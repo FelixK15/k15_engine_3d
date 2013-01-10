@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\test\src\ContainerTest.cpp" />
+    <ClCompile Include="..\..\test\src\FileManagerTest.cpp" />
+    <ClCompile Include="..\..\test\src\main.cpp" />
+    <ClCompile Include="..\..\test\src\MathTest.cpp" />
+    <ClCompile Include="..\..\test\src\MemoryTest.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{E9A85DD2-EEAF-4DDA-B0D6-47267C9C6776}</ProjectGuid>
+    <RootNamespace>EngineTest</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\..\test\bin\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IntDir>..\..\test\obj\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>$(ProjectName)_$(Configuration)</TargetName>
+    <IncludePath>..\..\engine\include\;..\..\test\unittest++\src\;..\Dependencies\unittest-cpp\UnitTest++\src\;$(IncludePath);..\..\math\include\</IncludePath>
+    <LibraryPath>..\..\engine\bin\$(Configuration)\;..\..\test\unittest++\$(Configuration)\;..\Dependencies\unittest-cpp\UnitTest++\bin\$(Configuration)\;$(LibraryPath);..\..\math\bin\$(Configuration)\</LibraryPath>
+    <IncludePath>..\..\engine\include\;..\Dependencies\unittest-cpp\UnitTest++\src\;$(IncludePath);..\..\math\include\</IncludePath>
+    <LibraryPath>..\..\engine\bin\$(Configuration)\;..\Dependencies\bin\$(Configuration)\;$(LibraryPath);..\..\math\bin\$(Configuration)\</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\..\test\bin\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IntDir>..\..\test\obj\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>$(ProjectName)_$(Configuration)</TargetName>
+    <IncludePath>..\..\engine\include\;..\..\test\unittest++\src\;\Dependencies\unittest-cpp\UnitTest++\src\;$(IncludePath);..\..\math\include\</IncludePath>
+    <LibraryPath>..\..\engine\bin\$(Configuration)\;..\..\test\unittest++\$(Configuration)\;\Dependencies\unittest-cpp\UnitTest++\bin\$(Configuration)\;$(LibraryPath);..\..\math\bin\$(Configuration)\</LibraryPath>
+    <IncludePath>..\..\engine\include\;\Dependencies\unittest-cpp\UnitTest++\src\;$(IncludePath);..\..\math\include\</IncludePath>
+    <LibraryPath>..\..\engine\bin\$(Configuration)\;\Dependencies\bin\$(Configuration)\;$(LibraryPath);..\..\math\bin\$(Configuration)\</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>K15_EngineV2_$(Configuration).lib;K15_Math_$(Configuration).lib;UnitTest++.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>K15_EngineV2_$(Configuration).lib;UnitTest++.vsnet2005.lib;K15_Math_$(Configuration).lib</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)\..\..\engine\bin\$(Configuration)\K15_EngineV2_$(Configuration).dll" "$(ProjectDir)\..\..\test\bin\$(Configuration)\" /y</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>K15_EngineV2_$(Configuration).lib;UnitTest++.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>K15_EngineV2_$(Configuration).lib;K15_Math_$(Configuration).lib;UnitTest++.lib;%(AdditionalDependencies);K15_Math_$(Configuration).lib</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)\..\..\engine\bin\$(Configuration)\K15_EngineV2_$(Configuration).dll" "$(ProjectDir)\..\..\test\bin\$(Configuration)\" /y</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,43 @@
+/game
+	|
+	| - /K15_Engine.dll
+	|
+	| - /Launcher.exe
+	|
+	| - /Game.dll
+	|
+	| - /GameLog.log
+	|
+	| - /Resource.rar
+	|
+	| -	/Extensions
+	|			|
+	|			| - /ResourceLoader
+	|						|
+	|						| - /TextureLoader.dll
+	|						|
+	|						| - /MusicLoader.dll
+	|						|
+	|						| - /ShaderLoader.dll
+	|
+	|			
+	|
+	| - /Configuration
+	|			|
+	|			| - /Renderer.cfg
+	|			|
+	|			| - /Engine.cfg
+	|			|
+	|			| - /Game.cfg
+	|
+	| - /Assets(DEBUG)
+	|			|
+	|			| - /Textures
+	|			|
+	|			| - /Shaders
+	|			|
+	|			| - /Meshes
+	|			|
+	|			| - /Sounds
+	|			|
+	|			| - /Music

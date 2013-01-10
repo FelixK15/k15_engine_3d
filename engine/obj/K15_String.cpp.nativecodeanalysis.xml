@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<DEFECTS><DEFECT><SFA><FILEPATH>f:\programming\c++\my projects\k15 engine 2\trunk\engine\src\</FILEPATH><FILENAME>k15_string.cpp</FILENAME><LINE>109</LINE><COLUMN>1</COLUMN></SFA><DEFECTCODE>6293</DEFECTCODE><DESCRIPTION>Ill-defined for-loop:  counts down from minimum.</DESCRIPTION><FUNCTION>K15_EngineV2::String::FindLastOf</FUNCTION><DECORATED>?FindLastOf@String@K15_EngineV2@@QBE?BHD@Z</DECORATED><FUNCLINE>105</FUNCLINE><PATH/></DEFECT></DEFECTS>

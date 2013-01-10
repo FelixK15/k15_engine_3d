@@ -1,0 +1,178 @@
+﻿Build started 06.11.2012 02:23:26.
+     1>Project "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Engine\K15_EngineV2.vcxproj" on node 2 (Build target(s)).
+     1>InitializeBuildStatus:
+         Touching "..\..\engine\obj\EngineV2.unsuccessfulbuild".
+       ClCompile:
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+       Link:
+         F:\Programme\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"..\..\engine\bin\Debug\K15_EngineV2_Debug.dll" /INCREMENTAL /NOLOGO TinyThread++.lib LuaPlus51_Debug.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /DEF:"module.def" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"..\..\engine\bin\Debug\K15_EngineV2_Debug.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"..\..\engine\bin\Debug\K15_EngineV2_Debug.lib" /MACHINE:X86 /DLL ..\..\engine\obj\K15_Directory.obj
+         ..\..\engine\obj\K15_DynamicLibraryManager.obj
+         ..\..\engine\obj\K15_Event.obj
+         ..\..\engine\obj\K15_EventManager.obj
+         ..\..\engine\obj\K15_EventTypes.obj
+         ..\..\engine\obj\K15_File.obj
+         ..\..\engine\obj\K15_FileWatcher.obj
+         ..\..\engine\obj\K15_GameTime.obj
+         ..\..\engine\obj\K15_HashedString.obj
+         ..\..\engine\obj\K15_Heap.obj
+         ..\..\engine\obj\K15_Log.obj
+         ..\..\engine\obj\K15_LogManager.obj
+         ..\..\engine\obj\K15_Memory.obj
+         ..\..\engine\obj\K15_Mutex.obj
+         ..\..\engine\obj\K15_Object.obj
+         ..\..\engine\obj\K15_Resource.obj
+         ..\..\engine\obj\K15_ResourceHandle.obj
+         ..\..\engine\obj\K15_ResourceManager.obj
+         ..\..\engine\obj\K15_Rtti.obj
+         ..\..\engine\obj\K15_String.obj
+         ..\..\engine\obj\K15_Thread.obj
+         ..\..\engine\obj\K15_DynamicLibrary_win32.obj
+         ..\..\engine\obj\K15_System_Win32.obj
+            Creating library ..\..\engine\bin\Debug\K15_EngineV2_Debug.lib and object ..\..\engine\bin\Debug\K15_EngineV2_Debug.exp
+     1>TinyThread++.lib(tinythread.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'TinyThread++.lib(tinythread.obj)' or at 'F:\Programming\C++\My Projects\K15 Engine 2\trunk\engine\bin\Debug\vc110.pdb'; linking object as if no debug info
+         K15_EngineV2.vcxproj -> F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Engine\..\..\engine\bin\Debug\K15_EngineV2_Debug.dll
+     1>k15_memory.cpp(143): warning : C6262: Function uses '16648' bytes of stack:  exceeds /analyze:stacksize '16384'.  Consider moving some data to heap.
+     1>k15_memory.cpp(162): warning : C6340: Mismatch on sign: 'unsigned int' passed as _Param_(4) when some signed type is required in call to 'sprintf'.
+     1>tinythread.h(188): warning : C26135: Missing annotation _Acquires_lock_(this->mHandle) at function 'tthread::mutex::lock'.
+     1>tinythread.h(204): warning : C26115: Failing to release lock 'this->mHandle' in function 'tthread::mutex::try_lock'.
+     1>tinythread.h(222): warning : C26135: Missing annotation _Releases_lock_(this->mHandle) at function 'tthread::mutex::unlock'.
+     1>tinythread.h(280): warning : C26135: Missing annotation _Acquires_lock_(this->mHandle) at function 'tthread::recursive_mutex::lock'.
+     1>tinythread.h(294): warning : C26135: Missing annotation _Acquires_lock_(this->mHandle) at function 'tthread::recursive_mutex::try_lock'.
+     1>tinythread.h(306): warning : C26135: Missing annotation _Releases_lock_(this->mHandle) at function 'tthread::recursive_mutex::unlock'.
+     1>k15_string.cpp(109): warning : C6293: Ill-defined for-loop:  counts down from minimum.
+       FinalizeBuildStatus:
+         Deleting file "..\..\engine\obj\EngineV2.unsuccessfulbuild".
+         Touching "..\..\engine\obj\EngineV2.lastbuildstate".
+     1>Done Building Project "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Engine\K15_EngineV2.vcxproj" (Build target(s)).
+
+Project Performance Summary:
+      836 ms  F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Engine\K15_EngineV2.vcxproj   1 calls
+                836 ms  Build                                      1 calls
+
+Target Performance Summary:
+        0 ms  GetCopyToOutputDirectoryItems              1 calls
+        0 ms  ResolveReferences                          1 calls
+        0 ms  SelectClCompile                            1 calls
+        0 ms  GetCopyToOutputDirectoryXamlAppDefs        1 calls
+        0 ms  _CheckForCompileOutputs                    1 calls
+        0 ms  GetResolvedWinMD                           1 calls
+        0 ms  _Manifest                                  1 calls
+        0 ms  _SelectedFiles                             1 calls
+        0 ms  _PrepareForBuild                           1 calls
+        0 ms  _Midl                                      1 calls
+        0 ms  SelectCustomBuild                          1 calls
+        0 ms  _ClCompile                                 1 calls
+        0 ms  GetReferenceAssemblyPaths                  1 calls
+        0 ms  CreateCustomManifestResourceNames          1 calls
+        0 ms  BeforeLink                                 1 calls
+        0 ms  AfterBuild                                 1 calls
+        0 ms  AfterBuildCompileEvent                     1 calls
+        0 ms  ComputeCLInputPDBName                      1 calls
+        0 ms  _BuildLinkAction                           1 calls
+        0 ms  BeforeResourceCompile                      1 calls
+        0 ms  ComputeManifestGeneratedLinkerInputs       1 calls
+        0 ms  AfterMidl                                  1 calls
+        0 ms  AfterBuildGenerateSources                  1 calls
+        0 ms  ExpandSDKReferences                        1 calls
+        0 ms  BuildGenerateSources                       1 calls
+        0 ms  _CopySourceItemsToOutputDirectory          1 calls
+        0 ms  GetFrameworkPaths                          1 calls
+        0 ms  AfterResourceCompile                       1 calls
+        0 ms  _Xsd                                       1 calls
+        0 ms  ComputeCustomBuildOutput                   1 calls
+        0 ms  MakeDirsForBscMake                         1 calls
+        0 ms  ComputeLinkSwitches                        1 calls
+        0 ms  _GenerateSatelliteAssemblyInputs           1 calls
+        0 ms  MakeDirsForResourceCompile                 1 calls
+        0 ms  _ResourceCompile                           1 calls
+        0 ms  ComputeLinkInputsFromProject               1 calls
+        0 ms  Build                                      1 calls
+        0 ms  _Link                                      1 calls
+        0 ms  BuildLinkTraverse                          1 calls
+        0 ms  ComputeManifestInputsTargets               1 calls
+        0 ms  ComputeRCOutputs                           1 calls
+        0 ms  _XdcMake                                   1 calls
+        0 ms  CreateSatelliteAssemblies                  1 calls
+        0 ms  BuildCompileTraverse                       1 calls
+        0 ms  PreLinkEvent                               1 calls
+        0 ms  ComputeMIDLGeneratedCompileInputs          1 calls
+        0 ms  _PrepareForReferenceResolution             1 calls
+        0 ms  _Deploy                                    1 calls
+        0 ms  DoLinkOutputFilesMatch                     1 calls
+        0 ms  ComputeReferenceCLInput                    1 calls
+        0 ms  PrepareForRun                              1 calls
+        0 ms  PreBuildEvent                              1 calls
+        0 ms  MakeDirsForMidl                            1 calls
+        0 ms  _BscMake                                   1 calls
+        0 ms  _Appverifier                               1 calls
+        0 ms  RegisterOutput                             1 calls
+        0 ms  _BuildGenerateSourcesAction                1 calls
+        0 ms  BuildLink                                  1 calls
+        0 ms  ComputeCLCompileGeneratedSbrFiles          1 calls
+        0 ms  ResolveSDKReferences                       1 calls
+        0 ms  _ALink                                     1 calls
+        0 ms  ComputeCLGeneratedLinkInputs               1 calls
+        0 ms  ResolveProjectReferences                   1 calls
+        0 ms  _SplitProjectReferencesByFileExistence     1 calls
+        0 ms  BuildGenerateSourcesTraverse               1 calls
+        0 ms  ComputeLegacyManifestEmbedding             1 calls
+        0 ms  AfterResolveReferences                     1 calls
+        0 ms  BeforeClCompile                            1 calls
+        0 ms  BeforeResolveReferences                    1 calls
+        0 ms  MakeDirsForXdcMake                         1 calls
+        0 ms  PrepareResourceNames                       1 calls
+        0 ms  AfterLink                                  1 calls
+        0 ms  PrepareForBuild                            1 calls
+        0 ms  SplitResourcesByCulture                    1 calls
+        0 ms  BeforeBuildGenerateSources                 1 calls
+        0 ms  AfterClCompile                             1 calls
+        0 ms  BuildCompile                               1 calls
+        0 ms  ResolvedXDCMake                            1 calls
+        0 ms  PlatformPrepareForBuild                    1 calls
+        0 ms  _BuildCompileAction                        1 calls
+        0 ms  GetInstalledSDKLocations                   1 calls
+        0 ms  AfterBuildGenerateSourcesEvent             1 calls
+        1 ms  MakeDirsForLink                            1 calls
+        1 ms  SetBuildDefaultEnvironmentVariables        1 calls
+        1 ms  ComputeCLOutputs                           1 calls
+        1 ms  ComputeCLCompileGeneratedXDCFiles          1 calls
+        1 ms  InitializeBuildStatus                      1 calls
+        1 ms  ResolveAssemblyReferences                  1 calls
+        1 ms  FinalizeBuildStatus                        1 calls
+        1 ms  AssignProjectConfiguration                 1 calls
+        1 ms  CopyFilesToOutputDirectory                 1 calls
+        1 ms  ComputeRCGeneratedLinkInputs               1 calls
+        1 ms  MakeDirsForCl                              1 calls
+        1 ms  AssignTargetPaths                          1 calls
+        1 ms  _CheckForInvalidConfigurationAndPlatform   1 calls
+       11 ms  ComputeLinkImportLibraryOutputsForClean    1 calls
+       41 ms  ClCompile                                  1 calls
+      111 ms  RunMergeNativeCodeAnalysis                 1 calls
+      259 ms  Link                                       1 calls
+      399 ms  RunNativeCodeAnalysis                      1 calls
+
+Build succeeded.
+
+Time Elapsed 00:00:01.00

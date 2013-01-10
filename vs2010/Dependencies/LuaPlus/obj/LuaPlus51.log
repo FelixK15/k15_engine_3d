@@ -1,0 +1,379 @@
+﻿Build started 06.11.2012 02:23:18.
+     1>Project "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\LuaPlus51.vcxproj" on node 2 (Build target(s)).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(345,5): warning MSB8004: Intermediate Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Intermediate Directory.
+     1>InitializeBuildStatus:
+         Creating "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\LuaPlus51.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         All outputs are up-to-date.
+         F:\Programme\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _MBCS /Gm /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\\" /Fd"F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt src\LuaObject.cpp src\LuaPlus.cpp src\LuaPlusFunctions.cpp src\LuaPlus_Libs.cpp src\LuaState.cpp src\LuaStateOutFile.cpp src\LuaState_DumpObject.cpp src\LuaTableIterator.cpp
+         LuaTableIterator.cpp
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\luacall.inl(122): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+         LuaState_DumpObject.cpp
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\luacall.inl(122): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\luastate_dumpobject.cpp(54): warning C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'vsprintf'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\luastate_dumpobject.cpp(215): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+         LuaStateOutFile.cpp
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\luacall.inl(122): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\luastateoutfile.cpp(48): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(218) : see declaration of 'fopen'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\luastateoutfile.cpp(50): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(218) : see declaration of 'fopen'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\luastateoutfile.cpp(70): warning C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'vsprintf'
+         LuaState.cpp
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\luacall.inl(122): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+         LuaPlus_Libs.cpp
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\luacall.inl(122): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\luaplus_libs.cpp(73): warning C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'vsprintf'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\luaplus_libs.cpp(88): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(191) : see declaration of 'strncpy'
+         LuaPlusFunctions.cpp
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\luacall.inl(122): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+         LuaPlus.cpp
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\luacall.inl(122): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+         LuaObject.cpp
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\luacall.inl(122): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\luaobject.cpp(1107): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(191) : see declaration of 'strncpy'
+         Generating Code...
+         All outputs are up-to-date.
+         F:\Programme\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _MBCS /Gm /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\\" /Fd"F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\vc110.pdb" /Gd /TC /analyze- /errorReport:prompt src\LuaPlusAddons.c src\lwstrlib.c src\popen.c src\src\lapi.c src\src\lauxlib.c src\src\lbaselib.c src\src\lcode.c src\src\ldblib.c src\src\ldebug.c src\src\ldo.c src\src\ldump.c src\src\lfunc.c src\src\lgc.c src\src\linit.c src\src\liolib.c src\src\llex.c src\src\lmathlib.c src\src\lmem.c src\src\loadlib.c src\src\lobject.c src\src\lopcodes.c src\src\loslib.c src\src\lparser.c src\src\lstate.c src\src\lstring.c src\src\lstrlib.c src\src\ltable.c src\src\ltablib.c src\src\ltm.c src\src\lundump.c src\src\lvm.c src\src\lzio.c src\src\print.c
+         print.c
+         lzio.c
+         lvm.c
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lvm.c(63): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+         lundump.c
+         ltm.c
+         ltablib.c
+         ltable.c
+         lstrlib.c
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lstrlib.c(775): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lstrlib.c(806): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lstrlib.c(832): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(191) : see declaration of 'strncpy'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lstrlib.c(842): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(110) : see declaration of 'strcpy'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lstrlib.c(865): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lstrlib.c(870): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lstrlib.c(875): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lstrlib.c(880): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lstrlib.c(898): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lstrlib.c(910): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(110) : see declaration of 'strcpy'
+         lstring.c
+         lstate.c
+         lparser.c
+         loslib.c
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\loslib.c(32): warning C4996: 'strerror': This function or variable may be unsafe. Consider using strerror_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(164) : see declaration of 'strerror'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\loslib.c(66): warning C4996: 'tmpnam': This function or variable may be unsafe. Consider using tmpnam_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(330) : see declaration of 'tmpnam'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\loslib.c(79): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdlib.h(449) : see declaration of 'getenv'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\loslib.c(142): warning C4996: 'gmtime': This function or variable may be unsafe. Consider using gmtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\time.inl(99) : see declaration of 'gmtime'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\loslib.c(146): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\time.inl(112) : see declaration of 'localtime'
+         lopcodes.c
+         lobject.c
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lobject.c(320): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lobject.c(362): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(191) : see declaration of 'strncpy'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lobject.c(371): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(110) : see declaration of 'strcpy'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lobject.c(374): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(115) : see declaration of 'strcat'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lobject.c(376): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(115) : see declaration of 'strcat'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lobject.c(382): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(110) : see declaration of 'strcpy'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lobject.c(384): warning C4996: 'strncat': This function or variable may be unsafe. Consider using strncat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(182) : see declaration of 'strncat'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lobject.c(385): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(115) : see declaration of 'strcat'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lobject.c(388): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(115) : see declaration of 'strcat'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lobject.c(389): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(115) : see declaration of 'strcat'
+         loadlib.c
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\loadlib.c(189): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(110) : see declaration of 'strcpy'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\loadlib.c(190): warning C4996: 'access': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _access. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\io.h(302) : see declaration of 'access'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\loadlib.c(224): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(110) : see declaration of 'strcpy'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\loadlib.c(227): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(110) : see declaration of 'strcpy'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\loadlib.c(270): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(110) : see declaration of 'strcpy'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\loadlib.c(272): warning C4996: 'stricmp': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _stricmp. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(249) : see declaration of 'stricmp'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\loadlib.c(278): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(115) : see declaration of 'strcat'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\loadlib.c(561): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(218) : see declaration of 'fopen'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\loadlib.c(825): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdlib.h(449) : see declaration of 'getenv'
+         lmem.c
+         lmathlib.c
+         llex.c
+         liolib.c
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\liolib.c(46): warning C4996: 'strerror': This function or variable may be unsafe. Consider using strerror_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(164) : see declaration of 'strerror'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\liolib.c(48): warning C4996: 'strerror': This function or variable may be unsafe. Consider using strerror_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(164) : see declaration of 'strerror'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\liolib.c(56): warning C4996: 'strerror': This function or variable may be unsafe. Consider using strerror_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(164) : see declaration of 'strerror'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\liolib.c(172): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(218) : see declaration of 'fopen'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\liolib.c(193): warning C4996: 'tmpfile': This function or variable may be unsafe. Consider using tmpfile_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(324) : see declaration of 'tmpfile'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\liolib.c(216): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(218) : see declaration of 'fopen'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\liolib.c(268): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(218) : see declaration of 'fopen'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\liolib.c(286): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(237) : see declaration of 'fscanf'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\liolib.c(399): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(218) : see declaration of 'fopen'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\liolib.c(422): warning C4996: 'strerror': This function or variable may be unsafe. Consider using strerror_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(164) : see declaration of 'strerror'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\liolib.c(466): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(218) : see declaration of 'fopen'
+         linit.c
+         Generating Code...
+         Compiling...
+         lgc.c
+         lfunc.c
+         ldump.c
+         ldo.c
+         ldebug.c
+         ldblib.c
+         lcode.c
+         lbaselib.c
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lbaselib.c(633): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(110) : see declaration of 'strcpy'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lbaselib.c(636): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(110) : see declaration of 'strcpy'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lbaselib.c(639): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+         lauxlib.c
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lauxlib.c(585): warning C4996: 'strerror': This function or variable may be unsafe. Consider using strerror_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(164) : see declaration of 'strerror'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lauxlib.c(605): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(218) : see declaration of 'fopen'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\src\lauxlib.c(619): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(233) : see declaration of 'freopen'
+         lapi.c
+         popen.c
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\popen.c(102): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdlib.h(449) : see declaration of 'getenv'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\popen.c(107): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(110) : see declaration of 'strcpy'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\popen.c(108): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(115) : see declaration of 'strcat'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\popen.c(109): warning C4996: 'strlwr': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strlwr. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(250) : see declaration of 'strlwr'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\popen.c(112): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(115) : see declaration of 'strcat'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\popen.c(113): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(115) : see declaration of 'strcat'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\popen.c(115): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(115) : see declaration of 'strcat'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\popen.c(160): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdlib.h(449) : see declaration of 'getenv'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\popen.c(165): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(110) : see declaration of 'strcpy'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\popen.c(166): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(115) : see declaration of 'strcat'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\popen.c(167): warning C4996: 'strlwr': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strlwr. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(250) : see declaration of 'strlwr'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\popen.c(170): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(115) : see declaration of 'strcat'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\popen.c(171): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(115) : see declaration of 'strcat'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\popen.c(173): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\string.h(115) : see declaration of 'strcat'
+         lwstrlib.c
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\lwstrlib.c(927): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\lwstrlib.c(934): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\lwstrlib.c(941): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\lwstrlib.c(948): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+         LuaPlusAddons.c
+     1>f:\programming\c++\my projects\k15 engine 2\trunk\vs2010\dependencies\luaplus\src\luaplusaddons.c(40): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 f:\programme\microsoft visual studio 11.0\vc\include\stdio.h(357) : see declaration of 'sprintf'
+         Generating Code...
+       Lib:
+         F:\Programme\Microsoft Visual Studio 11.0\VC\bin\Lib.exe /OUT:"F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\..\bin\Debug\LuaPlus51_Debug.lib" /NOLOGO "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\LuaObject.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\LuaPlus.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\LuaPlusAddons.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\LuaPlusFunctions.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\LuaPlus_Libs.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\LuaState.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\LuaStateOutFile.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\LuaState_DumpObject.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\LuaTableIterator.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\lwstrlib.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\popen.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\lapi.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\lauxlib.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\lbaselib.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\lcode.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\ldblib.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\ldebug.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\ldo.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\ldump.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\lfunc.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\lgc.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\linit.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\liolib.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\llex.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\lmathlib.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\lmem.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\loadlib.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\lobject.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\lopcodes.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\loslib.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\lparser.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\lstate.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\lstring.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\lstrlib.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\ltable.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\ltablib.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\ltm.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\lundump.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\lvm.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\lzio.obj"
+         "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\print.obj"
+         LuaPlus51.vcxproj -> F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\..\bin\Debug\LuaPlus51_Debug.lib
+       FinalizeBuildStatus:
+         Deleting file "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\LuaPlus51.unsuccessfulbuild".
+         Touching "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\obj\LuaPlus51.lastbuildstate".
+     1>Done Building Project "F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\LuaPlus51.vcxproj" (Build target(s)).
+
+Project Performance Summary:
+     4587 ms  F:\Programming\C++\My Projects\K15 Engine 2\trunk\vs2010\Dependencies\LuaPlus\LuaPlus51.vcxproj   1 calls
+               4587 ms  Build                                      1 calls
+
+Target Performance Summary:
+        0 ms  _Manifest                                  1 calls
+        0 ms  BuildCompileTraverse                       1 calls
+        0 ms  AfterBuildGenerateSources                  1 calls
+        0 ms  MakeDirsForLib                             1 calls
+        0 ms  ResolvedXDCMake                            1 calls
+        0 ms  ResolveReferences                          1 calls
+        0 ms  SelectClCompile                            1 calls
+        0 ms  GetCopyToOutputDirectoryXamlAppDefs        1 calls
+        0 ms  _CheckForCompileOutputs                    1 calls
+        0 ms  _CopySourceItemsToOutputDirectory          1 calls
+        0 ms  GetResolvedWinMD                           1 calls
+        0 ms  _PrepareForBuild                           1 calls
+        0 ms  _Midl                                      1 calls
+        0 ms  SelectCustomBuild                          1 calls
+        0 ms  _ClCompile                                 1 calls
+        0 ms  GetReferenceAssemblyPaths                  1 calls
+        0 ms  ComputeCLCompileGeneratedXDCFiles          1 calls
+        0 ms  ResolveAssemblyReferences                  1 calls
+        0 ms  ComputeCLInputPDBName                      1 calls
+        0 ms  _SelectedFiles                             1 calls
+        0 ms  PreLinkEvent                               1 calls
+        0 ms  CopyFilesToOutputDirectory                 1 calls
+        0 ms  CreateSatelliteAssemblies                  1 calls
+        0 ms  BuildGenerateSources                       1 calls
+        0 ms  ComputeCLGeneratedLibInputs                1 calls
+        0 ms  GetFrameworkPaths                          1 calls
+        0 ms  AfterResourceCompile                       1 calls
+        0 ms  _Xsd                                       1 calls
+        0 ms  ComputeCustomBuildOutput                   1 calls
+        0 ms  ComputeLibInputsFromProject                1 calls
+        0 ms  BeforeLib                                  1 calls
+        0 ms  PostBuildEvent                             1 calls
+        0 ms  MakeDirsForResourceCompile                 1 calls
+        0 ms  _ResourceCompile                           1 calls
+        0 ms  PlatformPrepareForBuild                    1 calls
+        0 ms  Build                                      1 calls
+        0 ms  BuildLinkTraverse                          1 calls
+        0 ms  ComputeRCOutputs                           1 calls
+        0 ms  _GenerateSatelliteAssemblyInputs           1 calls
+        0 ms  PrepareForRun                              1 calls
+        0 ms  _XdcMake                                   1 calls
+        0 ms  DoLibOutputFilesMatch                      1 calls
+        0 ms  AfterBuild                                 1 calls
+        0 ms  AfterBuildCompileEvent                     1 calls
+        0 ms  ComputeMIDLGeneratedCompileInputs          1 calls
+        0 ms  _BuildLinkAction                           1 calls
+        0 ms  ComputeReferenceCLInput                    1 calls
+        0 ms  ExpandSDKReferences                        1 calls
+        0 ms  PreBuildEvent                              1 calls
+        0 ms  MakeDirsForMidl                            1 calls
+        0 ms  _BscMake                                   1 calls
+        0 ms  _Appverifier                               1 calls
+        0 ms  _BuildGenerateSourcesAction                1 calls
+        0 ms  AfterResolveReferences                     1 calls
+        0 ms  BuildLink                                  1 calls
+        0 ms  ResolveSDKReferences                       1 calls
+        0 ms  _ALink                                     1 calls
+        0 ms  MakeDirsForBscMake                         1 calls
+        0 ms  _Lib                                       1 calls
+        0 ms  BuildGenerateSourcesTraverse               1 calls
+        0 ms  AssignTargetPaths                          1 calls
+        0 ms  ComputeLegacyManifestEmbedding             1 calls
+        0 ms  ComputeCLCompileGeneratedSbrFiles          1 calls
+        0 ms  ComputeLibAdditionalOptions                1 calls
+        0 ms  BeforeResolveReferences                    1 calls
+        0 ms  BeforeClCompile                            1 calls
+        0 ms  BeforeResourceCompile                      1 calls
+        0 ms  AfterMidl                                  1 calls
+        0 ms  ResolveProjectReferences                   1 calls
+        0 ms  _Deploy                                    1 calls
+        0 ms  _PrepareForReferenceResolution             1 calls
+        0 ms  BeforeBuildGenerateSources                 1 calls
+        0 ms  AfterLib                                   1 calls
+        0 ms  AfterClCompile                             1 calls
+        0 ms  BuildCompile                               1 calls
+        0 ms  AfterBuildGenerateSourcesEvent             1 calls
+        0 ms  _BuildCompileAction                        1 calls
+        0 ms  ComputeRCGeneratedLibInputs                1 calls
+        0 ms  AssignProjectConfiguration                 1 calls
+        0 ms  GetInstalledSDKLocations                   1 calls
+        1 ms  SetBuildDefaultEnvironmentVariables        1 calls
+        1 ms  InitializeBuildStatus                      1 calls
+        1 ms  MakeDirsForXdcMake                         1 calls
+        1 ms  FinalizeBuildStatus                        1 calls
+        1 ms  _CheckForInvalidConfigurationAndPlatform   1 calls
+        1 ms  PrepareForBuild                            1 calls
+        1 ms  MakeDirsForCl                              1 calls
+        1 ms  GetCopyToOutputDirectoryItems              1 calls
+        1 ms  _SplitProjectReferencesByFileExistence     1 calls
+        1 ms  RegisterOutput                             1 calls
+        2 ms  ComputeCLOutputs                           1 calls
+       52 ms  Lib                                        1 calls
+     4521 ms  ClCompile                                  1 calls
+
+Build succeeded.
+
+Time Elapsed 00:00:04.59

@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\renderer\src\K15_Importer.cpp" />
+    <ClCompile Include="..\..\renderer\src\K15_Bindable.cpp">
+      <Filter>Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_Buffer.cpp">
+      <Filter>Bindable\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_SceneNode.cpp">
+      <Filter>Scenegraph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_Geometry.cpp">
+      <Filter>Scenegraph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_VertexLayout.cpp">
+      <Filter>Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_Renderer.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_Camera.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_ColorRGB.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_ColorRGBA.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_Transformation.cpp">
+      <Filter>Scenegraph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_Light.cpp" />
+    <ClCompile Include="..\..\renderer\src\K15_ShaderVariable.cpp">
+      <Filter>ShaderVariable</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_LightShaderVariable.cpp" />
+    <ClCompile Include="..\..\renderer\src\K15_DX11_Texture2DImpl.cpp">
+      <Filter>ResourcesImpl\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_Texture2D.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_Texutre2DImpl.cpp">
+      <Filter>ResourcesImpl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_ShaderImpl.cpp">
+      <Filter>ResourcesImpl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_DX11_ShaderImpl.cpp">
+      <Filter>ResourcesImpl\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_Shader.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\renderer\include\K15_Importer.h" />
+    <ClInclude Include="..\..\renderer\include\K15_UsefulMacros.h" />
+    <ClInclude Include="..\..\renderer\include\K15_Bindable.h">
+      <Filter>Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_Buffer.h">
+      <Filter>Bindable\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_SceneNode.h">
+      <Filter>Scenegraph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_Geometry.h">
+      <Filter>Scenegraph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_VertexLayout.h">
+      <Filter>Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_Renderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_Camera.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_ColorRGB.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_ColorRGBA.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_Format.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_Material.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_Transformation.h">
+      <Filter>Scenegraph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_Light.h">
+      <Filter>Light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_ShaderVariable.h">
+      <Filter>ShaderVariable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_LightShaderVariable.h">
+      <Filter>ShaderVariable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_DX11_Texture2DImpl.h">
+      <Filter>ResourcesImpl\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_Texture2D.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_Texture2DImpl.h">
+      <Filter>ResourcesImpl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_ShaderImpl.h">
+      <Filter>ResourcesImpl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_DX11_ShaderImpl.h">
+      <Filter>ResourcesImpl\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_Shader.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_BufferImpl.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\renderer\src\K15_Bindable.inl">
+      <Filter>Bindable</Filter>
+    </None>
+    <None Include="..\..\renderer\src\K15_Buffer.inl">
+      <Filter>Bindable\Buffer</Filter>
+    </None>
+    <None Include="..\..\renderer\src\K15_SceneNode.inl">
+      <Filter>Scenegraph</Filter>
+    </None>
+    <None Include="..\..\renderer\src\K15_Geometry.inl">
+      <Filter>Scenegraph</Filter>
+    </None>
+    <None Include="..\..\renderer\src\K15_VertexLayout.inl">
+      <Filter>Bindable</Filter>
+    </None>
+    <None Include="..\..\renderer\src\K15_Camera.inl">
+      <Filter>Renderer</Filter>
+    </None>
+    <None Include="..\..\renderer\src\K15_Transformation.inl">
+      <Filter>Scenegraph</Filter>
+    </None>
+    <None Include="..\..\renderer\src\K15_ShaderVariable.inl">
+      <Filter>ShaderVariable</Filter>
+    </None>
+    <None Include="..\..\renderer\src\K15_Texture2D.inl">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="..\..\renderer\src\K15_Texture2DImpl.inl">
+      <Filter>ResourcesImpl</Filter>
+    </None>
+    <None Include="..\..\renderer\src\K15_ShaderImpl.inl">
+      <Filter>ResourcesImpl</Filter>
+    </None>
+    <None Include="..\..\renderer\shader\PS_Uber.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shader\Shader_Buffer.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shader\Shader_Structs.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\src\K15_Shader.inl">
+      <Filter>Resources</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Bindable">
+      <UniqueIdentifier>{2b724c89-851d-4191-a8a0-c4504117cd8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Bindable\Shader">
+      <UniqueIdentifier>{621e88dd-54b6-4e41-a21c-84cbb424ebc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Bindable\Buffer">
+      <UniqueIdentifier>{46573fde-64a4-479a-a205-20b06a541170}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenegraph">
+      <UniqueIdentifier>{802ef6f9-d111-4d9d-b0ec-e74cc8e0737e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderer">
+      <UniqueIdentifier>{dce2ba9e-3877-4657-a0db-4946bac174be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Light">
+      <UniqueIdentifier>{bbfa1e1d-cea6-4377-95a1-904d9ddd1030}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShaderVariable">
+      <UniqueIdentifier>{eb3eb43d-63b4-4364-abc8-f5a03de6ab04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{a0489e68-045e-43ed-8fbb-78654f3d2310}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{6cf3fe85-47da-4b58-aca0-34458d136333}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ResourcesImpl">
+      <UniqueIdentifier>{c03a62bf-ade2-44d6-b8a9-59c980903ca0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ResourcesImpl\DX11">
+      <UniqueIdentifier>{bb6709ee-f1dc-4b13-bbd4-c13617d4c0be}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
