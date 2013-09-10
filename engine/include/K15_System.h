@@ -1,6 +1,6 @@
 /**
  * @file K15_System.h
- * @author  Felix Klinge <f.klinge15@gmail.com>
+ * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2012/07/11
  * @section LICENSE

@@ -197,8 +197,8 @@ namespace K15_EngineV2
 		static void EnableMemorySerialization();
 		static void EnableEventsOnMemoryCommunication();
 
-		static void _AddMemoryBlock(MemoryBlock *pBlock);
-		static void _RemoveMemoryBlock(MemoryBlock *pBlock);
+		static void _AddMemoryBlock(MemoryHeader *pBlock);
+		static void _RemoveMemoryBlock(MemoryHeader *pBlock);
 
 	private:
 		static bool ms_bMemoryLogging;
@@ -209,7 +209,7 @@ namespace K15_EngineV2
 		static unsigned int ms_iApplicationMemory;
 		static unsigned int ms_iAmountAllocations;
 
-		static MemoryBlock *ms_pHeadMemoryBlock;
+		static MemoryHeader *ms_pHeadMemoryBlock;
 	};
 
 	#include "../src/K15_Memory.inl"

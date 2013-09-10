@@ -46,7 +46,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>K15_$(ProjectName)_$(Configuration)</TargetName>
-    <IncludePath>..\..\engine\include\;..\..\renderer\include\;..\Dependencies\TinyThread++-1.1\source\;..\Dependencies\LuaPlus\src\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\engine\src\;..\..\engine\include\;..\..\renderer\include\;..\Dependencies\TinyThread++-1.1\source\;..\Dependencies\LuaPlus\src\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\renderer\bin\$(Configuration)\;..\Dependencies\bin\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -101,24 +101,24 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\engine\include\K15_Application.h" />
     <ClInclude Include="..\..\engine\include\K15_Container.h" />
     <ClInclude Include="..\..\engine\include\K15_Directory.h" />
     <ClInclude Include="..\..\engine\include\K15_DynamicLibrary.h" />
     <ClInclude Include="..\..\engine\include\K15_DynamicLibraryManager.h" />
     <ClInclude Include="..\..\engine\include\K15_File.h" />
     <ClInclude Include="..\..\engine\include\K15_FileWatcher.h" />
-    <ClInclude Include="..\..\engine\include\K15_Game.h" />
     <ClInclude Include="..\..\engine\include\K15_Log.h" />
     <ClInclude Include="..\..\engine\include\K15_LogManager.h" />
-    <ClInclude Include="..\..\engine\include\K15_MemoryBlock.h" />
+    <ClInclude Include="..\..\engine\include\K15_MemoryHeader.h" />
     <ClInclude Include="..\..\engine\include\K15_Mutex.h" />
     <ClInclude Include="..\..\engine\include\K15_NTreeNode.h" />
-    <ClInclude Include="..\..\engine\include\K15_MemoryPoolNode.h" />
     <ClInclude Include="..\..\engine\include\K15_Pointer.h" />
     <ClInclude Include="..\..\engine\include\K15_ProfileManager.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_NTree.h" />
+    <ClInclude Include="..\..\engine\include\K15_StackAllocator.h" />
     <None Include="..\..\engine\include\K15_ByteConversion.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
@@ -135,13 +135,8 @@
     <ClInclude Include="..\..\engine\include\K15_HashedString.h" />
     <ClInclude Include="..\..\engine\include\K15_HashItem.h" />
     <ClInclude Include="..\..\engine\include\K15_HashMap.h" />
-    <ClInclude Include="..\..\engine\include\K15_Heap.h" />
     <ClInclude Include="..\..\engine\include\K15_List.h" />
     <ClInclude Include="..\..\engine\include\K15_ListNode.h" />
-    <ClInclude Include="..\..\engine\include\K15_Memory.h" />
-    <ClInclude Include="..\..\engine\include\K15_MemoryHeapNode.h" />
-    <ClInclude Include="..\..\engine\include\K15_MemoryHeap.h" />
-    <ClInclude Include="..\..\engine\include\K15_MemoryPool.h" />
     <ClInclude Include="..\..\engine\include\K15_Object.h" />
     <ClInclude Include="..\..\engine\include\K15_ProfileNode.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -157,7 +152,6 @@
     <ClInclude Include="..\..\engine\include\K15_StdInclude.h" />
     <ClInclude Include="..\..\engine\include\K15_Stream.h" />
     <ClInclude Include="..\..\engine\include\K15_String.h" />
-    <ClInclude Include="..\..\engine\include\K15_System.h" />
     <ClInclude Include="..\..\engine\include\K15_Thread.h" />
     <ClInclude Include="..\..\engine\include\K15_ThreadManager.h" />
     <ClInclude Include="..\..\engine\include\K15_UsefulMacros.h" />
@@ -175,12 +169,8 @@
     <None Include="..\..\engine\src\K15_GameTime.inl" />
     <None Include="..\..\engine\src\K15_HashItem.inl" />
     <None Include="..\..\engine\src\K15_HashMap.inl" />
-    <None Include="..\..\engine\src\K15_Heap.inl" />
     <None Include="..\..\engine\src\K15_List.inl" />
     <None Include="..\..\engine\src\K15_ListNode.inl" />
-    <None Include="..\..\engine\src\K15_Memory.inl" />
-    <None Include="..\..\engine\src\K15_MemoryHeap.inl" />
-    <None Include="..\..\engine\src\K15_MemoryPool.inl" />
     <None Include="..\..\engine\src\K15_Mutex.inl" />
     <None Include="..\..\engine\src\K15_NTree.inl" />
     <None Include="..\..\engine\src\K15_Object.inl" />
@@ -189,7 +179,9 @@
     <None Include="..\..\engine\src\K15_ResourceManager.inl" />
     <None Include="..\..\engine\src\K15_Rtti.inl" />
     <None Include="..\..\engine\src\K15_Stack.inl" />
+    <None Include="..\..\engine\src\K15_StackAllocator.inl" />
     <None Include="..\..\engine\src\K15_StackItem.inl" />
+    <ClCompile Include="..\..\engine\src\K15_Application.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Directory.cpp" />
     <ClCompile Include="..\..\engine\src\K15_DynamicLibraryManager.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Event.cpp" />
@@ -199,10 +191,8 @@
     <ClCompile Include="..\..\engine\src\K15_FileWatcher.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GameTime.cpp" />
     <ClCompile Include="..\..\engine\src\K15_HashedString.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Heap.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Log.cpp" />
     <ClCompile Include="..\..\engine\src\K15_LogManager.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Memory.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Mutex.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Object.cpp" />
     <ClCompile Include="..\..\engine\src\K15_ProfileNode.cpp">
@@ -212,6 +202,7 @@
     <ClCompile Include="..\..\engine\src\K15_ResourceHandle.cpp" />
     <ClCompile Include="..\..\engine\src\K15_ResourceManager.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Rtti.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_StackAllocator.cpp" />
     <ClCompile Include="..\..\engine\src\K15_String.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Thread.cpp" />
     <ClCompile Include="..\..\engine\src\Win32\K15_DynamicLibrary_win32.cpp" />

@@ -1,8 +1,8 @@
 /**
- * @file K15_MemoryBlock.h
+ * @file K15_Allocator.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/08/06
+ * @date 2013/09/10
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -15,27 +15,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
- *
- * @section DESCRIPTION
- *
- * 
  */
-#pragma once
 
-#ifndef __K15_MEMORYBLOCK__
-#define __K15_MEMORYBLOCK__
-
-namespace K15_EngineV2
+template <class Allocator>
+Allocator::Allocator(Allocator* pAllocator,size_t iSize)
+  : m_pMemory(0),
+    m_iUsedMemory(0),
+    m_iMemorySize(0)
 {
-	struct K15ENGINE2_API MemoryBlock
-	{
-		MemoryBlock *Next;		/*Address to next memory block*/
-		MemoryBlock *Previous;	/*Address to previous memory block*/
-		const char *File;		/*File the allocated occurred*/
-		unsigned int Line;		/*Line at which the new call happened*/
-		unsigned int Size;		/*Size of the allocated memory*/
-		bool IsArray;			/*Was the memory allocated by new[]?*/
-	};
+  m_pMemory     = pAllocator->allocate(iSize);
+  m_iMemorySize = iSize;
 }
-
-#endif //__K15_MEMORYBLOCK__

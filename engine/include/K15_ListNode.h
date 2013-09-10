@@ -32,7 +32,7 @@
 #include "K15_StdInclude.h"
 #include "K15_MemoryPool.h"
 
-namespace K15_EngineV2
+namespace K15_Engine { namespace Container { 
 {
 	template <class T>
 	class ListNode
@@ -83,7 +83,7 @@ namespace K15_EngineV2
 		ListNode<T> *m_pPrevious;		//Pointer to the previous element in the list.
 	};
 
-	#include "../src/K15_ListNode.inl"
-}
+	#include "K15_ListNode.inl"
+}}
 
 #endif //__K15_LISTNODE__

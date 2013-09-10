@@ -1,6 +1,6 @@
 /**
  * @file K15_Memory.cpp
- * @author Felix Klinge <f.klinge15@gmail.com>
+ * @author Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2012/07/12
  * @section LICENSE
@@ -31,7 +31,7 @@ unsigned int Memory::ms_iApplicationMemory = 0;
 unsigned int Memory::ms_iAllocatedMemory = 0;
 unsigned int Memory::ms_iAmountAllocations = 0;
 
-MemoryBlock *Memory::ms_pHeadMemoryBlock = NULL;
+MemoryHeader *Memory::ms_pHeadMemoryBlock = NULL;
 
 void *operator new[](unsigned int iSize,const char* sFile,unsigned int sLineNumber)
 {
@@ -76,7 +76,7 @@ void operator delete(void* pPointer)
 void *Memory::Allocate(unsigned int iSize,const char* sFile,unsigned int sLineNumber,bool bArray)
 {
 //	if(ms_bMemoryLogging){
-		iSize += sizeof(MemoryBlock);
+		iSize += sizeof(MemoryHeader);
 //	}
 
 	void *pPointer = malloc(iSize);
@@ -92,7 +92,7 @@ void *Memory::Allocate(unsigned int iSize,const char* sFile,unsigned int sLineNu
 
 //	if(ms_bMemoryLogging){
 		ProtocolMemoryAllocation(pPointer,iSize,sFile,sLineNumber,bArray);
-		iSize -= sizeof(MemoryBlock);
+		iSize -= sizeof(MemoryHeader);
 //	}
 
 	//Make everything in the new memory block is set to 0.
@@ -112,7 +112,7 @@ void Memory::Free( void *pPointer,bool bArray )
 
 void Memory::ProtocolMemoryAllocation( void*& pPointer,unsigned int iSize,const char* sFile,unsigned int iLineNumber,bool bArray )
 {
-	MemoryBlock* pBlock = (MemoryBlock*)pPointer;
+	MemoryHeader* pBlock = (MemoryHeader*)pPointer;
 
 	pBlock->IsArray = bArray;
 	pBlock->Size = iSize;
@@ -127,7 +127,7 @@ void Memory::ProtocolMemoryAllocation( void*& pPointer,unsigned int iSize,const 
 
 void Memory::ProtocolMemoryDeallocation( void*& pPointer,bool bArray )
 {
- 	MemoryBlock *pBlock = (MemoryBlock*)pPointer;
+ 	MemoryHeader *pBlock = (MemoryHeader*)pPointer;
  	--pBlock;
  	
 // 	assert(bArray == pBlock->IsArray);
@@ -150,7 +150,7 @@ void Memory::CheckForMemoryLeak()
 
 		arrString[0] = 0;
 
-		for(MemoryBlock *pBlock = ms_pHeadMemoryBlock;pBlock;pBlock = pBlock->Next,pPointer = pBlock - 1){
+		for(MemoryHeader *pBlock = ms_pHeadMemoryBlock;pBlock;pBlock = pBlock->Next,pPointer = pBlock - 1){
 			arrBuffer[0] = 0;
 
 			if(pBlock->IsArray){
@@ -209,7 +209,7 @@ void Memory::CleanUp()
 
 }
 
-void Memory::_AddMemoryBlock(MemoryBlock *pBlock)
+void Memory::_AddMemoryBlock(MemoryHeader *pBlock)
 {
 	if(!ms_pHeadMemoryBlock){
 		pBlock->Previous = NULL;
@@ -223,7 +223,7 @@ void Memory::_AddMemoryBlock(MemoryBlock *pBlock)
 	ms_pHeadMemoryBlock = pBlock;
 }
 
-void Memory::_RemoveMemoryBlock(MemoryBlock *pBlock)
+void Memory::_RemoveMemoryBlock(MemoryHeader *pBlock)
 {
 	if(pBlock->Next){
 		pBlock->Next->Previous = pBlock->Previous;

@@ -25,13 +25,13 @@
 
 #pragma once
 
-#ifndef __K15_LIST__
-#define __K15_LIST__
+#ifndef _K15Engine_Container_List_h_
+#define _K15Engine_Container_List_h_
 
 #include "K15_StdInclude.h"
 #include "K15_ListNode.h"
 
-namespace K15_EngineV2
+namespace K15_Engine { namespace Container { 
 {
 	template<class T>
 	class List
@@ -117,9 +117,7 @@ namespace K15_EngineV2
 		ListNode<T> *m_pLast;
 	};
 
-	#include "../src/K15_List.inl"
-}
+	#include "K15_List.inl"
+}}
 
-
-
-#endif //__K15_LIST__
+#endif //_K15Engine_Container_List_h_
