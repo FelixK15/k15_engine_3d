@@ -51,11 +51,10 @@
 	#define STR_STR(str,substr) strstr(str,substr)
 #endif
 
-namespace K15_EngineV2
-{
+namespace K15_Engine { namespace System { 
 	class Object;
 
-	class K15ENGINE2_API String
+	class K15_API_EXPORT String
 	{
 	public:
 		String(unsigned int iSize = 32,unsigned int iReallocationSize = 32);
@@ -215,6 +214,6 @@ namespace K15_EngineV2
 		unsigned int m_iSizeStr;
 		unsigned int m_iCapacity;
 	};
-}
+}}//end of K15_Engine::System namespace
 
 #endif //__K15_STRING__

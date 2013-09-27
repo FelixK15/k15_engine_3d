@@ -1,8 +1,8 @@
 /**
- * @file K15_Event.inl
+ * @file K15_ApplicationModule.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/08/09
+ * @date 2012/10/16
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -15,19 +15,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @section DESCRIPTION
+ *
+ * 
  */
 
-inline const EventType Event::GetType() const
-{
-	return m_etType;
-}
+#ifndef _K15Engine_System_ApplicationModule_h_
+#define _K15Engine_System_ApplicationModule_h_
 
-inline const size_t Event::GetArgumentSize() const
-{
-	return m_iArgumentSize;
-}
+#include "K15_Prerequisites.h"
 
-inline void *Event::GetArgument() const
-{
-	return m_pArgument;
-}
+namespace K15_Engine { namespace System { 
+
+	class ApplicationModule
+	{
+
+	};
+}} //end of K15_Engine::System namespace
+
+#endif

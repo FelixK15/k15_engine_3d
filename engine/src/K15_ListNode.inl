@@ -22,9 +22,9 @@ template<class T> MemoryPool<ListNode<T>,50000> ListNode<T>::ms_mpMemoryPool;
 template<class T>
 ListNode<T>::ListNode()
 {
-	m_pElement = NULL;
-	m_pNext = NULL;
-	m_pPrevious = NULL;
+	m_pElement = 0;
+	m_pNext = 0;
+	m_pPrevious = 0;
 }
 
 template<class T>
@@ -55,7 +55,7 @@ ListNode<T> *ListNode<T>::GetPrev()
 }
 
 template<class T>
-void *ListNode<T>::operator new(U32 iSize)
+void *ListNode<T>::operator new(uint32 iSize)
 {
 	return ms_mpMemoryPool.Allocate();
 }

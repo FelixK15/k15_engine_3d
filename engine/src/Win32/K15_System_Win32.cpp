@@ -39,23 +39,23 @@ using namespace K15_EngineV2;
 * Anonymous namespace to make the following variables only accessible in this file.
 */
 namespace{
-	HANDLE _hHeapHandle = NULL;
-	HINSTANCE _hInstance = NULL;
-	HWND _hWHandle = NULL;
+	HANDLE _hHeapHandle = 0;
+	HINSTANCE _hInstance = 0;
+	HWND _hWHandle = 0;
 	MSG _mMsg;
 
 	bool _bHighResolutionTimerSupported = false;
-	U32 _iMemoryFlags = 0;
+	uint32 _iMemoryFlags = 0;
 	double _dFreq = 0;
 	double _dEngineStart = 0;
 
-	Game *_pGame = NULL;
+	Game *_pGame = 0;
 }
 
 /**
  * WinProc function for Windows Message Processing.
  */
-LRESULT CALLBACK WindowProc(HWND hwnd,U32 msg,WPARAM wParam,LPARAM lParam)
+LRESULT CALLBACK WindowProc(HWND hwnd,uint32 msg,WPARAM wParam,LPARAM lParam)
 {
 	if(msg == WM_CLOSE){
 		PostQuitMessage(0);
@@ -76,7 +76,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd,U32 msg,WPARAM wParam,LPARAM lParam)
  * Function that initializes the window class using the WNDCLASS struct.
  * Will be called internally during InitializeWindow().
  */
-void InitializeWindowClass(U32 iFlags)
+void InitializeWindowClass(uint32 iFlags)
 {
 	WNDCLASS windowClass;
 	ZeroMemory(&windowClass,sizeof(WNDCLASS));
@@ -87,7 +87,7 @@ void InitializeWindowClass(U32 iFlags)
 	windowClass.hIcon = LoadIcon(_hInstance,IDI_SHIELD);
 	windowClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 	windowClass.lpszClassName = "K15GameWindow";
-	windowClass.lpszMenuName = NULL;
+	windowClass.lpszMenuName = 0;
 
 	if(HAS_FLAG(System::WF_FRAME,iFlags)){
 		windowClass.style = WS_OVERLAPPED;
@@ -102,9 +102,9 @@ void InitializeWindowClass(U32 iFlags)
  * If the window has been created successfully the window will be made visible.
  * Will be called internally during InitializeWindow() and after InitializeWindowClass().
  */
-bool CreateAndShowWindow(const String &sTitle,U32 iFlags,U32 iPosX,U32 iPosY,U32 iWidth,U32 iHeight)
+bool CreateAndShowWindow(const String &sTitle,uint32 iFlags,uint32 iPosX,uint32 iPosY,uint32 iWidth,uint32 iHeight)
 {
-	U32 iStyle = 0;
+	uint32 iStyle = 0;
 
 	if(HAS_FLAG(System::WF_FRAME,iFlags)){
 		iStyle = WS_OVERLAPPEDWINDOW;
@@ -130,7 +130,7 @@ bool CreateAndShowWindow(const String &sTitle,U32 iFlags,U32 iPosX,U32 iPosY,U32
 		iPosX = iPosY = 0;
 	}
 
-	_hWHandle = CreateWindow("K15GameWindow",sTitle.C_Str(),iStyle,iPosX,iPosY,iWidth,iHeight,NULL,NULL,_hInstance,NULL);
+	_hWHandle = CreateWindow("K15GameWindow",sTitle.C_Str(),iStyle,iPosX,iPosY,iWidth,iHeight,0,0,_hInstance,0);
 
 	if(_hWHandle){
 		::ShowWindow(_hWHandle,5);
@@ -147,9 +147,9 @@ bool CreateAndShowWindow(const String &sTitle,U32 iFlags,U32 iPosX,U32 iPosY,U32
 
 System::System()
 {
-	_hInstance = NULL;
-	_hWHandle = NULL;
-	m_pGame = NULL;
+	_hInstance = 0;
+	_hWHandle = 0;
+	m_pGame = 0;
 	_iMemoryFlags = 0;
 
 	m_bFullscreen = false;
@@ -161,12 +161,12 @@ System::~System()
 	//Nothing here.
 }
 
-bool System::Initialize(U32 iFlags)
+bool System::Initialize(uint32 iFlags)
 {
 	//We'll create our log first.
 	m_pEngineLog =  g_pLogManager->CreateLog("K15_Log",true,true,true);
 
-	WriteDefaultLog("Starting K15 System...");
+	K15_LogNormalMessage("Starting K15 System...");
 
 	//We need to obtain a Handle to the Process' Heap in order to 
 	//allocate memory via the HeapAlloc function.
@@ -174,7 +174,7 @@ bool System::Initialize(U32 iFlags)
 
 	//We also need the HINSTANCE handle of the current module instance in order to
 	//create a window class and do some other stuff.
-	_hInstance = GetModuleHandle(NULL);
+	_hInstance = GetModuleHandle(0);
 
 	//The amount of system memory gets queried.
 	size_t iTotalMemory, iProcessMemory;
@@ -189,19 +189,19 @@ bool System::Initialize(U32 iFlags)
 		_dEngineStart = (double)GetTickCount64();
 	}
 	
-	return _hHeapHandle != NULL && _hInstance != NULL;
+	return _hHeapHandle != 0 && _hInstance != 0;
 }
 
-bool System::InitializeWindow(const String &sTitle,U32 iFlags,U32 iPosX,U32 iPosY,U32 iWidth,U32 iHeight)
+bool System::InitializeWindow(const String &sTitle,uint32 iFlags,uint32 iPosX,uint32 iPosY,uint32 iWidth,uint32 iHeight)
 {
-	WriteDefaultLog("Initializing window...");
+	K15_LogNormalMessage("Initializing window...");
 
 	//Before we can create a new window, we must create and register a so called WindowClass (WNDCLASS).
 	InitializeWindowClass(iFlags);
 
 	//After the WindowClass has been created and registered, we try to create a new window.
 	if(!CreateAndShowWindow(sTitle,iFlags,iPosX,iPosY,iWidth,iHeight)){
-		WriteDefaultLog("Error - Could not create Window");
+		K15_LogNormalMessage("Error - Could not create Window");
 		MessageBox(_hWHandle,"Could not create Window","Error",0);
 		return false;
 	}
@@ -213,7 +213,7 @@ bool System::InitializeWindow(const String &sTitle,U32 iFlags,U32 iPosX,U32 iPos
 
 void System::Shutdown()
 {
-	WriteDefaultLog("Shutting down system...");
+	K15_LogNormalMessage("Shutting down system...");
 
 	//The window will get closed and destroyed during system shutdown.
 	//CloseWindow(_hWHandle);
@@ -221,23 +221,23 @@ void System::Shutdown()
 
 	//The normal desktop resolution gets set.
 	if(m_bFullscreen){
-		ChangeDisplaySettings(NULL,0);
+		ChangeDisplaySettings(0,0);
 	}
 
 	Memory::CheckForMemoryLeak();
 	//Object::PrintObjectsInUse();
 
-	WriteDefaultLog("Shutting down game...");
+	K15_LogNormalMessage("Shutting down game...");
 
 	if(m_pGame){
 		m_pGame->Shutdown();
 		K15_DELETE m_pGame;
-		m_pGame = NULL;
+		m_pGame = 0;
 	}
 
 	UnregisterClass("K15GameWindow",_hInstance);
 	
-	WriteDefaultLog("Shutting down log...");
+	K15_LogNormalMessage("Shutting down log...");
 	g_pLogManager->Shutdown();
 	Memory::CleanUp();
 }
@@ -347,7 +347,7 @@ void *System::QuerySystemObject( SystemObjectDescription eObjectDescription ) co
 		return _hWHandle;
 	}
 
-	return NULL;
+	return 0;
 }
 
 void System::SetGame(Game *pGame)
@@ -366,8 +366,8 @@ void System::SetGame(Game *pGame)
 String System::GetSystemError() const
 {
 	DWORD iErrorCode = GetLastError();
-	LPTSTR pMessageBuffer = NULL;
-	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER,NULL,iErrorCode,0,(LPTSTR)&pMessageBuffer,1024,NULL);
+	LPTSTR pMessageBuffer = 0;
+	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER,0,iErrorCode,0,(LPTSTR)&pMessageBuffer,1024,0);
 
 	String sErrorMessage(pMessageBuffer);
 	LocalFree(pMessageBuffer);

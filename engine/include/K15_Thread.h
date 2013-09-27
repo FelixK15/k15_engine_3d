@@ -23,22 +23,18 @@
  *
  * The class provides basic thread support.
  */
+#ifndef _K15Engine_System_Thread_h_
+#define _K15Engine_System_Thread_h_
 
-#pragma once
-#ifndef __K15_THREAD__
-#define __K15_THREAD__
-
-#include "K15_StdInclude.h"
+#include "K15_Prerequisites.h"
 
 namespace tthread{
 	class thread;
 }
 
-namespace K15_EngineV2
-{
-	typedef void(*ThreadFunction)(void*);
+namespace K15_Engine { namespace System { 
 
-	class K15ENGINE2_API Thread
+	class K15_API_EXPORT Thread
 	{
 	public:
 		/**
@@ -75,4 +71,4 @@ namespace K15_EngineV2
 	};
 }
 
-#endif //K15_THREAD 
+#endif //_K15Engine_System_Thread_h_ 

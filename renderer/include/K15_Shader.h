@@ -34,7 +34,7 @@ namespace K15_Renderer
 {
 	class ShaderVariable;
 
-	class Shader : public Resource
+	class Shader : public ResourceBase
 	{
 		DECLARE_RTTI;
 

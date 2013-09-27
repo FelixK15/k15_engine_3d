@@ -17,80 +17,47 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-inline void Object::IncreaseReferences()
+inline void Object::increaseReferences()
 {
-	++m_iReferences;
+	++m_References;
 }
 
-inline void Object::DecreaseReferences()
+inline void Object::decreaseReferences()
 {
-	if(--m_iReferences == 0){
-		delete this;
-	}
+	--m_References;
 }
 
-inline bool Object::IsInstanceOf(const Rtti &rtType) const
+inline bool Object::isInstanceOf(const Rtti& p_Type) const
 {
-	return GetType().IsInstanceOf(rtType);
+	return TYPE.IsInstanceOf(p_Type);
 }
 
-inline bool Object::IsInstanceOf(const Object *pObject) const
+inline bool Object::isInstanceOf(const Object* p_Object) const
 {
-	return pObject && TYPE.IsInstanceOf(pObject->GetType());
+	return p_Object && TYPE.IsInstanceOf(p_Object->getType());
 }
 
-inline bool Object::IsDerivedFrom(const Rtti &rtType) const
+inline bool Object::isDerivedFrom(const Rtti& p_Type) const
 {
-	return TYPE.IsDerivedFrom(rtType);
+	return TYPE.IsDerivedFrom(p_Type);
 }
 
-inline bool Object::IsDerivedFrom(const Object *pObject) const
+inline bool Object::isDerivedFrom(const Object* p_Object) const
 {
-	return pObject && TYPE.IsDerivedFrom(pObject->GetType());
+	return p_Object && TYPE.IsDerivedFrom(p_Object->getType());
 }
 
-inline U32 Object::GetReferenceCount() const
+inline uint32 Object::getReferenceCount() const
 {
-	return m_iReferences;
+	return m_References;
 }
 
-inline ObjectID Object::GetUniqueID() const
+inline const TypeName& Object::getName() const
 {
-	return m_iUniqueID;
+	return m_Name;
 }
 
-inline const String& Object::GetName() const
+inline void Object::setName(const TypeName& p_Name)
 {
-	return m_sName;
-}
-
-inline void Object::SetName(const String& sName)
-{
-	m_sName = sName;
-}
-
-inline Object *Object::GetObjectByID(ObjectID iID)
-{
-	//return ms_hmObjectsInUse.Get(iID)->GetValue();
-	return NULL;
-}
-
-inline const Rtti& Object::GetType() const
-{
-	return TYPE;
-}
-
-inline void Object::_SetID()
-{
-	m_iUniqueID = ms_iNextID++;
-}
-
-inline void Object::_RegisterObject()
-{
-	//ms_hmObjectsInUse.Insert(m_iUniqueID,this);
-}
-
-inline void Object::_UnregisterObject()
-{
-	//ms_hmObjectsInUse.Erase(m_iUniqueID);
+	m_Name = p_Name;
 }

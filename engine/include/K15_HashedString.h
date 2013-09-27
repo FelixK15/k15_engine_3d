@@ -20,37 +20,43 @@
  *
  * 
  */
-#pragma once
+#ifndef _K15Engine_System_HashedString_h_
+#define _K15Engine_System_HashedString_h_
 
-#ifndef __K15_HASHEDSTRING__
-#define __K15_HASHEDSTRING__
+namespace K15_Engine { namespace System { 
 
-#include "K15_StdInclude.h"
-#include "K15_String.h"
-
-namespace K15_EngineV2
-{
-	class K15ENGINE2_API HashedString
+	class HashedString
 	{
 	public:
-		explicit HashedString();
-		explicit HashedString(K15_CHAR *string);
+		static const HashedString BLANK;
+
+	public:
+		HashedString();
+		HashedString(const char* p_String);
+		HashedString(const HashedString& p_Other);
 		~HashedString();
 
-		const U32 getIdentifier() const;
-		U32 getIdentifier();
+		unsigned long getIdentifier() const;
 
-		//const String& getString() const;
-		//String& getString();
+#		ifndef K15_NO_STRINGS
+			const char* getString() const;
+			void setString(const char* p_String);
+#		endif
 
-		bool operator< (HashedString const &otherString) const;
-		bool operator== (HashedString const &otherString) const;
+		bool operator< (const HashedString& p_Other) const;
+		bool operator== (const HashedString& p_Other) const;
+		
+		const HashedString& operator=(const HashedString& p_Other);
 
-		static void * createIdentifier(K15_CHAR *string);
+		static unsigned long createHash(const char* p_String,unsigned int p_Length);
 
 	private:
-		void *m_identifier;
+		unsigned long m_Hash;
+#		ifndef K15_NO_STRINGS
+			const char* m_String;
+#		endif
 	};
-}
+#include "K15_HashedString.inl"
+}}//end of K15_Engine::System namespace
 
-#endif //__K15_HASHEDSTRING__
+#endif //_K15Engine_System_HashedString_h_

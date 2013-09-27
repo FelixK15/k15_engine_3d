@@ -46,9 +46,9 @@ bool DX11_Texture2DImpl::Load(byte *pBuffer,U32 iSize,const String &sExtension)
 	HRESULT result = D3DX11CreateShaderResourceViewFromMemory(m_pDevice,pBuffer,iSize,NULL,NULL,&m_pResourceView,NULL);
 
 	if(result != S_OK){
-		WriteDefaultLog("Could not create Texture2D");
-		WriteDefaultLog(DXGetErrorString(result));
-		WriteDefaultLog(DXGetErrorDescription(result));
+		K15_LogNormalMessage("Could not create Texture2D");
+		K15_LogNormalMessage(DXGetErrorString(result));
+		K15_LogNormalMessage(DXGetErrorDescription(result));
 		return false;
 	}
 

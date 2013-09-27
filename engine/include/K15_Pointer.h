@@ -22,13 +22,13 @@
  */
 #pragma once
 
-#ifndef __K15_POINTER__
-#define __K15_POINTER__
+#ifndef __K15Engine_System_Memory_Pointer_h_
+#define __K15Engine_System_Memory_Pointer_h_
 
-#include "K15_StdInclude.h"
+#include "K15_Prerequisites.h"
 
-namespace K15_EngineV2
-{
+namespace K15_Engine { namespace System { namespace Memory {
+
 	template<class T>
 	class Pointer
 	{
@@ -58,7 +58,7 @@ namespace K15_EngineV2
 	private:
 		T* m_pObject;
 	};
-	#include "../src/K15_Pointer.inl"
-}
+	#include "K15_Pointer.inl"
+}}} //end of K15_Engine::System::Memory namespace
 
 #endif //__K15_POINTER__

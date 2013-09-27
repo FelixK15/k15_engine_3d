@@ -18,11 +18,16 @@
  */
 
 template <class Allocator>
-Allocator::Allocator(Allocator* pAllocator,size_t iSize)
+StackAllocator::StackAllocator(Allocator* pAllocator,uint32 iSize)
   : m_pMemory(0),
     m_iUsedMemory(0),
     m_iMemorySize(0)
 {
-  m_pMemory     = pAllocator->allocate(iSize);
+#if defined (K15_DEBUG)
+	m_pMemory     = pAllocator->allocateDebug(iSize,__FILE__,__LINE__,false,__FUNCTION__);
+#else
+	m_pMemory     = pAllocator->allocate(iSize);
+#endif //K15_DEBUG
+  
   m_iMemorySize = iSize;
 }

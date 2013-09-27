@@ -17,35 +17,35 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-template <class TKEY,class TVALUE,U32 AMOUNT_BUCKETS>
+template <class TKEY,class TVALUE,uint32 AMOUNT_BUCKETS>
 HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::HashMap()
 {
 	for(int i = 0;i < AMOUNT_BUCKETS;++i){
-		m_arrBuckets[i] = NULL;
+		m_arrBuckets[i] = 0;
 	}
 
 	m_iSize = 0;
 }
 
-template <class TKEY,class TVALUE,U32 AMOUNT_BUCKETS>
+template <class TKEY,class TVALUE,uint32 AMOUNT_BUCKETS>
 HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::HashMap(const HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>& hmSource)
 {
 	_CopyFrom(hmSource);
 }
 
-template <class TKEY,class TVALUE,U32 AMOUNT_BUCKETS>
+template <class TKEY,class TVALUE,uint32 AMOUNT_BUCKETS>
 HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::~HashMap()
 {
 	Clear();
 }
 
-template <class TKEY,class TVALUE,U32 AMOUNT_BUCKETS>
+template <class TKEY,class TVALUE,uint32 AMOUNT_BUCKETS>
 void HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::Insert(const TKEY &tKey,const TVALUE &tValue)
 {
-	U32 iBucketNo = _Hash(tKey);
+	uint32 iBucketNo = _Hash(tKey);
 
-	if(m_arrBuckets[iBucketNo] == NULL){
-		m_arrBuckets[iBucketNo] = new HashItem<TKEY,TVALUE>(tKey,tValue,NULL);
+	if(m_arrBuckets[iBucketNo] == 0){
+		m_arrBuckets[iBucketNo] = new HashItem<TKEY,TVALUE>(tKey,tValue,0);
 	}else{
 		m_arrBuckets[iBucketNo] = new HashItem<TKEY,TVALUE>(tKey,tValue,m_arrBuckets[iBucketNo]);
 	}
@@ -53,24 +53,24 @@ void HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::Insert(const TKEY &tKey,const TVALUE &
 	++m_iSize;
 }
 
-template <class TKEY,class TVALUE,U32 AMOUNT_BUCKETS>
+template <class TKEY,class TVALUE,uint32 AMOUNT_BUCKETS>
 bool HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::HasItem(const TKEY &tKey) const
 {
-	U32 iBucketNo = _Hash(tKey);
+	uint32 iBucketNo = _Hash(tKey);
 
-	return m_arrBuckets[iBucketNo] != NULL;
+	return m_arrBuckets[iBucketNo] != 0;
 }
 
-template <class TKEY,class TVALUE,U32 AMOUNT_BUCKETS>
+template <class TKEY,class TVALUE,uint32 AMOUNT_BUCKETS>
 bool HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::Erase(const TKEY &tKey)
 {
-	U32 iBucketNo = _Hash(tKey);
+	uint32 iBucketNo = _Hash(tKey);
 
-	if(m_arrBuckets[iBucketNo] == NULL){
+	if(m_arrBuckets[iBucketNo] == 0){
 		return false;
 	}
 
-	HashItem<TKEY,TVALUE> *pPrevious = NULL;
+	HashItem<TKEY,TVALUE> *pPrevious = 0;
 	for(HashItem<TKEY,TVALUE> *pItem = m_arrBuckets[iBucketNo];pItem;pItem = pItem->m_pNext){
 		if(pItem->m_tKey == tKey){
 			if(pPrevious){
@@ -91,10 +91,10 @@ bool HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::Erase(const TKEY &tKey)
 	return false;
 }
 
-template <class TKEY,class TVALUE,U32 AMOUNT_BUCKETS>
+template <class TKEY,class TVALUE,uint32 AMOUNT_BUCKETS>
 void HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::Clear()
 {
-	for(U32 i = 0;i < AMOUNT_BUCKETS;++i){
+	for(uint32 i = 0;i < AMOUNT_BUCKETS;++i){
 		if(m_arrBuckets[i]){
 			for(HashItem<TKEY,TVALUE> *pItem = m_arrBuckets[i];pItem;){
 				HashItem<TKEY,TVALUE> *pNext = pItem->m_pNext;
@@ -107,11 +107,11 @@ void HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::Clear()
 	m_iSize = 0;
 }
 
-template <class TKEY,class TVALUE,U32 AMOUNT_BUCKETS>
+template <class TKEY,class TVALUE,uint32 AMOUNT_BUCKETS>
 HashItem<TKEY,TVALUE> *HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::Get(const TKEY &tKey) const
 {
-	U32 iBucketNo = _Hash(tKey);
-	HashItem<TKEY,TVALUE>* pDesiredItem = NULL;
+	uint32 iBucketNo = _Hash(tKey);
+	HashItem<TKEY,TVALUE>* pDesiredItem = 0;
 
 	for(HashItem<TKEY,TVALUE> *pItem = m_arrBuckets[iBucketNo];pItem;pItem = pItem->m_pNext){
 		if(pItem->m_tKey == tKey){
@@ -122,33 +122,33 @@ HashItem<TKEY,TVALUE> *HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::Get(const TKEY &tKey
 	return pDesiredItem;
 }
 
-template <class TKEY,class TVALUE,U32 AMOUNT_BUCKETS>
-HashItem<TKEY,TVALUE> *HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::GetBucketItem(U32 iBucketNo) const
+template <class TKEY,class TVALUE,uint32 AMOUNT_BUCKETS>
+HashItem<TKEY,TVALUE> *HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::GetBucketItem(uint32 iBucketNo) const
 {
 	return m_arrBuckets[iBucketNo];
 }
 
-template <class TKEY,class TVALUE,U32 AMOUNT_BUCKETS>
-U32 HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::Size() const
+template <class TKEY,class TVALUE,uint32 AMOUNT_BUCKETS>
+uint32 HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::Size() const
 {
 	return m_iSize;
 }
 
-template <class TKEY,class TVALUE,U32 AMOUNT_BUCKETS>
-U32 HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::BucketSize() const
+template <class TKEY,class TVALUE,uint32 AMOUNT_BUCKETS>
+uint32 HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::BucketSize() const
 {
 	return AMOUNT_BUCKETS;
 }
 
-template <class TKEY,class TVALUE,U32 AMOUNT_BUCKETS>
+template <class TKEY,class TVALUE,uint32 AMOUNT_BUCKETS>
 const HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>& HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::operator=(const HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>& hmSource)
 {
 	_CopyFrom(hmSource);
 	return *this;
 }
 
-template <class TKEY,class TVALUE,U32 AMOUNT_BUCKETS>
-U32 HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::_Hash(const TKEY &tKey) const
+template <class TKEY,class TVALUE,uint32 AMOUNT_BUCKETS>
+uint32 HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::_Hash(const TKEY &tKey) const
 {
 	int i = 0;
 
@@ -163,14 +163,14 @@ U32 HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>::_Hash(const TKEY &tKey) const
 	return iHash % AMOUNT_BUCKETS;
 }
 
-template <class TKEY,class TVALUE,U32 AMOUNT_BUCKETS>
+template <class TKEY,class TVALUE,uint32 AMOUNT_BUCKETS>
 void HashMap<TKEY, TVALUE, AMOUNT_BUCKETS>::_CopyFrom(const HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>& hmSource)
 {
 	Clear();
 
-	HashItem<TKEY,TVALUE> *pLastItem = NULL;
-	for(U32 i = 0;i < AMOUNT_BUCKETS;++i){
-		if(hmSource.m_arrBuckets[i] != NULL){
+	HashItem<TKEY,TVALUE> *pLastItem = 0;
+	for(uint32 i = 0;i < AMOUNT_BUCKETS;++i){
+		if(hmSource.m_arrBuckets[i] != 0){
 			HashItem<TKEY,TVALUE> *pCurItem = hmSource.m_arrBuckets[i];
 			while(pCurItem){
 				HashItem<TKEY,TVALUE> *pNewItem = new HashItem<TKEY,TVALUE>();

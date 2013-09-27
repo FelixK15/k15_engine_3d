@@ -22,17 +22,16 @@
  */
 #pragma once
 
-#ifndef __K15_RTTI__
-#define __K15_RTTI__
+#ifndef __K15Engine_System_RTTI_h_
+#define __K15Engine_System_RTTI_h_
 
-#include "K15_StdInclude.h"
-#include "K15_String.h"
+#include "K15_Prerequisites.h"
 
 #include "K15_Rtti.mcr"
 
-namespace K15_EngineV2
-{
-	class K15ENGINE2_API Rtti
+namespace K15_Engine { namespace System { 
+
+	class K15_API_EXPORT Rtti
 	{
 	public:
 		Rtti(const String &sName,const Rtti *pBaseType);
@@ -48,7 +47,7 @@ namespace K15_EngineV2
 		const Rtti *m_pBaseType;
 	};
 
-	#include "../src/K15_Rtti.inl"
-}
+	#include "K15_Rtti.inl"
+}} //end of K15_Engine::System namespace
 
-#endif //__K15_RTTI__
+#endif //__K15Engine_System_RTTI_h_

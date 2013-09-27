@@ -31,7 +31,7 @@
 
 namespace K15_EngineV2
 {
-	template<class T,U8 N>
+	template<class T,uint8 N>
 	class NTree
 	{
 
@@ -44,7 +44,7 @@ namespace K15_EngineV2
 		bool IsRoot(NTreeNode<T,N> *pNode) const;
 		bool IsLeaf(NTreeNode<T,N> *pNode) const;
 
-		U32 Size() const;
+		uint32 Size() const;
 
 		bool Insert(const T& tValue,NTreeNode<T,N> *pParent);
 		void Remove(NTreeNode<T,N> *pNode);
@@ -57,7 +57,7 @@ namespace K15_EngineV2
 
 	private:
 		NTreeNode<T,N> *m_pRoot;
-		U32 m_iSize;
+		uint32 m_iSize;
 	};
 
 	#include "../../engine/src/K15_NTree.inl"

@@ -31,7 +31,7 @@
 
 namespace K15_EngineV2
 {
-	class K15ENGINE2_API Stream
+	class K15_API_EXPORT Stream
 	{
 	public:
 		/*Stream();

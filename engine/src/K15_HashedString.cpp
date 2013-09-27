@@ -18,104 +18,79 @@
  */
 #include "K15_HashedString.h"
 
-using namespace K15_EngineV2;
+#include "K15_Application.h"
+#include <cstring>
 
-HashedString::HashedString()
-	: m_identifier(0)
-{
+namespace K15_Engine { namespace System {
 
-}
+	const HashedString HashedString::BLANK("0x0");
 
-HashedString::HashedString( K15_CHAR *string )
-	: m_identifier(createIdentifier(string))
-{
-
-}
-
-HashedString::~HashedString()
-{
-	//K15_DELETE_ARR m_string;
-}
-
-const U32 HashedString::getIdentifier() const
-{
-	return reinterpret_cast<U32>(m_identifier);
-}
-
-U32 HashedString::getIdentifier()
-{
-	return reinterpret_cast<U32>(m_identifier);
-}
-
-/*const String& HashedString::getString() const
-{
-	return m_string;
-}
-
-String& HashedString::getString()
-{
-	return m_string;
-}*/
-
-bool HashedString::operator< (HashedString const & otherString ) const
-{
-	return this->getIdentifier() < otherString.getIdentifier();
-}
-
-bool HashedString::operator== ( HashedString const & otherString ) const
-{
-	return this->getIdentifier() == otherString.getIdentifier();
-}
-
-void * HashedString::createIdentifier(char *string )
-{
-#define DO1(buf,i) {s1 += tolower(buf[i]); s2 += s1;}
-#define DO2(buf,i) DO1(buf,i); DO1(buf,i+1);
-#define DO4(buf,i) DO2(buf,i); DO2(buf,i+2);
-#define DO8(buf,i) DO4(buf,i); DO4(buf,i+4);
-#define DO16(buf) DO8(buf,0); DO8(buf,8);
-#define BASE 65521L
-#define NMAX 5552
-	
-	const char *c_string = string;//string.C_Str();
-
-	U32 s1 = 0;
-	U32 s2 = 0;
-
-	for(U32 len = strlen(c_string);len > 0;)
+	HashedString::HashedString()
+		: m_Hash(0),
+		  m_String(0)
 	{
-		U32 k = len < NMAX ? len : NMAX;
-		len -= k;
-		while(k >= 16)
-		{
-			DO16(string);
-			c_string += 16;
-			k -= 16;
-		}
-
-		if(k != 0) do
-		{
-			s1 += *c_string++;
-			s2 += s1;
-		} while(--k);
-
-		s1 %= BASE;
-		s2 %= BASE;
 
 	}
 
-#pragma warning(push)
-#pragma warning(disable : 4312)
+	HashedString::HashedString( const char *pString )
+		: m_Hash(createHash(pString,strlen(pString))),
+		  m_String(pString)
+	{
 
-	return reinterpret_cast<void*>((s2 << 16) | s1);
+	}
 
-#pragma warning(pop)
-#undef DO1
-#undef DO2
-#undef DO4
-#undef DO8
-#undef DO16
+	HashedString::HashedString( const HashedString& hsOther )
+		: m_Hash(hsOther.getIdentifier()),
+		  m_String(hsOther.getString())
+	{
 
-}
+	}
+
+	HashedString::~HashedString()
+	{
+
+	}
+
+	void HashedString::setString(const char* pString)
+	{
+		m_String = pString;
+		m_Hash = createHash(pString,strlen(pString));
+	}
+
+	bool HashedString::operator< (HashedString const & otherString ) const
+	{
+		return this->getIdentifier() < otherString.getIdentifier();
+	}
+
+	bool HashedString::operator== ( HashedString const & otherString ) const
+	{
+		return this->getIdentifier() == otherString.getIdentifier();
+	}
+
+	unsigned long HashedString::createHash( const char *pString,unsigned int iLength )
+	{
+		unsigned long hash = 0;
+		int i;
+
+		for (i=0; i<iLength; i++) 
+		{
+			hash = 33*hash + 720 + pString[i];
+		}
+
+		return hash;
+	}
+	/*********************************************************************************/
+	const HashedString& HashedString::operator=(const HashedString& p_Other)
+	{
+		m_Hash = p_Other.m_Hash;
+
+#ifndef K15_NO_STRINGS
+		m_String = p_Other.m_String;
+#endif
+
+		return *this;
+	}
+	/*********************************************************************************/
+}} //end of K15_Engine::System namespace
 
 

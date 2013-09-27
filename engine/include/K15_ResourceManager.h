@@ -20,50 +20,55 @@
  *
  * 
  */
+#ifndef _K15Engine_System_Resourcemanager_h_
+#define _K15Engine_System_Resourcemanager_h_
 
-#pragma once
+#include "K15_Prerequisites.h"
+#include "K15_Application.h"
+#include "K15_AllocatedObject.h"
 
-#ifndef __K15_RESOURCEMANAGER__
-#define __K15_RESOURCEMANAGER__
-
-#include "K15_StdInclude.h"
-#include "K15_Singleton.h"
-
-#include "K15_Resource.h"
 #include "K15_ResourceHandle.h"
-#include "K15_HashMap.h"
+#include "K15_ResourceBase.h"
 
-#define g_pResourceManager K15_EngineV2::ResourceManager::GetInstance()
+namespace K15_Engine { namespace System { 
 
-namespace K15_EngineV2
-{
-	class ResourceFile;
-
-	class ResourceManager : public Singleton<ResourceManager>
+	class K15_API_EXPORT ResourceManager : public ApplicationAllocatedObject,
+							public Singleton<ResourceManager>  //Singleton?
 	{
+	public:
+		typedef K15_DynamicArray(ResourceBase*)			ResourceList;
+		typedef K15_FixedArray(ResourceFileBase*,20)	ResourceFileList;
+		typedef K15_HashMap(ResourceName,ResourceBase*)	ResourceCache;
+
 	public:
 		ResourceManager();
 		virtual ~ResourceManager();
 
-		void Initialize();
-		void Update(const GameTime &gtTime);
-		void Shutdown();
+		void update(const GameTime &gtTime);
 
-		template<class T> ResourceHandlePtr GetResource(String &sFileName,Resource::ResourcePriority rpPriority);
-		template<class T> bool CacheResource(String &sFileName,Resource::ResourcePriority rpPriority);
+		template<class ResourceType> ResourceHandle<ResourceType> getResource(const String& ResourceName,Enum p_Priority);
+		bool cacheResource(const ResourceName& p_ResourceName,Enum p_Priority);
 
-		bool IsResourceInCache(const String &sName);
-		void SetResourceFile(ResourceFile *pResourceFile);
+		bool isResourceInCache(const ResourceName& p_ResourceName);
+		void addResourceFile(ResourceFileBase *p_ResourceFile);
 
+		ResourceBase* getResourceByID(ResourceID p_ResourceID);
+
+		const ResourceList& getResources();
+		const ResourceFileList& getResourceFileList();
+	
 	private:
-		void _DeleteResource(Resource *pResource);
+		void deleteResource(ResourceBase *p_Resource);
 
-		ResourceFile *m_pResoureFile;
+		void closeOpenResourceFiles();
+		void clearResourceCache();
+		void clearResources();
 
-		HashMap<const char*,Resource*,350> m_hmResources;
-		DynamicArray<Resource*> m_arrResource;
+		ResourceFileList m_ResoureFiles;
+		ResourceCache m_ResourceDataCache;
+		ResourceList m_Resources;
 	};
-	#include "..\src\K15_ResourceManager.inl"
-}
+	#include "K15_ResourceManager.inl"
+}} //end of K15_Engine::System namespace
 
-#endif //__K15_RESOURCEMANAGER__
+#endif //_K15Engine_System_Resourcemanager_h_

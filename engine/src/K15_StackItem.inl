@@ -20,8 +20,8 @@
 template<class T>
 StackItem<T>::StackItem()
 {
-	m_pObjectPointer = NULL;
-	m_pPrevious = NULL;
+	m_pObjectPointer = 0;
+	m_pPrevious = 0;
 }
 
 template<class T>

@@ -21,7 +21,7 @@
 #include "K15_Renderer.h"
 using namespace K15_Renderer;
 
-IMPLEMENT_RTTI("K15_Renderer",Texture2D,Resource);
+IMPLEMENT_RTTI("K15_Renderer",Texture2D,ResourceBase);
 
 Texture2D::Texture2D()
 	:	m_pTexture2DImpl(g_pRenderer->CreateTexture2DImpl())

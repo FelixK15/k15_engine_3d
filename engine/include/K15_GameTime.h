@@ -20,33 +20,47 @@
  *
  * 
  */
-#pragma once
+#ifndef _K15Engine_System_GameTime_h_
+#define _K15Engine_System_GameTime_h_
 
-#ifndef __K15_GAMETIME__
-#define __K15_GAMETIME__
+#include "K15_Prerequisites.h"
 
-#include "K15_UsefulMacros.h"
-
-namespace K15_EngineV2
+namespace K15_Engine { namespace System 
 {
-	class K15ENGINE2_API GameTime
+	class K15_API_EXPORT GameTime
 	{
-		friend class System;
-
 	public:
-		GameTime();
+		GameTime(double p_DeltaTime,double p_Multiplier = 1.0);
 		~GameTime();
 
-		const inline double GetDeltaTime() const;
-		const inline double GetRawDeltaTime() const;
+		/**
+		* get the delta time (e.g. the time it took to process the last frame).
+		* This is the modified value. (the real delta time multiplied by the multiplier)
+		*
+		* @return double - modified delta time (unmodified if getMultiplier() == 1.0)
+		*/
+		inline const double getDeltaTime() const;
 
-		const inline double GetTimeMultiplicator() const;
+		/**
+		* get the delta time (e.g. the time it took to process the last frame).
+		* This is the normal value. (the real delta time)
+		*
+		* @return double - unmodified delta time (unmodified if getMultiplier() == 1.0)
+		*/
+		inline const double getRawDeltaTime() const;
 
+		/**
+		* Returns the multiplier that affects the value of getDeltaTime()
+		*
+		* @return double - multiplier that affects the value of getDeltaTime()
+		*/
+		inline const double getMultiplier() const;
 	private:
-		double m_dDeltaTime;
-		double m_dMulitplicator;
+		double m_DeltaTime;
+		double m_Mulitplicator;
+		double m_RawDeltaTime;
 	};
-	#include "../src/K15_GameTime.inl"
-}
+	#include "K15_GameTime.inl"
+}}// end of K15_Engine::System namespace
 
-#endif //__K15_GAMETIME__
+#endif //_K15Engine_System_GameTime_h_

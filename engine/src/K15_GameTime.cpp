@@ -18,16 +18,20 @@
  */
 
 #include "K15_GameTime.h"
-using namespace K15_EngineV2;
 
-GameTime::GameTime()
-	: m_dDeltaTime(0.0),
-	  m_dMulitplicator(1.0)
-{
+namespace K15_Engine { namespace System {
+	/*********************************************************************************/
+	GameTime::GameTime(double p_DeltaTime,double p_Multiplier)
+		: m_DeltaTime(p_DeltaTime * p_Multiplier),
+		  m_Mulitplicator(p_Multiplier),
+		  m_RawDeltaTime(p_DeltaTime)
+	{
 
-}
+	}
+	/*********************************************************************************/
+	GameTime::~GameTime()
+	{
 
-GameTime::~GameTime()
-{
-
-}
+	}
+	/*********************************************************************************/
+}}//end of K15_Engine::System namespace

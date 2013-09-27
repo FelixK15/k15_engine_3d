@@ -18,94 +18,123 @@
  */
 
 #include "K15_ResourceManager.h"
-#include "K15_ResourceFile.h"
+#include "K15_ResourceFileBase.h"
+
 
 #include "K15_LogManager.h"
 
-using namespace K15_EngineV2;
+namespace K15_Engine { namespace System { 
 
-ResourceManager::ResourceManager()
-	: m_pResoureFile(NULL)
-{
+	ResourceManager::ResourceManager()
+		: m_Resources(),
+		  m_ResourceDataCache(),
+		  m_ResoureFiles()
+	{
 
-}
-
-ResourceManager::~ResourceManager()
-{
-	if(m_pResoureFile){
-		if(m_pResoureFile->IsOpen()){
-			m_pResoureFile->CloseResourceFile();
-		}
-
-		K15_DELETE m_pResoureFile;
 	}
-}
 
-void ResourceManager::Initialize()
-{
+	ResourceManager::~ResourceManager()
+	{
+		closeOpenResourceFiles();
+		clearResourceCache();
+		clearResources();
+	}
 
-}
+	void ResourceManager::update(const GameTime &gtTime)
+	{
+		double difference = 0;
+		bool alreadyOrphan = false;
 
-void ResourceManager::Update(const GameTime &gtTime)
-{
-	double dDifference = 0;
-
-	//Go through all Resources and check if they need to be deleted
-	for(U32 i = 0;i < m_arrResource.Size();++i){
-		if(m_arrResource[i] != NULL){
-			if(m_arrResource[i]->GetResourceReferences() == 0){
-				if(m_arrResource[i]->GetPriority() == Resource::RP_LOW){
-					_DeleteResource(m_arrResource[i]);
-					m_arrResource[i] = NULL;
-				}else if(m_arrResource[i]->GetPriority() == Resource::RP_NORMAL){
-					dDifference = g_pSystem->TimeSinceStart() - m_arrResource[i]->LastUsed();
-					if(dDifference > 200.0){ // @todo read time from file
-						_DeleteResource(m_arrResource[i]);
-						m_arrResource[i] = NULL;
-					}
-				}else{
-					dDifference = g_pSystem->TimeSinceStart() - m_arrResource[i]->LastUsed();
-					if(dDifference > 500.0){ // @todo read time from file
-						_DeleteResource(m_arrResource[i]);
-						m_arrResource[i] = NULL;
-					}
-				}
+		for(ResourceCache::iterator iter = m_ResourceDataCache.begin();
+			iter != m_ResourceDataCache.end();++iter)
+		{
+			if(iter->second->getResourceReferences() == 0 && !iter->second->isMarkedAsUnreferenced())
+			{
+				K15_LogNormalMessage(String(iter->second->AssetName) + " is no longer referenced.");
+				iter->second->setMarkedAsUnreferenced(true);
 			}
 
-			//Check each Resource if its needs to be reloaded.
+			if(iter->second->isMarkedAsUnreferenced())
+			{
+				difference = Application::getInstance()->getTime() - iter->second->getLastUsed();
 
+				if(iter->second->getPriority() == ResourceBase::RP_LOW ||
+					(iter->second->getPriority() == ResourceBase::RP_NORMAL && difference > 200.0) ||
+					(iter->second->getPriority() == ResourceBase::RP_HIGH	&& difference > 500.0))
+				{
+					K15_LogNormalMessage("Deleting Asset " + iter->second->getAssetName().getString());
+					deleteResource(iter->second);
+
+					m_ResourceDataCache.erase(iter);
+				}
+			}
 		}
 	}
-}
 
-void ResourceManager::Shutdown()
-{
-	for(U32 i = 0;i < m_arrResource.Size();++i){
-		if(m_arrResource[i] != NULL){
-			K15_DELETE m_arrResource[i];
-			m_arrResource[i] = NULL;
+	void ResourceManager::addResourceFile( ResourceFileBase* p_ResourceFile )
+	{
+		for(uint32 i = 0;i < m_ResoureFiles.size();++i)
+		{
+			if(m_ResoureFiles[i] == 0)
+			{
+				m_ResoureFiles[i] = p_ResourceFile;
+				return;
+			}
 		}
 	}
 
-	m_arrResource.Clear();
-	m_hmResources.Clear();
-}
-
-void ResourceManager::SetResourceFile( ResourceFile *pResourceFile )
-{
-	if(m_pResoureFile){
-		if(m_pResoureFile->IsOpen()){
-			m_pResoureFile->CloseResourceFile();
+	void ResourceManager::deleteResource( ResourceBase *pResource )
+	{
+		for(ResourceList::iterator iter = m_Resources.begin();iter != m_Resources.end();++iter)
+		{
+			if((*iter) == pResource)
+			{
+				m_Resources.erase(iter);
+			}
 		}
-		// @todo clear resource cache?
-		K15_DELETE m_pResoureFile;
+
+		K15_DELETE pResource;	
 	}
 
-	m_pResoureFile = pResourceFile;
-}
+	void ResourceManager::closeOpenResourceFiles()
+	{
+		for(ResourceFileList::iterator iter = m_ResoureFiles.begin();iter != m_ResoureFiles.end();++iter)
+		{
+			if((*iter)->isOpen())
+			{
+				K15_LogNormalMessage(String("Closing resource file... name:") + (*iter)->getResourceFileName());
+				(*iter)->close();
+			}
+		}
+	}
 
-void ResourceManager::_DeleteResource( Resource *pResource )
-{
-	m_hmResources.Erase(pResource->GetName().C_Str());
-	K15_DELETE pResource;	
-}
+	void ResourceManager::clearResourceCache()
+	{
+		for(ResourceCache::iterator iter = m_ResourceDataCache.begin();iter != m_ResourceDataCache.end();++iter)
+		{
+			deleteResource(iter->second);
+		}
+
+		m_ResourceDataCache.clear();
+	}
+
+	void ResourceManager::clearResources()
+	{
+		ResourceList toDelete;
+		for(ResourceList::iterator iter = m_Resources.begin();iter != m_Resources.end();++iter)
+		{
+			if((*iter)->getResourceReferences() == 0)
+			{
+				toDelete.push_back((*iter));
+			}
+		}
+
+		for(ResourceList::iterator iter = toDelete.begin();iter != toDelete.end();++iter)
+		{
+			deleteResource((*iter));
+		}
+
+		m_Resources.clear();
+	}
+
+ }}//end of K15_Engine::System namespace

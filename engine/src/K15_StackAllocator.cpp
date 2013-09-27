@@ -20,89 +20,90 @@
 #include "K15_StackAllocator.h"
 #include "K15_MemoryHeader.h"
 
-namespace K15_Engine { namespace System { namespace Memory {
-
-  StackAllocator::StackAllocator(byte* pMemory,size_t iSize)
-    : m_pMemory(pMemory),
-      m_iMemorySize(iSize),
-      m_iUsedMemory(0)
+namespace K15_Engine { namespace System {
+  /*********************************************************************************/
+  const TypeName StackAllocator::Type = _TN(StackAllocator);
+  /*********************************************************************************/
+  StackAllocator::StackAllocator(byte* p_Memory,uint32 p_Size)
+    : m_Memory(p_Memory),
+      m_MemorySize(p_Size),
+      m_UsedMemory(0)
   {
 
   }
-
-  StackAllocator::StackAllocator(size_t iSize)
-    : m_pMemory(malloc(iSize)),
-      m_iMemorySize(iSize),
-      m_iUsedMemory(0)
+  /*********************************************************************************/
+  StackAllocator::StackAllocator(uint32 p_Size)
+    : m_Memory((byte*)malloc(p_Size)),
+      m_MemorySize(p_Size),
+      m_UsedMemory(0)
   {
 
   }
-
-  void* StackAllocator::allocate(size_t iSize)
+  /*********************************************************************************/
+  void* StackAllocator::allocate(uint32 p_Size)
   {
-    iSize += sizeof(MemoryHeader);
-    K15_ASSERT(iSize + m_iUsedMemory > m_iMemorySize,"Cannot satisfy memory request.");
+    p_Size += sizeof(MemoryHeader);
+    K15_ASSERT(p_Size + m_UsedMemory > m_MemorySize,"Cannot satisfy memory request.");
 
     //each allocation creates a memory header in which information gets stored
-    MemoryHeader* pMemoryHeader = (MemoryHeader*)m_pMemory + m_iUsedMemory;
-    memset(pMemoryHeader,0,iSize);
-    pMemoryHeader->Size = iSize;
+    MemoryHeader* pMemoryHeader = (MemoryHeader*)m_Memory + m_UsedMemory;
+    memset(pMemoryHeader,0,p_Size);
+    pMemoryHeader->Size = p_Size;
 
     //increment used memory size
-    m_iUsedMemory += iSize;
+    m_UsedMemory += p_Size;
 
     //shift and return memory
     return (void*)pMemoryHeader + 1; 
   }
-
-  void* StackAllocator::allocateDebug(size_t iSize,const char* pFile,int iLine,bool bArray,const char* pFunction)
+  /*********************************************************************************/
+  void* StackAllocator::allocateDebug(uint32 p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function)
   {
-    iSize += sizeof(MemoryHeader);
-    K15_ASSERT(iSize + m_iUsedMemory > m_iMemorySize,"Cannot satisfy memory request.");
+    p_Size += sizeof(MemoryHeader);
+    K15_ASSERT(p_Size + m_UsedMemory > m_MemorySize,"Cannot satisfy memory request.");
 
     //each allocation creates a memory header in which information gets stored
-    MemoryHeader* pMemoryHeader = (MemoryHeader*)m_pMemory + m_iUsedMemory;
-    memset(pMemoryHeader,0,iSize);
-    pMemoryHeader->Size     = iSize;
-    pMemoryHeader->File     = pFile;
-    pMemoryHeader->Function = pFunction;
-    pMemoryHeader->Line     = iLine;
-    pMemoryHeader->IsArray  = bArray;
+    MemoryHeader* pMemoryHeader = (MemoryHeader*)m_Memory + m_UsedMemory;
+    memset(pMemoryHeader,0,p_Size);
+    pMemoryHeader->Size     = p_Size;
+    pMemoryHeader->File     = p_File;
+    pMemoryHeader->Function = p_Function;
+    pMemoryHeader->Line     = p_Line;
+    pMemoryHeader->IsArray  = p_Array;
 
     //increment used memory size
-    m_iUsedMemory += iSize;
+    m_UsedMemory += p_Size;
 
     //shift and return memory
     return (void*)pMemoryHeader + 1; 
   }
-
-  void StackAllocator::deallocate(void* pPointer)
+  /*********************************************************************************/
+  void StackAllocator::deallocate(void* p_Pointer)
   {
-    if(pPointer)
+    if(p_Pointer)
     {
       //Get the memory header of this pointer
-      MemoryHeader* pMemoryHeader = ((MemoryHeader*)pPointer) - 1;
+      MemoryHeader* pMemoryHeader = ((MemoryHeader*)p_Pointer) - 1;
 
       //Decrease amount of used memory.
-      m_iUsedMemory -= pMemoryHeader->Size;
+      m_UsedMemory -= pMemoryHeader->Size;
+    }
+  }
+  /*********************************************************************************/
+  void StackAllocator::deallocateDebug(void* p_Pointer,const char* p_File,int p_Line,bool p_Array,const char* p_Function)
+  {
+    if(p_Pointer)
+    {
+      //Get the memory header of this pointer
+      MemoryHeader* pMemoryHeader = ((MemoryHeader*)p_Pointer) - 1;
+
+      K15_ASSERT(p_Array != pMemoryHeader->IsArray,"Tried to deallocate using the wrong delete operator.");
+
+      //Decrease amount of used memory.
+      m_UsedMemory -= pMemoryHeader->Size;
 
       return;
     }
   }
-
-  void StackAllocator::deallocateDebug(void* pPointer,const char* pFile,int iLine,bool bArray,const char* pFunction)
-  {
-    if(pPointer)
-    {
-      //Get the memory header of this pointer
-      MemoryHeader* pMemoryHeader = ((MemoryHeader*)pPointer) - 1;
-
-      K15_ASSERT(bArray != pMemoryHeader->IsArray,"Tried to deallocate using the wrong delete operator.");
-
-      //Decrease amount of used memory.
-      m_iUsedMemory -= pMemoryHeader->Size;
-
-      return;
-    }
-  }
-}}}
+  /*********************************************************************************/
+}}//end of K15_Engine::System namespace

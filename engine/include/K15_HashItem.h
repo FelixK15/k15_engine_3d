@@ -22,17 +22,17 @@
  */
 #pragma once 
 
-#ifndef __K15_HASHITEM__
-#define __K15_HASHITEM__
+#ifndef _K15Engine_Container_HashItem_h_
+#define _K15Engine_Container_HashItem_h_
 
 #include "K15_StdInclude.h"
 
-namespace K15_EngineV2
-{
+namespace K15_Engine { namespace Container { 
+
 	template <class TKEY,class TVALUE>
 	class HashItem
 	{
-		template<class TKEY,class TVALUE,U32 AMOUNT_BUCKETS> friend class HashMap;
+		template<class TKEY,class TVALUE,uint32 AMOUNT_BUCKETS> friend class HashMap;
 
 	public:
 		HashItem();
@@ -49,6 +49,6 @@ namespace K15_EngineV2
 	};
 
 	#include "../src/K15_HashItem.inl"
-}
+}} //end of K15_Engine::Container namespace
 
-#endif //__K15_HASHITEM__
+#endif //_K15Engine_Container_HashItem_h_

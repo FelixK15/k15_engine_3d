@@ -19,5 +19,5 @@
 
 inline bool File::IsOpen()
 {
-	return m_pFile != NULL;
+	return m_pFile != 0;
 }

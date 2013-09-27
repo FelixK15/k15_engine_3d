@@ -17,8 +17,3 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_DynamicArray.h"
-#include "K15_HashMap.h"
-#include "K15_List.h"
-#include "K15_NTree.h"
-#include "K15_Stack.h"

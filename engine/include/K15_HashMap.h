@@ -30,7 +30,7 @@
 
 namespace K15_EngineV2
 {
-	template <class TKEY,class TVALUE,U32 AMOUNT_BUCKETS = 200>
+	template <class TKEY,class TVALUE,uint32 AMOUNT_BUCKETS = 200>
 	class HashMap
 	{
 	public:
@@ -47,19 +47,19 @@ namespace K15_EngineV2
 		void Clear();
 
 		HashItem<TKEY,TVALUE> *Get(const TKEY &tKey) const;
-		HashItem<TKEY,TVALUE> *GetBucketItem(U32 iBucketNumber) const;
+		HashItem<TKEY,TVALUE> *GetBucketItem(uint32 iBucketNumber) const;
 
-		U32 Size() const;
-		U32 BucketSize() const;
+		uint32 Size() const;
+		uint32 BucketSize() const;
 
 		const HashMap& operator=(const HashMap<TKEY,TVALUE,AMOUNT_BUCKETS> &hmSource);
 
 	private:
-		U32 _Hash(const TKEY &tKey) const;
+		uint32 _Hash(const TKEY &tKey) const;
 		void _CopyFrom(const HashMap<TKEY,TVALUE,AMOUNT_BUCKETS>& hmSource);
 
 	private: 
-		U32 m_iSize;
+		uint32 m_iSize;
 		HashItem<TKEY,TVALUE> *m_arrBuckets[AMOUNT_BUCKETS];
 	};
 

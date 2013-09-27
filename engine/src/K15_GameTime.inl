@@ -19,18 +19,19 @@
  * @section DESCRIPTION
  */
 
-
-const inline double GameTime::GetDeltaTime() const
+/*********************************************************************************/
+inline const double GameTime::getDeltaTime() const
 {
-	return m_dDeltaTime * m_dMulitplicator;
+	return m_DeltaTime;
 }
-
-const inline double GameTime::GetRawDeltaTime() const
+/*********************************************************************************/
+inline const double GameTime::getRawDeltaTime() const
 {
-	return m_dDeltaTime;
+	return m_RawDeltaTime;
 }
-
-const inline double GameTime::GetTimeMultiplicator() const
+/*********************************************************************************/
+inline const double GameTime::getTimeMultiplicator() const
 {
-	return m_dMulitplicator;
+	return m_Mulitplicator;
 }
+/*********************************************************************************/

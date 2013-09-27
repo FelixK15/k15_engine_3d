@@ -32,7 +32,7 @@ using namespace K15_EngineV2;
 
 namespace K15_Renderer
 {
-	class Texture2D : public Resource
+	class Texture2D : public ResourceBase
 	{
 		DECLARE_RTTI;
 
@@ -44,7 +44,7 @@ namespace K15_Renderer
 		inline U32 GetWidth() const;
 		inline U32 GetHeight() const;
 
-		inline virtual bool Load(byte *pBuffer,U32 iSize,const String &sExtension);
+		inline virtual bool load(byte *pBuffer,U32 iSize,const String &sExtension);
 		inline U32 GetAmountMipMaps() const;
 
 	protected:

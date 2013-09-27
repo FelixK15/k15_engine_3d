@@ -1,5 +1,5 @@
 /**
- * @file K15_DynamicLibrary.cpp
+ * @file K15_DynamicLibrary_win32.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2012/10/16
@@ -17,83 +17,76 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_DynamicLibrary.h"
-#include "K15_DynamicArray.h"
+#include "K15_DynamicLibrary_win32.h"
 #include "K15_LogManager.h"
-#include "Windows.h"
 
-using namespace K15_EngineV2;
+namespace K15_Engine { namespace System { 
 
-namespace {
-	DynamicArray<HMODULE> _arrModules;
-}
-
-DynamicLibrary::DynamicLibrary(const String& sFileName)
-	: m_pFileName(sFileName)
+DynamicLibrary_Win32::DynamicLibrary_Win32(const String& p_FileName)
+	: DynamicLibraryBase(p_FileName),
+	  m_Module(0)
 {
 
 }
 
-DynamicLibrary::~DynamicLibrary()
+DynamicLibrary_Win32::~DynamicLibrary_Win32()
 {
-	if(IsLoaded()){
-		_Unload();
+	if(isLoaded()){
+		unload();
 	}
 }
 
-bool DynamicLibrary::_Load()
+bool DynamicLibrary_Win32::load()
 {
-	HMODULE pModule = LoadLibrary(m_pFileName.C_Str());
-	if(!pModule){
-		WriteDefaultLog(g_pSystem->GetSystemError());
-		return false;
-	}
-
-	_arrModules.PushBack(pModule);
-	m_iHandle = _arrModules.Size() - 1;
-	m_bLoaded = true;
-	return true;
-}
-
-bool DynamicLibrary::_Unload()
-{
-	assert(m_bLoaded);
-
-	if(m_bLoaded){
-		BOOL bResult = FALSE;
-		bResult = FreeLibrary(_arrModules[m_iHandle]);
-
-		if(!bResult){
-			WriteDefaultLog(g_pSystem->GetSystemError());
+	if(isLoaded())
+	{
+		m_Module = LoadLibrary(getFileName().c_str());
+		if(!m_Module){
+			K15_LogNormalMessage(g_pSystem->GetSystemError());
 			return false;
 		}
 
-		_arrModules[m_iHandle] = NULL;
-		m_bLoaded = false;
+		m_Loaded = true;
+		return true;
+	}
+	
+	return false;
+}
+
+bool DynamicLibrary_Win32::unload()
+{
+	if(isLoaded()){
+		BOOL bResult = FALSE;
+		bResult = FreeLibrary(m_Module);
+
+		if(!bResult){
+			K15_LogNormalMessage(g_pSystem->GetSystemError());
+			return false;
+		}
+
+		m_Loaded = false;
 		return true;
 	}else{
-		WriteDefaultLog(String("Trying to load already unloaded library - ") + GetFileName());
+		K15_LogNormalMessage(String("Trying to load already unloaded library - ") + GetFileName());
 		return false;
 	}
 }
 
-void *DynamicLibrary::GetSymbol(const char* pSymbolName)
+void* DynamicLibrary_Win32::getSymbolInternal(const String& p_SymbolName)
 {
-	assert(m_bLoaded);
-
-	if(m_bLoaded){
-		FARPROC pSymbol = GetProcAddress(_arrModules[m_iHandle],pSymbolName);
+	if(isLoaded()){
+		FARPROC pSymbol = GetProcAddress(m_Module,p_SymbolName.c_str());
 
 		if(!pSymbol){
-			WriteDefaultLog(g_pSystem->GetSystemError());
-			return NULL;
+			K15_LogNormalMessage(g_pSystem->GetSystemError());
+			return 0;
 		}
 
-		return pSymbol;
-
+		return (void*)pSymbol;
 	}else{
-		WriteDefaultLog(String("Trying to load symbol from already unloaded library - Symbol:") + pSymbolName);
-		WriteDefaultLog(String("Library:") + GetFileName());
-		return false;
+		K15_LogNormalMessage(String("Trying to load symbol from unloaded library - Symbol:") + pSymbolName);
+		K15_LogNormalMessage(String("Library:") + GetFileName());	
 	}
+
+	return 0;
 }

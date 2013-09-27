@@ -10,9 +10,6 @@
     <Filter Include="Object System">
       <UniqueIdentifier>{d0bf2fa5-c28a-4de2-8893-b82ab70a676c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="System\Pure Header Files">
-      <UniqueIdentifier>{a4690c3c-e1b0-46b8-ba4c-8fa350aa209e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Memory">
       <UniqueIdentifier>{ea8d8b89-0238-4684-9247-5dfc54a83981}</UniqueIdentifier>
     </Filter>
@@ -30,9 +27,6 @@
     </Filter>
     <Filter Include="Profiling">
       <UniqueIdentifier>{7aa78366-abe1-41a9-9efd-5c81c52a8e80}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Thread">
-      <UniqueIdentifier>{46a8d966-0ccc-426c-986b-5f2cedb5cd0b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Dynamic Library">
       <UniqueIdentifier>{b6269ebf-2dc2-45c6-9dbe-12b5c39462f0}</UniqueIdentifier>
@@ -78,9 +72,6 @@
     <ClInclude Include="..\..\engine\include\K15_StackItem.h">
       <Filter>Container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Event.h">
-      <Filter>Event Manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_EventListener.h">
       <Filter>Event Manager</Filter>
     </ClInclude>
@@ -90,19 +81,7 @@
     <ClInclude Include="..\..\engine\include\K15_EventTypes.h">
       <Filter>Event Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_CStdIncludes.h">
-      <Filter>System\Pure Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_StdInclude.h">
-      <Filter>System\Pure Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_UsefulMacros.h">
-      <Filter>System\Pure Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_HashedString.h">
-      <Filter>String</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_String.h">
       <Filter>String</Filter>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_Singleton.h">
@@ -111,38 +90,17 @@
     <ClInclude Include="..\..\engine\include\K15_Pointer.h">
       <Filter>Object System</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ProfileManager.h">
-      <Filter>Profiling</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_NTree.h">
       <Filter>Container</Filter>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_NTreeNode.h">
       <Filter>Container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ProfileNode.h">
-      <Filter>Profiling</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Container.h">
-      <Filter>Container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Thread.h">
-      <Filter>Thread</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_GameTime.h">
       <Filter>System</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_DynamicLibrary.h">
-      <Filter>Dynamic Library</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_DynamicLibraryManager.h">
       <Filter>Dynamic Library</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Resource.h">
-      <Filter>Resource Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ResourceFile.h">
-      <Filter>Resource Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_ResourceHandle.h">
       <Filter>Resource Manager</Filter>
@@ -150,20 +108,11 @@
     <ClInclude Include="..\..\engine\include\K15_ResourceManager.h">
       <Filter>Resource Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ThreadManager.h">
-      <Filter>Thread</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_File.h">
       <Filter>File Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Log.h">
-      <Filter>Logging</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_LogManager.h">
       <Filter>Logging</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Mutex.h">
-      <Filter>Thread</Filter>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_Directory.h">
       <Filter>File Manager</Filter>
@@ -180,6 +129,69 @@
     <ClInclude Include="..\..\engine\include\K15_MemoryHeader.h">
       <Filter>Memory</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_TaskManager.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_AllocatedObject.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_DynamicLibraryBase.h">
+      <Filter>Dynamic Library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\win32\K15_DynamicLibrary_win32.h">
+      <Filter>Dynamic Library\Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_LogBase.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ManagerBase.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ResourceBase.h">
+      <Filter>Resource Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ResourceFileBase.h">
+      <Filter>Resource Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ResourceData.h">
+      <Filter>Resource Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_String.h">
+      <Filter>String</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ProfilingNode.h">
+      <Filter>Profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ProfilingManager.h">
+      <Filter>Profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Prerequisites.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ApplicationParameter.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Functor.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ApplicationModule.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_PageAllocator.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_GameEvent.h">
+      <Filter>Event Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ApplicationModuleDescription.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Task.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_MemberFunctor.h">
+      <Filter>System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Object.cpp">
@@ -187,9 +199,6 @@
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_Rtti.cpp">
       <Filter>Object System</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_Event.cpp">
-      <Filter>Event Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_EventManager.cpp">
       <Filter>Event Manager</Filter>
@@ -200,26 +209,14 @@
     <ClCompile Include="..\..\engine\src\K15_HashedString.cpp">
       <Filter>String</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_String.cpp">
-      <Filter>String</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\engine\src\Win32\K15_System_Win32.cpp">
       <Filter>System\Win32</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_ProfileNode.cpp">
-      <Filter>Profiling</Filter>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\Win32\K15_DynamicLibrary_win32.cpp">
       <Filter>Dynamic Library\Win32</Filter>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_DynamicLibraryManager.cpp">
       <Filter>Dynamic Library</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_Resource.cpp">
-      <Filter>Resource Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_ResourceHandle.cpp">
-      <Filter>Resource Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_ResourceManager.cpp">
       <Filter>Resource Manager</Filter>
@@ -230,17 +227,8 @@
     <ClCompile Include="..\..\engine\src\K15_File.cpp">
       <Filter>File Manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_Log.cpp">
-      <Filter>Logging</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_LogManager.cpp">
       <Filter>Logging</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_Mutex.cpp">
-      <Filter>Thread</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_Thread.cpp">
-      <Filter>Thread</Filter>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_Directory.cpp">
       <Filter>File Manager</Filter>
@@ -248,8 +236,37 @@
     <ClCompile Include="..\..\engine\src\K15_FileWatcher.cpp">
       <Filter>File Manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_StackAllocator.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Application.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_StackAllocator.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_LogBase.cpp">
+      <Filter>Logging</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ResourceBase.cpp">
+      <Filter>Resource Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ResourceHandle.inl">
+      <Filter>Resource Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_String.cpp">
+      <Filter>String</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ProfilingNode.cpp">
+      <Filter>Profiling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ProfilingManager.cpp">
+      <Filter>Profiling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_GameEvent.cpp">
+      <Filter>Event Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_Application.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_TaskManager.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_Task.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -283,9 +300,6 @@
     <None Include="..\..\engine\src\K15_StackItem.inl">
       <Filter>Container</Filter>
     </None>
-    <None Include="..\..\engine\src\K15_Event.inl">
-      <Filter>Event Manager</Filter>
-    </None>
     <None Include="..\..\engine\src\K15_ByteConversion.inl">
       <Filter>System</Filter>
     </None>
@@ -301,23 +315,11 @@
     <None Include="..\..\engine\src\K15_NTree.inl">
       <Filter>Container</Filter>
     </None>
-    <None Include="..\..\engine\include\K15_String.mcr">
-      <Filter>String</Filter>
-    </None>
-    <None Include="..\..\engine\src\K15_DynamicLibrary.inl">
-      <Filter>Dynamic Library</Filter>
-    </None>
-    <None Include="..\..\engine\src\K15_Resource.inl">
-      <Filter>Resource Manager</Filter>
-    </None>
     <None Include="..\..\engine\src\K15_GameTime.inl">
       <Filter>System</Filter>
     </None>
     <None Include="..\..\engine\src\K15_File.inl">
       <Filter>File Manager</Filter>
-    </None>
-    <None Include="..\..\engine\src\K15_Mutex.inl">
-      <Filter>Thread</Filter>
     </None>
     <None Include="..\..\engine\src\K15_ResourceManager.inl">
       <Filter>Resource Manager</Filter>
@@ -325,6 +327,42 @@
     <None Include="..\..\engine\src\K15_StackAllocator.inl">
       <Filter>Memory</Filter>
     </None>
+    <None Include="..\..\engine\src\K15_DynamicLibraryBase.inl">
+      <Filter>Dynamic Library</Filter>
+    </None>
+    <None Include="..\..\engine\src\K15_ResourceBase.inl">
+      <Filter>Resource Manager</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_String.mcr">
+      <Filter>String</Filter>
+    </None>
+    <None Include="..\..\engine\src\K15_ProfilingManager.inl">
+      <Filter>Profiling</Filter>
+    </None>
+    <None Include="..\..\engine\src\K15_LogManager.inl">
+      <Filter>Logging</Filter>
+    </None>
+    <None Include="..\..\engine\src\K15_HashedString.inl">
+      <Filter>String</Filter>
+    </None>
+    <None Include="..\..\engine\src\K15_Functor.inl">
+      <Filter>System</Filter>
+    </None>
+    <None Include="..\..\engine\src\K15_PageAllocator.inl">
+      <Filter>Memory</Filter>
+    </None>
+    <None Include="..\..\engine\src\K15_GameEvent.inl">
+      <Filter>Event Manager</Filter>
+    </None>
+    <None Include="..\..\engine\src\K15_Application.inl">
+      <Filter>System</Filter>
+    </None>
+    <None Include="..\..\engine\src\K15_AllocatedObject.inl">
+      <Filter>Memory</Filter>
+    </None>
+    <None Include="..\..\engine\src\K15_MemberFunctor.inl" />
+    <None Include="..\..\engine\src\K15_Task.inl" />
+    <None Include="..\..\engine\src\K15_TaskManager.inl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />

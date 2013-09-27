@@ -20,28 +20,87 @@
  *
  */
 
+#ifndef _K15Engine_System_Application_h_
+#define _K15Engine_System_Application_h_
+
+#include "K15_Prerequisites.h"
 #include "K15_Singleton.h"
-#include "K15_List.h"
-#include "K15_String.h"
+#include "K15_StackAllocator.h"
+#include "K15_ApplicationParameter.h"
 
 namespace K15_Engine { namespace System {
-
-  typedef Container::List<String> StringList;
-
-  class K15ENGINE2_API Application : public Singleton<Application>,
-                                     public Memory::StackAllocator
+  /*********************************************************************************/
+  typedef K15_Set(String) StringSet;
+  typedef K15_List(ApplicationParameter) ApplicationParameterList;
+  /*********************************************************************************/
+  class K15_API_EXPORT Application : public Singleton<Application>,
+                                     public StackAllocator
   {
   public:
+	  /*********************************************************************************/
+	  static const String SettingsFileName;
+	  static const String PluginFileName;
+	  /*********************************************************************************/
+  public:
     Application();
-    Application(int iCommandCount,char** pCommands);
+    Application(int p_CommandCount,char** p_Commands);
     ~Application();
-
-    void run();
     
-  private:
-    void _createCommandList(int iCommandCount,char** pCommands);
+	inline void setGameRootDir(const String& p_GameRootDir);
+
+	inline const String& getGameRootDir() const;
+	inline const StringSet& getPluginList() const;
+	inline const StringSet& getCommandList() const;
+	inline const ApplicationParameterList& getApplicationParameter() const;
+
+	void setWindowTitle(const String& p_WindowTitle);
+
+	void initialize();
+
+	void run();
+
+	void tick();
+
+	void shutdown();
+
+	void onBeforeTick();
+	void onAfterTick();
+
+	void onBeforeRender();
+	void onAfterRender();
+
+	inline TaskManager* getTaskManager() const;
+	inline ProfilingManager* getProfileManager() const;
+	inline EventManager* getEventManager() const;
+	inline DynamicLibraryManager* getDynamicLibraryManager() const;
+	inline RenderWindowBase* getRenderWindow() const;
+	inline LogManager* getLogManager() const;
 
   private:
-    StringList m_lCommands;
-  };
-}}
+    void createCommandList(int p_CommandCount,char** p_Commands);
+	void createApplicationParameterList();
+	void addSingleApplicationParameter(const String& p_Parameter,const String& p_Group);
+	void loadSettingsFile();
+	void loadPluginsFile();
+	void initializePlugins(const StringSet& p_PluginNames);
+
+  private:
+	bool m_Running;
+
+	String m_GameRootDir;
+
+	StringSet m_Plugins;
+    StringSet m_Commands;
+	ApplicationParameterList m_ApplicationParameter;
+
+	RenderWindowBase* m_RenderWindow;
+	TaskManager* m_TaskManager;
+	ProfilingManager* m_ProfileManager;
+	EventManager* m_EventManager;
+	LogManager* m_LogManager;
+	DynamicLibraryManager* m_DynamicLibraryManager;
+  }; //end of Application class definition
+#include "K15_Application.inl"
+}} //end of K15_Engine::System namespace
+
+#endif //_K15Engine_System_Application_h_

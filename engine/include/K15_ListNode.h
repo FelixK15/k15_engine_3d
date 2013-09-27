@@ -71,7 +71,7 @@ namespace K15_Engine { namespace Container {
 		*/
 		ListNode<T> *GetPrev();
 
-		void *operator new(U32 iSize);
+		void *operator new(uint32 iSize);
 
 		void operator delete(void *pPointer);
 

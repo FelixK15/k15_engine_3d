@@ -33,15 +33,15 @@
  */
 #pragma once
 
-#ifndef __K15_DYNAMICARRAY__
-#define __K15_DYNAMICARRAY__
+#ifndef __K15Engine_Container_DynamicArray_h_
+#define __K15Engine_Container_DynamicArray_h_
 
 #include "K15_StdInclude.h"
 
 #include "K15_System.h"
 
-namespace K15_EngineV2
-{
+namespace K15_Engine { namespace Container { 
+
 	template<class T>
 	class DynamicArray
 	{
@@ -52,7 +52,7 @@ namespace K15_EngineV2
 		  *
 		  * @param iSize - amount of elements the array will alocate on construction. (8 by default)
 		  */
-		DynamicArray(U32 iSize = 8);
+		DynamicArray(uint32 iSize = 8);
 
 		/** 
 		  * Copy Constructor
@@ -107,7 +107,7 @@ namespace K15_EngineV2
 		  *
 		  * @param iPos - index pos where the object lies that shall get popped.
 		  */
-		void Pop(U32 iPos);
+		void Pop(uint32 iPos);
 
 		/** 
 		  * Removes objects between the given start and end positions.
@@ -129,7 +129,7 @@ namespace K15_EngineV2
 		  * @param iPos - index position of the object you want to retrieve.
 		  * @returns T& - Reference to the object at the given index position.
 		  */
-		T& Get(U32 iPos);
+		T& Get(uint32 iPos);
 
 		/** 
 		  * Use this function to retrieve an object at the given index position.
@@ -137,7 +137,7 @@ namespace K15_EngineV2
 		  * @param iPos - index position of the object you want to retrieve.
 		  * @returns T& - Reference to the object at the given index position.
 		  */
-		const T& Get(U32 iPos) const;
+		const T& Get(uint32 iPos) const;
 
 
 		/** 
@@ -145,7 +145,7 @@ namespace K15_EngineV2
 		  *
 		  * @returns U32 - amount of objects.
 		  */
-		U32 Size() const;
+		uint32 Size() const;
 
 		/** 
 		  * Returns the capacity of the DynamicArray. (How many objects can the DynamicArray 
@@ -153,16 +153,16 @@ namespace K15_EngineV2
 		  *
 		  * @returns U32 - Capacity (in object size)
 		  */
-		U32 Capacity() const;
+		uint32 Capacity() const;
 
 		/** 
 		  * Returns the size in byte the DynamicArray will reallocate if the current capacity is full.
 		  *
 		  * @returns U32 - amount of memory that'll get reallocated when the current capacity is full.
 		  */
-		U32 ReallocationSize() const;
+		uint32 ReallocationSize() const;
 
-		void Resize(U32 iObjCount);
+		void Resize(uint32 iObjCount);
 
 		/**
 		* Checks if the array contains a specific item.
@@ -174,7 +174,7 @@ namespace K15_EngineV2
 		bool HasItem(const T &tItem) const;
 
 		const DynamicArray<T> &operator=(const DynamicArray<T> &arrSource);
-		T &operator[](U32 iPos);
+		T &operator[](uint32 iPos);
 
 	private:
 
@@ -185,16 +185,12 @@ namespace K15_EngineV2
 	private:
 		T *m_pArr;					//Pointer to the array.
 		size_t m_iSizeT;			//Size of the template class.
-		U32 m_iCapacity;			//Capacity of the array (capacity in objects, not bytes).
-		U32 m_iReallocateSize;		//Amount of objects that the array will grow if it is full. (amount in objects, not bytes).
-		U32 m_iFirst;				//Index of the first element (is currently always == 0).
-		U32 m_iLast;				//Index of the last element.
-		U32 m_iGrowthFactor;		//Factor by which m_iReallocateSize will get multiplied if the array is full.
+		uint32 m_iCapacity;			//Capacity of the array (capacity in objects, not bytes).
+		uint32 m_iReallocateSize;		//Amount of objects that the array will grow if it is full. (amount in objects, not bytes).
+		uint32 m_iFirst;				//Index of the first element (is currently always == 0).
+		uint32 m_iLast;				//Index of the last element.
+		uint32 m_iGrowthFactor;		//Factor by which m_iReallocateSize will get multiplied if the array is full.
 	};
-
-	#include "../src/K15_DynamicArray.inl"
-}
-
-
-
-#endif //__K15_ARRAYLIST__
+	#include "K15_DynamicArray.inl"
+}} //end of K15_Engine::Container namespace
+#endif //__K15Engine_Container_DynamicArray_h_

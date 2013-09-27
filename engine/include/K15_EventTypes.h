@@ -30,7 +30,7 @@
 
 namespace K15_EngineV2
 {
-	class K15ENGINE2_API EventTypes
+	class K15_API_EXPORT EventTypes
 	{
 	public:
 		static const HashedString KeyboardPressed;

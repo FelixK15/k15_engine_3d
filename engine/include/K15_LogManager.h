@@ -22,41 +22,61 @@
  */
 #pragma once
 
-#ifndef __K15_LOGMANAGER__
-#define __K15_LOGMANAGER__
+#ifndef _K15Engine_System_LogManager_h_
+#define _K15Engine_System_LogManager_h_
 
-#include "K15_StdInclude.h"
+#include "K15_Prerequisites.h"
+#include "K15_AllocatedObject.h"
 #include "K15_Singleton.h"
-#include "K15_String.h"
-#include "K15_HashMap.h"
-#include "K15_Log.h"
+#include "K15_Application.h"
 
-#define g_pLogManager K15_EngineV2::LogManager::GetInstance()
-#define WriteDefaultLog(x) g_pLogManager->LogMessage(x)
+#define K15_LogNormalMessage(msg)  K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_NORMAL)
+#define K15_LogErrorMessage(msg)   K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_ERROR)
+#define K15_LogDebugMessage(msg)   K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_DEBUG)
+#define K15_LogWarningMessage(msg) K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_WARNING)
+#define K15_LogCustom0Message(msg) K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_CUSTOM0)
+#define K15_LogCustom1Message(msg) K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_CUSTOM1)
+#define K15_LogCustom2Message(msg) K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_CUSTOM2)
+#define K15_LogCustom3Message(msg) K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_CUSTOM3)
 
-namespace K15_EngineV2
-{
-	class Log;
+namespace K15_Engine { namespace System {
 
-	class K15ENGINE2_API LogManager : public Singleton<LogManager>
+	class K15_API_EXPORT LogManager : public ApplicationAllocatedObject, 
+									  public Singleton<LogManager>
 	{
+	public:
+		typedef K15_List(LogBase*) LogList;
+	public:
+		enum eLogPriorityFlags
+		{
+			LP_INVALID = 0x0000,
+			LP_NORMAL = 0x0002,
+			LP_DEBUG = 0x0004,
+			LP_ERROR = 0x0008,
+			LP_WARNING = 0x0020,
+
+			LP_CUSTOM0 = 0x0040,
+			LP_CUSTOM1 = 0x0080,
+			LP_CUSTOM2 = 0x0200,
+			LP_CUSTOM3 = 0x0400
+		};
+
 	public:
 		LogManager();
 		virtual ~LogManager();
 
-		void Shutdown();
-
-		Log *CreateLog(const String &sLogName,bool bDefaultLog,bool bDebugLog,bool bFileLog);
+		void addLog(LogBase* p_Log, bool p_DefaultLog = false);
 		
-		Log *GetDefaultLog();
-		void SetDefaultLog(Log *pLog);
+		LogBase* getDefaultLog();
+		void setDefaultLog(LogBase* p_Log);
 
-		void LogMessage(const String &sLogMessage);
+		void logMessage(const String& p_LogMessage, bool p_DefaultLogOnly = false, eLogPriorityFlags p_PriorityFlag = LP_INVALID);
 
 	private:
-		Log *m_pDefaultLog;
-		HashMap<String,Log*> m_hmLogs;
+		LogBase *m_DefaultLog;
+		LogList m_Logs;
 	};
-}
+#include "K15_LogManager.inl"
+}} // end of K15_Engine::System namespace
 
-#endif //__K15_K15_LOGMANAGER__
+#endif //_K15Engine_System_LogManager_h_

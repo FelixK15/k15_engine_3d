@@ -20,21 +20,20 @@
  *
  * 
  */
-#pragma once
 
-#ifndef __K15_EVENTLISTENER__
-#define __K15_EVENTLISTENER__
+#ifndef _K15Engine_System_EventListener_h_
+#define _K15Engine_System_EventListener_h_
 
-#include "K15_StdInclude.h"
-#include "K15_Event.h"
+#include "K15_Prerequisites.h"
+#include "K15_GameEvent.h"
 
-namespace K15_EngineV2
-{
-	class K15ENGINE2_API EventListener
+namespace K15_Engine { namespace System { 
+
+	class K15_API_EXPORT EventListener
 	{
 	public:
-		virtual void HandleEvent(const Event &evGameEvent) = 0;
+		virtual void handleEvent(const GameEvent& p_Event) = 0;
 	};
-}
+}}// end of K15_Engine::System namespace
 
-#endif //__K15_EVENTLISTENER__
+#endif //_K15Engine_System_EventListener_h_

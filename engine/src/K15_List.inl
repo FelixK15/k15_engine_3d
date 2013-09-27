@@ -20,8 +20,8 @@
 template<class T>
 List<T>::List()
 {
-	m_pFirst = NULL;
-	m_pLast = NULL;
+	m_pFirst = 0;
+	m_pLast = 0;
 	m_iSize = 0;
 }
 
@@ -82,7 +82,7 @@ void List<T>::PopBack()
 		ListNode<T> *pNewTail = m_pLast->GetPrev();
 
 		if(pNewTail){
-			pNewTail->m_pNext = NULL;
+			pNewTail->m_pNext = 0;
 		}
 
 		K15_DELETE m_pLast;
@@ -104,7 +104,7 @@ void List<T>::PopFront()
 		ListNode<T> *pNewHead = m_pFirst->GetNext();
 
 		if(pNewHead){
-			pNewHead->m_pPrevious = NULL;
+			pNewHead->m_pPrevious = 0;
 		}
 
 		K15_DELETE m_pFirst;
@@ -121,8 +121,8 @@ template<class T>
 void List<T>::Clear()
 {
 	//Every node will get deleted.
-	U32 iCounter = 0;
-	ListNode<T> *pNextNode = NULL;
+	uint32 iCounter = 0;
+	ListNode<T> *pNextNode = 0;
 	for(ListNode<T> *pNode = m_pFirst;pNode;){
 		pNextNode = pNode->m_pNext;
 		K15_DELETE pNode;
@@ -132,7 +132,7 @@ void List<T>::Clear()
 		++iCounter;
 	}
 	
-	m_pFirst = m_pLast = NULL;
+	m_pFirst = m_pLast = 0;
 	m_iSize = 0;
 }
 
@@ -148,13 +148,13 @@ void List<T>::Erase(ListNode<T> *pNodeToErase)
 		pNodeToErase->m_pPrevious->m_pNext = pNodeToErase->GetNext();
 
 		K15_DELETE pNodeToErase;
-		pNodeToErase = NULL;
+		pNodeToErase = 0;
 		--m_iSize;
 	}
 }
 
 template<class T>
-U32 List<T>::Size() const
+uint32 List<T>::Size() const
 {
 	return m_iSize;
 }
@@ -177,9 +177,9 @@ void List<T>::_CheckForOphrandTailAndHead()
 	//Function is used internally to check if m_pFirst and m_pLast are still valid pointers.
 	if(Size() == 0){
 		if(m_pFirst){
-			m_pFirst = NULL;
+			m_pFirst = 0;
 		}else if(m_pLast){
-			m_pLast = NULL;
+			m_pLast = 0;
 		}
 	}
 }

@@ -26,31 +26,24 @@
  *
  * EventListener can also register and unregister themselves as listener for specific events.
  */
-#pragma once
+#ifndef _K15Engine_System_EventManager_h_
+#define _K15Engine_System_EventManager_h_
 
-#ifndef __K15_EVENTMANAGER__
-#define __K15_EVENTMANAGER__
+#include "K15_Prerequisites.h"
+#include "K15_Application.h"
+#include "K15_AllocatedObject.h"
+#include "K15_PageAllocator.h"
+#include "K15_Singleton.h"
+#include "K15_GameEvent.h"
 
-#include "K15_StdInclude.h"
-#include "K15_Event.h"
-#include "K15_EventListener.h"
-
-#include "K15_List.h"
-#include "K15_Stack.h"
-
-#include "K15_System.h"
-#include "K15_HashMap.h"
-
-//The EventManager object can get obtained using this macro.
-//Example:	g_pEventManager->Update();
-#define g_pEventManager EventManager::GetInstance()
-
-namespace K15_EngineV2
-{
-	typedef HashMap<EventType,List<EventListener*>* > EventTypeListenerMap;
-	typedef Stack<Event> EventStack;
-
-	class K15ENGINE2_API EventManager : public Singleton<EventManager>
+namespace K15_Engine { namespace System { 
+	/*********************************************************************************/
+	typedef K15_HashMap(EventName,K15_List(EventListener*) *) EventTypeListenerMap;
+	typedef K15_Stack(GameEvent) EventStack;
+	/*********************************************************************************/
+	class K15_API_EXPORT EventManager : public ApplicationAllocatedObject,
+									    public Singleton<EventManager>,
+										public PageAllocator<>
 	{
 	public:
 		/**
@@ -69,14 +62,14 @@ namespace K15_EngineV2
 		* @param  etType - type of the Event that the listener shall listen to.
 		* @param  pListener - pointer to EventListener implementation.
 		*/
-		void AddListener(const EventType &etType,EventListener *pListener);
+		void addListener(const EventName& p_EventName,EventListener* p_Listener);
 		/**
 		* You can remove a previously added EventListener using this function.
 		*
 		* @param  etType - type of the Event that the listener should stop listen to.
 		* @param  pListener - pointer to a previously added (AddListener()) EventListener.
 		*/
-		void RemoveListener(const EventType &etType,EventListener *pListener);
+		void removeListener(const EventName& p_EventName,EventListener* p_Listener);
 
 		/**
 		* If you want to add a new Event to the event queue.
@@ -84,26 +77,26 @@ namespace K15_EngineV2
 		*
 		* @param  evGameEvent - reference to an Event object.
 		*/
-		void AddEventToQueue(const Event& evGameEvent);
+		void addEventToQueue(const GameEvent& p_Event);
 		/**
 		* If you want to trigger an Event immediately use this function
 		* instead of AddEventToQueue.
 		*
 		* @param  evGameEvent - reference to an Event object. 
 		*/
-		void TriggerEvent(const Event& evGameEvent);
+		void triggerEvent(const GameEvent& p_Event);
 
 		/**
 		* This function will get called once per Frame to process all events in the queue.
 		* @note This function will be called internally. There's no reason for you 
 		*	    to call this function.
 		*/
-		void Update();
+		void update();
 
 	private:
-		EventStack m_sEvents;				//Event Queue.
-		EventTypeListenerMap m_hmListener;	//Map where the EventTypes are associated with EventListeners.
-	};
-}
+		EventStack m_Events;				//Event Queue.
+		EventTypeListenerMap m_Listener;	//Map where the EventTypes are associated with EventListeners.
+	};//end of EventManager class
+}}//end of K15_Engine::System namespace
 
-#endif
+#endif //_K15Engine_System_EventManager_h_

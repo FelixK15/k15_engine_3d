@@ -88,7 +88,7 @@ bool DX11_ShaderImpl::Compile(const char *pDefines)
 {
 	if(m_stType == ShaderImpl::ST_NONE){
 		m_sErrorString = "Could not compile shader. ShaderType was not set.";
-		WriteDefaultLog(m_sErrorString);
+		K15_LogNormalMessage(m_sErrorString);
 		return false;
 	}
 
@@ -108,8 +108,8 @@ bool DX11_ShaderImpl::Compile(const char *pDefines)
 			//Copy Error message to error string.
 			m_sErrorString = (const char*)pErrorMessage->GetBufferPointer();
 
-			WriteDefaultLog(String("Could not compile shader."));
-			WriteDefaultLog(m_sErrorString);
+			K15_LogNormalMessage(String("Could not compile shader."));
+			K15_LogNormalMessage(m_sErrorString);
 		}
 	}else{
 		bReturn = true;

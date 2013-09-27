@@ -574,11 +574,11 @@ void Renderer::_CreateRasterizerState()
 
 void Renderer::Release( BindablePtr pBindable )
 {
-	if(pBindable->IsInstanceOf(Buffer::TYPE)){
+	if(pBindable->isInstanceOf(Buffer::TYPE)){
 		_ReleaseBuffer(pBindable->GetHandle());
-	}else if(pBindable->IsInstanceOf(VertexLayout::TYPE)){
+	}else if(pBindable->isInstanceOf(VertexLayout::TYPE)){
 		_ReleaseVertexLayout(pBindable->GetHandle());
-	}else if(pBindable->IsInstanceOf(VertexShader::TYPE) || pBindable->IsInstanceOf(PixelShader::TYPE)){
+	}else if(pBindable->isInstanceOf(VertexShader::TYPE) || pBindable->isInstanceOf(PixelShader::TYPE)){
 		_ReleaseShader(pBindable->GetHandle());
 	}
 }
@@ -668,7 +668,7 @@ void Renderer::_SetShader( Shader *pShader )
 	bool bVertexShader = false;
 	U32 iCurrentShader = m_iCurrentPixelShader;
 
-	if(pShader->IsInstanceOf(VertexShader::TYPE)){
+	if(pShader->isInstanceOf(VertexShader::TYPE)){
 		bVertexShader = true;
 		iCurrentShader = m_iCurrentVertexShader;
 	}
@@ -724,7 +724,7 @@ void Renderer::_UpdateShader( Shader *pShader,Geometry *pGeometry )
 				pShaderVariable->Update(pGeometry);
 				BufferPtr pBuffer = pShaderVariable->GetBuffer();
 				ID3D11Buffer *pD3DBuffer = m_arrBuffers[pBuffer->GetHandle()];
-				if(pShader->IsInstanceOf(VertexShader::TYPE)){
+				if(pShader->isInstanceOf(VertexShader::TYPE)){
 					m_pDeviceContext->VSSetConstantBuffers(pShaderVariable->GetRegisterNumber(),1,&pD3DBuffer);
 				}else{
 					m_pDeviceContext->PSSetConstantBuffers(pShaderVariable->GetRegisterNumber(),1,&pD3DBuffer);
@@ -735,7 +735,7 @@ void Renderer::_UpdateShader( Shader *pShader,Geometry *pGeometry )
 					pShaderVariable->Update(pGeometry);
 					BufferPtr pBuffer = pShaderVariable->GetBuffer();
 					ID3D11Buffer *pD3DBuffer = m_arrBuffers[pBuffer->GetHandle()];
-					if(pShader->IsInstanceOf(VertexShader::TYPE)){
+					if(pShader->isInstanceOf(VertexShader::TYPE)){
 						m_pDeviceContext->VSSetConstantBuffers(pShaderVariable->GetRegisterNumber(),1,&pD3DBuffer);
 					}else{
 						m_pDeviceContext->PSSetConstantBuffers(pShaderVariable->GetRegisterNumber(),1,&pD3DBuffer);

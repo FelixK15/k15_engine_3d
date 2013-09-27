@@ -1,8 +1,71 @@
-﻿Build started 10.09.2013 17:13:20.
-     1>Project "D:\private repos\k15-engine-3d\vs2010\Engine\K15_EngineV2.vcxproj" on node 2 (ClCompile target(s)).
-     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Platforms\Win32\Microsoft.Cpp.Win32.Targets(518,5): error MSB8008: Specified platform toolset (v110) is not installed or invalid. Please make sure that a supported PlatformToolset value is selected.
-     1>Done Building Project "D:\private repos\k15-engine-3d\vs2010\Engine\K15_EngineV2.vcxproj" (ClCompile target(s)) -- FAILED.
+﻿Build started 26.09.2013 02:52:23.
+     1>Project "F:\Programming\C++\My Projects\k15-engine-3d\vs2010\Engine\K15_EngineV2.vcxproj" on node 2 (Build target(s)).
+     1>InitializeBuildStatus:
+         Touching "..\..\engine\obj\Engine.unsuccessfulbuild".
+       ClCompile:
+         All outputs are up-to-date.
+         F:\Programme\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D CODE_ANALYSIS /D _DEBUG /D K15_BUILD /D _WINDLL /D _MBCS /Gm /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"..\..\engine\obj\\" /Fd"..\..\engine\obj\vc110.pdb" /Gd /TP /wd4251 /analyze /analyze:log "..\..\engine\obj\K15_DynamicLibraryManager.cpp.nativecodeanalysis.xml" /analyze:pluginlocalespc.dll /errorReport:prompt   /analyze:quiet ..\..\engine\src\K15_DynamicLibraryManager.cpp
+         K15_DynamicLibraryManager.cpp
+     1>f:\programme\microsoft visual studio 11.0\vc\include\xlocale(336): warning C4530: C++ exception handler used, but unwind semantics are not enabled. Specify /EHsc
+     1>f:\programming\c++\my projects\k15-engine-3d\engine\src\k15_stackallocator.inl(25): error C2614: 'K15_Engine::System::StackAllocator' : illegal member initialization: 'm_iMemorySize' is not a base or member
+                 f:\programming\c++\my projects\k15-engine-3d\engine\src\k15_dynamiclibrarymanager.cpp(32) : see reference to function template instantiation 'K15_Engine::System::StackAllocator::StackAllocator<Allocator>(Allocator *,uint32)' being compiled
+                 with
+                 [
+                     Allocator=K15_Engine::System::Application
+                 ]
+     1>f:\programming\c++\my projects\k15-engine-3d\engine\src\k15_stackallocator.inl(25): error C2614: 'K15_Engine::System::StackAllocator' : illegal member initialization: 'm_iUsedMemory' is not a base or member
+     1>f:\programming\c++\my projects\k15-engine-3d\engine\src\k15_stackallocator.inl(25): error C2614: 'K15_Engine::System::StackAllocator' : illegal member initialization: 'm_pMemory' is not a base or member
+     1>f:\programming\c++\my projects\k15-engine-3d\engine\src\k15_stackallocator.inl(27): error C2065: 'm_pMemory' : undeclared identifier
+     1>f:\programming\c++\my projects\k15-engine-3d\engine\src\k15_stackallocator.inl(32): error C2065: 'm_iMemorySize' : undeclared identifier
+     1>Done Building Project "F:\Programming\C++\My Projects\k15-engine-3d\vs2010\Engine\K15_EngineV2.vcxproj" (Build target(s)) -- FAILED.
+
+Project Performance Summary:
+      947 ms  F:\Programming\C++\My Projects\k15-engine-3d\vs2010\Engine\K15_EngineV2.vcxproj   1 calls
+                947 ms  Build                                      1 calls
+
+Target Performance Summary:
+        0 ms  _BuildGenerateSourcesAction                1 calls
+        0 ms  BuildGenerateSourcesTraverse               1 calls
+        0 ms  _PrepareForBuild                           1 calls
+        0 ms  ComputeMIDLGeneratedCompileInputs          1 calls
+        0 ms  SelectClCompile                            1 calls
+        0 ms  ResolveProjectReferences                   1 calls
+        0 ms  MakeDirsForMidl                            1 calls
+        0 ms  GetFrameworkPaths                          1 calls
+        0 ms  ResolveAssemblyReferences                  1 calls
+        0 ms  ComputeReferenceCLInput                    1 calls
+        0 ms  _Midl                                      1 calls
+        0 ms  AfterResolveReferences                     1 calls
+        0 ms  PlatformPrepareForBuild                    1 calls
+        0 ms  MakeDirsForCl                              1 calls
+        0 ms  AfterBuildGenerateSources                  1 calls
+        0 ms  BuildCompileTraverse                       1 calls
+        0 ms  ResolveSDKReferences                       1 calls
+        0 ms  BuildGenerateSources                       1 calls
+        0 ms  ResolveReferences                          1 calls
+        0 ms  AfterBuildGenerateSourcesEvent             1 calls
+        0 ms  BeforeResolveReferences                    1 calls
+        0 ms  BeforeClCompile                            1 calls
+        0 ms  PreBuildEvent                              1 calls
+        0 ms  _SelectedFiles                             1 calls
+        0 ms  ExpandSDKReferences                        1 calls
+        0 ms  GetResolvedWinMD                           1 calls
+        0 ms  BeforeBuildGenerateSources                 1 calls
+        0 ms  GetReferenceAssemblyPaths                  1 calls
+        0 ms  _Xsd                                       1 calls
+        0 ms  _SplitProjectReferencesByFileExistence     1 calls
+        0 ms  AfterMidl                                  1 calls
+        0 ms  SelectCustomBuild                          1 calls
+        0 ms  GetInstalledSDKLocations                   1 calls
+        0 ms  _PrepareForReferenceResolution             1 calls
+        1 ms  ComputeCLInputPDBName                      1 calls
+        1 ms  AssignProjectConfiguration                 1 calls
+        1 ms  PrepareForBuild                            1 calls
+        1 ms  SetBuildDefaultEnvironmentVariables        1 calls
+        1 ms  _CheckForInvalidConfigurationAndPlatform   1 calls
+        2 ms  InitializeBuildStatus                      1 calls
+      940 ms  ClCompile                                  1 calls
 
 Build FAILED.
 
-Time Elapsed 00:00:00.01
+Time Elapsed 00:00:00.94

@@ -32,7 +32,7 @@
 #include "K15_ListNode.h"
 
 namespace K15_Engine { namespace Container { 
-{
+
 	template<class T>
 	class List
 	{
@@ -88,7 +88,7 @@ namespace K15_Engine { namespace Container {
 		*
 		* @return U32 - amount of elements in the list.
 		*/
-		U32 Size() const;
+		uint32 Size() const;
 
 		/**
 		* Returns a pointer to the ListNode at the beginning of the list.
@@ -112,12 +112,12 @@ namespace K15_Engine { namespace Container {
 
 	private:
 
-		U32 m_iSize;
+		uint32 m_iSize;
 		ListNode<T> *m_pFirst;
 		ListNode<T> *m_pLast;
 	};
 
 	#include "K15_List.inl"
-}}
+}} //end of K15_Engine::Container namespace
 
 #endif //_K15Engine_Container_List_h_

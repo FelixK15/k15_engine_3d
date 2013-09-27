@@ -22,85 +22,50 @@
  */
 #pragma once
 
-#ifndef __K15_OBJECT__
-#define __K15_OBJECT__
+#ifndef __K15Engine_System_Object_h_
+#define __K15Engine_System_Object_h_
 
-#include "K15_UsefulMacros.h"
-#include "K15_DynamicArray.h"
-#include "K15_HashMap.h"
+#include "K15_Prerequisites.h"
 #include "K15_Rtti.h"
-#include "K15_Stream.h"
 #include "K15_Pointer.h"
 
-namespace K15_EngineV2
-{
-	class Object;
+namespace K15_Engine { namespace System { 
 
-	typedef U32 ObjectID;
-	typedef Pointer<Object> ObjectPtr;
-
-	class K15ENGINE2_API Object
+	class K15_API_EXPORT Object
 	{
+		DECLARE_RTTI;
 
 	public:
 		Object();
+		Object(const String& p_Name);
+		Object(const TypeName& p_Name);
+
 		virtual ~Object();
 	
-		void IncreaseReferences();
-		void DecreaseReferences();
+		void increaseReferences();
+		void decreaseReferences();
 		
-		bool IsInstanceOf(const Rtti &rtType) const;
-		bool IsInstanceOf(const Object *pObject) const;
+		bool isInstanceOf(const Rtti& p_Type) const;
+		bool isInstanceOf(const Object* p_Object) const;
 
-		bool IsDerivedFrom(const Rtti &rtType) const;
-		bool IsDerivedFrom(const Object *pObject) const;
+		bool isDerivedFrom(const Rtti& p_Type) const;
+		bool isDerivedFrom(const Object* p_Object) const;
 
-		U32 GetReferenceCount() const;
-		ObjectID GetUniqueID() const;
-
-		void SetName(const String& sName);
-		const String &GetName() const;
+		uint32 getReferenceCount() const;
 		
-		virtual const Rtti& GetType() const;
+		void setName(const TypeName& p_Name);
+		const TypeName& getName() const;
+		
+		virtual const Rtti& getType() const;
 
-// 		virtual void Register(Stream &stStream) const;
-// 		virtual void Save(Stream &stStream) const;
-// 		virtual bool Load(Stream &stStream);
-
-		//virtual XMLTree SaveToXML() const;
-
-// 		virtual String ToString() const = 0;
-// 		virtual size_t GetDiscUsed() const = 0;
-// 		virtual size_t GetMemoryUsed() const = 0;
-
-	public:
-		static void PrintObjectsInUse();
-
-		static Object *GetObjectByID(ObjectID iID);
-		static Object *GetObjectByName(const String &sName);
-
-		static void GetObjectsByName(const String &sName,DynamicArray<Object*> &arrObjectsOut);
-
-	private:
-		void _SetID();
-
-		void _RegisterObject();
-		void _UnregisterObject();
-
-	public:
-		static Rtti TYPE;
-		//static HashMap<U32,Object*> ms_hmObjectsInUse;
-		//static HashMap<String,FactoryFunction> ms_hmFactoryFunctions;
-		static ObjectID ms_iNextID;
-
-	private:
-		ObjectID m_iUniqueID;
-		U32 m_iReferences;
-
-		String m_sName;
+	protected:
+		TypeName m_Name;
+		uint32 m_References;
 	};
 
-	#include "../src/K15_Object.inl"
-}
+	K15_SMART_POINTER(Object);
 
-#endif //__K15_OBJECT__
+	#include "K15_Object.inl"
+}} //end of K15_Engine::System namespace
+
+#endif //__K15Engine_System_Object_h_

@@ -29,11 +29,11 @@
 
 namespace K15_EngineV2
 {
-	template<class T,U8 N>
+	template<class T,uint8 N>
 	struct NTreeNode
 	{
 		T* Value;
-		U8 AmountChildren;
+		uint8 AmountChildren;
 		NTreeNode *Parent;
 		NTreeNode *Children[N];
 	};

@@ -20,55 +20,62 @@
 #include "K15_DynamicLibraryManager.h"
 #include "K15_LogManager.h"
 
-using namespace K15_EngineV2;
+#if defined K15_OS_WINDOWS
+#	include "K15_DynamicLibrary_win32.h"
+#endif
 
-DynamicLibraryManager::DynamicLibraryManager()
-{
-
-}
-
-DynamicLibraryManager::~DynamicLibraryManager()
-{
-	for(U32 i = 0;i < m_arrDynLibs.Size();++i){
-		K15_DELETE m_arrDynLibs[i];
-		m_arrDynLibs[i] = NULL;
-	}
-
-	m_arrDynLibs.Clear();
-}
-
-DynamicLibrary *DynamicLibraryManager::Load(const String &pFileName)
-{
-	for(U32 i = 0;i < m_arrDynLibs.Size();++i){
-		if(m_arrDynLibs[i]->GetFileName() == pFileName){
-			WriteDefaultLog(String("Library already loaded. Returning cached libray. Library:") + pFileName);
-			return m_arrDynLibs[i];
-		}
-	}
-
-	DynamicLibrary *pDynLib = K15_NEW DynamicLibrary(pFileName);
-	if(!pDynLib->_Load()){
-		WriteDefaultLog(String("Could not load library :") + pFileName);
-		WriteDefaultLog(g_pSystem->GetSystemError());
+namespace K15_Engine { namespace System {
+	/*********************************************************************************/
+	DynamicLibraryManager::DynamicLibraryManager()
+		: StackAllocator(MemoryAllocator,5 * MEGABYTE),
+		  m_LoadedLibs()
+	{
 	
-		K15_DELETE pDynLib;
-		return NULL;
 	}
+	/*********************************************************************************/
+	DynamicLibraryManager::~DynamicLibraryManager()
+	{
+		for(DynamicLibraryMap::iterator iter = m_LoadedLibs.begin();iter != m_LoadedLibs.end();++iter)
+		{
+			K15_DELETE iter->second;
+		}
 
-	m_arrDynLibs.PushBack(pDynLib);
-	pDynLib->m_iHandle = m_arrDynLibs.Size() - 1;
-
-	return pDynLib;
-}
-
-bool DynamicLibraryManager::Unload(DynamicLibrary *pDynLib)
-{
-	bool bUnload = pDynLib->_Unload();
-	if(bUnload){
-		m_arrDynLibs[pDynLib->GetHandle()] = NULL;
-		K15_DELETE pDynLib;
+		m_LoadedLibs.clear();
 	}
+	/*********************************************************************************/
+	DynamicLibraryBase *DynamicLibraryManager::load(const String& p_FileName)
+	{
+		DynamicLibraryMap::iterator iter = m_LoadedLibs.find(p_FileName);
 
-	return bUnload;
-}
+		if (iter != m_LoadedLibs.end())
+		{
+			K15_LogNormalMessage(String("Library already loaded. Returning cached libray. Library:") + p_FileName);
+			return iter->second;
+		}
 
+		DynamicLibraryBase *library = K15_NEW DynamicLibraryType();
+
+		if(!library->load())
+		{
+			K15_LogNormalMessage(String("Could not load library :") + p_FileName);
+	
+			K15_DELETE library;
+			return 0;
+		}
+
+		m_LoadedLibs.insert(K15_Pair(String,DynamicLibraryBase*)(p_FileName,library));
+
+		return library;
+	}
+	/*********************************************************************************/
+	bool DynamicLibraryManager::unload(DynamicLibraryBase *p_Lib)
+	{
+		if(p_Lib->unload())
+		{
+			//m_LoadedLibs.
+		}
+
+		return false;
+	}
+	/*********************************************************************************/
+}}// end of K15_Engine::System namespace

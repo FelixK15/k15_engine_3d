@@ -18,7 +18,7 @@
  */
 
 template<class T>
-DynamicArray<T>::DynamicArray(U32 iSize)
+DynamicArray<T>::DynamicArray(uint32 iSize)
 {
 	assert(iSize > 0);
 
@@ -50,7 +50,7 @@ template<class T>
 void DynamicArray<T>::PushBack(const T &tObject)
 {
 	//pos == end of array.
-	U32 iPos = Size();
+	uint32 iPos = Size();
 
 	if(iPos > (m_iCapacity - 1)){
 		//If there's not enough space to hold a new object, more memory will get allocated using _Reallocate().
@@ -72,8 +72,8 @@ template<class T>
 void DynamicArray<T>::PushFront(const T &tObject)
 {
 	//Calculate the current size of the array in byte.
-	U32 iCurSizeInByte = m_iCapacity * m_iSizeT;
-	U32 iSize = Size() + 1;
+	uint32 iCurSizeInByte = m_iCapacity * m_iSizeT;
+	uint32 iSize = Size() + 1;
 
 	if(iSize > m_iCapacity){
 		//If there's not enough space to hold a new object, more memory will get allocated using _Reallocate().
@@ -124,7 +124,7 @@ void DynamicArray<T>::PushFront(const T &tObject)
 // }
 // 
 template<class T>
-void DynamicArray<T>::Pop(U32 iPos)
+void DynamicArray<T>::Pop(uint32 iPos)
 {
 	assert(iPos <= Size());
 
@@ -163,7 +163,7 @@ template<class T>
 void DynamicArray<T>::Clear()
 {
 	//Call the destructor of all objects.
-	for(U32 i = 0;i < Size();++i){
+	for(uint32 i = 0;i < Size();++i){
 		m_pArr[i].~T();
 	}
 
@@ -172,7 +172,7 @@ void DynamicArray<T>::Clear()
 }
 
 template<class T>
-T& DynamicArray<T>::Get(U32 iPos)
+T& DynamicArray<T>::Get(uint32 iPos)
 {
 	assert(iPos < m_iCapacity);
 
@@ -184,25 +184,25 @@ T& DynamicArray<T>::Get(U32 iPos)
 }
 
 template<class T>
-const T& DynamicArray<T>::Get(U32 iPos) const
+const T& DynamicArray<T>::Get(uint32 iPos) const
 {
 	return Get(iPos);
 }
 
 template<class T>
-U32 DynamicArray<T>::Size() const
+uint32 DynamicArray<T>::Size() const
 {
 	return m_iLast - m_iFirst;
 }
 
 template<class T>
-U32 DynamicArray<T>::Capacity() const
+uint32 DynamicArray<T>::Capacity() const
 {
 	return m_iCapacity;
 }
 
 template<class T>
-U32 DynamicArray<T>::ReallocationSize() const
+uint32 DynamicArray<T>::ReallocationSize() const
 {
 	return m_iReallocateSize;
 }
@@ -211,8 +211,8 @@ template<class T>
 bool DynamicArray<T>::HasItem( const T &tItem ) const
 {
 	bool bReturn = false;
-	U32 iSize = Size();
-	for(U32 i = 0;i < iSize;++i){
+	uint32 iSize = Size();
+	for(uint32 i = 0;i < iSize;++i){
 		if(m_pArr[i] == tItem){
 			bReturn = true;
 			break;
@@ -223,11 +223,11 @@ bool DynamicArray<T>::HasItem( const T &tItem ) const
 }
 
 template<class T>
-void DynamicArray<T>::Resize( U32 iObjCount )
+void DynamicArray<T>::Resize( uint32 iObjCount )
 {
 	if(iObjCount > Size()){
-		U32 iTotalSize = iObjCount * m_iSizeT;
-		U32 iOldReallocationSize = m_iReallocateSize;
+		uint32 iTotalSize = iObjCount * m_iSizeT;
+		uint32 iOldReallocationSize = m_iReallocateSize;
 		m_iReallocateSize = iTotalSize;
 		_Reallocate();
 		m_iReallocateSize = iOldReallocationSize;
@@ -242,7 +242,7 @@ const DynamicArray<T>& DynamicArray<T>::operator=(const DynamicArray<T> &arrSour
 }
 
 template<class T>
-T& DynamicArray<T>::operator[](U32 iPos)
+T& DynamicArray<T>::operator[](uint32 iPos)
 {
 	return Get(iPos);
 }
@@ -261,7 +261,7 @@ void DynamicArray<T>::_CopyFrom(const DynamicArray<T> &arrSource)
 template<class T>
 void DynamicArray<T>::_Reallocate()
 {
-	U32 iOldSize = m_iCapacity * m_iSizeT;
+	uint32 iOldSize = m_iCapacity * m_iSizeT;
 	m_iCapacity += (m_iReallocateSize * m_iGrowthFactor);
 
 	m_iGrowthFactor *= 2;
@@ -276,7 +276,7 @@ void DynamicArray<T>::_Reallocate()
 template<class T>
 void DynamicArray<T>::_ZeroUnusedMemory()
 {
-	U32 iSize = (m_iCapacity - Size()) * m_iSizeT;
+	uint32 iSize = (m_iCapacity - Size()) * m_iSizeT;
 
 	size_t iStartArrayAddress = (size_t)m_pArr;
 	size_t iMemoryOffset = m_iCapacity * m_iSizeT;

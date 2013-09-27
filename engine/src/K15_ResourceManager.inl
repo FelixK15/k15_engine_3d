@@ -17,73 +17,102 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-template<class T>
-bool ResourceManager::CacheResource(String& sFileName,Resource::ResourcePriority rpPriority)
+template<class ResourceType>
+bool ResourceManager::cacheResource(const ResourceName& p_ResourceName,Enum p_Priority)
 {
-	U32 iPos = sFileName.FindLastOf('.');
-	String sExtension = sFileName.SubString(iPos);
-
-	m_pResoureFile->OpenResourceFile();
-	if(m_pResoureFile->HasResource(sFileName.C_Str())){
-		byte *pBuffer = NULL;
-		char *pErrorMessage = NULL;
-		U32 iSize = 0;
-
-		if(m_pResoureFile->GetResource(sFileName,pBuffer,iSize,pErrorMessage)){
-			//Resource gets created and loaded.
-			Resource *pResource = K15_NEW T();
-			pResource->SetFilename(sFileName);
-
-			bool bLoaded = pResource->Load(pBuffer,iSize,sExtension);
-
-			K15_DELETE[] pBuffer;
-			pBuffer = NULL;
-
-			if(bLoaded){
-				//Add Resource to Cache
-				pResource->m_rpPriority = rpPriority;
-				pResource->SetName(sFileName);
-
-				m_hmResources.Insert(sFileName.C_Str(),pResource);
-				m_arrResource.PushBack(pResource);
-				return true;
-			}else{
-				WriteDefaultLog(String("Resource could not get loaded - resource :") + sFileName);
-				return false;
-			}
-		}else{
-			//Error in ResourceFile::GetResource()
-			if(pErrorMessage){
-				WriteDefaultLog(String("Error during resource caching - resource :") + sFileName);
-				WriteDefaultLog(pErrorMessage);
-			}else{
-				WriteDefaultLog(String("Error during resource caching - but no error message was set - resource :") + sFileName);
-			}
-
-			K15_DELETE[] pErrorMessage;
-			return false;
+	bool cachedResource = false;
+	ResourceData resourceData = {0};
+	ResourceFileBase* resourceFile = 0;
+	//we need to load the resource from one of the resource files.
+	for(ResourceFileList::iterator iter = m_ResoureFiles.begin();iter != m_ResourceFiles.end();++iter)
+	{
+		resourceFile = (*iter);
+		//try to open the resource file
+		if(!resourceFile->isOpen())
+		{
+			//log error and load debug resoure
+			K15_LogErrorMessage("Could not open resource file " + resourceFile->getResourceFileName());
+			ResourceType::loadDebugResource(resourceData);
 		}
-	}else{
-		WriteDefaultLog(String("Could not load resource file - resource :") + sFileName);
-		return false;
+		else
+		{
+			if(!resourceFile->hasResource(p_ResourceName) || !resourceFile->getResource(p_ResourceName,resourceData))
+			{
+				//oh oh...that didn't go so well. Log Error and try to load the debug resource from that resource type.
+				String logMessage = "Could not load asset:";
+				logMessage += p_ResourceName.getString();
+
+				K15_LogErrorMessage(logMessage);
+
+				ResourceType::loadDebugResource(resourceData);
+			}
+		}
+
+		//check if actual data has been written
+		if(resourceData.Data)
+		{
+			//load Resource using resource data from the resource file
+			ResourceType* resource = K15_NEW ResourceType(p_ResourceName);
+			if((cachedResource = resource->load(resourceData)) == true)
+			{
+				m_ResourceDataChache.insert(K15_Pair(ResourceName,ResourceBase*)(p_ResourceName,resource));
+			}
+		}
+
+		//close the file after we're finished
+		resourceFile->close();
+
+		if(cachedResource)
+		{
+			break;
+		}
 	}
+
+	return cachedResource;
 }
 
-template<class T>
-ResourceHandlePtr ResourceManager::GetResource(String &sFileName,Resource::ResourcePriority rpPriority)
+template<class ResourceType>
+ResourceHandle<ResourceType> ResourceManager::getResource(const ResourceName& p_ResourceName,Enum p_Priority)
 {
-	HashItem<const char*,Resource*> *pItem = m_hmResources.Get(sFileName.C_Str());
+	ResourceCache::iterator iter = m_ResourceDataCache.find(p_ResourceName);
+	ResourceHandle<ResourceType> handle(K15_INVALID_RESOURCE_ID);
 
-	if(!pItem){
-		if(CacheResource<T>(sFileName,rpPriority)){
-			pItem = m_hmResources.Get(sFileName.C_Str());
-		}else{
-			return NULL;
+	if(iter == m_ResourceDataCache.end())
+	{
+		if(!cacheResource<ResourceType>(p_FileName,p_Priority))
+		{
+			//resource could not get loaded.
+			K15_LogErrorMessage(String("Could not load resource. name:") + p_ResourceName.getString());
+			K15_LogErrorMessage(String("Last Error:") + Application::getInstance()->getLastError());
+		}
+		else
+		{
+			iter = m_ResourceDataCache.find(p_ResourceName);
+
+			m_Resources.push_back(resource);
+			handle.setResourceID(m_Resource.size() - 1);
 		}
 	}
 
-	Resource *pResource = pItem->GetValue();
-	ResourceHandlePtr pResourceHandle(K15_NEW ResourceHandle(pResource));
+	return handle;
+}
 
-	return pResourceHandle;
+const ResourceManager::ResourceFileList& ResourceManager::getResourceFileList()
+{
+	return m_ResoureFiles;
+}
+
+const ResourceManager::ResourceList& ResourceManager::getLoadedResources()
+{
+	return m_Resources;
+}
+
+ResourceBase* ResourceManager::getResourceByID(ResourceID p_ResourceID)
+{
+	if(p_ResourceID > m_Resources.size())
+	{
+		return 0;
+	}
+
+	return m_Resources[p_ResourceID];
 }

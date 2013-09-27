@@ -48,13 +48,13 @@ String::String(const String& sString,unsigned int iReallocationSize)
 
 String::String(String&& sString)
 {
-	if(sString.m_pStr != NULL){
+	if(sString.m_pStr != 0){
 		this->m_pStr = sString.m_pStr;
 		this->m_iSizeStr = sString.m_iSizeStr;
 		this->m_iCapacity = sString.m_iCapacity;
 		this->m_iReallocationSize = sString.m_iReallocationSize;
 
-		sString.m_pStr = NULL;
+		sString.m_pStr = 0;
 	}else{
 		_InitString(32,32);
 	}
@@ -62,7 +62,7 @@ String::String(String&& sString)
 
 String::~String()
 {
-	if(m_pStr != NULL){
+	if(m_pStr != 0){
 		K15_DELETE[] m_pStr;
 	}
 }
@@ -125,7 +125,7 @@ String String::SubString( unsigned int iStartPos,unsigned int iEndPos )
 {
 	assert(iStartPos < m_iSizeStr);
 	
-	U32 iSize = m_iSizeStr - iStartPos;
+	uint32 iSize = m_iSizeStr - iStartPos;
 
 	if(iEndPos != 0xffffff){
 		assert(iEndPos <= m_iSizeStr);
@@ -152,7 +152,7 @@ void String::Clear()
 	m_pStr[0] = '/0';
 }
 
-const String& String::Insert( U32 iPos,const String& sString )
+const String& String::Insert( uint32 iPos,const String& sString )
 {
 	assert(iPos < Size());
 
@@ -182,7 +182,7 @@ const String& String::Insert( U32 iPos,const String& sString )
 	return *this;
 }
 
-const String& String::Replace(U32 iPos,const String& sString)
+const String& String::Replace(uint32 iPos,const String& sString)
 {
 	assert(iPos < Size());
 
@@ -235,14 +235,14 @@ String& String::operator=( const String &sString )
 
 String& String::operator=(String &&sString)
 {
-	if(sString.m_pStr != NULL){
+	if(sString.m_pStr != 0){
 		_DeleteArray();
 
 		this->m_pStr = sString.m_pStr;
 		this->m_iSizeStr = sString.m_iSizeStr;
 		this->m_iReallocationSize = sString.m_iReallocationSize;
 
-		sString.m_pStr = NULL;
+		sString.m_pStr = 0;
 	}
 
 	return *this;
@@ -314,7 +314,7 @@ const String& String::operator+=( const K15_CHAR* sString )
 {
 	assert(sString);
 
-	if(sString != NULL){
+	if(sString != 0){
 		_Append(sString,STR_LEN(sString));
 	}
 
@@ -400,13 +400,13 @@ void String::_DeleteArray()
 {
 	if(m_pStr){
 		K15_DELETE[] m_pStr;
-		m_pStr = NULL;
+		m_pStr = 0;
 	}
 }
 
 void String::_Append( const K15_CHAR* sString,unsigned int iSize )
 {
-	assert(sString != NULL && iSize > 0);
+	assert(sString != 0 && iSize > 0);
 
 	//Has sString a null terminator?
 	bool bNullTerminator = _HasNullTerminator(sString,iSize);

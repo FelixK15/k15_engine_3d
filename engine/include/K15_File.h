@@ -20,16 +20,14 @@
  *
  * 
  */
-#pragma once
-
-#ifndef __K15_FILE__
-#define __K15_FILE__
+#ifndef __K15Engine_System_File_h_
+#define __K15Engine_System_File_h_
 
 #include "K15_StdInclude.h"
 
-namespace K15_EngineV2
-{
-	class K15ENGINE2_API File
+namespace K15_Engine { namespace System { 
+
+	class K15_API_EXPORT File
 	{
 	public:
 		enum OpenMode {
@@ -46,7 +44,7 @@ namespace K15_EngineV2
 		* @param  pFileName path to the file you want to open.
 		* @param  iOpenFlags flags you want to use. (See File::OpenMode - multiple options can be OR'd together)
 		*/
-		File(const char *pFile,U32 iOpenFlags);
+		File(const char *pFile,uint32 iOpenFlags);
 		~File();
 
 		/**
@@ -72,7 +70,7 @@ namespace K15_EngineV2
 		*
 		* @return bool true if data has been read successful and false if not (e.g. file is not open)
 		*/
-		bool Read(U32 iElementSize,U32 iSize,byte *&pBuffer);
+		bool Read(uint32 iElementSize,uint32 iSize,byte *&pBuffer);
 
 		/**
 		* Reads a single line from the file. (moves the internal position)
@@ -106,7 +104,7 @@ namespace K15_EngineV2
 		*
 		* @return bool true if data has been written successful and false if not (e.g. file is not open)
 		*/
-		bool Write(U32 iElementSize,U32 iSize,byte *pBuffer,bool bDeleteBuffer = false);
+		bool Write(uint32 iElementSize,uint32 iSize,byte *pBuffer,bool bDeleteBuffer = false);
 
 		/**
 		* Use this function to check wether or not the file is open.
@@ -130,7 +128,7 @@ namespace K15_EngineV2
 		*
 		* @return bool true if the file could be opened and false if not.
 		*/
-		bool Open(const char *pFileName,U32 iOpenFlags);
+		bool Open(const char *pFileName,uint32 iOpenFlags);
 
 		/**
 		* Check whether a specific file exists or not.
@@ -163,9 +161,9 @@ namespace K15_EngineV2
 	private:
 		FILE *m_pFile;
 		const char *m_pFileName;
-		U32 m_iReferences;
+		uint32 m_iReferences;
 	};
-	#include "..\src\K15_File.inl"
-}
+	#include "K15_File.inl"
+}}
 
-#endif //__K15_FILE__
+#endif //__K15Engine_System_File_h_

@@ -21,7 +21,7 @@ template<class T>
 Stack<T>::Stack()
 {
 	m_iSize = 0;
-	m_pTop = NULL;
+	m_pTop = 0;
 }
 
 template<class T>
@@ -33,7 +33,7 @@ Stack<T>::~Stack()
 template<class T>
 void Stack<T>::Push(const T& tElement)
 {
-	StackItem<T> *pNewItem = NULL;
+	StackItem<T> *pNewItem = 0;
 
 	pNewItem = K15_NEW StackItem<T>();
 	pNewItem->m_pObjectPointer = K15_NEW T(tElement);
@@ -58,7 +58,7 @@ void Stack<T>::Pop()
 template<class T>
 void Stack<T>::Clear()
 {
-	for(U32 i = 0;i < m_iSize;Pop());
+	for(uint32 i = 0;i < m_iSize;Pop());
 	m_iSize = 0;
 }
 
@@ -69,7 +69,7 @@ T& Stack<T>::Top()
 }
 
 template<class T>
-U32 Stack<T>::Size() const
+uint32 Stack<T>::Size() const
 {
 	return m_iSize;
 }

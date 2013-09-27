@@ -17,46 +17,46 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-template<class T,U8 N>
+template<class T,uint8 N>
 NTree<T,N>::NTree()
 {
-	m_pRoot = NULL;
+	m_pRoot = 0;
 	m_iSize = 0;
 }
 
-template<class T,U8 N>
+template<class T,uint8 N>
 NTree<T,N>::~NTree()
 {
 	Clear();
 }
 
-template<class T,U8 N>
+template<class T,uint8 N>
 NTreeNode<T,N> *NTree<T,N>::GetRoot() const
 {
 	return m_pRoot;
 }
 
-template<class T,U8 N>
+template<class T,uint8 N>
 bool NTree<T,N>::IsRoot(NTreeNode<T,N> *pNode) const
 {
 	return pNode == m_pRoot;
 }
 
-template<class T,U8 N>
-U32 NTree<T,N>::Size() const
+template<class T,uint8 N>
+uint32 NTree<T,N>::Size() const
 {
 	return m_iSize;
 }
 
-template<class T,U8 N>
+template<class T,uint8 N>
 bool NTree<T,N>::IsLeaf(NTreeNode<T,N> *pNode) const
 {
 	bool bResult = true;
 
 	if(m_pRoot){
 		if(!IsRoot(pNode)){
-			for(U8 i = 0;i < N;++i){
-				if(pNode->Children[i] != NULL){
+			for(uint8 i = 0;i < N;++i){
+				if(pNode->Children[i] != 0){
 					bResult = false;
 					break;
 				}
@@ -67,7 +67,7 @@ bool NTree<T,N>::IsLeaf(NTreeNode<T,N> *pNode) const
 	return bResult;
 }
 
-template<class T,U8 N>
+template<class T,uint8 N>
 bool NTree<T,N>::Insert(const T& tValue,NTreeNode<T,N> *pParent)
 {
 	if(!pParent){
@@ -89,21 +89,21 @@ bool NTree<T,N>::Insert(const T& tValue,NTreeNode<T,N> *pParent)
 	return true;
 }
 
-template<class T,U8 N>
+template<class T,uint8 N>
 void NTree<T,N>::Remove(NTreeNode<T,N> *pNode)
 {
 	_ClearNode(pNode);
 }
 
-template<class T,U8 N>
+template<class T,uint8 N>
 void NTree<T,N>::Clear()
 {
 	_ClearNode(m_pRoot);
-	m_pRoot = NULL;
+	m_pRoot = 0;
 	m_iSize = 0;
 }
 
-template<class T,U8 N>
+template<class T,uint8 N>
 NTreeNode<T,N> *NTree<T,N>::_CreateNode(const T& tValue,NTreeNode<T,N> *pParent)
 {
 	NTreeNode<T,N> *pNewNode = K15_NEW NTreeNode<T,N>();
@@ -115,21 +115,21 @@ NTreeNode<T,N> *NTree<T,N>::_CreateNode(const T& tValue,NTreeNode<T,N> *pParent)
 		pParent->Children[pParent->AmountChildren++] = pNewNode;
 	}
 
-	for(U8 i = 0;i < N;++i){
-		pNewNode->Children[i] = NULL;
+	for(uint8 i = 0;i < N;++i){
+		pNewNode->Children[i] = 0;
 	}
 
 	return pNewNode;
 }
 
-template<class T,U8 N>
+template<class T,uint8 N>
 void NTree<T,N>::_ClearNode(NTreeNode<T,N> *pNode)
 {
-	if(pNode == NULL){
+	if(pNode == 0){
 		return;
 	}
 
-	for(U8 i = 0;i < pNode->AmountChildren;++i){
+	for(uint8 i = 0;i < pNode->AmountChildren;++i){
 		_ClearNode(pNode->Children[i]);
 	}
 

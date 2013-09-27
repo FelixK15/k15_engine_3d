@@ -20,20 +20,18 @@
  *
  * 
  */
-#pragma once
+#ifndef _K15Engine_System_Singleton_h_
+#define _K15Engine_System_Singleton_h_
 
-#ifndef __K15_SINGLETON__
-#define __K15_SINGLETON__
+namespace K15_Engine { namespace System { 
 
-namespace K15_EngineV2
-{
 	template<class T>
 	class Singleton
 	{
 	public:
-		static T* GetInstance()
+		static T* getInstance()
 		{
-			if(m_pInstance == NULL){
+			if(m_pInstance == 0){
 				m_pInstance = ::new T();
 			}
 
@@ -49,8 +47,8 @@ namespace K15_EngineV2
 			m_pInstance = (T*)this;
 		}
 	};
-}
+}} //end of K15_Engine::System namespace
 
-template<class T> T* K15_EngineV2::Singleton<T>::m_pInstance = NULL;
+template<class T> T* K15_Engine::System::Singleton<T>::m_pInstance = 0;
 
-#endif //__K15_SINGLETON__
+#endif //_K15Engine_System_Singleton_h_

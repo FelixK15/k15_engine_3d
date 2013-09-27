@@ -20,34 +20,36 @@
  *
  * 
  */
-#pragma once
+#ifndef _K15Engine_System_ResourceHandle_h_
+#define _K15Engine_System_ResourceHandle_h_
 
-#ifndef __K15_RESOURCEHANDLE__
-#define __K15_RESOURCEHANDLE__
+#include "K15_Prerequisites.h"
 
-#include "K15_StdInclude.h"
-#include "K15_Object.h"
+namespace K15_Engine { namespace System { 
 
-namespace K15_EngineV2
-{
-	class Resource;
-
-	class K15ENGINE2_API ResourceHandle : public Object
+	template<class ResourceType>
+	class K15_API_EXPORT ResourceHandle
 	{
 	public:
-		ResourceHandle(Resource *pResource);
-		ResourceHandle(const ResourceHandle &rsHandle);
+		ResourceHandle();
+		ResourceHandle(ResourceID p_ResourceID);
+		ResourceHandle(const ResourceHandle<ResourceType> &rsHandle);
 		~ResourceHandle();
 
-		const ResourceHandle &operator=(const ResourceHandle &rsHandle);
+		void setResourceID(ResourceID p_ResourceID);
+		const ResourceID getResourceID() const;
 
-		operator Resource*() const;
+		const ResourceHandle<ResourceType> &operator=(const ResourceHandle<ResourceType> &rsHandle);
+
+		operator ResourceType*() const;
 
 	private:
-		Resource *m_pResource;
+		ResourceType* getResource() const;
+
+	private:
+		ResourceID m_ResourceID;
 	};
+#include "K15_ResourceHandle.inl"
+}} //end of K15_Engine::System namespace
 
-	typedef Pointer<ResourceHandle> ResourceHandlePtr;
-}
-
-#endif //__K15_RESOURCEHANDLE__
+#endif //_K15Engine_System_ResourceHandle_h_

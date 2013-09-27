@@ -18,58 +18,58 @@
  */
 
 #include "K15_LogManager.h"
+#include "K15_LogBase.h"
 
-using namespace K15_EngineV2;
+namespace K15_Engine { namespace System { 
 
-LogManager::LogManager()
-	: m_pDefaultLog(NULL)
-{
-	
-}
+	LogManager::LogManager()
+		: m_DefaultLog(0),
+		m_Logs()
+	{
 
-LogManager::~LogManager()
-{
+	}
 
-}
+	LogManager::~LogManager()
+	{
+		for(LogList::iterator iter = m_Logs.begin();iter != m_Logs.end();++iter)
+		{
+			K15_DELETE (*iter);
+		}
 
-void LogManager::Shutdown()
-{
-	HashItem<String,Log*> *pItem = NULL;
-	for(U32 i = 0;i < m_hmLogs.BucketSize();++i){
-		for(pItem = m_hmLogs.GetBucketItem(i);pItem;pItem = pItem->GetNext()){
-			K15_DELETE pItem->GetValue();
+		m_Logs.clear();
+	}
+
+	void LogManager::addLog(LogBase* p_Log, bool p_DefaultLog)
+	{
+		if(p_Log)
+		{
+			if(p_DefaultLog)
+			{
+				setDefaultLog(p_Log);
+			}
+
+			m_Logs.push_back(p_Log);
 		}
 	}
-	m_pDefaultLog = NULL;
-	m_hmLogs.Clear();
-}
 
-Log *LogManager::CreateLog( const String &sLogName,bool bDefaultLog,bool bDebugLog,bool bFileLog )
-{
-	Log *pLog = K15_NEW Log(sLogName,bDebugLog,bFileLog);
-	
-	if(bDefaultLog){
-		SetDefaultLog(pLog);
+	void LogManager::logMessage(const String& p_LogMessage, bool p_DefaultLogOnly = false, 
+		eLogPriorityFlags p_PriorityFlag = LP_INVALID)
+	{
+		if(p_DefaultLogOnly)
+		{
+			if(m_DefaultLog){
+				m_DefaultLog->logMessage(p_LogMessage,(Enum)p_PriorityFlag);
+			}
+		}
+		else
+		{
+			for(LogList::iterator iter = m_Logs.begin();iter != m_Logs.end();++iter)
+			{
+				if((*iter)->getLoggingTypeMask() & p_PriorityFlag)
+				{
+					(*iter)->logMessage(p_LogMessage,(Enum)p_PriorityFlag);
+				}
+			}
+		}
 	}
-
-	m_hmLogs.Insert(sLogName,pLog);
-
-	return pLog;
-}
-
-Log *LogManager::GetDefaultLog()
-{
-	return m_pDefaultLog;
-}
-
-void LogManager::SetDefaultLog( Log *pLog )
-{
-	m_pDefaultLog = pLog;
-}
-
-void LogManager::LogMessage( const String &sLogMessage )
-{
-	if(m_pDefaultLog){
-		m_pDefaultLog->LogMessage(sLogMessage);
-	}
-}
+}}// end of K15_Engine::System namespace

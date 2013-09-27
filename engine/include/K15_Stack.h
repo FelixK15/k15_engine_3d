@@ -43,11 +43,11 @@ namespace K15_EngineV2
 
 		T& Top();
 
-		U32 Size() const;
+		uint32 Size() const;
 
 	private:
 		StackItem<T> *m_pTop;
-		U32 m_iSize;
+		uint32 m_iSize;
 	};
 
 	#include "../src/K15_Stack.inl"

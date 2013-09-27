@@ -1,8 +1,8 @@
 /**
- * @file K15_ProfileManager.h
- * @author  Felix Klinge <f.klinge15@gmail.com>
+ * @file K15_ResourceData.h
+ * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/07/10
+ * @date 2012/10/20
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,31 +21,20 @@
  * 
  */
 
-#pragma once
+#ifndef _K15Engine_System_ResourceData_h_
+#define _K15Engine_System_ResourceData_h_
 
-#ifndef __K15_PROFILEMANAGER__
-#define __K15_PROFILEMANAGER__
+#include "K15_Prerequisites.h"
 
-#include "K15_StdInclude.h"
-#include "K15_Singleton.h"
+namespace K15_Engine { namespace System { 
 
-#include "K15_ProfileNode.h"
-#include "K15_NTree.h"
-
-#define g_pProfileManager K15_EngineV2::ProfileManager::GetInstance()
-
-namespace K15_EngineV2
-{
-	class ProfileManager : public Singleton<ProfileManager>
+	class K15_API_EXPORT ResourceData
 	{
 	public:
-		ProfileManager();
-		~ProfileManager();
-
-		void AddProfileNode(const char *pName,double dTimeExecuted);
-	private:
-		NTree<ProfileNode,20> m_trProfileTree;
+		byte* Data;
+		uint32 DataSize;
 	};
-}
 
-#endif //__K15_PROFILEMANAGER__
+}}//end of K15_Engine::System namespace
+
+#endif

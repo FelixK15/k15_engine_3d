@@ -20,24 +20,34 @@
  *
  * 
  */
-#pragma once
 
-#ifndef __K15_PROFILE_NODE__
-#define __K15_PROFILE_NODE__
+#ifndef _K15Engine_System_ProfileNode_h_
+#define _K15Engine_System_ProfileNode_h_
 
-#include "K15_StdInclude.h"
+#include "K15_Prerequisites.h"
 
-namespace K15_EngineV2
-{
-	class ProfileNode
+namespace K15_Engine { namespace System { 
+
+	class ProfilingNode
 	{
 	public:
-		ProfileNode(const char *pName);
-		~ProfileNode();
+		typedef K15_List(ProfilingNode*) ProfilingNodeList;
 
-		const char *Name;
-		double Time;
+	public:
+		ProfilingNode(const ProfilingName& p_Name,Enum p_AppendMode);
+		~ProfilingNode();
+
+		ProfilingName m_Name;
+
+		ProfilingNode* m_Parent;
+		ProfilingNodeList m_Children;
+
+		double m_Time;
+		double m_EndTime;
+		double m_StartTime;
+
+		Enum m_AppendMode;
 	};
-}
+}} //end of K15_Engine::System namespace
 
-#endif //__K15_NTREENODE__
+#endif //_K15Engine_System_ProfileNode_h_

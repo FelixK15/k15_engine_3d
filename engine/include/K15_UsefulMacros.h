@@ -32,20 +32,9 @@
 
 #define HAS_FLAG(flag,var) (flag & var) == flag
 
-#define K15ENGINE2_API
-
-#ifdef _WIN32
-#undef K15ENGINE2_API
-#ifdef _K15BUILD
-#define K15ENGINE2_API __declspec(dllexport)
-#else
-#define K15ENGINE2_API __declspec(dllimport)
-#endif
-#endif
-
 #ifdef _REAL_NULL_PTR
 #undef NULL
-#define NULL nullptr
+#define 0 nullptr
 #endif
 
 #define GIGABYTE 1073741824

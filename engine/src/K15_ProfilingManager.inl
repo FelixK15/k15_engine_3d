@@ -1,5 +1,5 @@
 /**
- * @file K15_ProfileNode.h
+ * @file K15_ProfileManager.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2012/07/10
@@ -15,22 +15,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
- *
- * @section DESCRIPTION
- *
- * 
  */
-#include "K15_ProfileNode.h"
-#include "K15_ProfileManager.h"
 
-using namespace K15_EngineV2;
-
-ProfileNode::ProfileNode(const char *pName)
+ProfilingNode* ProfilingManager::getRootNode()
 {
-	Name = pName;
-}
-
-ProfileNode::~ProfileNode()
-{
-	g_pProfileManager->AddProfileNode(Name,Time);
+	return m_Root;
 }

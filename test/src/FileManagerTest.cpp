@@ -43,7 +43,7 @@ SUITE(FileManagerTest)
 	{
 		class FileWatchListener : public EventListener
 		{
-			virtual void HandleEvent(const Event &evGameEvent)
+			virtual void HandleEvent(const GameEvent &evGameEvent)
 			{
 				String sFileName = (const char*)evGameEvent.GetArgument();
 				if(evGameEvent.GetType() == EventTypes::FileCreated){

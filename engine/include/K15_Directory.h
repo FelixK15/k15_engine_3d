@@ -31,7 +31,7 @@
 
 namespace K15_EngineV2
 {
-	class K15ENGINE2_API Directory
+	class K15_API_EXPORT Directory
 	{
 	public:
 		static bool GetFileList(const char *pDirectory,List<String> &lFilesOut,bool bRecursive = true,const char *pFilter = "*.*");

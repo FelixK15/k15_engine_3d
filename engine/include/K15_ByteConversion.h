@@ -27,7 +27,7 @@
 
 #include "K15_UsefulMacros.h"
 
-class K15ENGINE2_API ByteConversion
+class K15_API_EXPORT ByteConversion
 {
 	template <typename T>
 	static T ByteToKilobyte(T byte);

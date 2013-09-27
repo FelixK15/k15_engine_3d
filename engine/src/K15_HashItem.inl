@@ -20,7 +20,7 @@
 template<class TKEY,class TVALUE>
 HashItem<TKEY,TVALUE>::HashItem()
 {
-	this->m_pNext = NULL;
+	this->m_pNext = 0;
 }
 
 template<class TKEY,class TVALUE>

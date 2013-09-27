@@ -19,56 +19,34 @@
 
 #include "K15_Object.h"
 
-using namespace K15_EngineV2;
+namespace K15_Engine { namespace System { 
 
-Rtti Object::TYPE = Rtti("K15_EngineV2.Object",NULL);
-ObjectID Object::ms_iNextID = 0;
+	IMPLEMENT_RTTI(System,Object);
 
-//HashMap<U32,Object*> Object::ms_hmObjectsInUse;
-//HashMap<String,FactoryFunction> Object::ms_hmFactoryFunctions;
+	Object::Object()
+		: m_References(0),
+		  m_Name(TypeName::BLANK)
+	{
 
-Object::Object()
-{
-	_SetID();
-	_RegisterObject();
-}
+	}
 
-Object::~Object()
-{
-	_UnregisterObject();
-}
+	Object::Object( const String& p_Name )
+		: m_References(0),
+		  m_Name(p_Name.c_str())
+	{
 
-Object *Object::GetObjectByName(const String &sName)
-{
-	Object *pDesiredObject = NULL;
-	
-// 	for(U32 i = 0;i < ms_hmObjectsInUse.BucketSize();++i){
-// 		HashItem<ObjectID,Object*> *pCurrentItem = ms_hmObjectsInUse.GetBucketItem(i);
-// 		while(pCurrentItem){
-// 			Object *pCurrentObject = pCurrentItem->GetValue();
-// 			if(pCurrentObject->GetName() == sName){
-// 				pDesiredObject = pCurrentObject;
-// 				break;
-// 			}
-// 
-// 			pCurrentItem = pCurrentItem->GetNext();
-// 		}
-// 	}
+	}
 
-	return pDesiredObject;
-}
+	Object::Object( const TypeName& p_Name )
+		: m_References(0),
+		  m_Name(p_Name)
+	{
 
-void Object::GetObjectsByName(const String &sName,DynamicArray<Object*> &arrObjectsOut)
-{
-// 	for(U32 i = 0;i < ms_hmObjectsInUse.BucketSize();++i){
-// 		HashItem<ObjectID,Object*> *pCurrentItem = ms_hmObjectsInUse.GetBucketItem(i);
-// 		while(pCurrentItem){
-// 			Object *pCurrentObject = pCurrentItem->GetValue();
-// 			if(pCurrentObject->GetName() == sName){
-// 				arrObjectsOut.PushBack(pCurrentObject);
-// 			}
-// 
-// 			pCurrentItem = pCurrentItem->GetNext();
-// 		}
-// 	}
-}
+	}
+
+	Object::~Object()
+	{
+
+	}
+
+}}// end of K15_Engine::System namespace

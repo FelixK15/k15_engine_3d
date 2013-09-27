@@ -37,7 +37,7 @@ inline U32 Texture2D::GetAmountMipMaps() const
 	return m_pTexture2DImpl->GetAmountMipMaps();
 }
 
-inline bool Texture2D::Load(byte *pBuffer,U32 iSize,const String &sExtension)
+inline bool Texture2D::load(byte *pBuffer,U32 iSize,const String &sExtension)
 {
 	return m_pTexture2DImpl->Load(pBuffer,iSize,sExtension);
 }

@@ -21,8 +21,8 @@
 
 using namespace K15_EngineV2;
 
-File::File(const char *pFile,U32 iOpenFlags)
-	: m_pFile(NULL),
+File::File(const char *pFile,uint32 iOpenFlags)
+	: m_pFile(0),
 	  m_pFileName(pFile)
 {
 	Open(pFile,iOpenFlags);
@@ -35,22 +35,22 @@ File::~File()
 	}
 }
 
-bool File::Read( U32 iElementSize,U32 iSize,byte *&pBuffer )
+bool File::Read( uint32 iElementSize,uint32 iSize,byte *&pBuffer )
 {
 	if(!IsOpen()){
-		WriteDefaultLog(String("Could not read from file because it is closed. Filename: ") + m_pFileName);
+		K15_LogNormalMessage(String("Could not read from file because it is closed. Filename: ") + m_pFileName);
 		return false;
 	}
 
 	pBuffer = K15_NEW byte[iElementSize * iSize];
 
-	U32 iReturn = fread(pBuffer,iElementSize,iSize,m_pFile);
+	uint32 iReturn = fread(pBuffer,iElementSize,iSize,m_pFile);
 
 	if(iReturn != iSize){
-		WriteDefaultLog(String("Could not read all elements. Filename: ") + m_pFileName);
+		K15_LogNormalMessage(String("Could not read all elements. Filename: ") + m_pFileName);
 		
 		if(feof(m_pFile) != 0){
-			WriteDefaultLog(String("Attempt to read past end of file. Filename: ") + m_pFileName);
+			K15_LogNormalMessage(String("Attempt to read past end of file. Filename: ") + m_pFileName);
 		}
 	}
 	
@@ -61,7 +61,7 @@ bool File::Read( U32 iElementSize,U32 iSize,byte *&pBuffer )
 bool File::ReadLine( byte *&pBuffer )
 {
 	if(!IsOpen()){
-		WriteDefaultLog(String("Could not read from file because it is closed. Filename: ") + m_pFileName);
+		K15_LogNormalMessage(String("Could not read from file because it is closed. Filename: ") + m_pFileName);
 		return false;
 	}
 
@@ -72,12 +72,12 @@ bool File::ReadLine( byte *&pBuffer )
 	return true;
 }
 
-bool File::Write( U32 iElementSize,U32 iSize,byte *pBuffer,bool bDeleteBuffer)
+bool File::Write( uint32 iElementSize,uint32 iSize,byte *pBuffer,bool bDeleteBuffer)
 {
 	assert(pBuffer);
 	
 	if(!IsOpen()){
-		WriteDefaultLog(String("Could not write to file because it is closed. Filename: ") + m_pFileName);
+		K15_LogNormalMessage(String("Could not write to file because it is closed. Filename: ") + m_pFileName);
 		return false;
 	}
 
@@ -95,11 +95,11 @@ void File::Close()
 {
 	if(m_pFile){
 		fclose(m_pFile);
-		m_pFile = NULL;
+		m_pFile = 0;
 	}
 }
 
-bool File::Open( const char *pFileName,U32 iOpenFlags )
+bool File::Open( const char *pFileName,uint32 iOpenFlags )
 {
 	if(m_pFile){
 		Close();
@@ -131,23 +131,23 @@ bool File::Open( const char *pFileName,U32 iOpenFlags )
 		sMode += 'b';
 	}
 
-	WriteDefaultLog(String("Trying to open file. Filename: ") + pFileName);
+	K15_LogNormalMessage(String("Trying to open file. Filename: ") + pFileName);
 
 	m_pFile = fopen(pFileName,sMode.C_Str());
 
 	if(!m_pFile){
-		WriteDefaultLog(String("Could not open file. Filename: ") + m_pFileName);
-		WriteDefaultLog(strerror(errno));
+		K15_LogNormalMessage(String("Could not open file. Filename: ") + m_pFileName);
+		K15_LogNormalMessage(strerror(errno));
 		return false;
 	}
 	
-	return m_pFile != NULL;
+	return m_pFile != 0;
 }
 
 bool File::Exists( const char *pFileName )
 {
 	FILE *pTemporary = fopen(pFileName,"r+");
-	bool bReturn = pTemporary != NULL;
+	bool bReturn = pTemporary != 0;
 
 	if(pTemporary){
 		fclose(pTemporary);
@@ -161,8 +161,8 @@ bool File::Erase( const char *pFileName )
 	bool bReturn = remove(pFileName) == 0;
 	
 	if(!bReturn){
-		WriteDefaultLog(String("Could not delete file. Filename: ") + pFileName);
-		WriteDefaultLog(strerror(errno));
+		K15_LogNormalMessage(String("Could not delete file. Filename: ") + pFileName);
+		K15_LogNormalMessage(strerror(errno));
 	}
 
 	return bReturn;
@@ -173,8 +173,8 @@ bool File::Rename( const char *pFileName,const char *pNewFileName )
 	bool bReturn = rename(pFileName,pNewFileName) == 0;
 
 	if(!bReturn){
-		WriteDefaultLog(String("Could not rename file. Filename: ") + pFileName);
-		WriteDefaultLog(strerror(errno));
+		K15_LogNormalMessage(String("Could not rename file. Filename: ") + pFileName);
+		K15_LogNormalMessage(strerror(errno));
 	}
 
 	return bReturn;

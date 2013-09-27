@@ -20,14 +20,14 @@
 template<class T>
 Pointer<T>::Pointer()
 {
-	m_pObject = NULL;
+	m_pObject = 0;
 }
 
 template<class T>
 Pointer<T>::Pointer(T *pObject)
 {
 	m_pObject = pObject;
-	if(pObject != NULL){
+	if(pObject != 0){
 		pObject->IncreaseReferences();
 	}
 }
@@ -57,6 +57,10 @@ const Pointer<T> &Pointer<T>::operator=(T* pObject)
 	if(pObject != m_pObject){
 		if(m_pObject){
 			m_pObject->DecreaseReferences();
+			if(m_pObject->GetReferenceCount() == 0)
+			{
+				K15_SAFE_DELETE(m_pObject);
+			}
 		}
 		m_pObject = pObject;
 		if(pObject){
@@ -112,7 +116,15 @@ bool Pointer<T>::operator!=(const Pointer<T> &pPointer)
 template<class T>
 void Pointer<T>::_GetAndIncreasePointer(const Pointer<T> &pPointer)
 {
-	if(pPointer.m_pObject != NULL){
+	if(m_pObject != 0)
+	{
+		m_pObject->DecreaseReference();
+		if(m_pObject->GetReferenceCount() == 0)
+		{
+			K15_SAFE_DELETE(m_pObject);
+		}
+	}
+	if(pPointer.m_pObject != 0){
 		m_pObject = pPointer.m_pObject;
 		m_pObject->IncreaseReferences();
 	}

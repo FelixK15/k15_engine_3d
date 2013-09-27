@@ -20,24 +20,24 @@
  *
  * 
  */
-#pragma once
+#ifndef _K15Engine_System_DynamicLibraryManager_h_
+#define _K15Engine_System_DynamicLibraryManager_h_
 
-#ifndef __K15_DYNAMIC_LIBRARY_MANAGER__
-#define __K15_DYNAMIC_LIBRARY_MANAGER__
-
-#include "K15_StdInclude.h"
+#include "K15_Prerequisites.h"
+#include "K15_DynamicLibraryBase.h"
+#include "K15_AllocatedObject.h"
 #include "K15_Singleton.h"
-#include "K15_DynamicArray.h"
-#include "K15_DynamicLibrary.h"
+#include "K15_Application.h"
 
-#define g_pDynamicLibraryManager K15_EngineV2::DynamicLibraryManager::GetInstance()
+namespace K15_Engine { namespace System {
 
-namespace K15_EngineV2
-{
-	class DynamicLibrary;
-
-	class K15ENGINE2_API DynamicLibraryManager : public Singleton<DynamicLibraryManager>
+	class DynamicLibraryManager : public ApplicationAllocatedObject,
+								  public Singleton<DynamicLibraryManager>,
+								  public StackAllocator
 	{
+	public:
+		typedef K15_HashMap(String,DynamicLibraryBase*) DynamicLibraryMap;
+
 	public:
 		DynamicLibraryManager();
 		virtual ~DynamicLibraryManager();
@@ -49,7 +49,7 @@ namespace K15_EngineV2
 		*
 		* @return DynamicLibrary - returns a pointer to a DynamicLibrary file if the library could get loaded without problems. returns NULL if problems occured.
 		*/
-		DynamicLibrary *Load(const String &pFileName);
+		DynamicLibraryBase* load(const String& p_FileName);
 		/**
 		* Tries to unload a previously loaded library.
 		*
@@ -58,11 +58,11 @@ namespace K15_EngineV2
 		* @return bool - returns true if the library could be unloaded successfully, false if not.
 		* @note Memory will be cleared internally. You don't need to free the memory of the DynamicLibrary yourself.
 		*/
-		bool Unload(DynamicLibrary *pDynLib);
+		bool unload(DynamicLibraryBase* p_Lib);
 
 	private:
-		DynamicArray<DynamicLibrary*> m_arrDynLibs;
+		DynamicLibraryMap m_LoadedLibs; //caching dynamic libs doesnt make much sense - reloading would be more sufficient
 	};
-}
+}}//end of K15_Engine::System namespace
 
-#endif //__K15_DYNAMIC_LIBRARY_MANAGER__
+#endif //_K15Engine_System_DynamicLibraryManager_h_
