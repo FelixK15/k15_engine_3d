@@ -48,10 +48,8 @@ namespace K15_Engine { namespace System {
 	public:
 		//allocate memory using malloc
 		PageAllocator();
-
-		//allocate memory from another allocator
-		template<class Allocator> PageAllocator(Allocator* p_Allocator);
-
+    //allocate memory from another allocator
+    PageAllocator(Allocator* p_Allocator,size_t p_Size);
 		//use pre-allocated memory
 		PageAllocator(byte* p_Memory);
 
@@ -68,12 +66,8 @@ namespace K15_Engine { namespace System {
 		static const uint32 PageCount;
 
 	private:
-		byte* m_Memory;
 		PageData m_PageData[TotalSize / PageSize];
 		uint32 m_CurrentPageIndex;
-
-		uint32 m_MemorySize;
-		uint32 m_UsedMemory;
 		uint32 m_PageSize;
 	};//end of PageAllocator class
 #include "K15_PageAllocator.inl"

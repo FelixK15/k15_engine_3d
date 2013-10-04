@@ -1,8 +1,8 @@
 /**
- * @file K15_Allocator.inl
- * @author  Felix Klinge <f.klinge@k15games.de>
+ * @file K15_BaseAllocator.inl
+ * @author Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/09/10
+ * @date 2013/09/09
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -16,19 +16,15 @@
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
  */
+
 /*********************************************************************************/
-// template <class Allocator>
-// StackAllocator::StackAllocator<Allocator>(Allocator* pAllocator,uint32 iSize)
-//   : m_pMemory(0),
-//     m_iUsedMemory(0),
-//     m_iMemorySize(0)
-// {
-// #if defined (K15_DEBUG)
-// 	m_pMemory     = pAllocator->allocateDebug(iSize,__FILE__,__LINE__,false,__FUNCTION__);
-// #else
-// 	m_pMemory     = pAllocator->allocate(iSize);
-// #endif //K15_DEBUG
-//   
-//   m_iMemorySize = iSize;
-// }
+void* BaseAllocator::allocate(uint32 p_Size)
+{
+  return alloc(p_Size);
+}
+/*********************************************************************************/
+void BaseAllocator::deallocate(void* p_Pointer)
+{
+  return free(p_Pointer);
+}
 /*********************************************************************************/

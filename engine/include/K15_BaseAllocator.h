@@ -1,8 +1,8 @@
 /**
- * @file K15_StackAllocator.h
+ * @file K15_BaseAllocator.h
  * @author Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/09/10
+ * @date 2013/09/09
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -17,44 +17,44 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @section DESCRIPTION
- * 
+ *
  */
 
-#ifndef _K15Engine_System_StackAllocationPattern_h_
-#define _K15Engine_System_StackAllocationPattern_h_
+#ifndef _K15Engine_System_BaseAllocator_h_
+#define _K15Engine_System_BaseAllocator_h_
 
 #include "K15_Prerequisites.h"
 
 namespace K15_Engine { namespace System {
-
-  class K15_API_EXPORT StackAllocator
+  
+  class K15_API_EXPORT BaseAllocator
   {
   public:
-	  /*********************************************************************************/
-	  static const TypeName Type;
-	  /*********************************************************************************/
-  public:
-	//allocate memory from another allocator
-/*    template<class Allocator> StackAllocator(Allocator* p_Allocator,uint32 p_Size);*/
-    
-	//allocate memory using malloc
-    StackAllocator(uint32 p_Size);
-
-	//use pre-allocated memory
-    StackAllocator(byte* p_Memory,uint32 p_Size);
+    BaseAllocator();
+    BaseAllocator(uint32 p_Size);
+    BaseAllocator(BaseAllocator* p_Allocator,uint32 p_Size);
+    virtual ~BaseAllocator();
 
     void* allocate(uint32 p_Size);
+#if defined K15_DEBUG
     void* allocateDebug(uint32 p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function);
-
+#endif //K15_DEBUG
     void  deallocate(void* p_Pointer);
+#if defined K15_DEBUG
     void  deallocateDebug(void* p_Pointer,const char* p_File,int p_Line,bool p_Array,const char* p_Function);
-  private:
-    byte* m_Memory;
+#endif //K15_DEBUG
 
+  protected:
+    virtual void* alloc(uint32 p_Size) = 0;
+    virtual void  free(void* p_Pointer) = 0;
+
+  protected:
+    BaseAllocator* m_Allocator;
+    byte* m_Memory;
     uint32 m_MemorySize;
     uint32 m_UsedMemory;
-  };
-#include "K15_StackAllocator.inl"
-}} //end of K15_Engine::System namespace
+  };//end of BaseAllocator class
+#include "K15_BaseAllocator.inl"
+}}//end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_StackAllocationPattern_h_
+#endif //_K15Engine_System_BaseAllocator_h_

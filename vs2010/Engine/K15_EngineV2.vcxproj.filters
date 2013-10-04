@@ -192,6 +192,9 @@
     <ClInclude Include="..\..\engine\include\K15_MemberFunctor.h">
       <Filter>System</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_BaseAllocator.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Object.cpp">
@@ -266,7 +269,12 @@
     <ClCompile Include="..\..\engine\src\K15_TaskManager.cpp">
       <Filter>System</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_Task.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_Task.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_BaseAllocator.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -360,9 +368,16 @@
     <None Include="..\..\engine\src\K15_AllocatedObject.inl">
       <Filter>Memory</Filter>
     </None>
-    <None Include="..\..\engine\src\K15_MemberFunctor.inl" />
-    <None Include="..\..\engine\src\K15_Task.inl" />
-    <None Include="..\..\engine\src\K15_TaskManager.inl" />
+    <None Include="..\..\engine\src\K15_Task.inl">
+      <Filter>System</Filter>
+    </None>
+    <None Include="..\..\engine\src\K15_TaskManager.inl">
+      <Filter>System</Filter>
+    </None>
+    <None Include="..\..\engine\src\K15_MemberFunctor.inl">
+      <Filter>System</Filter>
+    </None>
+    <None Include="..\..\engine\src\K15_BaseAllocator.inl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />

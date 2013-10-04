@@ -106,6 +106,7 @@
     <ClInclude Include="..\..\engine\include\K15_ApplicationModule.h" />
     <ClInclude Include="..\..\engine\include\K15_ApplicationModuleDescription.h" />
     <ClInclude Include="..\..\engine\include\K15_ApplicationParameter.h" />
+    <ClInclude Include="..\..\engine\include\K15_BaseAllocator.h" />
     <ClInclude Include="..\..\engine\include\K15_Directory.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
@@ -197,6 +198,7 @@
     </None>
     <None Include="..\..\engine\src\K15_AllocatedObject.inl" />
     <None Include="..\..\engine\src\K15_Application.inl" />
+    <None Include="..\..\engine\src\K15_BaseAllocator.inl" />
     <None Include="..\..\engine\src\K15_ByteConversion.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
@@ -243,6 +245,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_BaseAllocator.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Directory.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>

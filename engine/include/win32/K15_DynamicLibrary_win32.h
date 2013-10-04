@@ -44,8 +44,7 @@ namespace K15_Engine { namespace System {
 
 	protected:
 		HMODULE m_Module;
-	};
-
+	};// end of DynamicLibrary_Win32 class
 }} //end of K15_Engine::System namespace
 
 #endif //_K15Engine_System_DynamicLibrary_win32_h_
