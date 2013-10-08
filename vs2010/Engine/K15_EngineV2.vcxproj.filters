@@ -78,9 +78,6 @@
     <ClInclude Include="..\..\engine\include\K15_EventManager.h">
       <Filter>Event Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_EventTypes.h">
-      <Filter>Event Manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_HashedString.h">
       <Filter>String</Filter>
     </ClInclude>
@@ -206,9 +203,6 @@
     <ClCompile Include="..\..\engine\src\K15_EventManager.cpp">
       <Filter>Event Manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_EventTypes.cpp">
-      <Filter>Event Manager</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_HashedString.cpp">
       <Filter>String</Filter>
     </ClCompile>
@@ -246,9 +240,6 @@
       <Filter>Logging</Filter>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_ResourceBase.cpp">
-      <Filter>Resource Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_ResourceHandle.inl">
       <Filter>Resource Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_String.cpp">
@@ -378,6 +369,9 @@
       <Filter>System</Filter>
     </None>
     <None Include="..\..\engine\src\K15_BaseAllocator.inl" />
+    <None Include="..\..\engine\src\K15_ResourceHandle.inl">
+      <Filter>Resource Manager</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />

@@ -44,7 +44,7 @@ namespace K15_Engine { namespace System {
 
 	protected:
 		String m_Name;
-		uint32 m_LoggingTypeMask
+		uint32 m_LoggingTypeMask;
 	};
 }} //end of K15_Engine::System namespace
 

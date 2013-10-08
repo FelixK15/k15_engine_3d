@@ -25,7 +25,7 @@
 #define _K15Engine_System_ProfilingManager_h_
 
 #include "K15_Prerequisites.h"
-/*#include "K15_AllocatedObject.h"*/
+#include "K15_AllocatedObject.h"
 #include "K15_ProfilingNode.h"
 #include "K15_Singleton.h"
 
@@ -34,8 +34,7 @@
 
 namespace K15_Engine { namespace System { 
 
- 	class ProfilingManager : public Singleton<ProfilingManager>,
- 							 public ApplicationAllocatedObject
+ 	class ProfilingManager : public Singleton<ProfilingManager>, public ApplicationAllocatedObject
 											
 	{
 	public:

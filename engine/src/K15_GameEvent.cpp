@@ -21,7 +21,7 @@
 
 namespace K15_Engine { namespace System {
 	/*********************************************************************************/
-	GameEvent::ArgumentAllocator GameEvent::ArgAllocator = GameEvent::ArgAllocator<EventManager>(EventManager::getInstance());
+	GameEvent::ArgAllocator GameEvent::ArgumentAllocator = GameEvent::ArgAllocator(EventManagerAllocator);
 	/*********************************************************************************/
 	GameEvent::GameEvent(const EventName& p_Name,void* p_Argument,uint32 p_ArgumentSize)
 		: m_Name(p_Name),
@@ -31,9 +31,9 @@ namespace K15_Engine { namespace System {
 		if(m_ArgumentSize > 0)
 		{
 #		if defined(K15_DEBUG)
-			m_Argument = ArgAllocator.allocateDebug(p_ArgumentSize,__FILE__,__LINE__,false,__FUNCTION__);
+			m_Argument = ArgumentAllocator.allocateDebug(p_ArgumentSize,__FILE__,__LINE__,false,__FUNCTION__);
 #		else
-			m_Argument = ArgAllocator.allocate(p_ArgumentSize);
+			m_Argument = ArgumentAllocator.allocate(p_ArgumentSize);
 #		endif //K15_DEBUG
 
 			memcpy(m_Argument,p_Argument,m_ArgumentSize);
@@ -52,7 +52,11 @@ namespace K15_Engine { namespace System {
 	{
 		if(m_Argument != 0)
 		{
-			ArgAllocator.deallocate(m_Argument);
+#if defined(K15_DEBUG)
+			ArgumentAllocator.deallocate(m_Argument);
+#else
+      ArgumentAllocator.deallocateDebug(m_Argument,__FILE__,__LINE__,false,__FUNCTION__);
+#endif //K15_DEBUG
 		}
 	}
 	/*********************************************************************************/
@@ -64,9 +68,9 @@ namespace K15_Engine { namespace System {
 		if(p_Other.m_Argument)
 		{
 #		if defined(K15_DEBUG)
-			m_Argument = ArgAllocator.allocateDebug(m_ArgumentSize,__FILE__,__LINE__,false,__FUNCTION__);
+			m_Argument = ArgumentAllocator.allocateDebug(m_ArgumentSize,__FILE__,__LINE__,false,__FUNCTION__);
 #		else
-			m_Argument = ArgAllocator.allocate(m_ArgumentSize);
+			m_Argument = ArgumentAllocator.allocate(m_ArgumentSize);
 #		endif //K15_DEBUG
 			memcpy(m_Argument,p_Other.m_Argument,m_ArgumentSize);
 		}

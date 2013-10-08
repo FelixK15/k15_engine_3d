@@ -94,7 +94,7 @@ namespace K15_Engine { namespace System {
 		//We'll set the path to the application as the default game root dir.
 		String appPath = p_Commands[0];
 
-		uint32 pos = String::npos;
+		String::size_type pos = String::npos;
 
 		if((pos = appPath.find_last_of('//')) != String::npos)
 		{

@@ -20,11 +20,10 @@
 #include "K15_ResourceManager.h"
 #include "K15_ResourceFileBase.h"
 
-
 #include "K15_LogManager.h"
 
 namespace K15_Engine { namespace System { 
-
+  /*********************************************************************************/
 	ResourceManager::ResourceManager()
 		: m_Resources(),
 		  m_ResourceDataCache(),
@@ -32,14 +31,14 @@ namespace K15_Engine { namespace System {
 	{
 
 	}
-
+  /*********************************************************************************/
 	ResourceManager::~ResourceManager()
 	{
 		closeOpenResourceFiles();
 		clearResourceCache();
 		clearResources();
 	}
-
+  /*********************************************************************************/
 	void ResourceManager::update(const GameTime &gtTime)
 	{
 		double difference = 0;
@@ -50,19 +49,19 @@ namespace K15_Engine { namespace System {
 		{
 			if(iter->second->getResourceReferences() == 0 && !iter->second->isMarkedAsUnreferenced())
 			{
-				K15_LogNormalMessage(String(iter->second->AssetName) + " is no longer referenced.");
+				K15_LogNormalMessage(String(iter->second->getAssetName().getString()) + " is no longer referenced.");
 				iter->second->setMarkedAsUnreferenced(true);
 			}
 
 			if(iter->second->isMarkedAsUnreferenced())
 			{
-				difference = Application::getInstance()->getTime() - iter->second->getLastUsed();
+				difference = 0.0;//Application::getInstance()->getTime() - iter->second->getLastUsed();
 
 				if(iter->second->getPriority() == ResourceBase::RP_LOW ||
 					(iter->second->getPriority() == ResourceBase::RP_NORMAL && difference > 200.0) ||
 					(iter->second->getPriority() == ResourceBase::RP_HIGH	&& difference > 500.0))
 				{
-					K15_LogNormalMessage("Deleting Asset " + iter->second->getAssetName().getString());
+					K15_LogNormalMessage(String("Deleting Asset ") + iter->second->getAssetName().getString());
 					deleteResource(iter->second);
 
 					m_ResourceDataCache.erase(iter);
@@ -70,7 +69,7 @@ namespace K15_Engine { namespace System {
 			}
 		}
 	}
-
+  /*********************************************************************************/
 	void ResourceManager::addResourceFile( ResourceFileBase* p_ResourceFile )
 	{
 		for(uint32 i = 0;i < m_ResoureFiles.size();++i)
@@ -82,7 +81,7 @@ namespace K15_Engine { namespace System {
 			}
 		}
 	}
-
+  /*********************************************************************************/
 	void ResourceManager::deleteResource( ResourceBase *pResource )
 	{
 		for(ResourceList::iterator iter = m_Resources.begin();iter != m_Resources.end();++iter)
@@ -95,7 +94,7 @@ namespace K15_Engine { namespace System {
 
 		K15_DELETE pResource;	
 	}
-
+  /*********************************************************************************/
 	void ResourceManager::closeOpenResourceFiles()
 	{
 		for(ResourceFileList::iterator iter = m_ResoureFiles.begin();iter != m_ResoureFiles.end();++iter)
@@ -107,7 +106,7 @@ namespace K15_Engine { namespace System {
 			}
 		}
 	}
-
+  /*********************************************************************************/
 	void ResourceManager::clearResourceCache()
 	{
 		for(ResourceCache::iterator iter = m_ResourceDataCache.begin();iter != m_ResourceDataCache.end();++iter)
@@ -117,7 +116,7 @@ namespace K15_Engine { namespace System {
 
 		m_ResourceDataCache.clear();
 	}
-
+  /*********************************************************************************/
 	void ResourceManager::clearResources()
 	{
 		ResourceList toDelete;
@@ -136,5 +135,5 @@ namespace K15_Engine { namespace System {
 
 		m_Resources.clear();
 	}
-
+  /*********************************************************************************/
  }}//end of K15_Engine::System namespace

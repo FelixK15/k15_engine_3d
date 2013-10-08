@@ -16,45 +16,45 @@
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
  */
-
+/*********************************************************************************/
 template<class ResourceType>
-ResourceHandle::ResourceHandle()
+ResourceHandle<ResourceType>::ResourceHandle()
 	: m_ResourceID(K15_INVALID_RESOURCE_ID)
 {
 
 }
-
+/*********************************************************************************/
 template<class ResourceType>
-ResourceHandle::ResourceHandle(ResourceID p_ResourceID)
-	: m_ResourceID(p_ResourceID)
+ResourceHandle<ResourceType>::ResourceHandle(ResourceID p_ResourceID)
+	: m_ResourceID(m_ResourceID)
 {
 	if(m_ResourceID != K15_INVALID_RESOURCE_ID)
 	{
 		getResource()->increseResourceReference();
 	}
 }
-
+/*********************************************************************************/
 template<class ResourceType>
-ResourceHandle::ResourceHandle( const ResourceHandle<ResourceType>& p_Other )
-	: m_ResourceID(p_Other.p_ResourceID)
+ResourceHandle<ResourceType>::ResourceHandle( const ResourceHandle<ResourceType>& p_Other )
+	: m_ResourceID(p_Other.m_ResourceID)
 {
 	if(m_ResourceID != K15_INVALID_RESOURCE_ID)
 	{
 		getResource()->increseResourceReference();
 	}
 }
-
+/*********************************************************************************/
 template<class ResourceType>
-ResourceHandle::~ResourceHandle()
+ResourceHandle<ResourceType>::~ResourceHandle()
 {
 	if(m_ResourceID != K15_INVALID_RESOURCE_ID)
 	{
 		getResource()->decreaseResourceReference();
 	}
 }
-
+/*********************************************************************************/
 template<class ResourceType>
-const ResourceHandle<ResourceType>& ResourceHandle::operator=(const ResourceHandle<ResourceType>& p_Other)
+const ResourceHandle<ResourceType>& ResourceHandle<ResourceType>::operator=(const ResourceHandle<ResourceType>& p_Other)
 {
 	if(m_ResourceID != K15_INVALID_RESOURCE_ID)
 	{
@@ -70,15 +70,16 @@ const ResourceHandle<ResourceType>& ResourceHandle::operator=(const ResourceHand
 
 	return *this;
 }
-
+/*********************************************************************************/
 template<class ResourceType>
-ResourceHandle::operator ResourceType*() const
+ResourceHandle<ResourceType>::operator ResourceType*() const
 {
 	return getResource();
 }
-
+/*********************************************************************************/
 template<class ResourceType>
-ResourceType* ResourceHandle::getResource() const
+ResourceType* ResourceHandle<ResourceType>::getResource() const
 {
 	return (ResourceType)ResourceManager::getInstance()->getResourceByID(m_ResourceID);
 }
+/*********************************************************************************/

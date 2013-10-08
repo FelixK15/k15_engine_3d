@@ -26,7 +26,9 @@
 #include "K15_Prerequisites.h"
 
 namespace K15_Engine { namespace System { 
-
+  /*********************************************************************************/
+  typedef unsigned int ResourceID;
+  /*********************************************************************************/
 	template<class ResourceType>
 	class K15_API_EXPORT ResourceHandle
 	{
@@ -48,8 +50,10 @@ namespace K15_Engine { namespace System {
 
 	private:
 		ResourceID m_ResourceID;
-	};
-#include "K15_ResourceHandle.inl"
+	};// end of ResourceHandle class
+  /*********************************************************************************/
+  #include "K15_ResourceHandle.inl"
+  /*********************************************************************************/
 }} //end of K15_Engine::System namespace
 
 #endif //_K15Engine_System_ResourceHandle_h_

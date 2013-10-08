@@ -24,22 +24,22 @@
 #define _K15Engine_System_PageAllocator_h_
 
 #include "K15_Prerequisites.h"
-#include "K15_MemoryHeader.h"
+#include "K15_BaseAllocator.h"
 
 namespace K15_Engine { namespace System {
 
 	template<uint16 PageSize = 128,uint32 TotalSize = 8192>
-	class PageAllocator
+	class PageAllocator : public BaseAllocator
 	{
 	private:
 		/*********************************************************************************/
 		struct PageData
 		{
-#		if defined (K15_DEBUG)
-			byte Memory[PageSize + sizeof(MemoryHeader)];
-#		else
+// #		if defined (K15_DEBUG)
+// 			byte Memory[PageSize + sizeof(MemoryHeader)];
+// #		else
 			byte Memory[PageSize];
-#		endif //K15_DEBUG
+//#		endif //K15_DEBUG
 			bool Used;
 			uint32 Size;
 		};
@@ -49,15 +49,13 @@ namespace K15_Engine { namespace System {
 		//allocate memory using malloc
 		PageAllocator();
     //allocate memory from another allocator
-    PageAllocator(Allocator* p_Allocator,size_t p_Size);
-		//use pre-allocated memory
-		PageAllocator(byte* p_Memory);
+    PageAllocator(BaseAllocator* p_Allocator);
 
-		void* allocate(uint32 p_Size);
-		void* allocateDebug(uint32 p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function);
+    virtual void clear();
 
-		void  deallocate(void* p_Pointer);
-		void  deallocateDebug(void* p_Pointer,const char* p_File,int p_Line,bool p_Array,const char* p_Function);
+  protected:
+    virtual void* alloc(uint32 p_Size);
+    virtual void free(void* p_Pointer);
 
 	private:
 		void createPages();

@@ -19,18 +19,22 @@
 
 #include "K15_BaseAllocator.h"
 
+#include "K15_MemoryHeader.h"
+
 namespace K15_Engine { namespace System {
   /*********************************************************************************/
   BaseAllocator::BaseAllocator()
-    : m_Memory(0),
-      m_UsedMemory(0),
-      m_MemorySize(0)
+    : m_Allocator(0),
+      m_Memory(0),
+      m_MemorySize(0),
+      m_UsedMemory(0)
   {
 
   }
   /*********************************************************************************/
   BaseAllocator::BaseAllocator(uint32 p_Size)
-    : m_Memory(0),
+    : m_Allocator(0),
+      m_Memory(0),
       m_MemorySize(0),
       m_UsedMemory(0)
   {
@@ -47,6 +51,7 @@ namespace K15_Engine { namespace System {
       m_MemorySize(0),
       m_UsedMemory(0)
   {
+    K15_ASSERT(p_Allocator == 0,"Custom allocator for is NULL.");
 #if defined K15_DEBUG
     m_Memory = (byte*)m_Allocator->allocateDebug(p_Size,__FILE__,__LINE__,false,__FUNCTION__);
 #else
@@ -77,8 +82,9 @@ namespace K15_Engine { namespace System {
   void* BaseAllocator::allocateDebug( uint32 p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function )
   {
     p_Size += sizeof(MemoryHeader);
-
+    K15_ASSERT(p_Size + m_UsedMemory > m_MemorySize,"Cannot satisfy memory request.");
     byte* memory = (byte*)alloc(p_Size);
+    return (void*)memory;
   }
   /*********************************************************************************/
 }}//end of K15_Engine::System

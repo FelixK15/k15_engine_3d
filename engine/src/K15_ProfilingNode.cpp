@@ -35,16 +35,16 @@ namespace K15_Engine { namespace System {
 		  m_Children()
 	{
 		//Todo
-		m_StartTime = Application::getInstance()->getCurrentTime();
+//		m_StartTime = Application::getInstance()->getCurrentTime();
 	}
 
 	ProfilingNode::~ProfilingNode()
 	{
-		m_EndTime = Application::getInstance()->getCurrentTime();
-		m_Time = m_EndTime - m_StartTime;
-
-		//add a reference of this to the profilemanager. the manager will create a copy.
-		ProfilingManager::getInstance()->addProfileNode(*this);
+// 		m_EndTime = Application::getInstance()->getCurrentTime();
+// 		m_Time = m_EndTime - m_StartTime;
+// 
+// 		//add a reference of this to the profilemanager. the manager will create a copy.
+// 		ProfilingManager::getInstance()->addProfileNode(*this);
 	}
 
 }}//end of K15_Engine::System namespace

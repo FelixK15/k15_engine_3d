@@ -18,11 +18,13 @@
  */
 
 #include "K15_EventManager.h"
+#include "K15_EventListener.h"
+#include "K15_GameEvent.h"
 
 namespace K15_Engine { namespace System { 
 	/*********************************************************************************/
 	EventManager::EventManager()
-		: PageAllocator<Application>(Application::getInstance())
+		: PageAllocator(ApplicationAllocator)
 	{
 
 	}
@@ -38,61 +40,73 @@ namespace K15_Engine { namespace System {
 		 * to an EventListener list. If there hasn't been any listeners for this
 		 * EventType, just add a new entry to the map.	
 		 */
-		List<EventListener*> *pList = 0;
+		K15_List(EventListener*) *list = 0;
 
-		if(!m_hmListener.HasItem(etType)){
-			pList = new List<EventListener*>();
-			m_hmListener.Insert(etType,pList);
-		}else{
-			pList = m_hmListener.Get(etType)->GetValue();
+    EventTypeListenerMap::iterator iter = m_Listener.find(p_EventName);
+    if(iter == m_Listener.end())
+    {
+#if defined (K15_DEBUG)
+      list = new(MemoryAllocator->allocateDebug(sizeof(EventListenerList),__FILE__,__LINE__,false,__FUNCTION__)) EventListenerList();
+#else
+      list = new(MemoryAllocator->allocate(sizeof(EventListenerList))) EventListenerList();
+#endif
+      m_Listener.insert(K15_Pair(EventName,EventListenerList*)(p_EventName,list));
+    }
+    else
+    {
+			list = iter->second;
 		}
 
-		pList->PushBack(pListener);
+		list->push_back(p_Listener);
 	}
 	/*********************************************************************************/
 	void EventManager::removeListener(const EventName& p_EventName,EventListener* p_Listener)
 	{
-		if(m_hmListener.HasItem(etType)){
-			List<EventListener*> *pList = m_hmListener.Get(etType)->GetValue();
-			for(ListNode<EventListener*> *pNode = pList->GetFirstElement();pNode;pNode = pNode->GetNext()){
-				EventListener *pCurrentListener = pNode->GetElement();
+    EventTypeListenerMap::iterator iter = m_Listener.find(p_EventName);
+    if(iter != m_Listener.end())
+    {
+      EventListenerList* list = iter->second;
+      EventListenerList::iterator list_iter = list->begin();
 
-				if(pCurrentListener == pListener){
-					pList->Erase(pNode);
-					break;
-				}
-			}
-		}
+      for(list_iter;list_iter != list->end();++list_iter)
+      {
+        EventListener* currentListener = *list_iter;
+
+        if(currentListener == p_Listener){
+          list->remove(p_Listener);
+          break;
+        }
+      }
+    }
 	}
 	/*********************************************************************************/
-	void EventManager::addEventToQueue(const GameEvent& p_Event)
+	void EventManager::addEventToQueue(GameEvent* p_Event)
 	{
-		m_sEvents.Push(evGameEvent);
+		m_Events.push(p_Event);
 	}
 	/*********************************************************************************/
-	void EventManager::triggerEvent(const GameEvent& p_Event)
+	void EventManager::triggerEvent(GameEvent* p_Event)
 	{
-		if(m_hmListener.HasItem(evGameEvent.GetType())){
-			List<EventListener*> *pList = m_hmListener.Get(evGameEvent.GetType())->GetValue();
-			for(ListNode<EventListener*> *pNode = pList->GetFirstElement();pNode;pNode = pNode->GetNext()){
-				EventListener *pCurrentListener = pNode->GetElement();
-				pCurrentListener->HandleEvent(evGameEvent);
-			}
-		}
+    EventTypeListenerMap::iterator iter = m_Listener.find(p_Event->getName());
+    if(iter != m_Listener.end())
+    {
+      EventListenerList* list = iter->second;
+      for(EventListenerList::iterator list_iter = list->begin();list_iter != list->end();++list_iter)
+      {
+        EventListener *currentListener = *list_iter;
+        currentListener->handleEvent(p_Event);
+      }
+    }
 	}
 	/*********************************************************************************/
 	void EventManager::update()
 	{
-		double start = g_pSystem->TimeSinceStart();
-		double diff = 0;
-
-		if(m_sEvents.Size() > 0){
-			GameEvent &gameEvent = m_sEvents.Top();
+		if(m_Events.size() > 0){
+			GameEvent* gameEvent = m_Events.top();
 			triggerEvent(gameEvent);
-			m_sEvents.Pop();
-		}
-
-		diff = g_pSystem->TimeSinceStart() - start;
+			m_Events.pop();
+      K15_DELETE gameEvent;
+    }
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::System namespace

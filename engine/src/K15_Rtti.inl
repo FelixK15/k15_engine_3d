@@ -17,12 +17,12 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-inline const String& Rtti::GetName() const
+inline const TypeName& Rtti::getName() const
 {
-	return m_sName;
+	return m_Name;
 }
 
-inline bool Rtti::IsInstanceOf(const Rtti &rtType) const
+inline bool Rtti::isInstanceOf(const Rtti &rtType) const
 {
 	return &rtType == this;
 }

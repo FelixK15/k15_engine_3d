@@ -20,10 +20,8 @@
  *
  * 
  */
-#pragma once
-
-#ifndef __K15Engine_System_RTTI_h_
-#define __K15Engine_System_RTTI_h_
+#ifndef _K15Engine_System_RTTI_h_
+#define _K15Engine_System_RTTI_h_
 
 #include "K15_Prerequisites.h"
 
@@ -34,20 +32,21 @@ namespace K15_Engine { namespace System {
 	class K15_API_EXPORT Rtti
 	{
 	public:
-		Rtti(const String &sName,const Rtti *pBaseType);
+		Rtti(const TypeName &sName,const Rtti *pBaseType);
 		~Rtti();
 
-		const String &GetName() const;
+		const TypeName &getName() const;
 
-		bool IsInstanceOf(const Rtti &rtType) const;
-		bool IsDerivedFrom(const Rtti &rtType) const;
+		bool isInstanceOf(const Rtti &rtType) const;
+		bool isDerivedFrom(const Rtti &rtType) const;
 
 	private:
-		String m_sName;
-		const Rtti *m_pBaseType;
-	};
-
+		TypeName m_Name;
+		const Rtti *m_BaseType;
+	};//end of Rtti class
+  /*********************************************************************************/
 	#include "K15_Rtti.inl"
+  /*********************************************************************************/
 }} //end of K15_Engine::System namespace
 
-#endif //__K15Engine_System_RTTI_h_
+#endif //_K15Engine_System_RTTI_h_

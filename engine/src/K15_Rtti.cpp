@@ -19,32 +19,34 @@
 
 #include "K15_Rtti.h"
 
-using namespace K15_EngineV2;
+namespace K15_Engine { namespace System { 
+  /*********************************************************************************/
+  Rtti::Rtti(const TypeName& p_Name,const Rtti *p_BaseType)
+  {
+    m_Name = p_Name;
+    m_BaseType = p_BaseType;
+  }
+  /*********************************************************************************/
+  Rtti::~Rtti()
+  {
 
-Rtti::Rtti(const String &sName,const Rtti *pBaseType)
-{
-	m_sName = sName;
-	m_pBaseType = pBaseType;
-}
+  }
+  /*********************************************************************************/
+  bool Rtti::isDerivedFrom(const Rtti &rtType) const
+  {
+    bool bDerived = false;
 
-Rtti::~Rtti()
-{
+    const Rtti *pSearch = this;
+    while(pSearch){
+      if(pSearch == &rtType){
+        bDerived = true;
+        break;
+      }
 
-}
+      pSearch = pSearch->p_BaseType;
+    }
 
-bool Rtti::IsDerivedFrom(const Rtti &rtType) const
-{
-	bool bDerived = false;
-
-	const Rtti *pSearch = this;
-	while(pSearch){
-		if(pSearch == &rtType){
-			bDerived = true;
-			break;
-		}
-
-		pSearch = pSearch->m_pBaseType;
-	}
-	
-	return bDerived;
-}
+    return bDerived;
+  }
+  /*********************************************************************************/
+}}//end of K15_Engine::System namespace

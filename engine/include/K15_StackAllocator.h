@@ -24,10 +24,11 @@
 #define _K15Engine_System_StackAllocationPattern_h_
 
 #include "K15_Prerequisites.h"
+#include "K15_BaseAllocator.h"
 
 namespace K15_Engine { namespace System {
 
-  class K15_API_EXPORT StackAllocator
+  class K15_API_EXPORT StackAllocator : public BaseAllocator
   {
   public:
 	  /*********************************************************************************/
@@ -35,24 +36,18 @@ namespace K15_Engine { namespace System {
 	  /*********************************************************************************/
   public:
 	//allocate memory from another allocator
-/*    template<class Allocator> StackAllocator(Allocator* p_Allocator,uint32 p_Size);*/
+    StackAllocator(BaseAllocator* p_Allocator,uint32 p_Size);
     
 	//allocate memory using malloc
     StackAllocator(uint32 p_Size);
 
-	//use pre-allocated memory
-    StackAllocator(byte* p_Memory,uint32 p_Size);
+    virtual void clear();
+  protected:
+    virtual void* alloc(uint32 p_Size);
+    virtual void free(void* p_Pointer);
 
-    void* allocate(uint32 p_Size);
-    void* allocateDebug(uint32 p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function);
-
-    void  deallocate(void* p_Pointer);
-    void  deallocateDebug(void* p_Pointer,const char* p_File,int p_Line,bool p_Array,const char* p_Function);
-  private:
-    byte* m_Memory;
-
-    uint32 m_MemorySize;
-    uint32 m_UsedMemory;
+  protected:
+    byte* m_Marker;
   };
 #include "K15_StackAllocator.inl"
 }} //end of K15_Engine::System namespace

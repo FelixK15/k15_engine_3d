@@ -44,6 +44,8 @@ namespace K15_Engine { namespace System {
     void  deallocateDebug(void* p_Pointer,const char* p_File,int p_Line,bool p_Array,const char* p_Function);
 #endif //K15_DEBUG
 
+    virtual void clear(){}
+
   protected:
     virtual void* alloc(uint32 p_Size) = 0;
     virtual void  free(void* p_Pointer) = 0;

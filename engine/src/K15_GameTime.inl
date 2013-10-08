@@ -30,7 +30,7 @@ inline const double GameTime::getRawDeltaTime() const
 	return m_RawDeltaTime;
 }
 /*********************************************************************************/
-inline const double GameTime::getTimeMultiplicator() const
+inline const double GameTime::getMultiplier() const
 {
 	return m_Mulitplicator;
 }

@@ -34,8 +34,6 @@ namespace K15_Engine { namespace System {
 
 	LogBase::~LogBase()
 	{
-		if(m_pFile){
-			fclose(m_pFile);
-		}
+
 	}
 }} //end of K15_Engine::System

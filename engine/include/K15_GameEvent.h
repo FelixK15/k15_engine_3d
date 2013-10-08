@@ -33,20 +33,10 @@ namespace K15_Engine { namespace System {
 	{
 	public:
 		/*********************************************************************************/
-		static PageAllocator<128,8192> ArgAllocator;
+    typedef PageAllocator<128,8192> ArgAllocator;
+    static ArgAllocator ArgumentAllocator;
 		/*********************************************************************************/
 	public:
-		/**
-		* Event constructor. (template)
-		*
-		* The constructor will copy p_Argument into an internal buffer. 
-		*
-		* @param  p_Name - Unique name of the event
-		* @param  p_Argument - Argument for this event
-		*/
-		template<class T>
-		GameEvent(const EventName& p_Name,T p_Argument);
-
 		/**
 		* Event constructor.
 		*

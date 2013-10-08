@@ -70,7 +70,7 @@ namespace K15_Engine { namespace System {
 	unsigned long HashedString::createHash( const char *pString,unsigned int iLength )
 	{
 		unsigned long hash = 0;
-		int i;
+		unsigned int i;
 
 		for (i=0; i<iLength; i++) 
 		{

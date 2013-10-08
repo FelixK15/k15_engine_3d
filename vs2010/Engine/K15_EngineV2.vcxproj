@@ -157,7 +157,6 @@
     <ClInclude Include="..\..\engine\include\K15_GameEvent.h" />
     <ClInclude Include="..\..\engine\include\K15_EventListener.h" />
     <ClInclude Include="..\..\engine\include\K15_EventManager.h" />
-    <ClInclude Include="..\..\engine\include\K15_EventTypes.h" />
     <ClInclude Include="..\..\engine\include\K15_GameTime.h" />
     <ClInclude Include="..\..\engine\include\K15_HashedString.h" />
     <ClInclude Include="..\..\engine\include\K15_HashItem.h">
@@ -252,7 +251,6 @@
     <ClCompile Include="..\..\engine\src\K15_DynamicLibraryManager.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GameEvent.cpp" />
     <ClCompile Include="..\..\engine\src\K15_EventManager.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_EventTypes.cpp" />
     <ClCompile Include="..\..\engine\src\K15_File.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -269,7 +267,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_ResourceBase.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_ResourceHandle.inl" />
+    <None Include="..\..\engine\src\K15_ResourceHandle.inl">
+      <FileType>Document</FileType>
+    </None>
     <ClCompile Include="..\..\engine\src\K15_ResourceManager.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Rtti.cpp" />
     <ClCompile Include="..\..\engine\src\K15_StackAllocator.cpp" />

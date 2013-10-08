@@ -28,7 +28,7 @@
 
 namespace K15_Engine { namespace System { 
 
-	class ResourceBase
+	class K15_API_EXPORT ResourceBase
 	{
 	public:
 		static TypeName Type;

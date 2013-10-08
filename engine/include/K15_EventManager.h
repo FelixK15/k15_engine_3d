@@ -34,16 +34,14 @@
 #include "K15_AllocatedObject.h"
 #include "K15_PageAllocator.h"
 #include "K15_Singleton.h"
-#include "K15_GameEvent.h"
 
 namespace K15_Engine { namespace System { 
 	/*********************************************************************************/
-	typedef K15_HashMap(EventName,K15_List(EventListener*) *) EventTypeListenerMap;
-	typedef K15_Stack(GameEvent) EventStack;
+  typedef K15_List(EventListener*) EventListenerList;
+	typedef K15_HashMap(EventName,EventListenerList*) EventTypeListenerMap;
+	typedef K15_Stack(GameEvent*) EventStack;
 	/*********************************************************************************/
-	class K15_API_EXPORT EventManager : public ApplicationAllocatedObject,
-									    public Singleton<EventManager>,
-										public PageAllocator<>
+	class K15_API_EXPORT EventManager : public ApplicationAllocatedObject, public Singleton<EventManager>, public PageAllocator<>
 	{
 	public:
 		/**
@@ -77,14 +75,14 @@ namespace K15_Engine { namespace System {
 		*
 		* @param  evGameEvent - reference to an Event object.
 		*/
-		void addEventToQueue(const GameEvent& p_Event);
+		void addEventToQueue(GameEvent* p_Event);
 		/**
 		* If you want to trigger an Event immediately use this function
-		* instead of AddEventToQueue.
+		* instead of addEventToQueue.
 		*
 		* @param  evGameEvent - reference to an Event object. 
 		*/
-		void triggerEvent(const GameEvent& p_Event);
+		void triggerEvent(GameEvent* p_Event);
 
 		/**
 		* This function will get called once per Frame to process all events in the queue.
@@ -94,8 +92,8 @@ namespace K15_Engine { namespace System {
 		void update();
 
 	private:
-		EventStack m_Events;				//Event Queue.
-		EventTypeListenerMap m_Listener;	//Map where the EventTypes are associated with EventListeners.
+		EventStack m_Events; //Event Queue.
+		EventTypeListenerMap m_Listener; //Map where the EventTypes are associated with EventListeners.
 	};//end of EventManager class
 }}//end of K15_Engine::System namespace
 

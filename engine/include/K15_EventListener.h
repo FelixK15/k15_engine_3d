@@ -25,14 +25,13 @@
 #define _K15Engine_System_EventListener_h_
 
 #include "K15_Prerequisites.h"
-#include "K15_GameEvent.h"
 
 namespace K15_Engine { namespace System { 
 
 	class K15_API_EXPORT EventListener
 	{
 	public:
-		virtual void handleEvent(const GameEvent& p_Event) = 0;
+		virtual void handleEvent(GameEvent* p_Event) = 0;
 	};
 }}// end of K15_Engine::System namespace
 

@@ -31,24 +31,24 @@ namespace K15_Engine { namespace System {
 	public:
 		static T* getInstance()
 		{
-			if(m_pInstance == 0){
-				m_pInstance = ::new T();
+			if(m_Instance == 0){
+				m_Instance = ::new T();
 			}
 
-			return m_pInstance; 
+			return m_Instance; 
 		}
 
 	private:
-		static T* m_pInstance;
+		static T* m_Instance;
 
 	protected:
 		Singleton()
 		{
-			m_pInstance = (T*)this;
+			m_Instance = (T*)this;
 		}
 	};
 }} //end of K15_Engine::System namespace
 
-template<class T> T* K15_Engine::System::Singleton<T>::m_pInstance = 0;
+template<class T> T* K15_Engine::System::Singleton<T>::m_Instance = 0;
 
 #endif //_K15Engine_System_Singleton_h_

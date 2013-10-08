@@ -20,6 +20,7 @@
 /*********************************************************************************/
 void* BaseAllocator::allocate(uint32 p_Size)
 {
+  K15_ASSERT(p_Size + m_UsedMemory > m_MemorySize,"Cannot satisfy memory request.");
   return alloc(p_Size);
 }
 /*********************************************************************************/

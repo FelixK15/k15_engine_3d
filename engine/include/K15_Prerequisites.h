@@ -46,7 +46,6 @@ namespace K15_Engine
 		class LogBase;
 		class ResourceManager;
 		class ResourceBase;
-		class ResourceHandle;
 		class ResourceFileBase;
 		class ResourceData;
 		class ProfilingNode;
@@ -223,7 +222,7 @@ namespace K15_Engine
 # define K15_PLACEMENT_NEW new(ptr)
 
 #define K15_ASSERT(condition,message)	\
-	if(!condition){ \
+	if(!(condition)){ \
 		String debugMessage__ = "\""; \
 		debugMessage__ += message; \
 		debugMessage__ += "\"\n\n"; \
@@ -245,6 +244,11 @@ typedef K15_Engine::System::AllocatedObject<K15_Engine::System::Application> App
 typedef K15_Engine::System::AllocatedObject<K15_Engine::System::EventManager> EventManagerAllocatedObject;
 typedef K15_Engine::System::AllocatedObject<K15_Engine::System::TaskManager> TaskManagerAllocatedObject;
 typedef K15_Engine::System::AllocatedObject<K15_Engine::System::DynamicLibraryManager> DynamicLibraryManagerAllocatedObject;
+
+#define ApplicationAllocator K15_Engine::System::Application::getInstance()
+#define EventManagerAllocator K15_Engine::System::EventManager::getInstance()
+#define TaskManagerAllocator K15_Engine::System::TaskManager::getInstance()
+#define DynamicLibraryManagerAllocator K15_Engine::System::DynamicLibraryManager::getInstance()
 
 typedef signed char byte;
 
@@ -278,8 +282,7 @@ typedef unsigned	long long	uint64;
 
 #endif //K15_OS_WINDOWS
 
-typedef signed	 int Enum;
-typedef unsigned int ResourceID;
+typedef unsigned int Enum;
 
 typedef K15_Engine::System::HashedString TypeName;
 typedef K15_Engine::System::HashedString EventName;

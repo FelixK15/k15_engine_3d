@@ -52,8 +52,7 @@ namespace K15_Engine { namespace System {
 		}
 	}
 
-	void LogManager::logMessage(const String& p_LogMessage, bool p_DefaultLogOnly = false, 
-		eLogPriorityFlags p_PriorityFlag = LP_INVALID)
+	void LogManager::logMessage(const String& p_LogMessage, bool p_DefaultLogOnly, eLogPriorityFlags p_PriorityFlag)
 	{
 		if(p_DefaultLogOnly)
 		{
