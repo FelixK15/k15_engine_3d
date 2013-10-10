@@ -4,9 +4,6 @@
     <Filter Include="System">
       <UniqueIdentifier>{34f27cf8-d909-432d-b985-baff45966719}</UniqueIdentifier>
     </Filter>
-    <Filter Include="System\Win32">
-      <UniqueIdentifier>{7edac7c4-8874-45d0-98e5-f20fe055b592}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Object System">
       <UniqueIdentifier>{d0bf2fa5-c28a-4de2-8893-b82ab70a676c}</UniqueIdentifier>
     </Filter>
@@ -39,6 +36,9 @@
     </Filter>
     <Filter Include="Logging">
       <UniqueIdentifier>{671d178c-a7f7-4c30-a652-de2d509b0988}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\Win32">
+      <UniqueIdentifier>{d549c5b7-ed43-49cf-9536-ee6c055280d2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -192,6 +192,12 @@
     <ClInclude Include="..\..\engine\include\K15_BaseAllocator.h">
       <Filter>Memory</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ApplicationOSLayerBase.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\win32\K15_ApplicationOSLayer_Win32.h">
+      <Filter>System\Win32</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Object.cpp">
@@ -205,9 +211,6 @@
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_HashedString.cpp">
       <Filter>String</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\Win32\K15_System_Win32.cpp">
-      <Filter>System\Win32</Filter>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\Win32\K15_DynamicLibrary_win32.cpp">
       <Filter>Dynamic Library\Win32</Filter>
@@ -265,6 +268,9 @@
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_BaseAllocator.cpp">
       <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\Win32\K15_ApplicationOSLayer_Win32.cpp">
+      <Filter>System\Win32</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -368,9 +374,11 @@
     <None Include="..\..\engine\src\K15_MemberFunctor.inl">
       <Filter>System</Filter>
     </None>
-    <None Include="..\..\engine\src\K15_BaseAllocator.inl" />
     <None Include="..\..\engine\src\K15_ResourceHandle.inl">
       <Filter>Resource Manager</Filter>
+    </None>
+    <None Include="..\..\engine\src\K15_BaseAllocator.inl">
+      <Filter>Memory</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

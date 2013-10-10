@@ -105,6 +105,7 @@
     <ClInclude Include="..\..\engine\include\K15_Application.h" />
     <ClInclude Include="..\..\engine\include\K15_ApplicationModule.h" />
     <ClInclude Include="..\..\engine\include\K15_ApplicationModuleDescription.h" />
+    <ClInclude Include="..\..\engine\include\K15_ApplicationOSLayerBase.h" />
     <ClInclude Include="..\..\engine\include\K15_ApplicationParameter.h" />
     <ClInclude Include="..\..\engine\include\K15_BaseAllocator.h" />
     <ClInclude Include="..\..\engine\include\K15_Directory.h">
@@ -144,6 +145,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_Task.h" />
+    <ClInclude Include="..\..\engine\include\win32\K15_ApplicationOSLayer_Win32.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_DynamicLibrary_win32.h" />
     <None Include="..\..\engine\include\K15_ByteConversion.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -278,8 +280,8 @@
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_Task.cpp" />
     <ClCompile Include="..\..\engine\src\K15_TaskManager.cpp" />
+    <ClCompile Include="..\..\engine\src\Win32\K15_ApplicationOSLayer_Win32.cpp" />
     <ClCompile Include="..\..\engine\src\Win32\K15_DynamicLibrary_win32.cpp" />
-    <ClCompile Include="..\..\engine\src\Win32\K15_System_Win32.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\engine\src\K15_Task.inl" />
