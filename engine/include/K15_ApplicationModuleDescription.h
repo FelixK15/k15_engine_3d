@@ -32,15 +32,15 @@ namespace K15_Engine { namespace System {
 	{
 		enum PluginFlags
 		{
-			PF_OwnTask		= 0x002, //does the plugin needs to get updated every frame?
-			PF_OwnWindow	= 0x004, //does the plugin needs its own window?
-			PF_IsRenderer	= 0x008	 //is the plugin a renderer?
+			PF_ProvidesTask     = 0x00000001,
+      PF_ProvidesRenderer = 0x00000002
 		};
 
+    StringSet GroupFilter;
 		String Author;
 		uint32 MajorVersion;
 		uint32 MinorVersion;
-		uint32 SettingsBitMask;
+		uint32 PluginFlagBitMask;
 	};
 }}//end of K15_Engine::System namespace
 

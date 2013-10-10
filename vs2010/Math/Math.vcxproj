@@ -73,7 +73,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\math\include\K15_Mathematic.h" />
+    <ClInclude Include="..\..\math\include\K15_Math_Prerequisites.h" />
     <ClInclude Include="..\..\math\include\K15_Matrix3x3.h" />
     <ClInclude Include="..\..\math\include\K15_Matrix4x4.h" />
     <ClInclude Include="..\..\math\include\K15_Quaternion.h">
@@ -84,7 +84,6 @@
     <ClInclude Include="..\..\math\include\K15_Vector3.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\math\src\K15_Mathematic.cpp" />
     <ClCompile Include="..\..\math\src\K15_Matrix3x3.cpp" />
     <ClCompile Include="..\..\math\src\K15_Matrix4x4.cpp" />
     <ClCompile Include="..\..\math\src\K15_Quaternion.cpp">
@@ -99,9 +98,6 @@
     <None Include="..\..\math\src\K15_Vector3.inl">
       <FileType>Document</FileType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\math\src\K15_Mathematic.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

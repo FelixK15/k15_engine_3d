@@ -38,7 +38,7 @@ File::~File()
 bool File::Read( uint32 iElementSize,uint32 iSize,byte *&pBuffer )
 {
 	if(!IsOpen()){
-		K15_LogNormalMessage(String("Could not read from file because it is closed. Filename: ") + m_pFileName);
+		_LogNormal(String("Could not read from file because it is closed. Filename: ") + m_pFileName);
 		return false;
 	}
 
@@ -47,10 +47,10 @@ bool File::Read( uint32 iElementSize,uint32 iSize,byte *&pBuffer )
 	uint32 iReturn = fread(pBuffer,iElementSize,iSize,m_pFile);
 
 	if(iReturn != iSize){
-		K15_LogNormalMessage(String("Could not read all elements. Filename: ") + m_pFileName);
+		_LogNormal(String("Could not read all elements. Filename: ") + m_pFileName);
 		
 		if(feof(m_pFile) != 0){
-			K15_LogNormalMessage(String("Attempt to read past end of file. Filename: ") + m_pFileName);
+			_LogNormal(String("Attempt to read past end of file. Filename: ") + m_pFileName);
 		}
 	}
 	
@@ -61,7 +61,7 @@ bool File::Read( uint32 iElementSize,uint32 iSize,byte *&pBuffer )
 bool File::ReadLine( byte *&pBuffer )
 {
 	if(!IsOpen()){
-		K15_LogNormalMessage(String("Could not read from file because it is closed. Filename: ") + m_pFileName);
+		_LogNormal(String("Could not read from file because it is closed. Filename: ") + m_pFileName);
 		return false;
 	}
 
@@ -77,7 +77,7 @@ bool File::Write( uint32 iElementSize,uint32 iSize,byte *pBuffer,bool bDeleteBuf
 	assert(pBuffer);
 	
 	if(!IsOpen()){
-		K15_LogNormalMessage(String("Could not write to file because it is closed. Filename: ") + m_pFileName);
+		_LogNormal(String("Could not write to file because it is closed. Filename: ") + m_pFileName);
 		return false;
 	}
 
@@ -131,13 +131,13 @@ bool File::Open( const char *pFileName,uint32 iOpenFlags )
 		sMode += 'b';
 	}
 
-	K15_LogNormalMessage(String("Trying to open file. Filename: ") + pFileName);
+	_LogNormal(String("Trying to open file. Filename: ") + pFileName);
 
 	m_pFile = fopen(pFileName,sMode.C_Str());
 
 	if(!m_pFile){
-		K15_LogNormalMessage(String("Could not open file. Filename: ") + m_pFileName);
-		K15_LogNormalMessage(strerror(errno));
+		_LogNormal(String("Could not open file. Filename: ") + m_pFileName);
+		_LogNormal(strerror(errno));
 		return false;
 	}
 	
@@ -161,8 +161,8 @@ bool File::Erase( const char *pFileName )
 	bool bReturn = remove(pFileName) == 0;
 	
 	if(!bReturn){
-		K15_LogNormalMessage(String("Could not delete file. Filename: ") + pFileName);
-		K15_LogNormalMessage(strerror(errno));
+		_LogNormal(String("Could not delete file. Filename: ") + pFileName);
+		_LogNormal(strerror(errno));
 	}
 
 	return bReturn;
@@ -173,8 +173,8 @@ bool File::Rename( const char *pFileName,const char *pNewFileName )
 	bool bReturn = rename(pFileName,pNewFileName) == 0;
 
 	if(!bReturn){
-		K15_LogNormalMessage(String("Could not rename file. Filename: ") + pFileName);
-		K15_LogNormalMessage(strerror(errno));
+		_LogNormal(String("Could not rename file. Filename: ") + pFileName);
+		_LogNormal(strerror(errno));
 	}
 
 	return bReturn;

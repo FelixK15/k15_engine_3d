@@ -35,6 +35,7 @@
 namespace K15_Engine { namespace System {
   /*********************************************************************************/
   typedef K15_Set(String) StringSet;
+  typedef K15_List(ApplicationModule*) ApplicationModuleList;
   typedef K15_List(ApplicationParameter) ApplicationParameterList;
   /*********************************************************************************/
   class K15_API_EXPORT Application : public Singleton<Application>,
@@ -67,8 +68,8 @@ namespace K15_Engine { namespace System {
 
     void shutdown();
 
-    void onBeforeTick();
-    void onAfterTick();
+    void onPreTick();
+    void onPostTick();
 
     void onBeforeRender();
     void onAfterRender();
@@ -81,6 +82,10 @@ namespace K15_Engine { namespace System {
     inline LogManager* getLogManager() const;
 	inline const ApplicationOSLayerType& getOSLayer() const;
 
+    inline const GameTime& getGameTime() const;
+    inline const double getDeltaTime() const;
+    inline const double getRawDeltaTime() const;
+
   private:
     void createCommandList(int p_CommandCount,char** p_Commands);
     void createApplicationParameterList();
@@ -92,11 +97,14 @@ namespace K15_Engine { namespace System {
   private:
 	bool m_Running;
     
-	String m_GameRootDir;
+    GameTime m_GameTime;
+
+	  String m_GameRootDir;
 
 	StringSet m_Plugins;
     StringSet m_Commands;
     ApplicationParameterList m_ApplicationParameter;
+    ApplicationModuleList m_LoadedModules;
 
 	ApplicationOSLayerType m_OSLayer;
 

@@ -20,17 +20,13 @@
  *
  * 
  */
-#pragma once
+#ifndef _K15Engine_Math_Matrix3x3_h_
+#define _K15Engine_Math_Matrix3x3_h_
 
-#ifndef __K15_MATRIX3X3__
-#define __K15_MATRIX3X3__
-
+#include "K15_Math_Prerequisites.h"
 #include "K15_Vector3.h"
-#include "K15_Mathematic.h"
 
-namespace K15_Math
-{
-	template <class Real>
+namespace K15_Engine { namespace Math { 
 	class Matrix3x3
 	{
 	public:
@@ -44,15 +40,15 @@ namespace K15_Math
 		Matrix3x3(Real _1_1,Real _1_2,Real _1_3,
 			Real _2_1,Real _2_2,Real _2_3,
 			Real _3_1,Real _3_2,Real _3_3);
-		Matrix3x3(const Matrix3x3<Real> &mat);
+		Matrix3x3(const Matrix3x3 &mat);
 
 		~Matrix3x3();
 
 		void Identity();
 		void Zero();
 
-		Matrix3x3<Real> ColumnChange(Matrix3x3<Real> &mat, int column1, int column2);
-		Matrix3x3<Real> RowChange(Matrix3x3<Real> &mat, int row1, int row2);
+		Matrix3x3 ColumnChange(Matrix3x3 &mat, int column1, int column2);
+		Matrix3x3 RowChange(Matrix3x3 &mat, int row1, int row2);
 
 		Real Determinant() const;
 
@@ -70,23 +66,23 @@ namespace K15_Math
 		bool HasZeroVector() const;
 		int GetMaxDiagonalColumn() const;
 
-		Matrix3x3<Real> operator*(const Matrix3x3<Real> &mat);
-		Vector3<Real> operator*(const Vector3<Real> &vec) const;
-		Matrix3x3<Real> operator*(Real scalar);
+		Matrix3x3 operator*(const Matrix3x3 &mat);
+		Vector3 operator*(const Vector3 &vec) const;
+		Matrix3x3 operator*(Real scalar);
 
-		Matrix3x3<Real> &operator+(const Matrix3x3<Real> &mat);
-		Matrix3x3<Real> &operator-(const Matrix3x3<Real> &mat);
-		Matrix3x3<Real> &operator-();
-		Matrix3x3<Real> &operator=(const Matrix3x3<Real> &mat);
+		Matrix3x3 &operator+(const Matrix3x3 &mat);
+		Matrix3x3 &operator-(const Matrix3x3 &mat);
+		Matrix3x3 &operator-();
+		Matrix3x3 &operator=(const Matrix3x3 &mat);
 
-		Matrix3x3<Real> &operator+=(const Matrix3x3<Real> &mat);
-		Matrix3x3<Real> &operator-=(const Matrix3x3<Real> &mat);
+		Matrix3x3 &operator+=(const Matrix3x3 &mat);
+		Matrix3x3 &operator-=(const Matrix3x3 &mat);
 
-		bool operator==(const Matrix3x3<Real> &mat);
-		bool operator!=(const Matrix3x3<Real> &mat);
+		bool operator==(const Matrix3x3 &mat);
+		bool operator!=(const Matrix3x3 &mat);
 
 
-		static const Matrix3x3<Real> UnitMatrix;
+		static const Matrix3x3 UnitMatrix;
 	public:
 
 		union{
@@ -94,13 +90,13 @@ namespace K15_Math
 				Real _1_1,_1_2,_1_3;
 				Real _2_1,_2_2,_2_3;
 				Real _3_1,_3_2,_3_3;
-			};
-			Real m_fMatrix[9];
-		};
-	};
-	typedef Matrix3x3<float> Matrix3x3F;
-	typedef Matrix3x3<double> Matrix3x3D;
-	#include "../src/K15_Matrix3x3.inl"
-}
+			};//struct
 
-#endif //__K15_MATRIX3X3__
+			Real m_MatrixValue[9];
+#endif //K15_SIMD_SUPPORT
+		};//union
+	};
+	#include "../src/K15_Matrix3x3.inl"
+ }}
+
+#endif //_K15Engine_Math_Matrix3x3_h_

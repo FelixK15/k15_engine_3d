@@ -55,6 +55,10 @@ namespace K15_Engine { namespace System
 		* @return double - multiplier that affects the value of getDeltaTime()
 		*/
 		inline const double getMultiplier() const;
+
+    inline void setDeltaTime(const double p_DeltaTime);
+
+    inline void setMultiplier(const double p_Multiplier);
 	private:
 		double m_DeltaTime;
 		double m_Mulitplicator;

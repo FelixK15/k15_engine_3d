@@ -89,7 +89,7 @@ namespace K15_Engine
 
 #if __cplusplus > 199711L || _MSC_VER >= 1700 || K15_GCC_VERSION > 40800
 #	define K15_CPP11_SUPPORT
-#endif
+#endif //__cplusplus > 199711L || _MSC_VER >= 1700 || K15_GCC_VERSION > 40800
 
 #include "K15_HashedString.h"
 
@@ -178,7 +178,7 @@ namespace K15_Engine
 #		define K15_API_EXPORT __declspec(dllimport)
 #	endif //K15_BUILD
 #endif //K15_OS_WINDOWS
-
+  
 #if defined K15_OS_WINDOWS
 #	define WIN32_LEAN_AND_MEAN
 #endif //K15_OS_WINDOWS
@@ -310,6 +310,7 @@ typedef K15_Engine::System::HashedString ResourceName;
 
 #define K15_ERROR_BUFFER_SIZE 1024
 #define K15_PLUGIN_INFO_BUFFER_SIZE 1024
+#define K15_FORMAT_MESSAGE_ADDITIONAL_LENGTH 1024
 
 #define GIGABYTE	1073741824
 #define MEGABYTE	1048576

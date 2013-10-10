@@ -1,8 +1,8 @@
 /**
- * @file K15_GameTime.cpp
+ * @file K15_StringUtil.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/10/16
+ * @date 2012/07/11
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -17,21 +17,22 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_GameTime.h"
+#include "K15_StringUtil.h"
 
 namespace K15_Engine { namespace System {
-	/*********************************************************************************/
-	GameTime::GameTime(double p_DeltaTime,double p_Multiplier)
-		: m_DeltaTime(p_DeltaTime * p_Multiplier),
-		  m_Mulitplicator(p_Multiplier),
-		  m_RawDeltaTime(p_DeltaTime)
-	{
+  /*********************************************************************************/
+  String StringUtil::format(char* p_Message,...)
+  {
+    va_list list;
+    uint32 length = strlen(p_Message);
+    length += K15_FORMAT_MESSAGE_ADDITIONAL_LENGTH;
 
-	}
-	/*********************************************************************************/
-	GameTime::~GameTime()
-	{
+    char* buffer = (char*)_malloca(length);
+    va_start(list,p_Message);
+    vsprintf(buffer,p_Message,list);
+    va_end(list);
 
-	}
+    return buffer;
+  }
   /*********************************************************************************/
 }}//end of K15_Engine::System namespace

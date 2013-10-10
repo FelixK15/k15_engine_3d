@@ -49,7 +49,7 @@ namespace K15_Engine { namespace System {
 		{
 			if(iter->second->getResourceReferences() == 0 && !iter->second->isMarkedAsUnreferenced())
 			{
-				K15_LogNormalMessage(String(iter->second->getAssetName().getString()) + " is no longer referenced.");
+				_LogNormal(String(iter->second->getAssetName().getString()) + " is no longer referenced.");
 				iter->second->setMarkedAsUnreferenced(true);
 			}
 
@@ -61,7 +61,7 @@ namespace K15_Engine { namespace System {
 					(iter->second->getPriority() == ResourceBase::RP_NORMAL && difference > 200.0) ||
 					(iter->second->getPriority() == ResourceBase::RP_HIGH	&& difference > 500.0))
 				{
-					K15_LogNormalMessage(String("Deleting Asset ") + iter->second->getAssetName().getString());
+					_LogNormal(String("Deleting Asset ") + iter->second->getAssetName().getString());
 					deleteResource(iter->second);
 
 					m_ResourceDataCache.erase(iter);
@@ -101,7 +101,7 @@ namespace K15_Engine { namespace System {
 		{
 			if((*iter)->isOpen())
 			{
-				K15_LogNormalMessage(String("Closing resource file... name:") + (*iter)->getResourceFileName());
+				_LogNormal(String("Closing resource file... name:") + (*iter)->getResourceFileName());
 				(*iter)->close();
 			}
 		}

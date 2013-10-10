@@ -49,7 +49,7 @@ namespace K15_Engine { namespace System {
 
 		if (iter != m_LoadedLibs.end())
 		{
-			K15_LogNormalMessage(String("Library already loaded. Returning cached libray. Library:") + p_FileName);
+			_LogNormal(String("Library already loaded. Returning cached libray. Library:") + p_FileName);
 			return iter->second;
 		}
 
@@ -57,7 +57,7 @@ namespace K15_Engine { namespace System {
 
 		if(!library->load())
 		{
-			K15_LogNormalMessage(String("Could not load library :") + p_FileName);
+			_LogNormal(String("Could not load library :") + p_FileName);
 	
 			K15_DELETE library;
 			return 0;

@@ -30,8 +30,22 @@ namespace K15_Engine { namespace System {
 
 	class ApplicationModule
 	{
+  public:
+    virtual void evaluateSettings(const StringSet& p_ApplicationSettings){}
 
-	};
+    virtual Task* createTask(){return 0;}
+    //virtual RenderTask* createRenderTask(){return 0;} 
+    virtual bool onInitialize(){}
+    virtual void onShutdown(){}
+
+    virtual void onPreTick(){}
+    virtual void onPreRun(){}
+    virtual void onPreRender(/*const RenderContext* p_RenderContext*/){}
+
+    virtual void onPostTick(){}
+    virtual void onPostRun(){}
+    virtual void onPostRender(/*const RenderContext* p_RenderContext*/){}
+	}; //end of ApplicationModule class
 }} //end of K15_Engine::System namespace
 
 #endif
