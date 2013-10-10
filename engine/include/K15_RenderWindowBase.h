@@ -1,8 +1,8 @@
 /**
- * @file K15_ApplicationParameter.h
+ * @file K15_RenderWindowBase.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/07/10
+ * @date 2012/07/11
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,19 +21,28 @@
  * 
  */
 
-#ifndef _K15Engine_System_ApplicationParameter_h_
-#define _K15Engine_System_ApplicationParameter_h_
+#ifndef _K15Engine_System_RenderWindowBase_h_
+#define _K15Engine_System_RenderWindowBase_h_
 
 #include "K15_Prerequisites.h"
 
 namespace K15_Engine { namespace System { 
-	
-	struct ApplicationParameter
-	{
-		String Group;
-		String Name;
-		String Value;
-	};
-}}//end of K15_Engine::System namespace
+  class K15_API_EXPORT RenderWindowBase
+  {
+  public:
+    virtual void setWindowTitle(const String& p_WindowTitle);
+    const String& getWindowTitle() const;
 
-#endif //_K15Engine_System_ApplicationParameter_h_
+    virtual void setResolution(uint32 p_Width,uint32 p_Height);
+    void getResolution(uint32* p_Width,uint32* p_Height) const;
+
+    virtual void setIsFullscreen(bool p_Fullscreen);
+    void getIsFullscreen() const;
+  protected:
+    String m_WindowTitle;
+    uint32 m_Width, m_Height;
+    bool m_IsFullscreen;
+  };// end of RenderWindowBase class
+}}// end of K15_Engine::System namespace
+
+#endif //_K15Engine_System_RenderWindowBase_h_

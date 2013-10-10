@@ -1,8 +1,8 @@
 /**
- * @file K15_ApplicationParameter.h
+ * @file K15_StringUtil.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/07/10
+ * @date 2012/07/11
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,19 +21,17 @@
  * 
  */
 
-#ifndef _K15Engine_System_ApplicationParameter_h_
-#define _K15Engine_System_ApplicationParameter_h_
+#ifndef _K15Engine_System_StringUtil_h_
+#define _K15Engine_System_StringUtil_h_
 
 #include "K15_Prerequisites.h"
 
 namespace K15_Engine { namespace System { 
-	
-	struct ApplicationParameter
-	{
-		String Group;
-		String Name;
-		String Value;
-	};
+  class K15_API_EXPORT StringUtil
+  {
+  public:
+    static String format(char* p_Message,...);
+  };//end of StringUtil class
 }}//end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_ApplicationParameter_h_
+#endif //_K15Engine_System_StringUtil_h_

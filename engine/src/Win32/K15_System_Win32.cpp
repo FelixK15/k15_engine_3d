@@ -166,7 +166,7 @@ bool System::Initialize(uint32 iFlags)
 	//We'll create our log first.
 	m_pEngineLog =  g_pLogManager->CreateLog("K15_Log",true,true,true);
 
-	K15_LogNormalMessage("Starting K15 System...");
+	_LogNormal("Starting K15 System...");
 
 	//We need to obtain a Handle to the Process' Heap in order to 
 	//allocate memory via the HeapAlloc function.
@@ -194,14 +194,14 @@ bool System::Initialize(uint32 iFlags)
 
 bool System::InitializeWindow(const String &sTitle,uint32 iFlags,uint32 iPosX,uint32 iPosY,uint32 iWidth,uint32 iHeight)
 {
-	K15_LogNormalMessage("Initializing window...");
+	_LogNormal("Initializing window...");
 
 	//Before we can create a new window, we must create and register a so called WindowClass (WNDCLASS).
 	InitializeWindowClass(iFlags);
 
 	//After the WindowClass has been created and registered, we try to create a new window.
 	if(!CreateAndShowWindow(sTitle,iFlags,iPosX,iPosY,iWidth,iHeight)){
-		K15_LogNormalMessage("Error - Could not create Window");
+		_LogNormal("Error - Could not create Window");
 		MessageBox(_hWHandle,"Could not create Window","Error",0);
 		return false;
 	}
@@ -213,7 +213,7 @@ bool System::InitializeWindow(const String &sTitle,uint32 iFlags,uint32 iPosX,ui
 
 void System::Shutdown()
 {
-	K15_LogNormalMessage("Shutting down system...");
+	_LogNormal("Shutting down system...");
 
 	//The window will get closed and destroyed during system shutdown.
 	//CloseWindow(_hWHandle);
@@ -227,7 +227,7 @@ void System::Shutdown()
 	Memory::CheckForMemoryLeak();
 	//Object::PrintObjectsInUse();
 
-	K15_LogNormalMessage("Shutting down game...");
+	_LogNormal("Shutting down game...");
 
 	if(m_pGame){
 		m_pGame->Shutdown();
@@ -237,7 +237,7 @@ void System::Shutdown()
 
 	UnregisterClass("K15GameWindow",_hInstance);
 	
-	K15_LogNormalMessage("Shutting down log...");
+	_LogNormal("Shutting down log...");
 	g_pLogManager->Shutdown();
 	Memory::CleanUp();
 }

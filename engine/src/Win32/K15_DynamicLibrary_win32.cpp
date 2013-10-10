@@ -42,7 +42,7 @@ namespace K15_Engine { namespace System {
     {
       m_Module = LoadLibrary(getFileName().c_str());
       if(!m_Module){
-        K15_LogNormalMessage(g_pSystem->GetSystemError());
+        _LogNormal(g_pSystem->GetSystemError());
         return false;
       }
 
@@ -60,14 +60,14 @@ namespace K15_Engine { namespace System {
       bResult = FreeLibrary(m_Module);
 
       if(!bResult){
-        K15_LogNormalMessage(g_pSystem->GetSystemError());
+        _LogNormal(g_pSystem->GetSystemError());
         return false;
       }
 
       m_Loaded = false;
       return true;
     }else{
-      K15_LogNormalMessage(String("Trying to load already unloaded library - ") + GetFileName());
+      _LogNormal(String("Trying to load already unloaded library - ") + GetFileName());
       return false;
     }
   }
@@ -80,7 +80,7 @@ namespace K15_Engine { namespace System {
 
       if(!pSymbol)
       {
-        K15_LogNormalMessage(g_pSystem->GetSystemError());
+        _LogNormal(g_pSystem->GetSystemError());
         return 0;
       }
 
@@ -88,8 +88,8 @@ namespace K15_Engine { namespace System {
     }
     else
     {
-      K15_LogNormalMessage(String("Trying to load symbol from unloaded library - Symbol:") + pSymbolName);
-      K15_LogNormalMessage(String("Library:") + GetFileName());	
+      _LogNormal(String("Trying to load symbol from unloaded library - Symbol:") + pSymbolName);
+      _LogNormal(String("Library:") + GetFileName());	
     }
 
     return 0;

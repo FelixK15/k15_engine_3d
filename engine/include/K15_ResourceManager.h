@@ -55,8 +55,8 @@ namespace K15_Engine { namespace System {
         if(!cacheResource<ResourceType>(p_FileName,p_Priority))
         {
           //resource could not get loaded.
-          K15_LogErrorMessage(String("Could not load resource. name:") + p_ResourceName.getString());
-          K15_LogErrorMessage(String("Last Error:") + Application::getInstance()->getLastError());
+          _LogError(String("Could not load resource. name:") + p_ResourceName.getString());
+          _LogError(String("Last Error:") + Application::getInstance()->getLastError());
         }
         else
         {
@@ -83,7 +83,7 @@ namespace K15_Engine { namespace System {
         if(!resourceFile->isOpen())
         {
           //log error and load debug resoure
-          K15_LogErrorMessage("Could not open resource file " + resourceFile->getResourceFileName());
+          _LogError("Could not open resource file " + resourceFile->getResourceFileName());
           ResourceType::loadDebugResource(resourceData);
         }
         else
@@ -94,7 +94,7 @@ namespace K15_Engine { namespace System {
             String logMessage = "Could not load asset:";
             logMessage += p_ResourceName.getString();
 
-            K15_LogErrorMessage(logMessage);
+            _LogError(logMessage);
 
             ResourceType::loadDebugResource(resourceData);
           }

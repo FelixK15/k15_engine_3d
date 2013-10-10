@@ -65,8 +65,7 @@ Functor0<ReturnType> DynamicLibraryBase::getSymbol(const String& p_SymbolName)
 		}
 
 	}else{
-		K15_LogNormalMessage(String("Trying to load symbol from already unloaded library - Symbol:") + p_SymbolName);
-		K15_LogNormalMessage(String("Library:") + getFileName());
+    _LogNormal(StringUtil::format("Trying to load symbol from already unloaded library - Symbol:\"%s\ (Library:\"%s\")",p_SymbolName,getFileName().c_str()));
 	}
 
 	return Functor0<ReturnType>();

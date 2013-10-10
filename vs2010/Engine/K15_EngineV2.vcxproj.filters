@@ -192,6 +192,12 @@
     <ClInclude Include="..\..\engine\include\K15_BaseAllocator.h">
       <Filter>Memory</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_RenderWindowBase.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_StringUtil.h">
+      <Filter>String</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Object.cpp">
@@ -266,6 +272,8 @@
     <ClCompile Include="..\..\engine\src\K15_BaseAllocator.cpp">
       <Filter>Memory</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_RenderWindowBase.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_StringUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />

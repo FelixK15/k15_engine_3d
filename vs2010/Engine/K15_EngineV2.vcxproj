@@ -138,11 +138,13 @@
     <ClInclude Include="..\..\engine\include\K15_NTree.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_RenderWindowBase.h" />
     <ClInclude Include="..\..\engine\include\K15_ResourceData.h" />
     <ClInclude Include="..\..\engine\include\K15_StackAllocator.h" />
     <ClInclude Include="..\..\engine\include\K15_String.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_StringUtil.h" />
     <ClInclude Include="..\..\engine\include\K15_Task.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_DynamicLibrary_win32.h" />
     <None Include="..\..\engine\include\K15_ByteConversion.h">
@@ -266,6 +268,7 @@
     <ClCompile Include="..\..\engine\src\K15_ProfilingNode.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_RenderWindowBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_ResourceBase.cpp" />
     <None Include="..\..\engine\src\K15_ResourceHandle.inl">
       <FileType>Document</FileType>
@@ -276,6 +279,7 @@
     <ClCompile Include="..\..\engine\src\K15_String.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_StringUtil.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Task.cpp" />
     <ClCompile Include="..\..\engine\src\K15_TaskManager.cpp" />
     <ClCompile Include="..\..\engine\src\Win32\K15_DynamicLibrary_win32.cpp" />

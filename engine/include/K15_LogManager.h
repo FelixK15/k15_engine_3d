@@ -30,14 +30,15 @@
 #include "K15_Singleton.h"
 #include "K15_Application.h"
 
-#define K15_LogNormalMessage(msg)  K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_NORMAL)
-#define K15_LogErrorMessage(msg)   K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_ERROR)
-#define K15_LogDebugMessage(msg)   K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_DEBUG)
-#define K15_LogWarningMessage(msg) K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_WARNING)
-#define K15_LogCustom0Message(msg) K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_CUSTOM0)
-#define K15_LogCustom1Message(msg) K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_CUSTOM1)
-#define K15_LogCustom2Message(msg) K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_CUSTOM2)
-#define K15_LogCustom3Message(msg) K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_CUSTOM3)
+#define _LogNormal(msg)  K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_NORMAL)
+#define _LogError(msg)   K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_ERROR)
+#define _LogDebug(msg)   K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_DEBUG)
+#define _LogWarning(msg) K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_WARNING)
+#define _LogSuccess(msg) K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_SUCCESS)
+#define _LogCustom0(msg) K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_CUSTOM0)
+#define _LogCustom1(msg) K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_CUSTOM1)
+#define _LogCustom2(msg) K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_CUSTOM2)
+#define _LogCustom3(msg) K15_Engine::System::LogManager::getInstance()->logMessage(msg,false,K15_Engine::System::LogManager::LP_CUSTOM3)
 
 namespace K15_Engine { namespace System {
 
@@ -50,15 +51,16 @@ namespace K15_Engine { namespace System {
 		enum eLogPriorityFlags
 		{
 			LP_INVALID = 0x0000,
-			LP_NORMAL = 0x0002,
-			LP_DEBUG = 0x0004,
-			LP_ERROR = 0x0008,
-			LP_WARNING = 0x0020,
+			LP_NORMAL = 0x0001,
+			LP_DEBUG = 0x0002,
+			LP_ERROR = 0x0004,
+			LP_WARNING = 0x0008,
+      LP_SUCCESS = 0x0010,
 
-			LP_CUSTOM0 = 0x0040,
-			LP_CUSTOM1 = 0x0080,
-			LP_CUSTOM2 = 0x0200,
-			LP_CUSTOM3 = 0x0400
+			LP_CUSTOM0 = 0x0020,
+			LP_CUSTOM1 = 0x0040,
+			LP_CUSTOM2 = 0x0080,
+			LP_CUSTOM3 = 0x0100
 		};
 
 	public:

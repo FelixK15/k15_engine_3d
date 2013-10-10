@@ -31,6 +31,7 @@
 namespace K15_Engine { namespace System {
   /*********************************************************************************/
   typedef K15_Set(String) StringSet;
+  typedef K15_List(ApplicationModule*) ApplicationModuleList;
   typedef K15_List(ApplicationParameter) ApplicationParameterList;
   /*********************************************************************************/
   class K15_API_EXPORT Application : public Singleton<Application>,
@@ -87,11 +88,14 @@ namespace K15_Engine { namespace System {
   private:
 	  bool m_Running;
     
+    GameTime m_GameTime;
+
 	  String m_GameRootDir;
 
 	  StringSet m_Plugins;
     StringSet m_Commands;
     ApplicationParameterList m_ApplicationParameter;
+    ApplicationModuleList m_LoadedModules;
 
     RenderWindowBase* m_RenderWindow;
     TaskManager* m_TaskManager;
