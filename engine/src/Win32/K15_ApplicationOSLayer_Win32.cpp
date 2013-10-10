@@ -1,5 +1,5 @@
 /**
- * @file K15_ApplicationOSLayer_Win32.h
+ * @file K15_ApplicationOSLayer_Win32.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2012/10/16
@@ -18,6 +18,10 @@
  */
 
 #include "K15_ApplicationOSLayer_Win32.h"
+#include "K15_RenderWindowBase.h"
+#include "K15_LogManager.h"
+#include "K15_Application.h"
+#include "K15_StringUtil.h"
 
 namespace K15_Engine { namespace System { 
 	/*********************************************************************************/
@@ -34,7 +38,20 @@ namespace K15_Engine { namespace System {
 
 	}
 	/*********************************************************************************/
-	String ApplicationOSLayer_Win32::getError()
+	bool ApplicationOSLayer_Win32::initialize()
+	{
+		if(QueryPerformanceFrequency(&m_PerformanceCounterFrequency) == FALSE)
+		{
+			_LogError(StringUtil::format("Could not get performance counter frequency. Error:%s",Application::getInstance()->getLastError()));
+			return false;
+		}
+
+		m_Frequency = double(m_PerformanceCounterFrequency.QuadPart);
+
+		return true;
+	}
+	/*********************************************************************************/
+	String ApplicationOSLayer_Win32::getError() const
 	{
 		char* errorBuffer = (char*)_malloca(K15_ERROR_BUFFER_SIZE);
 		errorBuffer = '\0';
@@ -45,6 +62,26 @@ namespace K15_Engine { namespace System {
 			sprintf(errorBuffer,"Could not retrieve last error from OS.");
 		}
 		return String(errorBuffer);
+	}
+	/*********************************************************************************/
+	void ApplicationOSLayer_Win32::getSupportedResolutions(SupportedResolutionSet* p_ResolutionSet) const
+	{
+		DEVMODE dm = {0};
+		dm.dmSize = sizeof(dm);
+		
+		for(int i = 0;EnumDisplaySettings(0,i,&dm) != 0;++i)
+		{
+			RenderWindowBase::Resolution currentResolution = {dm.dmPelsWidth,dm.dmPelsHeight};
+			p_ResolutionSet->push_back(currentResolution);
+		}
+	}
+	/*********************************************************************************/
+	double ApplicationOSLayer_Win32::getTime() const
+	{
+		LARGE_INTEGER counts;
+		QueryPerformanceCounter(&counts);
+
+		return counts.QuadPart / m_Frequency;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::System namespace

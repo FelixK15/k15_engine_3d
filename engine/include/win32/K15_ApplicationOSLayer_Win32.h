@@ -34,9 +34,20 @@ namespace K15_Engine { namespace System {
 	public:
 		ApplicationOSLayer_Win32();
 		virtual ~ApplicationOSLayer_Win32();
+		// initialize the OS layer
+		virtual bool initialize();
+		// shutdown OS layer
+		virtual void shutdown();
 		// get the last error set by the OS
-		virtual String getError();
-	};
+		virtual String getError() const;
+		// get supported resolutions
+		virtual void getSupportedResolutions(SupportedResolutionSet* p_ResolutionSet) const;
+		// get current time (1.0 = 1 sec)
+		virtual double getTime() const;
+	private:
+		LARGE_INTEGER m_PerformanceCounterFrequency;
+		double m_Frequency;
+	};//end of ApplicationOSLayer_Win32 class
 	/*********************************************************************************/
 }}// end of K15_Engine::System namespace
 

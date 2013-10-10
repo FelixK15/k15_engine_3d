@@ -87,3 +87,13 @@ inline const double Application::getRawDeltaTime() const
   return m_GameTime.getRawDeltaTime();
 }
 /*********************************************************************************/
+inline String Application::getLastError() const
+{
+	return m_OSLayer.getError();
+}
+/*********************************************************************************/
+inline double Application::getTime() const
+{
+	return m_OSLayer.getTime();
+}
+/*********************************************************************************/

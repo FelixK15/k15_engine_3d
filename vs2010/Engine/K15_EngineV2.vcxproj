@@ -149,6 +149,7 @@
     <ClInclude Include="..\..\engine\include\K15_Task.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_ApplicationOSLayer_Win32.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_DynamicLibrary_win32.h" />
+    <ClInclude Include="..\..\engine\include\win32\K15_RenderWindow_Win32.h" />
     <None Include="..\..\engine\include\K15_ByteConversion.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
@@ -195,6 +196,7 @@
     <ClInclude Include="..\..\engine\include\K15_TaskManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\engine\src\win32\K15_RenderWindow_Win32.cpp" />
     <None Include="..\..\engine\include\K15_Rtti.mcr" />
     <None Include="..\..\engine\include\K15_String.mcr">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -290,6 +292,7 @@
   <ItemGroup>
     <None Include="..\..\engine\src\K15_Task.inl" />
     <None Include="..\..\engine\src\K15_TaskManager.inl" />
+    <None Include="..\..\engine\src\Win32\K15_RenderWindowBase.inl" />
     <None Include="module.def" />
   </ItemGroup>
   <ItemGroup>

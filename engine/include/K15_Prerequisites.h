@@ -38,6 +38,7 @@ namespace K15_Engine
 #		if defined _WIN32
 			class DynamicLibrary_Win32;
 			class ApplicationOSLayer_Win32;
+			class RenderWindow_Win32;
 #		endif //_WIN32
 		class DynamicLibraryBase;
 		class DynamicLibraryManager;
@@ -66,7 +67,6 @@ namespace K15_Engine
 
 		template<class Allocator>
 		class AllocatedObject;
-
 	}
 }
 
@@ -205,6 +205,7 @@ namespace K15_Engine
 #if defined K15_OS_WINDOWS
 	typedef K15_Engine::System::DynamicLibrary_Win32 DynamicLibraryType;
 	typedef K15_Engine::System::ApplicationOSLayer_Win32 ApplicationOSLayerType;
+	typedef K15_Engine::System::RenderWindow_Win32 RenderWindowType;
 #endif //K15_OS_WINDOWS
  
 #if defined K15_DEBUG

@@ -82,6 +82,9 @@ namespace K15_Engine { namespace System {
     inline LogManager* getLogManager() const;
 	inline const ApplicationOSLayerType& getOSLayer() const;
 
+	inline String getLastError() const;
+	inline double getTime() const;
+
     inline const GameTime& getGameTime() const;
     inline const double getDeltaTime() const;
     inline const double getRawDeltaTime() const;
@@ -96,10 +99,12 @@ namespace K15_Engine { namespace System {
 
   private:
 	bool m_Running;
-    
+    double m_Started;
+	double m_TimeLastFrame;
+
     GameTime m_GameTime;
 
-	  String m_GameRootDir;
+	String m_GameRootDir;
 
 	StringSet m_Plugins;
     StringSet m_Commands;

@@ -27,6 +27,7 @@
 #include "K15_Prerequisites.h"
 #include "K15_Application.h"
 #include "K15_AllocatedObject.h"
+#include "K15_RenderWindowBase.h"
 
 namespace K15_Engine { namespace System {
 	/*********************************************************************************/
@@ -35,13 +36,22 @@ namespace K15_Engine { namespace System {
 	public:
 		/*********************************************************************************/
 		static const String OSName;
+		typedef K15_List(RenderWindowBase::Resolution) SupportedResolutionSet;
 		/*********************************************************************************/
 	public:
 		ApplicationOSLayerBase();
 		virtual ~ApplicationOSLayerBase();
+		// initialize the OS layer
+		virtual bool initialize() = 0;
+		// shutdown OS layer
+		virtual void shutdown() = 0;
 		// get the last error set by the OS
-		virtual String getError() = 0;
-	};
+		virtual String getError() const = 0;
+		// get supported resolutions
+		virtual void getSupportedResolutions(SupportedResolutionSet* p_ResolutionSet) const = 0;
+		// get current time
+		virtual double getTime() const = 0;
+	};//end of ApplicationOSLayerBase class
 	/*********************************************************************************/
 }}// end of K15_Engine::System namespace
 

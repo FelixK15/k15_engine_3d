@@ -25,8 +25,7 @@
 
 #include "K15_Prerequisites.h"
 
-namespace K15_Engine { namespace System 
-{
+namespace K15_Engine { namespace System {
 	class K15_API_EXPORT GameTime
 	{
 	public:
@@ -56,14 +55,14 @@ namespace K15_Engine { namespace System
 		*/
 		inline const double getMultiplier() const;
 
-    inline void setDeltaTime(const double p_DeltaTime);
+		inline void setDeltaTime(const double p_DeltaTime);
 
-    inline void setMultiplier(const double p_Multiplier);
+		inline void setMultiplier(const double p_Multiplier);
 	private:
 		double m_DeltaTime;
 		double m_Mulitplicator;
 		double m_RawDeltaTime;
-	};
+	};// end of GameTime class
 	#include "K15_GameTime.inl"
 }}// end of K15_Engine::System namespace
 

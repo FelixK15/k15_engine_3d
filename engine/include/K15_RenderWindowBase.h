@@ -25,24 +25,36 @@
 #define _K15Engine_System_RenderWindowBase_h_
 
 #include "K15_Prerequisites.h"
+#include "K15_AllocatedObject.h"
+#include "K15_Application.h"
 
 namespace K15_Engine { namespace System { 
-  class K15_API_EXPORT RenderWindowBase
+  class K15_API_EXPORT RenderWindowBase : public ApplicationAllocatedObject
   {
   public:
+	  struct Resolution
+	  {
+		  uint32 width;
+		  uint32 height;
+	  };
+  public:
+	virtual bool initialize() = 0;
+	virtual void shutdown() = 0;
+
     virtual void setWindowTitle(const String& p_WindowTitle);
     const String& getWindowTitle() const;
 
-    virtual void setResolution(uint32 p_Width,uint32 p_Height);
-    void getResolution(uint32* p_Width,uint32* p_Height) const;
+    virtual void setResolution(const Resolution& p_Resolution);
+    const Resolution& getResolution() const;
 
     virtual void setIsFullscreen(bool p_Fullscreen);
-    void getIsFullscreen() const;
+    bool isFullscreen() const;
   protected:
     String m_WindowTitle;
-    uint32 m_Width, m_Height;
+    Resolution m_CurrentResolution;
     bool m_IsFullscreen;
   };// end of RenderWindowBase class
+#include "K15_RenderWindowBase.inl"
 }}// end of K15_Engine::System namespace
 
 #endif //_K15Engine_System_RenderWindowBase_h_

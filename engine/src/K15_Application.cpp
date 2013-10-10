@@ -29,6 +29,11 @@
 #include "K15_ApplicationModule.h"
 #include "K15_ApplicationModuleDescription.h"
 
+#ifdef K15_OS_WINDOWS
+#	include "K15_RenderWindow_Win32.h"
+#	include "K15_ApplicationOSLayer_Win32.h"
+#endif //K15_OS_WINDOWS
+
 namespace K15_Engine { namespace System { 
 	/*********************************************************************************/
 	const String Application::SettingsFileName = "settings.ini";
@@ -174,77 +179,96 @@ namespace K15_Engine { namespace System {
 	/*********************************************************************************/
 	void Application::initialize()
 	{
+		_LogNormal(StringUtil::format("Initializing OS layer (OS:\"%s\")",m_OSLayer.OSName));
+
+		//try to initialize the os layer
+		if(!m_OSLayer.initialize())
+		{
+			_LogError("Failed to initialize OS layer");
+		}
+
+		_LogSuccess("OS layer initialized!");
+
+		m_Started = m_OSLayer.getTime();
+
 		loadSettingsFile();
 
 		_LogNormal("Initializing DynamicLibraryManager...");
 		m_DynamicLibraryManager = K15_NEW DynamicLibraryManager();
-
+		
 		_LogNormal("Initializing EventManager...");
 		m_EventManager = K15_NEW EventManager();
-
+		
 		_LogNormal("Initializing ProfilingManager...");
 		m_ProfileManager = K15_NEW ProfilingManager();
 
 		_LogNormal("Initializing TaskManager...");
 		m_TaskManager = K15_NEW TaskManager();
 
-    //Load plugins
+		//Load plugins
 		loadPluginsFile();
 
-    //call callbacks on plugin modules
-    for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
-    {
-      (*iter)->onInitialize();
-    }
+		//call callbacks on plugin modules
+		for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
+		{
+			(*iter)->onInitialize();
+		}
+
+		m_RenderWindow = K15_NEW RenderWindowType();
+
+		m_RenderWindow->initialize();
 	}
-  /*********************************************************************************/
-  void Application::run()
-  {
-    for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
-    {
-      (*iter)->onPreRun();
-    }
+	/*********************************************************************************/
+	void Application::run()
+	{
+		for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
+		{
+			(*iter)->onPreRun();
+		}
 
-    m_Running = true;
-    while(m_Running)
-    {
-      tick();
-    }
+		m_Running = true;
+		while(m_Running)
+		{
+			tick();
+		}
 
-    for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
-    {
-      (*iter)->onPostRun();
-    }
-  }
-  /*********************************************************************************/
-  void Application::onPreTick()
-  {
-    for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
-    {
-      (*iter)->onPreTick();
-    }
-  }
-  /*********************************************************************************/
-  void Application::tick()
-  {
-    onPreTick();
-    //Update gametime
+		for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
+		{
+			(*iter)->onPostRun();
+		}
+	}
+	/*********************************************************************************/
+	void Application::onPreTick()
+	{
+		for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
+		{
+			(*iter)->onPreTick();
+		}
+	}
+	/*********************************************************************************/
+	void Application::tick()
+	{
+		onPreTick();
 
-    //dispatch events
-    m_EventManager->update();
-    m_TaskManager->update(m_GameTime);
+		//Update gametime
+		m_GameTime.setDeltaTime(getTime() - m_TimeLastFrame);
+		m_TimeLastFrame = getTime();
 
-    //Render frame
-    onPostTick();
-  }
-  /*********************************************************************************/
-  void Application::onPostTick()
-  {
-    for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
-    {
-      (*iter)->onPostTick();
-    }
-  }
+		//dispatch events
+		m_EventManager->update();
+		m_TaskManager->update(m_GameTime);
+
+		//Render frame
+		onPostTick();
+	}
+	/*********************************************************************************/
+	void Application::onPostTick()
+	{
+		for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
+		{
+			(*iter)->onPostTick();
+		}
+	}
 	/*********************************************************************************/
 	void Application::loadPluginsFile()
 	{
@@ -314,65 +338,76 @@ namespace K15_Engine { namespace System {
 				}
 
 				//initialize plugin
-				if(initFunc.isValid()) initFunc();
+				if(initFunc.isValid())
+				{
+					initFunc();
+				}
 
 				//get the plugins module description to check what kind of module we're loading
 				ApplicationModuleDescription description = moduleDescFunc();
 				
-        _LogNormal(StringUtil::format("Plugin information:\n\tAuthor:\t%s\n\tVersion:\t\%i.%i",description.Author,description.MajorVersion,description.MinorVersion));
+				_LogSuccess(StringUtil::format("Plugin information:\n\tAuthor:\t%s\n\tVersion:\t\%i.%i",description.Author,description.MajorVersion,description.MinorVersion));
 
-        static ApplicationParameterList pluginSettings;
+				static ApplicationParameterList pluginSettings;
 
-        //Filter plugin parameter by group name
-        for(StringSet::iterator groupIter = description.GroupFilter.begin();groupIter != description.GroupFilter.end();++groupIter)
-        {
-          _LogNormal(StringUtil::format("Filtering plugin parameter (by group name \"%s\")...",(*groupIter).c_str()));
-          const String& groupName = *groupIter;
-          uint32 counter = 0;
-          for(ApplicationParameterList::iterator paramIter = m_ApplicationParameter.begin();paramIter != m_ApplicationParameter.end();++paramIter)
-          {
-            if((*paramIter).Group == groupName)
-            {
-              pluginSettings.push_back(*paramIter);
-              ++counter;
-            }
-          }
-          _LogNormal(StringUtil::format("...Done filtering plugin parameter. (%i parameter found)",counter));
-        }
+				//Filter plugin parameter by group name
+				for(StringSet::iterator groupIter = description.GroupFilter.begin();groupIter != description.GroupFilter.end();++groupIter)
+				{
+					_LogNormal(StringUtil::format("Filtering plugin parameter (by group name \"%s\")...",(*groupIter).c_str()));
+					const String& groupName = *groupIter;
+					uint32 counter = 0;
+					for(ApplicationParameterList::iterator paramIter = m_ApplicationParameter.begin();paramIter != m_ApplicationParameter.end();++paramIter)
+					{
+						if((*paramIter).Group == groupName)
+						{
+							pluginSettings.push_back(*paramIter);
+							++counter;
+						}
+					}
+					_LogNormal(StringUtil::format("...Done filtering plugin parameter. (%i parameter found)",counter));
+				}
 
 				//get the module
 				ApplicationModule* module = moduleFunc();
-        m_LoadedModules.push_back(module);
-        //Check if plugin provides an own Task...if so, add it to the task manager
+				m_LoadedModules.push_back(module);
+				//Check if plugin provides an own Task...if so, add it to the task manager
 				if(description.PluginFlagBitMask | ApplicationModuleDescription::PF_ProvidesTask)
 				{
-          Task* pluginTask = module->createTask();
-          if(!pluginTask)
-          {
-            //K15_LogErrorMessage()
-          }
-          else
-          {
-            m_TaskManager->addTask(pluginTask);
-          }
-        //Check if the plugin provides a renderer.
-				}else if(description.PluginFlagBitMask | ApplicationModuleDescription::PF_ProvidesRenderer)
-        {
-          //Add Renderer
-        }
+					Task* pluginTask = module->createTask();
+					if(!pluginTask)
+					{
+						_LogError(StringUtil::format("Plugin \"%s\" flag PF_ProvidesTask set, but no Task could be obtained via createTask",lib->getFileName()));
+					}
+					else
+					{
+						m_TaskManager->addTask(pluginTask);
+						_LogSuccess(StringUtil::format("Task successfully loaded from plugin \"%s\".",lib->getFileName()));
+					}
+					//Check if the plugin provides a renderer.
+				}
+				else if(description.PluginFlagBitMask | ApplicationModuleDescription::PF_ProvidesRenderer)
+				{
+					//Add Renderer
+				}
 
 				//uninitialize plugin
-				if(shutdownFunc.isValid()) shutdownFunc();
+				if(shutdownFunc.isValid())
+				{
+					shutdownFunc();	
+				}
 			}
 		}
 	}
-  /*********************************************************************************/
-  void Application::shutdown()
-  {
-    for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
-    {
-      (*iter)->onShutdown();
-    }
-  }
-/*********************************************************************************/
-}}
+	/*********************************************************************************/
+	void Application::shutdown()
+	{
+		for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
+		{
+			(*iter)->onShutdown();
+		}
+
+		m_RenderWindow->shutdown();
+		m_OSLayer.shutdown();
+	}
+	/*********************************************************************************/
+}}//end of K15_Engine::System namespace
