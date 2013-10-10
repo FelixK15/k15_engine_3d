@@ -217,20 +217,29 @@ namespace K15_Engine { namespace System {
     }
   }
   /*********************************************************************************/
-  void Application::tick()
+  void Application::onPreTick()
   {
     for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
     {
       (*iter)->onPreTick();
     }
-
+  }
+  /*********************************************************************************/
+  void Application::tick()
+  {
+    onPreTick();
     //Update gametime
-
 
     //dispatch events
     m_EventManager->update();
     m_TaskManager->update(m_GameTime);
 
+    //Render frame
+    onPostTick();
+  }
+  /*********************************************************************************/
+  void Application::onPostTick()
+  {
     for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
     {
       (*iter)->onPostTick();
@@ -364,5 +373,5 @@ namespace K15_Engine { namespace System {
       (*iter)->onShutdown();
     }
   }
-  /*********************************************************************************/
+/*********************************************************************************/
 }}

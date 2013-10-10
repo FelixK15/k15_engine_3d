@@ -72,3 +72,18 @@ inline LogManager* Application::getLogManager() const
 	return m_LogManager;
 }
 /*********************************************************************************/
+inline const GameTime& Application::getGameTime() const
+{
+  return m_GameTime;
+}
+/*********************************************************************************/
+inline const double Application::getDeltaTime() const
+{
+  return m_GameTime.getDeltaTime();
+}
+/*********************************************************************************/
+inline const double Application::getRawDeltaTime() const
+{
+  return m_GameTime.getRawDeltaTime();
+}
+/*********************************************************************************/

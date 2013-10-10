@@ -35,3 +35,13 @@ inline const double GameTime::getMultiplier() const
 	return m_Mulitplicator;
 }
 /*********************************************************************************/
+void GameTime::setDeltaTime(const double p_DeltaTime)
+{
+  m_DeltaTime = p_DeltaTime;
+}
+/*********************************************************************************/
+void GameTime::setMultiplier(const double p_Multiplier)
+{
+  m_Mulitplicator = p_Multiplier;
+}
+/*********************************************************************************/

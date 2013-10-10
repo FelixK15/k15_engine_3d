@@ -63,7 +63,7 @@ namespace K15_Engine { namespace System {
         _LogNormal(g_pSystem->GetSystemError());
         return false;
       }
-
+      
       m_Loaded = false;
       return true;
     }else{

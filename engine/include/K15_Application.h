@@ -64,8 +64,8 @@ namespace K15_Engine { namespace System {
 
     void shutdown();
 
-    void onBeforeTick();
-    void onAfterTick();
+    void onPreTick();
+    void onPostTick();
 
     void onBeforeRender();
     void onAfterRender();
@@ -76,6 +76,10 @@ namespace K15_Engine { namespace System {
     inline DynamicLibraryManager* getDynamicLibraryManager() const;
     inline RenderWindowBase* getRenderWindow() const;
     inline LogManager* getLogManager() const;
+
+    inline const GameTime& getGameTime() const;
+    inline const double getDeltaTime() const;
+    inline const double getRawDeltaTime() const;
 
   private:
     void createCommandList(int p_CommandCount,char** p_Commands);
