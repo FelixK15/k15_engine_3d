@@ -1,8 +1,8 @@
 /**
- * @file K15_Task.cpp
+ * @file K15_ApplicationOSLayer_Win32.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/09/26
+ * @date 2012/10/16
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -15,34 +15,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @section DESCRIPTION
+ *
+ * 
  */
 
-#include "K15_Task.h"
+#ifndef _K15Engine_System_ApplicationOSLayer_Win32_h_
+#define _K15Engine_System_ApplicationOSLayer_Win32_h_
+
+#include "K15_Prerequisites.h"
+#include "K15_ApplicationOSLayerBase.h"
 
 namespace K15_Engine { namespace System {
 	/*********************************************************************************/
-	Task::Task()
-		: m_Functor(0),
-		  m_Priority(0)
+	class K15_API_EXPORT ApplicationOSLayer_Win32 : public ApplicationOSLayerBase
 	{
+	public:
+		ApplicationOSLayer_Win32();
+		virtual ~ApplicationOSLayer_Win32();
+		// get the last error set by the OS
+		virtual String getError();
+	};
+	/*********************************************************************************/
+}}// end of K15_Engine::System namespace
 
-	}
-	/*********************************************************************************/
-	Task::Task(FunctorType p_Functor,uint32 p_Priority)
-		: m_Functor(p_Functor),
-		  m_Priority(p_Priority)
-	{
-
-	}
-	/*********************************************************************************/
-	Task::~Task()
-	{
-
-	}
-	/*********************************************************************************/
-	bool Task::operator<( const Task& p_Other )
-	{
-		return m_Priority < p_Other.m_Priority;
-	}
-	/*********************************************************************************/
-}}//end of K15_Engine::System
+#endif //_K15Engine_System_ApplicationOSLayer_Win32_h_

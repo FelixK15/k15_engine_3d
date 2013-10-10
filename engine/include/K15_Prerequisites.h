@@ -29,6 +29,7 @@ namespace K15_Engine
 	namespace System
 	{
 		class Application;
+		class ApplicationOSLayer;
 		class ApplicationModule;
 		struct ApplicationModuleDescription;
 		class TaskManager;
@@ -36,6 +37,7 @@ namespace K15_Engine
 		class GameTime;
 #		if defined _WIN32
 			class DynamicLibrary_Win32;
+			class ApplicationOSLayer_Win32;
 #		endif //_WIN32
 		class DynamicLibraryBase;
 		class DynamicLibraryManager;
@@ -202,6 +204,7 @@ namespace K15_Engine
 
 #if defined K15_OS_WINDOWS
 	typedef K15_Engine::System::DynamicLibrary_Win32 DynamicLibraryType;
+	typedef K15_Engine::System::ApplicationOSLayer_Win32 ApplicationOSLayerType;
 #endif //K15_OS_WINDOWS
  
 #if defined K15_DEBUG

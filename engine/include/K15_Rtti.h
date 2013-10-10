@@ -32,13 +32,13 @@ namespace K15_Engine { namespace System {
 	class K15_API_EXPORT Rtti
 	{
 	public:
-		Rtti(const TypeName &sName,const Rtti *pBaseType);
+		Rtti(const TypeName &p_Name,const Rtti *p_BaseType);
 		~Rtti();
 
 		const TypeName &getName() const;
 
-		bool isInstanceOf(const Rtti &rtType) const;
-		bool isDerivedFrom(const Rtti &rtType) const;
+		bool isInstanceOf(const Rtti &p_OtherType) const;
+		bool isDerivedFrom(const Rtti &p_OtherType) const;
 
 	private:
 		TypeName m_Name;

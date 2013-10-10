@@ -29,7 +29,7 @@ inline void Object::decreaseReferences()
 
 inline bool Object::isInstanceOf(const Rtti& p_Type) const
 {
-	return TYPE.IsInstanceOf(p_Type);
+	return TYPE.isInstanceOf(p_Type);
 }
 
 inline bool Object::isInstanceOf(const Object* p_Object) const

@@ -96,7 +96,7 @@ namespace K15_Engine { namespace System {
 
 		String::size_type pos = String::npos;
 
-		if((pos = appPath.find_last_of('//')) != String::npos)
+		if((pos = appPath.find_last_of('\\')) != String::npos)
 		{
 			m_GameRootDir = appPath.substr(0,pos);
 		}
@@ -127,7 +127,7 @@ namespace K15_Engine { namespace System {
 			String line; line.reserve(lineLength);
 			String group;
 
-			char* buffer = (char*)alloca(lineLength);
+			char* buffer = (char*)_malloca(lineLength);
 			while(!settingsFile.eof())
 			{
 				settingsFile.getline(buffer,lineLength);
@@ -203,7 +203,7 @@ namespace K15_Engine { namespace System {
 		if(pluginsFile.is_open())
 		{
 			static const uint32 lineLength = 256;
-			char* buffer = (char*)alloca(lineLength);
+			char* buffer = (char*)_malloca(lineLength);
 			String line; line.reserve(lineLength);
 			String pluginName; uint32 pos = 0;
 			while(!pluginsFile.eof())
@@ -233,7 +233,7 @@ namespace K15_Engine { namespace System {
 	void Application::initializePlugins(const StringSet& p_PluginNames)
 	{
 		DynamicLibraryBase* lib = 0;
-		char* messageBuffer = (char*)alloca(K15_PLUGIN_INFO_BUFFER_SIZE);
+		char* messageBuffer = (char*)_malloca(K15_PLUGIN_INFO_BUFFER_SIZE);
 		for(StringSet::const_iterator iter = p_PluginNames.begin();iter != p_PluginNames.end();++iter)
 		{
 			K15_LogNormalMessage("Trying to initialize plugin " + *iter);

@@ -22,7 +22,7 @@ inline const TypeName& Rtti::getName() const
 	return m_Name;
 }
 
-inline bool Rtti::isInstanceOf(const Rtti &rtType) const
+inline bool Rtti::isInstanceOf(const Rtti &p_OtherType) const
 {
-	return &rtType == this;
+	return &p_OtherType == this;
 }

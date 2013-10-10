@@ -32,21 +32,21 @@ namespace K15_Engine { namespace System {
 
   }
   /*********************************************************************************/
-  bool Rtti::isDerivedFrom(const Rtti &rtType) const
+  bool Rtti::isDerivedFrom(const Rtti &p_OtherType) const
   {
-    bool bDerived = false;
+    bool isDerived = false;
 
-    const Rtti *pSearch = this;
-    while(pSearch){
-      if(pSearch == &rtType){
-        bDerived = true;
+    const Rtti *search = this;
+    while(search){
+      if(search == &p_OtherType){
+        isDerived = true;
         break;
       }
 
-      pSearch = pSearch->p_BaseType;
+      search = search->m_BaseType;
     }
 
-    return bDerived;
+    return isDerived;
   }
   /*********************************************************************************/
 }}//end of K15_Engine::System namespace

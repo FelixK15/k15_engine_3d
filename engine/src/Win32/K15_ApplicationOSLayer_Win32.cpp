@@ -1,8 +1,8 @@
 /**
- * @file K15_Task.cpp
+ * @file K15_ApplicationOSLayer_Win32.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/09/26
+ * @date 2012/10/16
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -17,32 +17,34 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_Task.h"
+#include "K15_ApplicationOSLayer_Win32.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace System { 
 	/*********************************************************************************/
-	Task::Task()
-		: m_Functor(0),
-		  m_Priority(0)
+	const String ApplicationOSLayer_Win32::OSName = "Microsoft Windows";
+	/*********************************************************************************/
+	ApplicationOSLayer_Win32::ApplicationOSLayer_Win32()
+		: ApplicationOSLayerBase()
 	{
 
 	}
 	/*********************************************************************************/
-	Task::Task(FunctorType p_Functor,uint32 p_Priority)
-		: m_Functor(p_Functor),
-		  m_Priority(p_Priority)
+	ApplicationOSLayer_Win32::~ApplicationOSLayer_Win32()
 	{
 
 	}
 	/*********************************************************************************/
-	Task::~Task()
+	String ApplicationOSLayer_Win32::getError()
 	{
-
+		char* errorBuffer = (char*)_malloca(K15_ERROR_BUFFER_SIZE);
+		errorBuffer = '\0';
+		DWORD lastError = GetLastError();
+		DWORD writtenChars = FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,0,lastError,1033,errorBuffer,K15_ERROR_BUFFER_SIZE,0);
+		if(writtenChars == 0)
+		{
+			sprintf(errorBuffer,"Could not retrieve last error from OS.");
+		}
+		return String(errorBuffer);
 	}
 	/*********************************************************************************/
-	bool Task::operator<( const Task& p_Other )
-	{
-		return m_Priority < p_Other.m_Priority;
-	}
-	/*********************************************************************************/
-}}//end of K15_Engine::System
+}}//end of K15_Engine::System namespace

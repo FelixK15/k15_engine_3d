@@ -1,8 +1,8 @@
 /**
- * @file K15_Task.h
- * @author  Felix Klinge <f.klinge15@gmail.com>
+ * @file K15_ApplicationOSLayerBase.h
+ * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- *
+ * @date 2012/10/16
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,39 +21,28 @@
  * 
  */
 
-#ifndef _K15Engine_System_Task_h_
-#define _K15Engine_System_Task_h_
+#ifndef _K15Engine_System_ApplicationOSLayerBase_h_
+#define _K15Engine_System_ApplicationOSLayerBase_h_
 
 #include "K15_Prerequisites.h"
+#include "K15_Application.h"
 #include "K15_AllocatedObject.h"
-#include "K15_TaskManager.h"
-#include "K15_Functor.h"
-#include "K15_GameTime.h"
 
 namespace K15_Engine { namespace System {
-	class Task : public TaskManagerAllocatedObject
+	/*********************************************************************************/
+	class K15_API_EXPORT ApplicationOSLayerBase : public ApplicationAllocatedObject
 	{
 	public:
 		/*********************************************************************************/
-		typedef Functor1<void,const GameTime&> FunctorType;
+		static const String OSName;
 		/*********************************************************************************/
 	public:
-		Task();
-		Task(FunctorType p_Functor,uint32 p_Priority = 0);
-		~Task();
+		ApplicationOSLayerBase();
+		virtual ~ApplicationOSLayerBase();
+		// get the last error set by the OS
+		virtual String getError() = 0;
+	};
+	/*********************************************************************************/
+}}// end of K15_Engine::System namespace
 
-		inline void update(const GameTime& p_GameTime);
-		inline void setUpdateFunc(FunctorType p_Functor);
-
-		inline uint32 getPriority() const;
-		inline void setPriority(uint32 p_Priority);
-
-		bool operator<(const Task& p_Other);
-	protected:
-		uint32 m_Priority;
-		FunctorType m_Functor;
-	};// end of Task class
-#include "K15_Task.inl"
-}}//end of K15_Engine::System namespace
-
-#endif //_K15Engine_System_Task_h_
+#endif //_K15Engine_System_ApplicationOSLayerBase_h_

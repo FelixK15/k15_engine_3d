@@ -72,3 +72,8 @@ inline LogManager* Application::getLogManager() const
 	return m_LogManager;
 }
 /*********************************************************************************/
+inline const ApplicationOSLayerType& Application::getOSLayer() const
+{
+	return m_OSLayer;
+}
+/*********************************************************************************/

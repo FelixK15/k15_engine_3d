@@ -26,19 +26,9 @@ inline void Task::update(const GameTime& p_GameTime)
 	}
 }
 /*********************************************************************************/
-inline void Task::setUpdateFunc(FunctorType p_Functor)
+inline void Task::setUpdateFunc(Task::FunctorType p_Functor)
 {
 	m_Functor = p_Functor;
-}
-/*********************************************************************************/
-inline bool Task::isThreaded()
-{
-	return m_Threaded;
-}
-/*********************************************************************************/
-inline void Task::setThreaded(bool p_Threaded)
-{
-	m_Threaded = p_Threaded;
 }
 /*********************************************************************************/
 inline uint32 Task::getPriority() const

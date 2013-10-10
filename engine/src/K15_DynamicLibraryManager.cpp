@@ -22,7 +22,7 @@
 
 #if defined K15_OS_WINDOWS
 #	include "K15_DynamicLibrary_win32.h"
-#endif
+#endif //K15_OS_WINDOWS
 
 namespace K15_Engine { namespace System {
 	/*********************************************************************************/

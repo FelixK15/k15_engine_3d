@@ -28,6 +28,10 @@
 #include "K15_StackAllocator.h"
 #include "K15_ApplicationParameter.h"
 
+#if defined (K15_OS_WINDOWS)
+#	include "K15_ApplicationOSLayer_Win32.h"
+#endif //K15_OS_WINDOWS
+
 namespace K15_Engine { namespace System {
   /*********************************************************************************/
   typedef K15_Set(String) StringSet;
@@ -75,6 +79,7 @@ namespace K15_Engine { namespace System {
     inline DynamicLibraryManager* getDynamicLibraryManager() const;
     inline RenderWindowBase* getRenderWindow() const;
     inline LogManager* getLogManager() const;
+	inline const ApplicationOSLayerType& getOSLayer() const;
 
   private:
     void createCommandList(int p_CommandCount,char** p_Commands);
@@ -85,13 +90,15 @@ namespace K15_Engine { namespace System {
     void initializePlugins(const StringSet& p_PluginNames);
 
   private:
-	  bool m_Running;
+	bool m_Running;
     
-	  String m_GameRootDir;
+	String m_GameRootDir;
 
-	  StringSet m_Plugins;
+	StringSet m_Plugins;
     StringSet m_Commands;
     ApplicationParameterList m_ApplicationParameter;
+
+	ApplicationOSLayerType m_OSLayer;
 
     RenderWindowBase* m_RenderWindow;
     TaskManager* m_TaskManager;
