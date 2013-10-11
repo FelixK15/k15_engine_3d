@@ -42,7 +42,7 @@ namespace K15_Engine { namespace System {
 	{
 		if(QueryPerformanceFrequency(&m_PerformanceCounterFrequency) == FALSE)
 		{
-			_LogError(StringUtil::format("Could not get performance counter frequency. Error:%s",Application::getInstance()->getLastError()));
+			_LogError("Could not get performance counter frequency. Error:%s",Application::getInstance()->getLastError().c_str());
 			return false;
 		}
 

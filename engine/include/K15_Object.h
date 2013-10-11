@@ -62,9 +62,9 @@ namespace K15_Engine { namespace System {
 		TypeName m_Name;
 		uint32 m_References;
 	};
-
+  
 	K15_SMART_POINTER(Object);
-
+   
 	#include "K15_Object.inl"
 }} //end of K15_Engine::System namespace
 

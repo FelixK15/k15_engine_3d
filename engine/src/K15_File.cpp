@@ -38,7 +38,7 @@ File::~File()
 bool File::Read( uint32 iElementSize,uint32 iSize,byte *&pBuffer )
 {
 	if(!IsOpen()){
-		_LogNormal(String("Could not read from file because it is closed. Filename: ") + m_pFileName);
+		_LogNormal("Could not read from file because it is closed. Filename: \"%s\"",m_pFileName);
 		return false;
 	}
 
@@ -47,10 +47,10 @@ bool File::Read( uint32 iElementSize,uint32 iSize,byte *&pBuffer )
 	uint32 iReturn = fread(pBuffer,iElementSize,iSize,m_pFile);
 
 	if(iReturn != iSize){
-		_LogNormal(String("Could not read all elements. Filename: ") + m_pFileName);
+		_LogNormal("Could not read all elements. Filename: \"%s\"",m_pFileName);
 		
 		if(feof(m_pFile) != 0){
-			_LogNormal(String("Attempt to read past end of file. Filename: ") + m_pFileName);
+			_LogNormal("Attempt to read past end of file. Filename: \"%s\"",m_pFileName);
 		}
 	}
 	
