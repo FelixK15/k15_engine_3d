@@ -23,11 +23,15 @@
 #ifndef _K15Engine_System_DynamicLibraryManager_h_
 #define _K15Engine_System_DynamicLibraryManager_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#	include "K15_Application.h"
+#endif //K15_USE_PRECOMPILED_HEADER
+
 #include "K15_DynamicLibraryBase.h"
 #include "K15_AllocatedObject.h"
 #include "K15_Singleton.h"
-#include "K15_Application.h"
+
 
 namespace K15_Engine { namespace System {
 

@@ -17,8 +17,9 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_BaseAllocator.h"
+#include "K15_PrecompiledHeader.h"
 
+#include "K15_BaseAllocator.h"
 #include "K15_MemoryHeader.h"
 
 namespace K15_Engine { namespace System {
@@ -35,27 +36,23 @@ namespace K15_Engine { namespace System {
   BaseAllocator::BaseAllocator(uint32 p_Size)
     : m_Allocator(0),
       m_Memory(0),
-      m_MemorySize(0),
+      m_MemorySize(p_Size),
       m_UsedMemory(0)
   {
-#if defined K15_DEBUG
-    m_Memory = (byte*)allocateDebug(p_Size,__FILE__,__LINE__,false,__FUNCTION__);
-#else
-    m_Memory = (byte*)allocate(p_Size);
-#endif //K15_DEBUG
+	m_Memory = (byte*)malloc(p_Size);
   }
   /*********************************************************************************/
   BaseAllocator::BaseAllocator(BaseAllocator* p_Allocator,uint32 p_Size)
     : m_Allocator(p_Allocator),
       m_Memory(0),
-      m_MemorySize(0),
+      m_MemorySize(p_Size),
       m_UsedMemory(0)
   {
-    K15_ASSERT(p_Allocator == 0,"Custom allocator for is NULL.");
-#if defined K15_DEBUG
-    m_Memory = (byte*)m_Allocator->allocateDebug(p_Size,__FILE__,__LINE__,false,__FUNCTION__);
+    K15_ASSERT(p_Allocator != 0,"Custom allocator is NULL.");
+#if defined (K15_DEBUG)
+	m_Memory = (byte*)p_Allocator->allocateDebug(p_Size,__FILE__,__LINE__,false,__FUNCTION__);
 #else
-    m_Memory = (byte*)m_Allocator->allocate(p_Size);
+	m_Memory = (byte*)p_Allocator->allocate(p_Size);
 #endif //K15_DEBUG
   }
   /*********************************************************************************/
@@ -79,12 +76,37 @@ namespace K15_Engine { namespace System {
     }
   }
   /*********************************************************************************/
-  void* BaseAllocator::allocateDebug( uint32 p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function )
+  void* BaseAllocator::allocate(uint32 p_Size)
   {
-    p_Size += sizeof(MemoryHeader);
-    K15_ASSERT(p_Size + m_UsedMemory > m_MemorySize,"Cannot satisfy memory request.");
-    byte* memory = (byte*)alloc(p_Size);
-    return (void*)memory;
+	  K15_ASSERT(p_Size + m_UsedMemory <= m_MemorySize,"Cannot satisfy memory request.");
+	  void* memory = alloc(p_Size);
+	  memset(memory,0,p_Size);
+	  m_UsedMemory += p_Size;
+	  return memory;
   }
   /*********************************************************************************/
+  void BaseAllocator::deallocate(void* p_Pointer)
+  {
+	  return free(p_Pointer);
+  }
+  /*********************************************************************************/
+  void* BaseAllocator::allocateDebug( uint32 p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function )
+  {
+   // p_Size += sizeof(MemoryHeader);
+    K15_ASSERT(p_Size + m_UsedMemory <= m_MemorySize,"Cannot satisfy memory request.");
+    byte* memory = (byte*)alloc(p_Size);
+	memset(memory,0,p_Size);
+// 	MemoryHeader* header = (MemoryHeader*)memory;
+// 	header->File = p_File;
+// 	header->Function = p_Function;
+// 	header->IsArray = p_Array;
+// 	header->Size = p_Size;
+// 	header->Line = p_Line;
+
+	m_UsedMemory += p_Size;
+
+    //return (void*)(memory += sizeof(MemoryHeader)); //shift and return memory
+	return (void*)memory;
+  }
+/*********************************************************************************/
 }}//end of K15_Engine::System

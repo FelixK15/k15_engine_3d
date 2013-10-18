@@ -1,8 +1,8 @@
 /**
- * @file K15_Task.inl
- * @author  Felix Klinge <f.klinge@k15games.de>
+ * @file plugin.h
+ * @author Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/09/26
+ * @date 2013/09/09
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -15,29 +15,16 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @section DESCRIPTION
+ *
  */
 
+#include "K15_VisualStudioLoggerApplicationModule.h"
+#include "K15_ApplicationModuleDescription.h"
+
 /*********************************************************************************/
-inline void Task::update(const GameTime& p_GameTime)
-{
-	if(m_Functor.isValid())
-	{
-		m_Functor(p_GameTime);
-	}
-}
+__declspec(dllexport) K15_Engine::System::ApplicationModuleDescription getDescription();
 /*********************************************************************************/
-inline void Task::setUpdateFunc(Task::FunctorType p_Functor)
-{
-	m_Functor = p_Functor;
-}
-/*********************************************************************************/
-inline uint32 Task::getPriority() const
-{
-	return m_Priority;
-}
-/*********************************************************************************/
-inline void Task::setPriority(uint32 p_Priority)
-{
-	m_Priority = p_Priority;
-}
+__declspec(dllexport) K15_Engine::System::ApplicationModule* getModule();
 /*********************************************************************************/

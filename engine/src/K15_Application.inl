@@ -97,3 +97,30 @@ inline double Application::getTime() const
 	return m_OSLayer.getTime();
 }
 /*********************************************************************************/
+inline void Application::setMaxFPS(uint16 p_MaxFPS)
+{
+	m_MaxFPS = p_MaxFPS;
+	m_AvgFrameTime = 1.0 / p_MaxFPS;
+}
+/*********************************************************************************/
+inline uint16 Application::getMaxFPS() const
+{
+	return m_MaxFPS;
+}
+/*********************************************************************************/
+inline void Application::setRunning(bool p_Running) 
+{
+	m_Running = p_Running;
+}
+/*********************************************************************************/
+inline bool Application::getRunning() const
+{
+	return m_Running;
+}
+/*********************************************************************************/
+inline const FrameStatistic& Application::getFrameStatistic(uint32 p_FrameNumber) const
+{
+	K15_ASSERT(p_FrameNumber > FrameStatisticCount,StringUtil::format("Requestes frame statistics from frame %i, but only statistics from the last %i frames get saved.",p_FrameNumber,FrameStatisticCount));
+	return m_FrameStatistics[p_FrameNumber];
+}
+/*********************************************************************************/

@@ -24,7 +24,10 @@
 #ifndef _K15Engine_System_ApplicationOSLayer_Win32_h_
 #define _K15Engine_System_ApplicationOSLayer_Win32_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif// K15_USE_PRECOMPILED_HEADER
+
 #include "K15_ApplicationOSLayerBase.h"
 
 namespace K15_Engine { namespace System {
@@ -44,6 +47,12 @@ namespace K15_Engine { namespace System {
 		virtual void getSupportedResolutions(SupportedResolutionSet* p_ResolutionSet) const;
 		// get current time (1.0 = 1 sec)
 		virtual double getTime() const;
+		// idle for x seconds
+		virtual void sleep(double p_TimeInSeconds) const;
+		// callback before the game gets ticked (pumps messages)
+		virtual void onPreTick();
+		// callback after the game gets ticked
+		virtual void onPostTick();
 	private:
 		LARGE_INTEGER m_PerformanceCounterFrequency;
 		double m_Frequency;

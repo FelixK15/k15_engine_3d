@@ -16,57 +16,66 @@
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
  */
+#include "K15_PrecompiledHeader.h"
+
 #include "K15_HashedString.h"
 
-#include "K15_Application.h"
-#include <cstring>
-
 namespace K15_Engine { namespace System {
-
+	/*********************************************************************************/
 	const HashedString HashedString::BLANK("0x0");
-
+	/*********************************************************************************/
 	HashedString::HashedString()
 		: m_Hash(0),
 		  m_String(0)
 	{
 
 	}
-
+	/*********************************************************************************/
 	HashedString::HashedString( const char *pString )
 		: m_Hash(createHash(pString,strlen(pString))),
 		  m_String(pString)
 	{
 
 	}
-
+	/*********************************************************************************/
 	HashedString::HashedString( const HashedString& hsOther )
 		: m_Hash(hsOther.getIdentifier()),
 		  m_String(hsOther.getString())
 	{
 
 	}
-
+	/*********************************************************************************/
 	HashedString::~HashedString()
 	{
 
 	}
-
+	/*********************************************************************************/
+	unsigned long HashedString::getIdentifier() const
+	{
+		return m_Hash;
+	}
+	/*********************************************************************************/
+	const char* HashedString::getString() const
+	{
+		return m_String;
+	}
+	/*********************************************************************************/
 	void HashedString::setString(const char* pString)
 	{
 		m_String = pString;
 		m_Hash = createHash(pString,strlen(pString));
 	}
-
+	/*********************************************************************************/
 	bool HashedString::operator< (HashedString const & otherString ) const
 	{
 		return this->getIdentifier() < otherString.getIdentifier();
 	}
-
+	/*********************************************************************************/
 	bool HashedString::operator== ( HashedString const & otherString ) const
 	{
 		return this->getIdentifier() == otherString.getIdentifier();
 	}
-
+	/*********************************************************************************/
 	unsigned long HashedString::createHash( const char *pString,unsigned int iLength )
 	{
 		unsigned long hash = 0;

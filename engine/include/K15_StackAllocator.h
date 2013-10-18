@@ -23,7 +23,10 @@
 #ifndef _K15Engine_System_StackAllocationPattern_h_
 #define _K15Engine_System_StackAllocationPattern_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
+
 #include "K15_BaseAllocator.h"
 
 namespace K15_Engine { namespace System {
@@ -42,14 +45,14 @@ namespace K15_Engine { namespace System {
     StackAllocator(uint32 p_Size);
 
     virtual void clear();
+
   protected:
     virtual void* alloc(uint32 p_Size);
     virtual void free(void* p_Pointer);
 
   protected:
     byte* m_Marker;
-  };
-#include "K15_StackAllocator.inl"
+  };// end of stack allocator class
 }} //end of K15_Engine::System namespace
 
 #endif //_K15Engine_System_StackAllocationPattern_h_

@@ -21,8 +21,7 @@
  * 
  */
 #include "K15_Matrix4x4.h"
-using namespace K15_Math;
 
-
-const Matrix4x4<float> Matrix4x4<float>::IdentityMatrix = Matrix4x4<float>(MF_IDENT);
-const Matrix4x4<double> Matrix4x4<double>::IdentityMatrix = Matrix4x4<double>(MF_IDENT);
+namespace K15_Engine { namespace Math {
+	const Matrix4x4 Matrix4x4::IdentityMatrix = Matrix4x4(MF_IDENT);
+}}//end of K15_Engine::Math namespace

@@ -25,10 +25,13 @@
 #ifndef _K15Engine_System_LogManager_h_
 #define _K15Engine_System_LogManager_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#	include "K15_Application.h"
+#endif //K15_USE_PRECOMPILED_HEADER
+
 #include "K15_AllocatedObject.h"
 #include "K15_Singleton.h"
-#include "K15_Application.h"
 #include "K15_StringUtil.h"
 
 #define _LogNormal(msg, ...)  K15_Engine::System::LogManager::getInstance()->logMessage(K15_Engine::System::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::System::LogManager::LP_NORMAL)
@@ -44,7 +47,8 @@
 namespace K15_Engine { namespace System {
 
 	class K15_API_EXPORT LogManager : public ApplicationAllocatedObject, 
-									  public Singleton<LogManager>
+									  public Singleton<LogManager>,
+									  public StackAllocator
 	{
 	public:
 		typedef K15_List(LogBase*) LogList;
@@ -56,30 +60,41 @@ namespace K15_Engine { namespace System {
 			LP_DEBUG = 0x0002,
 			LP_ERROR = 0x0004,
 			LP_WARNING = 0x0008,
-      LP_SUCCESS = 0x0010,
+			LP_SUCCESS = 0x0010,
 
 			LP_CUSTOM0 = 0x0020,
 			LP_CUSTOM1 = 0x0040,
 			LP_CUSTOM2 = 0x0080,
-			LP_CUSTOM3 = 0x0100
-		};
+			LP_CUSTOM3 = 0x0100,
+
+			LP_ALL_NORMAL = LP_NORMAL | LP_ERROR | LP_WARNING | LP_SUCCESS,
+			LP_ALL_NORMAL_DEBUG = LP_ALL_NORMAL | LP_DEBUG,
+			LP_ALL = LP_ALL_NORMAL_DEBUG | LP_CUSTOM0 | LP_CUSTOM1 | LP_CUSTOM2 | LP_CUSTOM3
+		}; //eLogPriorityFlags
 
 	public:
+		
+		/**
+		 * Default constructor
+		 */
 		LogManager();
+
+		/**
+		 * Default destructor
+		 */
 		virtual ~LogManager();
 
-		void addLog(LogBase* p_Log, bool p_DefaultLog = false);
+		void addLog(LogBase* p_Log, bool p_DefaultLog = false, Enum p_LogMask = LP_ALL_NORMAL);
 		
-		LogBase* getDefaultLog();
+		LogBase* getDefaultLog() const;
 		void setDefaultLog(LogBase* p_Log);
 
-		void logMessage(const String& p_LogMessage, bool p_DefaultLogOnly = false, eLogPriorityFlags p_PriorityFlag = LP_INVALID);
+		void logMessage(const String& p_LogMessage, bool p_DefaultLogOnly = false, Enum p_LogFlag = LP_INVALID);
 
 	private:
 		LogBase *m_DefaultLog;
 		LogList m_Logs;
-	};
-#include "K15_LogManager.inl"
+	};// end of LogManager class
 }} // end of K15_Engine::System namespace
 
 #endif //_K15Engine_System_LogManager_h_

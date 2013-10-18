@@ -24,7 +24,9 @@
 #ifndef _K15Engine_System_ProfileNode_h_
 #define _K15Engine_System_ProfileNode_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace System { 
 
@@ -34,10 +36,10 @@ namespace K15_Engine { namespace System {
 		typedef K15_List(ProfilingNode*) ProfilingNodeList;
 
 	public:
-		ProfilingNode(const ProfilingName& p_Name,Enum p_AppendMode);
+		ProfilingNode(const ObjectName& p_Name);
 		~ProfilingNode();
 
-		ProfilingName m_Name;
+		ObjectName m_Name;
 
 		ProfilingNode* m_Parent;
 		ProfilingNodeList m_Children;
@@ -45,8 +47,6 @@ namespace K15_Engine { namespace System {
 		double m_Time;
 		double m_EndTime;
 		double m_StartTime;
-
-		Enum m_AppendMode;
 	};
 }} //end of K15_Engine::System namespace
 

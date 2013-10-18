@@ -23,10 +23,12 @@
 #ifndef _K15Engine_System_Resourcemanager_h_
 #define _K15Engine_System_Resourcemanager_h_
 
-#include "K15_Prerequisites.h"
-#include "K15_Application.h"
-#include "K15_AllocatedObject.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#	include "K15_Application.h"
+#endif //K15_USE_PRECOMPILED_HEADER
 
+#include "K15_AllocatedObject.h"
 #include "K15_ResourceHandle.h"
 #include "K15_ResourceBase.h"
 
@@ -46,82 +48,87 @@ namespace K15_Engine { namespace System {
 		void update(const GameTime &gtTime);
 
 		template<class ResourceType> ResourceHandle<ResourceType> getResource(const String& ResourceName,Enum p_Priority)
-    {
-      ResourceCache::iterator iter = m_ResourceDataCache.find(p_ResourceName);
-      ResourceHandle<ResourceType> handle(K15_INVALID_RESOURCE_ID);
+		{
+			K15_PROFILE(ResourceManager_GetResource);
 
-      if(iter == m_ResourceDataCache.end())
-      {
-        if(!cacheResource<ResourceType>(p_FileName,p_Priority))
-        {
-          //resource could not get loaded.
-          _LogError(String("Could not load resource. name:") + p_ResourceName.getString());
-          _LogError(String("Last Error:") + Application::getInstance()->getLastError());
-        }
-        else
-        {
-          iter = m_ResourceDataCache.find(p_ResourceName);
+			ResourceCache::iterator iter = m_ResourceDataCache.find(p_ResourceName);
+			ResourceHandle<ResourceType> handle(K15_INVALID_RESOURCE_ID);
 
-          m_Resources.push_back(resource);
-          handle.setResourceID(m_Resource.size() - 1);
-        }
-      }
+			if(iter == m_ResourceDataCache.end())
+			{
+				if(!cacheResource<ResourceType>(p_FileName,p_Priority))
+				{
+					//resource could not get loaded.
+					_LogError(String("Could not load resource. name:") + p_ResourceName.getString());
+					_LogError(String("Last Error:") + Application::getInstance()->getLastError());
+				}
+				else
+				{
+					iter = m_ResourceDataCache.find(p_ResourceName);
 
-      return handle;
-    }
+					m_Resources.push_back(resource);
+					handle.setResourceID(m_Resource.size() - 1);
+				}
+			}
+
+			return handle;
+		}
 
 		template<class ResourceType> bool cacheResource(const ResourceName& p_ResourceName,Enum p_Priority)
-    {
-      bool cachedResource = false;
-      ResourceData resourceData = {0};
-      ResourceFileBase* resourceFile = 0;
-      //we need to load the resource from one of the resource files.
-      for(ResourceFileList::iterator iter = m_ResoureFiles.begin();iter != m_ResourceFiles.end();++iter)
-      {
-        resourceFile = (*iter);
-        //try to open the resource file
-        if(!resourceFile->isOpen())
-        {
-          //log error and load debug resoure
-          _LogError("Could not open resource file " + resourceFile->getResourceFileName());
-          ResourceType::loadDebugResource(resourceData);
-        }
-        else
-        {
-          if(!resourceFile->hasResource(p_ResourceName) || !resourceFile->getResource(p_ResourceName,resourceData))
-          {
-            //oh oh...that didn't go so well. Log Error and try to load the debug resource from that resource type.
-            String logMessage = "Could not load asset:";
-            logMessage += p_ResourceName.getString();
+		{
+			K15_PROFILE(ResourceManager_CacheResource);
 
-            _LogError(logMessage);
+			bool cachedResource = false;
+			ResourceData resourceData = {0};
+			ResourceFileBase* resourceFile = 0;
+			//we need to load the resource from one of the resource files.
+			for(ResourceFileList::iterator iter = m_ResoureFiles.begin();iter != m_ResourceFiles.end();++iter)
+			{
+				resourceFile = (*iter);
+				//try to open the resource file
+				if(!resourceFile->isOpen())
+				{
+					//log error and load debug resoure
+					_LogError("Could not open resource file " + resourceFile->getResourceFileName());
+					ResourceType::loadDebugResource(resourceData);
+				}
+				else
+				{
+					if(!resourceFile->hasResource(p_ResourceName) || !resourceFile->getResource(p_ResourceName,resourceData))
+					{
+						//oh oh...that didn't go so well. Log Error and try to load the debug resource from that resource type.
+						String logMessage = "Could not load asset:";
+						logMessage += p_ResourceName.getString();
 
-            ResourceType::loadDebugResource(resourceData);
-          }
-        }
+						_LogError(logMessage);
 
-        //check if actual data has been written
-        if(resourceData.Data)
-        {
-          //load Resource using resource data from the resource file
-          ResourceType* resource = K15_NEW ResourceType(p_ResourceName);
-          if((cachedResource = resource->load(resourceData)) == true)
-          {
-            m_ResourceDataChache.insert(K15_Pair(ResourceName,ResourceBase*)(p_ResourceName,resource));
-          }
-        }
+						ResourceType::loadDebugResource(resourceData);
+					}
+				}
 
-        //close the file after we're finished
-        resourceFile->close();
+				//check if actual data has been written
+				if(resourceData.Data)
+				{
+					//load Resource using resource data from the resource file
+					ResourceType* resource = K15_NEW ResourceType(p_ResourceName);
+					
+					if((cachedResource = resource->load(resourceData)) == true)
+					{
+						m_ResourceDataChache.insert(K15_Pair(ResourceName,ResourceBase*)(p_ResourceName,resource));
+					}
+				}
 
-        if(cachedResource)
-        {
-          break;
-        }
-      }
+				//close the file after we're finished
+				resourceFile->close();
 
-      return cachedResource;
-    }
+				if(cachedResource)
+				{
+					break;
+				}
+			}
+
+			return cachedResource;
+		}
 
 		bool isResourceInCache(const ResourceName& p_ResourceName);
 		void addResourceFile(ResourceFileBase *p_ResourceFile);

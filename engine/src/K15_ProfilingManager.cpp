@@ -17,6 +17,8 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+#include "K15_PrecompiledHeader.h"
+
 #include "K15_ProfilingManager.h"
 
 namespace K15_Engine { namespace System { 
@@ -45,14 +47,14 @@ namespace K15_Engine { namespace System {
 		}
 		else
 		{
-			if(p_Node.m_AppendMode == AM_APPEND_LAST_NODE)
-			{
-				m_LastNode->m_Children.push_back(lastNode);
-			}
-			else if(p_Node.m_AppendMode == AM_NEW_BRANCH)
-			{
-				m_LastNode = lastNode;
-			}
+// 			if(p_Node.m_AppendMode == AM_APPEND_LAST_NODE)
+// 			{
+// 				m_LastNode->m_Children.push_back(lastNode);
+// 			}
+// 			else if(p_Node.m_AppendMode == AM_NEW_BRANCH)
+// 			{
+// 				m_LastNode = lastNode;
+// 			}
 		}
 	}
 	/*********************************************************************************/

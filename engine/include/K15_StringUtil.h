@@ -24,14 +24,57 @@
 #ifndef _K15Engine_System_StringUtil_h_
 #define _K15Engine_System_StringUtil_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif
 
 namespace K15_Engine { namespace System { 
-  class K15_API_EXPORT StringUtil
-  {
-  public:
-    static String format(char* p_Message,...);
-  };//end of StringUtil class
+	class K15_API_EXPORT StringUtil
+	{
+	public:
+		
+		/**
+		 * Formats a string using printf syntax
+		 *
+		 * @param char * p_Message - message to format with printf placeholder
+		 *
+		 * @return String - Formatted String
+		 */
+		static String format(char* p_Message,...);
+		
+		/**
+		 * Return the current time as string
+		 *
+		 * @param char * p_Format - format of the returned string
+		 *							hh = hours
+		 *							mm = minutes
+		 *							ss = seconds
+		 *							ms = milliseconds
+		 * @note example: StringUtil::timeAsString("hh:mm:ss:ms") = "15:21:54:54"
+		 *
+		 * @return String - - Formatted string
+		 */
+		static String timeAsString(const String& p_Format = "hh:mm:ss");
+
+		/**
+		 * Returns the current date as string
+		 *
+		 * @param char * p_Format - format of the returned string
+		 *							dd = day
+		 *							yy = last 2 digits of the year
+		 *							yyyy = year
+		 *							mm = month
+		 * @note example: StringUtil::dateAsString("dd.mm.yyyy") = "05.12.2010"
+		 *
+		 * @return String - Formatted string
+		 */
+		static String dateAsString(const String& p_Format = "dd/yyyy/mm");
+
+		static String toString(int p_Value);
+
+		static String toString(float p_Value, int p_Precision = 2);
+
+	};//end of StringUtil class
 }}//end of K15_Engine::System namespace
 
 #endif //_K15Engine_System_StringUtil_h_

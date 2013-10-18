@@ -17,35 +17,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-DynamicLibraryBase::DynamicLibraryBase()
-	: m_FileName(),
-	  m_Loaded(false)
-{
-
-}
-
-DynamicLibraryBase::DynamicLibraryBase(const String& p_FileName)
-	: m_FileName(p_FileName),
-	  m_Loaded(false)
-{
-	load();
-}
-
-DynamicLibraryBase::~DynamicLibraryBase()
-{
-
-}
-
-const inline String& DynamicLibraryBase::getFileName() const
-{
-	return m_FileName;
-}
-
-inline bool DynamicLibraryBase::isLoaded() const
-{
-	return m_Loaded;
-}
-
 template<class ReturnType>
 Functor0<ReturnType> DynamicLibraryBase::getSymbol(const String& p_SymbolName)
 {
@@ -55,7 +26,7 @@ Functor0<ReturnType> DynamicLibraryBase::getSymbol(const String& p_SymbolName)
 
 		if(!symbol)
 		{
-			//K15_LogNormalMessage(g_pSystem->GetSystemError());
+			_LogError("Could not find symbol \"%s\" (library:\"%s\") Error:%s",p_SymbolName.c_str(),getFileName().c_str(),Application::getInstance()->getLastError().c_str());
 		}
 		else
 		{
@@ -64,8 +35,10 @@ Functor0<ReturnType> DynamicLibraryBase::getSymbol(const String& p_SymbolName)
 			return func;
 		}
 
-	}else{
-    _LogNormal(StringUtil::format("Trying to load symbol from already unloaded library - Symbol:\"%s\ (Library:\"%s\")",p_SymbolName,getFileName().c_str()));
+	}
+	else
+	{
+	    _LogNormal("Trying to load symbol from already unloaded library - Symbol:\"%s\" (Library:\"%s\")",p_SymbolName,getFileName().c_str());
 	}
 
 	return Functor0<ReturnType>();

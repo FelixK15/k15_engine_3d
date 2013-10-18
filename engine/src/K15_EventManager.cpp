@@ -16,15 +16,41 @@
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
  */
+#include "K15_PrecompiledHeader.h"
 
 #include "K15_EventManager.h"
 #include "K15_EventListener.h"
 #include "K15_GameEvent.h"
+#include "K15_TaskBase.h"
+#include "K15_GameTime.h"
+#include "K15_ProfilingManager.h"
 
 namespace K15_Engine { namespace System { 
 	/*********************************************************************************/
+	const uint32 EventManagerUpdateTask::TaskPriority = 1;
+	/*********************************************************************************/
+	EventManagerUpdateTask::EventManagerUpdateTask(EventManager* p_EventManager)
+		: TaskBase(TaskPriority),
+		  m_EventManager(p_EventManager)
+	{
+
+	}
+	/*********************************************************************************/
+	EventManagerUpdateTask::~EventManagerUpdateTask()
+	{
+
+	}
+	/*********************************************************************************/
+	void EventManagerUpdateTask::update(const GameTime& p_GameTime)
+	{
+		m_EventManager->update();
+	}
+	/*********************************************************************************/
+
+	/*********************************************************************************/
 	EventManager::EventManager()
-		: PageAllocator(ApplicationAllocator)
+		: AllocatedObject(),
+		  PageAllocator(ApplicationAllocator)
 	{
 
 	}
@@ -42,18 +68,18 @@ namespace K15_Engine { namespace System {
 		 */
 		K15_List(EventListener*) *list = 0;
 
-    EventTypeListenerMap::iterator iter = m_Listener.find(p_EventName);
-    if(iter == m_Listener.end())
-    {
+		EventTypeListenerMap::iterator iter = m_Listener.find(p_EventName);
+		if(iter == m_Listener.end())
+		{
 #if defined (K15_DEBUG)
-      list = new(MemoryAllocator->allocateDebug(sizeof(EventListenerList),__FILE__,__LINE__,false,__FUNCTION__)) EventListenerList();
+		list = new(MemoryAllocator->allocateDebug(sizeof(EventListenerList),__FILE__,__LINE__,false,__FUNCTION__)) EventListenerList();
 #else
-      list = new(MemoryAllocator->allocate(sizeof(EventListenerList))) EventListenerList();
+		list = new(MemoryAllocator->allocate(sizeof(EventListenerList))) EventListenerList();
 #endif
-      m_Listener.insert(K15_Pair(EventName,EventListenerList*)(p_EventName,list));
-    }
-    else
-    {
+		m_Listener.insert(K15_Pair(EventName,EventListenerList*)(p_EventName,list));
+		}
+		else
+		{
 			list = iter->second;
 		}
 
@@ -87,26 +113,34 @@ namespace K15_Engine { namespace System {
 	/*********************************************************************************/
 	void EventManager::triggerEvent(GameEvent* p_Event)
 	{
-    EventTypeListenerMap::iterator iter = m_Listener.find(p_Event->getName());
-    if(iter != m_Listener.end())
-    {
-      EventListenerList* list = iter->second;
-      for(EventListenerList::iterator list_iter = list->begin();list_iter != list->end();++list_iter)
-      {
-        EventListener *currentListener = *list_iter;
-        currentListener->handleEvent(p_Event);
-      }
-    }
+		EventTypeListenerMap::iterator iter = m_Listener.find(p_Event->getName());
+		if(iter != m_Listener.end())
+		{
+			EventListenerList* list = iter->second;
+			for(EventListenerList::iterator list_iter = list->begin();list_iter != list->end();++list_iter)
+			{
+				EventListener *currentListener = *list_iter;
+				currentListener->handleEvent(p_Event);
+			}
+		}
 	}
 	/*********************************************************************************/
 	void EventManager::update()
 	{
-		if(m_Events.size() > 0){
+		K15_PROFILE(EventManager_Update);
+
+		if(m_Events.size() > 0)
+		{
 			GameEvent* gameEvent = m_Events.top();
 			triggerEvent(gameEvent);
 			m_Events.pop();
-      K15_DELETE gameEvent;
-    }
+			K15_DELETE gameEvent;
+		}
+	}
+	/*********************************************************************************/
+	TaskBase* EventManager::createTask()
+	{
+		return K15_NEW EventManagerUpdateTask(this);
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::System namespace

@@ -17,7 +17,10 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+#include "K15_PrecompiledHeader.h"
+
 #include "K15_ApplicationOSLayer_Win32.h"
+#include "K15_RenderWindow_Win32.h"
 #include "K15_RenderWindowBase.h"
 #include "K15_LogManager.h"
 #include "K15_Application.h"
@@ -51,17 +54,31 @@ namespace K15_Engine { namespace System {
 		return true;
 	}
 	/*********************************************************************************/
+	void ApplicationOSLayer_Win32::shutdown()
+	{
+
+	}
+	/*********************************************************************************/
 	String ApplicationOSLayer_Win32::getError() const
 	{
-		char* errorBuffer = (char*)_malloca(K15_ERROR_BUFFER_SIZE);
-		errorBuffer = '\0';
+		String errorMsg;
+		char* errorBuffer = 0;
 		DWORD lastError = GetLastError();
-		DWORD writtenChars = FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,0,lastError,1033,errorBuffer,K15_ERROR_BUFFER_SIZE,0);
-		if(writtenChars == 0)
+		DWORD writtenChars = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,0,lastError,1033,(LPSTR)&errorBuffer,0,0);
+		if(writtenChars == 0 && !errorBuffer)
 		{
+			errorBuffer = (char*)_malloca(K15_ERROR_BUFFER_SIZE);
 			sprintf(errorBuffer,"Could not retrieve last error from OS.");
 		}
-		return String(errorBuffer);
+
+		errorMsg = errorBuffer;
+		
+		if(writtenChars)
+		{
+			LocalFree(errorBuffer);
+		}
+
+		return errorMsg;
 	}
 	/*********************************************************************************/
 	void ApplicationOSLayer_Win32::getSupportedResolutions(SupportedResolutionSet* p_ResolutionSet) const
@@ -71,7 +88,7 @@ namespace K15_Engine { namespace System {
 		
 		for(int i = 0;EnumDisplaySettings(0,i,&dm) != 0;++i)
 		{
-			RenderWindowBase::Resolution currentResolution = {dm.dmPelsWidth,dm.dmPelsHeight};
+			Resolution currentResolution = {dm.dmPelsWidth,dm.dmPelsHeight};
 			p_ResolutionSet->push_back(currentResolution);
 		}
 	}
@@ -82,6 +99,37 @@ namespace K15_Engine { namespace System {
 		QueryPerformanceCounter(&counts);
 
 		return counts.QuadPart / m_Frequency;
+	}
+	/*********************************************************************************/
+	void ApplicationOSLayer_Win32::sleep(double p_TimeInSeconds) const
+	{
+		static DWORD msecs = 0;
+		msecs = (DWORD)(p_TimeInSeconds * 100);
+		Sleep(msecs);
+	}
+	/*********************************************************************************/
+	void ApplicationOSLayer_Win32::onPreTick()
+	{
+		static MSG msg;
+		static HWND hwnd = (HWND)INVALID_HANDLE_VALUE;
+		
+		hwnd = ((RenderWindow_Win32*)Application::getInstance()->getRenderWindow())->getHandleWindow();
+		
+		if(PeekMessage(&msg,hwnd,0,0,PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+
+			if(msg.message == WM_QUIT || msg.message == WM_CLOSE)
+			{
+				Application::getInstance()->setRunning(false);
+			}
+		}
+	}
+	/*********************************************************************************/
+	void ApplicationOSLayer_Win32::onPostTick()
+	{
+
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::System namespace

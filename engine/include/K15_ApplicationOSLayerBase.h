@@ -24,8 +24,11 @@
 #ifndef _K15Engine_System_ApplicationOSLayerBase_h_
 #define _K15Engine_System_ApplicationOSLayerBase_h_
 
-#include "K15_Prerequisites.h"
-#include "K15_Application.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#	include "K15_Application.h"
+#endif// K15_USE_PRECOMPILED_HEADER
+
 #include "K15_AllocatedObject.h"
 #include "K15_RenderWindowBase.h"
 
@@ -36,11 +39,11 @@ namespace K15_Engine { namespace System {
 	public:
 		/*********************************************************************************/
 		static const String OSName;
-		typedef K15_List(RenderWindowBase::Resolution) SupportedResolutionSet;
+		typedef K15_List(Resolution) SupportedResolutionSet;
 		/*********************************************************************************/
 	public:
-		ApplicationOSLayerBase();
-		virtual ~ApplicationOSLayerBase();
+		ApplicationOSLayerBase(){}
+		virtual ~ApplicationOSLayerBase(){}
 		// initialize the OS layer
 		virtual bool initialize() = 0;
 		// shutdown OS layer
@@ -51,6 +54,12 @@ namespace K15_Engine { namespace System {
 		virtual void getSupportedResolutions(SupportedResolutionSet* p_ResolutionSet) const = 0;
 		// get current time
 		virtual double getTime() const = 0;
+		// idle for x seconds
+		virtual void sleep(double p_TimeInSeconds) const = 0;
+		// callback before the game gets ticked
+		virtual void onPreTick() = 0;
+		// callback after the game got ticked
+		virtual void onPostTick() = 0;
 	};//end of ApplicationOSLayerBase class
 	/*********************************************************************************/
 }}// end of K15_Engine::System namespace

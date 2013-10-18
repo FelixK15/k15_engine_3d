@@ -25,7 +25,10 @@
 #ifndef __K15Engine_System_Object_h_
 #define __K15Engine_System_Object_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
+
 #include "K15_Rtti.h"
 #include "K15_Pointer.h"
 
@@ -56,8 +59,6 @@ namespace K15_Engine { namespace System {
 		void setName(const TypeName& p_Name);
 		const TypeName& getName() const;
 		
-		virtual const Rtti& getType() const;
-
 	protected:
 		TypeName m_Name;
 		uint32 m_References;

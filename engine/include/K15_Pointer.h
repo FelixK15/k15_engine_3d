@@ -22,10 +22,12 @@
  */
 #pragma once
 
-#ifndef __K15Engine_System_Memory_Pointer_h_
-#define __K15Engine_System_Memory_Pointer_h_
+#ifndef _K15Engine_System_Memory_Pointer_h_
+#define _K15Engine_System_Memory_Pointer_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace System { namespace Memory {
 
@@ -61,4 +63,4 @@ namespace K15_Engine { namespace System { namespace Memory {
 	#include "K15_Pointer.inl"
 }}} //end of K15_Engine::System::Memory namespace
 
-#endif //__K15_POINTER__
+#endif //_K15Engine_System_Memory_Pointer_h_

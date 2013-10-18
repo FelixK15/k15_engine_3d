@@ -17,23 +17,52 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+#include "K15_PrecompiledHeader.h"
+
 #include "K15_LogBase.h"
 
 namespace K15_Engine { namespace System { 
-
+	/*********************************************************************************/
 	LogBase::LogBase()
 	{
 
 	}
-
+	/*********************************************************************************/
 	LogBase::LogBase(const String &p_Name)
 		: m_Name(p_Name)
 	{
 
 	}
-
+	/*********************************************************************************/
 	LogBase::~LogBase()
 	{
 
 	}
+	/*********************************************************************************/
+	void LogBase::setLogBitMask(uint32 p_Mask)
+	{
+		m_LogBitMask = p_Mask;
+	}
+	/*********************************************************************************/
+	void LogBase::toggleLogFlag(uint32 p_Flag)
+	{
+
+	}
+	/*********************************************************************************/
+	const uint32 LogBase::getLogBitMask() const
+	{
+		return m_LogBitMask;
+	}
+	/*********************************************************************************/
+	const String& LogBase::getName() const
+	{
+		return m_Name;
+	}
+	/*********************************************************************************/
+	void LogBase::setName(const String& p_Name) 
+	{
+		m_Name = p_Name;
+	}
+/*********************************************************************************/
+
 }} //end of K15_Engine::System

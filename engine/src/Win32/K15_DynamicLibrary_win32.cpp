@@ -17,87 +17,75 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+#include "K15_PrecompiledHeader.h"
+
 #include "K15_DynamicLibrary_win32.h"
 #include "K15_LogManager.h"
 #include "K15_StringUtil.h"
 
 namespace K15_Engine { namespace System { 
-  /*********************************************************************************/
-  DynamicLibrary_Win32::DynamicLibrary_Win32(const String& p_FileName)
-    : DynamicLibraryBase(p_FileName),
-    m_Module(0)
-  {
-
-  }
-  /*********************************************************************************/
-  DynamicLibrary_Win32::~DynamicLibrary_Win32()
-  {
-	  if(isLoaded())
-	  {
-		  unload();
-	  }
-  }
-  /*********************************************************************************/
-  bool DynamicLibrary_Win32::load()
-  {
-	  if(isLoaded())
-	  {
-		  m_Module = LoadLibrary(getFileName().c_str());
-		  if(!m_Module)
-		  {
-			  _LogError(StringUtil::format("Could not load library (\"%s\") Error:%s",getFileName(),Application::getInstance()->getLastError()));
-			  return false;
-		  }
-
-		  m_Loaded = true;
-		  return true;
-	  }
-
-	  return false;
-  }
-  /*********************************************************************************/
-  bool DynamicLibrary_Win32::unload()
-  {
-    if(isLoaded()){
-		BOOL bResult = FALSE;
-		bResult = FreeLibrary(m_Module);
-
-		if(!bResult)
-		{
-			_LogError(StringUtil::format("Could not unload library (\"%s\") Error:%s",getFileName(),Application::getInstance()->getLastError());
-			return false;
-		}
-      
-		m_Loaded = false;
-		return true;
-    }
-	else
+	/*********************************************************************************/
+	DynamicLibrary_Win32::DynamicLibrary_Win32()
+		: DynamicLibraryBase(),
+		  m_Module(0)
 	{
-		_LogError(StringUtil::format("Trying to load already unloaded library (\"%s\")",getFileName()));
+
+	}
+	/*********************************************************************************/
+	DynamicLibrary_Win32::DynamicLibrary_Win32(const String& p_FileName)
+		: DynamicLibraryBase(p_FileName),
+		  m_Module(0)
+	{
+
+	}
+	/*********************************************************************************/
+	DynamicLibrary_Win32::~DynamicLibrary_Win32()
+	{
+		if(isLoaded())
+		{
+			unload();
+		}
+	}
+	/*********************************************************************************/
+	bool DynamicLibrary_Win32::load()
+	{
+		if(!isLoaded())
+		{
+			m_Module = LoadLibrary(getFileName().c_str());
+			if(!m_Module)
+			{
+				return false;
+			}
+
+			m_Loaded = true;
+			return true;
+		}
+
 		return false;
-    }
-  }
-  /*********************************************************************************/
-  void* DynamicLibrary_Win32::getSymbolInternal(const String& p_SymbolName)
-  {
-	if(isLoaded())
+	}
+	/*********************************************************************************/
+	bool DynamicLibrary_Win32::unload()
 	{
-		FARPROC pSymbol = GetProcAddress(m_Module,p_SymbolName.c_str());
-
-		if(!pSymbol)
-		{
-		_LogError(StringUtil::format("Could not load symbol \"%s\" Error:%s",p_SymbolName.c_str(),Application::getInstance()->getError().c_str());
-		return 0;
+		if(isLoaded()){
+			BOOL bResult = FALSE;
+			bResult = FreeLibrary(m_Module);
+      
+			m_Loaded = false;
+			return true;
 		}
 
-		return (void*)pSymbol;
+		return false;
 	}
-	else
+	/*********************************************************************************/
+	void* DynamicLibrary_Win32::getSymbolInternal(const String& p_SymbolName)
 	{
-		_LogError(StringUtil::format("Trying to load symbol from unloaded library - Symbol:\"%s\" (Library:\"%s\")"),p_SymbolName,getFileName());
-	}
+		if(isLoaded())
+		{
+			FARPROC pSymbol = GetProcAddress(m_Module,p_SymbolName.c_str());
+			return (void*)pSymbol;
+		}
 
-	return 0;
-  }
-  /*********************************************************************************/
+		return 0;
+	}
+	/*********************************************************************************/
 }}//end of K15_Engine::System namespace

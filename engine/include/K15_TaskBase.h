@@ -1,5 +1,5 @@
 /**
- * @file K15_Task.h
+ * @file K15_TaskBase.h
  * @author  Felix Klinge <f.klinge15@gmail.com>
  * @version 1.0
  *
@@ -21,39 +21,35 @@
  * 
  */
 
-#ifndef _K15Engine_System_Task_h_
-#define _K15Engine_System_Task_h_
+#ifndef _K15Engine_System_TaskBase_h_
+#define _K15Engine_System_TaskBase_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif// K15_USE_PRECOMPILED_HEADER
+
 #include "K15_AllocatedObject.h"
 #include "K15_TaskManager.h"
 #include "K15_Functor.h"
 #include "K15_GameTime.h"
 
 namespace K15_Engine { namespace System {
-	class Task : public TaskManagerAllocatedObject
+	class TaskBase : public TaskManagerAllocatedObject
 	{
 	public:
-		/*********************************************************************************/
-		typedef Functor1<void,const GameTime&> FunctorType;
-		/*********************************************************************************/
-	public:
-		Task();
-		Task(FunctorType p_Functor,uint32 p_Priority = 0);
-		~Task();
+		TaskBase(uint32 p_Priority = 0);
+		~TaskBase();
 
-		inline void update(const GameTime& p_GameTime);
-		inline void setUpdateFunc(FunctorType p_Functor);
-
+		virtual void update(const GameTime& p_GameTime) = 0;
+		
 		inline uint32 getPriority() const;
 		inline void setPriority(uint32 p_Priority);
 
-		bool operator<(const Task& p_Other);
+		bool operator<(const TaskBase& p_Other);
 	protected:
 		uint32 m_Priority;
-		FunctorType m_Functor;
-	};// end of Task class
-#include "K15_Task.inl"
+	};// end of TaskBase class
+#include "K15_TaskBase.inl"
 }}//end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_Task_h_
+#endif //_K15Engine_System_TaskBase_h_

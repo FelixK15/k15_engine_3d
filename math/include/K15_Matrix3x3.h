@@ -54,9 +54,9 @@ namespace K15_Engine { namespace Math {
 
 		void Inverse();
 		void Transpose();
-		void Rotate(const Vector3<Real> &vec,Real angleInRad);
-		void Scale(const Vector3<Real> &scaleVec);
-		void Translate(const Vector3<Real> &posVec);
+		void Rotate(const Vector3 &vec,Real angleInRad);
+		void Scale(const Vector3 &scaleVec);
+		void Translate(const Vector3 &posVec);
 
 		bool IsTriangle() const;
 		bool IsLowerTriangle() const;

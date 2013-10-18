@@ -24,7 +24,9 @@
 #ifndef _K15Engine_System_ApplicationModule_h_
 #define _K15Engine_System_ApplicationModule_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif// K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace System { 
 
@@ -33,9 +35,9 @@ namespace K15_Engine { namespace System {
   public:
     virtual void evaluateSettings(const StringSet& p_ApplicationSettings){}
 
-    virtual Task* createTask(){return 0;}
+    virtual TaskBase* createTask(){return 0;}
     //virtual RenderTask* createRenderTask(){return 0;} 
-    virtual bool onInitialize(){}
+    virtual bool onInitialize(){return false;}
     virtual void onShutdown(){}
 
     virtual void onPreTick(){}

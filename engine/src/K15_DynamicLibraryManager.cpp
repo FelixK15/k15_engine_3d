@@ -17,6 +17,8 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+#include "K15_PrecompiledHeader.h"
+
 #include "K15_DynamicLibraryManager.h"
 #include "K15_LogManager.h"
 
@@ -49,15 +51,15 @@ namespace K15_Engine { namespace System {
 
 		if (iter != m_LoadedLibs.end())
 		{
-			_LogNormal(String("Library already loaded. Returning cached libray. Library:") + p_FileName);
+			_LogNormal("Library \"%s\" already loaded. Returning cached libray.",p_FileName.c_str());
 			return iter->second;
 		}
 
-		DynamicLibraryBase *library = K15_NEW DynamicLibraryType();
+		DynamicLibraryBase *library = K15_NEW DynamicLibraryType(p_FileName);
 
 		if(!library->load())
 		{
-			_LogNormal(String("Could not load library :") + p_FileName);
+			_LogError("Could not load library (\"%s\") Error:%s",p_FileName.c_str(),g_Application->getLastError().c_str());
 	
 			K15_DELETE library;
 			return 0;

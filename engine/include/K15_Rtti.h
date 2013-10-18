@@ -23,7 +23,9 @@
 #ifndef _K15Engine_System_RTTI_h_
 #define _K15Engine_System_RTTI_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
 
 #include "K15_Rtti.mcr"
 

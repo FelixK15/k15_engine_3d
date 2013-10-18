@@ -17,9 +17,9 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+#include "K15_PrecompiledHeader.h"
+
 #include "K15_RenderWindow_Win32.h"
-#include "K15_Application.h"
-#include "K15_LogManager.h"
 #include "K15_StringUtil.h"
 #include "K15_EventManager.h"
 
@@ -27,6 +27,11 @@ namespace K15_Engine { namespace System {
 	LRESULT CALLBACK K15_WindowProc(HWND p_HandleWindow,UINT p_MSG,WPARAM p_wParam,LPARAM p_lParam)
 	{
 		//if(p_MSG == WM_)
+		if(p_MSG == WM_CLOSE)
+		{
+			PostQuitMessage(0);
+			return 0;
+		}
 
 		return DefWindowProc(p_HandleWindow,p_MSG,p_wParam,p_lParam);
 	}
@@ -56,16 +61,16 @@ namespace K15_Engine { namespace System {
 		
 		if(RegisterClass(&wc) == FALSE)
 		{
-			_LogError(StringUtil::format("Could not register WNDCLASS \"K15_RenderWindowClass\" Error:%s",Application::getInstance()->getLastError()));
+			_LogError("Could not register WNDCLASS \"K15_RenderWindowClass\" Error:%s",Application::getInstance()->getLastError().c_str());
 			return false;
 		}
 
 		if((m_HandleWindow = CreateWindow("K15_RenderWindowClass",
 			m_WindowTitle.c_str(),WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,
-			0,0,m_Instance,0)) != INVALID_HANDLE_VALUE)
+			0,0,m_Instance,0)) == INVALID_HANDLE_VALUE)
 		{
-			_LogError(StringUtil::format("Could not create window. Error:%s",Application::getInstance()->getLastError()));
+			_LogError("Could not create window. Error:%s",Application::getInstance()->getLastError().c_str());
 			return false;
 		}
 
@@ -102,7 +107,7 @@ namespace K15_Engine { namespace System {
 		DWORD result = 0;
 		if((result = ChangeDisplaySettings(&dm,flags)) != DISP_CHANGE_SUCCESSFUL)
 		{
-			_LogError(StringUtil::format("Could not change resolution to \"%ix%i\" Error:%s",p_Resolution.width,p_Resolution.height,Application::getInstance()->getLastError()));
+			_LogError("Could not change resolution to \"%ix%i\" Error:%s",p_Resolution.width,p_Resolution.height,Application::getInstance()->getLastError().c_str());
 		}
 	}
 	/*********************************************************************************/
@@ -110,6 +115,16 @@ namespace K15_Engine { namespace System {
 	{
 		m_IsFullscreen = p_Fullscreen;
 		setResolution(m_CurrentResolution);
+	}
+	/*********************************************************************************/
+	HWND RenderWindow_Win32::getHandleWindow()
+	{
+		return m_HandleWindow;
+	}
+	/*********************************************************************************/
+	HINSTANCE RenderWindow_Win32::getHandleInstance()
+	{
+		return m_Instance;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::System namespace

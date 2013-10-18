@@ -24,12 +24,15 @@
 #ifndef _K15Engine_System_TaskManager_h_
 #define _K15Engine_System_TaskManager_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#	include "K15_Application.h"
+#endif// K15_USE_PRECOMPILED_HEADER
+
 #include "K15_AllocatedObject.h"
 #include "K15_PageAllocator.h"
 #include "K15_Singleton.h"
-#include "K15_Application.h"
-#include "K15_Task.h"
+#include "K15_TaskBase.h"
 
 namespace K15_Engine { namespace System {
 
@@ -39,7 +42,7 @@ namespace K15_Engine { namespace System {
 	{
 	public:
 		/*********************************************************************************/
-		typedef K15_List(Task*) TaskList;
+		typedef K15_List(TaskBase*) TaskList;
 		/*********************************************************************************/
 	public:
 		TaskManager();
@@ -47,8 +50,8 @@ namespace K15_Engine { namespace System {
 
 		void update(const GameTime&);
 
-		inline void addTask(Task*);
-		void removeTask(Task*);
+		inline void addTask(TaskBase*);
+		void removeTask(TaskBase*);
 
 	protected:
 		TaskList m_Tasks;

@@ -23,10 +23,16 @@
 #ifndef _K15Engine_System_Application_h_
 #define _K15Engine_System_Application_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
+
 #include "K15_Singleton.h"
 #include "K15_StackAllocator.h"
 #include "K15_ApplicationParameter.h"
+#include "K15_GameTime.h"
+#include "K15_FrameStatistic.h"
+#include "K15_StringUtil.h"
 
 #if defined (K15_OS_WINDOWS)
 #	include "K15_ApplicationOSLayer_Win32.h"
@@ -34,24 +40,24 @@
 
 namespace K15_Engine { namespace System {
   /*********************************************************************************/
-  typedef K15_Set(String) StringSet;
   typedef K15_List(ApplicationModule*) ApplicationModuleList;
   typedef K15_List(ApplicationParameter) ApplicationParameterList;
   /*********************************************************************************/
-  class K15_API_EXPORT Application : public Singleton<Application>,
-                                     public StackAllocator
+  exposed_class K15_API_EXPORT Application : public Singleton<Application>,
+											 public StackAllocator
   {
   public:
 	  /*********************************************************************************/
 	  static const String SettingsFileName;
 	  static const String PluginFileName;
+	  static const String GameDirFileName;
+	  static const uint32 FrameStatisticCount = 1024;
 	  /*********************************************************************************/
   public:
     Application();
-    Application(int p_CommandCount,char** p_Commands);
     ~Application();
     
-	  inline void setGameRootDir(const String& p_GameRootDir);
+	inline void setGameRootDir(const String& p_GameRootDir);
 
     inline const String& getGameRootDir() const;
     inline const StringSet& getPluginList() const;
@@ -60,6 +66,7 @@ namespace K15_Engine { namespace System {
 
     void setWindowTitle(const String& p_WindowTitle);
 
+	void initialize(int p_CommandCount,char** p_Commands);
     void initialize();
 
     void run();
@@ -82,6 +89,9 @@ namespace K15_Engine { namespace System {
     inline LogManager* getLogManager() const;
 	inline const ApplicationOSLayerType& getOSLayer() const;
 
+	inline void setRunning(bool p_Running);
+	inline bool getRunning() const;
+
 	inline String getLastError() const;
 	inline double getTime() const;
 
@@ -89,6 +99,11 @@ namespace K15_Engine { namespace System {
     inline const double getDeltaTime() const;
     inline const double getRawDeltaTime() const;
 
+	inline void setMaxFPS(uint16 p_MaxFPS);
+	inline uint16 getMaxFPS() const;
+
+	inline const FrameStatistic& getFrameStatistic(uint32 p_FrameNumber) const;
+  
   private:
     void createCommandList(int p_CommandCount,char** p_Commands);
     void createApplicationParameterList();
@@ -96,18 +111,25 @@ namespace K15_Engine { namespace System {
     void loadSettingsFile();
     void loadPluginsFile();
     void initializePlugins(const StringSet& p_PluginNames);
-
+	void loadGameDirFile();
+  
   private:
 	bool m_Running;
     double m_Started;
 	double m_TimeLastFrame;
+	
+	expose		uint16 m_MaxFPS;
+	expose_read uint32 m_FrameCounter;
+	expose_read double m_AvgFrameTime;
 
+	FrameStatistic m_FrameStatistics[FrameStatisticCount];
     GameTime m_GameTime;
 
-	String m_GameRootDir;
+	expose_read String m_GameRootDir;
 
-	StringSet m_Plugins;
-    StringSet m_Commands;
+	expose_read StringSet m_Plugins;
+    
+	StringSet m_Commands;
     ApplicationParameterList m_ApplicationParameter;
     ApplicationModuleList m_LoadedModules;
 

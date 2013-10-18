@@ -23,9 +23,11 @@
 #ifndef _K15Engine_System_Event_h_
 #define _K15Engine_System_Event_h_
 
-#include "K15_Prerequisites.h"
-#include "K15_EventManager.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
 
+#include "K15_EventManager.h"
 #include "K15_PageAllocator.h"
 
 namespace K15_Engine { namespace System { 

@@ -24,7 +24,9 @@
 #ifndef _K15Engine_System_AllocatedObject_h_
 #define _K15Engine_System_AllocatedObject_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace System {
 
@@ -32,6 +34,9 @@ namespace K15_Engine { namespace System {
 	class AllocatedObject
 	{
 	public:
+		AllocatedObject();
+		virtual ~AllocatedObject();
+
 #	if defined (K15_DEBUG)
 		/*********************************************************************************/
 		static void* alloc(size_t,const char*,uint32,bool,const char*);
@@ -57,9 +62,8 @@ namespace K15_Engine { namespace System {
 		static void operator delete[](void*,uint32);
 		/*********************************************************************************/
 #	endif //K15_DEBUG
-		/*********************************************************************************/
+
 		static Allocator* MemoryAllocator;
-		/*********************************************************************************/
 	};
 
 #include "K15_AllocatedObject.inl"

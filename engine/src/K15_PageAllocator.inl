@@ -25,7 +25,7 @@ PageAllocator<PageSize,TotalSize>::PageAllocator()
 	  m_PageSize(PageSize),
 	  m_CurrentPageIndex(0)
 {
-	K15_ASSERT(m_MemorySize < m_PageSize,"PageAllocator total size is smaller than the size of 1 page.");
+	K15_ASSERT(m_MemorySize >= m_PageSize,"PageAllocator total size is smaller than the size of 1 page.");
 	createPages();
 }
 //---------------------------------------------------------------------------//
@@ -35,7 +35,7 @@ PageAllocator<PageSize,TotalSize>::PageAllocator(BaseAllocator* p_Allocator)
 	  m_PageSize(PageSize),
 	  m_CurrentPageIndex(0)
 {
-	K15_ASSERT(m_MemorySize < m_PageSize,"PageAllocator total size is smaller than the size of 1 page.");
+	K15_ASSERT(m_MemorySize >= m_PageSize,"PageAllocator total size is smaller than the size of 1 page.");
 	createPages();
 }
 /*********************************************************************************/
@@ -49,12 +49,12 @@ void* PageAllocator<PageSize,TotalSize>::alloc(uint32 p_Size)
 		pagesNeeded = p_Size / m_PageSize;
 	}
 
-	K15_ASSERT((pagesNeeded + m_CurrentPageIndex) > PageCount,"Not enough pages left to satisfy memory request");
+	K15_ASSERT((pagesNeeded + m_CurrentPageIndex) <= PageCount,"Not enough pages left to satisfy memory request");
 
 	byte* memory = m_PageData[m_CurrentPageIndex].Memory;
 	m_PageData[m_CurrentPageIndex].Size = p_Size;
 
-	for(uint32 i = m_CurrentPageIndex;i < m_CurrentPageIndex + pagesNeeded;++i)
+	for(uint32 i = m_CurrentPageIndex + 1;i < m_CurrentPageIndex + pagesNeeded;++i)
 	{
 		m_PageData[i].Used = true;
 		m_PageData[i].Size = 0;

@@ -17,6 +17,8 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+#include "K15_PrecompiledHeader.h"
+
 #include "K15_ResourceManager.h"
 #include "K15_ResourceFileBase.h"
 
@@ -49,7 +51,7 @@ namespace K15_Engine { namespace System {
 		{
 			if(iter->second->getResourceReferences() == 0 && !iter->second->isMarkedAsUnreferenced())
 			{
-				_LogNormal(String(iter->second->getAssetName().getString()) + " is no longer referenced.");
+				_LogNormal("Asset \"%s\" is no longer referenced.",iter->second->getAssetName().getString());
 				iter->second->setMarkedAsUnreferenced(true);
 			}
 
@@ -61,7 +63,7 @@ namespace K15_Engine { namespace System {
 					(iter->second->getPriority() == ResourceBase::RP_NORMAL && difference > 200.0) ||
 					(iter->second->getPriority() == ResourceBase::RP_HIGH	&& difference > 500.0))
 				{
-					_LogNormal(String("Deleting Asset ") + iter->second->getAssetName().getString());
+					_LogNormal("Deleting Asset \"%s\"",iter->second->getAssetName().getString());
 					deleteResource(iter->second);
 
 					m_ResourceDataCache.erase(iter);
@@ -101,7 +103,7 @@ namespace K15_Engine { namespace System {
 		{
 			if((*iter)->isOpen())
 			{
-				_LogNormal(String("Closing resource file... name:") + (*iter)->getResourceFileName());
+				_LogNormal("Closing resource file \"%s\"",(*iter)->getResourceFileName().c_str());
 				(*iter)->close();
 			}
 		}

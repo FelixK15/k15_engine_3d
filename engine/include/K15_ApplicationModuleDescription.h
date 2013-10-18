@@ -24,7 +24,9 @@
 #ifndef _K15Engine_System_ApplicationModuleDescription_h_
 #define _K15Engine_System_ApplicationModuleDescription_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif// K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace System { 
 
@@ -41,6 +43,7 @@ namespace K15_Engine { namespace System {
 		uint32 MajorVersion;
 		uint32 MinorVersion;
 		uint32 PluginFlagBitMask;
+		uint32 CompiledWithEngineVersion;
 	};
 }}//end of K15_Engine::System namespace
 

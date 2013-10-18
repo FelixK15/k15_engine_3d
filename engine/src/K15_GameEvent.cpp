@@ -16,6 +16,7 @@
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
  */
+#include "K15_PrecompiledHeader.h"
 
 #include "K15_GameEvent.h"
 

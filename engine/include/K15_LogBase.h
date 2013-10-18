@@ -23,11 +23,15 @@
 #ifndef _K15Engine_System_LogBase_h_
 #define _K15Engine_System_LogBase_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
+
+#include "K15_LogManager.h"
 
 namespace K15_Engine { namespace System { 
 
-	class K15_API_EXPORT LogBase
+	class K15_API_EXPORT LogBase : public LogManagerAllocatedObject
 	{
 	public:
 		LogBase();
@@ -36,15 +40,16 @@ namespace K15_Engine { namespace System {
 
 		virtual void logMessage(const String &p_Message,Enum p_PriorityFlag) = 0;
 
-		void toggleLoggingTypeFlag(uint32 p_Flag);
-		const uint32 getLoggingTypeMask() const;
+		void setLogBitMask(uint32 p_Mask);
+		void toggleLogFlag(uint32 p_Flag);
+		const uint32 getLogBitMask() const;
 
 		const String& getName() const;
 		void setName(const String& p_Name);
 
 	protected:
 		String m_Name;
-		uint32 m_LoggingTypeMask;
+		uint32 m_LogBitMask;
 	};
 }} //end of K15_Engine::System namespace
 

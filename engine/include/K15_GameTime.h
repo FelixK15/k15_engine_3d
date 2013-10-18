@@ -23,7 +23,9 @@
 #ifndef _K15Engine_System_GameTime_h_
 #define _K15Engine_System_GameTime_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif// K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace System {
 	class K15_API_EXPORT GameTime
@@ -38,7 +40,7 @@ namespace K15_Engine { namespace System {
 		*
 		* @return double - modified delta time (unmodified if getMultiplier() == 1.0)
 		*/
-		inline const double getDeltaTime() const;
+		inline const double getDeltaTime() const{return m_DeltaTime * m_Mulitplicator;}
 
 		/**
 		* get the delta time (e.g. the time it took to process the last frame).
@@ -46,24 +48,24 @@ namespace K15_Engine { namespace System {
 		*
 		* @return double - unmodified delta time (unmodified if getMultiplier() == 1.0)
 		*/
-		inline const double getRawDeltaTime() const;
+		inline const double getRawDeltaTime() const{return m_RawDeltaTime;}
 
 		/**
 		* Returns the multiplier that affects the value of getDeltaTime()
 		*
 		* @return double - multiplier that affects the value of getDeltaTime()
 		*/
-		inline const double getMultiplier() const;
+		inline const double getMultiplier() const{return m_Mulitplicator;}
 
-		inline void setDeltaTime(const double p_DeltaTime);
+		inline void setDeltaTime(double p_DeltaTime){m_DeltaTime = p_DeltaTime;}
 
-		inline void setMultiplier(const double p_Multiplier);
+		inline void setMultiplier(double p_Multiplier){m_Mulitplicator = p_Multiplier;}
 	private:
 		double m_DeltaTime;
 		double m_Mulitplicator;
 		double m_RawDeltaTime;
 	};// end of GameTime class
-	#include "K15_GameTime.inl"
+	//#include "K15_GameTime.inl"
 }}// end of K15_Engine::System namespace
 
 #endif //_K15Engine_System_GameTime_h_

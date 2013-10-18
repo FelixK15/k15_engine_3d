@@ -17,18 +17,21 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+#include "K15_PrecompiledHeader.h"
+
 #include "K15_LogManager.h"
 #include "K15_LogBase.h"
 
 namespace K15_Engine { namespace System { 
-
+	/*********************************************************************************/
 	LogManager::LogManager()
-		: m_DefaultLog(0),
-		m_Logs()
+		:	StackAllocator(MemoryAllocator,MEGABYTE),
+			m_DefaultLog(0),
+			m_Logs()
 	{
 
 	}
-
+	/*********************************************************************************/
 	LogManager::~LogManager()
 	{
 		for(LogList::iterator iter = m_Logs.begin();iter != m_Logs.end();++iter)
@@ -38,11 +41,12 @@ namespace K15_Engine { namespace System {
 
 		m_Logs.clear();
 	}
-
-	void LogManager::addLog(LogBase* p_Log, bool p_DefaultLog)
+	/*********************************************************************************/
+	void LogManager::addLog(LogBase* p_Log, bool p_DefaultLog, uint32 p_LogMask)
 	{
 		if(p_Log)
 		{
+			p_Log->setLogBitMask(p_LogMask);
 			if(p_DefaultLog)
 			{
 				setDefaultLog(p_Log);
@@ -51,24 +55,38 @@ namespace K15_Engine { namespace System {
 			m_Logs.push_back(p_Log);
 		}
 	}
-
-	void LogManager::logMessage(const String& p_LogMessage, bool p_DefaultLogOnly, eLogPriorityFlags p_PriorityFlag)
+	/*********************************************************************************/
+	void LogManager::logMessage(const String& p_LogMessage, bool p_DefaultLogOnly, Enum p_LogFlag)
 	{
 		if(p_DefaultLogOnly)
 		{
-			if(m_DefaultLog){
-				m_DefaultLog->logMessage(p_LogMessage,(Enum)p_PriorityFlag);
+			if(m_DefaultLog)
+			{
+				m_DefaultLog->logMessage(p_LogMessage,(Enum)p_LogFlag);
 			}
 		}
 		else
 		{
+			LogBase* currentLog = 0;
 			for(LogList::iterator iter = m_Logs.begin();iter != m_Logs.end();++iter)
 			{
-				if((*iter)->getLoggingTypeMask() & p_PriorityFlag)
+				currentLog = (*iter);
+				if(currentLog->getLogBitMask() & p_LogFlag)
 				{
-					(*iter)->logMessage(p_LogMessage,(Enum)p_PriorityFlag);
+					(*iter)->logMessage(p_LogMessage,p_LogFlag);
 				}
 			}
 		}
 	}
+	/*********************************************************************************/
+	void LogManager::setDefaultLog(LogBase* p_Log)
+	{
+		m_DefaultLog = p_Log;
+	}
+	/*********************************************************************************/
+	LogBase* LogManager::getDefaultLog() const
+	{
+		return m_DefaultLog;
+	}
+	/*********************************************************************************/
 }}// end of K15_Engine::System namespace

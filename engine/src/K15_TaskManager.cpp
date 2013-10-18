@@ -17,6 +17,8 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+#include "K15_PrecompiledHeader.h"
+
 #include "K15_TaskManager.h"
 
 namespace K15_Engine { namespace System {
@@ -41,7 +43,7 @@ namespace K15_Engine { namespace System {
 		}
 	}
 	/*********************************************************************************/
-	void TaskManager::removeTask(Task* p_Task)
+	void TaskManager::removeTask(TaskBase* p_Task)
 	{
 		TaskList::iterator toDelete = m_Tasks.end();
 

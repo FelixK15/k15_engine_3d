@@ -28,12 +28,12 @@ const String& RenderWindowBase::getWindowTitle() const
 	return m_WindowTitle;
 }
 /*********************************************************************************/
-void RenderWindowBase::setResolution(const RenderWindowBase::Resolution& p_Resolution)
+void RenderWindowBase::setResolution(const Resolution& p_Resolution)
 {
 	m_CurrentResolution = p_Resolution;
 }
 /*********************************************************************************/
-const RenderWindowBase::Resolution& RenderWindowBase::getResolution() const
+const Resolution& RenderWindowBase::getResolution() const
 {
 	return m_CurrentResolution;
 }

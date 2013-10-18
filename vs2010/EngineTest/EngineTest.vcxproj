@@ -11,11 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\test\src\ContainerTest.cpp" />
-    <ClCompile Include="..\..\test\src\FileManagerTest.cpp" />
     <ClCompile Include="..\..\test\src\main.cpp" />
-    <ClCompile Include="..\..\test\src\MathTest.cpp" />
-    <ClCompile Include="..\..\test\src\MemoryTest.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E9A85DD2-EEAF-4DDA-B0D6-47267C9C6776}</ProjectGuid>
@@ -54,7 +50,7 @@
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <IncludePath>..\..\engine\include\;..\..\test\unittest++\src\;..\Dependencies\unittest-cpp\UnitTest++\src\;$(IncludePath);..\..\math\include\</IncludePath>
     <LibraryPath>..\..\engine\bin\$(Configuration)\;..\..\test\unittest++\$(Configuration)\;..\Dependencies\unittest-cpp\UnitTest++\bin\$(Configuration)\;$(LibraryPath);..\..\math\bin\$(Configuration)\</LibraryPath>
-    <IncludePath>..\..\engine\include\;..\Dependencies\unittest-cpp\UnitTest++\src\;$(IncludePath);..\..\math\include\</IncludePath>
+    <IncludePath>..\..\engine\src\win32\;..\..\engine\src\;..\..\engine\include\win32\;..\..\engine\include\;..\Dependencies\unittest-cpp\UnitTest++\src\;$(IncludePath);..\..\math\include\</IncludePath>
     <LibraryPath>..\..\engine\bin\$(Configuration)\;..\Dependencies\bin\$(Configuration)\;$(LibraryPath);..\..\math\bin\$(Configuration)\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -79,12 +75,12 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>K15_EngineV2_$(Configuration).lib;K15_Math_$(Configuration).lib;UnitTest++.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies>K15_EngineV2_$(Configuration).lib;UnitTest++.vsnet2005.lib;K15_Math_$(Configuration).lib</AdditionalDependencies>
+      <AdditionalDependencies>K15_Engine.lib;UnitTest++.vsnet2005.lib;K15_Math_$(Configuration).lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)\..\..\engine\bin\$(Configuration)\K15_EngineV2_$(Configuration).dll" "$(ProjectDir)\..\..\test\bin\$(Configuration)\" /y</Command>
+      <Command>xcopy "$(ProjectDir)\..\..\engine\bin\$(Configuration)\K15_Engine.dll" "$(ProjectDir)\..\..\test\bin\$(Configuration)\" /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

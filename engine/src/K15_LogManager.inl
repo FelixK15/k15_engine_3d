@@ -16,13 +16,14 @@
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
  */
-
+/*********************************************************************************/
 LogBase* LogManager::getDefaultLog()
 {
 	return m_DefaultLog;
 }
-
+/*********************************************************************************/
 void LogManager::setDefaultLog(LogBase* p_Log)
 {
 	m_DefaultLog = p_Log;
 }
+/*********************************************************************************/

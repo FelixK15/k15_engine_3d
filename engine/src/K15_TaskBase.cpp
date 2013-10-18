@@ -17,30 +17,24 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_Task.h"
+#include "K15_PrecompiledHeader.h"
+
+#include "K15_TaskBase.h"
 
 namespace K15_Engine { namespace System {
 	/*********************************************************************************/
-	Task::Task()
-		: m_Functor(0),
-		  m_Priority(0)
+	TaskBase::TaskBase(uint32 p_Priority)
+		: m_Priority(p_Priority)
 	{
 
 	}
 	/*********************************************************************************/
-	Task::Task(FunctorType p_Functor,uint32 p_Priority)
-		: m_Functor(p_Functor),
-		  m_Priority(p_Priority)
+	TaskBase::~TaskBase()
 	{
 
 	}
 	/*********************************************************************************/
-	Task::~Task()
-	{
-
-	}
-	/*********************************************************************************/
-	bool Task::operator<( const Task& p_Other )
+	bool TaskBase::operator<( const TaskBase& p_Other )
 	{
 		return m_Priority < p_Other.m_Priority;
 	}

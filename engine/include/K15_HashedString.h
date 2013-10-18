@@ -55,8 +55,7 @@ namespace K15_Engine { namespace System {
 #		ifndef K15_NO_STRINGS
 			const char* m_String;
 #		endif
-	};
-#include "K15_HashedString.inl"
+	};//end of HashedString class
 }}//end of K15_Engine::System namespace
 
 #endif //_K15Engine_System_HashedString_h_

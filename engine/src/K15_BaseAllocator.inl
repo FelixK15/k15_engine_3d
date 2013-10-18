@@ -16,16 +16,3 @@
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
  */
-
-/*********************************************************************************/
-void* BaseAllocator::allocate(uint32 p_Size)
-{
-  K15_ASSERT(p_Size + m_UsedMemory > m_MemorySize,"Cannot satisfy memory request.");
-  return alloc(p_Size);
-}
-/*********************************************************************************/
-void BaseAllocator::deallocate(void* p_Pointer)
-{
-  return free(p_Pointer);
-}
-/*********************************************************************************/

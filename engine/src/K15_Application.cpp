@@ -17,8 +17,8 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_Application.h"
-#include "K15_LogManager.h"
+#include "K15_PrecompiledHeader.h"
+
 #include "K15_DynamicLibraryManager.h"
 #include "K15_EventManager.h"
 #include "K15_ProfilingManager.h"
@@ -29,6 +29,10 @@
 #include "K15_ApplicationModule.h"
 #include "K15_ApplicationModuleDescription.h"
 
+#ifdef K15_DEBUG
+#	include "K15_TextConsoleLog.h"
+#endif //K15_DEBUG
+
 #ifdef K15_OS_WINDOWS
 #	include "K15_RenderWindow_Win32.h"
 #	include "K15_ApplicationOSLayer_Win32.h"
@@ -38,9 +42,10 @@ namespace K15_Engine { namespace System {
 	/*********************************************************************************/
 	const String Application::SettingsFileName = "settings.ini";
 	const String Application::PluginFileName = "plugins.ini";
+	const String Application::GameDirFileName = "gamedir.ini";
 	/*********************************************************************************/
 	Application::Application()
-		: StackAllocator(GIGABYTE),
+		: StackAllocator(20 * MEGABYTE),
 		m_Commands(),
 		m_DynamicLibraryManager(0),
 		m_EventManager(0),
@@ -50,48 +55,23 @@ namespace K15_Engine { namespace System {
 		m_LogManager(0),
 		m_Plugins(),
 		m_ApplicationParameter(),
-		m_GameRootDir()
-
-	{
-		//creating the Log Manager is first thing we'll do.
-		m_LogManager = K15_NEW LogManager();
-	}
-	/*********************************************************************************/
-	Application::Application( int p_CommandCount,char** p_Commands )
-		: StackAllocator(GIGABYTE),
-		m_Commands(),
-		m_DynamicLibraryManager(0),
-		m_EventManager(0),
-		m_RenderWindow(0),
-		m_ProfileManager(0),
-		m_TaskManager(0),
-		m_LogManager(0),
-		m_Plugins(),
-		m_ApplicationParameter(),
-		m_GameRootDir()
+		m_GameRootDir(),
+		m_GameTime(0.0,1.0),
+		m_FrameCounter(0),
+		m_MaxFPS(30),
+		m_AvgFrameTime(0.33)
 	{
 		//creating the Log Manager is first thing we'll do.
 		m_LogManager = K15_NEW LogManager();
 
-		createCommandList(p_CommandCount,p_Commands);
-		createApplicationParameterList();
+#		if defined (K15_DEBUG)
+			m_LogManager->addLog(K15_NEW TextConsoleLog(),true,LogManager::LP_ALL);
+#		endif //K15_DEBUG
 	}
 	/*********************************************************************************/
 	Application::~Application()
 	{
 		m_Commands.clear();
-
-		_LogNormal("Destroying DynamicLibraryManager...");
-		K15_DELETE_T(m_DynamicLibraryManager);
-
-		_LogNormal("Destroying EventManager...");
-		K15_DELETE_T(m_EventManager);
-
-		_LogNormal("Destroying ProfilingManager...");
-		K15_DELETE_T(m_ProfileManager);
-
-		_LogNormal("Destroying LogManager...");
-		K15_DELETE_T(m_LogManager);
 	}
 	/*********************************************************************************/
 	void Application::createCommandList(int p_CommandCount,char** p_Commands)
@@ -99,12 +79,11 @@ namespace K15_Engine { namespace System {
 		//the 1. entry in the command array is always (on every system?) the path to the application. 
 		//We'll set the path to the application as the default game root dir.
 		String appPath = p_Commands[0];
-
 		String::size_type pos = String::npos;
 
 		if((pos = appPath.find_last_of('\\')) != String::npos)
 		{
-			m_GameRootDir = appPath.substr(0,pos);
+			m_GameRootDir = appPath.substr(0,pos+1);
 		}
 
 		for(int i = 1;i < p_CommandCount;++i){
@@ -123,7 +102,7 @@ namespace K15_Engine { namespace System {
 	/*********************************************************************************/
 	void Application::loadSettingsFile()
 	{
-		String settingsFileName = m_GameRootDir += SettingsFileName;
+		String settingsFileName = m_GameRootDir + SettingsFileName;
 
 		FileStream settingsFile(SettingsFileName);
 		
@@ -148,7 +127,7 @@ namespace K15_Engine { namespace System {
 				}
 				else
 				{
-					_LogWarning(StringUtil::format("(%s) Line \"%s\" cant get processed.",settingsFileName.c_str(),line.c_str()));
+					_LogWarning("(%s) Line \"%s\" cant get processed.",settingsFileName.c_str(),line.c_str());
 				}
 
 				memset(buffer,0,lineLength);
@@ -177,9 +156,17 @@ namespace K15_Engine { namespace System {
 		}
 	}
 	/*********************************************************************************/
+	void Application::initialize(int p_CommandCount,char** p_Commands)
+	{
+		createCommandList(p_CommandCount,p_Commands);
+		createApplicationParameterList();
+
+		initialize();
+	}
+	/*********************************************************************************/
 	void Application::initialize()
 	{
-		_LogNormal(StringUtil::format("Initializing OS layer (OS:\"%s\")",m_OSLayer.OSName));
+		_LogNormal("Initializing OS layer (OS:\"%s\")",m_OSLayer.OSName.c_str());
 
 		//try to initialize the os layer
 		if(!m_OSLayer.initialize())
@@ -192,7 +179,8 @@ namespace K15_Engine { namespace System {
 		m_Started = m_OSLayer.getTime();
 
 		loadSettingsFile();
-
+		loadGameDirFile();
+		
 		_LogNormal("Initializing DynamicLibraryManager...");
 		m_DynamicLibraryManager = K15_NEW DynamicLibraryManager();
 		
@@ -217,6 +205,10 @@ namespace K15_Engine { namespace System {
 		m_RenderWindow = K15_NEW RenderWindowType();
 
 		m_RenderWindow->initialize();
+	
+		_LogNormal("Tasks will get created and added to the task manager.");
+		_LogNormal("Adding Eventmanager task...");
+		m_TaskManager->addTask(m_EventManager->createTask());
 	}
 	/*********************************************************************************/
 	void Application::run()
@@ -240,6 +232,7 @@ namespace K15_Engine { namespace System {
 	/*********************************************************************************/
 	void Application::onPreTick()
 	{
+		m_OSLayer.onPreTick();
 		for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
 		{
 			(*iter)->onPreTick();
@@ -248,18 +241,61 @@ namespace K15_Engine { namespace System {
 	/*********************************************************************************/
 	void Application::tick()
 	{
-		onPreTick();
+		static double startFrameTime = 0.0;
+		static double endFrameTime = 0.0;
+		static double diffTime = m_AvgFrameTime;
 
-		//Update gametime
-		m_GameTime.setDeltaTime(getTime() - m_TimeLastFrame);
-		m_TimeLastFrame = getTime();
+		startFrameTime = getTime();
 
-		//dispatch events
-		m_EventManager->update();
-		m_TaskManager->update(m_GameTime);
+		{
+			K15_PROFILE(Application_Pre_Tick);
+			onPreTick();
+		}
+		
+		{
+			K15_PROFILE(Application_TaskManager_Tick);
+			//update tasks (render frame)
+			m_TaskManager->update(m_GameTime);
+		}
+		
+		{
+			K15_PROFILE(Application_Post_Tick);
+			onPostTick();
+		}
 
-		//Render frame
-		onPostTick();
+		endFrameTime = getTime();
+		//so is there any frame time left?
+		diffTime = endFrameTime - startFrameTime;
+
+		if(diffTime < m_AvgFrameTime)
+		{
+			static double sleepTime = 0.0;
+			sleepTime = m_AvgFrameTime - diffTime;
+
+			m_OSLayer.sleep(sleepTime);
+		}
+		else if(diffTime > m_AvgFrameTime)
+		{
+			//frame took longer than expected. fire a warning
+			//and then clip diffTime to the max frame time
+			_LogWarning("Frame %i took %.3f seconds to render! (%.3f seconds is average)",m_FrameCounter,diffTime,m_AvgFrameTime);
+
+			diffTime = m_AvgFrameTime;
+		}
+		
+		//update game time
+		m_GameTime.setDeltaTime(diffTime);
+
+		//increase frame counter
+		++m_FrameCounter;
+
+		//save stastic for this frame
+		static uint32 FrameStatisticIndex = 0;
+		FrameStatisticIndex = m_FrameCounter % (FrameStatisticCount - 1);
+		m_FrameStatistics[FrameStatisticIndex].Time = diffTime;
+		m_FrameStatistics[FrameStatisticIndex].FrameNumber = m_FrameCounter;
+
+		m_RenderWindow->setWindowTitle(StringUtil::format("msec: %.3f - Frame Index: %i",diffTime * 100,m_FrameCounter));
 	}
 	/*********************************************************************************/
 	void Application::onPostTick()
@@ -272,13 +308,17 @@ namespace K15_Engine { namespace System {
 	/*********************************************************************************/
 	void Application::loadPluginsFile()
 	{
-		String pluginsFileName = m_GameRootDir += PluginFileName;
+		_LogNormal("Trying to open plugin file \"%s\".",PluginFileName.c_str());
+
+		String pluginsFileName = m_GameRootDir + PluginFileName;
 		StringSet pluginsToLoad;
 
 		FileStream pluginsFile(pluginsFileName);
 
 		if(pluginsFile.is_open())
 		{
+			_LogSuccess("Opened plugin file \"%s\".",PluginFileName.c_str());
+
 			static const uint32 lineLength = 256;
 			char* buffer = (char*)_malloca(lineLength);
 			String line; line.reserve(lineLength);
@@ -295,14 +335,16 @@ namespace K15_Engine { namespace System {
 				}
 				else
 				{
-					_LogWarning(StringUtil::format("(%s) Line \"%s\" cant get processed.",pluginsFileName.c_str(),line.c_str()));
+					_LogWarning("(%s) Line \"%s\" cant get processed.",pluginsFileName.c_str(),line.c_str());
 				}
 			}
+			pluginsFile.close();
+			initializePlugins(pluginsToLoad);
 		}
-
-		pluginsFile.close();
-
-		initializePlugins(pluginsToLoad);
+		else
+		{
+			_LogError("Could not open plugin file \"%s\".",PluginFileName.c_str());
+		}
 	}
 	/*********************************************************************************/
 	void Application::initializePlugins(const StringSet& p_PluginNames)
@@ -311,7 +353,7 @@ namespace K15_Engine { namespace System {
 		char* messageBuffer = (char*)_malloca(K15_PLUGIN_INFO_BUFFER_SIZE);
 		for(StringSet::const_iterator iter = p_PluginNames.begin();iter != p_PluginNames.end();++iter)
 		{
-			_LogNormal("Trying to initialize plugin " + *iter);
+			_LogNormal("Trying to initialize plugin \"%s\"",iter->c_str());
 			
 			if((lib = m_DynamicLibraryManager->load(*iter)) != 0)
 			{
@@ -322,16 +364,16 @@ namespace K15_Engine { namespace System {
 
 				if(!moduleDescFunc.isValid() || !moduleFunc.isValid())
 				{
-					_LogError("Failed to initialize plugin " + *iter);
+					_LogError("Failed to initialize plugin \"%s\"",(*iter).c_str());
 					
 					if(!moduleDescFunc.isValid())
 					{
-						_LogError("Plugin " + *iter + " has no \"getDescription\" function.");
+						_LogError("Plugin \"%s\" has no \"getDescription\" function.",(*iter).c_str());
 					}
 
 					if(!moduleFunc.isValid())
 					{
-						_LogError("Plugin " + *iter + " has no \"getModule\" function.");
+						_LogError("Plugin \"%s\" has no \"getModule\" function.",(*iter).c_str());
 					}
 
 					break;
@@ -346,14 +388,14 @@ namespace K15_Engine { namespace System {
 				//get the plugins module description to check what kind of module we're loading
 				ApplicationModuleDescription description = moduleDescFunc();
 				
-				_LogSuccess(StringUtil::format("Plugin information:\n\tAuthor:\t%s\n\tVersion:\t\%i.%i",description.Author,description.MajorVersion,description.MinorVersion));
+				_LogSuccess("Plugin information:\n\tAuthor:\t%s\n\tVersion:\t%u.%u\n\tEngine Version:\t%u",description.Author.c_str(),description.MajorVersion,description.MinorVersion,description.CompiledWithEngineVersion);
 
 				static ApplicationParameterList pluginSettings;
 
 				//Filter plugin parameter by group name
 				for(StringSet::iterator groupIter = description.GroupFilter.begin();groupIter != description.GroupFilter.end();++groupIter)
 				{
-					_LogNormal(StringUtil::format("Filtering plugin parameter (by group name \"%s\")...",(*groupIter).c_str()));
+					_LogNormal("Filtering plugin parameter (by group name \"%s\")...",(*groupIter).c_str());
 					const String& groupName = *groupIter;
 					uint32 counter = 0;
 					for(ApplicationParameterList::iterator paramIter = m_ApplicationParameter.begin();paramIter != m_ApplicationParameter.end();++paramIter)
@@ -364,28 +406,28 @@ namespace K15_Engine { namespace System {
 							++counter;
 						}
 					}
-					_LogNormal(StringUtil::format("...Done filtering plugin parameter. (%i parameter found)",counter));
+					_LogNormal("...Done filtering plugin parameter. (%i parameter found)",counter);
 				}
 
 				//get the module
 				ApplicationModule* module = moduleFunc();
 				m_LoadedModules.push_back(module);
 				//Check if plugin provides an own Task...if so, add it to the task manager
-				if(description.PluginFlagBitMask | ApplicationModuleDescription::PF_ProvidesTask)
+				if(description.PluginFlagBitMask & ApplicationModuleDescription::PF_ProvidesTask)
 				{
-					Task* pluginTask = module->createTask();
+					TaskBase* pluginTask = module->createTask();
 					if(!pluginTask)
 					{
-						_LogError(StringUtil::format("Plugin \"%s\" flag PF_ProvidesTask set, but no Task could be obtained via createTask",lib->getFileName()));
+						_LogError("Plugin \"%s\" flag PF_ProvidesTask set, but no Task could be obtained via createTask",lib->getFileName());
 					}
 					else
 					{
 						m_TaskManager->addTask(pluginTask);
-						_LogSuccess(StringUtil::format("Task successfully loaded from plugin \"%s\".",lib->getFileName()));
+						_LogSuccess("Task successfully loaded from plugin \"%s\".",lib->getFileName());
 					}
 					//Check if the plugin provides a renderer.
 				}
-				else if(description.PluginFlagBitMask | ApplicationModuleDescription::PF_ProvidesRenderer)
+				else if(description.PluginFlagBitMask & ApplicationModuleDescription::PF_ProvidesRenderer)
 				{
 					//Add Renderer
 				}
@@ -408,6 +450,39 @@ namespace K15_Engine { namespace System {
 
 		m_RenderWindow->shutdown();
 		m_OSLayer.shutdown();
+
+		_LogNormal("Destroying RenderWindow...");
+		K15_DELETE_T(m_RenderWindow);
+
+		_LogNormal("Destroying DynamicLibraryManager...");
+		K15_DELETE_T(m_DynamicLibraryManager);
+
+		_LogNormal("Destroying EventManager...");
+		K15_DELETE_T(m_EventManager);
+
+		_LogNormal("Destroying ProfilingManager...");
+		K15_DELETE_T(m_ProfileManager);
+
+		_LogNormal("Destroying LogManager...");
+		K15_DELETE_T(m_LogManager);
+	}
+	/*********************************************************************************/
+	void Application::loadGameDirFile()
+	{
+		FileStream gameDirFile(GameDirFileName);
+
+		if(gameDirFile.is_open())
+		{
+			char* buffer = (char*)_malloca(K15_GAMEDIR_BUFFER_SIZE);
+			buffer = '\0';
+			gameDirFile.getline(buffer,K15_GAMEDIR_BUFFER_SIZE);
+			m_GameRootDir = buffer;
+			gameDirFile.close();
+		}
+		else
+		{
+			_LogWarning("Could not find gamedir file \"%s\"",GameDirFileName.c_str());
+		}
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::System namespace

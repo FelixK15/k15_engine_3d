@@ -21,10 +21,13 @@
  * 
  */
 
-#ifndef __K15Engine_System_DynamicLibrary_h_
-#define __K15Engine_System_DynamicLibrary_h_
+#ifndef _K15Engine_System_DynamicLibrary_h_
+#define _K15Engine_System_DynamicLibrary_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
+
 #include "K15_DynamicLibraryManager.h"
 #include "K15_AllocatedObject.h"
 #include "K15_Functor.h"
@@ -46,7 +49,7 @@ namespace K15_Engine { namespace System {
 		* @return String - filename of the library.
 
 		*/
-		const inline String &getFileName() const;
+		const String &getFileName() const;
 
 		void setFileName(const String& p_FileName);
 
@@ -55,7 +58,7 @@ namespace K15_Engine { namespace System {
 		*
 		* @return bool - true library is loaded and false if unloaded.
 		*/
-		inline bool isLoaded() const;
+		bool isLoaded() const;
 
 		/**
 		* Returns a pointer to a symbol (function, etc) of a dynamic library.
@@ -68,8 +71,7 @@ namespace K15_Engine { namespace System {
 		Functor0<ReturnType> getSymbol(const String& p_SymbolName);
 
 	public:
-		virtual bool load() = 0;
-
+		virtual bool load(){return false;}
 		virtual bool unload() = 0;
 	
 	protected:
@@ -78,7 +80,7 @@ namespace K15_Engine { namespace System {
 	protected:
 		String m_FileName;
 		bool m_Loaded;
-	};
+	};// end of DynamicLibraryBase class
 	#include "K15_DynamicLibraryBase.inl"
 }} //end of K15_Engine::System namespace
 

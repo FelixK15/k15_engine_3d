@@ -1,5 +1,5 @@
 /**
- * @file K15_Quaternion<Real>.h
+ * @file K15_Quaternion.h
  * @author  Tobias Funke <t.funke@k15games.de>
  * @version 1.0
  * @date 2012/08/07
@@ -20,76 +20,67 @@
  *
  * 
  */
-#pragma once
-
-#ifndef __K15_QUATERNION__
-#define __K15_QUATERNION__
+#ifndef _K15Engine_Math_Quaternion_h_
+#define _K15Engine_Math_Quaternion_h_
 
 #include "K15_Vector3.h"
 #include "K15_Matrix4x4.h"
-#include "K15_Mathematic.h"
-#include <cassert>
 
-namespace K15_Math
-{
- template <class Real>
- class Quaternion
- {
- public:
+namespace K15_Engine { namespace Math {
+	class Quaternion
+	{
+	public:
 
-	Quaternion<Real>();
-	Quaternion<Real>(Real fWValue, Real fXValue, Real fYValue, Real fZValue);
-	Quaternion<Real>(Real fSAngle, Vector3<Real> vecVec);
-	Quaternion<Real>(const Quaternion<Real> &qQuat);
-	~Quaternion<Real>();
+		Quaternion();
+		Quaternion(Real fWValue, Real fXValue, Real fYValue, Real fZValue);
+		Quaternion(Real fSAngle, Vector3 vecVec);
+		Quaternion(const Quaternion &qQuat);
+		~Quaternion();
 
 
-	Quaternion<Real> operator+(const Quaternion<Real> &qQuat);
-	Quaternion<Real> &operator-();
-	Quaternion<Real> &operator+=(const Quaternion<Real> &qQuat);
-	Quaternion<Real> operator-(const Quaternion<Real> &qQuat);
-	Quaternion<Real> &operator-=(const Quaternion<Real> &qQuat);
-	Quaternion<Real> operator*(const Quaternion<Real> &qQuat);
-	Vector3<Real> operator*(Vector3<Real> &vec);
-	Quaternion<Real> &operator*=(const Quaternion<Real> &qQuat);
-	Quaternion<Real> operator*(Real fScalar);
-	Quaternion<Real> &operator*=(Real fScalar);
-	Quaternion<Real> operator/(Real fScalar);
-	Quaternion<Real> operator/(const Quaternion<Real> &qQuat);
-	Quaternion<Real> &operator=(const Quaternion<Real> &qQuat);
-	bool operator==(const Quaternion<Real> &qQuat);
-	bool operator!=(const Quaternion<Real> &qQuat);
-	static Real Dot(const Quaternion<Real> &qQuat1, const Quaternion<Real> &qQuat2);
-	static Quaternion<Real> Lerp(const Quaternion<Real> &qQuat1, const Quaternion<Real> &qQuat2, Real fValue);
-	static Quaternion<Real> Slerp(const Quaternion<Real> &qQuat1, const Quaternion<Real> &qQuat2, Real fValue);
-	void QuaternionToMatrix(const Quaternion<Real> &qQuat, Matrix4x4<Real>* matDest);
-	void ToMatrix(Matrix4x4<Real>* matDest);
-	Quaternion<Real> AxisAngleToQuaternion(Real rAngel, Vector3<Real> vecVec);
-	Quaternion<Real> AxisAngleToQuaternion(Real rWValue, Real rXValue, Real rYValue, Real rZValue);
-	Quaternion<Real> EulerAnglesToQuaternion(Real rXEuler, Real rYEuler, Real rZEuler);
-	Quaternion<Real> EulerAnglesToQuaternion(Vector3<Real> vecVec);
-	Real Magnitude() const;
-	void Normalize();
-	void Conjugate();
-	void Invert();
-	void Identity();
-	bool IsUnitQuaternion() const;
+		Quaternion operator+(const Quaternion &qQuat);
+		Quaternion &operator-();
+		Quaternion &operator+=(const Quaternion &qQuat);
+		Quaternion operator-(const Quaternion &qQuat);
+		Quaternion &operator-=(const Quaternion &qQuat);
+		Quaternion operator*(const Quaternion &qQuat);
+		Vector3 operator*(Vector3 &vec);
+		Quaternion &operator*=(const Quaternion &qQuat);
+		Quaternion operator*(Real fScalar);
+		Quaternion &operator*=(Real fScalar);
+		Quaternion operator/(Real fScalar);
+		Quaternion operator/(const Quaternion &qQuat);
+		Quaternion &operator=(const Quaternion &qQuat);
+		bool operator==(const Quaternion &qQuat);
+		bool operator!=(const Quaternion &qQuat);
+		static Real Dot(const Quaternion &qQuat1, const Quaternion &qQuat2);
+		static Quaternion Lerp(const Quaternion &qQuat1, const Quaternion &qQuat2, Real fValue);
+		static Quaternion Slerp(const Quaternion &qQuat1, const Quaternion &qQuat2, Real fValue);
+		void QuaternionToMatrix(const Quaternion &qQuat, Matrix4x4* matDest);
+		void ToMatrix(Matrix4x4* matDest);
+		Quaternion AxisAngleToQuaternion(Real rAngel, Vector3 vecVec);
+		Quaternion AxisAngleToQuaternion(Real rWValue, Real rXValue, Real rYValue, Real rZValue);
+		Quaternion EulerAnglesToQuaternion(Real rXEuler, Real rYEuler, Real rZEuler);
+		Quaternion EulerAnglesToQuaternion(Vector3 vecVec);
+		Real Magnitude() const;
+		void Normalize();
+		void Conjugate();
+		void Invert();
+		void Identity();
+		bool IsUnitQuaternion() const;
 
 
- public:
-	 union{
-		 struct {
-			Real s;
-			Vector3<Real> v;
-		 };
-		Real m_fValues[4];
-	 };
- };
+	public:
+		union{
+			struct {
+				Real s;
+				Vector3 v;
+			};
+			Real m_fValues[4];
+		};
+	};
 
- typedef Quaternion<float> QuaternionF;
- typedef Quaternion<double> QuaternionD;
-
-#include "../src/K15_Quaternion.inl"
-}
+	#include "K15_Quaternion.inl"
+}} //end of K15_Engine::Math namespace
 
 #endif //__K15_Quaternion__

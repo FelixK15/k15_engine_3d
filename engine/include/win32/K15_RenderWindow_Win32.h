@@ -24,7 +24,10 @@
 #ifndef _K15Engine_System_RenderWindow_Win32_h_
 #define _K15Engine_System_RenderWindow_Win32_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif// K15_USE_PRECOMPILED_HEADER
+
 #include "K15_RenderWindowBase.h"
 
 namespace K15_Engine { namespace System {
@@ -41,10 +44,13 @@ namespace K15_Engine { namespace System {
 		virtual void setWindowTitle(const String& p_WindowTitle);
 		virtual void setResolution(const Resolution& p_Resolution); 
 		virtual void setIsFullscreen(bool p_Fullscreen);
+
+		HWND getHandleWindow();
+		HINSTANCE getHandleInstance();
 	private:
 		HWND m_HandleWindow;
 		HINSTANCE m_Instance;
-	};
+	};// end of RenderWindow_Win32 class declaration
 }}//end of K15_Engine::System namespace
 
 #endif //_K15Engine_System_RenderWindow_Win32_h_

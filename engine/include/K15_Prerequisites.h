@@ -24,6 +24,15 @@
 #ifndef _K15Engine_Prerequisites_h_
 #define _K15Engine_Prerequisites_h_
 
+#ifdef _WIN32
+# define K15_OS_WINDOWS
+#endif //_WIN32
+
+//edit export defines
+#define expose //read + write
+#define expose_read //read only
+#define exposed_class class
+
 namespace K15_Engine
 {
 	namespace System
@@ -33,13 +42,13 @@ namespace K15_Engine
 		class ApplicationModule;
 		struct ApplicationModuleDescription;
 		class TaskManager;
-		class Task;
+		class TaskBase;
 		class GameTime;
-#		if defined _WIN32
+#		if defined K15_OS_WINDOWS
 			class DynamicLibrary_Win32;
 			class ApplicationOSLayer_Win32;
 			class RenderWindow_Win32;
-#		endif //_WIN32
+#		endif //K15_OS_WINDOWS
 		class DynamicLibraryBase;
 		class DynamicLibraryManager;
 		class EventManager;
@@ -55,7 +64,7 @@ namespace K15_Engine
 		class ProfilingManager;
 		class EventManager;
 		class RenderWindowBase;
-
+		struct Resolution;
 		template<class ReturnType>
 		class Functor0;
 
@@ -77,10 +86,6 @@ namespace K15_Engine
                           + __GNUC_PATCHLEVEL__)
 #endif //__GNUC__
 
-#ifdef _WIN32
-# define K15_OS_WINDOWS
-#endif //_WIN32
-
 #ifdef K15_OS_WINDOWS
 # ifdef _DEBUG
 #   define K15_DEBUG
@@ -91,12 +96,23 @@ namespace K15_Engine
 #	define K15_CPP11_SUPPORT
 #endif //__cplusplus > 199711L || _MSC_VER >= 1700 || K15_GCC_VERSION > 40800
 
+#define K15_VERSION_MAJOR 1
+#define K15_VERSION_MINOR 1
+
+#define K15_ENGINE_VERSION (K15_VERSION_MAJOR * 10 + K15_VERSION_MINOR)
+
+#if defined _MSC_VER
+#	define _CRT_SECURE_NO_WARNINGS //don't throw a "unsafe function" warning when using printf, sprintf, etc. 
+#	pragma warning(disable : 4251)
+#endif //_MSC_VER
+
 #include "K15_HashedString.h"
 
 //c std libs
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <ctime>
 #include <malloc.h>
 
 //Container
@@ -230,10 +246,10 @@ namespace K15_Engine
 		String debugMessage__ = "\""; \
 		debugMessage__ += message; \
 		debugMessage__ += "\"\n\n"; \
-		debugMessage__ += "\""; \
+		debugMessage__ += "The expression \""; \
 		debugMessage__ += #condition; \
 		debugMessage__ += "\" failed.\n"; \
-		debugMessage__ += "\"abort\" will terminate the application, \"retry\" will break the application for debugging \n"; \
+		debugMessage__ += "\"abort\" will terminate the application, \"retry\" will break the application for debugging and"; \
 		debugMessage__ += "\"ignore\" will ignore the failed condition and continue processing the application."; \
 		int returnValue__ = K15_DEBUG_MESSAGEBOX(debugMessage__.c_str(),"Assertion"); \
 		if(returnValue__ == K15_ID_ABORT){ \
@@ -243,16 +259,26 @@ namespace K15_Engine
 		} \
 	} \
 
-  
+
+typedef K15_Set(String) StringSet;
+
 typedef K15_Engine::System::AllocatedObject<K15_Engine::System::Application> ApplicationAllocatedObject;
 typedef K15_Engine::System::AllocatedObject<K15_Engine::System::EventManager> EventManagerAllocatedObject;
 typedef K15_Engine::System::AllocatedObject<K15_Engine::System::TaskManager> TaskManagerAllocatedObject;
 typedef K15_Engine::System::AllocatedObject<K15_Engine::System::DynamicLibraryManager> DynamicLibraryManagerAllocatedObject;
+typedef K15_Engine::System::AllocatedObject<K15_Engine::System::LogManager> LogManagerAllocatedObject;
 
 #define ApplicationAllocator K15_Engine::System::Application::getInstance()
 #define EventManagerAllocator K15_Engine::System::EventManager::getInstance()
 #define TaskManagerAllocator K15_Engine::System::TaskManager::getInstance()
 #define DynamicLibraryManagerAllocator K15_Engine::System::DynamicLibraryManager::getInstance()
+#define LogManagerAllocator K15_Engine::System::LogManager::getInstance()
+
+#define g_Application K15_Engine::System::Application::getInstance()
+#define g_EventManager K15_Engine::System::EventManager::getInstance()
+#define g_TaskManager K15_Engine::System::TaskManager::getInstance()
+#define g_DynamicLibraryManager K15_Engine::System::DynamicLibraryManager::getInstance()
+#define g_LogManager K15_Engine::System::LogManager::getInstance()
 
 typedef signed char byte;
 
@@ -288,16 +314,19 @@ typedef unsigned	long long	uint64;
 
 typedef unsigned int Enum;
 
+typedef K15_Engine::System::HashedString ObjectName;
 typedef K15_Engine::System::HashedString TypeName;
 typedef K15_Engine::System::HashedString EventName;
 typedef K15_Engine::System::HashedString ProfilingName;
 typedef K15_Engine::System::HashedString ResourceName;
 
 #if defined K15_NO_STRINGS
+#	define _N(x)  K15_Engine::System::ObjectNames::ObjectNames::x
 #	define _TN(x) K15_Engine::System::ObjectNames::TypeNames::x
 #	define _EN(x) K15_Engine::System::ObjectNames::EventNames::x
 #	define _RN(x) K15_Engine::System::ObjectNames::ResourceNames::x
 #else
+#	define _N(x)  ObjectName(#x)
 #	define _TN(x) TypeName(#x)
 #	define _EN(x) EventName(#x)
 #	define _RN(x) ResourceName(#x)
@@ -309,6 +338,10 @@ typedef K15_Engine::System::HashedString ResourceName;
 
 #define K15_INVALID_RESOURCE_ID -1
 
+// #if defined _MSC_VER || K15_GCC_VERSION
+// #	define K15_USE_PRECOMPILED_HEADER
+// #endif //_MSC_VER || K15_GCC_VERSION
+#define K15_GAMEDIR_BUFFER_SIZE 512
 #define K15_ERROR_BUFFER_SIZE 1024
 #define K15_PLUGIN_INFO_BUFFER_SIZE 1024
 #define K15_FORMAT_MESSAGE_ADDITIONAL_LENGTH 1024

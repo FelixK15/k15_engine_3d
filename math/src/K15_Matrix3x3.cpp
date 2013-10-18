@@ -21,6 +21,7 @@
  * 
  */
 #include "K15_Matrix3x3.h"
-using namespace K15_Math;
 
-const Matrix3x3<float> Matrix3x3<float>::UnitMatrix = Matrix3x3<float>(MF_IDENT);
+namespace K15_Engine { namespace Math {
+	const Matrix3x3 Matrix3x3::UnitMatrix = Matrix3x3(MF_IDENT);
+}}//end of K15_Engine::Math namespace

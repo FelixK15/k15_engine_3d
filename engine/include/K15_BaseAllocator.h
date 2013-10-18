@@ -23,7 +23,9 @@
 #ifndef _K15Engine_System_BaseAllocator_h_
 #define _K15Engine_System_BaseAllocator_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace System {
   
@@ -41,7 +43,7 @@ namespace K15_Engine { namespace System {
 #endif //K15_DEBUG
     void  deallocate(void* p_Pointer);
 #if defined K15_DEBUG
-    void  deallocateDebug(void* p_Pointer,const char* p_File,int p_Line,bool p_Array,const char* p_Function);
+    void  deallocateDebug(void* p_Pointer,const char* p_File,int p_Line,bool p_Array,const char* p_Function){}
 #endif //K15_DEBUG
 
     virtual void clear(){}
@@ -56,7 +58,6 @@ namespace K15_Engine { namespace System {
     uint32 m_MemorySize;
     uint32 m_UsedMemory;
   };//end of BaseAllocator class
-#include "K15_BaseAllocator.inl"
 }}//end of K15_Engine::System namespace
 
 #endif //_K15Engine_System_BaseAllocator_h_

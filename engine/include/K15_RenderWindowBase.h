@@ -24,37 +24,45 @@
 #ifndef _K15Engine_System_RenderWindowBase_h_
 #define _K15Engine_System_RenderWindowBase_h_
 
-#include "K15_Prerequisites.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#	include "K15_Application.h"
+#endif// K15_USE_PRECOMPILED_HEADER
+
 #include "K15_AllocatedObject.h"
-#include "K15_Application.h"
 
 namespace K15_Engine { namespace System { 
-  class K15_API_EXPORT RenderWindowBase : public ApplicationAllocatedObject
-  {
-  public:
-	  struct Resolution
-	  {
-		  uint32 width;
-		  uint32 height;
-	  };
-  public:
-	virtual bool initialize() = 0;
-	virtual void shutdown() = 0;
+	/*********************************************************************************/
+	struct Resolution
+	{
+		uint32 width;
+		uint32 height;
+	};
+	/*********************************************************************************/
+	class K15_API_EXPORT RenderWindowBase : public ApplicationAllocatedObject
+	{
+	public:
+		RenderWindowBase();
+		virtual ~RenderWindowBase();
 
-    virtual void setWindowTitle(const String& p_WindowTitle);
-    const String& getWindowTitle() const;
+		virtual bool initialize() = 0;
+		virtual void shutdown() = 0;
 
-    virtual void setResolution(const Resolution& p_Resolution);
-    const Resolution& getResolution() const;
+		virtual void setWindowTitle(const String& p_WindowTitle);
+		const String& getWindowTitle() const;
 
-    virtual void setIsFullscreen(bool p_Fullscreen);
-    bool isFullscreen() const;
-  protected:
-    String m_WindowTitle;
-    Resolution m_CurrentResolution;
-    bool m_IsFullscreen;
-  };// end of RenderWindowBase class
-#include "K15_RenderWindowBase.inl"
+		virtual void setResolution(const Resolution& p_Resolution);
+		const Resolution& getResolution() const;
+
+		virtual void setIsFullscreen(bool p_Fullscreen);
+		bool isFullscreen() const;
+	
+	protected:
+		String m_WindowTitle;
+		Resolution m_CurrentResolution;
+		bool m_IsFullscreen;
+	};// end of RenderWindowBase class
+	/*********************************************************************************/
 }}// end of K15_Engine::System namespace
 
 #endif //_K15Engine_System_RenderWindowBase_h_

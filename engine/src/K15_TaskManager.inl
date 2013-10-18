@@ -18,7 +18,7 @@
  */
 
 /*********************************************************************************/
-inline void TaskManager::addTask(Task* p_Task)
+inline void TaskManager::addTask(TaskBase* p_Task)
 {
 	m_Tasks.push_back(p_Task);
 	m_Tasks.sort();

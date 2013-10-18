@@ -29,15 +29,47 @@
 #ifndef _K15Engine_System_EventManager_h_
 #define _K15Engine_System_EventManager_h_
 
-#include "K15_Prerequisites.h"
-#include "K15_Application.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#	include "K15_Application.h"
+#endif //K15_USE_PRECOMPILED_HEADER
+
 #include "K15_AllocatedObject.h"
 #include "K15_PageAllocator.h"
 #include "K15_Singleton.h"
+#include "K15_TaskBase.h"
 
 namespace K15_Engine { namespace System { 
 	/*********************************************************************************/
-  typedef K15_List(EventListener*) EventListenerList;
+	class EventManagerUpdateTask : public TaskBase
+	{
+	public:
+		/*********************************************************************************/
+		static const uint32 TaskPriority;
+		/*********************************************************************************/
+	public:
+		/**
+		* Standard Constructor
+		*/
+		EventManagerUpdateTask(EventManager* p_EventManager);
+		
+		/**
+		* Standard Destructor
+		*/
+		virtual ~EventManagerUpdateTask();
+		
+		/**
+		* update method (events will get processed)
+		*
+		* @param p_GameTime 		
+		*/
+		virtual void update(const GameTime& p_GameTime);
+
+	protected:
+		EventManager* m_EventManager;
+	};
+	/*********************************************************************************/
+	typedef K15_List(EventListener*) EventListenerList;
 	typedef K15_HashMap(EventName,EventListenerList*) EventTypeListenerMap;
 	typedef K15_Stack(GameEvent*) EventStack;
 	/*********************************************************************************/
@@ -91,8 +123,16 @@ namespace K15_Engine { namespace System {
 		*/
 		void update();
 
+		/**
+		* This function creates a new task for updating the event manager.
+		* By that we can just add the new task to the task manager.
+		* The task will then get updated automatically each frame.
+		*
+		* @return TaskBase* - task for updating the event manager.
+		*/
+		TaskBase* createTask();
 	private:
-		EventStack m_Events; //Event Queue.
+		EventStack m_Events; //Event Queue
 		EventTypeListenerMap m_Listener; //Map where the EventTypes are associated with EventListeners.
 	};//end of EventManager class
 }}//end of K15_Engine::System namespace
