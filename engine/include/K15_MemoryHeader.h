@@ -20,10 +20,10 @@
  *
  * 
  */
-#ifndef _K15Engine_System_MemoryHeader_h_
-#define _K15Engine_System_MemoryHeader_h_
+#ifndef _K15Engine_Core_MemoryHeader_h_
+#define _K15Engine_Core_MemoryHeader_h_
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 
 	struct MemoryHeader
 	{
@@ -35,4 +35,4 @@ namespace K15_Engine { namespace System {
 	};
 }}//end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_MemoryHeader_h_
+#endif //_K15Engine_Core_MemoryHeader_h_

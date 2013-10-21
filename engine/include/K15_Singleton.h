@@ -20,10 +20,10 @@
  *
  * 
  */
-#ifndef _K15Engine_System_Singleton_h_
-#define _K15Engine_System_Singleton_h_
+#ifndef _K15Engine_Core_Singleton_h_
+#define _K15Engine_Core_Singleton_h_
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 
 	template<class T>
 	class Singleton
@@ -49,6 +49,6 @@ namespace K15_Engine { namespace System {
 	};
 }} //end of K15_Engine::System namespace
 
-template<class T> T* K15_Engine::System::Singleton<T>::m_Instance = 0;
+template<class T> T* K15_Engine::Core::Singleton<T>::m_Instance = 0;
 
-#endif //_K15Engine_System_Singleton_h_
+#endif //_K15Engine_Core_Singleton_h_

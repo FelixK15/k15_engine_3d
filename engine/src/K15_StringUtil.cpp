@@ -21,7 +21,7 @@
 
 #include "K15_StringUtil.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	String StringUtil::format(char* p_Message,...)
 	{
@@ -132,6 +132,31 @@ namespace K15_Engine { namespace System {
 		stream << p_Value;
 
 		return stream.str();
+	}
+	/*********************************************************************************/
+	int32 StringUtil::toInt(const String& p_String)
+	{
+		return stringToNumeric<int32>(p_String);
+	}
+	/*********************************************************************************/
+	uint32 StringUtil::toUInt(const String& p_String)
+	{
+		return stringToNumeric<uint32>(p_String);
+	}
+	/*********************************************************************************/
+	float StringUtil::toFloat(const String& p_String,const char p_Delimiter)
+	{
+		return stringToNumeric<float>(p_String,p_Delimiter);
+	}
+	/*********************************************************************************/
+	double StringUtil::toDouble(const String& p_String,const char p_Delimiter)
+	{
+		return stringToNumeric<double>(p_String,p_Delimiter);
+	}
+	/*********************************************************************************/
+	bool StringUtil::toBool(const String& p_String)
+	{
+		return p_String.find_first_of("true") != String::npos || p_String.find_first_of("1") != String::npos;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::System namespace

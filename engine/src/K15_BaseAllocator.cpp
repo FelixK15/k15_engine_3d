@@ -22,7 +22,7 @@
 #include "K15_BaseAllocator.h"
 #include "K15_MemoryHeader.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
   /*********************************************************************************/
   BaseAllocator::BaseAllocator()
     : m_Allocator(0),

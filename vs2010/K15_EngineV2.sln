@@ -21,6 +21,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Renderer", "Renderer\K15_Re
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VisualStudioLogger", "VisualStudioLogger\VisualStudioLogger.vcxproj", "{FD0C19F5-13F3-454E-8240-80B5766028C6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Renderer_OGL", "Renderer_OGL\Renderer_OGL.vcxproj", "{3E1520C8-9F5B-403B-854B-F0ACE407C47B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -51,6 +53,10 @@ Global
 		{FD0C19F5-13F3-454E-8240-80B5766028C6}.Debug|Win32.Build.0 = Debug|Win32
 		{FD0C19F5-13F3-454E-8240-80B5766028C6}.Release|Win32.ActiveCfg = Release|Win32
 		{FD0C19F5-13F3-454E-8240-80B5766028C6}.Release|Win32.Build.0 = Release|Win32
+		{3E1520C8-9F5B-403B-854B-F0ACE407C47B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3E1520C8-9F5B-403B-854B-F0ACE407C47B}.Debug|Win32.Build.0 = Debug|Win32
+		{3E1520C8-9F5B-403B-854B-F0ACE407C47B}.Release|Win32.ActiveCfg = Release|Win32
+		{3E1520C8-9F5B-403B-854B-F0ACE407C47B}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -20,14 +20,14 @@
  *
  */
 
-#ifndef _K15Engine_System_BaseAllocator_h_
-#define _K15Engine_System_BaseAllocator_h_
+#ifndef _K15Engine_Core_BaseAllocator_h_
+#define _K15Engine_Core_BaseAllocator_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
   
   class K15_API_EXPORT BaseAllocator
   {
@@ -60,4 +60,4 @@ namespace K15_Engine { namespace System {
   };//end of BaseAllocator class
 }}//end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_BaseAllocator_h_
+#endif //_K15Engine_Core_BaseAllocator_h_

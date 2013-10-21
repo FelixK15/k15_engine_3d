@@ -25,7 +25,7 @@
 #include "K15_GameTime.h"
 #include "K15_ProfilingManager.h"
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	const uint32 EventManagerUpdateTask::TaskPriority = 1;
 	/*********************************************************************************/

@@ -21,20 +21,20 @@
  * 
  */
 
-#ifndef _K15Engine_System_TaskManager_h_
-#define _K15Engine_System_TaskManager_h_
+#ifndef _K15Engine_Core_TaskManager_h_
+#define _K15Engine_Core_TaskManager_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
 #	include "K15_Application.h"
+#	include "K15_AllocatedObject.h"
+#	include "K15_Singleton.h"
 #endif// K15_USE_PRECOMPILED_HEADER
 
-#include "K15_AllocatedObject.h"
 #include "K15_PageAllocator.h"
-#include "K15_Singleton.h"
 #include "K15_TaskBase.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 
 	class TaskManager : public ApplicationAllocatedObject,
 						public Singleton<TaskManager>,
@@ -59,4 +59,4 @@ namespace K15_Engine { namespace System {
 #include "K15_TaskManager.inl"
 }} //end of K15_Engine::System
 
-#endif //_K15Engine_System_TaskManager_h_
+#endif //_K15Engine_Core_TaskManager_h_

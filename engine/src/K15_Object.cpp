@@ -21,9 +21,9 @@
 
 #include "K15_Object.h"
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 
-	IMPLEMENT_RTTI(System,Object);
+	IMPLEMENT_RTTI(Core,Object);
 
 	Object::Object()
 		: m_References(0),

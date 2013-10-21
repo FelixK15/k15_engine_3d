@@ -20,8 +20,8 @@
  *
  * 
  */
-#ifndef _K15Engine_System_ResourceBase_h_
-#define _K15Engine_System_ResourceBase_h_
+#ifndef _K15Engine_Core_ResourceBase_h_
+#define _K15Engine_Core_ResourceBase_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
@@ -29,7 +29,7 @@
 
 #include "K15_ResourceData.h"
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 
 	class K15_API_EXPORT ResourceBase
 	{

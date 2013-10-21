@@ -21,7 +21,7 @@
 
 #include "K15_GameTime.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	GameTime::GameTime(double p_DeltaTime,double p_Multiplier)
 		: m_DeltaTime(p_DeltaTime * p_Multiplier),

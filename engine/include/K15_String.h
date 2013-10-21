@@ -51,7 +51,7 @@
 	#define STR_STR(str,substr) strstr(str,substr)
 #endif
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 	class Object;
 
 	class K15_API_EXPORT String

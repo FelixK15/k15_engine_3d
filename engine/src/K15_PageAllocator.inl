@@ -104,7 +104,7 @@ void PageAllocator<PageSize,TotalSize>::createPages()
 }
 /*********************************************************************************/
 template<uint16 PageSize,uint32 TotalSize>
-void K15_Engine::System::PageAllocator<PageSize, TotalSize>::clear()
+void K15_Engine::Core::PageAllocator<PageSize, TotalSize>::clear()
 {
   createPages();
 }

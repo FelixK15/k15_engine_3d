@@ -22,17 +22,16 @@
  */
 #pragma once
 
-#ifndef _K15Engine_System_LogManager_h_
-#define _K15Engine_System_LogManager_h_
+#ifndef _K15Engine_Core_LogManager_h_
+#define _K15Engine_Core_LogManager_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
 #	include "K15_Application.h"
+#	include "K15_AllocatedObject.h"
+#	include "K15_Singleton.h"
+#	include "K15_StringUtil.h"
 #endif //K15_USE_PRECOMPILED_HEADER
-
-#include "K15_AllocatedObject.h"
-#include "K15_Singleton.h"
-#include "K15_StringUtil.h"
 
 #define _LogNormal(msg, ...)  K15_Engine::System::LogManager::getInstance()->logMessage(K15_Engine::System::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::System::LogManager::LP_NORMAL)
 #define _LogError(msg, ...)   K15_Engine::System::LogManager::getInstance()->logMessage(K15_Engine::System::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::System::LogManager::LP_ERROR)
@@ -44,7 +43,7 @@
 #define _LogCustom2(msg, ...) K15_Engine::System::LogManager::getInstance()->logMessage(K15_Engine::System::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::System::LogManager::LP_CUSTOM2)
 #define _LogCustom3(msg, ...) K15_Engine::System::LogManager::getInstance()->logMessage(K15_Engine::System::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::System::LogManager::LP_CUSTOM3)
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 
 	class K15_API_EXPORT LogManager : public ApplicationAllocatedObject, 
 									  public Singleton<LogManager>,
@@ -97,4 +96,4 @@ namespace K15_Engine { namespace System {
 	};// end of LogManager class
 }} // end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_LogManager_h_
+#endif //_K15Engine_Core_LogManager_h_

@@ -38,7 +38,7 @@
 #	include "K15_ApplicationOSLayer_Win32.h"
 #endif //K15_OS_WINDOWS
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	const String Application::SettingsFileName = "settings.ini";
 	const String Application::PluginFileName = "plugins.ini";
@@ -54,12 +54,14 @@ namespace K15_Engine { namespace System {
 		m_TaskManager(0),
 		m_LogManager(0),
 		m_Plugins(),
+		m_RunningTime(0.0),
 		m_ApplicationParameter(),
 		m_GameRootDir(),
 		m_GameTime(0.0,1.0),
 		m_FrameCounter(0),
 		m_MaxFPS(30),
-		m_AvgFrameTime(0.33)
+		m_AvgFrameTime(0.33),
+		m_FrameAllocator(this,FrameAllocatorSize)
 	{
 		//creating the Log Manager is first thing we'll do.
 		m_LogManager = K15_NEW LogManager();
@@ -78,7 +80,7 @@ namespace K15_Engine { namespace System {
 	{
 		//the 1. entry in the command array is always (on every system?) the path to the application. 
 		//We'll set the path to the application as the default game root dir.
-		String appPath = p_Commands[0];
+		static String appPath = p_Commands[0];
 		String::size_type pos = String::npos;
 
 		if((pos = appPath.find_last_of('\\')) != String::npos)
@@ -102,7 +104,8 @@ namespace K15_Engine { namespace System {
 	/*********************************************************************************/
 	void Application::loadSettingsFile()
 	{
-		String settingsFileName = m_GameRootDir + SettingsFileName;
+		static String settingsFileName;
+		settingsFileName = m_GameRootDir + SettingsFileName;
 
 		FileStream settingsFile(SettingsFileName);
 		
@@ -117,7 +120,12 @@ namespace K15_Engine { namespace System {
 			{
 				settingsFile.getline(buffer,lineLength);
 				line = buffer;
-				if(line.find_first_of('[') != String::npos)
+				//if this line is comment, just skip it.
+				if(line.find_first_of("\\\\") != String::npos)
+				{
+					continue;
+				}
+				else if(line.find_first_of('[') != String::npos)
 				{
 					group = line.substr(1,line.size() - 2);
 				}
@@ -140,12 +148,14 @@ namespace K15_Engine { namespace System {
 	/*********************************************************************************/
 	void Application::addSingleApplicationParameter(const String& p_Parameter,const String& p_Group)
 	{
+		static String key;
+		static String value;
 		int32 pos = String::npos;
 
 		if((pos = p_Parameter.find_first_of('=')) != String::npos)
 		{
-			const String& key = p_Parameter.substr(0,pos-1);
-			const String& value = p_Parameter.substr(pos+1);
+			key = p_Parameter.substr(0,pos);
+			value = p_Parameter.substr(pos+1);
 
 			ApplicationParameter param;
 			param.Name = key;
@@ -176,8 +186,6 @@ namespace K15_Engine { namespace System {
 
 		_LogSuccess("OS layer initialized!");
 
-		m_Started = m_OSLayer.getTime();
-
 		loadSettingsFile();
 		loadGameDirFile();
 		
@@ -206,6 +214,9 @@ namespace K15_Engine { namespace System {
 
 		m_RenderWindow->initialize();
 	
+		//process settings
+		processSettings();
+
 		_LogNormal("Tasks will get created and added to the task manager.");
 		_LogNormal("Adding Eventmanager task...");
 		m_TaskManager->addTask(m_EventManager->createTask());
@@ -245,6 +256,9 @@ namespace K15_Engine { namespace System {
 		static double endFrameTime = 0.0;
 		static double diffTime = m_AvgFrameTime;
 
+		//clear the frame allocator on the start of each frame
+		m_FrameAllocator.clear();
+
 		startFrameTime = getTime();
 
 		{
@@ -264,8 +278,12 @@ namespace K15_Engine { namespace System {
 		}
 
 		endFrameTime = getTime();
+
 		//so is there any frame time left?
 		diffTime = endFrameTime - startFrameTime;
+
+		//update running time
+		m_RunningTime += diffTime;
 
 		if(diffTime < m_AvgFrameTime)
 		{
@@ -295,7 +313,7 @@ namespace K15_Engine { namespace System {
 		m_FrameStatistics[FrameStatisticIndex].Time = diffTime;
 		m_FrameStatistics[FrameStatisticIndex].FrameNumber = m_FrameCounter;
 
-		m_RenderWindow->setWindowTitle(StringUtil::format("msec: %.3f - Frame Index: %i",diffTime * 100,m_FrameCounter));
+		//m_RenderWindow->setWindowTitle(StringUtil::format("msec: %.3f - Frame Index: %i",diffTime * 100,m_FrameCounter));
 	}
 	/*********************************************************************************/
 	void Application::onPostTick()
@@ -310,7 +328,9 @@ namespace K15_Engine { namespace System {
 	{
 		_LogNormal("Trying to open plugin file \"%s\".",PluginFileName.c_str());
 
-		String pluginsFileName = m_GameRootDir + PluginFileName;
+		static String pluginsFileName;
+		pluginsFileName = m_GameRootDir + PluginFileName;
+
 		StringSet pluginsToLoad;
 
 		FileStream pluginsFile(pluginsFileName);
@@ -328,9 +348,14 @@ namespace K15_Engine { namespace System {
 				pluginsFile.getline(buffer,lineLength);
 				line = buffer;
 
-				if((pos = line.find_first_of('=')) != String::npos)
+				//if this line is comment, just skip it.
+				if(line.find_first_of("\\\\") != String::npos)
 				{
-					pluginName = line.substr(pos+1);
+					continue;
+				}
+				else if((pos = line.find_first_of('=')) != String::npos)
+				{
+					pluginName = line.substr(pos+1) + '.' + m_OSLayer.PluginExtension;
 					pluginsToLoad.insert(pluginName);
 				}
 				else
@@ -482,6 +507,29 @@ namespace K15_Engine { namespace System {
 		else
 		{
 			_LogWarning("Could not find gamedir file \"%s\"",GameDirFileName.c_str());
+		}
+	}
+	/*********************************************************************************/
+	void Application::processSettings()
+	{
+		ApplicationParameter currentParam;
+
+		for(ApplicationParameterList::iterator iter = m_ApplicationParameter.begin();iter != m_ApplicationParameter.end();++iter)
+		{
+			currentParam = (*iter);
+			K15_SET_NUMERICAL_SETTING(currentParam,MaxFPS,uint16);
+			K15_SET_STRING_SETTING(currentParam,WindowTitle);
+
+			if(currentParam.Name == "Resolution")
+			{
+				int width = atoi(currentParam.Value.substr(0,currentParam.Value.find_first_of('x')).c_str());
+				int height = atoi(currentParam.Value.substr(currentParam.Value.find_first_of('x') + 1).c_str());
+
+				Resolution r;
+				r.width = width;
+				r.height = height;
+				m_RenderWindow->setResolution(r);
+			}
 		}
 	}
 	/*********************************************************************************/

@@ -26,9 +26,10 @@
 #include "K15_Application.h"
 #include "K15_StringUtil.h"
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	const String ApplicationOSLayer_Win32::OSName = "Microsoft Windows";
+	const String ApplicationOSLayer_Win32::PluginExtension = "dll";
 	/*********************************************************************************/
 	ApplicationOSLayer_Win32::ApplicationOSLayer_Win32()
 		: ApplicationOSLayerBase()

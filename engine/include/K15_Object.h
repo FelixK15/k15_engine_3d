@@ -22,8 +22,8 @@
  */
 #pragma once
 
-#ifndef __K15Engine_System_Object_h_
-#define __K15Engine_System_Object_h_
+#ifndef __K15Engine_Core_Object_h_
+#define __K15Engine_Core_Object_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
@@ -32,7 +32,7 @@
 #include "K15_Rtti.h"
 #include "K15_Pointer.h"
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 
 	class K15_API_EXPORT Object
 	{
@@ -69,4 +69,4 @@ namespace K15_Engine { namespace System {
 	#include "K15_Object.inl"
 }} //end of K15_Engine::System namespace
 
-#endif //__K15Engine_System_Object_h_
+#endif //__K15Engine_Core_Object_h_

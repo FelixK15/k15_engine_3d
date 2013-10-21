@@ -20,19 +20,19 @@
  *
  * 
  */
-#ifndef _K15Engine_System_Resourcemanager_h_
-#define _K15Engine_System_Resourcemanager_h_
+#ifndef _K15Engine_Core_Resourcemanager_h_
+#define _K15Engine_Core_Resourcemanager_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
 #	include "K15_Application.h"
+#	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-#include "K15_AllocatedObject.h"
 #include "K15_ResourceHandle.h"
 #include "K15_ResourceBase.h"
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 
 	class K15_API_EXPORT ResourceManager : public ApplicationAllocatedObject, public Singleton<ResourceManager>  //Singleton?
 	{
@@ -152,4 +152,4 @@ namespace K15_Engine { namespace System {
 	#include "K15_ResourceManager.inl"
 }} //end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_Resourcemanager_h_
+#endif //_K15Engine_Core_Resourcemanager_h_

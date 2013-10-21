@@ -21,46 +21,39 @@
 
 #include "K15_ProfilingManager.h"
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	ProfilingManager::ProfilingManager()
-		: m_Root(0),
-		  m_LastNode(0),
-		  m_Nodes()
+		: AllocatedObject(),
+		  m_Root(0),
+		  m_LastNode(0)
 	{
 
 	}
 	/*********************************************************************************/
 	ProfilingManager::~ProfilingManager()
 	{
-		m_Nodes.clear();
+		
 	}
 	/*********************************************************************************/
-	void ProfilingManager::addProfileNode(ProfilingNode p_Node)
+	void ProfilingManager::addNode(ProfilingNode* p_Node)
 	{
-		m_Nodes.push_back(p_Node);
-		ProfilingNode* lastNode = &m_Nodes[m_Nodes.size() - 1];
+		//ProfilingNode* newNode = K15_NEW ProfilingNode(*p_Node);
 		if(!m_Root)
 		{
-			m_Root = &m_Nodes[0];
-			m_LastNode = m_Root;
+			m_Root = p_Node;
 		}
-		else
+		
+		if(m_LastNode)
 		{
-// 			if(p_Node.m_AppendMode == AM_APPEND_LAST_NODE)
-// 			{
-// 				m_LastNode->m_Children.push_back(lastNode);
-// 			}
-// 			else if(p_Node.m_AppendMode == AM_NEW_BRANCH)
-// 			{
-// 				m_LastNode = lastNode;
-// 			}
+			m_LastNode->m_Children.push_back(p_Node);
 		}
+		p_Node->m_Parent = m_LastNode;
+		m_LastNode = p_Node;
 	}
 	/*********************************************************************************/
 	void ProfilingManager::clear()
 	{
-		m_Nodes.clear();
 		m_Root = 0;
 		m_LastNode = 0;
 	}

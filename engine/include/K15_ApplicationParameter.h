@@ -21,14 +21,26 @@
  * 
  */
 
-#ifndef _K15Engine_System_ApplicationParameter_h_
-#define _K15Engine_System_ApplicationParameter_h_
+#ifndef _K15Engine_Core_ApplicationParameter_h_
+#define _K15Engine_Core_ApplicationParameter_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
 #endif// K15_USE_PRECOMPILED_HEADER
 
-namespace K15_Engine { namespace System { 
+#define K15_SET_NUMERICAL_SETTING(parameter_variable,setting_name,data_type) \
+	if(parameter_variable.Name == #setting_name)  \
+		this->set ## setting_name(K15_Engine::System::StringUtil::stringToNumeric<data_type>(parameter_variable.Value))
+
+#define K15_SET_BOOL_SETTING(parameter_variable,setting_name) \
+	if(parameter_variable.Name == #setting_name)  \
+		this->set ## setting_name(K15_Engine::System::StringUtil::toBool(parameter_variable.Value))
+
+#define K15_SET_STRING_SETTING(parameter_variable,setting_name) \
+	if(parameter_variable.Name == #setting_name)  \
+		this->set ## setting_name(parameter_variable.Value)
+
+namespace K15_Engine { namespace Core { 
 	
 	struct ApplicationParameter
 	{
@@ -38,4 +50,4 @@ namespace K15_Engine { namespace System {
 	};
 }}//end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_ApplicationParameter_h_
+#endif //_K15Engine_Core_ApplicationParameter_h_

@@ -21,7 +21,7 @@
 
 #include "K15_TaskBase.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	TaskBase::TaskBase(uint32 p_Priority)
 		: m_Priority(p_Priority)

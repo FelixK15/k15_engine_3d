@@ -23,7 +23,7 @@
 #include "K15_LogManager.h"
 #include "K15_StringUtil.h"
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	DynamicLibrary_Win32::DynamicLibrary_Win32()
 		: DynamicLibraryBase(),

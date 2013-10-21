@@ -21,7 +21,7 @@
 
 #include "K15_TaskManager.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	TaskManager::TaskManager()
 		: PageAllocator(MemoryAllocator),

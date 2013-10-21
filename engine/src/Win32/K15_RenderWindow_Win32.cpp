@@ -23,7 +23,7 @@
 #include "K15_StringUtil.h"
 #include "K15_EventManager.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 	LRESULT CALLBACK K15_WindowProc(HWND p_HandleWindow,UINT p_MSG,WPARAM p_wParam,LPARAM p_lParam)
 	{
 		//if(p_MSG == WM_)
@@ -73,6 +73,8 @@ namespace K15_Engine { namespace System {
 			_LogError("Could not create window. Error:%s",Application::getInstance()->getLastError().c_str());
 			return false;
 		}
+		
+		m_DeviceContext = GetDC(m_HandleWindow);
 
 		ShowWindow(m_HandleWindow,SW_SHOW);
 		return true;
@@ -98,10 +100,10 @@ namespace K15_Engine { namespace System {
 		dm.dmPelsHeight = p_Resolution.height;
 		dm.dmPelsWidth = p_Resolution.width;
 		dm.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
-		DWORD flags = 0;
+		DWORD flags = CDS_RESET;
 		if(isFullscreen())
 		{
-			flags |= CDS_FULLSCREEN;
+			flags = CDS_FULLSCREEN;
 		}
 
 		DWORD result = 0;
@@ -117,6 +119,11 @@ namespace K15_Engine { namespace System {
 		setResolution(m_CurrentResolution);
 	}
 	/*********************************************************************************/
+	HDC RenderWindow_Win32::getDeviceContext()
+	{
+		return m_DeviceContext;
+	}
+	/*********************************************************************************/
 	HWND RenderWindow_Win32::getHandleWindow()
 	{
 		return m_HandleWindow;
@@ -126,5 +133,5 @@ namespace K15_Engine { namespace System {
 	{
 		return m_Instance;
 	}
-	/*********************************************************************************/
+/*********************************************************************************/
 }}//end of K15_Engine::System namespace

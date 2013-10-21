@@ -17,6 +17,11 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+#include "K15_PrecompiledHeader.h"
+
 #pragma message("Compiling precompiled headers...Should only be done once per build.")
 
-#include "K15_PrecompiledHeader.h"
+#ifdef K15_OS_WINDOWS
+#	pragma message("Compiling for Windows...")
+#endif //K15_OS_WINDOWS
+

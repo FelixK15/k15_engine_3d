@@ -11,78 +11,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\renderer\include\K15_Bindable.h" />
-    <ClInclude Include="..\..\renderer\include\K15_BufferImpl.h" />
-    <ClInclude Include="..\..\renderer\include\K15_Camera.h" />
-    <ClInclude Include="..\..\renderer\include\K15_Buffer.h" />
-    <ClInclude Include="..\..\renderer\include\K15_ColorRGBA.h" />
-    <ClInclude Include="..\..\renderer\include\K15_ColorRGB.h" />
-    <ClInclude Include="..\..\renderer\include\K15_DX11_ShaderImpl.h" />
-    <ClInclude Include="..\..\renderer\include\K15_DX11_Texture2DImpl.h" />
-    <ClInclude Include="..\..\renderer\include\K15_Format.h" />
-    <ClInclude Include="..\..\renderer\include\K15_Geometry.h" />
-    <ClInclude Include="..\..\renderer\include\K15_Importer.h" />
-    <ClInclude Include="..\..\renderer\include\K15_Light.h" />
-    <ClInclude Include="..\..\renderer\include\K15_LightShaderVariable.h" />
-    <ClInclude Include="..\..\renderer\include\K15_Material.h" />
-    <ClInclude Include="..\..\renderer\include\K15_Renderer.h" />
-    <ClInclude Include="..\..\renderer\include\K15_Shader.h" />
-    <ClInclude Include="..\..\renderer\include\K15_ShaderImpl.h" />
-    <ClInclude Include="..\..\renderer\include\K15_ShaderVariable.h" />
-    <ClInclude Include="..\..\renderer\include\K15_Texture2D.h" />
-    <ClInclude Include="..\..\renderer\include\K15_Texture2DImpl.h" />
-    <ClInclude Include="..\..\renderer\include\K15_Transformation.h" />
-    <ClInclude Include="..\..\renderer\include\K15_UsefulMacros.h" />
-    <ClInclude Include="..\..\renderer\include\K15_VertexLayout.h" />
-    <ClInclude Include="..\..\renderer\include\K15_SceneNode.h" />
+    <ClInclude Include="..\..\renderer\include\K15_GpuBuffer.h" />
+    <ClInclude Include="..\..\renderer\include\K15_GpuProgram.h" />
+    <ClInclude Include="..\..\renderer\include\K15_RendererBase.h" />
+    <ClInclude Include="..\..\renderer\include\K15_RendererPrerequisites.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\renderer\src\K15_Bindable.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_ColorRGB.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_Camera.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_ColorRGBA.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_DX11_ShaderImpl.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_DX11_Texture2DImpl.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_Geometry.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_Buffer.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_Importer.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_Light.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_LightShaderVariable.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_Renderer.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_SceneNode.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_Shader.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_ShaderImpl.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_ShaderVariable.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_Texture2D.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_Texutre2DImpl.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_Transformation.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_VertexLayout.cpp" />
+    <ClCompile Include="..\..\renderer\src\K15_GpuBuffer.cpp" />
+    <ClCompile Include="..\..\renderer\src\K15_RendererBase.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\renderer\src\K15_Bindable.inl" />
-    <None Include="..\..\renderer\src\K15_Camera.inl" />
-    <None Include="..\..\renderer\src\K15_Geometry.inl" />
-    <None Include="..\..\renderer\src\K15_Buffer.inl" />
-    <None Include="..\..\renderer\src\K15_SceneNode.inl" />
-    <None Include="..\..\renderer\src\K15_Shader.inl" />
-    <None Include="..\..\renderer\src\K15_ShaderImpl.inl" />
-    <None Include="..\..\renderer\src\K15_ShaderVariable.inl" />
-    <None Include="..\..\renderer\src\K15_Texture2D.inl" />
-    <None Include="..\..\renderer\src\K15_Texture2DImpl.inl" />
-    <None Include="..\..\renderer\src\K15_Transformation.inl" />
-    <None Include="..\..\renderer\src\K15_VertexLayout.inl" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\renderer\shader\PS_Uber.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <FileType>Document</FileType>
-    </None>
-    <None Include="..\..\renderer\shader\Shader_Buffer.hlsl">
-      <FileType>Document</FileType>
-    </None>
-    <None Include="..\..\renderer\shader\Shader_Structs.hlsl">
-      <FileType>Document</FileType>
-    </None>
+    <None Include="..\..\renderer\src\K15_GpuBuffer.inl" />
+    <None Include="..\..\renderer\src\K15_RendererBase.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{72E5819A-5708-4B3F-95CD-B0412EFB9868}</ProjectGuid>

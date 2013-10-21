@@ -21,14 +21,14 @@
  * 
  */
 
-#ifndef _K15Engine_System_StringUtil_h_
-#define _K15Engine_System_StringUtil_h_
+#ifndef _K15Engine_Core_StringUtil_h_
+#define _K15Engine_Core_StringUtil_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
 #endif
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 	class K15_API_EXPORT StringUtil
 	{
 	public:
@@ -70,11 +70,111 @@ namespace K15_Engine { namespace System {
 		 */
 		static String dateAsString(const String& p_Format = "dd/yyyy/mm");
 
+		/**
+		* Create a string representing an integer value
+		*
+		* @param  p_Value - integer value
+		*
+		* @return String - integer value as string
+		*/
 		static String toString(int p_Value);
 
+		/**
+		* Create a string representing a float value
+		*
+		* @param  p_Value - float value
+		* @param  p_Precision - decimal precision of the string 
+		*
+		* @return String - float value as string
+		*/
 		static String toString(float p_Value, int p_Precision = 2);
 
+		/**
+		* Create an integer variable out of a string
+		* @note anything in that string except numbers will get ignored.
+		*
+		* @param  p_String - string containing the int
+		*
+		* @return int32 - extracted integer from the string
+		*/
+		static int32 toInt(const String& p_String);
+
+		/**
+		* Create an unsigned integer variable out of a string
+		* @note anything in that string except numbers will get ignored.
+		*
+		* @param  p_String - string containing the int
+		*
+		* @return uint32 - extracted unsigned integer from the string
+		*/
+		static uint32 toUInt(const String& p_String);
+
+		/**
+		* Create a float variable out of a string
+		* @note anything in that string except numbers and the delimiter will get ignored.
+		*
+		* @param  p_String - string containing the float
+		*
+		* @return float - extracted float from the string
+		*/
+		static float toFloat(const String& p_String,const char p_Delimiter = '.');
+
+		/**
+		* Create a double variable out of a string
+		* @note anything in that string except numbers and the delimiter will get ignored.
+		*
+		* @param  p_String - string containing the double
+		*
+		* @return double - extracted double from the string
+		*/
+		static double toDouble(const String& p_String,const char p_Delimiter = '.');
+
+		/**
+		* Create a bool variable out of a string
+		* @note anything except "true", "false", "1" and "0" will get ignored
+		*
+		* @param  p_String - string containing the bool
+		*
+		* @return bool - extracted bool from the string
+		*/
+		static bool toBool(const String& p_String);
+
+		/**
+		* Creates a numeric variable out of a string
+		* @note anything in that string except numbers and the delimiter will get ignored.
+		*
+		* @param  p_String - string containing the numeric value
+		*
+		* @return T - extracted numeric value
+		*/
+		template<typename T>
+		static T stringToNumeric(const String& p_String,const char p_Delimiter = '.')
+		{
+			static String tempString;
+			static T returnValue;
+			StringStream stream;
+
+			tempString = p_String;
+
+			for(String::size_type i = 0;i < tempString.size();++i)
+			{
+				if(!isdigit(tempString.at(i)) && tempString.at(i) != p_Delimiter)
+				{
+					tempString = tempString.substr(i,1);
+					--i;
+				}
+			}
+
+			//insert string
+			stream << tempString;
+			//extract value
+			stream >> returnValue;
+
+			K15_ASSERT(!stream.fail(),format("Could not convert \"%s\" to numerical value.",p_String.c_str()));
+
+			return returnValue;
+		}
 	};//end of StringUtil class
 }}//end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_StringUtil_h_
+#endif //_K15Engine_Core_StringUtil_h_

@@ -21,8 +21,8 @@
  * 
  */
 
-#ifndef _K15Engine_System_TextConsoleLog_h_
-#define _K15Engine_System_TextConsoleLog_h_
+#ifndef _K15Engine_Core_TextConsoleLog_h_
+#define _K15Engine_Core_TextConsoleLog_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
@@ -30,7 +30,7 @@
 
 #include "K15_LogBase.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 	class K15_API_EXPORT TextConsoleLog : public LogBase
 	{
 	public:
@@ -49,4 +49,4 @@ namespace K15_Engine { namespace System {
 	};// end of TextConsoleLog class definition
 }} // end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_TextConsoleLog_h_
+#endif //_K15Engine_Core_TextConsoleLog_h_

@@ -21,14 +21,14 @@
  * 
  */
 
-#ifndef _K15Engine_System_FrameStatistic_h_
-#define _K15Engine_System_FrameStatistic_h_
+#ifndef _K15Engine_Core_FrameStatistic_h_
+#define _K15Engine_Core_FrameStatistic_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
 #endif// K15_USE_PRECOMPILED_HEADER
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 	struct FrameStatistic
 	{
 		double Time;
@@ -36,4 +36,4 @@ namespace K15_Engine { namespace System {
 		uint32 FrameNumber;
 	};
 }}//end of K15_Engine::System namespace
-#endif //_K15Engine_System_FrameStatistic_h_
+#endif //_K15Engine_Core_FrameStatistic_h_

@@ -20,8 +20,32 @@
 #include "K15_PrecompiledHeader.h"
 
 #include "K15_RenderWindowBase.h"
+#include "K15_GameEvent.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
+	/*********************************************************************************/
+	RenderWindowBase::Listener::Listener()
+		: EventListener()
+	{
+		g_EventManager->addListener(_EN(ResolutionChanged),this);
+	}
+	/*********************************************************************************/
+	RenderWindowBase::Listener::~Listener()
+	{
+		g_EventManager->removeListener(_EN(ResolutionChanged),this);
+	}
+	/*********************************************************************************/
+	void RenderWindowBase::Listener::handleEvent(GameEvent* p_Event)
+	{
+		if(p_Event->getName() == _EN(ResolutionChanged) && p_Event->getArgumentSize() == sizeof(Resolution))
+		{
+			Resolution* resolution = (Resolution*)p_Event->getArgument();
+			onResolutionChanged(*resolution);
+			return;
+		}
+	}
+	/*********************************************************************************/
+
 	/*********************************************************************************/
 	RenderWindowBase::RenderWindowBase()
 		: m_WindowTitle(""),
@@ -49,6 +73,8 @@ namespace K15_Engine { namespace System {
 	void RenderWindowBase::setResolution(const Resolution& p_Resolution)
 	{
 		m_CurrentResolution = p_Resolution;
+
+		g_EventManager->triggerEvent(K15_NEW GameEvent(_EN(ResolutionChanged),(void*)&p_Resolution,K15_PTR_SIZE));
 	}
 	/*********************************************************************************/
 	const Resolution& RenderWindowBase::getResolution() const

@@ -21,14 +21,14 @@
  * 
  */
 
-#ifndef _K15Engine_System_AllocatedObject_h_
-#define _K15Engine_System_AllocatedObject_h_
+#ifndef _K15Engine_Core_AllocatedObject_h_
+#define _K15Engine_Core_AllocatedObject_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 
 	template<class Allocator>
 	class AllocatedObject
@@ -69,4 +69,4 @@ namespace K15_Engine { namespace System {
 #include "K15_AllocatedObject.inl"
 }} //end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_AllocatedObject_h_
+#endif //_K15Engine_Core_AllocatedObject_h_

@@ -1,9 +1,9 @@
-#ifndef _K15Engine_System_ManagerBase_h_
-#define _K15Engine_System_ManagerBase_h_
+#ifndef _K15Engine_Core_ManagerBase_h_
+#define _K15Engine_Core_ManagerBase_h_
 
 #include "K15_Prerequisites.h"
 
-namespace K15_Engine { namespace System 
+namespace K15_Engine { namespace Core 
 
 	template<class OBJECTTYPE>
 	class K15_API_EXPORT ManagerBase
@@ -25,4 +25,4 @@ namespace K15_Engine { namespace System
 
 }} //end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_ManagerBase_h_
+#endif //_K15Engine_Core_ManagerBase_h_

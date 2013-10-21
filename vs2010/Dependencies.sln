@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest++.vsnet2005", "Dependencies\unittest-cpp\UnitTest++\UnitTest++.vsnet2005.vcxproj", "{64A4FEFE-0461-4E95-8CC1-91EF5F57DBC6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaPlus", "Dependencies\LuaPlus\LuaPlus.vcxproj", "{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyThread++", "Dependencies\TinyThread++-1.1\TinyThread++.vcxproj", "{F5502631-C3BC-433D-B1C8-D9DC5143DF64}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLEW", "Dependencies\GLEW\GLEW.vcxproj", "{07360CCD-840A-4C93-A6A2-E43347CC313E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaPlus51", "Dependencies\LuaPlus\LuaPlus51.vcxproj", "{BE0A2AE9-A8ED-4897-8033-9A5B5A4BA150}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyThread", "Dependencies\TinyThread\TinyThread.vcxproj", "{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,18 +13,18 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{64A4FEFE-0461-4E95-8CC1-91EF5F57DBC6}.Debug|Win32.ActiveCfg = Debug|Win32
-		{64A4FEFE-0461-4E95-8CC1-91EF5F57DBC6}.Debug|Win32.Build.0 = Debug|Win32
-		{64A4FEFE-0461-4E95-8CC1-91EF5F57DBC6}.Release|Win32.ActiveCfg = Release|Win32
-		{64A4FEFE-0461-4E95-8CC1-91EF5F57DBC6}.Release|Win32.Build.0 = Release|Win32
-		{F5502631-C3BC-433D-B1C8-D9DC5143DF64}.Debug|Win32.ActiveCfg = Debug|Win32
-		{F5502631-C3BC-433D-B1C8-D9DC5143DF64}.Debug|Win32.Build.0 = Debug|Win32
-		{F5502631-C3BC-433D-B1C8-D9DC5143DF64}.Release|Win32.ActiveCfg = Release|Win32
-		{F5502631-C3BC-433D-B1C8-D9DC5143DF64}.Release|Win32.Build.0 = Release|Win32
-		{BE0A2AE9-A8ED-4897-8033-9A5B5A4BA150}.Debug|Win32.ActiveCfg = Debug|Win32
-		{BE0A2AE9-A8ED-4897-8033-9A5B5A4BA150}.Debug|Win32.Build.0 = Debug|Win32
-		{BE0A2AE9-A8ED-4897-8033-9A5B5A4BA150}.Release|Win32.ActiveCfg = Release|Win32
-		{BE0A2AE9-A8ED-4897-8033-9A5B5A4BA150}.Release|Win32.Build.0 = Release|Win32
+		{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}.Debug|Win32.Build.0 = Debug|Win32
+		{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}.Release|Win32.ActiveCfg = Release|Win32
+		{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}.Release|Win32.Build.0 = Release|Win32
+		{07360CCD-840A-4C93-A6A2-E43347CC313E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{07360CCD-840A-4C93-A6A2-E43347CC313E}.Debug|Win32.Build.0 = Debug|Win32
+		{07360CCD-840A-4C93-A6A2-E43347CC313E}.Release|Win32.ActiveCfg = Release|Win32
+		{07360CCD-840A-4C93-A6A2-E43347CC313E}.Release|Win32.Build.0 = Release|Win32
+		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Debug|Win32.Build.0 = Debug|Win32
+		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Release|Win32.ActiveCfg = Release|Win32
+		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
