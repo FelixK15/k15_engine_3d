@@ -26,16 +26,19 @@
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
+#	include "K15_ProfilingManager.h"
+#	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace System { 
 
-	class ProfilingNode
+	class K15_API_EXPORT ProfilingNode/* : public ProfilingManagerAllocatedObject*/
 	{
 	public:
 		typedef K15_List(ProfilingNode*) ProfilingNodeList;
 
 	public:
+		ProfilingNode(const ProfilingNode& p_Other);
 		ProfilingNode(const ObjectName& p_Name);
 		~ProfilingNode();
 

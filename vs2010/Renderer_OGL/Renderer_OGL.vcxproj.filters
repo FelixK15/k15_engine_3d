@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Core">
+      <UniqueIdentifier>{240bfccd-2ded-4599-9be7-38eb8a9db4b0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\rendererOGL\include\K15_RendererOGLPrerequisites.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rendererOGL\include\K15_RendererOGL.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rendererOGL\include\K15_GpuBufferImplOGL.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\rendererOGL\src\K15_RendererOGL.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\K15_GpuBufferImplOGL.cpp" />
+  </ItemGroup>
+</Project>

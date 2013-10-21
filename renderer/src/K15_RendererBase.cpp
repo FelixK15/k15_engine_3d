@@ -1,8 +1,8 @@
 /**
- * @file K15_ProfileManager.h
+ * @file K15_RendererBase.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/07/10
+ * @date 2012/07/11
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -17,45 +17,41 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_PrecompiledHeader.h"
+#include "K15_RendererBase.h"
 
-#include "K15_ProfilingManager.h"
-
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Rendering { 
 	/*********************************************************************************/
-	ProfilingManager::ProfilingManager()
-		: AllocatedObject(),
-		  m_Root(0),
-		  m_LastNode(0)
-	{
-
-	}
+	uint8 RendererBase::PixelFormatSize[PF_COUNT]= {
+		24,	//PF_RGB_8_I
+		24, //F_RGB_8_UI,
+		48, //PF_RGB_16_I
+		48, //PF_RGB_16_U
+		48, //PF_RGB_16_F
+		96, //PF_RGB_32_I
+		96, //PF_RGB_32_U
+		96, //PF_RGB_32_F
+		32, //PF_RGBA_8_I
+		32, //PF_RGBA_8_U
+		64, //PF_RGBA_16_I
+		64, //PF_RGBA_16_U
+		64, //PF_RGBA_16_F
+		128, //PF_RGBA_32_I
+		128, //PF_RGBA_32_U
+		128  //PF_RGBA_32_F
+	}; //PixelFormatSize
 	/*********************************************************************************/
-	ProfilingManager::~ProfilingManager()
-	{
-		
-	}
+	uint8 RendererBase::DepthFormatSize[DBF_COUNT] = {
+		16, //DBF_COMPONENT_16_I
+		24, //DBF_COMPONENT_24_I
+		32, //DBF_COMPONENT_32_I
+		32  //DBF_COMPONENT_32_F
+	}; //DepthFormatSize
 	/*********************************************************************************/
-	void ProfilingManager::addNode(ProfilingNode* p_Node)
-	{
-		//ProfilingNode* newNode = K15_NEW ProfilingNode(*p_Node);
-		if(!m_Root)
-		{
-			m_Root = p_Node;
-		}
-		
-		if(m_LastNode)
-		{
-			m_LastNode->m_Children.push_back(p_Node);
-		}
-		p_Node->m_Parent = m_LastNode;
-		m_LastNode = p_Node;
-	}
+	uint8 RendererBase::StencilFormatSize[SBF_COUNT] = {
+		1, //SBF_COMPONENT_1_I
+		4, //SBF_COMPONENT_4_I
+		8, //SBF_COMPONENT_8_I
+		16 //SBF_COMPONENT_16_I
+	}; //StencilFormatSize
 	/*********************************************************************************/
-	void ProfilingManager::clear()
-	{
-		m_Root = 0;
-		m_LastNode = 0;
-	}
-	/*********************************************************************************/
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Rendering namespace

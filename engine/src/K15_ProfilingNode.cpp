@@ -27,7 +27,18 @@
 #include "K15_ProfilingManager.h"
 
 namespace K15_Engine { namespace System { 
+	/*********************************************************************************/
+	ProfilingNode::ProfilingNode(const ProfilingNode& p_Other)
+		: m_Name(p_Other.m_Name),
+		  m_StartTime(p_Other.m_StartTime),
+		  m_EndTime(p_Other.m_EndTime),
+		  m_Time(p_Other.m_Time),
+		  m_Parent(p_Other.m_Parent),
+		  m_Children(p_Other.m_Children)
+	{
 
+	}
+	/*********************************************************************************/
 	ProfilingNode::ProfilingNode(const ProfilingName& p_Name)
 		: m_Name(p_Name),
 		  m_StartTime(0.0),
@@ -36,17 +47,14 @@ namespace K15_Engine { namespace System {
 		  m_Parent(0),
 		  m_Children()
 	{
-		//Todo
-//		m_StartTime = Application::getInstance()->getCurrentTime();
+		m_StartTime = g_Application->getTime();
+		g_ProfileManager->addNode(this);
 	}
-
+	/*********************************************************************************/
 	ProfilingNode::~ProfilingNode()
 	{
-// 		m_EndTime = Application::getInstance()->getCurrentTime();
-// 		m_Time = m_EndTime - m_StartTime;
-// 
-// 		//add a reference of this to the profilemanager. the manager will create a copy.
-// 		ProfilingManager::getInstance()->addProfileNode(*this);
+		m_EndTime = g_Application->getTime();
+		m_Time = m_EndTime - m_StartTime;
 	}
-
+	/*********************************************************************************/
 }}//end of K15_Engine::System namespace

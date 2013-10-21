@@ -27,9 +27,9 @@
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
 #	include "K15_Application.h"
+#	include "K15_AllocatedObject.h"
 #endif// K15_USE_PRECOMPILED_HEADER
 
-#include "K15_AllocatedObject.h"
 #include "K15_RenderWindowBase.h"
 
 namespace K15_Engine { namespace System {
@@ -39,6 +39,7 @@ namespace K15_Engine { namespace System {
 	public:
 		/*********************************************************************************/
 		static const String OSName;
+		static const String PluginExtension;
 		typedef K15_List(Resolution) SupportedResolutionSet;
 		/*********************************************************************************/
 	public:

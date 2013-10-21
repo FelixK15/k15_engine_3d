@@ -28,11 +28,10 @@
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
 #	include "K15_Application.h"
+#	include "K15_AllocatedObject.h"
+#	include "K15_Singleton.h"
+#	include "K15_StringUtil.h"
 #endif //K15_USE_PRECOMPILED_HEADER
-
-#include "K15_AllocatedObject.h"
-#include "K15_Singleton.h"
-#include "K15_StringUtil.h"
 
 #define _LogNormal(msg, ...)  K15_Engine::System::LogManager::getInstance()->logMessage(K15_Engine::System::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::System::LogManager::LP_NORMAL)
 #define _LogError(msg, ...)   K15_Engine::System::LogManager::getInstance()->logMessage(K15_Engine::System::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::System::LogManager::LP_ERROR)

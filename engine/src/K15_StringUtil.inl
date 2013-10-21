@@ -1,8 +1,8 @@
 /**
- * @file K15_PrecompiledHeader.cpp
- * @author Felix Klinge <f.klinge@k15games.de>
+ * @file K15_StringUtil.inl
+ * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/07/12
+ * @date 2012/07/11
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -16,12 +16,5 @@
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
  */
-
-#include "K15_PrecompiledHeader.h"
-
-#pragma message("Compiling precompiled headers...Should only be done once per build.")
-
-#ifdef K15_OS_WINDOWS
-#	pragma message("Compiling for Windows...")
-#endif //K15_OS_WINDOWS
-
+template<typename T>
+T StringUtil::in

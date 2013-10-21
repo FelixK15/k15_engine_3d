@@ -1,8 +1,8 @@
 /**
- * @file K15_PrecompiledHeader.cpp
- * @author Felix Klinge <f.klinge@k15games.de>
+ * @file K15_RendererOGLPrerequisites.h
+ * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/07/12
+ * @date 2013/09/10
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -15,13 +15,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @section DESCRIPTION
+ *
+ * 
  */
 
-#include "K15_PrecompiledHeader.h"
+#ifndef _K15Engine_RendererOGL_Prerequisites_h_
+#define _K15Engine_RendererOGL_Prerequisites_h_
 
-#pragma message("Compiling precompiled headers...Should only be done once per build.")
+#include "K15_RendererPrerequisites.h"
+#include "GL\glew.h"
+#include "GL\glxew.h"
+#include "GL\wglew.h"
 
-#ifdef K15_OS_WINDOWS
-#	pragma message("Compiling for Windows...")
-#endif //K15_OS_WINDOWS
+#include "K15_RendererBase.h"
 
+using namespace K15_Engine::Rendering;
+
+
+#endif //_K15Engine_RendererOGL_Prerequisites_h_

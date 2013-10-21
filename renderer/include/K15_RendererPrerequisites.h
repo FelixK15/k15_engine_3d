@@ -1,8 +1,8 @@
 /**
- * @file K15_PrecompiledHeader.cpp
- * @author Felix Klinge <f.klinge@k15games.de>
+ * @file K15_RendererPrerequisites.h
+ * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/07/12
+ * @date 2012/07/11
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,15 +21,25 @@
  * 
  */
 
+#ifndef _K15Engine_Renderer_Prerequisites_h_
+#define _K15Engine_Renderer_Prerequisites_h_
+
 #include "K15_Prerequisites.h"
-#include "K15_Application.h"
-#include "K15_LogManager.h"
-#include "K15_ProfilingManager.h"
-#include "K15_EventManager.h"
-#include "K15_Singleton.h"
-#include "K15_TaskManager.h"
-#include "K15_DynamicLibraryManager.h"
-#include "K15_HashedString.h"
-#include "K15_AllocatedObject.h"
-#include "K15_StringUtil.h"
-#include "K15_Object.h"
+
+using namespace K15_Engine::System;
+
+namespace K15_Engine { namespace Rendering {
+	class RenderTarget;
+	class Texture2D;
+	class VertexBuffer;
+	class IndexBuffer;
+	class Material;
+	class Mesh;
+	class Camera;
+	class SubMesh;
+	class GpuProgram;
+}}// end of K15_Engine::Rendering namespace
+
+typedef K15_Engine::System::AllocatedObject<K15_Engine::Rendering::RendererBase> RendererAllocatedObject;
+
+#endif //_K15Engine_Renderer_Prerequisites_h_

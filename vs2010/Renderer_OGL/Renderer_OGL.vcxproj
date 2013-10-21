@@ -10,35 +10,21 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\renderer\include\K15_GpuBuffer.h" />
-    <ClInclude Include="..\..\renderer\include\K15_GpuProgram.h" />
-    <ClInclude Include="..\..\renderer\include\K15_RendererBase.h" />
-    <ClInclude Include="..\..\renderer\include\K15_RendererPrerequisites.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\renderer\src\K15_GpuBuffer.cpp" />
-    <ClCompile Include="..\..\renderer\src\K15_RendererBase.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\renderer\src\K15_GpuBuffer.inl" />
-    <None Include="..\..\renderer\src\K15_RendererBase.inl" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{72E5819A-5708-4B3F-95CD-B0412EFB9868}</ProjectGuid>
-    <RootNamespace>K15_Renderer</RootNamespace>
-    <ProjectName>Renderer</ProjectName>
+    <ProjectGuid>{3E1520C8-9F5B-403B-854B-F0ACE407C47B}</ProjectGuid>
+    <RootNamespace>Renderer_OGL</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -53,33 +39,27 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\renderer\bin\$(Configuration)</OutDir>
-    <IntDir>..\..\renderer\obj\</IntDir>
-    <TargetName>K15_$(ProjectName)_$(Configuration)</TargetName>
-    <IncludePath>..\..\renderer\include\;..\..\engine\include\;..\..\math\include\;$(DXSDK_DIR)\Include\;$(ProjectDir)..\Dependencies\NVIDIA cg\include\;$(IncludePath)</IncludePath>
-    <SourcePath>../../renderer/src/;../../engine/src/;$(SourcePath)</SourcePath>
-    <LibraryPath>$(DXSDK_DIR)/Lib/x86/;../../engine/bin/$(Configuration)/;$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\rendererOGL\bin\$(Configuration)\</OutDir>
+    <IntDir>..\..\rendererOGL\obj\</IntDir>
+    <IncludePath>..\..\rendererOGL\include\;..\Dependencies\glew-1.10.0\include\;..\..\engine\include\;..\..\renderer\include\;..\..\engine\src\win32\;..\..\engine\src\;..\..\engine\include\win32\;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\engine\bin\$(Configuration)\;..\..\renderer\bin\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\..\renderer\bin\$(Configuration)</OutDir>
-    <IntDir>..\..\renderer\obj\</IntDir>
-    <IncludePath>..\..\renderer\include\;..\..\engine\include\;..\..\math\include\;$(DXSDK_DIR)\Include\;$(ProjectDir)..\Dependencies\NVIDIA cg\include\;$(IncludePath)</IncludePath>
-    <SourcePath>..\..\renderer\src\;..\..\engine\src\;$(SourcePath)</SourcePath>
-    <LibraryPath>$(DXSDK_DIR)Lib\x86\;$(LibraryPath)</LibraryPath>
-    <TargetName>K15_$(ProjectName)_$(Configuration)</TargetName>
+    <OutDir>..\..\rendererOGL\bin\$(Configuration)\</OutDir>
+    <IntDir>..\..\rendererOGL\obj\</IntDir>
+    <IncludePath>..\..\engine\include\;..\..\renderer\include\;..\..\engine\src\win32\;..\..\engine\src\;..\..\engine\include\win32\;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\engine\bin\$(Configuration)\;..\..\renderer\bin\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>K15_Engine.lib;K15_Renderer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <Lib>
-      <AdditionalDependencies>d3d11.lib;d3dx11d.lib;d3dcompiler.lib;dxgi.lib;DxErr.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -87,13 +67,24 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>K15_Engine.lib;K15_Renderer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\rendererOGL\include\K15_GpuBufferImplOGL.h" />
+    <ClInclude Include="..\..\rendererOGL\include\K15_RendererOGL.h" />
+    <ClInclude Include="..\..\rendererOGL\include\K15_RendererOGLPrerequisites.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\rendererOGL\src\K15_GpuBufferImplOGL.cpp" />
+    <ClCompile Include="..\..\rendererOGL\src\K15_RendererOGL.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

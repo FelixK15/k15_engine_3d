@@ -25,8 +25,21 @@
 #define _K15Engine_Prerequisites_h_
 
 #ifdef _WIN32
-# define K15_OS_WINDOWS
+#	define K15_OS_WINDOWS
 #endif //_WIN32
+
+#if defined (K15_OS_WINDWS)
+	#ifdef _WIN64
+	#	define K15_64_BIT
+	#endif //_WIN64
+#endif //K15_OS_WINDOWS
+
+#if defined (K15_64_BIT)
+#	define K15_PTR_SIZE 64
+#else
+#	define K15_PTR_SIZE 32
+#endif //K15_64_BIT
+
 
 //edit export defines
 #define expose //read + write
@@ -103,7 +116,8 @@ namespace K15_Engine
 
 #if defined _MSC_VER
 #	define _CRT_SECURE_NO_WARNINGS //don't throw a "unsafe function" warning when using printf, sprintf, etc. 
-#	pragma warning(disable : 4251)
+#	pragma warning(disable : 4251) //dll export for std::string, std::list etc.
+#	pragma warning(disable : 4530) //c++ exception used, but not enabled (xlocale.h)
 #endif //_MSC_VER
 
 #include "K15_HashedString.h"
@@ -267,6 +281,7 @@ typedef K15_Engine::System::AllocatedObject<K15_Engine::System::EventManager> Ev
 typedef K15_Engine::System::AllocatedObject<K15_Engine::System::TaskManager> TaskManagerAllocatedObject;
 typedef K15_Engine::System::AllocatedObject<K15_Engine::System::DynamicLibraryManager> DynamicLibraryManagerAllocatedObject;
 typedef K15_Engine::System::AllocatedObject<K15_Engine::System::LogManager> LogManagerAllocatedObject;
+typedef K15_Engine::System::AllocatedObject<K15_Engine::System::ProfilingManager> ProfilingManagerAllocatedObject;
 
 #define ApplicationAllocator K15_Engine::System::Application::getInstance()
 #define EventManagerAllocator K15_Engine::System::EventManager::getInstance()
@@ -279,6 +294,7 @@ typedef K15_Engine::System::AllocatedObject<K15_Engine::System::LogManager> LogM
 #define g_TaskManager K15_Engine::System::TaskManager::getInstance()
 #define g_DynamicLibraryManager K15_Engine::System::DynamicLibraryManager::getInstance()
 #define g_LogManager K15_Engine::System::LogManager::getInstance()
+#define g_ProfileManager K15_Engine::System::ProfilingManager::getInstance()
 
 typedef signed char byte;
 

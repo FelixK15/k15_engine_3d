@@ -26,10 +26,11 @@
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
+#	include "K15_AllocatedObject.h"
+#	include "K15_TaskManager.h"
 #endif// K15_USE_PRECOMPILED_HEADER
 
-#include "K15_AllocatedObject.h"
-#include "K15_TaskManager.h"
+
 #include "K15_Functor.h"
 #include "K15_GameTime.h"
 

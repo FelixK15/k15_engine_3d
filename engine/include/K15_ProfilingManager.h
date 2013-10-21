@@ -25,44 +25,36 @@
 #define _K15Engine_System_ProfilingManager_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
-#include "K15_Prerequisites.h"
+#	include "K15_Prerequisites.h"
+#	include "K15_AllocatedObject.h"
+#	include "K15_Singleton.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
 #include "K15_ProfilingNode.h"
-#include "K15_AllocatedObject.h"
-#include "K15_Singleton.h"
 
-#define K15_PROFILE_APPEND(profile_name) K15_Engine::System::ProfilingNode n_#profile_name(_N(profile_name),(Enum)K15_Engine::System::ProfileManager::AM_APPEND_LAST_NODE)
-#define K15_PROFILE_NEW_BRANCH(profile_name) K15_Engine::System::ProfilingNode n_#profile_name(_N(profile_name),(Enum)K15_Engine::System::ProfileManager::AM_NEW_BRANCH)
-#define K15_PROFILE(profile_name) K15_Engine::System::ProfilingNode n_##profile_name(_N(profile_name));
+#define K15_PROFILE(profile_name) //K15_Engine::System::ProfilingNode n_##profile_name(_N(profile_name));
 
 namespace K15_Engine { namespace System { 
 
- 	class ProfilingManager : public Singleton<ProfilingManager>, public ApplicationAllocatedObject
-											
+ 	class ProfilingManager : public Singleton<ProfilingManager>, public ApplicationAllocatedObject							
 	{
 	public:
-		typedef K15_DynamicArray(ProfilingNode) ProfileNodeList;
-
-		enum eAppendMode
-		{
-			AM_NEW_BRANCH,
-			AM_APPEND_LAST_NODE
-		};
+		/*********************************************************************************/
+		typedef K15_DynamicArray(ProfilingNode*) ProflingNodeList;
+		/*********************************************************************************/
 	public:
 		ProfilingManager();
 		~ProfilingManager();
 
-		void addProfileNode(ProfilingNode p_Node);
+		void addNode(ProfilingNode* p_Node);
+		void removeNode(ProfilingNode* p_Node);
 		void clear();
 
 		ProfilingNode* getRootNode();
-
 	private:
+		ProflingNodeList m_Nodes;
 		ProfilingNode* m_Root;
 		ProfilingNode* m_LastNode;
-
-		ProfileNodeList m_Nodes;
 	};// end of ProfilingManager class
 #include "K15_ProfilingManager.inl"
 }}//end of K15_Engine::System namespace

@@ -26,9 +26,9 @@
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
 #	include "K15_Application.h"
+#	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-#include "K15_AllocatedObject.h"
 #include "K15_ResourceHandle.h"
 #include "K15_ResourceBase.h"
 

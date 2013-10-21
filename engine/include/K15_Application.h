@@ -25,14 +25,14 @@
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
+#	include "K15_Singleton.h"
+#	include "K15_StringUtil.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-#include "K15_Singleton.h"
 #include "K15_StackAllocator.h"
 #include "K15_ApplicationParameter.h"
 #include "K15_GameTime.h"
 #include "K15_FrameStatistic.h"
-#include "K15_StringUtil.h"
 
 #if defined (K15_OS_WINDOWS)
 #	include "K15_ApplicationOSLayer_Win32.h"
@@ -52,6 +52,7 @@ namespace K15_Engine { namespace System {
 	  static const String PluginFileName;
 	  static const String GameDirFileName;
 	  static const uint32 FrameStatisticCount = 1024;
+	  static const uint32 FrameAllocatorSize = MEGABYTE;
 	  /*********************************************************************************/
   public:
     Application();
@@ -64,7 +65,7 @@ namespace K15_Engine { namespace System {
     inline const StringSet& getCommandList() const;
     inline const ApplicationParameterList& getApplicationParameter() const;
 
-    void setWindowTitle(const String& p_WindowTitle);
+    inline void setWindowTitle(const String& p_WindowTitle);
 
 	void initialize(int p_CommandCount,char** p_Commands);
     void initialize();
@@ -87,7 +88,10 @@ namespace K15_Engine { namespace System {
     inline DynamicLibraryManager* getDynamicLibraryManager() const;
     inline RenderWindowBase* getRenderWindow() const;
     inline LogManager* getLogManager() const;
+	inline const StackAllocator& getFrameAllocator() const;
 	inline const ApplicationOSLayerType& getOSLayer() const;
+
+	inline double getRunningTime() const;
 
 	inline void setRunning(bool p_Running);
 	inline bool getRunning() const;
@@ -112,35 +116,37 @@ namespace K15_Engine { namespace System {
     void loadPluginsFile();
     void initializePlugins(const StringSet& p_PluginNames);
 	void loadGameDirFile();
-  
+	void processSettings();
+
   private:
-	bool m_Running;
-    double m_Started;
-	double m_TimeLastFrame;
+				bool m_Running;
 	
 	expose		uint16 m_MaxFPS;
 	expose_read uint32 m_FrameCounter;
 	expose_read double m_AvgFrameTime;
+				double m_RunningTime;
+				double m_TimeLastFrame;
 
-	FrameStatistic m_FrameStatistics[FrameStatisticCount];
-    GameTime m_GameTime;
+				StackAllocator m_FrameAllocator; //allocator which will get reset each frame.
+				FrameStatistic m_FrameStatistics[FrameStatisticCount];
+				GameTime m_GameTime;
 
 	expose_read String m_GameRootDir;
 
 	expose_read StringSet m_Plugins;
     
-	StringSet m_Commands;
-    ApplicationParameterList m_ApplicationParameter;
-    ApplicationModuleList m_LoadedModules;
+				StringSet m_Commands;
+				ApplicationParameterList m_ApplicationParameter;
+				ApplicationModuleList m_LoadedModules;
 
-	ApplicationOSLayerType m_OSLayer;
+				ApplicationOSLayerType m_OSLayer;
 
-    RenderWindowBase* m_RenderWindow;
-    TaskManager* m_TaskManager;
-    ProfilingManager* m_ProfileManager;
-    EventManager* m_EventManager;
-    LogManager* m_LogManager;
-    DynamicLibraryManager* m_DynamicLibraryManager;
+				RenderWindowBase* m_RenderWindow;
+				TaskManager* m_TaskManager;
+				ProfilingManager* m_ProfileManager;
+				EventManager* m_EventManager;
+				LogManager* m_LogManager;
+				DynamicLibraryManager* m_DynamicLibraryManager;
   }; //end of Application class definition
 #include "K15_Application.inl"
 }} //end of K15_Engine::System namespace

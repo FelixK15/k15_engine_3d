@@ -45,9 +45,11 @@ namespace K15_Engine { namespace System {
 		virtual void setResolution(const Resolution& p_Resolution); 
 		virtual void setIsFullscreen(bool p_Fullscreen);
 
+		HDC getDeviceContext();
 		HWND getHandleWindow();
 		HINSTANCE getHandleInstance();
 	private:
+		HDC m_DeviceContext;
 		HWND m_HandleWindow;
 		HINSTANCE m_Instance;
 	};// end of RenderWindow_Win32 class declaration

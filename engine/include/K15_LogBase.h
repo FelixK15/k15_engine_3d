@@ -25,9 +25,8 @@
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
+#	include "K15_LogManager.h"
 #endif //K15_USE_PRECOMPILED_HEADER
-
-#include "K15_LogManager.h"
 
 namespace K15_Engine { namespace System { 
 

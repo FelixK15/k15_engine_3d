@@ -72,9 +72,25 @@ inline LogManager* Application::getLogManager() const
 	return m_LogManager;
 }
 /*********************************************************************************/
+inline const StackAllocator& Application::getFrameAllocator() const
+{
+	return m_FrameAllocator;
+}
+/*********************************************************************************/
+inline double Application::getRunningTime() const
+{
+	return m_RunningTime;
+}
+/*********************************************************************************/
 inline const GameTime& Application::getGameTime() const
 {
   return m_GameTime;
+}
+/*********************************************************************************/
+inline void Application::setWindowTitle(const String& p_WindowTitle) 
+{
+	if(m_RenderWindow)
+		m_RenderWindow->setWindowTitle(p_WindowTitle);
 }
 /*********************************************************************************/
 inline const double Application::getDeltaTime() const

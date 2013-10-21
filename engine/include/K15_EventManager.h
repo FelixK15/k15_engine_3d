@@ -32,11 +32,11 @@
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
 #	include "K15_Application.h"
+#	include "K15_AllocatedObject.h"
+#	include "K15_Singleton.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-#include "K15_AllocatedObject.h"
 #include "K15_PageAllocator.h"
-#include "K15_Singleton.h"
 #include "K15_TaskBase.h"
 
 namespace K15_Engine { namespace System { 
