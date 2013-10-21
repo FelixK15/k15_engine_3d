@@ -24,7 +24,7 @@
 
 #include "K15_LogManager.h"
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
   /*********************************************************************************/
 	ResourceManager::ResourceManager()
 		: m_Resources(),

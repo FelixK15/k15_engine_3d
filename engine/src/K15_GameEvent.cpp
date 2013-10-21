@@ -20,7 +20,7 @@
 
 #include "K15_GameEvent.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	GameEvent::ArgAllocator GameEvent::ArgumentAllocator = GameEvent::ArgAllocator(EventManagerAllocator);
 	/*********************************************************************************/

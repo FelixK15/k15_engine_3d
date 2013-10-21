@@ -21,8 +21,8 @@
  * 
  */
 
-#ifndef _K15Engine_System_ApplicationParameter_h_
-#define _K15Engine_System_ApplicationParameter_h_
+#ifndef _K15Engine_Core_ApplicationParameter_h_
+#define _K15Engine_Core_ApplicationParameter_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
@@ -40,7 +40,7 @@
 	if(parameter_variable.Name == #setting_name)  \
 		this->set ## setting_name(parameter_variable.Value)
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 	
 	struct ApplicationParameter
 	{
@@ -50,4 +50,4 @@ namespace K15_Engine { namespace System {
 	};
 }}//end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_ApplicationParameter_h_
+#endif //_K15Engine_Core_ApplicationParameter_h_

@@ -21,8 +21,8 @@
  * 
  */
 
-#ifndef _K15Engine_System_DynamicLibrary_win32_h_
-#define _K15Engine_System_DynamicLibrary_win32_h_
+#ifndef _K15Engine_Core_DynamicLibrary_win32_h_
+#define _K15Engine_Core_DynamicLibrary_win32_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
@@ -30,7 +30,7 @@
 
 #include "K15_DynamicLibraryBase.h"
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 
 	class K15_API_EXPORT DynamicLibrary_Win32 : public DynamicLibraryBase
 	{
@@ -50,4 +50,4 @@ namespace K15_Engine { namespace System {
 	};// end of DynamicLibrary_Win32 class
 }} //end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_DynamicLibrary_win32_h_
+#endif //_K15Engine_Core_DynamicLibrary_win32_h_

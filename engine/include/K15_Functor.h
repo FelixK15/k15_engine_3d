@@ -21,14 +21,14 @@
  * 
  */
 
-#ifndef _K15Engine_System_Functor_h_
-#define _K15Engine_System_Functor_h_
+#ifndef _K15Engine_Core_Functor_h_
+#define _K15Engine_Core_Functor_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
 #endif// K15_USE_PRECOMPILED_HEADER
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	template<class ReturnType>
 	class Functor0
@@ -79,4 +79,4 @@ namespace K15_Engine { namespace System {
 #include "K15_Functor.inl"
 }}//end of namespace K15_Engine::System
 
-#endif //_K15Engine_System_Functor_h_
+#endif //_K15Engine_Core_Functor_h_

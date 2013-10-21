@@ -38,7 +38,7 @@
 #	include "K15_ApplicationOSLayer_Win32.h"
 #endif //K15_OS_WINDOWS
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	const String Application::SettingsFileName = "settings.ini";
 	const String Application::PluginFileName = "plugins.ini";

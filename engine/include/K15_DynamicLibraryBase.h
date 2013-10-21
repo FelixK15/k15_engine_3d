@@ -21,8 +21,8 @@
  * 
  */
 
-#ifndef _K15Engine_System_DynamicLibrary_h_
-#define _K15Engine_System_DynamicLibrary_h_
+#ifndef _K15Engine_Core_DynamicLibrary_h_
+#define _K15Engine_Core_DynamicLibrary_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
@@ -32,7 +32,7 @@
 
 #include "K15_Functor.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 
 	class K15_API_EXPORT DynamicLibraryBase : public DynamicLibraryManagerAllocatedObject
 	{

@@ -20,7 +20,7 @@
 #include "K15_PrecompiledHeader.h"
 #include "K15_TextConsoleLog.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	TextConsoleLog::TextConsoleLog()
 		: LogBase()
@@ -34,29 +34,29 @@ namespace K15_Engine { namespace System {
 		static HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 		static WORD colorCode = 0;
 
-		msg = System::StringUtil::timeAsString() + " ";
+		msg = Core::StringUtil::timeAsString() + " ";
 
-		if(p_PriorityFlag & System::LogManager::LP_NORMAL)
+		if(p_PriorityFlag & Core::LogManager::LP_NORMAL)
 		{
 			msg += "[NORMAL]: ";
 			colorCode = FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN;
 		}
-		else if(p_PriorityFlag & System::LogManager::LP_ERROR)
+		else if(p_PriorityFlag & Core::LogManager::LP_ERROR)
 		{
 			msg += "[ERROR]: ";
 			colorCode = FOREGROUND_RED;
 		}
-		else if(p_PriorityFlag & System::LogManager::LP_WARNING)
+		else if(p_PriorityFlag & Core::LogManager::LP_WARNING)
 		{
 			msg += "[WARNING]: ";
 			colorCode = FOREGROUND_GREEN | FOREGROUND_RED;
 		}
-		else if(p_PriorityFlag & System::LogManager::LP_SUCCESS)
+		else if(p_PriorityFlag & Core::LogManager::LP_SUCCESS)
 		{
 			msg += "[SUCCESS]: ";
 			colorCode = FOREGROUND_GREEN;
 		}
-		else if(p_PriorityFlag & System::LogManager::LP_DEBUG)
+		else if(p_PriorityFlag & Core::LogManager::LP_DEBUG)
 		{
 			msg += "[DEBUG]: ";
 			colorCode = FOREGROUND_BLUE;

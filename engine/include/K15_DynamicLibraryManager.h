@@ -20,8 +20,8 @@
  *
  * 
  */
-#ifndef _K15Engine_System_DynamicLibraryManager_h_
-#define _K15Engine_System_DynamicLibraryManager_h_
+#ifndef _K15Engine_Core_DynamicLibraryManager_h_
+#define _K15Engine_Core_DynamicLibraryManager_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
@@ -32,7 +32,7 @@
 
 #include "K15_DynamicLibraryBase.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 
 	class DynamicLibraryManager : public ApplicationAllocatedObject,
 								  public Singleton<DynamicLibraryManager>,
@@ -68,4 +68,4 @@ namespace K15_Engine { namespace System {
 	};
 }}//end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_DynamicLibraryManager_h_
+#endif //_K15Engine_Core_DynamicLibraryManager_h_

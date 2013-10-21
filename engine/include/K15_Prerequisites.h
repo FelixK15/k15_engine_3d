@@ -40,7 +40,6 @@
 #	define K15_PTR_SIZE 32
 #endif //K15_64_BIT
 
-
 //edit export defines
 #define expose //read + write
 #define expose_read //read only
@@ -48,7 +47,7 @@
 
 namespace K15_Engine
 {
-	namespace System
+	namespace Core
 	{
 		class Application;
 		class ApplicationOSLayer;
@@ -169,7 +168,7 @@ namespace K15_Engine
  //Strings
 #if defined K15_DONT_USE_STL
 #	include "K15_String.h"
-	typedef K15_Engine::System::String String;
+	typedef K15_Engine::Core::String String;
 #else
 #	include <string>
 	typedef std::string String;
@@ -192,8 +191,8 @@ namespace K15_Engine
 #if defined K15_DONT_USE_STL
 #	include "K15_FileStream.h"
 #	include "k15_StringStream.h"
-	typedef K15_Engine::System::FileStream FileStream;
-	typedef K15_Engine::System::StringStream StringStream;
+	typedef K15_Engine::Core::FileStream FileStream;
+	typedef K15_Engine::Core::StringStream StringStream;
 #else
 #	include <fstream>
 #	include <sstream>
@@ -233,9 +232,9 @@ namespace K15_Engine
 #endif //K15_OS_WINDOWS
 
 #if defined K15_OS_WINDOWS
-	typedef K15_Engine::System::DynamicLibrary_Win32 DynamicLibraryType;
-	typedef K15_Engine::System::ApplicationOSLayer_Win32 ApplicationOSLayerType;
-	typedef K15_Engine::System::RenderWindow_Win32 RenderWindowType;
+	typedef K15_Engine::Core::DynamicLibrary_Win32 DynamicLibraryType;
+	typedef K15_Engine::Core::ApplicationOSLayer_Win32 ApplicationOSLayerType;
+	typedef K15_Engine::Core::RenderWindow_Win32 RenderWindowType;
 #endif //K15_OS_WINDOWS
  
 #if defined K15_DEBUG
@@ -276,12 +275,12 @@ namespace K15_Engine
 
 typedef K15_Set(String) StringSet;
 
-typedef K15_Engine::System::AllocatedObject<K15_Engine::System::Application> ApplicationAllocatedObject;
-typedef K15_Engine::System::AllocatedObject<K15_Engine::System::EventManager> EventManagerAllocatedObject;
-typedef K15_Engine::System::AllocatedObject<K15_Engine::System::TaskManager> TaskManagerAllocatedObject;
-typedef K15_Engine::System::AllocatedObject<K15_Engine::System::DynamicLibraryManager> DynamicLibraryManagerAllocatedObject;
-typedef K15_Engine::System::AllocatedObject<K15_Engine::System::LogManager> LogManagerAllocatedObject;
-typedef K15_Engine::System::AllocatedObject<K15_Engine::System::ProfilingManager> ProfilingManagerAllocatedObject;
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::Application> ApplicationAllocatedObject;
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::EventManager> EventManagerAllocatedObject;
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::TaskManager> TaskManagerAllocatedObject;
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::DynamicLibraryManager> DynamicLibraryManagerAllocatedObject;
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::LogManager> LogManagerAllocatedObject;
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::ProfilingManager> ProfilingManagerAllocatedObject;
 
 #define ApplicationAllocator K15_Engine::System::Application::getInstance()
 #define EventManagerAllocator K15_Engine::System::EventManager::getInstance()
@@ -330,11 +329,11 @@ typedef unsigned	long long	uint64;
 
 typedef unsigned int Enum;
 
-typedef K15_Engine::System::HashedString ObjectName;
-typedef K15_Engine::System::HashedString TypeName;
-typedef K15_Engine::System::HashedString EventName;
-typedef K15_Engine::System::HashedString ProfilingName;
-typedef K15_Engine::System::HashedString ResourceName;
+typedef K15_Engine::Core::HashedString ObjectName;
+typedef K15_Engine::Core::HashedString TypeName;
+typedef K15_Engine::Core::HashedString EventName;
+typedef K15_Engine::Core::HashedString ProfilingName;
+typedef K15_Engine::Core::HashedString ResourceName;
 
 #if defined K15_NO_STRINGS
 #	define _N(x)  K15_Engine::System::ObjectNames::ObjectNames::x
@@ -365,5 +364,11 @@ typedef K15_Engine::System::HashedString ResourceName;
 #define GIGABYTE	1073741824
 #define MEGABYTE	1048576
 #define KILOBYTE	1024
+
+#if defined (K15_CPP11_SUPPORT)
+#		define OVERRIDE override
+#else
+#		define OVERRIDE
+#endif //K15_CPP11_SUPPORT
 
 #endif //_K15Engine_Prerequisites_h_

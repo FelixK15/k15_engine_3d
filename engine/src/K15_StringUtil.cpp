@@ -21,7 +21,7 @@
 
 #include "K15_StringUtil.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	String StringUtil::format(char* p_Message,...)
 	{

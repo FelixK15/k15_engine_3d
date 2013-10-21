@@ -20,8 +20,8 @@
  *
  * 
  */
-#ifndef _K15Engine_System_RTTI_h_
-#define _K15Engine_System_RTTI_h_
+#ifndef _K15Engine_Core_RTTI_h_
+#define _K15Engine_Core_RTTI_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
@@ -29,7 +29,7 @@
 
 #include "K15_Rtti.mcr"
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 
 	class K15_API_EXPORT Rtti
 	{
@@ -51,4 +51,4 @@ namespace K15_Engine { namespace System {
   /*********************************************************************************/
 }} //end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_RTTI_h_
+#endif //_K15Engine_Core_RTTI_h_

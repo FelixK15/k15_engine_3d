@@ -21,8 +21,8 @@
  * 
  */
 
-#ifndef _K15Engine_System_TaskBase_h_
-#define _K15Engine_System_TaskBase_h_
+#ifndef _K15Engine_Core_TaskBase_h_
+#define _K15Engine_Core_TaskBase_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
@@ -34,7 +34,7 @@
 #include "K15_Functor.h"
 #include "K15_GameTime.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 	class TaskBase : public TaskManagerAllocatedObject
 	{
 	public:
@@ -53,4 +53,4 @@ namespace K15_Engine { namespace System {
 #include "K15_TaskBase.inl"
 }}//end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_TaskBase_h_
+#endif //_K15Engine_Core_TaskBase_h_

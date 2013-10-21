@@ -26,7 +26,7 @@
 #	include "K15_DynamicLibrary_win32.h"
 #endif //K15_OS_WINDOWS
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	DynamicLibraryManager::DynamicLibraryManager()
 		: StackAllocator(MemoryAllocator,5 * MEGABYTE),

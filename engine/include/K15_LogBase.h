@@ -20,15 +20,15 @@
  *
  * 
  */
-#ifndef _K15Engine_System_LogBase_h_
-#define _K15Engine_System_LogBase_h_
+#ifndef _K15Engine_Core_LogBase_h_
+#define _K15Engine_Core_LogBase_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
 #	include "K15_LogManager.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 
 	class K15_API_EXPORT LogBase : public LogManagerAllocatedObject
 	{
@@ -52,4 +52,4 @@ namespace K15_Engine { namespace System {
 	};
 }} //end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_Log_h_
+#endif //_K15Engine_Core_Log_h_

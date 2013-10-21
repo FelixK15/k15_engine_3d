@@ -26,7 +26,7 @@
 #include "K15_ProfilingNode.h"
 #include "K15_ProfilingManager.h"
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	ProfilingNode::ProfilingNode(const ProfilingNode& p_Other)
 		: m_Name(p_Other.m_Name),

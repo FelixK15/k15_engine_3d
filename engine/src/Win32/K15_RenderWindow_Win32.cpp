@@ -23,7 +23,7 @@
 #include "K15_StringUtil.h"
 #include "K15_EventManager.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 	LRESULT CALLBACK K15_WindowProc(HWND p_HandleWindow,UINT p_MSG,WPARAM p_wParam,LPARAM p_lParam)
 	{
 		//if(p_MSG == WM_)

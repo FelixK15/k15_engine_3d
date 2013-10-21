@@ -21,7 +21,7 @@
 
 #include "K15_Rtti.h"
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
   /*********************************************************************************/
   Rtti::Rtti(const TypeName& p_Name,const Rtti *p_BaseType)
   {

@@ -21,7 +21,7 @@
 
 #include "K15_LogBase.h"
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	LogBase::LogBase()
 	{

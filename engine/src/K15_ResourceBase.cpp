@@ -21,7 +21,7 @@
 
 #include "K15_ResourceBase.h"
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 
 	ResourceBase::ResourceBase()
 		: m_AssetName(ResourceName::BLANK),

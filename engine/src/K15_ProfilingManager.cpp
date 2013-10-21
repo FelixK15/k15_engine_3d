@@ -21,7 +21,7 @@
 
 #include "K15_ProfilingManager.h"
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	ProfilingManager::ProfilingManager()
 		: AllocatedObject(),

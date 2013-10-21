@@ -20,7 +20,7 @@
 
 #include "K15_HashedString.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	const HashedString HashedString::BLANK("0x0");
 	/*********************************************************************************/

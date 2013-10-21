@@ -20,12 +20,12 @@
  *
  * 
  */
-#ifndef __K15Engine_System_File_h_
-#define __K15Engine_System_File_h_
+#ifndef __K15Engine_Core_File_h_
+#define __K15Engine_Core_File_h_
 
 #include "K15_StdInclude.h"
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 
 	class K15_API_EXPORT File
 	{
@@ -166,4 +166,4 @@ namespace K15_Engine { namespace System {
 	#include "K15_File.inl"
 }}
 
-#endif //__K15Engine_System_File_h_
+#endif //__K15Engine_Core_File_h_

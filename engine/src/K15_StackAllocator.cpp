@@ -22,7 +22,7 @@
 #include "K15_StackAllocator.h"
 #include "K15_MemoryHeader.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
   /*********************************************************************************/
   const TypeName StackAllocator::Type = _TN(StackAllocator);
   /*********************************************************************************/

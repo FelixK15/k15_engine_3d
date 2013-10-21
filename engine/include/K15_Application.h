@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef _K15Engine_System_Application_h_
-#define _K15Engine_System_Application_h_
+#ifndef _K15Engine_Core_Application_h_
+#define _K15Engine_Core_Application_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
@@ -38,7 +38,7 @@
 #	include "K15_ApplicationOSLayer_Win32.h"
 #endif //K15_OS_WINDOWS
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
   /*********************************************************************************/
   typedef K15_List(ApplicationModule*) ApplicationModuleList;
   typedef K15_List(ApplicationParameter) ApplicationParameterList;
@@ -151,4 +151,4 @@ namespace K15_Engine { namespace System {
 #include "K15_Application.inl"
 }} //end of K15_Engine::System namespace
 
-#endif //_K15Engine_System_Application_h_
+#endif //_K15Engine_Core_Application_h_

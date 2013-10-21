@@ -22,7 +22,7 @@
 #include "K15_LogManager.h"
 #include "K15_LogBase.h"
 
-namespace K15_Engine { namespace System { 
+namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	LogManager::LogManager()
 		:	StackAllocator(MemoryAllocator,MEGABYTE),

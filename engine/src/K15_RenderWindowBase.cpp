@@ -22,7 +22,7 @@
 #include "K15_RenderWindowBase.h"
 #include "K15_GameEvent.h"
 
-namespace K15_Engine { namespace System {
+namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	RenderWindowBase::Listener::Listener()
 		: EventListener()
