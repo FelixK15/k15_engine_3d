@@ -17,97 +17,97 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-template<class Real>
-Vector3<Real>::Vector3()
+template<class float>
+Vector3::Vector3()
 {
- 	x = (Real)0;
-	y = (Real)0;
-	z = (Real)0;
+ 	x = (float)0;
+	y = (float)0;
+	z = (float)0;
 }
 
-template<class Real>
-Vector3<Real>::Vector3( Real vec[3] )
+template<class float>
+Vector3::Vector3( float vec[3] )
 {
 	x = vec[0];
 	y = vec[1];
 	z = vec[2];
 }
 
-template<class Real>
-Vector3<Real>::Vector3( Real x,Real y, Real z )
+template<class float>
+Vector3::Vector3( float x,float y, float z )
 {
 	vec[0] = x;
 	vec[1] = y;
 	vec[2] = z;
 }
 
-template<class Real>
-Vector3<Real>::Vector3( const Vector3<Real> &vec3 )
+template<class float>
+Vector3::Vector3( const Vector3 &vec3 )
 {
 	x = vec3.x;
 	y = vec3.y;
 	z = vec3.z;
 }
 
-template<class Real>
-Vector3<Real>::~Vector3()
+template<class float>
+Vector3::~Vector3()
 {
 
 }
 
-template<class Real>
-void Vector3<Real>::Normalize()
+template<class float>
+void Vector3::Normalize()
 {
-	Real tmp = Magnitude();
+	float tmp = Magnitude();
 	assert(tmp != 0);
 	x /= tmp;
 	y /= tmp;
 	z /= tmp;
 }
 
-template<class Real>
-Real Vector3<Real>::Magnitude() const
+template<class float>
+float Vector3::magnitude() const
 {
-	return Mathematic<Real>::Sqrt((x*x+y*y+z*z));
+	return Mathematic<float>::Sqrt((x*x+y*y+z*z));
 }
 
-template<class Real>
-void Vector3<Real>::Invert()
+template<class float>
+void Vector3::invert()
 {
 	x = -x;
 	y = -y;
 	z = -z;
 }
 
-template<class Real>
-bool Vector3<Real>::IsNull() const
+template<class float>
+bool Vector3::isNull() const
 {
-	return (((Real)x == (Real)y) && ((Real)y == (Real)z) && ((Real)x == (Real)0));
+	return (((float)x == (float)y) && ((float)y == (float)z) && ((float)x == (float)0));
 }
 
-template<class Real>
-bool Vector3<Real>::IsUnitVector() const
+template<class float>
+bool Vector3::isUnit() const
 {
-	return (Magnitude() == (Real)1);
+	return (Magnitude() == (float)1);
 }
 
-template<class Real>
-Real Vector3<Real>::Dot( const Vector3<Real> &vec ) const
+template<class float>
+float Vector3::dot( const Vector3 &vec ) const
 {
 	return (x * vec.x + y * vec.y + z * vec.z);
 }
 
-template<class Real>
-Vector3<Real> Vector3<Real>::Cross( const Vector3<Real> &vec ) const
+template<class float>
+Vector3 Vector3::cross( const Vector3 &vec ) const
 {
-	Real tmpx = y * vec.z - z * vec.y;
-	Real tmpy = z * vec.x - x * vec.z;
-	Real tmpz = x * vec.y - y * vec.x;
-	return Vector3<Real>(tmpx, tmpy, tmpz);
+	float tmpx = y * vec.z - z * vec.y;
+	float tmpy = z * vec.x - x * vec.z;
+	float tmpz = x * vec.y - y * vec.x;
+	return Vector3(tmpx, tmpy, tmpz);
 }
 
-template<class Real>
-Vector3<Real> &Vector3<Real>::operator=(const Vector3<Real> &vec)
+template<class float>
+Vector3 &Vector3::operator=(const Vector3 &vec)
 {
 	x = vec.x;
 	y = vec.y;
@@ -115,8 +115,8 @@ Vector3<Real> &Vector3<Real>::operator=(const Vector3<Real> &vec)
 	return *this;
 }
 
-template<class Real>
-Vector3<Real> &Vector3<Real>::operator*(Real fScale)
+template<class float>
+Vector3 &Vector3::operator*(float fScale)
 {
 	x *= fScale;
 	y *= fScale;
@@ -124,8 +124,8 @@ Vector3<Real> &Vector3<Real>::operator*(Real fScale)
 	return *this;
 }
 
-template<class Real>
-Vector3<Real> &Vector3<Real>::operator*=(Real fScale)
+template<class float>
+Vector3 &Vector3::operator*=(float fScale)
 {
 	x *= fScale;
 	y *= fScale;
@@ -133,34 +133,34 @@ Vector3<Real> &Vector3<Real>::operator*=(Real fScale)
 	return *this;
 }
 
-template<class Real>
-Real Vector3<Real>::operator*( const Vector3<Real> &vec ) const
+template<class float>
+float Vector3::operator*( const Vector3 &vec ) const
 {
 	return (x * vec.x + y * vec.y + z * vec.z);
 }
 
-template<class Real>
-Vector3<Real> Vector3<Real>::operator+( const Vector3<Real> &vec )
+template<class float>
+Vector3 Vector3::operator+( const Vector3 &vec )
 {
-	Vector3<Real> vecNewVec;
+	Vector3 vecNewVec;
 	vecNewVec.x = this->x + vec.x;
 	vecNewVec.y = this->y + vec.y;
 	vecNewVec.z = this->z + vec.z;
 	return vecNewVec;
 }
 
-template<class Real>
-Vector3<Real> Vector3<Real>::operator-( const Vector3<Real> &vec )
+template<class float>
+Vector3 Vector3::operator-( const Vector3 &vec )
 {
-	Vector3<Real> vecNewVec;
+	Vector3 vecNewVec;
 	vecNewVec.x = this->x - vec.x;
 	vecNewVec.y = this->y - vec.y;
 	vecNewVec.z = this->z - vec.z;
 	return vecNewVec;
 }
 
-template<class Real>
-Vector3<Real> &Vector3<Real>::operator+=( const Vector3<Real> &vec )
+template<class float>
+Vector3 &Vector3::operator+=( const Vector3 &vec )
 {
 	x += vec.x;
 	y += vec.y;
@@ -168,8 +168,8 @@ Vector3<Real> &Vector3<Real>::operator+=( const Vector3<Real> &vec )
 	return *this;
 }
 
-template<class Real>
-Vector3<Real> &Vector3<Real>::operator-=( const Vector3<Real> &vec )
+template<class float>
+Vector3 &Vector3::operator-=( const Vector3 &vec )
 {
 	x -= vec.x;
 	y -= vec.y;
@@ -177,8 +177,8 @@ Vector3<Real> &Vector3<Real>::operator-=( const Vector3<Real> &vec )
 	return *this;
 }
 
-template<class Real>
-bool Vector3<Real>::operator<( const Vector3<Real> &vec ) const
+template<class float>
+bool Vector3::operator<( const Vector3 &vec ) const
 {
 	if(Magnitude()<vec.Magnitude()){
 		return true;
@@ -186,8 +186,8 @@ bool Vector3<Real>::operator<( const Vector3<Real> &vec ) const
 	return false;
 }
 
-template<class Real>
-bool Vector3<Real>::operator>( const Vector3<Real> &vec ) const
+template<class float>
+bool Vector3::operator>( const Vector3 &vec ) const
 {
 	if(Magnitude()>vec.Magnitude()){
 		return true;
@@ -195,8 +195,8 @@ bool Vector3<Real>::operator>( const Vector3<Real> &vec ) const
 	return false;
 }
 
-template<class Real>
-bool Vector3<Real>::operator<=( const Vector3<Real> &vec ) const
+template<class float>
+bool Vector3::operator<=( const Vector3 &vec ) const
 {
 	if(Magnitude()<=vec.Magnitude()){
 		return true;
@@ -204,8 +204,8 @@ bool Vector3<Real>::operator<=( const Vector3<Real> &vec ) const
 	return false;
 }
 
-template<class Real>
-bool Vector3<Real>::operator>=( const Vector3<Real> &vec ) const
+template<class float>
+bool Vector3::operator>=( const Vector3 &vec ) const
 {
 	if(Magnitude()>=vec.Magnitude()){
 		return true;
@@ -213,8 +213,8 @@ bool Vector3<Real>::operator>=( const Vector3<Real> &vec ) const
 	return false;
 }
 
-template<class Real>
-bool Vector3<Real>::operator==( const Vector3<Real> &vec ) const
+template<class float>
+bool Vector3::operator==( const Vector3 &vec ) const
 {
 	if((x==vec.x) && (y==vec.y) && (z==vec.z)){
 		return true;
@@ -222,8 +222,8 @@ bool Vector3<Real>::operator==( const Vector3<Real> &vec ) const
 	return false;
 }
 
-template<class Real>
-bool Vector3<Real>::operator!=( const Vector3<Real> &vec ) const
+template<class float>
+bool Vector3::operator!=( const Vector3 &vec ) const
 {
 	if((x==vec.x) && (y==vec.y) && (z==vec.z)){
 		return false;

@@ -32,8 +32,8 @@ namespace K15_Engine { namespace Math {
 	public:
 
 		Quaternion();
-		Quaternion(Real fWValue, Real fXValue, Real fYValue, Real fZValue);
-		Quaternion(Real fSAngle, Vector3 vecVec);
+		Quaternion(float fWValue, float fXValue, float fYValue, float fZValue);
+		Quaternion(float fSAngle, Vector3 vecVec);
 		Quaternion(const Quaternion &qQuat);
 		~Quaternion();
 
@@ -46,23 +46,23 @@ namespace K15_Engine { namespace Math {
 		Quaternion operator*(const Quaternion &qQuat);
 		Vector3 operator*(Vector3 &vec);
 		Quaternion &operator*=(const Quaternion &qQuat);
-		Quaternion operator*(Real fScalar);
-		Quaternion &operator*=(Real fScalar);
-		Quaternion operator/(Real fScalar);
+		Quaternion operator*(float fScalar);
+		Quaternion &operator*=(float fScalar);
+		Quaternion operator/(float fScalar);
 		Quaternion operator/(const Quaternion &qQuat);
 		Quaternion &operator=(const Quaternion &qQuat);
 		bool operator==(const Quaternion &qQuat);
 		bool operator!=(const Quaternion &qQuat);
-		static Real Dot(const Quaternion &qQuat1, const Quaternion &qQuat2);
-		static Quaternion Lerp(const Quaternion &qQuat1, const Quaternion &qQuat2, Real fValue);
-		static Quaternion Slerp(const Quaternion &qQuat1, const Quaternion &qQuat2, Real fValue);
+		static float Dot(const Quaternion &qQuat1, const Quaternion &qQuat2);
+		static Quaternion Lerp(const Quaternion &qQuat1, const Quaternion &qQuat2, float fValue);
+		static Quaternion Slerp(const Quaternion &qQuat1, const Quaternion &qQuat2, float fValue);
 		void QuaternionToMatrix(const Quaternion &qQuat, Matrix4x4* matDest);
 		void ToMatrix(Matrix4x4* matDest);
-		Quaternion AxisAngleToQuaternion(Real rAngel, Vector3 vecVec);
-		Quaternion AxisAngleToQuaternion(Real rWValue, Real rXValue, Real rYValue, Real rZValue);
-		Quaternion EulerAnglesToQuaternion(Real rXEuler, Real rYEuler, Real rZEuler);
+		Quaternion AxisAngleToQuaternion(float rAngel, Vector3 vecVec);
+		Quaternion AxisAngleToQuaternion(float rWValue, float rXValue, float rYValue, float rZValue);
+		Quaternion EulerAnglesToQuaternion(float rXEuler, float rYEuler, float rZEuler);
 		Quaternion EulerAnglesToQuaternion(Vector3 vecVec);
-		Real Magnitude() const;
+		float Magnitude() const;
 		void Normalize();
 		void Conjugate();
 		void Invert();
@@ -73,10 +73,10 @@ namespace K15_Engine { namespace Math {
 	public:
 		union{
 			struct {
-				Real s;
+				float s;
 				Vector3 v;
 			};
-			Real m_fValues[4];
+			float m_fValues[4];
 		};
 	};
 

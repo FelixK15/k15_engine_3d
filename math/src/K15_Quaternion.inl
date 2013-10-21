@@ -18,8 +18,8 @@
  */
 
 
-template <class Real>
-Quaternion<Real>::Quaternion()
+template <class float>
+Quaternion<float>::Quaternion()
 {
 	m_fValues[0] = 0;
 	m_fValues[1] = 0;
@@ -27,8 +27,8 @@ Quaternion<Real>::Quaternion()
 	m_fValues[3] = 0;
 }
 
-template <class Real>
-Quaternion<Real>::Quaternion(Real fWValue, Real fXValue, Real fYValue, Real fZValue)
+template <class float>
+Quaternion<float>::Quaternion(float fWValue, float fXValue, float fYValue, float fZValue)
 {
 	m_fValues[0] = fWValue;
 	m_fValues[1] = fXValue;
@@ -36,8 +36,8 @@ Quaternion<Real>::Quaternion(Real fWValue, Real fXValue, Real fYValue, Real fZVa
 	m_fValues[3] = fZValue;
 }
 
-template <class Real>
-Quaternion<Real>::Quaternion(Real fSValue, Vector3<Real> vecVec)
+template <class float>
+Quaternion<float>::Quaternion(float fSValue, Vector3 vecVec)
 {
 	m_fValues[0] = fSValue;
 	m_fValues[1] = vecVec.x;
@@ -45,8 +45,8 @@ Quaternion<Real>::Quaternion(Real fSValue, Vector3<Real> vecVec)
 	m_fValues[3] = vecVec.z;
 }
 
-template <class Real>
-Quaternion<Real>::Quaternion(const Quaternion<Real> &qQuat)
+template <class float>
+Quaternion<float>::Quaternion(const Quaternion<float> &qQuat)
 {
 	m_fValues[0] = qQuat.m_fValues[0];
 	m_fValues[1] = qQuat.m_fValues[1];
@@ -56,22 +56,22 @@ Quaternion<Real>::Quaternion(const Quaternion<Real> &qQuat)
 
 
 
-template <class Real>
-Quaternion<Real>::~Quaternion()
+template <class float>
+Quaternion<float>::~Quaternion()
 {
 
 }
 
-template <class Real>
-Real Quaternion<Real>::Magnitude() const
+template <class float>
+float Quaternion<float>::Magnitude() const
 {
-	return Mathematic<Real>::Sqrt(m_fValues[0]*m_fValues[0]+m_fValues[1]*m_fValues[1]+m_fValues[2]*m_fValues[2]+m_fValues[3]*m_fValues[3]);
+	return Mathematic<float>::Sqrt(m_fValues[0]*m_fValues[0]+m_fValues[1]*m_fValues[1]+m_fValues[2]*m_fValues[2]+m_fValues[3]*m_fValues[3]);
 }
 
-template <class Real>
-void Quaternion<Real>::Normalize()
+template <class float>
+void Quaternion<float>::Normalize()
 {
-	Real fMag = Magnitude();
+	float fMag = Magnitude();
 	if(fMag != 0){
 		m_fValues[0] = m_fValues[0] / fMag;
 		m_fValues[1] = m_fValues[1] / fMag;
@@ -81,33 +81,33 @@ void Quaternion<Real>::Normalize()
 }
 
 
-template <class Real>
-void Quaternion<Real>::Conjugate()
+template <class float>
+void Quaternion<float>::Conjugate()
 {
 	v.x = -v.x;
 	v.y = -v.y;
 	v.z = -v.z;
 }
 
-template <class Real>
-void Quaternion<Real>::Invert()
+template <class float>
+void Quaternion<float>::Invert()
 {
 	Conjugate();
 	*this / Magnitude();
 }
 
 
-template <class Real>
-bool Quaternion<Real>::IsUnitQuaternion() const
+template <class float>
+bool Quaternion<float>::IsUnitQuaternion() const
 {
-	return ((Real)1 == Magnitude());
+	return ((float)1 == Magnitude());
 }
 
 // ACHTUNG: Multiplikation NICHT kommutativ, Hamilton-Produkt
-template <class Real>
-Quaternion<Real> Quaternion<Real>::operator*(const Quaternion<Real> &qQuat)
+template <class float>
+Quaternion<float> Quaternion<float>::operator*(const Quaternion<float> &qQuat)
 {
-	Real fTmpW, fTmpX, fTmpY, fTmpZ; 
+	float fTmpW, fTmpX, fTmpY, fTmpZ; 
 	fTmpW = m_fValues[0]*qQuat.m_fValues[0] - m_fValues[1]*qQuat.m_fValues[1] - m_fValues[2]*qQuat.m_fValues[2] - m_fValues[3]*qQuat.m_fValues[3];
 	fTmpX = m_fValues[0]*qQuat.m_fValues[1] + m_fValues[1]*qQuat.m_fValues[0] + m_fValues[2]*qQuat.m_fValues[3] - m_fValues[3]*qQuat.m_fValues[2];
 	fTmpY = m_fValues[0]*qQuat.m_fValues[2] - m_fValues[1]*qQuat.m_fValues[3] + m_fValues[2]*qQuat.m_fValues[0] + m_fValues[3]*qQuat.m_fValues[1];
@@ -119,10 +119,10 @@ Quaternion<Real> Quaternion<Real>::operator*(const Quaternion<Real> &qQuat)
 	return *this;
 }
 
-template <class Real>
-Vector3<Real> Quaternion<Real>::operator*(Vector3<Real> &vec)
+template <class float>
+Vector3 Quaternion<float>::operator*(Vector3 &vec)
 {
-	Vector3<Real> vTmp1, vTmp2;
+	Vector3 vTmp1, vTmp2;
 	vTmp1 = v.Cross(vec);
 	vTmp2 = v.Cross(vTmp1);
 	vTmp1 *= (2 * s);
@@ -130,10 +130,10 @@ Vector3<Real> Quaternion<Real>::operator*(Vector3<Real> &vec)
 	return vec + vTmp1 + vTmp2;
 }
 
-template <class Real>
-Quaternion<Real> &Quaternion<Real>::operator*=(const Quaternion<Real> &qQuat)
+template <class float>
+Quaternion<float> &Quaternion<float>::operator*=(const Quaternion<float> &qQuat)
 {
-	Real fTmpW, fTmpX, fTmpY, fTmpZ; 
+	float fTmpW, fTmpX, fTmpY, fTmpZ; 
 	fTmpW = m_fValues[0]*qQuat.m_fValues[0] - m_fValues[1]*qQuat.m_fValues[1] - m_fValues[2]*qQuat.m_fValues[2] - m_fValues[3]*qQuat.m_fValues[3];
 	fTmpX = m_fValues[0]*qQuat.m_fValues[1] + m_fValues[1]*qQuat.m_fValues[0] + m_fValues[2]*qQuat.m_fValues[3] - m_fValues[3]*qQuat.m_fValues[2];
 	fTmpY = m_fValues[0]*qQuat.m_fValues[2] - m_fValues[1]*qQuat.m_fValues[3] + m_fValues[2]*qQuat.m_fValues[0] + m_fValues[3]*qQuat.m_fValues[1];
@@ -145,8 +145,8 @@ Quaternion<Real> &Quaternion<Real>::operator*=(const Quaternion<Real> &qQuat)
 	return *this;
 }
 
-template <class Real>
-Quaternion<Real> Quaternion<Real>::operator*(Real fScalar)
+template <class float>
+Quaternion<float> Quaternion<float>::operator*(float fScalar)
 {
 	m_fValues[0] *= fScalar;
 	m_fValues[1] *= fScalar;
@@ -155,8 +155,8 @@ Quaternion<Real> Quaternion<Real>::operator*(Real fScalar)
 	return *this;
 }
 
-template <class Real>
-Quaternion<Real> &Quaternion<Real>::operator*=(Real fScalar)
+template <class float>
+Quaternion<float> &Quaternion<float>::operator*=(float fScalar)
 {
 	m_fValues[0] *= fScalar;
 	m_fValues[1] *= fScalar;
@@ -165,8 +165,8 @@ Quaternion<Real> &Quaternion<Real>::operator*=(Real fScalar)
 	return *this;
 }
 
-template <class Real>
-Quaternion<Real> Quaternion<Real>::operator+(const Quaternion<Real> &qQuat)
+template <class float>
+Quaternion<float> Quaternion<float>::operator+(const Quaternion<float> &qQuat)
 {
 	m_fValues[0] += qQuat.m_fValues[0];
 	m_fValues[1] += qQuat.m_fValues[1];
@@ -175,8 +175,8 @@ Quaternion<Real> Quaternion<Real>::operator+(const Quaternion<Real> &qQuat)
 	return *this;
 }
 
-template <class Real>
-Quaternion<Real> Quaternion<Real>::operator-(const Quaternion<Real> &qQuat)
+template <class float>
+Quaternion<float> Quaternion<float>::operator-(const Quaternion<float> &qQuat)
 {
 	for(int i = 0; i < 4; i++){
 		m_fValues[i] -= qQuat.m_fValues[i];
@@ -184,8 +184,8 @@ Quaternion<Real> Quaternion<Real>::operator-(const Quaternion<Real> &qQuat)
 	return *this;
 }
 
-template <class Real>
-Quaternion<Real> &Quaternion<Real>::operator-()
+template <class float>
+Quaternion<float> &Quaternion<float>::operator-()
 {
 	for(int i =0; i < 4; i++){
 		m_fValues[i] = -m_fValues[i]; 
@@ -193,8 +193,8 @@ Quaternion<Real> &Quaternion<Real>::operator-()
 	return *this;
 }
 
-template <class Real>
-Quaternion<Real> &Quaternion<Real>::operator+=(const Quaternion<Real> &qQuat)
+template <class float>
+Quaternion<float> &Quaternion<float>::operator+=(const Quaternion<float> &qQuat)
 {
 	m_fValues[0] += qQuat.m_fValues[0];
 	m_fValues[1] += qQuat.m_fValues[1];
@@ -203,8 +203,8 @@ Quaternion<Real> &Quaternion<Real>::operator+=(const Quaternion<Real> &qQuat)
 	return *this;
 }
 
-template <class Real>
-Quaternion<Real> &Quaternion<Real>::operator-=(const Quaternion<Real> &qQuat)
+template <class float>
+Quaternion<float> &Quaternion<float>::operator-=(const Quaternion<float> &qQuat)
 {
 	m_fValues[0] -= qQuat.m_fValues[0];
 	m_fValues[1] -= qQuat.m_fValues[1];
@@ -213,8 +213,8 @@ Quaternion<Real> &Quaternion<Real>::operator-=(const Quaternion<Real> &qQuat)
 	return *this;
 }
 
-template <class Real>
-Quaternion<Real> Quaternion<Real>::operator/(Real fScalar)
+template <class float>
+Quaternion<float> Quaternion<float>::operator/(float fScalar)
 {
 	assert(fScalar != 0);
 	m_fValues[0] /= fScalar;
@@ -224,57 +224,57 @@ Quaternion<Real> Quaternion<Real>::operator/(Real fScalar)
 	return *this;
 }
 
-template <class Real>
-Quaternion<Real> Quaternion<Real>::operator/(const Quaternion<Real> &qQuat)
+template <class float>
+Quaternion<float> Quaternion<float>::operator/(const Quaternion<float> &qQuat)
 {
-	Quaternion<Real> qTmp(qQuat);
+	Quaternion<float> qTmp(qQuat);
 	qTmp.Invert();
 	return *this * qTmp; 
 }
 
-template <class Real>
-bool Quaternion<Real>::operator==(const Quaternion<Real> &qQuat)
+template <class float>
+bool Quaternion<float>::operator==(const Quaternion<float> &qQuat)
 {
 	return ((m_fValues[0] == qQuat.m_fValues[0]) && (m_fValues[1] == qQuat.m_fValues[1]) && (m_fValues[2] == qQuat.m_fValues[2]) && (m_fValues[3] == qQuat.m_fValues[3]));
 }
 
-template <class Real>
-bool Quaternion<Real>::operator!=(const Quaternion<Real> &qQuat)
+template <class float>
+bool Quaternion<float>::operator!=(const Quaternion<float> &qQuat)
 {
 	return !((m_fValues[0] == qQuat.m_fValues[0]) && (m_fValues[1] == qQuat.m_fValues[1]) && (m_fValues[2] == qQuat.m_fValues[2]) && (m_fValues[3] == qQuat.m_fValues[3]));
 }
 
-template <class Real>
-Quaternion<Real> &Quaternion<Real>::operator=(const Quaternion<Real> &qQuat)
+template <class float>
+Quaternion<float> &Quaternion<float>::operator=(const Quaternion<float> &qQuat)
 {
 	s = qQuat.s;
 	v = qQuat.v;
 	return *this;
 }
 
-template <class Real>
-Real Quaternion<Real>::Dot(const Quaternion<Real> &qQuat1, const Quaternion<Real> &qQuat2)
+template <class float>
+float Quaternion<float>::Dot(const Quaternion<float> &qQuat1, const Quaternion<float> &qQuat2)
 {
 	return qQuat1.v.Dot(qQuat2.v) + qQuat1.s * qQuat2.s;
 }
 
-template <class Real>
-Quaternion<Real> Quaternion<Real>::Lerp(const Quaternion<Real> &qQuat1, const Quaternion<Real> &qQuat2, Real fValue)
+template <class float>
+Quaternion<float> Quaternion<float>::Lerp(const Quaternion<float> &qQuat1, const Quaternion<float> &qQuat2, float fValue)
 {
-	Quaternion<Real> qTmp1 = qQuat1;
-	Quaternion<Real> qTmp2 = qQuat2;
-	Quaternion<Real> qTmp = qTmp1 * (1-fValue) + qTmp2 * fValue;
+	Quaternion<float> qTmp1 = qQuat1;
+	Quaternion<float> qTmp2 = qQuat2;
+	Quaternion<float> qTmp = qTmp1 * (1-fValue) + qTmp2 * fValue;
 	qTmp.Normalize();
 	return qTmp; 
 }
 
-template <class Real>
-Quaternion<Real> Quaternion<Real>::Slerp(const Quaternion<Real> &qQuat1, const Quaternion<Real> &qQuat2, Real fValue)
+template <class float>
+Quaternion<float> Quaternion<float>::Slerp(const Quaternion<float> &qQuat1, const Quaternion<float> &qQuat2, float fValue)
 {
-	Quaternion<Real> qTmp;
-	Quaternion<Real> qTmp2 = qQuat2;
-	Quaternion<Real> qTmp1 = qQuat1;
-	Real fDot = Quaternion<Real>::Dot(qQuat1, qQuat2);
+	Quaternion<float> qTmp;
+	Quaternion<float> qTmp2 = qQuat2;
+	Quaternion<float> qTmp1 = qQuat1;
+	float fDot = Quaternion<float>::Dot(qQuat1, qQuat2);
 	if (fDot < 0){
 		fDot = -fDot;
 		qTmp2.Conjugate();
@@ -285,14 +285,14 @@ Quaternion<Real> Quaternion<Real>::Slerp(const Quaternion<Real> &qQuat1, const Q
 	}
 	if (fDot < 0.95f)
 	{
-		Real fAngle = acosf(fDot);
+		float fAngle = acosf(fDot);
 		return (qTmp1*sinf(fAngle*(1-fValue)) + qTmp*sinf(fAngle*fValue))/sinf(fAngle);
 	} else return Lerp(qTmp1,qTmp,fValue);		
 }
 
 // mit Vorsicht geniessen, normalize need? code sollte richtig sein, testen!
-template <class Real>
-void Quaternion<Real>::QuaternionToMatrix(const Quaternion<Real> &qQuat, Matrix4x4<Real>* matDest)
+template <class float>
+void Quaternion<float>::QuaternionToMatrix(const Quaternion<float> &qQuat, Matrix4x4<float>* matDest)
 {
 	//Normalize();
 	matDest->_1_1 = 1 - 2*(qQuat.m_fValues[2]*qQuat.m_fValues[2] + qQuat.m_fValues[3]*qQuat.m_fValues[3]);
@@ -313,8 +313,8 @@ void Quaternion<Real>::QuaternionToMatrix(const Quaternion<Real> &qQuat, Matrix4
 	matDest->_4_4 = 1;
 }
 
-template <class Real>
-void Quaternion<Real>::ToMatrix(Matrix4x4<Real>* matDest)
+template <class float>
+void Quaternion<float>::ToMatrix(Matrix4x4<float>* matDest)
 {
 	//Normalize();
 	matDest->_1_1 = 1 - 2*(m_fValues[2]*m_fValues[2] + m_fValues[3]*m_fValues[3]);
@@ -335,43 +335,43 @@ void Quaternion<Real>::ToMatrix(Matrix4x4<Real>* matDest)
 	matDest->_4_4 = 1;
 }
 
-template <class Real>
-Quaternion<Real> Quaternion<Real>::AxisAngleToQuaternion(Real rAngel, Vector3<Real> vecVec)
+template <class float>
+Quaternion<float> Quaternion<float>::AxisAngleToQuaternion(float rAngel, Vector3 vecVec)
 {
 	if(!vecVec.IsUnitVector()) vecVec.Normalize();
-	m_fValues[0]   =   Mathematic::Cos(rAngel/(Real)2);
-	m_fValues[1]   =   vecVec.x * Mathematic<Real>::Sin(rAngel/(Real)2);
-	m_fValues[2]   =   vecVec.y * Mathematic<Real>::Sin(rAngel/(Real)2);
-	m_fValues[3]   =   vecVec.z * Mathematic<Real>::Sin(rAngel/(Real)2);
+	m_fValues[0]   =   Mathematic::Cos(rAngel/(float)2);
+	m_fValues[1]   =   vecVec.x * Mathematic<float>::Sin(rAngel/(float)2);
+	m_fValues[2]   =   vecVec.y * Mathematic<float>::Sin(rAngel/(float)2);
+	m_fValues[3]   =   vecVec.z * Mathematic<float>::Sin(rAngel/(float)2);
 	return *this;
 }
 
-template <class Real>
-Quaternion<Real> Quaternion<Real>::AxisAngleToQuaternion(Real rWValue, Real rXValue, Real rYValue, Real rZValue)
+template <class float>
+Quaternion<float> Quaternion<float>::AxisAngleToQuaternion(float rWValue, float rXValue, float rYValue, float rZValue)
 {
-	Vector3<Real> vecVec(rXValue,rYValue,rZValue);
+	Vector3 vecVec(rXValue,rYValue,rZValue);
 	if(!vecVec.IsUnitVector()) vecVec.Normalize();
-	m_fValues[0]   =   Mathematic<Real>::Cos(rWValue/(Real)2);
-	m_fValues[1]   =   vecVec.x * Mathematic<Real>::Sin(rWValue/(Real)2);
-	m_fValues[2]   =   vecVec.y * Mathematic<Real>::Sin(rWValue/(Real)2);
-	m_fValues[3]   =   vecVec.z * Mathematic<Real>::Sin(rWValue/(Real)2);
+	m_fValues[0]   =   Mathematic<float>::Cos(rWValue/(float)2);
+	m_fValues[1]   =   vecVec.x * Mathematic<float>::Sin(rWValue/(float)2);
+	m_fValues[2]   =   vecVec.y * Mathematic<float>::Sin(rWValue/(float)2);
+	m_fValues[3]   =   vecVec.z * Mathematic<float>::Sin(rWValue/(float)2);
 	return *this;
 }
 
-template <class Real>
-Quaternion<Real> Quaternion<Real>::EulerAnglesToQuaternion(Real rXEuler, Real rYEuler, Real rZEuler)
+template <class float>
+Quaternion<float> Quaternion<float>::EulerAnglesToQuaternion(float rXEuler, float rYEuler, float rZEuler)
 {
-	Quaternion<Real> Qx (Mathematic<Real>::Cos(rXEuler/2), Mathematic<Real>::Sin(rXEuler/2), 0, 0);
-	Quaternion<Real> Qy (Mathematic<Real>::Cos(rYEuler/2), 0, Mathematic<Real>::Sin(rYEuler/2), 0);
-	Quaternion<Real> Qz (Mathematic<Real>::Cos(rZEuler/2), 0, 0, Mathematic<Real>::Sin(rZEuler/2));
+	Quaternion<float> Qx (Mathematic<float>::Cos(rXEuler/2), Mathematic<float>::Sin(rXEuler/2), 0, 0);
+	Quaternion<float> Qy (Mathematic<float>::Cos(rYEuler/2), 0, Mathematic<float>::Sin(rYEuler/2), 0);
+	Quaternion<float> Qz (Mathematic<float>::Cos(rZEuler/2), 0, 0, Mathematic<float>::Sin(rZEuler/2));
 	return (Qx * Qy * Qz);
 }
 
-template <class Real>
-Quaternion<Real> Quaternion<Real>::EulerAnglesToQuaternion(Vector3<Real> vecVec)
+template <class float>
+Quaternion<float> Quaternion<float>::EulerAnglesToQuaternion(Vector3 vecVec)
 {
-	Quaternion<Real> Qx (Mathematic<Real>::Cos(vecVec.x/2), Mathematic<Real>::Sin(vecVec.x/2), 0, 0);
-	Quaternion<Real> Qy (Mathematic<Real>::Cos(vecVec.y/2), 0, Mathematic<Real>::Sin(vecVec.y/2), 0);
-	Quaternion<Real> Qz (Mathematic<Real>::Cos(vecVec.z/2), 0, 0, Mathematic<Real>::Sin(vecVec.z/2));
+	Quaternion<float> Qx (Mathematic<float>::Cos(vecVec.x/2), Mathematic<float>::Sin(vecVec.x/2), 0, 0);
+	Quaternion<float> Qy (Mathematic<float>::Cos(vecVec.y/2), 0, Mathematic<float>::Sin(vecVec.y/2), 0);
+	Quaternion<float> Qz (Mathematic<float>::Cos(vecVec.z/2), 0, 0, Mathematic<float>::Sin(vecVec.z/2));
 	return (Qx * Qy * Qz);
 }

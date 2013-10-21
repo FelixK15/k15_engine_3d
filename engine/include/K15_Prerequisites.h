@@ -350,4 +350,6 @@ typedef K15_Engine::System::HashedString ResourceName;
 #define MEGABYTE	1048576
 #define KILOBYTE	1024
 
+#define DEPRECATED //define to identify deprecated functionality
+
 #endif //_K15Engine_Prerequisites_h_

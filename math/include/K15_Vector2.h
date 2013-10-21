@@ -18,60 +18,63 @@
  *
  * @section DESCRIPTION
  *
- *							<--- PLEASE PUT A DESCRIPTION HERE
+ *
  */
-#pragma once
 
-#ifndef __K15_VECTOR2__
-#define __K15_VECTOR2__
+#ifndef _K15Engine_Math_Vector2_h_
+#define _K15Engine_Math_Vector2_h_
 
-namespace K15_Math
-{
+#ifndef K15_MATH_USE_PRECOMPILED_HEADER
+#	include "K15_Math_Prerequisites.h"
+#endif //K15_MATH_USE_PRECOMPILED_HEADER
+
+#pragma message("FK - Add lazy evaluation and SIMD semantics")
+
+namespace K15_Engine { namespace Math {
+
 	class Vector2
 	{
 	public:
 		Vector2();
-		Vector2(float vec[2]);
+		Vector2(float p_Values[2]);
 		Vector2(float x,float y);
-		Vector2(const Vector2 &vec2);
+		Vector2(const Vector2& p_Other);
 
 		~Vector2();
 
-		void Normalize();
-		float Magnitude() const;
-		float Dot(const Vector2 &vec) const;
+		void normalize();
+		float magnitude() const;
+		float dot(const Vector2& p_Other) const;
 
-		Vector2 &operator*(float scalar);
+		Vector2& operator*(float p_Scalar);
 
-		float operator*(const Vector2 &vec) const;
+		float operator*(const Vector2& p_Other) const;
 
-		Vector2 &operator+(const Vector2 &vec);
-		Vector2 &operator-(const Vector2 &vec);
+		Vector2& operator+(const Vector2& p_Other);
+		Vector2& operator-(const Vector2& p_Other);
 
-		Vector2 &operator+=(const Vector2 &vec);
-		Vector2 &operator-=(const Vector2 &vec);
+		Vector2& operator+=(const Vector2& p_Other);
+		Vector2& operator-=(const Vector2& p_Other);
 
-		bool operator<(const Vector2 &vec);
-		bool operator>(const Vector2 &vec);
+		bool operator<(const Vector2& p_Other);
+		bool operator>(const Vector2& p_Other);
 
-		bool operator<=(const Vector2 &vec);
-		bool operator>=(const Vector2 &vec);
+		bool operator<=(const Vector2& p_Other);
+		bool operator>=(const Vector2& p_Other);
 
-		bool operator==(const Vector2 &vec);
-		bool operator!=(const Vector2 &vec);
+		bool operator==(const Vector2& p_Other);
+		bool operator!=(const Vector2& p_Other);
 
 	public:
-
-		union{
-			struct{
+		union
+		{
+			struct
+			{
 				float x,y;
-			};
+			};// struct
 			float vec[2];
-		};
-
-	private:
-		Vector2& _Add(const Vector2 &vec);
-	};
-}
+		};// union
+	};// end of Vector2 class declaration
+}}// end of K15_Engine::Math namespace
 
 #endif //__K15_VECTOR2__

@@ -37,24 +37,24 @@ namespace K15_Engine { namespace Math {
 			MF_IDENT																	
 		};
 
-		Matrix4x4(MatrixFlags flag = MF_ZERO);
-		Matrix4x4(Real mat[16]);
-		Matrix4x4(Real _1_1,Real _1_2,Real _1_3,Real _1_4,
-				  Real _2_1,Real _2_2,Real _2_3,Real _2_4,
-				  Real _3_1,Real _3_2,Real _3_3,Real _3_4,
-				  Real _4_1,Real _4_2,Real _4_3,Real _4_4);
-		Matrix4x4(const Matrix4x4 &mat);
+		Matrix4x4(MatrixFlags p_Flag = MF_ZERO);
+		Matrix4x4(float p_Values[16]);
+		Matrix4x4(float _1_1,float _1_2,float _1_3,float _1_4,
+				  float _2_1,float _2_2,float _2_3,float _2_4,
+				  float _3_1,float _3_2,float _3_3,float _3_4,
+				  float _4_1,float _4_2,float _4_3,float _4_4);
+		Matrix4x4(const Matrix4x4 &p_Other);
 
 		~Matrix4x4();
 		
 		void Identity();
 		void Zero();
 
-		Matrix4x4 ColumnChange(Matrix4x4 &mat, int column1, int column2);
-		Matrix4x4 RowChange(Matrix4x4 &mat, int row1, int row2);
+		Matrix4x4 ColumnChange(Matrix4x4& p_Matrix, int p_Column1, int p_Column2);
+		Matrix4x4 RowChange(Matrix4x4& p_Matrix, int p_Row1, int p_Row2);
 
-		Real Determinant() const;
-		void SubMat(Matrix4x4 mat4, Matrix3x3 &mat3, int row, int column) const;
+		float Determinant() const;
+		void subMat(Matrix4x4 p_Mat, Matrix3x3& p_Matrix, int p_Row, int p_Column) const;
 
 		void Inverse();
 		void Transpose();
@@ -66,40 +66,41 @@ namespace K15_Engine { namespace Math {
 		bool IsZero() const;
 		bool HasZeroVector() const;
 
-		const Matrix4x4& operator*(const Matrix4x4& mat);
-		Vector3 operator*(const Vector3& vec);
-		const Matrix4x4& operator*(Real scalar);
+		const Matrix4x4& operator*(const Matrix4x4& p_Matrix);
+		Vector3 operator*(const Vector3& p_Vector);
+		const Matrix4x4& operator*(float p_Scalar);
 
-		void operator*=(const Matrix4x4& mat);
-		void operator*=(Real fScalar);
+		void operator*=(const Matrix4x4& p_Matrix);
+		void operator*=(float p_Scalar);
 
-		Matrix4x4& operator+(const Matrix4x4& mat);
-		Matrix4x4& operator-(const Matrix4x4& mat);
+		Matrix4x4& operator+(const Matrix4x4& p_Matrix);
+		Matrix4x4& operator-(const Matrix4x4& p_Matrix);
 		Matrix4x4& operator-();
-		Matrix4x4& operator=(const Matrix4x4& mat);
+		Matrix4x4& operator=(const Matrix4x4& p_Matrix);
 
-		Matrix4x4& operator+=(const Matrix4x4& mat);
-		Matrix4x4& operator-=(const Matrix4x4& mat);
+		Matrix4x4& operator+=(const Matrix4x4& p_Matrix);
+		Matrix4x4& operator-=(const Matrix4x4& p_Matrix);
 
-		bool operator==(const Matrix4x4& mat);
-		bool operator!=(const Matrix4x4& mat);
+		bool operator==(const Matrix4x4& p_Matrix);
+		bool operator!=(const Matrix4x4& p_Matrix);
 
-		static void RotationMatrixFromEuler(Matrix4x4& mat, Vector3& eulerAngles);
+		static void rotationMatrixFromEuler(Matrix4x4& p_Matrix, Vector3& p_EulerAngles);
 
 		static Matrix4x4 PerspectiveLH(float fieldOfViewY,float aspectRatio,float zNear,float zFar);
 		static Matrix4x4 PerspectiveRH(float fieldOfViewY,float aspectRatio,float zNear,float zFar);
 
 		static const Matrix4x4 IdentityMatrix;
 	public:
-
-		union{
-			struct {
-				Real _1_1,_1_2,_1_3,_1_4;
-				Real _2_1,_2_2,_2_3,_2_4;
-				Real _3_1,_3_2,_3_3,_3_4;
-				Real _4_1,_4_2,_4_3,_4_4;
+		union
+		{
+			struct 
+			{
+				float _1_1,_1_2,_1_3,_1_4;
+				float _2_1,_2_2,_2_3,_2_4;
+				float _3_1,_3_2,_3_3,_3_4;
+				float _4_1,_4_2,_4_3,_4_4;
 			};// struct
-			Real m_fMatrix[16];
+			float m_fMatrix[16];
 		};// union
 	};// end of Matrix4x4 class
 	#include "K15_Matrix4x4.inl"

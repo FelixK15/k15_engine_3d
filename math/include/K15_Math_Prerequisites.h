@@ -33,14 +33,8 @@
 # include <xmmintrin.h> //SSE
 #endif //K15_SIMD_SUPPORT
 
-#if defined K15_MATH_USE_DOUBLE_PRECISION
-  typedef double Real;
-#else
-  typedef float Real;
-#endif //K15_MATH_USE_DOUBLE_PRECISION
-
-const Real _Pi = 4.0*atan(1.0);
-const Real _HalfPi = _Pi * 0.5;
-const Real _TwoPi = _Pi + _Pi;
+const float _Pi = 4.0f*atan(1.0f);
+const float _HalfPi = _Pi * 0.5f;
+const float _TwoPi = _Pi + _Pi;
 
 #endif //_K15Engine_Math_Prerequisites_h_

@@ -17,124 +17,126 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+#include "K15_Math_PrecompiledHeader.h"
 #include "K15_Vector2.h"
-#include "math.h"
 
-using namespace K15_Math;
-
-Vector2::Vector2()
-{
-	x = 0;
-	y = 0;
-}
-
-Vector2::Vector2( float vec[2] )
-{
-	x = vec[0];
-	y = vec[1];
-}
-
-Vector2::Vector2( float x,float y )
-{
-	vec[0] = x;
-	vec[1] = y;
-}
-
-Vector2::Vector2( const Vector2 &vec2 )
-{
-	x = vec2.x;
-	y = vec2.y;
-}
-
-Vector2::~Vector2()
-{
-
-}
-
-void Vector2::Normalize()
-{
-	float tmp = Magnitude();
-	x /= tmp;
-	y /= tmp;
-}
-
-float Vector2::Magnitude() const
-{
-	return sqrt((x*x+y*y));
-}
-
-float Vector2::Dot( const Vector2 &vec ) const
-{
-	return (x * vec.x + y * vec.y);
-}
-
-Vector2 &Vector2::operator*( float scale )
-{
-	x *= scale;
-	y *= scale;
-	return *this;
-}
-
-
-Vector2 &Vector2::operator+( const Vector2 &vec )
-{
-	return _Add(vec);
-}
-
-Vector2 &Vector2::operator-( const Vector2 &vec )
-{
-	x -= vec.x;
-	y -= vec.y;
-	return *this;
-}
-
-Vector2 &Vector2::operator+=( const Vector2 &vec )
-{
-	return _Add(vec);
-}
-
-Vector2 &Vector2::operator-=( const Vector2 &vec )
-{
-	x -= vec.x;
-	y -= vec.y;
-	return *this;
-}
-
-bool Vector2::operator>( const Vector2 &vec )
-{
-	if(Magnitude()>vec.Magnitude()){
-		return true;
+namespace K15_Engine { namespace Math {
+	/*********************************************************************************/
+	Vector2::Vector2()
+		: x(0.0f),
+		  y(0.0f)
+	{
+		
 	}
-	return false;
-}
-
-bool Vector2::operator<=( const Vector2 &vec )
-{
-	if(Magnitude()<=vec.Magnitude()){
-		return true;
+	/*********************************************************************************/
+	Vector2::Vector2(float p_Values[2])
+		: x(p_Values[0]),
+		  y(p_Values[1])
+	{
+		
 	}
-	return false;
-}
-
-bool Vector2::operator==( const Vector2 &vec )
-{
-	if(x==vec.x && y==vec.y){
-		return true;
+	/*********************************************************************************/
+	Vector2::Vector2(float x,float y)
+		: x(x),
+		  y(y)
+	{
+	
 	}
-	return false;
-}
+	/*********************************************************************************/
+	Vector2::Vector2(const Vector2& p_Other)
+		: x(p_Other.x),
+		  y(p_Other.y)
+	{
+	
+	}
+	/*********************************************************************************/
+	Vector2::~Vector2()
+	{
 
-bool Vector2::operator!=( const Vector2 &vec )
-{
-	if(x==vec.x && y==vec.y){
+	}
+	/*********************************************************************************/
+	void Vector2::normalize()
+	{
+		float tmp = magnitude();
+		x /= tmp;
+		y /= tmp;
+	}
+	/*********************************************************************************/
+	float Vector2::magnitude() const
+	{
+		return ::sqrt(x*x+y*y);
+	}
+	/*********************************************************************************/
+	float Vector2::dot(const Vector2& p_Other) const
+	{
+		return (x * p_Other.x + y * p_Other.y);
+	}
+	/*********************************************************************************/
+	Vector2& Vector2::operator*(float p_Scale)
+	{
+		x *= p_Scale;
+		y *= p_Scale;
+		return *this;
+	}
+	/*********************************************************************************/
+	Vector2& Vector2::operator+(const Vector2& p_Other)
+	{
+		x += p_Other.x;
+		y += p_Other.y;
+		return *this;
+	}
+
+	Vector2& Vector2::operator-(const Vector2& p_Other)
+	{
+		x -= p_Other.x;
+		y -= p_Other.y;
+		return *this;
+	}
+	/*********************************************************************************/
+	Vector2& Vector2::operator+=( const Vector2& p_Other )
+	{
+		x += p_Other.x;
+		y += p_Other.y;
+		return *this;
+	}
+	/*********************************************************************************/
+	Vector2& Vector2::operator-=( const Vector2& p_Other )
+	{
+		x -= p_Other.x;
+		y -= p_Other.y;
+		return *this;
+	}
+	/*********************************************************************************/
+	bool Vector2::operator>( const Vector2& p_Other )
+	{
+		if(magnitude()>p_Other.magnitude()){
+			return true;
+		}
 		return false;
 	}
-	return true;
-}
-
-Vector2 &Vector2::_Add( const Vector2 &vec )
-{
-	x += vec.x;
-	y += vec.y;
-	return *this;
-}
+	/*********************************************************************************/
+	bool Vector2::operator<=( const Vector2& p_Other )
+	{
+		if(magnitude()<=p_Other.magnitude()){
+			return true;
+		}
+		return false;
+	}
+	/*********************************************************************************/
+	bool Vector2::operator==( const Vector2& p_Other )
+	{
+		if(x==p_Other.x && y==p_Other.y){
+			return true;
+		}
+		return false;
+	}
+	/*********************************************************************************/
+	bool Vector2::operator!=( const Vector2& p_Other )
+	{
+		if(x==p_Other.x && y==p_Other.y){
+			return false;
+		}
+		return true;
+	}
+	/*********************************************************************************/
+}}// end of K15_Engine::Math namespace
