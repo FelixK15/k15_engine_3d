@@ -27,8 +27,6 @@
 
 #include "K15_StdInclude.h"
 
-#include "K15_String.mcr"
-
 #ifdef _UNICODE
 	#define K15_CHAR wchar_t
 
@@ -214,6 +212,6 @@ namespace K15_Engine { namespace Core {
 		unsigned int m_iSizeStr;
 		unsigned int m_iCapacity;
 	};
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace
 
 #endif //__K15_STRING__

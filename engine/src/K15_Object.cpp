@@ -23,7 +23,7 @@
 
 namespace K15_Engine { namespace Core { 
 
-	IMPLEMENT_RTTI(Core,Object);
+	K15_IMPLEMENT_RTTI(Core,Object);
 
 	Object::Object()
 		: m_References(0),
@@ -51,4 +51,4 @@ namespace K15_Engine { namespace Core {
 
 	}
 
-}}// end of K15_Engine::System namespace
+}}// end of K15_Engine::Core namespace

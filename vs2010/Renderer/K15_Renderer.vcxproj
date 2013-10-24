@@ -14,11 +14,15 @@
     <ClInclude Include="..\..\renderer\include\K15_GpuBuffer.h" />
     <ClInclude Include="..\..\renderer\include\K15_GpuProgram.h" />
     <ClInclude Include="..\..\renderer\include\K15_RendererBase.h" />
+    <ClInclude Include="..\..\renderer\include\K15_RendererPrecompiledHeader.h" />
     <ClInclude Include="..\..\renderer\include\K15_RendererPrerequisites.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\renderer\src\K15_GpuBuffer.cpp" />
     <ClCompile Include="..\..\renderer\src\K15_RendererBase.cpp" />
+    <ClCompile Include="..\..\renderer\src\K15_RendererPrecompiledHeader.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\renderer\src\K15_GpuBuffer.inl" />
@@ -73,6 +77,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>K15_RendererPrecompiledHeader.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

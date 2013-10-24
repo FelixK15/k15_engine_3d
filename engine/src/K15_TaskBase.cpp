@@ -39,4 +39,4 @@ namespace K15_Engine { namespace Core {
 		return m_Priority < p_Other.m_Priority;
 	}
 	/*********************************************************************************/
-}}//end of K15_Engine::System
+}}//end of K15_Engine::Core

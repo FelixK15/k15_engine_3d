@@ -33,6 +33,6 @@ namespace K15_Engine { namespace Core {
 		unsigned int Size;		/*Size of the allocated memory*/
 		bool IsArray;			/*Was the memory allocated by new[]?*/
 	};
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_MemoryHeader_h_

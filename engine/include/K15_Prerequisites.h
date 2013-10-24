@@ -176,7 +176,7 @@ namespace K15_Engine
 
 //Threading
 #if defined K15_DONT_USE_STL
-#	define K15_Thread(func,args) K15_Engine::System::Thread<func,args>
+#	define K15_Thread(func,args) K15_Engine::Core::Thread<func,args>
 #else
 #	if defined K15_CPP11_SUPPORT
 #		include <thread>		
@@ -282,18 +282,18 @@ typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::DynamicLibraryManage
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::LogManager> LogManagerAllocatedObject;
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::ProfilingManager> ProfilingManagerAllocatedObject;
 
-#define ApplicationAllocator K15_Engine::System::Application::getInstance()
-#define EventManagerAllocator K15_Engine::System::EventManager::getInstance()
-#define TaskManagerAllocator K15_Engine::System::TaskManager::getInstance()
-#define DynamicLibraryManagerAllocator K15_Engine::System::DynamicLibraryManager::getInstance()
-#define LogManagerAllocator K15_Engine::System::LogManager::getInstance()
+#define ApplicationAllocator K15_Engine::Core::Application::getInstance()
+#define EventManagerAllocator K15_Engine::Core::EventManager::getInstance()
+#define TaskManagerAllocator K15_Engine::Core::TaskManager::getInstance()
+#define DynamicLibraryManagerAllocator K15_Engine::Core::DynamicLibraryManager::getInstance()
+#define LogManagerAllocator K15_Engine::Core::LogManager::getInstance()
 
-#define g_Application K15_Engine::System::Application::getInstance()
-#define g_EventManager K15_Engine::System::EventManager::getInstance()
-#define g_TaskManager K15_Engine::System::TaskManager::getInstance()
-#define g_DynamicLibraryManager K15_Engine::System::DynamicLibraryManager::getInstance()
-#define g_LogManager K15_Engine::System::LogManager::getInstance()
-#define g_ProfileManager K15_Engine::System::ProfilingManager::getInstance()
+#define g_Application K15_Engine::Core::Application::getInstance()
+#define g_EventManager K15_Engine::Core::EventManager::getInstance()
+#define g_TaskManager K15_Engine::Core::TaskManager::getInstance()
+#define g_DynamicLibraryManager K15_Engine::Core::DynamicLibraryManager::getInstance()
+#define g_LogManager K15_Engine::Core::LogManager::getInstance()
+#define g_ProfileManager K15_Engine::Core::ProfilingManager::getInstance()
 
 typedef signed char byte;
 
@@ -336,10 +336,10 @@ typedef K15_Engine::Core::HashedString ProfilingName;
 typedef K15_Engine::Core::HashedString ResourceName;
 
 #if defined K15_NO_STRINGS
-#	define _N(x)  K15_Engine::System::ObjectNames::ObjectNames::x
-#	define _TN(x) K15_Engine::System::ObjectNames::TypeNames::x
-#	define _EN(x) K15_Engine::System::ObjectNames::EventNames::x
-#	define _RN(x) K15_Engine::System::ObjectNames::ResourceNames::x
+#	define _N(x)  K15_Engine::Core::ObjectNames::ObjectNames::x
+#	define _TN(x) K15_Engine::Core::ObjectNames::TypeNames::x
+#	define _EN(x) K15_Engine::Core::ObjectNames::EventNames::x
+#	define _RN(x) K15_Engine::Core::ObjectNames::ResourceNames::x
 #else
 #	define _N(x)  ObjectName(#x)
 #	define _TN(x) TypeName(#x)
@@ -349,7 +349,7 @@ typedef K15_Engine::Core::HashedString ResourceName;
 
 #define K15_SAFE_DELETE(ptr) if(ptr){ delete ptr; ptr = 0; }
 
-#define K15_SMART_POINTER(type) typedef K15_Engine::System::Memory::Pointer<type> typePtr
+#define K15_SMART_POINTER(type) typedef K15_Engine::Core::Memory::Pointer<type> typePtr
 
 #define K15_INVALID_RESOURCE_ID -1
 

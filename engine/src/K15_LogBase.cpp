@@ -65,4 +65,4 @@ namespace K15_Engine { namespace Core {
 	}
 /*********************************************************************************/
 
-}} //end of K15_Engine::System
+}} //end of K15_Engine::Core

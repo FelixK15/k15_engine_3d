@@ -47,6 +47,6 @@ namespace K15_Engine { namespace Core {
 		 */
 		virtual void logMessage(const String &p_Message,Enum p_PriorityFlag);
 	};// end of TextConsoleLog class definition
-}} // end of K15_Engine::System namespace
+}} // end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_TextConsoleLog_h_

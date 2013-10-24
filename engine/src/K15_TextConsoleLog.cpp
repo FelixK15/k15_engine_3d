@@ -67,4 +67,4 @@ namespace K15_Engine { namespace Core {
 		printf("%s\n",msg.c_str());
 	}
 	/*********************************************************************************/
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace

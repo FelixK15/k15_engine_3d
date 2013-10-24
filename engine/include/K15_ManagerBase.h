@@ -23,6 +23,6 @@ namespace K15_Engine { namespace Core
 		ObjectList m_ObjectList;
 	};
 
-}} //end of K15_Engine::System namespace
+}} //end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_ManagerBase_h_

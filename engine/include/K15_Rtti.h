@@ -27,7 +27,29 @@
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-#include "K15_Rtti.mcr"
+#define K15_DECLARE_RTTI \
+public:	\
+  static const K15_Engine::Core::Rtti TYPE;	\
+  virtual const K15_Engine::Core::Rtti &getType() const{ return TYPE; }	
+
+#define K15_DECLARE_RTTI_TEMPLATE \
+public: \
+  static const K15_Engine::Core::Rtti TYPE; \
+  virtual const K15_Engine::Core::Rtti &getType() const{ return TYPE; }	
+
+#define K15_IMPLEMENT_RTTI_BASE(namespace,classtype,basetype)	\
+  const K15_Engine::Core::Rtti classtype::TYPE(#namespace"."#classtype,&basetype::TYPE);
+
+#define K15_IMPLEMENT_RTTI(namespace,classtype)	\
+  const K15_Engine::Core::Rtti classtype::TYPE(#namespace"."#classtype,0);
+
+#define K15_IMPLEMENT_RTTI_TEMPLATE_BASE(namespace,classtype,basetype) \
+  template<> \
+  const K15_Engine::Core::Rtti classtype::TYPE(#namespace"."#classtype,&basetype::TYPE);
+
+#define K15_IMPLEMENT_RTTI_TEMPLATE(namespace,classtype) \
+  template<> \
+  const K15_Engine::Core::Rtti classtype::TYPE(#namespace"."#classtype,0);
 
 namespace K15_Engine { namespace Core { 
 
@@ -49,6 +71,6 @@ namespace K15_Engine { namespace Core {
   /*********************************************************************************/
 	#include "K15_Rtti.inl"
   /*********************************************************************************/
-}} //end of K15_Engine::System namespace
+}} //end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_RTTI_h_

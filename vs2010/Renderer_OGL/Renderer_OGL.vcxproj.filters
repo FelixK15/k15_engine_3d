@@ -4,22 +4,30 @@
     <Filter Include="Core">
       <UniqueIdentifier>{240bfccd-2ded-4599-9be7-38eb8a9db4b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\include">
+      <UniqueIdentifier>{cd61d28b-7c1c-43f4-8384-c56cda9692f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\src">
+      <UniqueIdentifier>{9ca95f4c-bacf-4008-9ab8-d8c4593a0710}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\rendererOGL\include\K15_RendererOGLPrerequisites.h">
-      <Filter>Core</Filter>
+    <ClInclude Include="..\..\rendererOGL\include\K15_GpuBufferImplOGL.h">
+      <Filter>Core\include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\rendererOGL\include\K15_RendererOGL.h">
-      <Filter>Core</Filter>
+      <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\rendererOGL\include\K15_GpuBufferImplOGL.h">
-      <Filter>Core</Filter>
+    <ClInclude Include="..\..\rendererOGL\include\K15_RendererOGLPrerequisites.h">
+      <Filter>Core\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\rendererOGL\src\K15_RendererOGL.cpp">
-      <Filter>Core</Filter>
+      <Filter>Core\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\rendererOGL\src\K15_GpuBufferImplOGL.cpp" />
+    <ClCompile Include="..\..\rendererOGL\src\K15_GpuBufferImplOGL.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

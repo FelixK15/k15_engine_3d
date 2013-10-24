@@ -20,9 +20,9 @@
 #include "plugin.h"
 
 /*********************************************************************************/
-K15_Engine::System::ApplicationModuleDescription getDescription()
+K15_Engine::Core::ApplicationModuleDescription getDescription()
 {
-	K15_Engine::System::ApplicationModuleDescription desc;
+	K15_Engine::Core::ApplicationModuleDescription desc;
 
 	desc.Author = "Felix Klinge";
 	desc.CompiledWithEngineVersion = K15_ENGINE_VERSION;
@@ -33,7 +33,7 @@ K15_Engine::System::ApplicationModuleDescription getDescription()
 	return desc;
 }
 /*********************************************************************************/
-K15_Engine::System::ApplicationModule* getModule()
+K15_Engine::Core::ApplicationModule* getModule()
 {
 	return new K15_Engine::Plugins::VisualStudioLogger::VisualStudioLoggerApplicationModule();
 }

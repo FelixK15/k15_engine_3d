@@ -57,4 +57,4 @@ namespace K15_Engine { namespace Core {
 		return m_Loaded;
 	}
 	/*********************************************************************************/
-}}// end of K15_Engine::System namespace
+}}// end of K15_Engine::Core namespace

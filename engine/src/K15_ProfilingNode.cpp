@@ -57,4 +57,4 @@ namespace K15_Engine { namespace Core {
 		m_Time = m_EndTime - m_StartTime;
 	}
 	/*********************************************************************************/
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace

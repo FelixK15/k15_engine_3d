@@ -16,7 +16,7 @@
     <ClInclude Include="..\..\math\include\K15_Quaternion.h">
       <Filter>Quaternion</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\math\include\K15_Math_Prerequisites.h">
+    <ClInclude Include="..\..\math\include\K15_MathPrerequisites.h">
       <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
@@ -35,9 +35,6 @@
     </ClCompile>
     <ClCompile Include="..\..\math\src\K15_Matrix4x4.cpp" />
     <ClCompile Include="..\..\math\src\K15_Matrix3x3.cpp" />
-    <ClCompile Include="..\..\math\src\K15_Mathematic.cpp">
-      <Filter>Mathematic</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\math\src\K15_Vector2.cpp">
       <Filter>Vector</Filter>
     </ClCompile>
@@ -65,12 +62,6 @@
   <ItemGroup>
     <None Include="..\..\math\src\K15_Vector3.inl">
       <Filter>Vector</Filter>
-    </None>
-    <None Include="..\..\math\src\K15_Matrix4x4.inl">
-      <Filter>Matrix</Filter>
-    </None>
-    <None Include="..\..\math\src\K15_Matrix3x3.inl">
-      <Filter>Matrix</Filter>
     </None>
     <None Include="..\..\math\src\K15_Vector3.inl">
       <Filter>Vector</Filter>

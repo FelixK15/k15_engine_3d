@@ -47,7 +47,7 @@ namespace K15_Engine { namespace Core {
 			m_Instance = (T*)this;
 		}
 	};
-}} //end of K15_Engine::System namespace
+}} //end of K15_Engine::Core namespace
 
 template<class T> T* K15_Engine::Core::Singleton<T>::m_Instance = 0;
 

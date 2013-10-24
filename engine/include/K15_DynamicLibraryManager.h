@@ -66,6 +66,6 @@ namespace K15_Engine { namespace Core {
 	private:
 		DynamicLibraryMap m_LoadedLibs; //caching dynamic libs doesnt make much sense - reloading would be more sufficient
 	};
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_DynamicLibraryManager_h_

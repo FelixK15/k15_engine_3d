@@ -82,6 +82,6 @@ namespace K15_Engine { namespace Core {
 		bool m_Loaded;
 	};// end of DynamicLibraryBase class
 	#include "K15_DynamicLibraryBase.inl"
-}} //end of K15_Engine::System namespace
+}} //end of K15_Engine::Core namespace
 
 #endif //__K15_DYNAMIC_LIBRARY__

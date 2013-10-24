@@ -133,4 +133,4 @@ namespace K15_Engine { namespace Core {
 
 	}
 	/*********************************************************************************/
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace

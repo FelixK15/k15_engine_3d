@@ -61,6 +61,6 @@ namespace K15_Engine { namespace Core { namespace Memory {
 		T* m_pObject;
 	};
 	#include "K15_Pointer.inl"
-}}} //end of K15_Engine::System::Memory namespace
+}}} //end of K15_Engine::Core::Memory namespace
 
 #endif //_K15Engine_Core_Memory_Pointer_h_

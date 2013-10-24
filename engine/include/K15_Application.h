@@ -149,6 +149,6 @@ namespace K15_Engine { namespace Core {
 				DynamicLibraryManager* m_DynamicLibraryManager;
   }; //end of Application class definition
 #include "K15_Application.inl"
-}} //end of K15_Engine::System namespace
+}} //end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_Application_h_

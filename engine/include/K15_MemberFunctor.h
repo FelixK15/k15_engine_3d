@@ -81,6 +81,6 @@ namespace K15_Engine { namespace Core {
 	};//end of MemberFunctor1 class
 	/*********************************************************************************/
 #include "K15_MemberFunctor.inl"
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_MemberFunctor_h_

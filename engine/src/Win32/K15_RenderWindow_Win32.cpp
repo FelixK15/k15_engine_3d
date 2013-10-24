@@ -26,12 +26,20 @@
 namespace K15_Engine { namespace Core {
 	LRESULT CALLBACK K15_WindowProc(HWND p_HandleWindow,UINT p_MSG,WPARAM p_wParam,LPARAM p_lParam)
 	{
+    RenderWindowBase* window = (RenderWindowBase*)GetWindowLong(p_HandleWindow,GWL_USERDATA);
 		//if(p_MSG == WM_)
 		if(p_MSG == WM_CLOSE)
 		{
 			PostQuitMessage(0);
 			return 0;
 		}
+    else if(p_MSG == WM_ACTIVATE)
+    {
+      bool hasFocus = p_wParam > 0;
+      window->setHasFocus(hasFocus);
+
+      return 0;
+    }
 
 		return DefWindowProc(p_HandleWindow,p_MSG,p_wParam,p_lParam);
 	}
@@ -74,6 +82,8 @@ namespace K15_Engine { namespace Core {
 			return false;
 		}
 		
+    SetWindowLong(m_HandleWindow,GWL_USERDATA,(LONG)this);
+
 		m_DeviceContext = GetDC(m_HandleWindow);
 
 		ShowWindow(m_HandleWindow,SW_SHOW);
@@ -134,4 +144,4 @@ namespace K15_Engine { namespace Core {
 		return m_Instance;
 	}
 /*********************************************************************************/
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace

@@ -51,6 +51,6 @@ namespace K15_Engine { namespace Core {
 		double m_EndTime;
 		double m_StartTime;
 	};
-}} //end of K15_Engine::System namespace
+}} //end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_ProfileNode_h_

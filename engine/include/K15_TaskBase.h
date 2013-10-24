@@ -51,6 +51,6 @@ namespace K15_Engine { namespace Core {
 		uint32 m_Priority;
 	};// end of TaskBase class
 #include "K15_TaskBase.inl"
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_TaskBase_h_

@@ -123,6 +123,9 @@ namespace K15_Engine { namespace Core {
 				currentListener->handleEvent(p_Event);
 			}
 		}
+
+    //delete event after it has been processed
+    K15_DELETE p_Event;
 	}
 	/*********************************************************************************/
 	void EventManager::update()
@@ -134,7 +137,6 @@ namespace K15_Engine { namespace Core {
 			GameEvent* gameEvent = m_Events.top();
 			triggerEvent(gameEvent);
 			m_Events.pop();
-			K15_DELETE gameEvent;
 		}
 	}
 	/*********************************************************************************/
@@ -143,4 +145,4 @@ namespace K15_Engine { namespace Core {
 		return K15_NEW EventManagerUpdateTask(this);
 	}
 	/*********************************************************************************/
-}}// end of K15_Engine::System namespace
+}}// end of K15_Engine::Core namespace

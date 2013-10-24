@@ -175,6 +175,6 @@ namespace K15_Engine { namespace Core {
 			return returnValue;
 		}
 	};//end of StringUtil class
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_StringUtil_h_

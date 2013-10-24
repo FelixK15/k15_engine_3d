@@ -36,7 +36,7 @@ namespace K15_Engine { namespace Core {
 
 	class K15_API_EXPORT Object
 	{
-		DECLARE_RTTI;
+		K15_DECLARE_RTTI;
 
 	public:
 		Object();
@@ -67,6 +67,6 @@ namespace K15_Engine { namespace Core {
 	K15_SMART_POINTER(Object);
    
 	#include "K15_Object.inl"
-}} //end of K15_Engine::System namespace
+}} //end of K15_Engine::Core namespace
 
 #endif //__K15Engine_Core_Object_h_
