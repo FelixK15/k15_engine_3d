@@ -58,6 +58,6 @@ namespace K15_Engine { namespace Core {
 		double m_Frequency;
 	};//end of ApplicationOSLayer_Win32 class
 	/*********************************************************************************/
-}}// end of K15_Engine::System namespace
+}}// end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_ApplicationOSLayer_Win32_h_

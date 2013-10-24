@@ -48,6 +48,6 @@ namespace K15_Engine { namespace Core {
 	protected:
 		HMODULE m_Module;
 	};// end of DynamicLibrary_Win32 class
-}} //end of K15_Engine::System namespace
+}} //end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_DynamicLibrary_win32_h_

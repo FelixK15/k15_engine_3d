@@ -24,7 +24,7 @@
 #include "K15_ApplicationModuleDescription.h"
 
 /*********************************************************************************/
-__declspec(dllexport) K15_Engine::System::ApplicationModuleDescription getDescription();
+__declspec(dllexport) K15_Engine::Core::ApplicationModuleDescription getDescription();
 /*********************************************************************************/
-__declspec(dllexport) K15_Engine::System::ApplicationModule* getModule();
+__declspec(dllexport) K15_Engine::Core::ApplicationModule* getModule();
 /*********************************************************************************/

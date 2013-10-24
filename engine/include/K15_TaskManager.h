@@ -57,6 +57,6 @@ namespace K15_Engine { namespace Core {
 		TaskList m_Tasks;
 	};//end of TaskManager class
 #include "K15_TaskManager.inl"
-}} //end of K15_Engine::System
+}} //end of K15_Engine::Core
 
 #endif //_K15Engine_Core_TaskManager_h_

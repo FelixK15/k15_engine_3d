@@ -26,7 +26,7 @@
 
 #include "K15_Prerequisites.h"
 
-using namespace K15_Engine::System;
+using namespace K15_Engine::Core;
 
 namespace K15_Engine { namespace Rendering {
 	class RenderTarget;
@@ -34,12 +34,13 @@ namespace K15_Engine { namespace Rendering {
 	class VertexBuffer;
 	class IndexBuffer;
 	class Material;
+  class RendererBase;
 	class Mesh;
 	class Camera;
 	class SubMesh;
 	class GpuProgram;
 }}// end of K15_Engine::Rendering namespace
 
-typedef K15_Engine::System::AllocatedObject<K15_Engine::Rendering::RendererBase> RendererAllocatedObject;
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Rendering::RendererBase> RendererAllocatedObject;
 
 #endif //_K15Engine_Renderer_Prerequisites_h_

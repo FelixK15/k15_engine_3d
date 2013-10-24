@@ -48,6 +48,6 @@ namespace K15_Engine { namespace Core {
     virtual void onPostRun(){}
     virtual void onPostRender(/*const RenderContext* p_RenderContext*/){}
 	}; //end of ApplicationModule class
-}} //end of K15_Engine::System namespace
+}} //end of K15_Engine::Core namespace
 
 #endif

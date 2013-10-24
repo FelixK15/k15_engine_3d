@@ -56,6 +56,6 @@ namespace K15_Engine { namespace Core {
   /*********************************************************************************/
   #include "K15_ResourceHandle.inl"
   /*********************************************************************************/
-}} //end of K15_Engine::System namespace
+}} //end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_ResourceHandle_h_

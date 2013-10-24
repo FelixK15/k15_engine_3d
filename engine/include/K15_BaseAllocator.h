@@ -58,6 +58,6 @@ namespace K15_Engine { namespace Core {
     uint32 m_MemorySize;
     uint32 m_UsedMemory;
   };//end of BaseAllocator class
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_BaseAllocator_h_

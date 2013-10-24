@@ -45,6 +45,6 @@ namespace K15_Engine { namespace Core {
 		uint32 PluginFlagBitMask;
 		uint32 CompiledWithEngineVersion;
 	};
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_ApplicationModuleDescription_h_

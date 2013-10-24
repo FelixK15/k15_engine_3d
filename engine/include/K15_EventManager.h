@@ -135,6 +135,6 @@ namespace K15_Engine { namespace Core {
 		EventStack m_Events; //Event Queue
 		EventTypeListenerMap m_Listener; //Map where the EventTypes are associated with EventListeners.
 	};//end of EventManager class
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_EventManager_h_

@@ -77,6 +77,6 @@ namespace K15_Engine { namespace Core {
 	};
 	/*********************************************************************************/
 #include "K15_Functor.inl"
-}}//end of namespace K15_Engine::System
+}}//end of namespace K15_Engine::Core
 
 #endif //_K15Engine_Core_Functor_h_

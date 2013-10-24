@@ -32,7 +32,7 @@
 
 #include "K15_ProfilingNode.h"
 
-#define K15_PROFILE(profile_name) //K15_Engine::System::ProfilingNode n_##profile_name(_N(profile_name));
+#define K15_PROFILE(profile_name) //K15_Engine::Core::ProfilingNode n_##profile_name(_N(profile_name));
 
 namespace K15_Engine { namespace Core { 
 
@@ -57,6 +57,6 @@ namespace K15_Engine { namespace Core {
 		ProfilingNode* m_LastNode;
 	};// end of ProfilingManager class
 #include "K15_ProfilingManager.inl"
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_ProfilingManager_h_

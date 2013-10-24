@@ -50,7 +50,8 @@ namespace K15_Engine { namespace Core {
 	RenderWindowBase::RenderWindowBase()
 		: m_WindowTitle(""),
 		m_CurrentResolution(),
-		m_IsFullscreen(false)
+		m_IsFullscreen(false),
+    m_HasFocus(true)
 	{
 
 	}
@@ -91,5 +92,33 @@ namespace K15_Engine { namespace Core {
 	{
 		return m_IsFullscreen;
 	}
-	/*********************************************************************************/
-}}//end of K15_Engine::System namespace
+  /*********************************************************************************/
+  void RenderWindowBase::setHasFocus(bool p_HasFocus)
+  {
+  		if(m_HasFocus == p_HasFocus)
+  		{
+  				return;
+  		}
+
+  		GameEvent *focusEvent = 0;
+
+  		if(p_HasFocus)
+  		{
+      		focusEvent = K15_NEW GameEvent(_EN(FocusGained));
+  		}
+  		else
+    	{
+      		focusEvent = K15_NEW GameEvent(_EN(FocusLost));
+    	}
+
+    	m_HasFocus = p_HasFocus;
+
+    	g_EventManager->triggerEvent(focusEvent);
+  }
+  /*********************************************************************************/
+  bool RenderWindowBase::getHasFocus() const
+  {
+    return m_HasFocus;
+  }
+  /*********************************************************************************/
+}}//end of K15_Engine::Core namespace

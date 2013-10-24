@@ -37,6 +37,6 @@ namespace K15_Engine { namespace Core {
 		uint32 DataSize;
 	};
 
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace
 
 #endif

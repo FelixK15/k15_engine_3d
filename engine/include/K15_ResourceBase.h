@@ -98,6 +98,6 @@ namespace K15_Engine { namespace Core {
 		uint32 m_ReferenceCount;
 	};
 	#include "K15_ResourceBase.inl"
-}} //end of K15_Engine::System namespace
+}} //end of K15_Engine::Core namespace
 
 #endif //__K15_RESOURCE__

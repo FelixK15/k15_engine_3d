@@ -48,7 +48,7 @@ namespace K15_Engine { namespace Core {
 		* @param  p_Argument - Argument for this event
 		* @param  p_ArgumentSize - Size of the argument
 		*/
-		GameEvent(const EventName& p_Name,void* p_Argument,uint32 p_ArgumentSize);
+		GameEvent(const EventName& p_Name,void* p_Argument = 0,uint32 p_ArgumentSize = 0);
 
 		/**
 		* Event constructor. (copy constructor)
@@ -111,6 +111,6 @@ namespace K15_Engine { namespace Core {
 		void* m_Argument;
 	};
 	#include "K15_GameEvent.inl"
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_Event_h_

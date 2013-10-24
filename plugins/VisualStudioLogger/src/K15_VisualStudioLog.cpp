@@ -52,4 +52,4 @@ namespace K15_Engine { namespace Plugins { namespace VisualStudioLogger {
 		OutputDebugString(msg.c_str());
 	}
 	/*********************************************************************************/
-}}}// end of K15_Engine::System namespace
+}}}// end of K15_Engine::Core namespace

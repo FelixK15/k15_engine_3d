@@ -53,6 +53,6 @@ namespace K15_Engine { namespace Core {
 		HWND m_HandleWindow;
 		HINSTANCE m_Instance;
 	};// end of RenderWindow_Win32 class declaration
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_RenderWindow_Win32_h_

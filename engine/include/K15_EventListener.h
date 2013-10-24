@@ -35,6 +35,6 @@ namespace K15_Engine { namespace Core {
 	public:
 		virtual void handleEvent(GameEvent* p_Event) = 0;
 	};
-}}// end of K15_Engine::System namespace
+}}// end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_EventListener_h_

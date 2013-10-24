@@ -109,4 +109,4 @@ namespace K15_Engine { namespace Core {
 	return (void*)memory;
   }
 /*********************************************************************************/
-}}//end of K15_Engine::System
+}}//end of K15_Engine::Core

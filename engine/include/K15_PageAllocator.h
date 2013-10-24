@@ -72,6 +72,6 @@ namespace K15_Engine { namespace Core {
 		uint32 m_PageSize;
 	};//end of PageAllocator class
 #include "K15_PageAllocator.inl"
-}} //end of K15_Engine::System namespace
+}} //end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_PageAllocator_h_

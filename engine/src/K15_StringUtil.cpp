@@ -159,4 +159,4 @@ namespace K15_Engine { namespace Core {
 		return p_String.find_first_of("true") != String::npos || p_String.find_first_of("1") != String::npos;
 	}
 	/*********************************************************************************/
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace

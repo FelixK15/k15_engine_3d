@@ -58,4 +58,4 @@ namespace K15_Engine { namespace Core {
 		m_LastNode = 0;
 	}
 	/*********************************************************************************/
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace

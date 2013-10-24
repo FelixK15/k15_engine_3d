@@ -66,6 +66,6 @@ namespace K15_Engine { namespace Core {
 		double m_RawDeltaTime;
 	};// end of GameTime class
 	//#include "K15_GameTime.inl"
-}}// end of K15_Engine::System namespace
+}}// end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_GameTime_h_

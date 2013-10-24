@@ -30,11 +30,11 @@
 
 #define K15_SET_NUMERICAL_SETTING(parameter_variable,setting_name,data_type) \
 	if(parameter_variable.Name == #setting_name)  \
-		this->set ## setting_name(K15_Engine::System::StringUtil::stringToNumeric<data_type>(parameter_variable.Value))
+		this->set ## setting_name(K15_Engine::Core::StringUtil::stringToNumeric<data_type>(parameter_variable.Value))
 
 #define K15_SET_BOOL_SETTING(parameter_variable,setting_name) \
 	if(parameter_variable.Name == #setting_name)  \
-		this->set ## setting_name(K15_Engine::System::StringUtil::toBool(parameter_variable.Value))
+		this->set ## setting_name(K15_Engine::Core::StringUtil::toBool(parameter_variable.Value))
 
 #define K15_SET_STRING_SETTING(parameter_variable,setting_name) \
 	if(parameter_variable.Name == #setting_name)  \
@@ -48,6 +48,6 @@ namespace K15_Engine { namespace Core {
 		String Name;
 		String Value;
 	};
-}}//end of K15_Engine::System namespace
+}}//end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_ApplicationParameter_h_

@@ -25,8 +25,20 @@
 #define _K15Engine_Prerequisites_h_
 
 #ifdef _WIN32
-# define K15_OS_WINDOWS
+#	define K15_OS_WINDOWS
 #endif //_WIN32
+
+#if defined (K15_OS_WINDWS)
+	#ifdef _WIN64
+	#	define K15_64_BIT
+	#endif //_WIN64
+#endif //K15_OS_WINDOWS
+
+#if defined (K15_64_BIT)
+#	define K15_PTR_SIZE 64
+#else
+#	define K15_PTR_SIZE 32
+#endif //K15_64_BIT
 
 //edit export defines
 #define expose //read + write
@@ -35,7 +47,7 @@
 
 namespace K15_Engine
 {
-	namespace System
+	namespace Core
 	{
 		class Application;
 		class ApplicationOSLayer;
@@ -103,7 +115,8 @@ namespace K15_Engine
 
 #if defined _MSC_VER
 #	define _CRT_SECURE_NO_WARNINGS //don't throw a "unsafe function" warning when using printf, sprintf, etc. 
-#	pragma warning(disable : 4251)
+#	pragma warning(disable : 4251) //dll export for std::string, std::list etc.
+#	pragma warning(disable : 4530) //c++ exception used, but not enabled (xlocale.h)
 #endif //_MSC_VER
 
 #include "K15_HashedString.h"
@@ -155,7 +168,7 @@ namespace K15_Engine
  //Strings
 #if defined K15_DONT_USE_STL
 #	include "K15_String.h"
-	typedef K15_Engine::System::String String;
+	typedef K15_Engine::Core::String String;
 #else
 #	include <string>
 	typedef std::string String;
@@ -163,7 +176,7 @@ namespace K15_Engine
 
 //Threading
 #if defined K15_DONT_USE_STL
-#	define K15_Thread(func,args) K15_Engine::System::Thread<func,args>
+#	define K15_Thread(func,args) K15_Engine::Core::Thread<func,args>
 #else
 #	if defined K15_CPP11_SUPPORT
 #		include <thread>		
@@ -178,8 +191,8 @@ namespace K15_Engine
 #if defined K15_DONT_USE_STL
 #	include "K15_FileStream.h"
 #	include "k15_StringStream.h"
-	typedef K15_Engine::System::FileStream FileStream;
-	typedef K15_Engine::System::StringStream StringStream;
+	typedef K15_Engine::Core::FileStream FileStream;
+	typedef K15_Engine::Core::StringStream StringStream;
 #else
 #	include <fstream>
 #	include <sstream>
@@ -219,9 +232,9 @@ namespace K15_Engine
 #endif //K15_OS_WINDOWS
 
 #if defined K15_OS_WINDOWS
-	typedef K15_Engine::System::DynamicLibrary_Win32 DynamicLibraryType;
-	typedef K15_Engine::System::ApplicationOSLayer_Win32 ApplicationOSLayerType;
-	typedef K15_Engine::System::RenderWindow_Win32 RenderWindowType;
+	typedef K15_Engine::Core::DynamicLibrary_Win32 DynamicLibraryType;
+	typedef K15_Engine::Core::ApplicationOSLayer_Win32 ApplicationOSLayerType;
+	typedef K15_Engine::Core::RenderWindow_Win32 RenderWindowType;
 #endif //K15_OS_WINDOWS
  
 #if defined K15_DEBUG
@@ -262,23 +275,25 @@ namespace K15_Engine
 
 typedef K15_Set(String) StringSet;
 
-typedef K15_Engine::System::AllocatedObject<K15_Engine::System::Application> ApplicationAllocatedObject;
-typedef K15_Engine::System::AllocatedObject<K15_Engine::System::EventManager> EventManagerAllocatedObject;
-typedef K15_Engine::System::AllocatedObject<K15_Engine::System::TaskManager> TaskManagerAllocatedObject;
-typedef K15_Engine::System::AllocatedObject<K15_Engine::System::DynamicLibraryManager> DynamicLibraryManagerAllocatedObject;
-typedef K15_Engine::System::AllocatedObject<K15_Engine::System::LogManager> LogManagerAllocatedObject;
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::Application> ApplicationAllocatedObject;
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::EventManager> EventManagerAllocatedObject;
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::TaskManager> TaskManagerAllocatedObject;
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::DynamicLibraryManager> DynamicLibraryManagerAllocatedObject;
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::LogManager> LogManagerAllocatedObject;
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::ProfilingManager> ProfilingManagerAllocatedObject;
 
-#define ApplicationAllocator K15_Engine::System::Application::getInstance()
-#define EventManagerAllocator K15_Engine::System::EventManager::getInstance()
-#define TaskManagerAllocator K15_Engine::System::TaskManager::getInstance()
-#define DynamicLibraryManagerAllocator K15_Engine::System::DynamicLibraryManager::getInstance()
-#define LogManagerAllocator K15_Engine::System::LogManager::getInstance()
+#define ApplicationAllocator K15_Engine::Core::Application::getInstance()
+#define EventManagerAllocator K15_Engine::Core::EventManager::getInstance()
+#define TaskManagerAllocator K15_Engine::Core::TaskManager::getInstance()
+#define DynamicLibraryManagerAllocator K15_Engine::Core::DynamicLibraryManager::getInstance()
+#define LogManagerAllocator K15_Engine::Core::LogManager::getInstance()
 
-#define g_Application K15_Engine::System::Application::getInstance()
-#define g_EventManager K15_Engine::System::EventManager::getInstance()
-#define g_TaskManager K15_Engine::System::TaskManager::getInstance()
-#define g_DynamicLibraryManager K15_Engine::System::DynamicLibraryManager::getInstance()
-#define g_LogManager K15_Engine::System::LogManager::getInstance()
+#define g_Application K15_Engine::Core::Application::getInstance()
+#define g_EventManager K15_Engine::Core::EventManager::getInstance()
+#define g_TaskManager K15_Engine::Core::TaskManager::getInstance()
+#define g_DynamicLibraryManager K15_Engine::Core::DynamicLibraryManager::getInstance()
+#define g_LogManager K15_Engine::Core::LogManager::getInstance()
+#define g_ProfileManager K15_Engine::Core::ProfilingManager::getInstance()
 
 typedef signed char byte;
 
@@ -314,17 +329,17 @@ typedef unsigned	long long	uint64;
 
 typedef unsigned int Enum;
 
-typedef K15_Engine::System::HashedString ObjectName;
-typedef K15_Engine::System::HashedString TypeName;
-typedef K15_Engine::System::HashedString EventName;
-typedef K15_Engine::System::HashedString ProfilingName;
-typedef K15_Engine::System::HashedString ResourceName;
+typedef K15_Engine::Core::HashedString ObjectName;
+typedef K15_Engine::Core::HashedString TypeName;
+typedef K15_Engine::Core::HashedString EventName;
+typedef K15_Engine::Core::HashedString ProfilingName;
+typedef K15_Engine::Core::HashedString ResourceName;
 
 #if defined K15_NO_STRINGS
-#	define _N(x)  K15_Engine::System::ObjectNames::ObjectNames::x
-#	define _TN(x) K15_Engine::System::ObjectNames::TypeNames::x
-#	define _EN(x) K15_Engine::System::ObjectNames::EventNames::x
-#	define _RN(x) K15_Engine::System::ObjectNames::ResourceNames::x
+#	define _N(x)  K15_Engine::Core::ObjectNames::ObjectNames::x
+#	define _TN(x) K15_Engine::Core::ObjectNames::TypeNames::x
+#	define _EN(x) K15_Engine::Core::ObjectNames::EventNames::x
+#	define _RN(x) K15_Engine::Core::ObjectNames::ResourceNames::x
 #else
 #	define _N(x)  ObjectName(#x)
 #	define _TN(x) TypeName(#x)
@@ -334,7 +349,7 @@ typedef K15_Engine::System::HashedString ResourceName;
 
 #define K15_SAFE_DELETE(ptr) if(ptr){ delete ptr; ptr = 0; }
 
-#define K15_SMART_POINTER(type) typedef K15_Engine::System::Memory::Pointer<type> typePtr
+#define K15_SMART_POINTER(type) typedef K15_Engine::Core::Memory::Pointer<type> typePtr
 
 #define K15_INVALID_RESOURCE_ID -1
 
@@ -350,6 +365,10 @@ typedef K15_Engine::System::HashedString ResourceName;
 #define MEGABYTE	1048576
 #define KILOBYTE	1024
 
-#define DEPRECATED //define to identify deprecated functionality
+#if defined (K15_CPP11_SUPPORT)
+#		define OVERRIDE override
+#else
+#		define OVERRIDE
+#endif //K15_CPP11_SUPPORT
 
 #endif //_K15Engine_Prerequisites_h_

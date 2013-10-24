@@ -33,15 +33,15 @@
 #	include "K15_StringUtil.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-#define _LogNormal(msg, ...)  K15_Engine::System::LogManager::getInstance()->logMessage(K15_Engine::System::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::System::LogManager::LP_NORMAL)
-#define _LogError(msg, ...)   K15_Engine::System::LogManager::getInstance()->logMessage(K15_Engine::System::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::System::LogManager::LP_ERROR)
-#define _LogDebug(msg, ...)   K15_Engine::System::LogManager::getInstance()->logMessage(K15_Engine::System::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::System::LogManager::LP_DEBUG)
-#define _LogWarning(msg, ...) K15_Engine::System::LogManager::getInstance()->logMessage(K15_Engine::System::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::System::LogManager::LP_WARNING)
-#define _LogSuccess(msg, ...) K15_Engine::System::LogManager::getInstance()->logMessage(K15_Engine::System::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::System::LogManager::LP_SUCCESS)
-#define _LogCustom0(msg, ...) K15_Engine::System::LogManager::getInstance()->logMessage(K15_Engine::System::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::System::LogManager::LP_CUSTOM0)
-#define _LogCustom1(msg, ...) K15_Engine::System::LogManager::getInstance()->logMessage(K15_Engine::System::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::System::LogManager::LP_CUSTOM1)
-#define _LogCustom2(msg, ...) K15_Engine::System::LogManager::getInstance()->logMessage(K15_Engine::System::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::System::LogManager::LP_CUSTOM2)
-#define _LogCustom3(msg, ...) K15_Engine::System::LogManager::getInstance()->logMessage(K15_Engine::System::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::System::LogManager::LP_CUSTOM3)
+#define _LogNormal(msg, ...)  K15_Engine::Core::LogManager::getInstance()->logMessage(K15_Engine::Core::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::Core::LogManager::LP_NORMAL)
+#define _LogError(msg, ...)   K15_Engine::Core::LogManager::getInstance()->logMessage(K15_Engine::Core::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::Core::LogManager::LP_ERROR)
+#define _LogDebug(msg, ...)   K15_Engine::Core::LogManager::getInstance()->logMessage(K15_Engine::Core::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::Core::LogManager::LP_DEBUG)
+#define _LogWarning(msg, ...) K15_Engine::Core::LogManager::getInstance()->logMessage(K15_Engine::Core::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::Core::LogManager::LP_WARNING)
+#define _LogSuccess(msg, ...) K15_Engine::Core::LogManager::getInstance()->logMessage(K15_Engine::Core::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::Core::LogManager::LP_SUCCESS)
+#define _LogCustom0(msg, ...) K15_Engine::Core::LogManager::getInstance()->logMessage(K15_Engine::Core::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::Core::LogManager::LP_CUSTOM0)
+#define _LogCustom1(msg, ...) K15_Engine::Core::LogManager::getInstance()->logMessage(K15_Engine::Core::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::Core::LogManager::LP_CUSTOM1)
+#define _LogCustom2(msg, ...) K15_Engine::Core::LogManager::getInstance()->logMessage(K15_Engine::Core::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::Core::LogManager::LP_CUSTOM2)
+#define _LogCustom3(msg, ...) K15_Engine::Core::LogManager::getInstance()->logMessage(K15_Engine::Core::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::Core::LogManager::LP_CUSTOM3)
 
 namespace K15_Engine { namespace Core {
 
@@ -94,6 +94,6 @@ namespace K15_Engine { namespace Core {
 		LogBase *m_DefaultLog;
 		LogList m_Logs;
 	};// end of LogManager class
-}} // end of K15_Engine::System namespace
+}} // end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_LogManager_h_

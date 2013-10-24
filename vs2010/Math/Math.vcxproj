@@ -73,7 +73,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\math\include\K15_Math_Prerequisites.h" />
+    <ClInclude Include="..\..\math\include\K15_MathPrerequisites.h" />
     <ClInclude Include="..\..\math\include\K15_Matrix3x3.h" />
     <ClInclude Include="..\..\math\include\K15_Matrix4x4.h" />
     <ClInclude Include="..\..\math\include\K15_Quaternion.h">

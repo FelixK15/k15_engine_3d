@@ -46,8 +46,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>K15_Engine</TargetName>
-    <IncludePath>..\..\engine\src\;..\..\engine\include\;..\..\engine\include\win32\;..\..\renderer\include\;..\Dependencies\TinyThread++-1.1\source\;..\Dependencies\LuaPlus\src\;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\renderer\bin\$(Configuration)\;..\Dependencies\bin\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\dependencies\LuaPlus\include\;..\..\engine\include\;..\..\engine\include\win32\;..\..\renderer\include\;..\..\dependencies\TinyThread\include\;..\..\dependencies\TinyXML\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\renderer\bin\$(Configuration)\;..\..\dependencies\TinyThread\bin\$(Platform)_$(Configuration)\;..\..\dependencies\TinyXML\bin\$(Platform)_$(Configuration)\;..\..\dependencies\LuaPlus\bin\$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
@@ -77,7 +77,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>module.def</ModuleDefinitionFile>
-      <AdditionalDependencies>TinyThread++.lib;LuaPlus51_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>TinyThread.lib;TinyXML.lib;LuaPlus.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>"$(ProjectDir)..\..\test\bin\$(Configuration)\EngineTest_$(Configuration).exe"</Command>
@@ -214,57 +214,53 @@
     <ClCompile Include="..\..\engine\src\K15_TextConsoleLog.cpp" />
     <ClCompile Include="..\..\engine\src\Win32\K15_DynamicLibrary_Win32.cpp" />
     <ClCompile Include="..\..\engine\src\win32\K15_RenderWindow_Win32.cpp" />
-    <None Include="..\..\engine\include\K15_Rtti.mcr" />
-    <None Include="..\..\engine\include\K15_String.mcr">
+    <None Include="..\..\engine\include\K15_AllocatedObject.inl" />
+    <None Include="..\..\engine\include\K15_Application.inl" />
+    <None Include="..\..\engine\include\K15_ByteConversion.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
-    <None Include="..\..\engine\src\K15_AllocatedObject.inl" />
-    <None Include="..\..\engine\src\K15_Application.inl" />
-    <None Include="..\..\engine\src\K15_ByteConversion.inl">
+    <None Include="..\..\engine\include\K15_DynamicArray.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
-    <None Include="..\..\engine\src\K15_DynamicArray.inl">
+    <None Include="..\..\engine\include\K15_DynamicLibraryBase.inl" />
+    <None Include="..\..\engine\include\K15_GameEvent.inl" />
+    <None Include="..\..\engine\include\K15_File.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
-    <None Include="..\..\engine\src\K15_DynamicLibraryBase.inl" />
-    <None Include="..\..\engine\src\K15_GameEvent.inl" />
-    <None Include="..\..\engine\src\K15_File.inl">
+    <None Include="..\..\engine\v\K15_Functor.inl" />
+    <None Include="..\..\engine\include\K15_GameTime.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
-    <None Include="..\..\engine\src\K15_Functor.inl" />
-    <None Include="..\..\engine\src\K15_GameTime.inl">
+    <None Include="..\..\engine\include\K15_HashedString.inl" />
+    <None Include="..\..\engine\include\K15_HashItem.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
-    <None Include="..\..\engine\src\K15_HashedString.inl" />
-    <None Include="..\..\engine\src\K15_HashItem.inl">
+    <None Include="..\..\engine\include\K15_HashMap.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
-    <None Include="..\..\engine\src\K15_HashMap.inl">
+    <None Include="..\..\engine\include\K15_List.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
-    <None Include="..\..\engine\src\K15_List.inl">
+    <None Include="..\..\engine\include\K15_ListNode.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
-    <None Include="..\..\engine\src\K15_ListNode.inl">
+    <None Include="..\..\engine\include\K15_LogManager.inl" />
+    <None Include="..\..\engine\include\K15_MemberFunctor.inl" />
+    <None Include="..\..\engine\include\K15_NTree.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
-    <None Include="..\..\engine\src\K15_LogManager.inl" />
-    <None Include="..\..\engine\src\K15_MemberFunctor.inl" />
-    <None Include="..\..\engine\src\K15_NTree.inl">
+    <None Include="..\..\engine\include\K15_Object.inl" />
+    <None Include="..\..\engine\include\K15_PageAllocator.inl" />
+    <None Include="..\..\engine\include\K15_Pointer.inl" />
+    <None Include="..\..\engine\include\K15_ProfilingManager.inl" />
+    <None Include="..\..\engine\include\K15_ResourceBase.inl" />
+    <None Include="..\..\engine\include\K15_ResourceManager.inl" />
+    <None Include="..\..\engine\include\K15_Rtti.inl" />
+    <None Include="..\..\engine\include\K15_Stack.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
-    <None Include="..\..\engine\src\K15_Object.inl" />
-    <None Include="..\..\engine\src\K15_PageAllocator.inl" />
-    <None Include="..\..\engine\src\K15_Pointer.inl" />
-    <None Include="..\..\engine\src\K15_ProfilingManager.inl" />
-    <None Include="..\..\engine\src\K15_ResourceBase.inl" />
-    <None Include="..\..\engine\src\K15_ResourceManager.inl" />
-    <None Include="..\..\engine\src\K15_Rtti.inl" />
-    <None Include="..\..\engine\src\K15_Stack.inl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </None>
-    <None Include="..\..\engine\src\K15_StackAllocator.inl" />
-    <None Include="..\..\engine\src\K15_StackItem.inl">
+    <None Include="..\..\engine\include\K15_StackAllocator.inl" />
+    <None Include="..\..\engine\include\K15_StackItem.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp" />
@@ -306,8 +302,8 @@
     <ClCompile Include="..\..\engine\src\Win32\K15_ApplicationOSLayer_Win32.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\engine\src\K15_TaskBase.inl" />
-    <None Include="..\..\engine\src\K15_TaskManager.inl" />
+    <None Include="..\..\engine\include\K15_TaskBase.inl" />
+    <None Include="..\..\engine\include\K15_TaskManager.inl" />
     <None Include="module.def" />
   </ItemGroup>
   <ItemGroup>
