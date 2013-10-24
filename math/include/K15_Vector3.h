@@ -18,80 +18,77 @@
  *
  * @section DESCRIPTION
  *
- *							<--- PLEASE PUT A DESCRIPTION HERE
+ *
  */
 #pragma once
 
-#ifndef __K15_VECTOR3__
-#define __K15_VECTOR3__
+#ifndef _K15Engine_Math_Vector3_h_
+#define _K15Engine_Math_Vector3_h_
 
-#include <cassert>
+#ifndef K15_MATH_USE_PREDEFINED_HEADER
+#	include "K15_Math_Prerequisites.h"
+#endif //K15_MATH_USE_PREDEFINED_HEADER
 
-namespace K15_Math
-{
-	template <class Real>
+#pragma message("FK - Add lazy evaluation and SIMD semantics")
+
+namespace K15_Engine { namespace Math {
 	class Vector3
 	{
 	public:
 		Vector3();
-		Vector3(Real vec[3]);
-		Vector3(Real x, Real y, Real z);
-		Vector3(const Vector3<Real> &vec3);
+		Vector3(float p_Values[3]);
+		Vector3(float x, float y, float z);
+		Vector3(const Vector3& p_Other);
 
 		~Vector3();
 
-		void Normalize();
-		Real Magnitude() const;
-		Real Dot(const Vector3<Real> &vec) const;
-		Vector3<Real> Cross(const Vector3<Real> &vec) const;
-		void Invert();
+		void normalize();
+		float magnitude() const;
+		float dot(const Vector3& p_Other) const;
+		Vector3 cross(const Vector3& p_Other) const;
+		void invert();
 
-		bool IsNull() const;
-		bool IsUnitVector() const;
+		bool isNull() const;
+		bool isUnit() const;
 
-		Vector3<Real> &operator*(Real fScalar);
+		Vector3& operator*(float p_Scalar);
 
-		Real operator*(const Vector3<Real> &vec) const;
-		Vector3<Real> &operator*=(Real fScalar);
+		float operator*(const Vector3& p_Other) const;
+		Vector3& operator*=(float p_Scalar);
 
-		Vector3<Real> &operator=(const Vector3<Real> &vec);
+		Vector3& operator=(const Vector3& p_Other);
 
-		Vector3<Real> operator+(const Vector3<Real> &vec);
-		Vector3<Real> operator-(const Vector3<Real> &vec);
+		Vector3 operator+(const Vector3& p_Other);
+		Vector3 operator-(const Vector3& p_Other);
 
-		Vector3<Real> &operator+=(const Vector3<Real> &vec);
-		Vector3<Real> &operator-=(const Vector3<Real> &vec);
+		Vector3& operator+=(const Vector3& p_Other);
+		Vector3& operator-=(const Vector3& p_Other);
 
-		bool operator<(const Vector3<Real> &vec) const;
-		bool operator>(const Vector3<Real> &vec) const;
+		bool operator<(const Vector3& p_Other) const;
+		bool operator>(const Vector3& p_Other) const;
 
-		bool operator<=(const Vector3<Real> &vec) const;
-		bool operator>=(const Vector3<Real> &vec) const;
+		bool operator<=(const Vector3& p_Other) const;
+		bool operator>=(const Vector3& p_Other) const;
 
-		bool operator==(const Vector3<Real> &vec) const;
-		bool operator!=(const Vector3<Real> &vec) const;
-
-	public:
-		static Vector3<Real> Up;
-		static Vector3<Real> Right;
-		static Vector3<Real> Forward;
+		bool operator==(const Vector3& p_Other) const;
+		bool operator!=(const Vector3& p_Other) const;
 
 	public:
+		static Vector3 Up;
+		static Vector3 Right;
+		static Vector3 Forward;
 
+	public:
 		union{
-			struct{
-				Real x,y,z;
-			};
-			Real vec[3];
-		};
-	};
-
-	typedef Vector3<float> Vector3F;
-	typedef Vector3<double> Vector3D;
-
-	#include "../src/K15_Vector3.inl"
-}
+			struct
+			{
+				float x,y,z;
+			};//struct
+			float vec[3];
+		};//union
+	};// end of Vector3 class declaration
+}}// end of K15_Engine::Math namespace
 
 
 
-#endif //__K15_VECTOR3__
+#endif //_K15Engine_Math_Vector3_h_

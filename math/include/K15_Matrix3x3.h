@@ -23,7 +23,10 @@
 #ifndef _K15Engine_Math_Matrix3x3_h_
 #define _K15Engine_Math_Matrix3x3_h_
 
-#include "K15_Math_Prerequisites.h"
+#ifndef K15_MATH_USE_PRECOMPILED_HEADER
+#	include "K15_Math_Prerequisites.h"
+#endif //K15_MATH_USE_PRECOMPILED_HEADER
+
 #include "K15_Vector3.h"
 
 namespace K15_Engine { namespace Math { 
@@ -36,67 +39,65 @@ namespace K15_Engine { namespace Math {
 		};
 
 		Matrix3x3(MatrixFlags flag = MF_IDENT);
-		Matrix3x3(Real mat[9]);
-		Matrix3x3(Real _1_1,Real _1_2,Real _1_3,
-			Real _2_1,Real _2_2,Real _2_3,
-			Real _3_1,Real _3_2,Real _3_3);
-		Matrix3x3(const Matrix3x3 &mat);
+		Matrix3x3(float p_Values[9]);
+		Matrix3x3(float _1_1,float _1_2,float _1_3,
+			float _2_1,float _2_2,float _2_3,
+			float _3_1,float _3_2,float _3_3);
+		Matrix3x3(const Matrix3x3& p_Other);
 
 		~Matrix3x3();
 
 		void Identity();
 		void Zero();
 
-		Matrix3x3 ColumnChange(Matrix3x3 &mat, int column1, int column2);
-		Matrix3x3 RowChange(Matrix3x3 &mat, int row1, int row2);
+		Matrix3x3 columnChange(Matrix3x3& p_Other, int column1, int column2);
+		Matrix3x3 rowChange(Matrix3x3& p_Other, int row1, int row2);
 
-		Real Determinant() const;
+		float determinant() const;
 
-		void Inverse();
-		void Transpose();
-		void Rotate(const Vector3 &vec,Real angleInRad);
-		void Scale(const Vector3 &scaleVec);
-		void Translate(const Vector3 &posVec);
+		void inverse();
+		void transpose();
+		void Rotate(const Vector3& p_Vector,float angleInRad);
+		void Scale(const Vector3& scaleVec);
+		void Translate(const Vector3& posVec);
 
-		bool IsTriangle() const;
-		bool IsLowerTriangle() const;
-		bool IsUpperTriangle() const;
-		bool IsIdentity() const;
-		bool IsZero() const;
-		bool HasZeroVector() const;
-		int GetMaxDiagonalColumn() const;
+		bool isTriangle() const;
+		bool isLowerTriangle() const;
+		bool isUpperTriangle() const;
+		bool isIdentity() const;
+		bool isZero() const;
+		bool hasZeroVector() const;
+		int getMaxDiagonalColumn() const;
 
-		Matrix3x3 operator*(const Matrix3x3 &mat);
-		Vector3 operator*(const Vector3 &vec) const;
-		Matrix3x3 operator*(Real scalar);
+		Matrix3x3 operator*(const Matrix3x3& p_Other);
+		Vector3 operator*(const Vector3& p_Vector) const;
+		Matrix3x3 operator*(float scalar);
 
-		Matrix3x3 &operator+(const Matrix3x3 &mat);
-		Matrix3x3 &operator-(const Matrix3x3 &mat);
-		Matrix3x3 &operator-();
-		Matrix3x3 &operator=(const Matrix3x3 &mat);
+		Matrix3x3& operator+(const Matrix3x3& p_Other);
+		Matrix3x3& operator-(const Matrix3x3& p_Other);
+		Matrix3x3& operator-();
+		Matrix3x3& operator=(const Matrix3x3& p_Other);
 
-		Matrix3x3 &operator+=(const Matrix3x3 &mat);
-		Matrix3x3 &operator-=(const Matrix3x3 &mat);
+		Matrix3x3& operator+=(const Matrix3x3& p_Other);
+		Matrix3x3& operator-=(const Matrix3x3& p_Other);
 
-		bool operator==(const Matrix3x3 &mat);
-		bool operator!=(const Matrix3x3 &mat);
-
+		bool operator==(const Matrix3x3& p_Other);
+		bool operator!=(const Matrix3x3& p_Other);
 
 		static const Matrix3x3 UnitMatrix;
 	public:
-
-		union{
-			struct {
-				Real _1_1,_1_2,_1_3;
-				Real _2_1,_2_2,_2_3;
-				Real _3_1,_3_2,_3_3;
+		union
+		{
+			struct 
+			{
+				float _1_1,_1_2,_1_3;
+				float _2_1,_2_2,_2_3;
+				float _3_1,_3_2,_3_3;
 			};//struct
 
-			Real m_MatrixValue[9];
-#endif //K15_SIMD_SUPPORT
+			float m_MatrixValue[9];
 		};//union
-	};
-	#include "../src/K15_Matrix3x3.inl"
- }}
+	};// end of Matrix3x3 class declaration
+ }}//end of K15_Engine::Math namespace
 
 #endif //_K15Engine_Math_Matrix3x3_h_
