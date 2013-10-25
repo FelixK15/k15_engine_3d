@@ -19,8 +19,8 @@
 
 #include "K15_PrecompiledHeader.h"
 
-#include "K15_ApplicationOSLayer_Win32.h"
-#include "K15_RenderWindow_Win32.h"
+#include "Win32\K15_ApplicationOSLayer_Win32.h"
+#include "Win32\K15_RenderWindow_Win32.h"
 #include "K15_RenderWindowBase.h"
 #include "K15_LogManager.h"
 #include "K15_Application.h"

@@ -21,7 +21,7 @@
 #include "K15_RendererOGL.h"
 
 #include "K15_LogManager.h"
-#include "K15_RenderWindow_Win32.h"
+#include "Win32\K15_RenderWindow_Win32.h"
 
 namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/

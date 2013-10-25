@@ -166,8 +166,8 @@ namespace K15_Engine { namespace Rendering {
 		inline bool getLightningEnabled() const;
 
 		virtual void bindGpuProgram(GpuProgram* p_GpuProgram);
-		inline GpuProgram* getBoundGpuProgram(Enum p_GpuProgramType);
-		inline bool isBoundGpuProgram(Enum p_GpuProgramType);
+		inline GpuProgram* getBoundGpuProgram(Enum p_GpuProgramType) const;
+		inline bool isBoundGpuProgram(Enum p_GpuProgramType) const;
 
 		virtual void beginFrame() = 0;
 		virtual void endFrame() = 0;

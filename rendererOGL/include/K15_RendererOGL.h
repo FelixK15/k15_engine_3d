@@ -25,6 +25,8 @@
 #	include "K15_RendererOGLPrerequisites.h"
 #endif //K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
 
+#include "K15_RendererBase.h"
+
 namespace K15_Engine { namespace Rendering { namespace OGL {
 	class RendererOGL : public RendererBase
 	{

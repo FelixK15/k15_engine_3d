@@ -23,11 +23,10 @@
 #ifndef _K15Engine_Plugin_VisualStudioLog_h_
 #define _K15Engine_Plugin_VisualStudioLog_h_
 
-#include "K15_Prerequisites.h"
 #include "K15_LogBase.h"
 
 namespace K15_Engine { namespace Plugins { namespace VisualStudioLogger {
-	class VisualStudioLog : public System::LogBase
+	class VisualStudioLog : public Core::LogBase
 	{
 	public:
 		virtual void logMessage(const String &p_Message,Enum p_PriorityFlag); 

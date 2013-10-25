@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\renderer\include\K15_ColorRGBA.h" />
     <ClInclude Include="..\..\renderer\include\K15_GpuBuffer.h" />
     <ClInclude Include="..\..\renderer\include\K15_GpuProgram.h" />
     <ClInclude Include="..\..\renderer\include\K15_RendererBase.h" />
@@ -25,7 +26,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\renderer\src\K15_GpuBuffer.inl" />
+    <None Include="..\..\renderer\include\K15_ColorRGBA.inl" />
+    <None Include="..\..\renderer\include\K15_GpuBuffer.inl" />
     <None Include="..\..\renderer\src\K15_RendererBase.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -38,7 +40,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -57,12 +59,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\renderer\bin\$(Configuration)</OutDir>
+    <OutDir>..\..\renderer\bin\$(Platform)_$(Configuration)</OutDir>
     <IntDir>..\..\renderer\obj\</IntDir>
-    <TargetName>K15_$(ProjectName)_$(Configuration)</TargetName>
-    <IncludePath>..\..\renderer\include\;..\..\engine\include\;..\..\math\include\;$(DXSDK_DIR)\Include\;$(ProjectDir)..\Dependencies\NVIDIA cg\include\;$(IncludePath)</IncludePath>
-    <SourcePath>../../renderer/src/;../../engine/src/;$(SourcePath)</SourcePath>
-    <LibraryPath>$(DXSDK_DIR)/Lib/x86/;../../engine/bin/$(Configuration)/;$(LibraryPath)</LibraryPath>
+    <TargetName>K15_Renderer</TargetName>
+    <IncludePath>..\..\renderer\include\;..\..\engine\include\;..\..\math\include\;$(IncludePath)</IncludePath>
+    <SourcePath>$(SourcePath)</SourcePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>..\..\renderer\bin\$(Configuration)</OutDir>
@@ -84,7 +86,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>d3d11.lib;d3dx11d.lib;d3dcompiler.lib;dxgi.lib;DxErr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

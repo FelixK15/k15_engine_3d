@@ -31,7 +31,7 @@
 
 namespace K15_Engine { namespace Core { 
 
-	class K15_API_EXPORT ResourceBase
+	class K15_CORE_API ResourceBase
 	{
 	public:
 		static TypeName Type;

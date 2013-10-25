@@ -52,7 +52,7 @@
 namespace K15_Engine { namespace Core { 
 	class Object;
 
-	class K15_API_EXPORT String
+	class K15_CORE_API String
 	{
 	public:
 		String(unsigned int iSize = 32,unsigned int iReallocationSize = 32);

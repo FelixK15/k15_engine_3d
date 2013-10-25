@@ -42,7 +42,7 @@ namespace K15_Engine { namespace Core {
 	{
 	public:
 		/*********************************************************************************/
-		typedef K15_List(TaskBase*) TaskList;
+		typedef List(TaskBase*) TaskList;
 		/*********************************************************************************/
 	public:
 		TaskManager();

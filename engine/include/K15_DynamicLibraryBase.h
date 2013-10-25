@@ -34,7 +34,7 @@
 
 namespace K15_Engine { namespace Core {
 
-	class K15_API_EXPORT DynamicLibraryBase : public DynamicLibraryManagerAllocatedObject
+	class K15_CORE_API DynamicLibraryBase : public DynamicLibraryManagerAllocatedObject
 	{
 
 	public:

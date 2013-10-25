@@ -30,7 +30,7 @@
 
 namespace K15_Engine { namespace Core { 
 
-	class K15_API_EXPORT LogBase : public LogManagerAllocatedObject
+	class K15_CORE_API LogBase : public LogManagerAllocatedObject
 	{
 	public:
 		LogBase();

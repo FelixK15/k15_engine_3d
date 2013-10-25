@@ -19,7 +19,7 @@
 
 #include "K15_PrecompiledHeader.h"
 
-#include "K15_RenderWindow_Win32.h"
+#include "Win32\K15_RenderWindow_Win32.h"
 #include "K15_StringUtil.h"
 #include "K15_EventManager.h"
 

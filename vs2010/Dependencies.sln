@@ -1,15 +1,15 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaPlus", "Dependencies\LuaPlus\LuaPlus.vcxproj", "{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Enet", "Dependencies\Enet\Enet.vcxproj", "{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLEW", "Dependencies\GLEW\GLEW.vcxproj", "{07360CCD-840A-4C93-A6A2-E43347CC313E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaPlus", "Dependencies\LuaPlus\LuaPlus.vcxproj", "{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyThread", "Dependencies\TinyThread\TinyThread.vcxproj", "{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyXML", "Dependencies\TinyXML\TinyXML.vcxproj", "{ED637AF1-F621-4899-9946-6B9C8AE9D1FD}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Enet", "Dependencies\Enet\Enet.vcxproj", "{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,14 +17,18 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}.Debug|Win32.ActiveCfg = Debug|Win32
-		{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}.Debug|Win32.Build.0 = Debug|Win32
-		{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}.Release|Win32.ActiveCfg = Release|Win32
-		{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}.Release|Win32.Build.0 = Release|Win32
+		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Debug|Win32.ActiveCfg = Debug|Win32
+		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Debug|Win32.Build.0 = Debug|Win32
+		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Release|Win32.ActiveCfg = Release|Win32
+		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Release|Win32.Build.0 = Release|Win32
 		{07360CCD-840A-4C93-A6A2-E43347CC313E}.Debug|Win32.ActiveCfg = Debug|Win32
 		{07360CCD-840A-4C93-A6A2-E43347CC313E}.Debug|Win32.Build.0 = Debug|Win32
 		{07360CCD-840A-4C93-A6A2-E43347CC313E}.Release|Win32.ActiveCfg = Release|Win32
 		{07360CCD-840A-4C93-A6A2-E43347CC313E}.Release|Win32.Build.0 = Release|Win32
+		{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}.Debug|Win32.Build.0 = Debug|Win32
+		{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}.Release|Win32.ActiveCfg = Release|Win32
+		{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}.Release|Win32.Build.0 = Release|Win32
 		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Debug|Win32.ActiveCfg = Debug|Win32
 		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Debug|Win32.Build.0 = Debug|Win32
 		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Release|Win32.ActiveCfg = Release|Win32
@@ -33,10 +37,6 @@ Global
 		{ED637AF1-F621-4899-9946-6B9C8AE9D1FD}.Debug|Win32.Build.0 = Debug|Win32
 		{ED637AF1-F621-4899-9946-6B9C8AE9D1FD}.Release|Win32.ActiveCfg = Release|Win32
 		{ED637AF1-F621-4899-9946-6B9C8AE9D1FD}.Release|Win32.Build.0 = Release|Win32
-		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Debug|Win32.ActiveCfg = Debug|Win32
-		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Debug|Win32.Build.0 = Debug|Win32
-		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Release|Win32.ActiveCfg = Release|Win32
-		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

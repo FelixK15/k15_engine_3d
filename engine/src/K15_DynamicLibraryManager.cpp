@@ -23,7 +23,7 @@
 #include "K15_LogManager.h"
 
 #if defined K15_OS_WINDOWS
-#	include "K15_DynamicLibrary_win32.h"
+#	include "Win32\K15_DynamicLibrary_win32.h"
 #endif //K15_OS_WINDOWS
 
 namespace K15_Engine { namespace Core {
@@ -65,7 +65,7 @@ namespace K15_Engine { namespace Core {
 			return 0;
 		}
 
-		m_LoadedLibs.insert(K15_Pair(String,DynamicLibraryBase*)(p_FileName,library));
+		m_LoadedLibs.insert(Pair(String,DynamicLibraryBase*)(p_FileName,library));
 
 		return library;
 	}

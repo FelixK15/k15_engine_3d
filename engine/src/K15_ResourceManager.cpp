@@ -57,7 +57,7 @@ namespace K15_Engine { namespace Core {
 
 			if(iter->second->isMarkedAsUnreferenced())
 			{
-				difference = 0.0;//Application::getInstance()->getTime() - iter->second->getLastUsed();
+				difference = g_Application->getTime() - iter->second->getLastUsed();
 
 				if(iter->second->getPriority() == ResourceBase::RP_LOW ||
 					(iter->second->getPriority() == ResourceBase::RP_NORMAL && difference > 200.0) ||

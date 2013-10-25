@@ -40,7 +40,7 @@ namespace K15_Engine { namespace Core {
 		uint32 height;
 	};
 	/*********************************************************************************/
-	class K15_API_EXPORT RenderWindowBase : public ApplicationAllocatedObject
+	class K15_CORE_API RenderWindowBase : public ApplicationAllocatedObject
 	{
 	public:
 		/*********************************************************************************/

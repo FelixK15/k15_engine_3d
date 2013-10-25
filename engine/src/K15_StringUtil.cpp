@@ -144,12 +144,12 @@ namespace K15_Engine { namespace Core {
 		return stringToNumeric<uint32>(p_String);
 	}
 	/*********************************************************************************/
-	float StringUtil::toFloat(const String& p_String,const char p_Delimiter)
+	float StringUtil::toFloat(const String& p_String,const unsigned char p_Delimiter)
 	{
 		return stringToNumeric<float>(p_String,p_Delimiter);
 	}
 	/*********************************************************************************/
-	double StringUtil::toDouble(const String& p_String,const char p_Delimiter)
+	double StringUtil::toDouble(const String& p_String,const unsigned char p_Delimiter)
 	{
 		return stringToNumeric<double>(p_String,p_Delimiter);
 	}

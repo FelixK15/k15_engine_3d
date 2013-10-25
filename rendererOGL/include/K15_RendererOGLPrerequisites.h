@@ -24,12 +24,8 @@
 #ifndef _K15Engine_RendererOGL_Prerequisites_h_
 #define _K15Engine_RendererOGL_Prerequisites_h_
 
-#include "K15_RendererPrerequisites.h"
+#include "K15_Prerequisites.h"
 #include "GL\glew.h"
-#include "GL\glxew.h"
-#include "GL\wglew.h"
-
-#include "K15_RendererBase.h"
 
 using namespace K15_Engine::Rendering;
 

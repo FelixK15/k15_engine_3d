@@ -32,10 +32,10 @@
 
 namespace K15_Engine { namespace Core { 
 
-	class K15_API_EXPORT ProfilingNode/* : public ProfilingManagerAllocatedObject*/
+	class K15_CORE_API ProfilingNode/* : public ProfilingManagerAllocatedObject*/
 	{
 	public:
-		typedef K15_List(ProfilingNode*) ProfilingNodeList;
+		typedef List(ProfilingNode*) ProfilingNodeList;
 
 	public:
 		ProfilingNode(const ProfilingNode& p_Other);

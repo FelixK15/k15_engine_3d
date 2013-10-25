@@ -34,12 +34,12 @@
 
 namespace K15_Engine { namespace Core { 
 
-	class K15_API_EXPORT ResourceManager : public ApplicationAllocatedObject, public Singleton<ResourceManager>  //Singleton?
+	class K15_CORE_API ResourceManager : public ApplicationAllocatedObject, public Singleton<ResourceManager>  //Singleton?
 	{
 	public:
-		typedef K15_DynamicArray(ResourceBase*)			ResourceList;
-		typedef K15_FixedArray(ResourceFileBase*,20)	ResourceFileList;
-		typedef K15_HashMap(ResourceName,ResourceBase*)	ResourceCache;
+		typedef DynamicArray(ResourceBase*)			ResourceList;
+		typedef FixedArray(ResourceFileBase*,20)	ResourceFileList;
+		typedef HashMap(ResourceName,ResourceBase*)	ResourceCache;
 
 	public:
 		ResourceManager();
@@ -114,7 +114,7 @@ namespace K15_Engine { namespace Core {
 					
 					if((cachedResource = resource->load(resourceData)) == true)
 					{
-						m_ResourceDataChache.insert(K15_Pair(ResourceName,ResourceBase*)(p_ResourceName,resource));
+						m_ResourceDataChache.insert(Pair(ResourceName,ResourceBase*)(p_ResourceName,resource));
 					}
 				}
 

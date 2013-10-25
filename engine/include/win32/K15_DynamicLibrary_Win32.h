@@ -32,7 +32,7 @@
 
 namespace K15_Engine { namespace Core { 
 
-	class K15_API_EXPORT DynamicLibrary_Win32 : public DynamicLibraryBase
+	class K15_CORE_API DynamicLibrary_Win32 : public DynamicLibraryBase
 	{
 	public:
 		DynamicLibrary_Win32();

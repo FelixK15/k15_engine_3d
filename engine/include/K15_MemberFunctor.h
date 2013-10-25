@@ -31,7 +31,7 @@
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	template<class ObjectType,class ReturnType>
-	class K15_API_EXPORT MemberFunctor0
+	class K15_CORE_API MemberFunctor0
 	{
 	public:
 		/*********************************************************************************/
@@ -56,7 +56,7 @@ namespace K15_Engine { namespace Core {
 	};//end of MemberFunctor0 class
 	/*********************************************************************************/
 	template<class ObjectType,class ReturnType,class ArgumentType>
-	class K15_API_EXPORT MemberFunctor1
+	class K15_CORE_API MemberFunctor1
 	{
 	public:
 		/*********************************************************************************/

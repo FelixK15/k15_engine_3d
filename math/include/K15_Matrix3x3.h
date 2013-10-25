@@ -24,7 +24,7 @@
 #define _K15Engine_Math_Matrix3x3_h_
 
 #ifndef K15_MATH_USE_PRECOMPILED_HEADER
-#	include "K15_Math_Prerequisites.h"
+#	include "K15_MathPrerequisites.h"
 #endif //K15_MATH_USE_PRECOMPILED_HEADER
 
 #include "K15_Vector3.h"

@@ -22,35 +22,38 @@
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
-	GpuBuffer::GpuBuffer()
+	GpuBuffer::GpuBuffer(Enum p_BufferType)
 		: m_Locked(false),
 		  m_LockOption(LO_NORMAL),
 		  m_ShadowCopy(0),
 		  m_ShadowCopyEnabled(false),
 		  m_ShadowCopySize(0),
-		  m_UsageOption(UO_DYNAMIC)
+		  m_UsageOption(UO_DYNAMIC),
+		  m_BufferType(p_BufferType)
 	{
 		//m_Impl = g_Renderer
 	}
 	/*********************************************************************************/
-	GpuBuffer::GpuBuffer(Enum p_LockOption, Enum p_UsageOption, bool p_ShadowCopyEnabled)
+	GpuBuffer::GpuBuffer(Enum p_BufferType,Enum p_LockOption, Enum p_UsageOption, bool p_ShadowCopyEnabled)
 		: m_Locked(false),
 		  m_LockOption(p_LockOption),
 		  m_UsageOption(p_UsageOption),
 		  m_ShadowCopyEnabled(true),
 		  m_ShadowCopySize(0),
-		  m_ShadowCopy(0)
+		  m_ShadowCopy(0),
+		  m_BufferType(p_BufferType)
 	{
 
 	}
 	/*********************************************************************************/
-	GpuBuffer::GpuBuffer(Enum p_LockOption, Enum p_UsageOption, uint32 p_InitialDataSize, byte* p_InitialData, uint32 p_InitialDataOffset, bool p_ShadowCopyEnabled)
+	GpuBuffer::GpuBuffer(Enum p_BufferType,Enum p_LockOption, Enum p_UsageOption, uint32 p_InitialDataSize, byte* p_InitialData, uint32 p_InitialDataOffset, bool p_ShadowCopyEnabled)
 		: m_Locked(false),
 		  m_LockOption(p_LockOption),
 		  m_ShadowCopy(p_InitialData),
 		  m_ShadowCopyEnabled(true),
 		  m_ShadowCopySize(p_InitialDataSize),
-		  m_UsageOption(p_UsageOption)
+		  m_UsageOption(p_UsageOption),
+		  m_BufferType(p_BufferType)
 	{
 		writeData(p_InitialDataSize,p_InitialData,p_InitialDataOffset);
 	}

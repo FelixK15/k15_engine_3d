@@ -31,7 +31,7 @@
 #include "K15_LogBase.h"
 
 namespace K15_Engine { namespace Core {
-	class K15_API_EXPORT TextConsoleLog : public LogBase
+	class K15_CORE_API TextConsoleLog : public LogBase
 	{
 	public:
 		/**

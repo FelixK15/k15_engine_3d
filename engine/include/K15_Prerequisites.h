@@ -26,12 +26,21 @@
 
 #ifdef _WIN32
 #	define K15_OS_WINDOWS
+#elif defined __linux__
+#	define K15_OS_LINUX
+#elif defined __APPLE__
+#	define K15_OS_APPLE
 #endif //_WIN32
 
-#if defined (K15_OS_WINDWS)
+#if defined (K15_OS_WINDOWS)
 	#ifdef _WIN64
 	#	define K15_64_BIT
 	#endif //_WIN64
+#else
+#	include <limit.h>
+#	if (__WORDSIZE == 64)
+#		define K15_64_BIT
+#	endif //(__WORDSIZE == 64)
 #endif //K15_OS_WINDOWS
 
 #if defined (K15_64_BIT)
@@ -47,6 +56,7 @@
 
 namespace K15_Engine
 {
+	/*********************************************************************************/
 	namespace Core
 	{
 		class Application;
@@ -69,6 +79,10 @@ namespace K15_Engine
 		class LogManager;
 		class LogBase;
 		class ResourceManager;
+		class PhysicsProcessBase;
+		class RenderProcessBase;
+		class RenderTask;
+		class PhysicsTask;
 		class ResourceBase;
 		class ResourceFileBase;
 		class ResourceData;
@@ -88,8 +102,18 @@ namespace K15_Engine
 
 		template<class Allocator>
 		class AllocatedObject;
-	}
-}
+	} // end of K15_Engine::Core namespace
+	/*********************************************************************************/
+	namespace Rendering
+	{
+		class RendererBase;
+		class GpuProgram;
+		class GpuProgramImplBase;
+		class GpuBuffer;
+		class GpuBufferImplBase;
+	} //end of K15_Engine::Rendering namespace
+	/*********************************************************************************/
+ }
 
 #ifdef __GNUC__
 //http://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html
@@ -137,32 +161,28 @@ namespace K15_Engine
 #	include "K15_Stack.h"
 #	include "K15_FixedArray.h"
 
-#	define K15_DynamicArray(T)	K15_Engine::Container::DynamicArray<T>
-#	define K15_HashMap(K,V)		K15_Engine::Container::HashMap<K,V>
-#	define K15_List(T)			K15_Engine::Container::List<T>
-#	define K15_Stack(T)			K15_Engine::Container::Stack<T>
-#	define K15_Set(T)			K15_Engine::Container::Set<T>
-#	define K15_FixedArray(T,C)  K15_Engine::Container::FixedArray<T,C>
+#	define DynamicArray(T)	K15_Engine::Container::DynamicArray<T>
+#	define HashMap(K,V)		K15_Engine::Container::HashMap<K,V>
+#	define List(T)			K15_Engine::Container::List<T>
+#	define Stack(T)			K15_Engine::Container::Stack<T>
+#	define Set(T)			K15_Engine::Container::Set<T>
+#	define FixedArray(T,C)  K15_Engine::Container::FixedArray<T,C>
 #else
 #	include <list>
 #	include <map>
 #	include <stack>
 #	include <vector>
 #	include <set>
+#	include <array>
 
-#	define K15_DynamicArray(T)	std::vector<T>
-#	define K15_HashMap(K,V)		std::map<K,V>
-#	define K15_List(T)			std::list<T>
-#	define K15_Stack(T)			std::stack<T>
-#	define K15_Set(T)			std::set<T>
-#	define K15_Pair(K,V)		std::pair<K,V>
-
-#	if defined K15_CPP11_SUPPORT
-#		include <array>
-#		define K15_FixedArray(T,C)	std::array<T,C>
-#	else
-#		define K15_FixedArray(T,C)  K15_Engine::Container::FixedArray<T,C>
-#	endif //K15_CPP11_SUPPORT
+#	define DynamicArray(T)	std::vector<T>
+#	define HashMap(K,V)		std::map<K,V>
+#	define List(T)			std::list<T>
+#	define Stack(T)			std::stack<T>
+#	define Set(T)			std::set<T>
+#	define Pair(K,V)		std::pair<K,V>
+#	define FixedArray(T,C)	std::array<T,C>
+	
 #endif //K15_DONT_USE_STL
 
  //Strings
@@ -182,8 +202,8 @@ namespace K15_Engine
 #		include <thread>		
 		typedef std::thread Thread;
 #	else
-#		include "tinythread.h"
-		typedef tinythread::thread Thread;
+//#		include "tinythread.h"
+//		typedef tthread::thread Thread;
 #	endif //K15_CPP11_SUPPORT
 #endif //K15_DONT_USE_STL
 
@@ -202,9 +222,9 @@ namespace K15_Engine
 
 #if defined K15_OS_WINDOWS
 #	if defined K15_BUILD
-#		define K15_API_EXPORT __declspec(dllexport)
+#		define K15_CORE_API __declspec(dllexport)
 #	else
-#		define K15_API_EXPORT __declspec(dllimport)
+#		define K15_CORE_API __declspec(dllimport)
 #	endif //K15_BUILD
 #endif //K15_OS_WINDOWS
   
@@ -273,7 +293,7 @@ namespace K15_Engine
 	} \
 
 
-typedef K15_Set(String) StringSet;
+typedef Set(String) StringSet;
 
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::Application> ApplicationAllocatedObject;
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::EventManager> EventManagerAllocatedObject;

@@ -32,7 +32,7 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	class K15_API_EXPORT ApplicationOSLayer_Win32 : public ApplicationOSLayerBase
+	class K15_CORE_API ApplicationOSLayer_Win32 : public ApplicationOSLayerBase
 	{
 	public:
 		ApplicationOSLayer_Win32();

@@ -53,7 +53,7 @@ public: \
 
 namespace K15_Engine { namespace Core { 
 
-	class K15_API_EXPORT Rtti
+	class K15_CORE_API Rtti
 	{
 	public:
 		Rtti(const TypeName &p_Name,const Rtti *p_BaseType);

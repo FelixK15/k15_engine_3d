@@ -31,7 +31,7 @@
 #include "K15_PageAllocator.h"
 
 namespace K15_Engine { namespace Core { 
-	class K15_API_EXPORT GameEvent : public EventManagerAllocatedObject
+	class K15_CORE_API GameEvent : public EventManagerAllocatedObject
 	{
 	public:
 		/*********************************************************************************/

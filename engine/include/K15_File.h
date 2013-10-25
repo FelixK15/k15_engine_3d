@@ -27,7 +27,7 @@
 
 namespace K15_Engine { namespace Core { 
 
-	class K15_API_EXPORT File
+	class K15_CORE_API File
 	{
 	public:
 		enum OpenMode {

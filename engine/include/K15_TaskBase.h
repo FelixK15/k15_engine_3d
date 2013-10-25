@@ -35,7 +35,7 @@
 #include "K15_GameTime.h"
 
 namespace K15_Engine { namespace Core {
-	class TaskBase : public TaskManagerAllocatedObject
+	class K15_CORE_API TaskBase : public TaskManagerAllocatedObject
 	{
 	public:
 		TaskBase(uint32 p_Priority = 0);

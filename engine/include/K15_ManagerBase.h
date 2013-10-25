@@ -6,10 +6,10 @@
 namespace K15_Engine { namespace Core 
 
 	template<class OBJECTTYPE>
-	class K15_API_EXPORT ManagerBase
+	class K15_CORE_API ManagerBase
 	{
 	public:
-		typedef K15_List(OBJECTTYPE) ObjectList;
+		typedef List(OBJECTTYPE) ObjectList;
 
 	public:
 		virtual ~ManagerBase();

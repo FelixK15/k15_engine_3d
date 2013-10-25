@@ -28,7 +28,7 @@
 #endif// K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace Core {
-	class K15_API_EXPORT GameTime
+	class K15_CORE_API GameTime
 	{
 	public:
 		GameTime(double p_DeltaTime,double p_Multiplier = 1.0);

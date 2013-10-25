@@ -32,7 +32,7 @@
 
 namespace K15_Engine { namespace Core {
 
-	class K15_API_EXPORT RenderWindow_Win32 : public RenderWindowBase
+	class K15_CORE_API RenderWindow_Win32 : public RenderWindowBase
 	{
 	public:
 		RenderWindow_Win32();

@@ -42,6 +42,16 @@ inline const ApplicationParameterList& Application::getApplicationParameter() co
 	return m_ApplicationParameter;
 }
 /*********************************************************************************/
+inline RenderTask* Application::getRenderTask() const
+{
+	return m_RenderTask;
+}
+/*********************************************************************************/
+inline PhysicsTask* Application::getPhysicsTask() const
+{
+	return m_PhysicsTask;
+}
+/*********************************************************************************/
 inline TaskManager* Application::getTaskManager() const
 {
 	return m_TaskManager;
@@ -87,12 +97,6 @@ inline const GameTime& Application::getGameTime() const
   return m_GameTime;
 }
 /*********************************************************************************/
-inline void Application::setWindowTitle(const String& p_WindowTitle) 
-{
-	if(m_RenderWindow)
-		m_RenderWindow->setWindowTitle(p_WindowTitle);
-}
-/*********************************************************************************/
 inline const double Application::getDeltaTime() const
 {
   return m_GameTime.getDeltaTime();
@@ -136,7 +140,9 @@ inline bool Application::getRunning() const
 /*********************************************************************************/
 inline const FrameStatistic& Application::getFrameStatistic(uint32 p_FrameNumber) const
 {
-	K15_ASSERT(p_FrameNumber > FrameStatisticCount,StringUtil::format("Requestes frame statistics from frame %i, but only statistics from the last %i frames get saved.",p_FrameNumber,FrameStatisticCount));
+	K15_ASSERT(p_FrameNumber < FrameStatisticCount,
+		StringUtil::format("Requestes frame statistics from frame %i, but only statistics from the last %i frames get saved.",
+		p_FrameNumber,FrameStatisticCount));
 	return m_FrameStatistics[p_FrameNumber];
 }
 /*********************************************************************************/

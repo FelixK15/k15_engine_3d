@@ -50,7 +50,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		virtual uint32 writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset);
 
 	private:
-		GLuint m_BufferIndex;
+		GLuint m_BufferHandle;
 	};// end of GpuBufferImplOG class declaration
 }}}//end of K15_Engine::Rendering::OGL namespace
 

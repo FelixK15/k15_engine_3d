@@ -34,13 +34,13 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	class K15_API_EXPORT ApplicationOSLayerBase : public ApplicationAllocatedObject
+	class K15_CORE_API ApplicationOSLayerBase : public ApplicationAllocatedObject
 	{
 	public:
 		/*********************************************************************************/
 		static const String OSName;
 		static const String PluginExtension;
-		typedef K15_List(Resolution) SupportedResolutionSet;
+		typedef List(Resolution) SupportedResolutionSet;
 		/*********************************************************************************/
 	public:
 		ApplicationOSLayerBase(){}

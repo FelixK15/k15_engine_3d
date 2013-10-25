@@ -18,7 +18,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -39,10 +39,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\plugins\$(ProjectName)\bin\$(Configuration)\</OutDir>
+    <OutDir>..\..\plugins\$(ProjectName)\bin\$(Platform)_$(Configuration)\</OutDir>
     <IntDir>..\..\plugins\$(ProjectName)\obj\</IntDir>
-    <IncludePath>..\..\engine\include\;..\..\engine\src\win32\;..\..\engine\src\;..\..\engine\include\win32\;..\..\plugins\VisualStudioLogger\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\engine\bin\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\engine\include\;..\..\plugins\VisualStudioLogger\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\engine\bin\$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -35,15 +35,15 @@
 #include "K15_FrameStatistic.h"
 
 #if defined (K15_OS_WINDOWS)
-#	include "K15_ApplicationOSLayer_Win32.h"
+#	include "Win32\K15_ApplicationOSLayer_Win32.h"
 #endif //K15_OS_WINDOWS
 
 namespace K15_Engine { namespace Core {
   /*********************************************************************************/
-  typedef K15_List(ApplicationModule*) ApplicationModuleList;
-  typedef K15_List(ApplicationParameter) ApplicationParameterList;
+  typedef List(ApplicationModule*) ApplicationModuleList;
+  typedef List(ApplicationParameter) ApplicationParameterList;
   /*********************************************************************************/
-  exposed_class K15_API_EXPORT Application : public Singleton<Application>,
+  exposed_class K15_CORE_API Application : public Singleton<Application>,
 											 public StackAllocator
   {
   public:
@@ -65,7 +65,7 @@ namespace K15_Engine { namespace Core {
     inline const StringSet& getCommandList() const;
     inline const ApplicationParameterList& getApplicationParameter() const;
 
-    inline void setWindowTitle(const String& p_WindowTitle);
+    void setWindowTitle(const String& p_WindowTitle);
 
 	void initialize(int p_CommandCount,char** p_Commands);
     void initialize();
@@ -81,6 +81,9 @@ namespace K15_Engine { namespace Core {
 
     void onBeforeRender();
     void onAfterRender();
+
+	inline RenderTask* getRenderTask() const;
+	inline PhysicsTask* getPhysicsTask() const;
 
     inline TaskManager* getTaskManager() const;
     inline ProfilingManager* getProfileManager() const;
@@ -147,6 +150,9 @@ namespace K15_Engine { namespace Core {
 				EventManager* m_EventManager;
 				LogManager* m_LogManager;
 				DynamicLibraryManager* m_DynamicLibraryManager;
+
+				RenderTask* m_RenderTask;
+				PhysicsTask* m_PhysicsTask;
   }; //end of Application class definition
 #include "K15_Application.inl"
 }} //end of K15_Engine::Core namespace

@@ -198,6 +198,18 @@
     <ClInclude Include="..\..\engine\include\K15_StackItem.h">
       <Filter>Container\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_PhysicsProcessBase.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_PhysicsTask.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_RenderProcessBase.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_RenderTask.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -288,6 +300,15 @@
       <Filter>Core\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_StringUtil.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_PhysicsTask.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_RenderTask.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_RenderProcessBase.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
   </ItemGroup>

@@ -19,7 +19,7 @@
 
 #include "K15_PrecompiledHeader.h"
 
-#include "K15_DynamicLibrary_win32.h"
+#include "Win32\K15_DynamicLibrary_win32.h"
 #include "K15_LogManager.h"
 #include "K15_StringUtil.h"
 

@@ -34,7 +34,7 @@
 
 namespace K15_Engine { namespace Core { 
 
-	class K15_API_EXPORT Object
+	class K15_CORE_API Object
 	{
 		K15_DECLARE_RTTI;
 

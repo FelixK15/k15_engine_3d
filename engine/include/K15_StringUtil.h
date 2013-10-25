@@ -29,7 +29,7 @@
 #endif
 
 namespace K15_Engine { namespace Core { 
-	class K15_API_EXPORT StringUtil
+	class K15_CORE_API StringUtil
 	{
 	public:
 		
@@ -117,7 +117,7 @@ namespace K15_Engine { namespace Core {
 		*
 		* @return float - extracted float from the string
 		*/
-		static float toFloat(const String& p_String,const char p_Delimiter = '.');
+		static float toFloat(const String& p_String,const unsigned char p_Delimiter = '.');
 
 		/**
 		* Create a double variable out of a string
@@ -127,7 +127,7 @@ namespace K15_Engine { namespace Core {
 		*
 		* @return double - extracted double from the string
 		*/
-		static double toDouble(const String& p_String,const char p_Delimiter = '.');
+		static double toDouble(const String& p_String,const unsigned char p_Delimiter = '.');
 
 		/**
 		* Create a bool variable out of a string
@@ -148,7 +148,7 @@ namespace K15_Engine { namespace Core {
 		* @return T - extracted numeric value
 		*/
 		template<typename T>
-		static T stringToNumeric(const String& p_String,const char p_Delimiter = '.')
+		static T stringToNumeric(const String& p_String,const unsigned char p_Delimiter = '.')
 		{
 			static String tempString;
 			static T returnValue;

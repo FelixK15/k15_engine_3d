@@ -18,7 +18,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -39,16 +39,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\bin\$(Platform)_$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\obj\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\include\;$(IncludePath)</IncludePath>
+    <OutDir>..\..\..\dependencies\$(ProjectName)\bin\$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>..\..\..\dependencies\$(ProjectName)\obj\</IntDir>
+    <IncludePath>..\..\..\dependencies\$(ProjectName)\include\GL\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -69,14 +69,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\dependencies\GLEW\include\glew.h" />
-    <ClInclude Include="..\..\..\dependencies\GLEW\include\glxew.h" />
-    <ClInclude Include="..\..\..\dependencies\GLEW\include\wglew.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\..\..\dependencies\GLEW\src\glew.c" />
     <ClCompile Include="..\..\..\dependencies\GLEW\src\glewinfo.c" />
-    <ClCompile Include="..\..\..\dependencies\GLEW\src\visualinfo.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\dependencies\GLEW\include\GL\glew.h" />
+    <ClInclude Include="..\..\..\dependencies\GLEW\include\GL\wglew.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

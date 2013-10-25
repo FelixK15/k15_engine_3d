@@ -22,7 +22,7 @@
 namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	GpuBufferImplOGL::GpuBufferImplOGL()
-		: m_BufferIndex(0)
+		: m_BufferHandle(0)
 	{
 
 	}
@@ -34,8 +34,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	void GpuBufferImplOGL::init(Enum p_BufferType,Enum p_UsageOptions,Enum p_LockOptions)
 	{
-		glGenBuffers(1,&m_BufferIndex);
-		
+		glGenBuffers(1,&m_BufferHandle);
 	}
 	/*********************************************************************************/
 	void GpuBufferImplOGL::shutdown()
@@ -45,22 +44,27 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	bool GpuBufferImplOGL::lock()
 	{
-
+		//Todo
+		return false;
 	}
 	/*********************************************************************************/
 	bool GpuBufferImplOGL::unlock()
 	{
-
+		//Todo
+		return false;
 	}
 	/*********************************************************************************/
 	uint32 GpuBufferImplOGL::readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset)
 	{
-		
+		//Todo
+		return 0;
 	}
 	/*********************************************************************************/
 	uint32 GpuBufferImplOGL::writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset)
 	{
-		glBufferData(m_BufferIndex,p_Size,(GLvoid*)(p_Destination + p_Offset)
+		glBufferSubData(m_BufferHandle,p_Offset,p_Size,p_Source);
+
+		return p_Size;
 	}
 	/*********************************************************************************/
 }}}//end of K15_Engine::Rendering::OGL namespace

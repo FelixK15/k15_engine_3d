@@ -14,4 +14,3 @@ bin
 *.opensdf
 *.suo
 *.ipch
-vs2010/Dependencies/glew-1.10.0/

@@ -39,7 +39,7 @@ namespace K15_Engine { namespace Core {
 								  public StackAllocator
 	{
 	public:
-		typedef K15_HashMap(String,DynamicLibraryBase*) DynamicLibraryMap;
+		typedef HashMap(String,DynamicLibraryBase*) DynamicLibraryMap;
 
 	public:
 		DynamicLibraryManager();

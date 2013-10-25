@@ -45,12 +45,12 @@
 
 namespace K15_Engine { namespace Core {
 
-	class K15_API_EXPORT LogManager : public ApplicationAllocatedObject, 
+	class K15_CORE_API LogManager : public ApplicationAllocatedObject, 
 									  public Singleton<LogManager>,
 									  public StackAllocator
 	{
 	public:
-		typedef K15_List(LogBase*) LogList;
+		typedef List(LogBase*) LogList;
 	public:
 		enum eLogPriorityFlags
 		{

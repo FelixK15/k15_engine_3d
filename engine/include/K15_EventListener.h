@@ -30,7 +30,7 @@
 
 namespace K15_Engine { namespace Core { 
 
-	class K15_API_EXPORT EventListener
+	class K15_CORE_API EventListener
 	{
 	public:
 		virtual void handleEvent(GameEvent* p_Event) = 0;

@@ -30,7 +30,7 @@
 
 namespace K15_Engine { namespace Core { 
 
-	class K15_API_EXPORT ResourceData
+	class K15_CORE_API ResourceData
 	{
 	public:
 		byte* Data;

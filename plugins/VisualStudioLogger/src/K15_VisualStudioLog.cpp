@@ -25,25 +25,25 @@ namespace K15_Engine { namespace Plugins { namespace VisualStudioLogger {
 	{
 		static String msg;
 
-		msg = System::StringUtil::timeAsString() + " ";
+		msg = Core::StringUtil::timeAsString() + " ";
 
-		if(p_PriorityFlag & System::LogManager::LP_NORMAL)
+		if(p_PriorityFlag & Core::LogManager::LP_NORMAL)
 		{
 			msg += "[NORMAL]: ";
 		}
-		else if(p_PriorityFlag & System::LogManager::LP_ERROR)
+		else if(p_PriorityFlag & Core::LogManager::LP_ERROR)
 		{
 			msg += "[ERROR]: ";
 		}
-		else if(p_PriorityFlag & System::LogManager::LP_WARNING)
+		else if(p_PriorityFlag & Core::LogManager::LP_WARNING)
 		{
 			msg += "[WARNING]: ";
 		}
-		else if(p_PriorityFlag & System::LogManager::LP_SUCCESS)
+		else if(p_PriorityFlag & Core::LogManager::LP_SUCCESS)
 		{
 			msg += "[SUCCESS]: ";
 		}
-		else if(p_PriorityFlag & System::LogManager::LP_DEBUG)
+		else if(p_PriorityFlag & Core::LogManager::LP_DEBUG)
 		{
 			msg += "[DEBUG]: ";
 		}

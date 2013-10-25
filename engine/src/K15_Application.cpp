@@ -26,6 +26,8 @@
 #include "K15_DynamicLibraryBase.h"
 #include "K15_StringUtil.h"
 #include "K15_Functor.h"
+#include "K15_RenderTask.h"
+#include "K15_PhysicsTask.h"
 #include "K15_ApplicationModule.h"
 #include "K15_ApplicationModuleDescription.h"
 
@@ -34,8 +36,7 @@
 #endif //K15_DEBUG
 
 #ifdef K15_OS_WINDOWS
-#	include "K15_RenderWindow_Win32.h"
-#	include "K15_ApplicationOSLayer_Win32.h"
+#	include "Win32\K15_RenderWindow_Win32.h"
 #endif //K15_OS_WINDOWS
 
 namespace K15_Engine { namespace Core { 
@@ -69,11 +70,17 @@ namespace K15_Engine { namespace Core {
 #		if defined (K15_DEBUG)
 			m_LogManager->addLog(K15_NEW TextConsoleLog(),true,LogManager::LP_ALL);
 #		endif //K15_DEBUG
+
+		m_RenderTask = K15_NEW RenderTask();
+		m_PhysicsTask = K15_NEW PhysicsTask();
 	}
 	/*********************************************************************************/
 	Application::~Application()
 	{
 		m_Commands.clear();
+		
+		K15_DELETE m_RenderTask;
+		K15_DELETE m_PhysicsTask;
 	}
 	/*********************************************************************************/
 	void Application::createCommandList(int p_CommandCount,char** p_Commands)
@@ -220,6 +227,18 @@ namespace K15_Engine { namespace Core {
 		_LogNormal("Tasks will get created and added to the task manager.");
 		_LogNormal("Adding Eventmanager task...");
 		m_TaskManager->addTask(m_EventManager->createTask());
+
+		_LogNormal("Adding render task...");
+		m_TaskManager->addTask(m_RenderTask);
+
+		_LogNormal("Adding physics task...");
+		m_TaskManager->addTask(m_PhysicsTask);
+	}
+	/*********************************************************************************/
+	void Application::setWindowTitle(const String& p_WindowTitle) 
+	{
+		if(m_RenderWindow)
+			m_RenderWindow->setWindowTitle(p_WindowTitle);
 	}
 	/*********************************************************************************/
 	void Application::run()
@@ -518,7 +537,6 @@ namespace K15_Engine { namespace Core {
 		{
 			currentParam = (*iter);
 			K15_SET_NUMERICAL_SETTING(currentParam,MaxFPS,uint16);
-			K15_SET_STRING_SETTING(currentParam,WindowTitle);
 
 			if(currentParam.Name == "Resolution")
 			{

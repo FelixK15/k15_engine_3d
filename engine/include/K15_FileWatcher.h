@@ -32,7 +32,7 @@
 
 namespace K15_EngineV2
 {
-	class K15_API_EXPORT FileWatcher : public Singleton<FileWatcher>
+	class K15_CORE_API FileWatcher : public Singleton<FileWatcher>
 	{
 	public:
 		FileWatcher();

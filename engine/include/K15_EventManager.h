@@ -69,11 +69,11 @@ namespace K15_Engine { namespace Core {
 		EventManager* m_EventManager;
 	};
 	/*********************************************************************************/
-	typedef K15_List(EventListener*) EventListenerList;
-	typedef K15_HashMap(EventName,EventListenerList*) EventTypeListenerMap;
-	typedef K15_Stack(GameEvent*) EventStack;
+	typedef List(EventListener*) EventListenerList;
+	typedef HashMap(EventName,EventListenerList*) EventTypeListenerMap;
+	typedef Stack(GameEvent*) EventStack;
 	/*********************************************************************************/
-	class K15_API_EXPORT EventManager : public ApplicationAllocatedObject, public Singleton<EventManager>, public PageAllocator<>
+	class K15_CORE_API EventManager : public ApplicationAllocatedObject, public Singleton<EventManager>, public PageAllocator<>
 	{
 	public:
 		/**

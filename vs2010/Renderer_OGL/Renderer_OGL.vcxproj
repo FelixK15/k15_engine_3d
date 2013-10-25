@@ -18,7 +18,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -39,10 +39,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\rendererOGL\bin\$(Configuration)\</OutDir>
+    <OutDir>..\..\rendererOGL\bin\$(Platform)_$(Configuration)\</OutDir>
     <IntDir>..\..\rendererOGL\obj\</IntDir>
-    <IncludePath>..\..\rendererOGL\include\;..\Dependencies\glew-1.10.0\include\;..\..\engine\include\;..\..\renderer\include\;..\..\engine\src\win32\;..\..\engine\src\;..\..\engine\include\win32\;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\engine\bin\$(Configuration)\;..\..\renderer\bin\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\rendererOGL\include\;..\..\engine\include\;..\..\renderer\include\;..\..\dependencies\GLEW\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\engine\bin\$(Platform)_$(Configuration)\;..\..\renderer\bin\$(Platform)_$(Configuration)\;..\..\dependencies\GLEW\bin\$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>..\..\rendererOGL\bin\$(Configuration)\</OutDir>
@@ -58,7 +58,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>K15_Engine.lib;K15_Renderer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>K15_Engine.lib;K15_Renderer.lib;GLEW.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

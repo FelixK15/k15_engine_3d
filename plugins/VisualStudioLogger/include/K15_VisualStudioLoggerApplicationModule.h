@@ -20,15 +20,14 @@
  *
  */
 
-#include "K15_Prerequisites.h"
 #include "K15_ApplicationModule.h"
 
 namespace K15_Engine { namespace Plugins { namespace VisualStudioLogger {
 	/*********************************************************************************/
-	class VisualStudioLoggerApplicationModule : public System::ApplicationModule
+	class VisualStudioLoggerApplicationModule : public Core::ApplicationModule
 	{
 	public:
-		bool onInitialize();
+		virtual bool onInitialize() OVERRIDE;
 	}; //end of VisualStudioLoggerApplicationModule class
 	/*********************************************************************************/
 }}} //end of K15_Engine::Plugins::VisualStudioLogger namespace
