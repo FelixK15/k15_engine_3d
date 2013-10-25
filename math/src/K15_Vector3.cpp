@@ -20,43 +20,43 @@
  *
  * 
  */
-#include "K15_Math_PrecompiledHeaders.h"
+
 #include "K15_Vector3.h"
 
 namespace K15_Engine { namespace Math { 
 	/*********************************************************************************/
-	Vector3 Vector3::Up = Vector3(0.f,1.f,0.f);
-	Vector3 Vector3::Right = Vector3(1.f,0.f,0.f);
-	Vector3 Vector3::Forward = Vector3(0.f,0.f,1.f);
+	const Vector3 Vector3::Up = Vector3(0.f,1.f,0.f);
+	const Vector3 Vector3::Right = Vector3(1.f,0.f,0.f);
+	const Vector3 Vector3::Forward = Vector3(0.f,0.f,1.f);
 	/*********************************************************************************/
 	
 	/*********************************************************************************/
 	Vector3::Vector3()
 	{
-		x = (float)0;
-		y = (float)0;
-		z = (float)0;
+		x = 0.0f;
+		y = 0.0f;
+		z = 0.0f;
 	}
 	/*********************************************************************************/
-	Vector3::Vector3( float vec[3] )
+	Vector3::Vector3(float p_Values[3])
 	{
-		x = vec[0];
-		y = vec[1];
-		z = vec[2];
+		x = p_Values[0];
+		y = p_Values[1];
+		z = p_Values[2];
 	}
 	/*********************************************************************************/
-	Vector3::Vector3( float x,float y, float z )
+	Vector3::Vector3(float x,float y, float z)
 	{
-		vec[0] = x;
-		vec[1] = y;
-		vec[2] = z;
+		m_VectorArray[0] = x;
+		m_VectorArray[1] = y;
+		m_VectorArray[2] = z;
 	}
 	/*********************************************************************************/
-	Vector3::Vector3( const Vector3 &vec3 )
+	Vector3::Vector3(const Vector3& p_Vector)
 	{
-		x = vec3.x;
-		y = vec3.y;
-		z = vec3.z;
+		x = p_Vector.x;
+		y = p_Vector.y;
+		z = p_Vector.z;
 	}
 	/*********************************************************************************/
 	Vector3::~Vector3()
@@ -66,14 +66,14 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	void Vector3::normalize()
 	{
-		float tmp = magnitude();
+		float magnitude = length();
 		
-		x /= tmp;
-		y /= tmp;
-		z /= tmp;
+		x /= magnitude;
+		y /= magnitude;
+		z /= magnitude;
 	}
 	/*********************************************************************************/
-	float Vector3::magnitude() const
+	float Vector3::length() const
 	{
 		return ::sqrt(x*x + y*y + z*z);
 	}
@@ -92,131 +92,150 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	bool Vector3::isUnit() const
 	{
-		return (magnitude() == 1);
+		return (length() == 1);
 	}
 	/*********************************************************************************/
-	float Vector3::dot( const Vector3 &vec ) const
+	float Vector3::dot(const Vector3& p_Vector) const
 	{
-		return (x * vec.x + y * vec.y + z * vec.z);
+		return (x * p_Vector.x + y * p_Vector.y + z * p_Vector.z);
 	}
 	/*********************************************************************************/
-	Vector3 Vector3::cross( const Vector3 &vec ) const
+	Vector3 Vector3::cross(const Vector3& p_Vector) const
 	{
-		float tmpx = y * vec.z - z * vec.y;
-		float tmpy = z * vec.x - x * vec.z;
-		float tmpz = x * vec.y - y * vec.x;
+		float tmpx = y * p_Vector.z - z * p_Vector.y;
+		float tmpy = z * p_Vector.x - x * p_Vector.z;
+		float tmpz = x * p_Vector.y - y * p_Vector.x;
 		return Vector3(tmpx, tmpy, tmpz);
 	}
 	/*********************************************************************************/
-	Vector3 &Vector3::operator=(const Vector3 &vec)
+	const Vector3& Vector3::operator=(const Vector3& p_Vector)
 	{
-		x = vec.x;
-		y = vec.y;
-		z = vec.z;
+		x = p_Vector.x;
+		y = p_Vector.y;
+		z = p_Vector.z;
 		return *this;
 	}
 	/*********************************************************************************/
-	Vector3 &Vector3::operator*(float fScale)
+	Vector3 Vector3::operator*(float p_Scale) const
 	{
-		x *= fScale;
-		y *= fScale;
-		z *= fScale;
+		Vector3 vector = *this;
+		vector.x *= p_Scale;
+		vector.y *= p_Scale;
+		vector.z *= p_Scale;
 		return *this;
 	}
 	/*********************************************************************************/
-	Vector3 &Vector3::operator*=(float fScale)
+	Vector3 Vector3::operator/(float p_Scalar) const
 	{
-		x *= fScale;
-		y *= fScale;
-		z *= fScale;
+		Vector3 vector = *this;
+		vector.x /= p_Scalar;
+		vector.y /= p_Scalar;
+		vector.z /= p_Scalar;
 		return *this;
 	}
 	/*********************************************************************************/
-	float Vector3::operator*( const Vector3 &vec ) const
+	const Vector3& Vector3::operator*=(float p_Scale)
 	{
-		return (x * vec.x + y * vec.y + z * vec.z);
+		x *= p_Scale;
+		y *= p_Scale;
+		z *= p_Scale;
+		return *this;
 	}
 	/*********************************************************************************/
-	Vector3 Vector3::operator+( const Vector3 &vec )
+	Vector3 Vector3::operator+(const Vector3& p_Vector) const
 	{
 		Vector3 vecNewVec;
-		vecNewVec.x = this->x + vec.x;
-		vecNewVec.y = this->y + vec.y;
-		vecNewVec.z = this->z + vec.z;
+		vecNewVec.x = this->x + p_Vector.x;
+		vecNewVec.y = this->y + p_Vector.y;
+		vecNewVec.z = this->z + p_Vector.z;
 		return vecNewVec;
 	}
 	/*********************************************************************************/
-	Vector3 Vector3::operator-( const Vector3 &vec )
+	Vector3 Vector3::operator-(const Vector3& p_Vector) const
 	{
 		Vector3 vecNewVec;
-		vecNewVec.x = this->x - vec.x;
-		vecNewVec.y = this->y - vec.y;
-		vecNewVec.z = this->z - vec.z;
+		vecNewVec.x = this->x - p_Vector.x;
+		vecNewVec.y = this->y - p_Vector.y;
+		vecNewVec.z = this->z - p_Vector.z;
 		return vecNewVec;
 	}
 	/*********************************************************************************/
-	Vector3 &Vector3::operator+=( const Vector3 &vec )
+	const Vector3& Vector3::operator+=(const Vector3& p_Vector)
 	{
-		x += vec.x;
-		y += vec.y;
-		z += vec.z;
+		x += p_Vector.x;
+		y += p_Vector.y;
+		z += p_Vector.z;
 		return *this;
 	}
 	/*********************************************************************************/
-	Vector3 &Vector3::operator-=( const Vector3 &vec )
+	const Vector3& Vector3::operator-=(const Vector3& p_Vector)
 	{
-		x -= vec.x;
-		y -= vec.y;
-		z -= vec.z;
+		x -= p_Vector.x;
+		y -= p_Vector.y;
+		z -= p_Vector.z;
 		return *this;
 	}
 	/*********************************************************************************/
-	bool Vector3::operator<( const Vector3 &vec ) const
+	const Vector3& Vector3::operator/=(float p_Scalar)
 	{
-		if(magnitude()<vec.magnitude()){
+		x /= p_Scalar;
+		y /= p_Scalar;
+		z /= p_Scalar;
+		return *this;
+	}
+	/*********************************************************************************/
+	bool Vector3::operator<(const Vector3& p_Vector) const
+	{
+		if(length()<p_Vector.length())
+		{
 			return true;
 		}
 		return false;
 	}
 	/*********************************************************************************/
-	bool Vector3::operator>( const Vector3 &vec ) const
+	bool Vector3::operator>(const Vector3& p_Vector) const
 	{
-		if(magnitude()>vec.magnitude()){
+		if(length()>p_Vector.length())
+		{
 			return true;
 		}
 		return false;
 	}
 	/*********************************************************************************/
-	bool Vector3::operator<=( const Vector3 &vec ) const
+	bool Vector3::operator<=(const Vector3& p_Vector) const
 	{
-		if(magnitude()<=vec.magnitude()){
+		if(length()<=p_Vector.length())
+		{
 			return true;
 		}
 		return false;
 	}
 	/*********************************************************************************/
-	bool Vector3::operator>=( const Vector3 &vec ) const
+	bool Vector3::operator>=(const Vector3& p_Vector) const
 	{
-		if(magnitude()>=vec.magnitude()){
+		if(length()>=p_Vector.length())
+		{
 			return true;
 		}
 		return false;
 	}
 	/*********************************************************************************/
-	bool Vector3::operator==( const Vector3 &vec ) const
+	bool Vector3::operator==(const Vector3& p_Vector) const
 	{
-		if((x==vec.x) && (y==vec.y) && (z==vec.z)){
+		if(length() == p_Vector.length())
+		{
 			return true;
 		}
 		return false;
 	}
 	/*********************************************************************************/
-	bool Vector3::operator!=( const Vector3 &vec ) const
+	bool Vector3::operator!=(const Vector3& p_Vector) const
 	{
-		if((x==vec.x) && (y==vec.y) && (z==vec.z)){
+		if(length() == p_Vector.length())
+		{
 			return false;
 		}
 		return true;
 	}
-	/*********************************************************************************/
+/*********************************************************************************/
 }}//end of K15_Engine::Math namespace

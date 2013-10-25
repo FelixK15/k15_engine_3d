@@ -48,7 +48,7 @@
     <OutDir>..\..\math\bin\$(Platform)_$(Configuration)\</OutDir>
     <IntDir>..\..\math\obj\</IntDir>
     <TargetName>K15_Math</TargetName>
-    <IncludePath>..\..\math\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\math\include\;..\..\engine\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -74,30 +74,26 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\math\include\K15_MathPrerequisites.h" />
-    <ClInclude Include="..\..\math\include\K15_Matrix3x3.h" />
-    <ClInclude Include="..\..\math\include\K15_Matrix4x4.h" />
+    <ClInclude Include="..\..\math\include\K15_Matrix3.h" />
+    <ClInclude Include="..\..\math\include\K15_Matrix4.h" />
     <ClInclude Include="..\..\math\include\K15_Quaternion.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\..\math\include\K15_Vector2.h" />
     <ClInclude Include="..\..\math\include\K15_Vector3.h" />
+    <ClInclude Include="..\..\math\include\K15_Vector4.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\math\src\K15_Matrix3x3.cpp" />
-    <ClCompile Include="..\..\math\src\K15_Matrix4x4.cpp" />
+    <ClCompile Include="..\..\math\src\K15_Matrix3.cpp" />
+    <ClCompile Include="..\..\math\src\K15_Matrix4.cpp" />
     <ClCompile Include="..\..\math\src\K15_Quaternion.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <None Include="..\..\math\src\K15_Quaternion.inl">
-      <FileType>CppCode</FileType>
-    </None>
+    <ClCompile Include="..\..\math\src\K15_Vector4.cpp" />
     <ClCompile Include="..\..\math\src\K15_Vector2.cpp" />
     <ClCompile Include="..\..\math\src\K15_Vector3.cpp" />
-    <None Include="..\..\math\src\K15_Vector3.inl">
-      <FileType>Document</FileType>
-    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

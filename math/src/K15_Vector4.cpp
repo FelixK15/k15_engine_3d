@@ -1,5 +1,5 @@
 /**
- * @file K15_Vector2.cpp
+ * @file K15_Vector4.cpp
  * @author  Tobias Funke <tobyfunke@web.de>
  * @version 1.0
  * @date 2012/10/19
@@ -21,146 +21,148 @@
  * 
  */
 
-#include "K15_Vector2.h"
+#include "K15_Vector4.h"
 
 namespace K15_Engine { namespace Math { 
 	/*********************************************************************************/
-	const Vector2 Vector2::Up = Vector2(0.0f,1.0f);
-	const Vector2 Vector2::Right = Vector2(1.0f,0.0f);
+	const Vector4 Vector4::Up = Vector4(0.0f,1.0f,0.0f,1.0f);
+	const Vector4 Vector4::Right = Vector4(1.0f,0.f,0.0f,1.0f);
+	const Vector4 Vector4::Forward = Vector4(0.0f,0.0f,1.0f,1.0f);
 	/*********************************************************************************/
 	
 	/*********************************************************************************/
-	Vector2::Vector2()
+	Vector4::Vector4()
 	{
-		x = 0.0f;
-		y = 0.0f;
+		m_VectorSIMD = _mm_set_ps(1.0f,0.0f,0.0f,0.0f);
 	}
 	/*********************************************************************************/
-	Vector2::Vector2(float p_Values[2])
+	Vector4::Vector4(float p_Values[3])
 	{
-		x = p_Values[0];
-		y = p_Values[1];
+		m_VectorSIMD = _mm_set_ps(p_Values[3],p_Values[2],p_Values[1],p_Values[0]);
 	}
 	/*********************************************************************************/
-	Vector2::Vector2(float x,float y)
+	Vector4::Vector4(float x,float y, float z, float w)
 	{
-		m_VectorArray[0] = x;
-		m_VectorArray[1] = y;
+		m_VectorSIMD = _mm_set_ps(w,z,y,x);
 	}
 	/*********************************************************************************/
-	Vector2::Vector2(const Vector2& p_Vector)
+	Vector4::Vector4(const Vector4& p_Vector)
 	{
-		x = p_Vector.x;
-		y = p_Vector.y;
+		m_VectorSIMD = _mm_set_ps(p_Vector.w,p_Vector.z,p_Vector.y,p_Vector.x);
 	}
 	/*********************************************************************************/
-	Vector2::~Vector2()
+	Vector4::~Vector4()
 	{
 
 	}
 	/*********************************************************************************/
-	void Vector2::normalize()
+	void Vector4::normalize()
 	{
-		float magnitude = length();
-		
-		x /= magnitude;
-		y /= magnitude;
+		__m128 temp = _mm_mul_ps(m_VectorSIMD,m_VectorSIMD);
+		__m128 length = _mm_sqrt_ps(temp);
+		_mm_div_ps(m_VectorSIMD,length);
 	}
 	/*********************************************************************************/
-	float Vector2::length() const
+	float Vector4::length() const
 	{
-		return ::sqrt(x*x + y*y);
+		__m128 temp = _mm_mul_ps(m_VectorSIMD,m_VectorSIMD);
+		__m128 length = _mm_sqrt_ps(temp);
+		return length.m128_f32[0];
 	}
 	/*********************************************************************************/
-	void Vector2::invert()
+	void Vector4::invert()
 	{
 		x = -x;
 		y = -y;
+		z = -z;
+		w = -w;
 	}
 	/*********************************************************************************/
-	bool Vector2::isNull() const
+	bool Vector4::isNull() const
 	{
-		return (x == y) && (x == 0);
+		return (x == y) && (y == z) && (x == 0) && (w == 0);
 	}
 	/*********************************************************************************/
-	bool Vector2::isUnit() const
+	bool Vector4::isUnit() const
 	{
-		return (length() == 1);
+		return (length() == 1.0f);
 	}
 	/*********************************************************************************/
-	float Vector2::dot(const Vector2& p_Vector) const
+	float Vector4::dot(const Vector4& p_Vector) const
 	{
-		return (x * p_Vector.x + y * p_Vector.y);
+		__m128 multiplied = _mm_mul_ps(m_VectorSIMD,p_Vector.m_VectorSIMD);
+		return multiplied.m128_f32[0] + multiplied.m128_f32[1] + multiplied.m128_f32[2] + multiplied.m128_f32[3];
 	}
 	/*********************************************************************************/
-	const Vector2& Vector2::operator=(const Vector2& p_Vector)
+// 	Vector4 Vector4::cross(const Vector4& p_Vector) const
+// 	{
+// 		float tmpx = y * p_Vector.z - z * p_Vector.y;
+// 		float tmpy = z * p_Vector.x - x * p_Vector.z;
+// 		float tmpz = x * p_Vector.y - y * p_Vector.x;
+// 		float tmpw = 
+// 		return Vector4(tmpx, tmpy, tmpz);
+// 	}
+	/*********************************************************************************/
+	const Vector4& Vector4::operator=(const Vector4& p_Vector)
 	{
 		x = p_Vector.x;
 		y = p_Vector.y;
+		z = p_Vector.z;
+		w = p_Vector.w;
 		return *this;
 	}
 	/*********************************************************************************/
-	Vector2 Vector2::operator*(float p_Scale) const
+	Vector4 Vector4::operator*(float p_Scale) const
 	{
-		Vector2 vector = *this;
-		vector.x *= p_Scale;
-		vector.y *= p_Scale;
+		__m128 temp = _mm_set_ps(p_Scale,p_Scale,p_Scale,p_Scale);
+		
+		Vector4 vector = *this;
+		vector *= p_Scale;
+		return vector;
+	}
+	/*********************************************************************************/
+	const Vector4& Vector4::operator*=(float p_Scale)
+	{
+		__m128 temp = _mm_set_ps(p_Scale,p_Scale,p_Scale,p_Scale);
+		m_VectorSIMD = _mm_mul_ps(m_VectorSIMD,temp);
 		return *this;
 	}
 	/*********************************************************************************/
-	Vector2 Vector2::operator/(float p_Scalar) const
+	Vector4 Vector4::operator+(const Vector4& p_Vector) const
 	{
-		Vector2 vector = *this;
-		vector.x /= p_Scalar;
-		vector.y /= p_Scalar;
+		Vector4 vector = *this;
+		vector += p_Vector;
+		
+		return vector;
+	}
+	/*********************************************************************************/
+	Vector4 Vector4::operator-(const Vector4& p_Vector) const
+	{
+		Vector4 vector = *this;
+		vector -= p_Vector;
+		return vector;
+	}
+	/*********************************************************************************/
+	const Vector4& Vector4::operator+=(const Vector4& p_Vector)
+	{
+		m_VectorSIMD = _mm_add_ps(m_VectorSIMD,p_Vector.m_VectorSIMD);
 		return *this;
 	}
 	/*********************************************************************************/
-	const Vector2& Vector2::operator*=(float p_Scale)
+	const Vector4& Vector4::operator-=(const Vector4& p_Vector)
 	{
-		x *= p_Scale;
-		y *= p_Scale;
+		m_VectorSIMD = _mm_sub_ps(m_VectorSIMD,p_Vector.m_VectorSIMD);
 		return *this;
 	}
 	/*********************************************************************************/
-	Vector2 Vector2::operator+(const Vector2& p_Vector) const
+	const Vector4& Vector4::operator/=(float p_Scalar)
 	{
-		Vector2 vecNewVec;
-		vecNewVec.x = this->x + p_Vector.x;
-		vecNewVec.y = this->y + p_Vector.y;
-		return vecNewVec;
-	}
-	/*********************************************************************************/
-	Vector2 Vector2::operator-(const Vector2& p_Vector) const
-	{
-		Vector2 vecNewVec;
-		vecNewVec.x = this->x - p_Vector.x;
-		vecNewVec.y = this->y - p_Vector.y;
-		return vecNewVec;
-	}
-	/*********************************************************************************/
-	const Vector2& Vector2::operator+=(const Vector2& p_Vector)
-	{
-		x += p_Vector.x;
-		y += p_Vector.y;
+		__m128 t = _mm_set_ps(p_Scalar,p_Scalar,p_Scalar,p_Scalar);
+		m_VectorSIMD = _mm_div_ps(m_VectorSIMD,t);
 		return *this;
 	}
 	/*********************************************************************************/
-	const Vector2& Vector2::operator-=(const Vector2& p_Vector)
-	{
-		x -= p_Vector.x;
-		y -= p_Vector.y;
-		return *this;
-	}
-	/*********************************************************************************/
-	const Vector2& Vector2::operator/=(float p_Scalar)
-	{
-		x /= p_Scalar;
-		y /= p_Scalar;
-		return *this;
-	}
-	/*********************************************************************************/
-	bool Vector2::operator<(const Vector2& p_Vector) const
+	bool Vector4::operator<(const Vector4& p_Vector) const
 	{
 		if(length()<p_Vector.length())
 		{
@@ -169,7 +171,7 @@ namespace K15_Engine { namespace Math {
 		return false;
 	}
 	/*********************************************************************************/
-	bool Vector2::operator>(const Vector2& p_Vector) const
+	bool Vector4::operator>(const Vector4& p_Vector) const
 	{
 		if(length()>p_Vector.length())
 		{
@@ -178,7 +180,7 @@ namespace K15_Engine { namespace Math {
 		return false;
 	}
 	/*********************************************************************************/
-	bool Vector2::operator<=(const Vector2& p_Vector) const
+	bool Vector4::operator<=(const Vector4& p_Vector) const
 	{
 		if(length()<=p_Vector.length())
 		{
@@ -187,7 +189,7 @@ namespace K15_Engine { namespace Math {
 		return false;
 	}
 	/*********************************************************************************/
-	bool Vector2::operator>=(const Vector2& p_Vector) const
+	bool Vector4::operator>=(const Vector4& p_Vector) const
 	{
 		if(length()>=p_Vector.length())
 		{
@@ -196,7 +198,7 @@ namespace K15_Engine { namespace Math {
 		return false;
 	}
 	/*********************************************************************************/
-	bool Vector2::operator==(const Vector2& p_Vector) const
+	bool Vector4::operator==(const Vector4& p_Vector) const
 	{
 		if(length() == p_Vector.length())
 		{
@@ -205,7 +207,7 @@ namespace K15_Engine { namespace Math {
 		return false;
 	}
 	/*********************************************************************************/
-	bool Vector2::operator!=(const Vector2& p_Vector) const
+	bool Vector4::operator!=(const Vector4& p_Vector) const
 	{
 		if(length() == p_Vector.length())
 		{

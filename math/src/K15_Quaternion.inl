@@ -292,7 +292,7 @@ Quaternion<float> Quaternion<float>::Slerp(const Quaternion<float> &qQuat1, cons
 
 // mit Vorsicht geniessen, normalize need? code sollte richtig sein, testen!
 template <class float>
-void Quaternion<float>::QuaternionToMatrix(const Quaternion<float> &qQuat, Matrix4x4<float>* matDest)
+void Quaternion<float>::QuaternionToMatrix(const Quaternion<float> &qQuat, Matrix4<float>* matDest)
 {
 	//Normalize();
 	matDest->_1_1 = 1 - 2*(qQuat.m_fValues[2]*qQuat.m_fValues[2] + qQuat.m_fValues[3]*qQuat.m_fValues[3]);
@@ -314,7 +314,7 @@ void Quaternion<float>::QuaternionToMatrix(const Quaternion<float> &qQuat, Matri
 }
 
 template <class float>
-void Quaternion<float>::ToMatrix(Matrix4x4<float>* matDest)
+void Quaternion<float>::ToMatrix(Matrix4<float>* matDest)
 {
 	//Normalize();
 	matDest->_1_1 = 1 - 2*(m_fValues[2]*m_fValues[2] + m_fValues[3]*m_fValues[3]);

@@ -24,6 +24,7 @@
 #ifndef _K15Engine_Math_Prerequisites_h_
 #define _K15Engine_Math_Prerequisites_h_
 
+#include "K15_Prerequisites.h"
 #include <math.h>
 
 //we'll use SIMD math

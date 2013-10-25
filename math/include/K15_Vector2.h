@@ -24,57 +24,62 @@
 #ifndef _K15Engine_Math_Vector2_h_
 #define _K15Engine_Math_Vector2_h_
 
-#ifndef K15_MATH_USE_PRECOMPILED_HEADER
-#	include "K15_Math_Prerequisites.h"
-#endif //K15_MATH_USE_PRECOMPILED_HEADER
-
-#pragma message("FK - Add lazy evaluation and SIMD semantics")
+#include "K15_MathPrerequisites.h"
 
 namespace K15_Engine { namespace Math {
-
 	class Vector2
 	{
 	public:
+		/*********************************************************************************/
+		static const Vector2 Up;
+		static const Vector2 Right;
+		/*********************************************************************************/
+	public:
 		Vector2();
 		Vector2(float p_Values[2]);
-		Vector2(float x,float y);
-		Vector2(const Vector2& p_Other);
+		Vector2(float x, float y);
+		Vector2(const Vector2& p_Vector);
 
 		~Vector2();
 
 		void normalize();
-		float magnitude() const;
-		float dot(const Vector2& p_Other) const;
+		float length() const;
+		float dot(const Vector2& p_Vector) const;
 
-		Vector2& operator*(float p_Scalar);
+		void invert();
 
-		float operator*(const Vector2& p_Other) const;
+		bool isNull() const;
+		bool isUnit() const;
 
-		Vector2& operator+(const Vector2& p_Other);
-		Vector2& operator-(const Vector2& p_Other);
+		Vector2 operator/(float p_Scalar) const;
+		Vector2 operator*(float p_Scalar) const;
+		Vector2 operator+(const Vector2& p_Vector) const;
+		Vector2 operator-(const Vector2& p_Vector) const;
 
-		Vector2& operator+=(const Vector2& p_Other);
-		Vector2& operator-=(const Vector2& p_Other);
+		const Vector2& operator=(const Vector2& p_Vector);
+		const Vector2& operator+=(const Vector2& p_Vector);
+		const Vector2& operator-=(const Vector2& p_Vector);
+		const Vector2& operator*=(float p_Scalar);
+		const Vector2& operator/=(float p_Scalar);
 
-		bool operator<(const Vector2& p_Other);
-		bool operator>(const Vector2& p_Other);
+		bool operator<(const Vector2& p_Vector) const;
+		bool operator>(const Vector2& p_Vector) const;
 
-		bool operator<=(const Vector2& p_Other);
-		bool operator>=(const Vector2& p_Other);
+		bool operator<=(const Vector2& p_Vector) const;
+		bool operator>=(const Vector2& p_Vector) const;
 
-		bool operator==(const Vector2& p_Other);
-		bool operator!=(const Vector2& p_Other);
+		bool operator==(const Vector2& p_Vector) const;
+		bool operator!=(const Vector2& p_Vector) const;
 
 	public:
-		union
-		{
+		union{
 			struct
 			{
 				float x,y;
-			};// struct
-			float vec[2];
-		};// union
+			};//struct
+			float m_VectorArray[2];
+		};//union
 	};// end of Vector2 class declaration
 }}// end of K15_Engine::Math namespace
 
-#endif //__K15_VECTOR2__
+#endif //_K15Engine_Math_Vector2_h_

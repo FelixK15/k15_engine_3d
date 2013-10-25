@@ -23,64 +23,83 @@
 #ifndef _K15Engine_Math_Quaternion_h_
 #define _K15Engine_Math_Quaternion_h_
 
+#include "K15_MathPrerequisites.h"
 #include "K15_Vector3.h"
-#include "K15_Matrix4x4.h"
+#include "K15_Matrix3.h"
 
 namespace K15_Engine { namespace Math {
 	class Quaternion
 	{
 	public:
-
+		/*********************************************************************************/
+		static const Quaternion Identity;
+		static const Quaternion Zero;
+		/*********************************************************************************/
+	public:
 		Quaternion();
-		Quaternion(float fWValue, float fXValue, float fYValue, float fZValue);
-		Quaternion(float fSAngle, Vector3 vecVec);
+		Quaternion(float w, float x, float y, float z);
+		Quaternion(float p_Angle, const Vector3& p_Vector);
+		Quaternion(const Matrix3& p_Matrix);
 		Quaternion(const Quaternion &qQuat);
 		~Quaternion();
 
+		float length() const;
+		void normalize();
+		void conjugate();
+		void invert();
 
-		Quaternion operator+(const Quaternion &qQuat);
-		Quaternion &operator-();
-		Quaternion &operator+=(const Quaternion &qQuat);
-		Quaternion operator-(const Quaternion &qQuat);
-		Quaternion &operator-=(const Quaternion &qQuat);
-		Quaternion operator*(const Quaternion &qQuat);
-		Vector3 operator*(Vector3 &vec);
-		Quaternion &operator*=(const Quaternion &qQuat);
-		Quaternion operator*(float fScalar);
-		Quaternion &operator*=(float fScalar);
-		Quaternion operator/(float fScalar);
-		Quaternion operator/(const Quaternion &qQuat);
-		Quaternion &operator=(const Quaternion &qQuat);
-		bool operator==(const Quaternion &qQuat);
-		bool operator!=(const Quaternion &qQuat);
-		static float Dot(const Quaternion &qQuat1, const Quaternion &qQuat2);
-		static Quaternion Lerp(const Quaternion &qQuat1, const Quaternion &qQuat2, float fValue);
-		static Quaternion Slerp(const Quaternion &qQuat1, const Quaternion &qQuat2, float fValue);
-		void QuaternionToMatrix(const Quaternion &qQuat, Matrix4x4* matDest);
-		void ToMatrix(Matrix4x4* matDest);
-		Quaternion AxisAngleToQuaternion(float rAngel, Vector3 vecVec);
-		Quaternion AxisAngleToQuaternion(float rWValue, float rXValue, float rYValue, float rZValue);
-		Quaternion EulerAnglesToQuaternion(float rXEuler, float rYEuler, float rZEuler);
-		Quaternion EulerAnglesToQuaternion(Vector3 vecVec);
-		float Magnitude() const;
-		void Normalize();
-		void Conjugate();
-		void Invert();
-		void Identity();
-		bool IsUnitQuaternion() const;
+		Quaternion operator+(const Quaternion &qQuat) const;
+		Quaternion operator-(const Quaternion &qQuat) const;
+		Quaternion operator*(const Quaternion &qQuat) const;
+		Quaternion operator/(const Quaternion &qQuat) const;
+		Quaternion operator*(float fScalar) const;
+		Quaternion operator/(float fScalar) const;
 
+		const Quaternion& operator=(const Quaternion &qQuat);
+		const Quaternion& operator+=(const Quaternion &qQuat);
+		const Quaternion& operator-=(const Quaternion &qQuat);
+		const Quaternion& operator*=(const Quaternion &qQuat);
+		const Quaternion& operator/=(const Quaternion& p_Quaternion);
+		const Quaternion& operator*=(float p_Scalar);
+		const Quaternion& operator/=(float p_Scalar);
+		
+		bool operator==(const Quaternion &qQuat) const;
+		bool operator!=(const Quaternion &qQuat) const;
 
+		Vector3 operator*(const Vector3& p_Vector) const;
+		
+		float getRoll() const;
+		float getPitch() const;
+		float getYaw() const;
+
+		bool isIdentity() const;
+		
+		float dot(const Quaternion& p_Quaternion) const;
+		
+		Matrix3 toRotationMatrix() const;
+		void fromRotationMatrix(const Matrix3& p_Matrix);
+		void fromAngleAxis(float p_Angle, const Vector3& p_Vector);
+
+// 		static Quaternion Lerp(const Quaternion &qQuat1, const Quaternion &qQuat2, float fValue);
+// 		static Quaternion Slerp(const Quaternion &qQuat1, const Quaternion &qQuat2, float fValue);
+	
 	public:
-		union{
-			struct {
-				float s;
+		union
+		{
+			struct 
+			{
+				float m_Angle;
 				Vector3 v;
-			};
-			float m_fValues[4];
-		};
-	};
+			};//struct
 
-	#include "K15_Quaternion.inl"
+			struct  
+			{
+				float w, x, y, z;
+			};//struct
+			float m_QuaternionArray[4];
+			__m128 m_QuaternionSIMD;
+		};//union
+	};// end of Quaternion class declaration
 }} //end of K15_Engine::Math namespace
 
 #endif //__K15_Quaternion__

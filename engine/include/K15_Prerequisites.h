@@ -113,6 +113,16 @@ namespace K15_Engine
 		class GpuBufferImplBase;
 	} //end of K15_Engine::Rendering namespace
 	/*********************************************************************************/
+	namespace Math
+	{
+		class Vector2;
+		class Vector3;
+		class Vector4;
+		class Matrix3;
+		class Matrix4;
+		class Quaternion;
+	} //end of K15_Engine::Math namespace
+	/*********************************************************************************/
  }
 
 #ifdef __GNUC__

@@ -66,7 +66,7 @@ void Vector3::Normalize()
 }
 
 template<class float>
-float Vector3::magnitude() const
+float Vector3::length() const
 {
 	return Mathematic<float>::Sqrt((x*x+y*y+z*z));
 }
