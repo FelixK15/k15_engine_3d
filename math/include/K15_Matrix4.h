@@ -18,8 +18,9 @@
  *
  * @section DESCRIPTION
  *
- *							<--- PLEASE PUT A DESCRIPTION HERE
+ *							
  */
+
 #ifndef _K15Engine_Math_Matrix4x4_h_
 #define _K15Engine_Math_Matrix4x4_h_
 

@@ -133,6 +133,7 @@
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_MemberFunctor.h" />
     <ClInclude Include="..\..\engine\include\K15_MemoryHeader.h" />
+    <ClInclude Include="..\..\engine\include\K15_Node.h" />
     <ClInclude Include="..\..\engine\include\K15_NTreeNode.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
@@ -215,6 +216,7 @@
     <ClCompile Include="..\..\engine\src\K15_DynamicLibraryBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_EventTask.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GameObjectComponentBase.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_Node.cpp" />
     <ClCompile Include="..\..\engine\src\K15_PhysicsTask.cpp" />
     <ClCompile Include="..\..\engine\src\K15_PrecompiledHeader.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -240,6 +242,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
     <None Include="..\..\engine\include\K15_GameObjectComponentBase.inl" />
+    <None Include="..\..\engine\include\K15_Node.inl" />
     <None Include="..\..\engine\v\K15_Functor.inl" />
     <None Include="..\..\engine\include\K15_GameTime.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

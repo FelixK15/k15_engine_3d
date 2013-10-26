@@ -18,7 +18,7 @@
  *
  * @section DESCRIPTION
  *
- *							<--- PLEASE PUT A DESCRIPTION HERE
+ *							
  */
 
 #ifndef _K15Engine_Math_Matrix3_h_

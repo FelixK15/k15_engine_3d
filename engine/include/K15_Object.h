@@ -41,7 +41,7 @@ namespace K15_Engine { namespace Core {
 	public:
 		Object();
 		Object(const String& p_Name);
-		Object(const TypeName& p_Name);
+		Object(const ObjectName& p_Name);
 
 		virtual ~Object();
 	
@@ -56,11 +56,11 @@ namespace K15_Engine { namespace Core {
 
 		uint32 getReferenceCount() const;
 		
-		void setName(const TypeName& p_Name);
-		const TypeName& getName() const;
+		void setName(const ObjectName& p_Name);
+		const ObjectName& getName() const;
 		
 	protected:
-		TypeName m_Name;
+		ObjectName m_Name;
 		uint32 m_References;
 	};
   

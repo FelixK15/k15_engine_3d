@@ -25,7 +25,7 @@
 
 namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
-	GLenum RendererOGL::GLFunctionTestConverter[DT_COUNT] = {
+	const GLenum RendererOGL::GLFunctionTestConverter[DT_COUNT] = {
 		GL_NONE,
 		GL_LESS,
 		GL_LEQUAL,

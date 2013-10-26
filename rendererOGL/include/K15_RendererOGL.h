@@ -31,13 +31,15 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	class RendererOGL : public RendererBase
 	{
 	public:
-		static GLenum GLFunctionTestConverter[DT_COUNT];
+		/*********************************************************************************/
+		static const GLenum GLFunctionTestConverter[DT_COUNT];
+		/*********************************************************************************/
 	public:
 		RendererOGL();
 		virtual ~RendererOGL();
 
 		virtual void setRenderTarget(RenderTarget* p_RenderTarget);
-		virtual void setActiveCamera(Camera* p_Camera);
+		//virtual void setActiveCamera(Camera* p_Camera);
 		virtual void setCullingMode(Enum p_CullingMode);
 		virtual void setDepthTestMode(Enum p_DepthTest);
 		virtual void setFrameBufferPixelFormat(Enum p_PixelFormat);

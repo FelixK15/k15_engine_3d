@@ -22,33 +22,35 @@
 #include "K15_Object.h"
 
 namespace K15_Engine { namespace Core { 
-
+	/*********************************************************************************/
 	K15_IMPLEMENT_RTTI(Core,Object);
+	/*********************************************************************************/
 
+	/*********************************************************************************/
 	Object::Object()
 		: m_References(0),
 		  m_Name(TypeName::BLANK)
 	{
 
 	}
-
-	Object::Object( const String& p_Name )
+	/*********************************************************************************/
+	Object::Object(const String& p_Name)
 		: m_References(0),
 		  m_Name(p_Name.c_str())
 	{
 
 	}
-
-	Object::Object( const TypeName& p_Name )
+	/*********************************************************************************/
+	Object::Object(const ObjectName& p_Name)
 		: m_References(0),
 		  m_Name(p_Name)
 	{
 
 	}
-
+	/*********************************************************************************/
 	Object::~Object()
 	{
 
 	}
-
+	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

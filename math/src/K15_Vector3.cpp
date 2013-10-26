@@ -118,20 +118,29 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	Vector3 Vector3::operator*(float p_Scale) const
 	{
-		Vector3 vector = *this;
-		vector.x *= p_Scale;
-		vector.y *= p_Scale;
-		vector.z *= p_Scale;
-		return *this;
+		Vector3 vector(*this);
+		
+		vector *= p_Scale;
+
+		return vector;
+	}
+	/*********************************************************************************/
+	Vector3 Vector3::operator*(const Vector3& p_Vector) const
+	{
+		Vector3 vector(*this);
+
+		vector *= p_Vector;
+
+		return vector;
 	}
 	/*********************************************************************************/
 	Vector3 Vector3::operator/(float p_Scalar) const
 	{
-		Vector3 vector = *this;
-		vector.x /= p_Scalar;
-		vector.y /= p_Scalar;
-		vector.z /= p_Scalar;
-		return *this;
+		Vector3 vector(*this);
+		
+		vector /= p_Scalar;
+
+		return vector;
 	}
 	/*********************************************************************************/
 	const Vector3& Vector3::operator*=(float p_Scale)
@@ -139,25 +148,35 @@ namespace K15_Engine { namespace Math {
 		x *= p_Scale;
 		y *= p_Scale;
 		z *= p_Scale;
+
+		return *this;
+	}
+	/*********************************************************************************/
+	const Vector3& Vector3::operator*=(const Vector3& p_Vector)
+	{
+		x *= p_Vector.x;
+		y *= p_Vector.y;
+		z *= p_Vector.z;
+
 		return *this;
 	}
 	/*********************************************************************************/
 	Vector3 Vector3::operator+(const Vector3& p_Vector) const
 	{
-		Vector3 vecNewVec;
-		vecNewVec.x = this->x + p_Vector.x;
-		vecNewVec.y = this->y + p_Vector.y;
-		vecNewVec.z = this->z + p_Vector.z;
-		return vecNewVec;
+		Vector3 vector(*this);
+
+		vector += p_Vector;
+
+		return vector;
 	}
 	/*********************************************************************************/
 	Vector3 Vector3::operator-(const Vector3& p_Vector) const
 	{
-		Vector3 vecNewVec;
-		vecNewVec.x = this->x - p_Vector.x;
-		vecNewVec.y = this->y - p_Vector.y;
-		vecNewVec.z = this->z - p_Vector.z;
-		return vecNewVec;
+		Vector3 vector(*this);
+
+		vector -= p_Vector;
+
+		return vector;
 	}
 	/*********************************************************************************/
 	const Vector3& Vector3::operator+=(const Vector3& p_Vector)

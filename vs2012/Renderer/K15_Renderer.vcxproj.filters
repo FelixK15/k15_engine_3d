@@ -30,6 +30,9 @@
     <ClInclude Include="..\..\renderer\include\K15_ColorRGBA.h">
       <Filter>Core\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\renderer\include\K15_Texture.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\renderer\src\K15_RendererBase.cpp">
@@ -41,6 +44,9 @@
     <ClCompile Include="..\..\renderer\src\K15_RendererPrecompiledHeader.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_Texture.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\renderer\src\K15_RendererBase.inl">
@@ -50,6 +56,9 @@
       <Filter>Core\include</Filter>
     </None>
     <None Include="..\..\renderer\include\K15_GpuBuffer.inl">
+      <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\renderer\include\K15_Texture.inl">
       <Filter>Core\include</Filter>
     </None>
   </ItemGroup>

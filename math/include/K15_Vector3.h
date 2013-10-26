@@ -26,8 +26,6 @@
 
 #include "K15_MathPrerequisites.h"
 
-#pragma message("FK - Add lazy evaluation and SIMD semantics")
-
 namespace K15_Engine { namespace Math {
 	class Vector3
 	{
@@ -58,10 +56,12 @@ namespace K15_Engine { namespace Math {
 		Vector3 operator*(float p_Scalar) const;
 		Vector3 operator+(const Vector3& p_Vector) const;
 		Vector3 operator-(const Vector3& p_Vector) const;
+		Vector3 operator*(const Vector3& p_Vector) const;
 
 		const Vector3& operator=(const Vector3& p_Vector);
 		const Vector3& operator+=(const Vector3& p_Vector);
 		const Vector3& operator-=(const Vector3& p_Vector);
+		const Vector3& operator*=(const Vector3& p_Vector);
 		const Vector3& operator*=(float p_Scalar);
 		const Vector3& operator/=(float p_Scalar);
 

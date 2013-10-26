@@ -26,8 +26,6 @@
 
 #include "K15_MathPrerequisites.h"
 
-#pragma message("FK - Add lazy evaluation and SIMD semantics")
-
 namespace K15_Engine { namespace Math {
 	class Vector4
 	{

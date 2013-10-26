@@ -1,8 +1,8 @@
 /**
- * @file K15_Object.inl
- * @author  Felix Klinge <f.klinge15@gmail.com>
+ * @file K15_Texture.inl
+ * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/08/09
+ * @date 2013/09/10
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -16,49 +16,48 @@
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
  */
+
 /*********************************************************************************/
-inline void Object::increaseReferences()
+inline Enum Texture::getTextureType() const
 {
-	++m_References;
+	return m_TextureType;
 }
 /*********************************************************************************/
-inline void Object::decreaseReferences()
+inline Enum Texture::getTextureUsage() const
 {
-	--m_References;
+	return m_TextureUsage;
 }
 /*********************************************************************************/
-inline bool Object::isInstanceOf(const Rtti& p_Type) const
+inline uint8 Texture::getMipMapCount() const
 {
-	return TYPE.isInstanceOf(p_Type);
+	return m_MipMapCount;
 }
 /*********************************************************************************/
-inline bool Object::isInstanceOf(const Object* p_Object) const
+inline uint32 Texture::getWidth() const
 {
-	return p_Object && TYPE.isInstanceOf(p_Object->getType());
+	return m_Width;
 }
 /*********************************************************************************/
-inline bool Object::isDerivedFrom(const Rtti& p_Type) const
+inline uint32 Texture::getHeight() const
 {
-	return TYPE.isDerivedFrom(p_Type);
+	return m_Height;
 }
 /*********************************************************************************/
-inline bool Object::isDerivedFrom(const Object* p_Object) const
+inline Resolution Texture::getResolution() const
 {
-	return p_Object && TYPE.isDerivedFrom(p_Object->getType());
+	Resolution resolution;
+	resolution.width = m_Width;
+	resolution.height = m_Height;
+	return resolution;
 }
 /*********************************************************************************/
-inline uint32 Object::getReferenceCount() const
+inline uint32 Texture::getDepth() const
 {
-	return m_References;
+	return m_Depth;
 }
 /*********************************************************************************/
-inline const TypeName& Object::getName() const
+inline Enum Texture::getPixelFormat() const
 {
-	return m_Name;
-}
-/*********************************************************************************/
-inline void Object::setName(const TypeName& p_Name)
-{
-	m_Name = p_Name;
+	return m_PixelFormat;
 }
 /*********************************************************************************/

@@ -20,6 +20,7 @@
  *
  * 
  */
+
 #ifndef _K15Engine_Math_Quaternion_h_
 #define _K15Engine_Math_Quaternion_h_
 

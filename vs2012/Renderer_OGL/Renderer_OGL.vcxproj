@@ -58,7 +58,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>K15_Engine.lib;K15_Renderer.lib;GLEW.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>K15_Engine.lib;K15_Renderer.lib;OpenGL32.lib;GLEW.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -80,10 +80,12 @@
     <ClInclude Include="..\..\rendererOGL\include\K15_GpuBufferImplOGL.h" />
     <ClInclude Include="..\..\rendererOGL\include\K15_RendererOGL.h" />
     <ClInclude Include="..\..\rendererOGL\include\K15_RendererOGLPrerequisites.h" />
+    <ClInclude Include="..\..\rendererOGL\include\K15_TextureImplOGL.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\rendererOGL\src\K15_GpuBufferImplOGL.cpp" />
     <ClCompile Include="..\..\rendererOGL\src\K15_RendererOGL.cpp" />
+    <ClCompile Include="..\..\rendererOGL\src\K15_TextureImplOGL.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

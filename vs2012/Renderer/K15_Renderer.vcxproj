@@ -17,6 +17,7 @@
     <ClInclude Include="..\..\renderer\include\K15_RendererBase.h" />
     <ClInclude Include="..\..\renderer\include\K15_RendererPrecompiledHeader.h" />
     <ClInclude Include="..\..\renderer\include\K15_RendererPrerequisites.h" />
+    <ClInclude Include="..\..\renderer\include\K15_Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\renderer\src\K15_GpuBuffer.cpp" />
@@ -24,10 +25,12 @@
     <ClCompile Include="..\..\renderer\src\K15_RendererPrecompiledHeader.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\renderer\include\K15_ColorRGBA.inl" />
     <None Include="..\..\renderer\include\K15_GpuBuffer.inl" />
+    <None Include="..\..\renderer\include\K15_Texture.inl" />
     <None Include="..\..\renderer\src\K15_RendererBase.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

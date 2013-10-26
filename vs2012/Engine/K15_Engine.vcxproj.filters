@@ -225,6 +225,9 @@
     <ClInclude Include="..\..\engine\include\K15_EventTask.h">
       <Filter>Core\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Node.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -332,6 +335,9 @@
     <ClCompile Include="..\..\engine\src\K15_EventTask.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_Node.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -433,6 +439,9 @@
     </None>
     <None Include="..\..\engine\include\K15_GameObjectComponentBase.inl">
       <Filter>Components\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_Node.inl">
+      <Filter>Core\include</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
