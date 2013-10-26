@@ -27,27 +27,6 @@
 
 namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
-	const uint32 EventManagerUpdateTask::TaskPriority = 1;
-	/*********************************************************************************/
-	EventManagerUpdateTask::EventManagerUpdateTask(EventManager* p_EventManager)
-		: TaskBase(TaskPriority),
-		  m_EventManager(p_EventManager)
-	{
-
-	}
-	/*********************************************************************************/
-	EventManagerUpdateTask::~EventManagerUpdateTask()
-	{
-
-	}
-	/*********************************************************************************/
-	void EventManagerUpdateTask::update(const GameTime& p_GameTime)
-	{
-		m_EventManager->update();
-	}
-	/*********************************************************************************/
-
-	/*********************************************************************************/
 	EventManager::EventManager()
 		: AllocatedObject(),
 		  PageAllocator(ApplicationAllocator)
@@ -138,11 +117,6 @@ namespace K15_Engine { namespace Core {
 			triggerEvent(gameEvent);
 			m_Events.pop();
 		}
-	}
-	/*********************************************************************************/
-	TaskBase* EventManager::createTask()
-	{
-		return K15_NEW EventManagerUpdateTask(this);
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

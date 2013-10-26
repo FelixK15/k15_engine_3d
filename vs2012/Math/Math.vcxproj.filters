@@ -24,14 +24,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\math\src\K15_Matrix4x4.cpp" />
-    <ClCompile Include="..\..\math\src\K15_Matrix3x3.cpp" />
-    <ClCompile Include="..\..\math\src\K15_Vector2.cpp">
-      <Filter>Vector</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\math\src\K15_Vector3.cpp">
-      <Filter>Vector</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\math\src\K15_Quaternion.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
@@ -50,6 +42,12 @@
     <ClCompile Include="..\..\math\src\K15_Vector4.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\math\src\K15_Vector3.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\math\src\K15_Vector2.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -61,10 +59,5 @@
     <Filter Include="Core\src">
       <UniqueIdentifier>{0539a286-dad0-4287-a387-a6e4d6256d62}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\math\src\K15_Vector3.inl">
-      <Filter>Vector</Filter>
-    </None>
   </ItemGroup>
 </Project>

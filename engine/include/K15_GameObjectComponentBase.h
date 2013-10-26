@@ -1,8 +1,8 @@
 /**
- * @file K15_RenderTask.h
- * @author  Felix Klinge <f.klinge@k15games.de>
+ * @file K15_GameObjectComponentBase.h
+ * @author Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/07/11
+ * @date 2013/09/09
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,40 +18,35 @@
  *
  * @section DESCRIPTION
  *
- * 
  */
 
-#ifndef _K15Engine_Core_RenderTask_h_
-#define _K15Engine_Core_RenderTask_h_
+#ifndef _K15Engine_Core_GameObjectComponent_h_
+#define _K15Engine_Core_GameObjectComponent_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
+#	include "K15_Object.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-#include "K15_TaskBase.h"
-
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API RenderTask : public TaskBase
+	class K15_CORE_API GameObjectComponentBase : public Object
 	{
 	/*********************************************************************************/
 	K15_DECLARE_RTTI;
 	/*********************************************************************************/
 
 	public:
-		/*********************************************************************************/
-		static const uint32 TaskPriority;
-		/*********************************************************************************/
-	public:
-		RenderTask();
-		virtual ~RenderTask();
+		GameObjectComponentBase(){}
+		virtual ~GameObjectComponentBase(){}
 
-		void setRenderProcess(RenderProcessBase* p_RenderProcess);
-		RenderProcessBase* getRenderProcess() const;
+		inline GameObject* getGameObject() const;
 
-		virtual void update(const GameTime& p_GameTime);
+		virtual void update(const GameTime& p_GameTime){}
+
 	protected:
-		RenderProcessBase* m_RenderProcess;
-	};// end of RenderTask class declaration
-}}//end of K15_Engine::Core namespace
+		GameObject* m_GameObject;
+	}; // end of GameObjectComponentBase class declaration
+	#include "K15_GameObjectComponentBase.inl"
+}}// end of K15_Engine::Core namespace
 
-#endif //_K15Engine_Core_RenderTask_h_
+#endif //_K15Engine_Core_GameObjectComponent_h_

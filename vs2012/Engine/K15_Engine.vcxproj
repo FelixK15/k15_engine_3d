@@ -46,7 +46,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>K15_Engine</TargetName>
-    <IncludePath>..\..\dependencies\LuaPlus\include\;..\..\engine\include\;..\..\renderer\include\;..\..\dependencies\TinyThread\include\;..\..\dependencies\TinyXML\include\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\dependencies\LuaPlus\include\;..\..\engine\include\;..\..\math\include\;..\..\renderer\include\;..\..\dependencies\TinyThread\include\;..\..\dependencies\TinyXML\include\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\renderer\bin\$(Configuration)\;..\..\dependencies\TinyThread\bin\$(Platform)_$(Configuration)\;..\..\dependencies\TinyXML\bin\$(Platform)_$(Configuration)\;..\..\dependencies\LuaPlus\bin\$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -116,6 +116,7 @@
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_DynamicLibraryBase.h" />
     <ClInclude Include="..\..\engine\include\K15_DynamicLibraryManager.h" />
+    <ClInclude Include="..\..\engine\include\K15_EventTask.h" />
     <ClInclude Include="..\..\engine\include\K15_File.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
@@ -124,6 +125,7 @@
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_FrameStatistic.h" />
     <ClInclude Include="..\..\engine\include\K15_Functor.h" />
+    <ClInclude Include="..\..\engine\include\K15_GameObjectComponentBase.h" />
     <ClInclude Include="..\..\engine\include\K15_LogBase.h" />
     <ClInclude Include="..\..\engine\include\K15_LogManager.h" />
     <ClInclude Include="..\..\engine\include\K15_ManagerBase.h">
@@ -211,6 +213,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_DynamicLibraryBase.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_EventTask.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_GameObjectComponentBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_PhysicsTask.cpp" />
     <ClCompile Include="..\..\engine\src\K15_PrecompiledHeader.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -235,6 +239,7 @@
     <None Include="..\..\engine\include\K15_File.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
+    <None Include="..\..\engine\include\K15_GameObjectComponentBase.inl" />
     <None Include="..\..\engine\v\K15_Functor.inl" />
     <None Include="..\..\engine\include\K15_GameTime.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

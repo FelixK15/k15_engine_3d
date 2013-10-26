@@ -1,5 +1,5 @@
 /**
- * @file K15_Math_Prerequisites.h
+ * @file K15_MatrixUtil.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2013/09/10
@@ -21,22 +21,18 @@
  * 
  */
 
-#ifndef _K15Engine_Math_Prerequisites_h_
-#define _K15Engine_Math_Prerequisites_h_
+#ifndef _K15Engine_Math_MatrixUtil_h_
+#define _K15Engine_Math_MatrixUtil_h_
 
-#include "K15_Prerequisites.h"
-#include <math.h>
+#include "K15_MathPrerequisites.h"
+#include "K15_Matrix4.h"
 
-//we'll use SIMD math
-#define K15_SIMD_SUPPORT
+namespace K15_Engine { namespace Math {
+	class MatrixUtil
+	{
+	public:
+		static 
+	};// end of MatrixUtil class declaration
+}}//end of K15_Engine::Math namespace
 
-#if defined K15_SIMD_SUPPORT
-
-# include <nmmintrin.h> //SSE4.2
-#endif //K15_SIMD_SUPPORT
-
-const float _Pi = 4.0f*atan(1.0f);
-const float _HalfPi = _Pi * 0.5f;
-const float _TwoPi = _Pi + _Pi;
-
-#endif //_K15Engine_Math_Prerequisites_h_
+#endif //_K15Engine_Math_MatrixUtil_h_

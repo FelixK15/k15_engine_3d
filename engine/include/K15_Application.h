@@ -153,6 +153,7 @@ namespace K15_Engine { namespace Core {
 
 				RenderTask* m_RenderTask;
 				PhysicsTask* m_PhysicsTask;
+				EventTask* m_EventTask;
   }; //end of Application class definition
 #include "K15_Application.inl"
 }} //end of K15_Engine::Core namespace

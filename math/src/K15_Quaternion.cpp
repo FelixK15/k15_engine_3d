@@ -52,8 +52,7 @@ namespace K15_Engine { namespace Math {
 	float Quaternion::length() const
 	{
 		__m128 t = _mm_mul_ps(m_QuaternionSIMD,m_QuaternionSIMD);
-		__m128 length = _mm_sqrt_ps(t);
-		return length.m128_f32[0];
+		return ::sqrt(t.m128_f32[0] + t.m128_f32[1] + t.m128_f32[2] + t.m128_f32[3]);
 	}
 	/*********************************************************************************/
 	void Quaternion::normalize()

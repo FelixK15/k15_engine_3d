@@ -48,7 +48,7 @@ namespace K15_Engine { namespace Math {
 		void normalize();
 		float length() const;
 		float dot(const Vector4& p_Vector) const;
-		//Vector4 cross(const Vector4& p_Vector) const;
+		Vector4 cross(const Vector4& p_Vector) const;
 		void invert();
 
 		bool isNull() const;

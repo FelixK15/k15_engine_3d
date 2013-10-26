@@ -85,9 +85,12 @@ namespace K15_Engine
 		class PhysicsTask;
 		class ResourceBase;
 		class ResourceFileBase;
+		class EventTask;
 		class ResourceData;
 		class ProfilingNode;
 		class ProfilingManager;
+		class GameObject;
+		class GameObjectComponentBase;
 		class EventManager;
 		class RenderWindowBase;
 		struct Resolution;

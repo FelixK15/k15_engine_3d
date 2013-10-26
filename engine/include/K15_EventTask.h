@@ -1,8 +1,8 @@
 /**
- * @file K15_RenderTask.h
- * @author  Felix Klinge <f.klinge@k15games.de>
+ * @file K15_EventTask.h
+ * @author Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/07/11
+ * @date 2013/09/09
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,11 +18,10 @@
  *
  * @section DESCRIPTION
  *
- * 
  */
 
-#ifndef _K15Engine_Core_RenderTask_h_
-#define _K15Engine_Core_RenderTask_h_
+#ifndef _K15Engine_Core_EventTask_h_
+#define _K15Engine_Core_EventTask_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
@@ -31,27 +30,35 @@
 #include "K15_TaskBase.h"
 
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API RenderTask : public TaskBase
+	class EventTask : public TaskBase
 	{
 	/*********************************************************************************/
 	K15_DECLARE_RTTI;
 	/*********************************************************************************/
-
 	public:
 		/*********************************************************************************/
 		static const uint32 TaskPriority;
 		/*********************************************************************************/
 	public:
-		RenderTask();
-		virtual ~RenderTask();
-
-		void setRenderProcess(RenderProcessBase* p_RenderProcess);
-		RenderProcessBase* getRenderProcess() const;
-
+		/**
+		* Standard Constructor
+		*/
+		EventTask();
+		
+		/**
+		* Standard Destructor
+		*/
+		virtual ~EventTask();
+		
+		/**
+		* update method (events will get processed)
+		*
+		* @param p_GameTime 		
+		*/
 		virtual void update(const GameTime& p_GameTime);
-	protected:
-		RenderProcessBase* m_RenderProcess;
-	};// end of RenderTask class declaration
-}}//end of K15_Engine::Core namespace
 
-#endif //_K15Engine_Core_RenderTask_h_
+	protected:
+		EventManager* m_EventManager;
+	}; // end of EventTask class declaration
+}}// end of K15_Engine::Core namespace
+#endif //_K15Engine_Core_EventTask_h_

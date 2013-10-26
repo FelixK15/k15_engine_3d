@@ -1,8 +1,8 @@
 /**
- * @file K15_RenderTask.h
- * @author  Felix Klinge <f.klinge@k15games.de>
+ * @file K15_EventTask.h
+ * @author Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/07/11
+ * @date 2013/09/09
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,44 +18,33 @@
  */
 
 #include "K15_PrecompiledHeader.h"
-#include "K15_RenderTask.h"
-#include "K15_RenderProcessBase.h"
+#include "K15_EventTask.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	const uint32 RenderTask::TaskPriority = 0;
-	K15_IMPLEMENT_RTTI(Core,RenderTask);
+	const uint32 EventTask::TaskPriority = 1;
+	K15_IMPLEMENT_RTTI(Core,EventTask);
 	/*********************************************************************************/
-
-	/*********************************************************************************/
-	RenderTask::RenderTask()
+	EventTask::EventTask()
 		: TaskBase(TaskPriority),
-		  m_RenderProcess(0)
+		m_EventManager(0)
 	{
 
 	}
 	/*********************************************************************************/
-	RenderTask::~RenderTask()
+	EventTask::~EventTask()
 	{
-		K15_DELETE m_RenderProcess;
+
 	}
 	/*********************************************************************************/
-	void RenderTask::setRenderProcess(RenderProcessBase* p_RenderProcess)
+	void EventTask::update(const GameTime& p_GameTime)
 	{
-		m_RenderProcess = p_RenderProcess;
-	}
-	/*********************************************************************************/
-	RenderProcessBase* RenderTask::getRenderProcess() const
-	{
-		return m_RenderProcess;
-	}
-	/*********************************************************************************/
-	void RenderTask::update(const GameTime& p_GameTime)
-	{
-		if(m_RenderProcess)
+		if(!m_EventManager)
 		{
-			m_RenderProcess->renderSingleFrame();
+			m_EventManager = g_EventManager;
 		}
+
+		m_EventManager->update();
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

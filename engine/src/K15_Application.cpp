@@ -28,6 +28,7 @@
 #include "K15_Functor.h"
 #include "K15_RenderTask.h"
 #include "K15_PhysicsTask.h"
+#include "K15_EventTask.h"
 #include "K15_ApplicationModule.h"
 #include "K15_ApplicationModuleDescription.h"
 
@@ -71,6 +72,7 @@ namespace K15_Engine { namespace Core {
 			m_LogManager->addLog(K15_NEW TextConsoleLog(),true,LogManager::LP_ALL);
 #		endif //K15_DEBUG
 
+		m_EventTask = K15_NEW EventTask();
 		m_RenderTask = K15_NEW RenderTask();
 		m_PhysicsTask = K15_NEW PhysicsTask();
 	}
@@ -225,8 +227,8 @@ namespace K15_Engine { namespace Core {
 		processSettings();
 
 		_LogNormal("Tasks will get created and added to the task manager.");
-		_LogNormal("Adding Eventmanager task...");
-		m_TaskManager->addTask(m_EventManager->createTask());
+		_LogNormal("Adding event task...");
+		m_TaskManager->addTask(m_EventTask);
 
 		_LogNormal("Adding render task...");
 		m_TaskManager->addTask(m_RenderTask);

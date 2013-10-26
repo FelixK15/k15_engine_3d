@@ -28,15 +28,19 @@
 #	include "K15_Prerequisites.h"
 #	include "K15_AllocatedObject.h"
 #	include "K15_TaskManager.h"
+#	include "K15_Object.h"
 #endif// K15_USE_PRECOMPILED_HEADER
-
 
 #include "K15_Functor.h"
 #include "K15_GameTime.h"
 
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API TaskBase : public TaskManagerAllocatedObject
+	class K15_CORE_API TaskBase : public Object, public TaskManagerAllocatedObject
 	{
+	/*********************************************************************************/
+	K15_DECLARE_RTTI;
+	/*********************************************************************************/
+
 	public:
 		TaskBase(uint32 p_Priority = 0);
 		~TaskBase();

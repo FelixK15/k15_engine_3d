@@ -37,37 +37,8 @@
 #endif //K15_USE_PRECOMPILED_HEADER
 
 #include "K15_PageAllocator.h"
-#include "K15_TaskBase.h"
 
 namespace K15_Engine { namespace Core { 
-	/*********************************************************************************/
-	class EventManagerUpdateTask : public TaskBase
-	{
-	public:
-		/*********************************************************************************/
-		static const uint32 TaskPriority;
-		/*********************************************************************************/
-	public:
-		/**
-		* Standard Constructor
-		*/
-		EventManagerUpdateTask(EventManager* p_EventManager);
-		
-		/**
-		* Standard Destructor
-		*/
-		virtual ~EventManagerUpdateTask();
-		
-		/**
-		* update method (events will get processed)
-		*
-		* @param p_GameTime 		
-		*/
-		virtual void update(const GameTime& p_GameTime);
-
-	protected:
-		EventManager* m_EventManager;
-	};
 	/*********************************************************************************/
 	typedef List(EventListener*) EventListenerList;
 	typedef HashMap(EventName,EventListenerList*) EventTypeListenerMap;
@@ -122,15 +93,6 @@ namespace K15_Engine { namespace Core {
 		*	    to call this function.
 		*/
 		void update();
-
-		/**
-		* This function creates a new task for updating the event manager.
-		* By that we can just add the new task to the task manager.
-		* The task will then get updated automatically each frame.
-		*
-		* @return TaskBase* - task for updating the event manager.
-		*/
-		TaskBase* createTask();
 	private:
 		EventStack m_Events; //Event Queue
 		EventTypeListenerMap m_Listener; //Map where the EventTypes are associated with EventListeners.

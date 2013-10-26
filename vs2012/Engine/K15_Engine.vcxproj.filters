@@ -22,6 +22,15 @@
     <Filter Include="Container\include">
       <UniqueIdentifier>{37643047-d2ce-4c81-baa0-04529e81b6ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Components">
+      <UniqueIdentifier>{f932cc30-eea5-46c2-a142-559e1a33dcdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\include">
+      <UniqueIdentifier>{43d5c7ec-709d-4285-bebe-4a81546c1298}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\src">
+      <UniqueIdentifier>{5e5c8d63-7902-4d58-8ac1-467015ed6222}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\engine\include\K15_Application.h">
@@ -210,6 +219,12 @@
     <ClInclude Include="..\..\engine\include\K15_RenderTask.h">
       <Filter>Core\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_GameObjectComponentBase.h">
+      <Filter>Components\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_EventTask.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -311,6 +326,12 @@
     <ClCompile Include="..\..\renderer\src\K15_RenderProcessBase.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_GameObjectComponentBase.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_EventTask.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -409,6 +430,9 @@
     </None>
     <None Include="..\..\engine\include\K15_StackItem.inl">
       <Filter>Container\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_GameObjectComponentBase.inl">
+      <Filter>Components\include</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

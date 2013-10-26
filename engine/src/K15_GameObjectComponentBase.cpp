@@ -1,8 +1,8 @@
 /**
- * @file K15_Math_Prerequisites.h
- * @author  Felix Klinge <f.klinge@k15games.de>
+ * @file K15_GameObjectComponentBase.cpp
+ * @author Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/09/10
+ * @date 2013/09/09
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -15,28 +15,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
- *
- * @section DESCRIPTION
- *
- * 
  */
 
-#ifndef _K15Engine_Math_Prerequisites_h_
-#define _K15Engine_Math_Prerequisites_h_
+#include "K15_PrecompiledHeader.h"
+#include "K15_GameObjectComponentBase.h"
 
-#include "K15_Prerequisites.h"
-#include <math.h>
-
-//we'll use SIMD math
-#define K15_SIMD_SUPPORT
-
-#if defined K15_SIMD_SUPPORT
-
-# include <nmmintrin.h> //SSE4.2
-#endif //K15_SIMD_SUPPORT
-
-const float _Pi = 4.0f*atan(1.0f);
-const float _HalfPi = _Pi * 0.5f;
-const float _TwoPi = _Pi + _Pi;
-
-#endif //_K15Engine_Math_Prerequisites_h_
+namespace K15_Engine { namespace Core {
+	/*********************************************************************************/
+	K15_IMPLEMENT_RTTI(Core,GameObjectComponentBase);
+	/*********************************************************************************/
+}}//end of K15_Engine::Core namespace

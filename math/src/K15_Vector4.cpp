@@ -58,16 +58,16 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	void Vector4::normalize()
 	{
-		__m128 temp = _mm_mul_ps(m_VectorSIMD,m_VectorSIMD);
-		__m128 length = _mm_sqrt_ps(temp);
-		_mm_div_ps(m_VectorSIMD,length);
+		float len = length();
+		__m128 length = _mm_set_ps(len,len,len,len);
+		m_VectorSIMD = _mm_div_ps(m_VectorSIMD,length);
 	}
 	/*********************************************************************************/
 	float Vector4::length() const
 	{
 		__m128 temp = _mm_mul_ps(m_VectorSIMD,m_VectorSIMD);
-		__m128 length = _mm_sqrt_ps(temp);
-		return length.m128_f32[0];
+
+		return ::sqrt(temp.m128_f32[0] + temp.m128_f32[1] + temp.m128_f32[2] + temp.m128_f32[3]);
 	}
 	/*********************************************************************************/
 	void Vector4::invert()
@@ -94,14 +94,22 @@ namespace K15_Engine { namespace Math {
 		return multiplied.m128_f32[0] + multiplied.m128_f32[1] + multiplied.m128_f32[2] + multiplied.m128_f32[3];
 	}
 	/*********************************************************************************/
-// 	Vector4 Vector4::cross(const Vector4& p_Vector) const
-// 	{
-// 		float tmpx = y * p_Vector.z - z * p_Vector.y;
-// 		float tmpy = z * p_Vector.x - x * p_Vector.z;
-// 		float tmpz = x * p_Vector.y - y * p_Vector.x;
-// 		float tmpw = 
-// 		return Vector4(tmpx, tmpy, tmpz);
-// 	}
+	Vector4 Vector4::cross(const Vector4& p_Vector) const
+	{
+		float Pxy = x * p_Vector.y - p_Vector.x * y;
+		float Pxz = x * p_Vector.z - p_Vector.x * z;
+		float Pxw = x * p_Vector.w - p_Vector.x * w;
+		float Pyz = y * p_Vector.z - p_Vector.y * z;
+		float Pyw = y * p_Vector.w - p_Vector.y * w;
+		float Pzw = z * p_Vector.w - p_Vector.z * w;
+
+		return Vector4(
+			y*Pzw - z*Pyw + w*Pyz,    
+			z*Pxw - x*Pzw - w*Pxz,    
+			x*Pyw - y*Pxw + w*Pxy,
+			y*Pxz - x*Pyz - z*Pxy
+			);
+	}
 	/*********************************************************************************/
 	const Vector4& Vector4::operator=(const Vector4& p_Vector)
 	{
