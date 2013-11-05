@@ -64,10 +64,11 @@ namespace K15_Engine { namespace Core {
     inline const StringSet& getPluginList() const;
     inline const StringSet& getCommandList() const;
     inline const ApplicationParameterList& getApplicationParameter() const;
+    inline uint32 getFrameCount() const;
 
     void setWindowTitle(const String& p_WindowTitle);
 
-	void initialize(int p_CommandCount,char** p_Commands);
+	  void initialize(int p_CommandCount,char** p_Commands);
     void initialize();
 
     void run();
@@ -82,8 +83,8 @@ namespace K15_Engine { namespace Core {
     void onBeforeRender();
     void onAfterRender();
 
-	inline RenderTask* getRenderTask() const;
-	inline PhysicsTask* getPhysicsTask() const;
+	  inline RenderTask* getRenderTask() const;
+	  inline PhysicsTask* getPhysicsTask() const;
 
     inline TaskManager* getTaskManager() const;
     inline ProfilingManager* getProfileManager() const;
@@ -91,25 +92,25 @@ namespace K15_Engine { namespace Core {
     inline DynamicLibraryManager* getDynamicLibraryManager() const;
     inline RenderWindowBase* getRenderWindow() const;
     inline LogManager* getLogManager() const;
-	inline const StackAllocator& getFrameAllocator() const;
-	inline const ApplicationOSLayerType& getOSLayer() const;
+	  inline const StackAllocator& getFrameAllocator() const;
+	  inline const ApplicationOSLayerType& getOSLayer() const;
 
-	inline double getRunningTime() const;
+    inline double getRunningTime() const;
 
-	inline void setRunning(bool p_Running);
-	inline bool getRunning() const;
+    inline void setRunning(bool p_Running);
+    inline bool getRunning() const;
 
-	inline String getLastError() const;
-	inline double getTime() const;
+    inline String getLastError() const;
+    inline double getTime() const;
 
     inline const GameTime& getGameTime() const;
     inline const double getDeltaTime() const;
     inline const double getRawDeltaTime() const;
 
-	inline void setMaxFPS(uint16 p_MaxFPS);
-	inline uint16 getMaxFPS() const;
+    inline void setMaxFPS(uint16 p_MaxFPS);
+    inline uint16 getMaxFPS() const;
 
-	inline const FrameStatistic& getFrameStatistic(uint32 p_FrameNumber) const;
+    inline const FrameStatistic& getFrameStatistic(uint32 p_FrameNumber) const;
   
   private:
     void createCommandList(int p_CommandCount,char** p_Commands);
@@ -118,42 +119,42 @@ namespace K15_Engine { namespace Core {
     void loadSettingsFile();
     void loadPluginsFile();
     void initializePlugins(const StringSet& p_PluginNames);
-	void loadGameDirFile();
-	void processSettings();
+	  void loadGameDirFile();
+	  void processSettings();
 
   private:
-				bool m_Running;
+    expose	    uint16 m_MaxFPS;
+    expose_read uint32 m_FrameCounter;
+    expose_read double m_AvgFrameTime;
+    expose_read String m_GameRootDir;
+    expose_read StringSet m_Plugins;
+
+		bool m_Running;
 	
-	expose		uint16 m_MaxFPS;
-	expose_read uint32 m_FrameCounter;
-	expose_read double m_AvgFrameTime;
-				double m_RunningTime;
-				double m_TimeLastFrame;
 
-				StackAllocator m_FrameAllocator; //allocator which will get reset each frame.
-				FrameStatistic m_FrameStatistics[FrameStatisticCount];
-				GameTime m_GameTime;
+		double m_RunningTime;
+		double m_TimeLastFrame;
 
-	expose_read String m_GameRootDir;
+		StackAllocator m_FrameAllocator; //allocator which will get reset each frame.
+		FrameStatistic m_FrameStatistics[FrameStatisticCount];
+		GameTime m_GameTime;
 
-	expose_read StringSet m_Plugins;
-    
-				StringSet m_Commands;
-				ApplicationParameterList m_ApplicationParameter;
-				ApplicationModuleList m_LoadedModules;
+		StringSet m_Commands;
+		ApplicationParameterList m_ApplicationParameter;
+		ApplicationModuleList m_LoadedModules;
 
-				ApplicationOSLayerType m_OSLayer;
+		ApplicationOSLayerType m_OSLayer;
 
-				RenderWindowBase* m_RenderWindow;
-				TaskManager* m_TaskManager;
-				ProfilingManager* m_ProfileManager;
-				EventManager* m_EventManager;
-				LogManager* m_LogManager;
-				DynamicLibraryManager* m_DynamicLibraryManager;
+		RenderWindowBase* m_RenderWindow;
+		TaskManager* m_TaskManager;
+		ProfilingManager* m_ProfileManager;
+		EventManager* m_EventManager;
+		LogManager* m_LogManager;
+		DynamicLibraryManager* m_DynamicLibraryManager;
 
-				RenderTask* m_RenderTask;
-				PhysicsTask* m_PhysicsTask;
-				EventTask* m_EventTask;
+		RenderTask* m_RenderTask;
+		PhysicsTask* m_PhysicsTask;
+		EventTask* m_EventTask;
   }; //end of Application class definition
 #include "K15_Application.inl"
 }} //end of K15_Engine::Core namespace

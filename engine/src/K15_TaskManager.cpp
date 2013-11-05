@@ -37,9 +37,13 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void TaskManager::update(const GameTime& p_GameTime)
 	{
+    uint32 frameCount = g_Application->getFrameCount();
 		for(TaskList::iterator iter = m_Tasks.begin();iter != m_Tasks.end();++iter)
 		{
-			(*iter)->update(p_GameTime);
+      if((*iter)->getFrameModFilter() % frameCount == 0)
+      {
+        (*iter)->update(p_GameTime);
+      }
 		}
 	}
 	/*********************************************************************************/

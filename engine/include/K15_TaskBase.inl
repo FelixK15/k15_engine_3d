@@ -28,3 +28,15 @@ inline void TaskBase::setPriority(uint32 p_Priority)
 	m_Priority = p_Priority;
 }
 /*********************************************************************************/
+inline uint32 TaskBase::getFrameModFilter() const
+{
+  return m_FrameModFilter;
+}
+/*********************************************************************************/
+inline void TaskBase::setFrameModFilter(uint32 p_FrameModFilter)
+{
+  if(p_FrameModFilter == 0) p_FrameModFilter = 1;
+
+  m_FrameModFilter = p_FrameModFilter;
+}
+/*********************************************************************************/
