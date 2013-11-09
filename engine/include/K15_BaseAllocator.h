@@ -25,6 +25,7 @@
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
+#	include "K15_HashedString.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace Core {
@@ -32,9 +33,8 @@ namespace K15_Engine { namespace Core {
   class K15_CORE_API BaseAllocator
   {
   public:
-    BaseAllocator();
-    BaseAllocator(uint32 p_Size);
-    BaseAllocator(BaseAllocator* p_Allocator,uint32 p_Size);
+    BaseAllocator(uint32 p_Size,const ObjectName& p_Name);
+    BaseAllocator(BaseAllocator* p_Allocator,uint32 p_Size,const ObjectName& p_Name);
     virtual ~BaseAllocator();
 
     void* allocate(uint32 p_Size);
@@ -43,8 +43,10 @@ namespace K15_Engine { namespace Core {
 #endif //K15_DEBUG
     void  deallocate(void* p_Pointer);
 #if defined K15_DEBUG
-    void  deallocateDebug(void* p_Pointer,const char* p_File,int p_Line,bool p_Array,const char* p_Function){}
+    void  deallocateDebug(void* p_Pointer,const char* p_File,int p_Line,bool p_Array,const char* p_Function);
 #endif //K15_DEBUG
+
+	const ObjectName& getName() const;
 
     virtual void clear(){}
 
@@ -53,9 +55,11 @@ namespace K15_Engine { namespace Core {
     virtual void  free(void* p_Pointer) = 0;
 
   protected:
+	ObjectName m_Name;
     BaseAllocator* m_Allocator;
     byte* m_Memory;
-    uint32 m_MemorySize;
+    byte* m_MemoryEndAddress;
+	uint32 m_MemorySize;
     uint32 m_UsedMemory;
   };//end of BaseAllocator class
 }}//end of K15_Engine::Core namespace
