@@ -28,7 +28,8 @@ namespace K15_Engine { namespace Core {
 
 	/*********************************************************************************/
 	TaskBase::TaskBase(uint32 p_Priority)
-		: m_Priority(p_Priority)
+		: m_Priority(p_Priority),
+      m_FrameModFilter(1)
 	{
 
 	}

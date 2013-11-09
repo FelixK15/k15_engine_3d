@@ -77,6 +77,7 @@ namespace K15_Engine { namespace Core {
 
 		void setParent(Node* p_Parent);
 		inline Node* getParent() const;
+
 	protected:
 		Node* m_Parent;
 		ChildNodes m_Children;

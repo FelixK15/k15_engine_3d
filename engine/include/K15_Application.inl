@@ -16,6 +16,12 @@
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
  */
+
+/*********************************************************************************/
+inline uint32 Application::getFrameCount() const
+{
+  return m_FrameCounter;
+}
 /*********************************************************************************/
 inline void Application::setGameRootDir(const String& p_GameRootDir)
 {

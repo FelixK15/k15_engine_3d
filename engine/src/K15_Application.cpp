@@ -342,7 +342,7 @@ namespace K15_Engine { namespace Core {
 		m_GameTime.setDeltaTime(diffTime);
 
 		//increase frame counter
-		++m_FrameCounter;
+		if(++m_FrameCounter == UINT_MAX) m_FrameCounter = 0;
 
 		//save stastic for this frame
 		static uint32 FrameStatisticIndex = 0;
