@@ -29,6 +29,7 @@
 #endif //K15_RENDERER_USE_PRECOMPILED_HEADERS
 
 #include "K15_RenderWindowBase.h"
+#include "K15_ColorRGBA.h"
 
 namespace K15_Engine { namespace Rendering { 
 	
@@ -137,7 +138,7 @@ namespace K15_Engine { namespace Rendering {
 		virtual void setCullingMode(Enum p_CullingMode);
 		inline Enum getCullingMode() const;
 
-		virtual void setDepthTestMode(Enum p_DepthTest);
+		virtual void setDepthTestFunction(Enum p_DepthTestFunction);
 		inline Enum getDepthTestMode() const;
 
 		virtual void setTopology(Enum p_Topology);
@@ -158,9 +159,9 @@ namespace K15_Engine { namespace Rendering {
 		virtual void setStencilBufferFormat(Enum p_StencilFormat);
 		inline Enum getStencilBufferFormat() const;
 
-		//virtual void setClearColor(const Color& p_ClearColor);
+		virtual void setClearColor(const ColorRGBA& p_ClearColor);
 		virtual void setClearColor(float p_Red = 1.0f, float p_Green = 1.0f, float p_Blue = 1.0f);
-		//inline const Color& getClearColor() const;
+		inline const ColorRGBA& getClearColor() const;
 
 		inline void setLightningEnabled(bool p_Enabled);
 		inline bool getLightningEnabled() const;
@@ -169,22 +170,26 @@ namespace K15_Engine { namespace Rendering {
 		inline GpuProgram* getBoundGpuProgram(Enum p_GpuProgramType) const;
 		inline bool isBoundGpuProgram(Enum p_GpuProgramType) const;
 
+		virtual GpuBufferImplBase* createGpuBufferImpl() = 0;
+		virtual	TextureImplBase* createTextureImpl() = 0;
+		virtual GpuProgramImplBase* createGpuProgramImpl() = 0;
+
 		virtual void beginFrame() = 0;
 		virtual void endFrame() = 0;
 
 		virtual bool initialize() = 0;
 		virtual void shutdown() = 0;
 
-		virtual void onResolutionChanged(const Resolution& p_Resolution);
+		virtual void onResolutionChanged(const Resolution& p_Resolution){};
 
 	protected:
-		//Color m_ClearColor;
+		ColorRGBA m_ClearColor;
 		RenderWindowBase* m_RenderWindow;
 		Camera* m_ActiveCamera;
 		RenderTarget* m_RenderTarget;
 		RenderTarget* m_DefaultRenderTarget;
 		Enum m_CullingMode;
-		Enum m_DepthFunction;
+		Enum m_DepthTestFunction;
 		Enum m_Topology;
 		Enum m_FrameBufferFormat;
 		Enum m_DepthBufferFormat;

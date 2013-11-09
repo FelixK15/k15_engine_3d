@@ -26,7 +26,7 @@ namespace K15_Engine { namespace Plugins { namespace VisualStudioLogger {
 	/*********************************************************************************/
 	bool VisualStudioLoggerApplicationModule::onInitialize()
 	{
-		g_LogManager->addLog(K15_NEW VisualStudioLog(),true);
+		
 
 		return true;
 	}

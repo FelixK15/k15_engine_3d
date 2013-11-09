@@ -28,32 +28,26 @@
 #	include "K15_RendererPrerequisites.h"
 #endif //K15_RENDERER_USE_PRECOMPILED_HEADER
 
+#include "K15_ResourceBase.h"
 #include "K15_RenderWindowBase.h"
 
 namespace K15_Engine { namespace Rendering {
 	class TextureImplBase
 	{
 	public:
-		virtual void init(Enum p_TextureType, Enum p_TextureUsage, Enum p_PixelFormat, uint32 p_Width, uint32 p_Height, uint32 p_Depth, uint8 p_MipMapCount) = 0;
-		virtual void shutdown() = 0;
+		TextureImplBase();
+		virtual ~TextureImplBase();
 
-		virtual void setTextureWrapMode(Enum p_TextureWrapMode) = 0;
-		virtual void setTextureType(Enum p_TextureType) = 0;
-		virtual void setTextureUsage(Enum p_TextureUsage) = 0;
+		virtual uint32 writeData(uint32 p_Size,byte* p_Source,uint32 p_Offset) = 0;
+		virtual uint32 readData(uint32 p_Size,byte* p_Destination,uint32 p_Offset) = 0;
 
-		virtual void setMipMapCount(uint8 p_MipMapCount) = 0;
-
-		virtual void setHeight(uint32 p_Height) = 0;
-		virtual void setWidth(uint32 p_Width) = 0;
-		virtual void setDepth(uint32 p_Depth) = 0;
-
-		virtual void setPixelFormat(Enum p_PixelFormat) = 0;
-		virtual bool hasAlpha() const = 0;
+		void setTexture(Texture* p_Texture);
+		Texture* getTexture() const;
 	protected:
 		Texture *m_Texture;
 	};// end of TexutreImpl class declaration
 	/*********************************************************************************/
-	class Texture
+	class Texture : public ResourceBase
 	{
 	public:
 		/*********************************************************************************/
@@ -115,7 +109,13 @@ namespace K15_Engine { namespace Rendering {
 		void setPixelFormat(Enum p_PixelFormat);
 		inline Enum getPixelFormat() const;
 
+		uint32 getTextureSize() const;
+		uint32 getMipMapSize(uint8 p_Index) const;
+
 		bool hasAlpha() const;
+
+		virtual void loadDebug(ResourceData& p_Data);
+		virtual bool internalLoad(const ResourceData& p_Data);
 
 	private:
 		TextureImplBase* m_Impl;
@@ -125,7 +125,9 @@ namespace K15_Engine { namespace Rendering {
 		uint32 m_Height;
 		uint32 m_Width;
 		uint32 m_Depth;
+		uint32 m_Size;
 		uint8 m_MipMapCount;
+		bool m_HasAlpha;
 	};//end of Texture class declaration
 #	include "K15_Texture.inl"
 }}// end of K15_Engine::Rendering

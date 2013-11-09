@@ -98,7 +98,7 @@ namespace K15_Engine { namespace Core {
 					{
 						//oh oh...that didn't go so well. Log Error and try to load the debug resource from that resource type.
 						String logMessage = "Could not load asset:";
-						logMessage += p_ResourceName.getString();
+						logMessage += p_ResourceName.c_str();
 
 						_LogError(logMessage);
 

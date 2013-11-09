@@ -18,13 +18,15 @@
  */
 
 #include "plugin.h"
-#include "K15_LogManager.h"
-#include "K15_VisualStudioLog.h"
+#include "K15_RendererOGL.h"
+#include "K15_Application.h"
+#include "K15_RenderTask.h"
+#include "K15_RenderProcessBase.h"
 
 /*********************************************************************************/
 void pluginLoad()
 {
-	g_LogManager->addLog(K15_NEW K15_Engine::Plugins::VisualStudioLogger::VisualStudioLog(),true);
+	g_Application->getRenderTask()->setRenderer(new K15_Engine::Rendering::OGL::RendererOGL());
 }
 /*********************************************************************************/
 void pluginUnload()

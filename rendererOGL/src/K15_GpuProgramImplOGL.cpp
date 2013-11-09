@@ -40,32 +40,32 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 	}
 	/*********************************************************************************/
-	void GpuProgramImplOGL::init(Enum p_Type)
-	{
-		m_GpuProgramHandle = glCreateShader(GLGpuProgramTypeConverter[p_Type]);
-	}
-	/*********************************************************************************/
-	void GpuProgramImplOGL::shutdown()
-	{
-		glDeleteShader(m_GpuProgramHandle);
-		m_GpuProgramHandle = K15_OGL_INVALID_HANDLE;
-	}
-	/*********************************************************************************/
-	bool GpuProgramImplOGL::compile()
-	{
-		glShaderSource(m_GpuProgramHandle,1,(GLchar**)m_GpuProgram->getProgramCode().c_str(),(GLint*)m_GpuProgram->getProgramCode().length());
-		glCompileShader(m_GpuProgramHandle);
-		
-		GLuint status = 0;
-		glGetShaderiv(m_GpuProgramHandle,GL_COMPILE_STATUS,&status);
-
-		if(status != GL_TRUE)
-		{
-			_LogError("Could not compile shader.");
-			return false;
-		}
-
-		return true;
-	}
+// 	void GpuProgramImplOGL::init(Enum p_Type)
+// 	{
+// 		m_GpuProgramHandle = glCreateShader(GLGpuProgramTypeConverter[p_Type]);
+// 	}
+// 	/*********************************************************************************/
+// 	void GpuProgramImplOGL::shutdown()
+// 	{
+// 		glDeleteShader(m_GpuProgramHandle);
+// 		m_GpuProgramHandle = K15_OGL_INVALID_HANDLE;
+// 	}
+// 	/*********************************************************************************/
+// 	bool GpuProgramImplOGL::compile()
+// 	{
+// 		glShaderSource(m_GpuProgramHandle,1,(GLchar**)m_GpuProgram->getProgramCode().c_str(),(GLint*)m_GpuProgram->getProgramCode().length());
+// 		glCompileShader(m_GpuProgramHandle);
+// 		
+// 		GLuint status = 0;
+// 		glGetShaderiv(m_GpuProgramHandle,GL_COMPILE_STATUS,&status);
+// 
+// 		if(status != GL_TRUE)
+// 		{
+// 			_LogError("Could not compile shader.");
+// 			return false;
+// 		}
+// 
+// 		return true;
+// 	}
 	/*********************************************************************************/
 }}}// end of K15_Engine::Rendering::OGL namespace

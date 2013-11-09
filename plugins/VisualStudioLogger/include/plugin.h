@@ -20,11 +20,12 @@
  *
  */
 
-#include "K15_VisualStudioLoggerApplicationModule.h"
 #include "K15_ApplicationModuleDescription.h"
 
 /*********************************************************************************/
-__declspec(dllexport) K15_Engine::Core::ApplicationModuleDescription getDescription();
+__declspec(dllexport) void pluginLoad();
 /*********************************************************************************/
-__declspec(dllexport) K15_Engine::Core::ApplicationModule* getModule();
+__declspec(dllexport) void pluginUnload();
+/*********************************************************************************/
+__declspec(dllexport) K15_Engine::Core::ApplicationModuleDescription getDescription();
 /*********************************************************************************/

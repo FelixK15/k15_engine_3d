@@ -51,7 +51,7 @@ namespace K15_Engine { namespace Core {
 		{
 			if(iter->second->getResourceReferences() == 0 && !iter->second->isMarkedAsUnreferenced())
 			{
-				_LogNormal("Asset \"%s\" is no longer referenced.",iter->second->getAssetName().getString());
+				_LogNormal("Asset \"%s\" is no longer referenced.",iter->second->getAssetName().c_str());
 				iter->second->setMarkedAsUnreferenced(true);
 			}
 
@@ -63,7 +63,7 @@ namespace K15_Engine { namespace Core {
 					(iter->second->getPriority() == ResourceBase::RP_NORMAL && difference > 200.0) ||
 					(iter->second->getPriority() == ResourceBase::RP_HIGH	&& difference > 500.0))
 				{
-					_LogNormal("Deleting Asset \"%s\"",iter->second->getAssetName().getString());
+					_LogNormal("Deleting Asset \"%s\"",iter->second->getAssetName().c_str());
 					deleteResource(iter->second);
 
 					m_ResourceDataCache.erase(iter);

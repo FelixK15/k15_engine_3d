@@ -21,8 +21,8 @@
  * 
  */
 
-#ifndef _K15Engine_Core_InputTrigger_h_
-#define _K15Engine_Core_InputTrigger_h_
+#ifndef _K15Engine_Core_InputTriggerBase_h_
+#define _K15Engine_Core_InputTriggerBase_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
@@ -35,7 +35,7 @@ namespace K15_Engine { namespace Core {
 	{
 	public:
 		virtual bool isActive() = 0;
-	};// end of InputTrigger class declaration
+	};// end of InputTriggerBase class declaration
 }}// end of K15_Engine::Core namespace
 
-#endif //_K15Engine_Core_InputTrigger_h_
+#endif //_K15Engine_Core_InputTriggerBase_h_

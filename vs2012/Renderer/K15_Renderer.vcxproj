@@ -20,6 +20,7 @@
     <ClInclude Include="..\..\renderer\include\K15_Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\renderer\src\K15_ColorRGBA.cpp" />
     <ClCompile Include="..\..\renderer\src\K15_GpuBuffer.cpp" />
     <ClCompile Include="..\..\renderer\src\K15_RendererBase.cpp" />
     <ClCompile Include="..\..\renderer\src\K15_RendererPrecompiledHeader.cpp">
@@ -28,10 +29,9 @@
     <ClCompile Include="..\..\renderer\src\K15_Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\renderer\include\K15_ColorRGBA.inl" />
     <None Include="..\..\renderer\include\K15_GpuBuffer.inl" />
+    <None Include="..\..\renderer\include\K15_RendererBase.inl" />
     <None Include="..\..\renderer\include\K15_Texture.inl" />
-    <None Include="..\..\renderer\src\K15_RendererBase.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{72E5819A-5708-4B3F-95CD-B0412EFB9868}</ProjectGuid>
@@ -65,7 +65,7 @@
     <OutDir>..\..\renderer\bin\$(Platform)_$(Configuration)</OutDir>
     <IntDir>..\..\renderer\obj\</IntDir>
     <TargetName>K15_Renderer</TargetName>
-    <IncludePath>..\..\renderer\include\;..\..\engine\include\;..\..\math\include\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\renderer\include\;..\..\engine\include\;..\..\math\include\;..\..\dependencies\GLEW\include\;$(IncludePath)</IncludePath>
     <SourcePath>$(SourcePath)</SourcePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>

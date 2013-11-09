@@ -20,22 +20,22 @@
 template<uint16 PageSize,uint32 TotalSize> const uint32 PageAllocator<PageSize,TotalSize>::PageCount = TotalSize / PageSize;
 /*********************************************************************************/
 template<uint16 PageSize,uint32 TotalSize>
-PageAllocator<PageSize,TotalSize>::PageAllocator()
-  : BaseAllocator(TotalSize - (TotalSize % PageSize)),
+PageAllocator<PageSize,TotalSize>::PageAllocator(const ObjectName& p_Name)
+  : BaseAllocator(TotalSize - (TotalSize % PageSize),p_Name),
 	  m_PageSize(PageSize),
 	  m_CurrentPageIndex(0)
 {
-	K15_ASSERT(m_MemorySize >= m_PageSize,"PageAllocator total size is smaller than the size of 1 page.");
+	K15_ASSERT(m_MemorySize >= m_PageSize,StringUtil::format("PageAllocator \"%s\" total size is smaller than the size of 1 page.",m_Name.c_str()));
 	createPages();
 }
 //---------------------------------------------------------------------------//
 template<uint16 PageSize,uint32 TotalSize>
-PageAllocator<PageSize,TotalSize>::PageAllocator(BaseAllocator* p_Allocator)
-  : BaseAllocator(p_Allocator,TotalSize - (TotalSize % PageSize)),
+PageAllocator<PageSize,TotalSize>::PageAllocator(BaseAllocator* p_Allocator,const ObjectName& p_Name)
+  : BaseAllocator(p_Allocator,TotalSize - (TotalSize % PageSize),p_Name),
 	  m_PageSize(PageSize),
 	  m_CurrentPageIndex(0)
 {
-	K15_ASSERT(m_MemorySize >= m_PageSize,"PageAllocator total size is smaller than the size of 1 page.");
+	K15_ASSERT(m_MemorySize >= m_PageSize,StringUtil::format("PageAllocator \"%s\" total size is smaller than the size of 1 page.",m_Name.c_str()));
 	createPages();
 }
 /*********************************************************************************/
@@ -49,18 +49,16 @@ void* PageAllocator<PageSize,TotalSize>::alloc(uint32 p_Size)
 		pagesNeeded = p_Size / m_PageSize;
 	}
 
-	K15_ASSERT((pagesNeeded + m_CurrentPageIndex) <= PageCount,"Not enough pages left to satisfy memory request");
-
-	byte* memory = m_PageData[m_CurrentPageIndex].Memory;
-	m_PageData[m_CurrentPageIndex].Size = p_Size;
-
-	for(uint32 i = m_CurrentPageIndex + 1;i < m_CurrentPageIndex + pagesNeeded;++i)
+	if(pagesNeeded > PageCount - m_CurrentPageIndex)
 	{
-		m_PageData[i].Used = true;
-		m_PageData[i].Size = 0;
+		m_CurrentPageIndex = 0;
+	}
+	else if(m_CurrentPageIndex == PageCount)
+	{
+		m_CurrentPageIndex = 0;
 	}
 
-	m_CurrentPageIndex += pagesNeeded;
+	while(m_PageData[m_CurrentPageIndex].Size < p_Size) ++m_CurrentPageIndex;
 
 	return memory;
 }
@@ -68,22 +66,20 @@ void* PageAllocator<PageSize,TotalSize>::alloc(uint32 p_Size)
 template<uint16 PageSize,uint32 TotalSize>
 void PageAllocator<PageSize,TotalSize>::free(void* p_Pointer)
 {
-	K15_ASSERT((size_t)p_Pointer > (size_t)m_Memory && (size_t)p_Pointer < ((size_t)m_Memory + m_MemorySize),"Trying to free pointer, which is not part of the PageAllocator");
+	K15_ASSERT((size_t)p_Pointer >= (size_t)m_Memory && (size_t)p_Pointer < ((size_t)m_Memory + m_MemorySize),
+		StringUtil::format("Trying to free pointer which is not part of the PageAllocator \"%s\".",m_Name.c_str()));
 
 	uint32 pageIndex = 0;
-	ptrdiff_t ptrOffset = (size_t)m_Memory - (size_t)p_Pointer;
+	ptrdiff_t ptrOffset = (size_t)p_Pointer - (size_t)m_Memory;
 
 	pageIndex = ptrOffset / m_PageSize;
-	pageIndex -= 1;
-
-	K15_ASSERT(pageIndex > PageCount,"pageIndex out of bounds")
-	K15_ASSERT(m_PageData[pageIndex].Size == 0,"Error calculating pageIndex.");
-
-	m_PageData[pageIndex].Used = false;
-	m_PageData[pageIndex].Size = 0;
-
-	while(m_PageData[++pageIndex].Size == 0)
+	if(pageIndex != 0) pageIndex -= 1;
+	
+	K15_ASSERT(pageIndex <= PageCount,StringUtil::format("pageIndex out of bounds PageAllocator \"%s\".",m_Name.c_str()))
+	
+	while(m_PageData[pageIndex++].Used)
 	{
+		m_PageData[pageIndex].Size = 0;
 		m_PageData[pageIndex].Used = false;
 	}
 }
@@ -97,10 +93,12 @@ void PageAllocator<PageSize,TotalSize>::createPages()
 	{
 		m_PageData[i].Used = false;
 		m_PageData[i].Size = 0;
-		memcpy(m_PageData[i].Memory,(byte*)memory + offset,m_PageSize);
-
+		m_PageData[i].Memory = m_Memory + offset;
+	
 		offset += m_PageSize;
 	}
+
+	m_PageData[0].Size = m_MemorySize;
 }
 /*********************************************************************************/
 template<uint16 PageSize,uint32 TotalSize>

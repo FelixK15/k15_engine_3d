@@ -20,26 +20,109 @@
 #include "K15_PrecompiledHeader.h"
 
 #include "Win32\K15_RenderWindow_Win32.h"
-#include "K15_StringUtil.h"
-#include "K15_EventManager.h"
+#include "K15_Mouse.h"
 
 namespace K15_Engine { namespace Core {
 	LRESULT CALLBACK K15_WindowProc(HWND p_HandleWindow,UINT p_MSG,WPARAM p_wParam,LPARAM p_lParam)
 	{
-    RenderWindowBase* window = (RenderWindowBase*)GetWindowLong(p_HandleWindow,GWL_USERDATA);
-		//if(p_MSG == WM_)
+	    RenderWindowBase* window = (RenderWindowBase*)GetWindowLong(p_HandleWindow,GWL_USERDATA);
+
 		if(p_MSG == WM_CLOSE)
 		{
 			PostQuitMessage(0);
 			return 0;
 		}
-    else if(p_MSG == WM_ACTIVATE)
-    {
-      bool hasFocus = p_wParam > 0;
-      window->setHasFocus(hasFocus);
+		else if(p_MSG == WM_ACTIVATE)
+		{
+			bool hasFocus = p_wParam > 0;
+			window->setHasFocus(hasFocus);
+		}
+		else if(p_MSG == WM_MBUTTONDOWN || p_MSG == WM_MBUTTONUP || p_MSG == WM_MBUTTONDBLCLK ||
+			    p_MSG == WM_LBUTTONDOWN || p_MSG == WM_LBUTTONUP || p_MSG == WM_LBUTTONDBLCLK ||
+				p_MSG == WM_RBUTTONDOWN || p_MSG == WM_RBUTTONUP || p_MSG == WM_RBUTTONDBLCLK ||
+				p_MSG == WM_XBUTTONDOWN || p_MSG == WM_XBUTTONUP || p_MSG == WM_XBUTTONDBLCLK ||
+				p_MSG == WM_MOUSEMOVE || p_MSG == WM_MOUSEWHEEL)
+		{
+			int x,y;
+			y = p_lParam & 0xFFFF0000;
+			x = p_lParam & 0x0000FFFF;
 
-      return 0;
-    }
+			EventName name;
+			if(p_MSG == WM_MBUTTONDOWN || p_MSG == WM_LBUTTONDOWN || p_MSG == WM_RBUTTONDOWN || p_MSG == WM_XBUTTONDOWN)
+			{
+				name = _EN(onMousePressed);
+			}
+			else if(p_MSG == WM_MBUTTONUP || p_MSG == WM_LBUTTONUP || p_MSG == WM_RBUTTONUP || p_MSG == WM_XBUTTONUP)
+			{
+				name = _EN(onMouseReleased);
+			}
+			else if(p_MSG == WM_MBUTTONDBLCLK || p_MSG == WM_LBUTTONDBLCLK || p_MSG == WM_RBUTTONDBLCLK || p_MSG == WM_XBUTTONDBLCLK)
+			{
+				name = _EN(onMouseDoubleClicked);
+			}
+			else if(p_MSG == WM_MOUSEMOVE)
+			{
+				name = _EN(onMouseMove);
+
+				uint32 eventArguments[2] = {x,y};
+
+				GameEvent* mouseMoveEvent = K15_NEW GameEvent(name,(void*)eventArguments,64);
+				g_EventManager->triggerEvent(mouseMoveEvent);
+			}
+			else if(p_MSG == WM_MOUSEWHEEL)
+			{
+				name = _EN(onMouseWheel);
+
+				uint32 eventArguments[3] = {(uint32)(p_wParam & 0xFFFF0000),x,y};
+				
+				GameEvent* mouseWheelEvent = K15_NEW GameEvent(name,(void*)eventArguments,96);
+				g_EventManager->triggerEvent(mouseWheelEvent);
+			}
+
+			uint32 eventArguments[3] = {0};
+
+			eventArguments[1] = x;
+			eventArguments[2] = y;
+
+			if(p_wParam & MK_LBUTTON)
+			{
+				eventArguments[0] = InputDevices::Mouse::BTN_LEFT;
+			}
+			else if(p_wParam & MK_RBUTTON)
+			{
+				eventArguments[0] = InputDevices::Mouse::BTN_RIGHT;
+			}
+			else if(p_wParam & MK_MBUTTON)
+			{
+				eventArguments[0] = InputDevices::Mouse::BTN_MIDDLE;
+			}
+			else if(p_wParam & MK_XBUTTON1)
+			{
+				eventArguments[0] = InputDevices::Mouse::BTN_SPECIAL1;
+			}
+			else if(p_wParam & MK_XBUTTON2)
+			{
+				eventArguments[0] = InputDevices::Mouse::BTN_SPECIAL2;
+			}
+
+			GameEvent* mouseEvent = K15_NEW GameEvent(name,(void*)eventArguments,96);
+			g_EventManager->triggerEvent(mouseEvent);
+		}
+		else if(p_MSG == WM_KEYDOWN || p_MSG == WM_KEYUP)
+		{
+			EventName name;
+			if(p_MSG == WM_KEYDOWN)
+			{
+				name = _EN(onKeyPressed);
+			}
+			else if(p_MSG == WM_KEYUP)
+			{
+				name = _EN(onKeyReleased);
+			}
+			uint32 key = p_wParam;
+			GameEvent* keyEvent = K15_NEW GameEvent(name,(void*)&key,32);
+			g_EventManager->triggerEvent(keyEvent);
+		}
 
 		return DefWindowProc(p_HandleWindow,p_MSG,p_wParam,p_lParam);
 	}
@@ -82,7 +165,13 @@ namespace K15_Engine { namespace Core {
 			return false;
 		}
 		
-    SetWindowLong(m_HandleWindow,GWL_USERDATA,(LONG)this);
+		SetWindowLong(m_HandleWindow,GWL_USERDATA,(LONG)this);
+
+		RECT windowrect = {0};
+		GetWindowRect(m_HandleWindow,&windowrect);
+
+		m_CurrentResolution.height = windowrect.bottom - windowrect.top;
+		m_CurrentResolution.width = windowrect.right - windowrect.left;
 
 		m_DeviceContext = GetDC(m_HandleWindow);
 
@@ -113,13 +202,14 @@ namespace K15_Engine { namespace Core {
 		DWORD flags = CDS_RESET;
 		if(isFullscreen())
 		{
-			flags = CDS_FULLSCREEN;
+			flags |= CDS_FULLSCREEN;
 		}
 
 		DWORD result = 0;
 		if((result = ChangeDisplaySettings(&dm,flags)) != DISP_CHANGE_SUCCESSFUL)
 		{
 			_LogError("Could not change resolution to \"%ix%i\" Error:%s",p_Resolution.width,p_Resolution.height,Application::getInstance()->getLastError().c_str());
+			return;
 		}
 	}
 	/*********************************************************************************/
@@ -143,5 +233,5 @@ namespace K15_Engine { namespace Core {
 	{
 		return m_Instance;
 	}
-/*********************************************************************************/
+	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace

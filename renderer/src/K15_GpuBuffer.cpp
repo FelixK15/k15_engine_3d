@@ -19,50 +19,65 @@
 
 #include "K15_RendererPrecompiledHeader.h"
 #include "K15_GpuBuffer.h"
+#include "K15_LogManager.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
-	GpuBuffer::GpuBuffer(Enum p_BufferType)
-		: m_Locked(false),
-		  m_LockOption(LO_NORMAL),
-		  m_ShadowCopy(0),
-		  m_ShadowCopyEnabled(false),
-		  m_ShadowCopySize(0),
-		  m_UsageOption(UO_DYNAMIC),
-		  m_BufferType(p_BufferType)
+	GpuBufferImplBase::GpuBufferImplBase()
+		: m_Buffer(0)
 	{
-		//m_Impl = g_Renderer
+
 	}
 	/*********************************************************************************/
-	GpuBuffer::GpuBuffer(Enum p_BufferType,Enum p_LockOption, Enum p_UsageOption, bool p_ShadowCopyEnabled)
+	GpuBufferImplBase::~GpuBufferImplBase()
+	{
+
+	}
+	/*********************************************************************************/
+	void GpuBufferImplBase::setBuffer(GpuBuffer* p_Buffer)
+	{
+		m_Buffer = p_Buffer;
+	}
+	/*********************************************************************************/
+	GpuBuffer* GpuBufferImplBase::getBuffer() const
+	{
+		return m_Buffer;
+	}
+	/*********************************************************************************/
+
+	/*********************************************************************************/
+	GpuBuffer::GpuBuffer(Enum p_BufferType, Enum p_LockOption, Enum p_UsageOption, Enum p_AccessOption, bool p_ShadowCopyEnabled)
 		: m_Locked(false),
 		  m_LockOption(p_LockOption),
 		  m_UsageOption(p_UsageOption),
 		  m_ShadowCopyEnabled(true),
 		  m_ShadowCopySize(0),
 		  m_ShadowCopy(0),
-		  m_BufferType(p_BufferType)
+		  m_BufferType(p_BufferType),
+		  m_AccessOption(p_AccessOption)
 	{
-
-	}
+// 		m_Impl = g_Renderer->getGpuBufferImpl();
+ 	}
 	/*********************************************************************************/
-	GpuBuffer::GpuBuffer(Enum p_BufferType,Enum p_LockOption, Enum p_UsageOption, uint32 p_InitialDataSize, byte* p_InitialData, uint32 p_InitialDataOffset, bool p_ShadowCopyEnabled)
+	GpuBuffer::GpuBuffer(Enum p_BufferType, uint32 p_InitialDataSize, byte* p_InitialData, uint32 p_InitialDataOffset, Enum p_LockOption, Enum p_UsageOption, Enum p_AccessOption, bool p_ShadowCopyEnabled)
 		: m_Locked(false),
 		  m_LockOption(p_LockOption),
 		  m_ShadowCopy(p_InitialData),
 		  m_ShadowCopyEnabled(true),
 		  m_ShadowCopySize(p_InitialDataSize),
 		  m_UsageOption(p_UsageOption),
-		  m_BufferType(p_BufferType)
+		  m_BufferType(p_BufferType),
+		  m_AccessOption(p_AccessOption)
 	{
+// 		m_Impl = g_Renderer->getGpuBufferImpl();
 		writeData(p_InitialDataSize,p_InitialData,p_InitialDataOffset);
 	}
 	/*********************************************************************************/
-	void GpuBuffer::lock()
+	void GpuBuffer::lock(uint32 p_StartPos, int32 p_Count)
 	{
 		K15_ASSERT(isLocked(),"GpuBuffer is already locked.");
 
-		if(m_Impl->lock())
+		if(m_Impl->lock(p_StartPos,p_Count))
 		{
 			m_Locked = true;
 		}
@@ -80,22 +95,71 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	uint32 GpuBuffer::readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset, bool p_FromShadowCopy)
 	{
-		if(p_FromShadowCopy)
+		bool wasLocked = false;
+		if(!m_AccessOption == BA_WRITE_ONLY)
 		{
-			return readFromShadowCopy(p_Size,p_Destination,p_Offset);
+			_LogWarning("Not allowed to read directly from GPU buffer due to limited access option (Buffer is write only)...Trying to read from shadow copy.");
+			p_FromShadowCopy = true;
 		}
 
-		return m_Impl->readData(p_Size,p_Destination,p_Offset);
+		
+		if(p_FromShadowCopy)
+		{
+			if(getShadowCopyEnabled())
+			{
+				return readFromShadowCopy(p_Size,p_Destination,p_Offset);
+			}
+			else
+			{
+				_LogError("Shadow copy not enabled. Can't read any data.");
+				return 0;
+			}
+		}
+
+		if(!isLocked())
+		{
+			wasLocked = true;
+			lock(p_FromShadowCopy,p_Size);
+		}
+
+		uint32 dataCount = m_Impl->readData(p_Size,p_Destination,p_Offset);
+
+		if(wasLocked)
+		{
+			unlock();
+		}
+
+		return dataCount;
 	}
 	/*********************************************************************************/
 	uint32 GpuBuffer::writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset)
 	{
+		bool wasLocked = false;
+		if(!m_AccessOption == BA_READ_ONLY)
+		{
+			_LogWarning("Not allowed to write directly to GPU buffer due to limited access option. (Buffer is read only)");
+			return 0;
+		}
+
 		if(getShadowCopyEnabled())
 		{
 			writeToShadowCopy(p_Size,p_Source,p_Offset);
 		}
 
-		return m_Impl->writeData(p_Size,p_Source,p_Offset);
+		if(!isLocked())
+		{
+			lock(p_Offset,p_Size);
+			wasLocked = true;
+		}
+
+		uint32 dataCount = m_Impl->writeData(p_Size,p_Source,p_Offset);
+
+		if(wasLocked)
+		{
+			unlock();
+		}
+
+		return dataCount;
 	}
 	/*********************************************************************************/
 	void GpuBuffer::writeToShadowCopy(uint32 p_Size, byte* p_Source, uint32 p_Offset)

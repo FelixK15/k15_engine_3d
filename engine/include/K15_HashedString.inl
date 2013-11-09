@@ -23,7 +23,7 @@ unsigned long HashedString::getIdentifier() const
 }
 
 #ifndef K15_NO_STRINGS
-const char* HashedString::getString() const
+const char* HashedString::c_str() const
 {
 	return m_String;
 }

@@ -42,9 +42,14 @@ inline Enum GpuBuffer::getUsageOption() const
 	return m_UsageOption;
 }
 /*********************************************************************************/
-inline Enum GpuBuffer::getBufferType() const
+inline Enum GpuBuffer::getType() const
 {
 	return m_BufferType;
+}
+/*********************************************************************************/
+inline Enum GpuBuffer::getAccessOption() const
+{
+	return m_AccessOption;
 }
 /*********************************************************************************/
 inline bool GpuBuffer::getShadowCopyEnabled() const

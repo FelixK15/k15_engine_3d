@@ -47,18 +47,18 @@
     <ClCompile Include="..\..\renderer\src\K15_Texture.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\renderer\src\K15_ColorRGBA.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\renderer\src\K15_RendererBase.inl">
-      <Filter>Core\include</Filter>
-    </None>
-    <None Include="..\..\renderer\include\K15_ColorRGBA.inl">
-      <Filter>Core\include</Filter>
-    </None>
     <None Include="..\..\renderer\include\K15_GpuBuffer.inl">
       <Filter>Core\include</Filter>
     </None>
     <None Include="..\..\renderer\include\K15_Texture.inl">
+      <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\renderer\include\K15_RendererBase.inl">
       <Filter>Core\include</Filter>
     </None>
   </ItemGroup>

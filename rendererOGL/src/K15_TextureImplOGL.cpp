@@ -18,6 +18,7 @@
  */
 
 #include "K15_TextureImplOGL.h"
+#include "K15_LogManager.h"
 
 namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
@@ -89,71 +90,96 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 	/*********************************************************************************/
 	TextureImplOGL::TextureImplOGL()
-		: m_TextureHandle(0)
+		: m_TextureHandle(0),
+		  m_TextureStorageSize(0)
 	{
-
+		glGenTextures(1,&m_TextureHandle);
 	}
 	/*********************************************************************************/
 	TextureImplOGL::~TextureImplOGL()
 	{
-
-	}
-	/*********************************************************************************/
-	void TextureImplOGL::init(Enum p_TextureType, Enum p_TextureUsage, Enum p_PixelFormat, uint32 p_Width, uint32 p_Height, uint32 p_Depth, uint8 p_MipMapCount)
-	{
-		if(!m_TextureHandle)
-		{
-			glGenTextures(1,&m_TextureHandle);
-		}
-		
-		glBindTexture(GLTextureTypeConverter[p_TextureType],m_TextureHandle);
-
-		if(p_TextureType == Texture::TT_1D)
-		{
-			glTexImage1D(GLTextureTypeConverter[p_TextureType],
-				p_MipMapCount,
-				GLInternalFormatConverter[p_PixelFormat],
-				p_Width,0,
-				GLInternalFormatConverter[p_PixelFormat],
-				GLPixelDataTypeConverter[p_PixelFormat],
-				0);
-		}
-		else if(p_TextureType == Texture::TT_2D)
-		{
-			glTexImage2D(GLTextureTypeConverter[p_TextureType],
-				p_MipMapCount,
-				GLInternalFormatConverter[p_PixelFormat],
-				p_Width,p_Height,0,
-				GLInternalFormatConverter[p_PixelFormat],
-				GLPixelDataTypeConverter[p_PixelFormat],
-				0);
-		}
-		else if(p_TextureType == Texture::TT_3D)
-		{
-			glTexImage3D(GLTextureTypeConverter[p_TextureType],
-				p_MipMapCount,
-				GLInternalFormatConverter[p_PixelFormat],
-				p_Width,p_Height,p_Depth,0,
-				GLInternalFormatConverter[p_PixelFormat],
-				GLPixelDataTypeConverter[p_PixelFormat],
-				0);
-		}
-	}
-	/*********************************************************************************/
-	void TextureImplOGL::shutdown()
-	{
 		glDeleteTextures(1,&m_TextureHandle);
-		m_TextureHandle = 0;
 	}
 	/*********************************************************************************/
-	void TextureImplOGL::setTextureWrapMode(Enum p_TextureType)
+	uint32 TextureImplOGL::writeData(uint32 p_Size,byte* p_Source,uint32 p_Offset)
 	{
+		bool recreate = false;
+		GLenum textureType = GLTextureTypeConverter[m_Texture->getTextureType()];
+		GLenum formatType = GLInternalFormatConverter[m_Texture->getPixelFormat()];
 
+		uint32 width,height,depth;
+		width = m_Texture->getWidth();
+		height = m_Texture->getHeight();
+		depth = m_Texture->getDepth();
+
+		uint32 newSize = m_Texture->getTextureSize();
+		if(newSize != m_TextureStorageSize)
+		{
+			_LogWarning("Texture size changed from %u to %u. Recreating texture storage.",m_TextureStorageSize,newSize);
+			m_TextureStorageSize = newSize;
+			recreate = true;
+		}
+
+		if(recreate)
+		{
+			deleteStorage();
+			createStorage();
+		}
+
+		glBindTexture(textureType,0);
+
+		return p_Size;
 	}
 	/*********************************************************************************/
-	void TextureImplOGL::setTextureType(Enum p_TextureType)
+	void TextureImplOGL::createStorage()
 	{
+		GLenum textureType = GLTextureTypeConverter[m_Texture->getTextureType()];
+		GLenum formatType = GLInternalFormatConverter[m_Texture->getPixelFormat()];
 
+		uint32 width,height,depth;
+		width = m_Texture->getWidth();
+		height = m_Texture->getHeight();
+		depth = m_Texture->getDepth();
+
+		glBindTexture(textureType,m_TextureHandle);
+
+		for(int i = 0;i < m_Texture->getMipMapCount();++i)
+		{
+			if(width == 1 || height == 1 || depth == 1)
+			{
+				_LogError("Can't create mip map level %i and following (up to level %i). Dimension is already 1.");
+				break;
+			}
+
+			if(textureType == GL_TEXTURE_1D)
+			{
+				glTexStorage1D(textureType,i,formatType,width);
+				width = max(1,(uint32)width * 0.5);
+			}
+			else if(textureType == GL_TEXTURE_2D)
+			{
+				glTexStorage2D(textureType,i,formatType,width,height);
+				width = max(1,(uint32)width * 0.5);
+				height = max(1,(uint32)height * 0.5);
+			}
+			else if(textureType == GL_TEXTURE_3D)
+			{
+				glTexStorage3D(textureType,i,formatType,width,height,depth);
+				width = max(1,(uint32)width * 0.5);
+				height = max(1,(uint32)height * 0.5);
+				depth = max(1,(uint32)depth * 0.5);
+			}
+		}
+
+		glBindTexture(textureType,0);
 	}
-/*********************************************************************************/
+	/*********************************************************************************/
+	void TextureImplOGL::deleteStorage()
+	{
+		for(int i = 0;i < m_Texture->getMipMapCount();++i)
+		{
+			glInvalidateTexImage(m_TextureHandle,i);
+		}
+	}
+	/*********************************************************************************/
 }}}//end of K15_Engine::Rendering::OGL namespace

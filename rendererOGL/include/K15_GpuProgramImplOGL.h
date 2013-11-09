@@ -33,10 +33,10 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	public:
 		GpuProgramImplOGL(Enum p_Type);
 		virtual ~GpuProgramImplOGL();
-
-		virtual void init(Enum p_Type) OVERRIDE;
-		virtual void shutdown() OVERRIDE;
-
-		virtual void setProgramCode(const String& p_Code) OVERRIDE;
+// 
+// 		virtual void init(Enum p_Type) OVERRIDE;
+// 		virtual void shutdown() OVERRIDE;
+// 
+// 		virtual void setProgramCode(const String& p_Code) OVERRIDE;
 	};// end of GpuProgramImplOGL class declaration
 }}}// end of K15_Engine::Rendering::OGL namespace

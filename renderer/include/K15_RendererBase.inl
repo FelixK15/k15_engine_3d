@@ -40,7 +40,7 @@ inline Enum RendererBase::getCullingMode() const
 /*********************************************************************************/
 inline Enum RendererBase::getDepthTestMode() const
 {
-	return m_DepthFunction;
+	return m_DepthTestFunction;
 }
 /*********************************************************************************/
 inline Enum RendererBase::getTopology() const
@@ -73,14 +73,14 @@ inline Enum RendererBase::getStencilBufferFormat() const
 	return m_StencilBufferFormat;
 }
 /*********************************************************************************/
+inline void RendererBase::setLightningEnabled(bool p_Enabled)
+{
+	m_LightningEnabled = p_Enabled;
+}
+/*********************************************************************************/
 inline bool RendererBase::getLightningEnabled() const
 {
 	return m_LightningEnabled;
-}
-/*********************************************************************************/
-inline void RendererBase::bindGpuProgram(GpuProgram* p_GpuProgram)
-{
-
 }
 /*********************************************************************************/
 inline GpuProgram* RendererBase::getBoundGpuProgram(Enum p_GpuProgramType) const

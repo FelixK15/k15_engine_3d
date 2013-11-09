@@ -132,9 +132,6 @@
     <ClInclude Include="..\..\engine\include\K15_MemoryHeader.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_PageAllocator.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_StackAllocator.h">
       <Filter>Core\include</Filter>
     </ClInclude>
@@ -228,6 +225,26 @@
     <ClInclude Include="..\..\engine\include\K15_Node.h">
       <Filter>Core\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Mouse.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_InputManager.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Keyboard.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_InputTriggerBase.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_BlockAllocator.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_MemoryProfiler.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_MemoryProfilingTask.h" />
+    <ClInclude Include="..\..\engine\include\K15_NetworkManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -338,6 +355,27 @@
     <ClCompile Include="..\..\engine\src\K15_Node.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_Mouse_Win32.cpp">
+      <Filter>Core\src\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_Keyboard_Win32.cpp">
+      <Filter>Core\src\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_Keyboard.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_Mouse.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_InputManager.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_BlockAllocator.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_MemoryProfiler.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_MemoryProfilingTask.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_NetworkManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -384,9 +422,6 @@
       <Filter>Core\include</Filter>
     </None>
     <None Include="..\..\engine\include\K15_AllocatedObject.inl">
-      <Filter>Core\include</Filter>
-    </None>
-    <None Include="..\..\engine\include\K15_PageAllocator.inl">
       <Filter>Core\include</Filter>
     </None>
     <None Include="..\..\engine\include\K15_StackAllocator.inl">
@@ -446,5 +481,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />
+    <Text Include="File formats.txt" />
   </ItemGroup>
 </Project>

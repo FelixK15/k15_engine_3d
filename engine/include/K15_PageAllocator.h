@@ -1,5 +1,5 @@
 /**
- * @file K15_PageAllocator.h
+ * @file K15_BlockAllocator.h
  * @author Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2013/09/09
@@ -30,7 +30,6 @@
 #include "K15_BaseAllocator.h"
 
 namespace K15_Engine { namespace Core {
-
 	template<uint16 PageSize = 128,uint32 TotalSize = 8192>
 	class PageAllocator : public BaseAllocator
 	{
@@ -41,7 +40,7 @@ namespace K15_Engine { namespace Core {
 // #		if defined (K15_DEBUG)
 // 			byte Memory[PageSize + sizeof(MemoryHeader)];
 // #		else
-			byte Memory[PageSize];
+			byte* Memory;
 //#		endif //K15_DEBUG
 			bool Used;
 			uint32 Size;
@@ -50,15 +49,15 @@ namespace K15_Engine { namespace Core {
 
 	public:
 		//allocate memory using malloc
-		PageAllocator();
-    //allocate memory from another allocator
-    PageAllocator(BaseAllocator* p_Allocator);
+		PageAllocator(const ObjectName& p_Name);
+		//allocate memory from another allocator
+		PageAllocator(BaseAllocator* p_Allocator,const ObjectName& p_Name);
 
-    virtual void clear();
+		virtual void clear();
 
-  protected:
-    virtual void* alloc(uint32 p_Size);
-    virtual void free(void* p_Pointer);
+	protected:
+		virtual void* alloc(uint32 p_Size);
+		virtual void free(void* p_Pointer);
 
 	private:
 		void createPages();

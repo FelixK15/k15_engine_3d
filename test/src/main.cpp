@@ -1,4 +1,7 @@
 #include "K15_Application.h"
+#include "K15_Keyboard.h"
+#include "K15_InputManager.h"
+#include "K15_HashedString.h"
 
 int main(int argc,char** argv)
 {

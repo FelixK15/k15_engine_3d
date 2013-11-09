@@ -23,28 +23,28 @@
 #include "K15_GameEvent.h"
 
 namespace K15_Engine { namespace Core {
-	/*********************************************************************************/
-	RenderWindowBase::Listener::Listener()
-		: EventListener()
-	{
-		g_EventManager->addListener(_EN(ResolutionChanged),this);
-	}
-	/*********************************************************************************/
-	RenderWindowBase::Listener::~Listener()
-	{
-		g_EventManager->removeListener(_EN(ResolutionChanged),this);
-	}
-	/*********************************************************************************/
-	void RenderWindowBase::Listener::handleEvent(GameEvent* p_Event)
-	{
-		if(p_Event->getName() == _EN(ResolutionChanged) && p_Event->getArgumentSize() == sizeof(Resolution))
-		{
-			Resolution* resolution = (Resolution*)p_Event->getArgument();
-			onResolutionChanged(*resolution);
-			return;
-		}
-	}
-	/*********************************************************************************/
+// 	/*********************************************************************************/
+// 	RenderWindowBase::Listener::Listener()
+// 		: EventListener()
+// 	{
+// 		g_EventManager->addListener(_EN(ResolutionChanged),this);
+// 	}
+// 	/*********************************************************************************/
+// 	RenderWindowBase::Listener::~Listener()
+// 	{
+// 		g_EventManager->removeListener(_EN(ResolutionChanged),this);
+// 	}
+// 	/*********************************************************************************/
+// 	void RenderWindowBase::Listener::handleEvent(GameEvent* p_Event)
+// 	{
+// 		if(p_Event->getName() == _EN(ResolutionChanged) && p_Event->getArgumentSize() == sizeof(Resolution))
+// 		{
+// 			Resolution* resolution = (Resolution*)p_Event->getArgument();
+// 			onResolutionChanged(*resolution);
+// 			return;
+// 		}
+// 	}
+// 	/*********************************************************************************/
 
 	/*********************************************************************************/
 	RenderWindowBase::RenderWindowBase()

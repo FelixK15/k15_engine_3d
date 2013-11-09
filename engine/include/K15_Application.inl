@@ -82,6 +82,11 @@ inline LogManager* Application::getLogManager() const
 	return m_LogManager;
 }
 /*********************************************************************************/
+inline InputManager* Application::getInputManager() const
+{
+	return m_InputManager;
+}
+/*********************************************************************************/
 inline const StackAllocator& Application::getFrameAllocator() const
 {
 	return m_FrameAllocator;

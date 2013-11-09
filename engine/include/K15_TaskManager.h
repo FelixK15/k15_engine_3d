@@ -31,14 +31,14 @@
 #	include "K15_Singleton.h"
 #endif// K15_USE_PRECOMPILED_HEADER
 
-#include "K15_PageAllocator.h"
+#include "K15_BlockAllocator.h"
 #include "K15_TaskBase.h"
 
 namespace K15_Engine { namespace Core {
 
 	class TaskManager : public ApplicationAllocatedObject,
 						public Singleton<TaskManager>,
-						public PageAllocator<>
+						public BlockAllocator
 	{
 	public:
 		/*********************************************************************************/

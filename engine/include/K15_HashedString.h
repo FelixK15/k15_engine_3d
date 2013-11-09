@@ -23,9 +23,12 @@
 #ifndef _K15Engine_Core_HashedString_h_
 #define _K15Engine_Core_HashedString_h_
 
-namespace K15_Engine { namespace Core { 
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
 
-	class HashedString
+namespace K15_Engine { namespace Core { 
+	class K15_CORE_API HashedString
 	{
 	public:
 		static const HashedString BLANK;
@@ -39,8 +42,7 @@ namespace K15_Engine { namespace Core {
 		unsigned long getIdentifier() const;
 
 #		ifndef K15_NO_STRINGS
-			const char* getString() const;
-			void setString(const char* p_String);
+			const char* c_str() const;
 #		endif
 
 		bool operator< (const HashedString& p_Other) const;

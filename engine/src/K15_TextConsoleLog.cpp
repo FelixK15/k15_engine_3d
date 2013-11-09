@@ -59,7 +59,7 @@ namespace K15_Engine { namespace Core {
 		else if(p_PriorityFlag & Core::LogManager::LP_DEBUG)
 		{
 			msg += "[DEBUG]: ";
-			colorCode = FOREGROUND_BLUE;
+			colorCode = FOREGROUND_RED | FOREGROUND_BLUE;
 		}
 
 		msg += p_Message;

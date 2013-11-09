@@ -34,23 +34,25 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	class GpuBufferImplOGL : public GpuBufferImplBase
 	{
 	public:
+		/*********************************************************************************/
+		static const GLenum GLBufferTypeConverter[GpuBuffer::BT_COUNT];
+		static const GLenum GLBufferUsageConverter[GpuBuffer::UO_COUNT];
+		static const GLenum GLBufferAccessConverter[GpuBuffer::BA_COUNT];
+		/*********************************************************************************/
+	public:
 		GpuBufferImplOGL();
 		virtual ~GpuBufferImplOGL();
 
-		virtual void init(Enum p_BufferType,Enum p_UsageOptions,Enum p_LockOptions);
-		virtual void shutdown();
+		virtual bool lock(uint32 p_StartPos,int32 p_Count) OVERRIDE;
+		virtual bool unlock() OVERRIDE;
 
-		virtual void setLockOption(Enum p_LockOption);
-		virtual void setUsageOption(Enum p_UsageOption);
-
-		virtual bool lock();
-		virtual bool unlock();
-
-		virtual uint32 readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset);
-		virtual uint32 writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset);
+		virtual uint32 readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset) OVERRIDE;
+		virtual uint32 writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset) OVERRIDE;
 
 	private:
 		GLuint m_BufferHandle;
+		uint32 m_BufferMemorySize;
+		byte* m_BufferMemory;
 	};// end of GpuBufferImplOG class declaration
 }}}//end of K15_Engine::Rendering::OGL namespace
 

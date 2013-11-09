@@ -29,32 +29,30 @@
 namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	ProfilingNode::ProfilingNode(const ProfilingNode& p_Other)
-		: m_Name(p_Other.m_Name),
-		  m_StartTime(p_Other.m_StartTime),
-		  m_EndTime(p_Other.m_EndTime),
-		  m_Time(p_Other.m_Time),
-		  m_Parent(p_Other.m_Parent),
-		  m_Children(p_Other.m_Children)
+		: Name(p_Other.Name),
+		  StartTime(p_Other.StartTime),
+		  EndTime(p_Other.EndTime),
+		  Time(p_Other.Time),
+		  Parent(p_Other.Parent)
 	{
 
 	}
 	/*********************************************************************************/
 	ProfilingNode::ProfilingNode(const ProfilingName& p_Name)
-		: m_Name(p_Name),
-		  m_StartTime(0.0),
-		  m_EndTime(0.0),
-		  m_Time(0.0),
-		  m_Parent(0),
-		  m_Children()
+		: Name(p_Name),
+		  StartTime(0.0),
+		  EndTime(0.0),
+		  Time(0.0),
+		  Parent(0)
 	{
-		m_StartTime = g_Application->getTime();
-		g_ProfileManager->addNode(this);
+		StartTime = g_Application->getTime();
+		//g_ProfileManager->addNode(this);
 	}
 	/*********************************************************************************/
 	ProfilingNode::~ProfilingNode()
 	{
-		m_EndTime = g_Application->getTime();
-		m_Time = m_EndTime - m_StartTime;
+		EndTime = g_Application->getTime();
+		Time = EndTime - StartTime;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace

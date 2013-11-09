@@ -55,4 +55,102 @@ namespace K15_Engine { namespace Rendering {
 		16 //SBF_COMPONENT_16_I
 	}; //StencilFormatSize
 	/*********************************************************************************/
+
+	/*********************************************************************************/
+	RendererBase::RendererBase()
+		: m_ActiveCamera(0),
+		  m_BackFaceCullingEnabled(true),
+		  m_ClearColor(ColorRGBA::DarkBlue),
+		  m_CullingMode(CM_CCW),
+		  m_DefaultRenderTarget(0),
+		  m_DepthBufferFormat(DBF_COMPONENT_24_I),
+		  m_DepthTestFunction(DF_GREATER_EQUAL),
+		  m_DepthTestEnabled(true),
+		  m_FrameBufferFormat(PF_RGB_32_F),
+		  m_LightningEnabled(true),
+		  m_RenderTarget(0),
+		  m_RenderWindow(g_Application->getRenderWindow()),
+		  m_StencilBufferFormat(SBF_COMPONENT_8_I),
+		  m_Topology(T_TRIANGLE)
+	{
+		
+	}
+	/*********************************************************************************/
+	RendererBase::~RendererBase()
+	{
+
+	}
+	/*********************************************************************************/
+	void RendererBase::setRenderWindow(RenderWindowBase* p_RenderWindow)
+	{
+		m_RenderWindow = p_RenderWindow;
+	}
+	/*********************************************************************************/
+	void RendererBase::setRenderTarget(RenderTarget* p_RenderTarget)
+	{
+		m_RenderTarget = p_RenderTarget;
+	}
+	/*********************************************************************************/
+	void RendererBase::setActiveCamera(Camera* p_Camera)
+	{
+		m_ActiveCamera = p_Camera;
+	}
+	/*********************************************************************************/
+	void RendererBase::setCullingMode(Enum p_CullingMode)
+	{
+		m_CullingMode = p_CullingMode;
+	}
+	/*********************************************************************************/
+	void RendererBase::setDepthTestFunction(Enum p_DepthTestFunction)
+	{
+		m_DepthTestFunction = p_DepthTestFunction;
+	}
+	/*********************************************************************************/
+	void RendererBase::setTopology(Enum p_Topology)
+	{
+		m_Topology = p_Topology;
+	}
+	/*********************************************************************************/
+	void RendererBase::setDepthTestEnabled(bool p_Enabled)
+	{
+		m_DepthTestEnabled = p_Enabled;
+	}
+	/*********************************************************************************/
+	void RendererBase::setBackFaceCullingEnabled(bool p_Enabled)
+	{
+		m_BackFaceCullingEnabled = p_Enabled;
+	}
+	/*********************************************************************************/
+	void RendererBase::setFrameBufferPixelFormat(Enum p_PixelFormat)
+	{
+		m_FrameBufferFormat = p_PixelFormat;
+	}
+	/*********************************************************************************/
+	void RendererBase::setDepthBufferFormat(Enum p_DepthFormat)
+	{
+		m_DepthBufferFormat = p_DepthFormat;
+	}
+	/*********************************************************************************/
+	void RendererBase::setStencilBufferFormat(Enum p_StencilFormat)
+	{
+		m_StencilBufferFormat = p_StencilFormat;
+	}
+	/*********************************************************************************/
+	void RendererBase::setClearColor(const ColorRGBA& p_ClearColor)
+	{
+		m_ClearColor = p_ClearColor;
+	}
+	/*********************************************************************************/
+	void RendererBase::setClearColor(float p_Red, float p_Green, float p_Blue)
+	{
+		m_ClearColor = ColorRGBA(p_Red,p_Green,p_Blue);
+	}
+	/*********************************************************************************/
+	void RendererBase::bindGpuProgram(GpuProgram* p_GpuProgram)
+	{
+
+	}
+	/*********************************************************************************/
+
+
 }}//end of K15_Engine::Rendering namespace

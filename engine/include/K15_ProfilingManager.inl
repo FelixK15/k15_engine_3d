@@ -17,7 +17,9 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-ProfilingNode* ProfilingManager::getRootNode()
+/*********************************************************************************/
+inline ProfilingNode* ProfilingManager::getRootNode()
 {
 	return m_Root;
 }
+/*********************************************************************************/

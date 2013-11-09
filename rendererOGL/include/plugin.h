@@ -1,5 +1,5 @@
 /**
- * @file plugin.cpp
+ * @file plugin.h
  * @author Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2013/09/09
@@ -15,33 +15,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @section DESCRIPTION
+ *
  */
 
-#include "plugin.h"
-#include "K15_LogManager.h"
-#include "K15_VisualStudioLog.h"
+#include "K15_ApplicationModuleDescription.h"
 
 /*********************************************************************************/
-void pluginLoad()
-{
-	g_LogManager->addLog(K15_NEW K15_Engine::Plugins::VisualStudioLogger::VisualStudioLog(),true);
-}
+__declspec(dllexport) void pluginLoad();
 /*********************************************************************************/
-void pluginUnload()
-{
-	
-}
+__declspec(dllexport) void pluginUnload();
 /*********************************************************************************/
-K15_Engine::Core::ApplicationModuleDescription getDescription()
-{
-	K15_Engine::Core::ApplicationModuleDescription desc;
-
-	desc.Author = "K15 Games";
-	desc.CompiledWithEngineVersion = K15_ENGINE_VERSION;
-	desc.MajorVersion = 1;
-	desc.MinorVersion = 0;
-	desc.PluginFlagBitMask = 0;
-
-	return desc;
-}
+__declspec(dllexport) K15_Engine::Core::ApplicationModuleDescription getDescription();
 /*********************************************************************************/

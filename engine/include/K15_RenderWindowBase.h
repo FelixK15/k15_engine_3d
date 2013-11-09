@@ -47,14 +47,14 @@ namespace K15_Engine { namespace Core {
 		class Listener : public EventListener
 		{
 		public:
-			Listener();
-			virtual ~Listener();
+			Listener(){}
+			virtual ~Listener(){}
 
-      virtual void onFocusLost(){}
-      virtual void onFocusReceived(){}
-      virtual void onResolutionChanged(const Resolution& p_Resolution){}
+			virtual void onFocusLost(){}
+			virtual void onFocusReceived(){}
+			virtual void onResolutionChanged(const Resolution& p_Resolution){}
 
-			virtual void handleEvent(GameEvent* p_Event);
+			virtual void handleEvent(GameEvent* p_Event) OVERRIDE{}
 		};// end of RenderWindowListener class definition
 		/*********************************************************************************/
 	public:
@@ -73,14 +73,14 @@ namespace K15_Engine { namespace Core {
 		virtual void setIsFullscreen(bool p_Fullscreen);
 		bool isFullscreen() const;
 
-    virtual void setHasFocus(bool p_HasFocus);
-    bool getHasFocus() const;
+		virtual void setHasFocus(bool p_HasFocus);
+		bool getHasFocus() const;
 	
 	protected:
 		String m_WindowTitle;
 		Resolution m_CurrentResolution;
 		bool m_IsFullscreen;
-    bool m_HasFocus;
+		bool m_HasFocus;
 	};// end of RenderWindowBase class
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

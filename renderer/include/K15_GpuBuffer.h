@@ -32,17 +32,20 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	class GpuBufferImplBase
 	{
-	public:
-		virtual void init(Enum p_BufferType,Enum p_UsageOptions,Enum p_LockOptions) = 0;
-		virtual void shutdown() = 0;
-		virtual void setLockOption(Enum p_LockOption) = 0;
-		virtual void setUsageOption(Enum p_UsageOption) = 0;
+	protected:
+		GpuBufferImplBase();
 
-		virtual bool lock() = 0;
+	public:
+		virtual ~GpuBufferImplBase();	
+
+		virtual bool lock(uint32 p_StartPos,int32 p_Count) = 0;
 		virtual bool unlock() = 0;
 
 		virtual uint32 readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset) = 0;
 		virtual uint32 writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset) = 0;
+
+		void setBuffer(GpuBuffer* p_Buffer);
+		GpuBuffer* getBuffer() const;
 
 	protected:
 		GpuBuffer *m_Buffer;
@@ -56,7 +59,6 @@ namespace K15_Engine { namespace Rendering {
 		{
 			UO_STATIC = 0,		//<! Content gets set ONLY on creation time
 			UO_DYNAMIC,			//<! Content gets set dynamically throughout the lifetime of the buffer
-			UO_WRITE_ONLY,      //<! The content of the buffer can not be read
 			
 			UO_COUNT
 		};// UsageOptions
@@ -73,22 +75,37 @@ namespace K15_Engine { namespace Rendering {
 		{
 			BT_VERTEX_BUFFER = 0,
 			BT_INDEX_BUFFER,
-
+			
 			BT_COUNT
 		};// BufferType
+		/*********************************************************************************/
+		enum eBufferAccess
+		{
+			BA_READ_ONLY = 0,
+			BA_WRITE_ONLY,
+			BA_READ_WRITE,
+
+			BA_COUNT
+		};// BufferAccess
+		/*********************************************************************************/
+		static const int32 LOCK_WHOLE_BUFFER = -1;
+		/*********************************************************************************/
+
 	public:
-		GpuBuffer(Enum p_BufferType);
-		GpuBuffer(Enum p_BufferType, Enum p_LockOption = UO_DYNAMIC, Enum p_UsageOption = LO_NORMAL, bool p_ShadowCopyEnabled = false);
-		GpuBuffer(Enum p_BufferType, Enum p_LockOption, Enum p_UsageOption, uint32 p_InitialDataSize, byte* p_InitialData, uint32 p_InitialDataOffset = 0, bool p_ShadowCopyEnabled = false);
+		GpuBuffer(Enum p_BufferType, Enum p_LockOption = UO_DYNAMIC, Enum p_UsageOption = LO_NORMAL, Enum p_AccessOption = BA_READ_WRITE, bool p_ShadowCopyEnabled = false);
+		GpuBuffer(Enum p_BufferType, uint32 p_InitialDataSize, byte* p_InitialData, uint32 p_InitialDataOffset = 0,Enum p_LockOption = UO_DYNAMIC, Enum p_UsageOption = UO_DYNAMIC, Enum p_AccessOption = BA_READ_WRITE, bool p_ShadowCopyEnabled = false);
 		~GpuBuffer();
 
 		inline void setShadowCopyEnabled(bool p_Enabled);
 		inline void setLockOption(Enum p_LockOption);
 		inline void setUsageOption(Enum p_UsageOption);
+		inline void setAccessOption(Enum p_AccessOption);
 
-		inline Enum getBufferType() const;
+		inline Enum getType() const;
 		inline Enum getLockOption() const;
 		inline Enum getUsageOption() const;
+		inline Enum getAccessOption() const;
+
 		inline bool getShadowCopyEnabled() const;
 
 		inline byte* getShadowCopy() const;
@@ -96,7 +113,7 @@ namespace K15_Engine { namespace Rendering {
 
 		inline bool isLocked();
 
-		void lock();
+		void lock(uint32 p_StartPos = 0, int32 p_Count = LOCK_WHOLE_BUFFER);
 		void unlock();
 
 		uint32 readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset = 0, bool p_FromShadowCopy = false);
@@ -113,6 +130,7 @@ namespace K15_Engine { namespace Rendering {
 		Enum m_LockOption;
 		Enum m_UsageOption;
 		Enum m_BufferType;
+		Enum m_AccessOption;
 		bool m_Locked;
 		bool m_ShadowCopyEnabled;
 	};// end of GpuBuffer class declaration

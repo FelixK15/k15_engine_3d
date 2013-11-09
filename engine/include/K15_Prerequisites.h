@@ -59,6 +59,7 @@ namespace K15_Engine
 	/*********************************************************************************/
 	namespace Core
 	{
+		class HashedString;
 		class Application;
 		class ApplicationOSLayer;
 		class ApplicationModule;
@@ -76,12 +77,19 @@ namespace K15_Engine
 		class EventManager;
 		class EventListener;
 		class GameEvent;
+		class InputManager;
+		class InputBindingBase;
 		class LogManager;
 		class LogBase;
+		class NetworkManager;
+		class MemoryProfiler;
+		class MemoryProfilingTask;
 		class ResourceManager;
 		class PhysicsProcessBase;
 		class RenderProcessBase;
 		class RenderTask;
+		class InputManager;
+		class InputTriggerBase;
 		class PhysicsTask;
 		class ResourceBase;
 		class ResourceFileBase;
@@ -96,7 +104,8 @@ namespace K15_Engine
 		struct Resolution;
 		template<class ReturnType>
 		class Functor0;
-
+		class MemoryProfiler;
+		class MemoryProfilingTask;
 		struct MemoryHeader;
 		class StackAllocator;
 
@@ -114,6 +123,8 @@ namespace K15_Engine
 		class GpuProgramImplBase;
 		class GpuBuffer;
 		class GpuBufferImplBase;
+		class Texture;
+		class TextureImplBase;
 	} //end of K15_Engine::Rendering namespace
 	/*********************************************************************************/
 	namespace Math
@@ -155,8 +166,6 @@ namespace K15_Engine
 #	pragma warning(disable : 4251) //dll export for std::string, std::list etc.
 #	pragma warning(disable : 4530) //c++ exception used, but not enabled (xlocale.h)
 #endif //_MSC_VER
-
-#include "K15_HashedString.h"
 
 //c std libs
 #include <cstdio>
@@ -308,6 +317,7 @@ namespace K15_Engine
 
 typedef Set(String) StringSet;
 
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::InputManager> InputManagerAllocatedObject;
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::Application> ApplicationAllocatedObject;
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::EventManager> EventManagerAllocatedObject;
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::TaskManager> TaskManagerAllocatedObject;
@@ -315,12 +325,15 @@ typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::DynamicLibraryManage
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::LogManager> LogManagerAllocatedObject;
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::ProfilingManager> ProfilingManagerAllocatedObject;
 
+#define InputManagerAllocator K15_Engine::Core::InputManager::getInstace()
 #define ApplicationAllocator K15_Engine::Core::Application::getInstance()
 #define EventManagerAllocator K15_Engine::Core::EventManager::getInstance()
 #define TaskManagerAllocator K15_Engine::Core::TaskManager::getInstance()
 #define DynamicLibraryManagerAllocator K15_Engine::Core::DynamicLibraryManager::getInstance()
 #define LogManagerAllocator K15_Engine::Core::LogManager::getInstance()
 
+#define g_MemoryProfiler K15_Engine::Core::MemoryProfiler::getInstance()
+#define g_InputManager K15_Engine::Core::InputManager::getInstance()
 #define g_Application K15_Engine::Core::Application::getInstance()
 #define g_EventManager K15_Engine::Core::EventManager::getInstance()
 #define g_TaskManager K15_Engine::Core::TaskManager::getInstance()

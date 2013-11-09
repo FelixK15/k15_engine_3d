@@ -40,6 +40,8 @@
 #	include "Win32\K15_RenderWindow_Win32.h"
 #endif //K15_OS_WINDOWS
 
+#include "K15_RendererBase.h"
+
 namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	const String Application::SettingsFileName = "settings.ini";
@@ -47,7 +49,7 @@ namespace K15_Engine { namespace Core {
 	const String Application::GameDirFileName = "gamedir.ini";
 	/*********************************************************************************/
 	Application::Application()
-		: StackAllocator(20 * MEGABYTE),
+		: StackAllocator(30 * MEGABYTE,_N(ApplicationAllocator)),
 		m_Commands(),
 		m_DynamicLibraryManager(0),
 		m_EventManager(0),
@@ -63,7 +65,7 @@ namespace K15_Engine { namespace Core {
 		m_FrameCounter(0),
 		m_MaxFPS(30),
 		m_AvgFrameTime(0.33),
-		m_FrameAllocator(this,FrameAllocatorSize)
+		m_FrameAllocator(this,FrameAllocatorSize,_N(FrameAllocator))
 	{
 		//creating the Log Manager is first thing we'll do.
 		m_LogManager = K15_NEW LogManager();
@@ -210,6 +212,9 @@ namespace K15_Engine { namespace Core {
 		_LogNormal("Initializing TaskManager...");
 		m_TaskManager = K15_NEW TaskManager();
 
+		_LogNormal("Initializing InputManager...");
+		m_InputManager = K15_NEW InputManager();
+
 		//Load plugins
 		loadPluginsFile();
 
@@ -235,6 +240,12 @@ namespace K15_Engine { namespace Core {
 
 		_LogNormal("Adding physics task...");
 		m_TaskManager->addTask(m_PhysicsTask);
+
+		m_RenderTask->getRenderer()->setRenderWindow(m_RenderWindow);
+		if(!m_RenderTask->getRenderer()->initialize())
+		{
+			_LogError("Could not initialize renderer.");
+		}
 	}
 	/*********************************************************************************/
 	void Application::setWindowTitle(const String& p_WindowTitle) 
@@ -283,7 +294,7 @@ namespace K15_Engine { namespace Core {
 		startFrameTime = getTime();
 
 		{
-			K15_PROFILE(Application_Pre_Tick);
+			K15_PROFILE("Application::onPreTick");
 			onPreTick();
 		}
 		
@@ -299,6 +310,11 @@ namespace K15_Engine { namespace Core {
 		}
 
 		endFrameTime = getTime();
+
+		if(m_InputManager->isActive(_N(Jump)))
+		{
+			_LogSuccess("JUMP!");
+		}
 
 		//so is there any frame time left?
 		diffTime = endFrameTime - startFrameTime;
@@ -403,12 +419,11 @@ namespace K15_Engine { namespace Core {
 			
 			if((lib = m_DynamicLibraryManager->load(*iter)) != 0)
 			{
-				Functor0<void> initFunc = lib->getSymbol<void>("loadPlugin");
+				Functor0<void> initFunc = lib->getSymbol<void>("pluginLoad");
 				Functor0<ApplicationModuleDescription> moduleDescFunc = lib->getSymbol<ApplicationModuleDescription>("getDescription");
-				Functor0<ApplicationModule*> moduleFunc = lib->getSymbol<ApplicationModule*>("getModule");
-				Functor0<void> shutdownFunc = lib->getSymbol<void>("closePlugin");
+				Functor0<void> shutdownFunc = lib->getSymbol<void>("pluginUnload");
 
-				if(!moduleDescFunc.isValid() || !moduleFunc.isValid())
+				if(!moduleDescFunc.isValid() || !initFunc.isValid())
 				{
 					_LogError("Failed to initialize plugin \"%s\"",(*iter).c_str());
 					
@@ -417,19 +432,17 @@ namespace K15_Engine { namespace Core {
 						_LogError("Plugin \"%s\" has no \"getDescription\" function.",(*iter).c_str());
 					}
 
-					if(!moduleFunc.isValid())
+					if(!initFunc.isValid())
 					{
-						_LogError("Plugin \"%s\" has no \"getModule\" function.",(*iter).c_str());
+						_LogError("Plugin \"%s\" has no \"pluginLoad\" function.",(*iter).c_str());
 					}
 
 					break;
 				}
 
 				//initialize plugin
-				if(initFunc.isValid())
-				{
-					initFunc();
-				}
+				initFunc();
+
 
 				//get the plugins module description to check what kind of module we're loading
 				ApplicationModuleDescription description = moduleDescFunc();
@@ -454,35 +467,6 @@ namespace K15_Engine { namespace Core {
 					}
 					_LogNormal("...Done filtering plugin parameter. (%i parameter found)",counter);
 				}
-
-				//get the module
-				ApplicationModule* module = moduleFunc();
-				m_LoadedModules.push_back(module);
-				//Check if plugin provides an own Task...if so, add it to the task manager
-				if(description.PluginFlagBitMask & ApplicationModuleDescription::PF_ProvidesTask)
-				{
-					TaskBase* pluginTask = module->createTask();
-					if(!pluginTask)
-					{
-						_LogError("Plugin \"%s\" flag PF_ProvidesTask set, but no Task could be obtained via createTask",lib->getFileName());
-					}
-					else
-					{
-						m_TaskManager->addTask(pluginTask);
-						_LogSuccess("Task successfully loaded from plugin \"%s\".",lib->getFileName());
-					}
-					//Check if the plugin provides a renderer.
-				}
-				else if(description.PluginFlagBitMask & ApplicationModuleDescription::PF_ProvidesRenderer)
-				{
-					//Add Renderer
-				}
-
-				//uninitialize plugin
-				if(shutdownFunc.isValid())
-				{
-					shutdownFunc();	
-				}
 			}
 		}
 	}
@@ -496,6 +480,9 @@ namespace K15_Engine { namespace Core {
 
 		m_RenderWindow->shutdown();
 		m_OSLayer.shutdown();
+
+		_LogNormal("Destroying InputManager...");
+		K15_DELETE_T(m_InputManager);
 
 		_LogNormal("Destroying RenderWindow...");
 		K15_DELETE_T(m_RenderWindow);

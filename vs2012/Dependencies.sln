@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyXML", "Dependencies\Tin
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Enet", "Dependencies\Enet\Enet.vcxproj", "{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nv_dds", "Dependencies\nv_dds\nv_dds.vcxproj", "{950B7848-E7E1-4CC1-8EAE-7A16E9EDAC52}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -37,6 +39,10 @@ Global
 		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Debug|Win32.Build.0 = Debug|Win32
 		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Release|Win32.ActiveCfg = Release|Win32
 		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Release|Win32.Build.0 = Release|Win32
+		{950B7848-E7E1-4CC1-8EAE-7A16E9EDAC52}.Debug|Win32.ActiveCfg = Debug|Win32
+		{950B7848-E7E1-4CC1-8EAE-7A16E9EDAC52}.Debug|Win32.Build.0 = Debug|Win32
+		{950B7848-E7E1-4CC1-8EAE-7A16E9EDAC52}.Release|Win32.ActiveCfg = Release|Win32
+		{950B7848-E7E1-4CC1-8EAE-7A16E9EDAC52}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

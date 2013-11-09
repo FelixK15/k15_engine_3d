@@ -42,14 +42,12 @@ namespace K15_Engine { namespace Core {
 		ProfilingNode(const ObjectName& p_Name);
 		~ProfilingNode();
 
-		ObjectName m_Name;
-
-		ProfilingNode* m_Parent;
-		ProfilingNodeList m_Children;
-
-		double m_Time;
-		double m_EndTime;
-		double m_StartTime;
+		ProfilingNode* Parent;
+		ObjectName Name;
+		int ThreadID;
+		double Time;
+		double EndTime;
+		double StartTime;
 	};
 }} //end of K15_Engine::Core namespace
 

@@ -31,16 +31,16 @@ namespace K15_Engine { namespace Core {
 
 	}
 	/*********************************************************************************/
-	HashedString::HashedString( const char *pString )
+	HashedString::HashedString(const char *pString)
 		: m_Hash(createHash(pString,strlen(pString))),
 		  m_String(pString)
 	{
 
 	}
 	/*********************************************************************************/
-	HashedString::HashedString( const HashedString& hsOther )
+	HashedString::HashedString(const HashedString& hsOther)
 		: m_Hash(hsOther.getIdentifier()),
-		  m_String(hsOther.getString())
+		  m_String(hsOther.c_str())
 	{
 
 	}
@@ -55,28 +55,22 @@ namespace K15_Engine { namespace Core {
 		return m_Hash;
 	}
 	/*********************************************************************************/
-	const char* HashedString::getString() const
+	const char* HashedString::c_str() const
 	{
 		return m_String;
 	}
 	/*********************************************************************************/
-	void HashedString::setString(const char* pString)
-	{
-		m_String = pString;
-		m_Hash = createHash(pString,strlen(pString));
-	}
-	/*********************************************************************************/
-	bool HashedString::operator< (HashedString const & otherString ) const
+	bool HashedString::operator< (HashedString const & otherString) const
 	{
 		return this->getIdentifier() < otherString.getIdentifier();
 	}
 	/*********************************************************************************/
-	bool HashedString::operator== ( HashedString const & otherString ) const
+	bool HashedString::operator== (HashedString const & otherString) const
 	{
 		return this->getIdentifier() == otherString.getIdentifier();
 	}
 	/*********************************************************************************/
-	unsigned long HashedString::createHash( const char *pString,unsigned int iLength )
+	unsigned long HashedString::createHash(const char *pString,unsigned int iLength)
 	{
 		unsigned long hash = 0;
 		unsigned int i;

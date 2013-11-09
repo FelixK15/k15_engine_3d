@@ -91,6 +91,7 @@ namespace K15_Engine { namespace Core {
     inline DynamicLibraryManager* getDynamicLibraryManager() const;
     inline RenderWindowBase* getRenderWindow() const;
     inline LogManager* getLogManager() const;
+	inline InputManager* getInputManager() const;
 	inline const StackAllocator& getFrameAllocator() const;
 	inline const ApplicationOSLayerType& getOSLayer() const;
 
@@ -150,6 +151,7 @@ namespace K15_Engine { namespace Core {
 				EventManager* m_EventManager;
 				LogManager* m_LogManager;
 				DynamicLibraryManager* m_DynamicLibraryManager;
+				InputManager* m_InputManager;
 
 				RenderTask* m_RenderTask;
 				PhysicsTask* m_PhysicsTask;

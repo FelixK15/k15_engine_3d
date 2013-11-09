@@ -65,7 +65,7 @@ namespace K15_Engine { namespace Core {
 		String errorMsg;
 		char* errorBuffer = 0;
 		DWORD lastError = GetLastError();
-		DWORD writtenChars = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,0,lastError,1033,(LPSTR)&errorBuffer,0,0);
+		DWORD writtenChars = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,0,lastError,MAKELANGID(LANG_ENGLISH,SUBLANG_ENGLISH_UK),(LPSTR)&errorBuffer,0,0);
 		if(writtenChars == 0 && !errorBuffer)
 		{
 			errorBuffer = (char*)_malloca(K15_ERROR_BUFFER_SIZE);

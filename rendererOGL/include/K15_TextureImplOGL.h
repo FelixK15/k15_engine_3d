@@ -43,23 +43,14 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		TextureImplOGL();
 		~TextureImplOGL();
 
-		virtual void init(Enum p_TextureType, Enum p_TextureUsage, Enum p_PixelFormat, uint32 p_Width, uint32 p_Height, uint32 p_Depth, uint8 p_MipMapCount) OVERRIDE;
-		virtual void shutdown() OVERRIDE;
+		virtual uint32 writeData(uint32 p_Size,byte* p_Source,uint32 p_Offset) OVERRIDE;
+		virtual uint32 readData(uint32 p_Size,byte* p_Destination,uint32 p_Offset) OVERRIDE{return 0;}
 
-		virtual void setTextureWrapMode(Enum p_TextureType) OVERRIDE;
-		virtual void setTextureType(Enum p_TextureType) OVERRIDE;
-		virtual void setTextureUsage(Enum p_TextureUsage) OVERRIDE;
-
-		virtual void setMipMapCount(uint8 p_MipMapCount) OVERRIDE;
-
-		virtual void setHeight(uint32 p_Height) OVERRIDE;
-		virtual void setWidth(uint32 p_Width) OVERRIDE;
-		virtual void setDepth(uint32 p_Depth) OVERRIDE;
-
-		virtual void setPixelFormat(Enum p_PixelFormat) OVERRIDE;
-		virtual bool hasAlpha() const OVERRIDE;
+		void createStorage();
+		void deleteStorage();
 	private:
 		GLuint m_TextureHandle;
+		uint32 m_TextureStorageSize;
 	};// end of TextureImplOGL class declaration
 }}}//end of K15_Engine::Rendering::OGL namespace
 

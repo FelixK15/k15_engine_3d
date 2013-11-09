@@ -30,11 +30,11 @@ using namespace K15_Engine::Core;
 
 namespace K15_Engine { namespace Rendering {
 	class RenderTarget;
-	class Texture2D;
+	class Texture;
 	class VertexBuffer;
 	class IndexBuffer;
 	class Material;
-  class RendererBase;
+	class RendererBase;
 	class Mesh;
 	class Camera;
 	class SubMesh;

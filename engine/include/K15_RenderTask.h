@@ -45,11 +45,14 @@ namespace K15_Engine { namespace Core {
 		RenderTask();
 		virtual ~RenderTask();
 
+		void setRenderer(Rendering::RendererBase* p_Renderer);
 		void setRenderProcess(RenderProcessBase* p_RenderProcess);
 		RenderProcessBase* getRenderProcess() const;
+		Rendering::RendererBase* getRenderer() const;
 
 		virtual void update(const GameTime& p_GameTime);
 	protected:
+		Rendering::RendererBase* m_Renderer;
 		RenderProcessBase* m_RenderProcess;
 	};// end of RenderTask class declaration
 }}//end of K15_Engine::Core namespace

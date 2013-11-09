@@ -38,28 +38,36 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		RendererOGL();
 		virtual ~RendererOGL();
 
-		virtual void setRenderTarget(RenderTarget* p_RenderTarget);
+		//virtual void setRenderTarget(RenderTarget* p_RenderTarget) OVERRIDE;
 		//virtual void setActiveCamera(Camera* p_Camera);
-		virtual void setCullingMode(Enum p_CullingMode);
-		virtual void setDepthTestMode(Enum p_DepthTest);
-		virtual void setFrameBufferPixelFormat(Enum p_PixelFormat);
-		virtual void bindGpuProgram(GpuProgram* p_GpuProgram);
-		virtual void setClearColor(float p_Red, float p_Green, float p_Blue);
-		virtual void setDepthTestEnabled(bool p_Enabled);
-		virtual void setBackFaceCullingEnabled(bool p_Enabled);
+		virtual void setCullingMode(Enum p_CullingMode) OVERRIDE;
+		virtual void setDepthTestFunction(Enum p_DepthTest) OVERRIDE;
+		//virtual void bindGpuProgram(GpuProgram* p_GpuProgram) OVERRIDE;
+		virtual void setClearColor(float p_Red, float p_Green, float p_Blue) OVERRIDE;
+		virtual void setDepthTestEnabled(bool p_Enabled) OVERRIDE;
+		virtual void setBackFaceCullingEnabled(bool p_Enabled) OVERRIDE;
 
-		virtual void beginFrame();
-		virtual void endFrame();
+		virtual GpuBufferImplBase* createGpuBufferImpl() OVERRIDE;
+		virtual TextureImplBase* createTextureImpl() OVERRIDE;
+		virtual GpuProgramImplBase* createGpuProgramImpl() OVERRIDE;
 
-		virtual bool initialize();
-		virtual void shutdown();
+		virtual void beginFrame() OVERRIDE;
+		virtual void endFrame() OVERRIDE;
 
-		virtual void onResolutionChanged(const Resolution& p_Resolution);
+		virtual bool initialize() OVERRIDE;
+		virtual void shutdown() OVERRIDE;
+
+		virtual void onResolutionChanged(const Resolution& p_Resolution) OVERRIDE;
 
 		//inline HGLRC getRenderContext() const;
 
 	protected:
+		bool createDummyContext();
+
+	protected:
+		int m_PixelFormat;
 		HDC m_DeviceContext;
 		HGLRC m_RenderContext;
+
 	};// end of RendererOGL class
 }}}//end of K15_Engine::Rendering::OGL

@@ -29,7 +29,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	EventManager::EventManager()
 		: AllocatedObject(),
-		  PageAllocator(ApplicationAllocator)
+		  BlockAllocator(ApplicationAllocator,MEGABYTE,_N(EventManagerAllocator))
 	{
 
 	}

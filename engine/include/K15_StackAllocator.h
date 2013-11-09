@@ -34,15 +34,15 @@ namespace K15_Engine { namespace Core {
   class K15_CORE_API StackAllocator : public BaseAllocator
   {
   public:
-	  /*********************************************************************************/
-	  static const TypeName Type;
-	  /*********************************************************************************/
+	/*********************************************************************************/
+	static const TypeName Type;
+	/*********************************************************************************/	
   public:
 	//allocate memory from another allocator
-    StackAllocator(BaseAllocator* p_Allocator,uint32 p_Size);
+	StackAllocator(BaseAllocator* p_Allocator,uint32 p_Size,const ObjectName& p_Name);
     
 	//allocate memory using malloc
-    StackAllocator(uint32 p_Size);
+    StackAllocator(uint32 p_Size,const ObjectName& p_Name);
 
     virtual void clear();
 

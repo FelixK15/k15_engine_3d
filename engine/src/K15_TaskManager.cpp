@@ -24,7 +24,7 @@
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	TaskManager::TaskManager()
-		: PageAllocator(MemoryAllocator),
+		: BlockAllocator(MemoryAllocator,MEGABYTE,_N(TaskManagerAllocator)),
 		  m_Tasks()
 	{
 

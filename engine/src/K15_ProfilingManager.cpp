@@ -39,17 +39,13 @@ namespace K15_Engine { namespace Core {
 	void ProfilingManager::addNode(ProfilingNode* p_Node)
 	{
 		//ProfilingNode* newNode = K15_NEW ProfilingNode(*p_Node);
-		if(!m_Root)
-		{
-			m_Root = p_Node;
-		}
-		
-		if(m_LastNode)
-		{
-			m_LastNode->m_Children.push_back(p_Node);
-		}
-		p_Node->m_Parent = m_LastNode;
-		m_LastNode = p_Node;
+// 		if(!m_Root)
+// 		{
+// 			m_Root = p_Node;
+// 		}
+// 		
+// 		p_Node->m_Parent = m_LastNode;
+// 		m_LastNode = p_Node;
 	}
 	/*********************************************************************************/
 	void ProfilingManager::clear()

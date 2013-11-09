@@ -20,6 +20,7 @@
 #include "K15_PrecompiledHeader.h"
 #include "K15_RenderTask.h"
 #include "K15_RenderProcessBase.h"
+#include "K15_RendererBase.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
@@ -40,6 +41,11 @@ namespace K15_Engine { namespace Core {
 		K15_DELETE m_RenderProcess;
 	}
 	/*********************************************************************************/
+	void RenderTask::setRenderer(Rendering::RendererBase* p_Renderer)
+	{
+		m_Renderer = p_Renderer;
+	}
+	/*********************************************************************************/
 	void RenderTask::setRenderProcess(RenderProcessBase* p_RenderProcess)
 	{
 		m_RenderProcess = p_RenderProcess;
@@ -50,12 +56,19 @@ namespace K15_Engine { namespace Core {
 		return m_RenderProcess;
 	}
 	/*********************************************************************************/
+	Rendering::RendererBase* RenderTask::getRenderer() const
+	{
+		return m_Renderer;
+	}
+	/*********************************************************************************/
 	void RenderTask::update(const GameTime& p_GameTime)
 	{
+		m_Renderer->beginFrame();
 		if(m_RenderProcess)
 		{
 			m_RenderProcess->renderSingleFrame();
 		}
+		m_Renderer->endFrame();
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

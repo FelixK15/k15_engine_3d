@@ -17,7 +17,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_RendererPrecompiledHeaders.h"
+#include "K15_RendererPrecompiledHeader.h"
 #include "K15_ColorRGBA.h"
 
 namespace K15_Engine { namespace Rendering {
@@ -31,7 +31,7 @@ namespace K15_Engine { namespace Rendering {
 	const ColorRGBA ColorRGBA::Yellow = ColorRGBA(1.0f,1.0f,0.0f);
 	const ColorRGBA ColorRGBA::Grey = ColorRGBA(0.5f,0.5f,0.5f);
 	const ColorRGBA ColorRGBA::Brown = ColorRGBA(0.65f,0.27f,0.0f);
-	const ColorRGBA ColorRGBA::Purple = ColorGBA(0.5f,0.0f,0.45f);
+	const ColorRGBA ColorRGBA::Purple = ColorRGBA(0.5f,0.0f,0.45f);
 	const ColorRGBA ColorRGBA::Pink = ColorRGBA(1.0f,0.5f,0.65f);
 	const ColorRGBA ColorRGBA::DarkRed = ColorRGBA(0.5f,0.0f,0.0f);
 	const ColorRGBA ColorRGBA::DarkBlue = ColorRGBA(0.0f,0.0f,0.5f);
@@ -42,59 +42,237 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	ColorRGBA::ColorRGBA()
-		: m_Red(0.0f),
-		  m_Green(0.0f),
-		  m_Blue(0.0f),
-		  m_Alpha(1.0f)
-	{
-
-	}
-	/*********************************************************************************/
 	ColorRGBA::ColorRGBA(float p_Red, float p_Green, float p_Blue,float p_Alpha)
-		: m_Red(p_Red),
-		  m_Green(p_Green),
-		  m_Blue(p_Blue),
-		  m_Alpha(p_Alpha)
+		: RedComponent(p_Red),
+		  GreenComponent(p_Green),
+		  BlueComponent(p_Blue),
+		  AlphaComponent(p_Alpha)
 	{
 		clamp();
 	}
 	/*********************************************************************************/
-	void ColorRGBA::setRed(float p_Red)
+	ColorRGBA::ColorRGBA(const ColorRGBA& p_Color)
+		: RedComponent(p_Color.RedComponent),
+		  GreenComponent(p_Color.GreenComponent),
+		  BlueComponent(p_Color.BlueComponent),
+		  AlphaComponent(p_Color.AlphaComponent)
 	{
-		m_Red = p_Red;
-		clamp();
-	}
-	/*********************************************************************************/
-	void ColorRGBA::setGreen(float p_Green)
-	{
-		m_Green = p_Green;
-		clamp();
-	}
-	/*********************************************************************************/
-	void ColorRGBA::setBlue(float p_Blue)
-	{
-		m_Blue = p_Blue;
-		clamp();
-	}
-	/*********************************************************************************/
-	void ColorRGBA::setAlpha(float p_Alpha)
-	{
-		m_Alpha = p_Alpha;
 		clamp();
 	}
 	/*********************************************************************************/
 	void ColorRGBA::clamp()
 	{
-		if(m_Red > 1.0f) m_Red = 1.0f;
-		if(m_Green > 1.0f) m_Green = 1.0f;
-		if(m_Blue > 1.0f) m_Blue = 1.0f;
-		if(m_Alpha > 1.0f) m_Alpha = 1.0f;
+		if(RedComponent > 1.0f) RedComponent = 1.0f;
+		if(GreenComponent > 1.0f) GreenComponent = 1.0f;
+		if(BlueComponent > 1.0f) BlueComponent = 1.0f;
+		if(AlphaComponent > 1.0f) AlphaComponent = 1.0f;
 
-		if(m_Red < 0.0f) m_Red = 0.0f;
-		if(m_Green < 0.0f) m_Green = 0.0f;
-		if(m_Blue < 0.0f) m_Blue = 0.0f;
-		if(m_Alpha < 0.0f) m_Alpha = 0.0f;
+		if(RedComponent < 0.0f) RedComponent = 0.0f;
+		if(GreenComponent < 0.0f) GreenComponent = 0.0f;
+		if(BlueComponent < 0.0f) BlueComponent = 0.0f;
+		if(AlphaComponent < 0.0f) AlphaComponent = 0.0f;
+	}
+	/*********************************************************************************/
+	bool ColorRGBA::operator==(const ColorRGBA& p_Color)
+	{
+		return RedComponent == p_Color.RedComponent && GreenComponent == p_Color.GreenComponent && 
+			BlueComponent == p_Color.BlueComponent && AlphaComponent == p_Color.AlphaComponent;
+	}
+	/*********************************************************************************/
+	bool ColorRGBA::operator!=(const ColorRGBA& p_Color)
+	{
+		return !this->operator==(p_Color);
+	}
+	/*********************************************************************************/
+	bool ColorRGBA::operator<(const ColorRGBA& p_Color)
+	{
+		return RedComponent < p_Color.RedComponent && GreenComponent < p_Color.GreenComponent && 
+			BlueComponent < p_Color.BlueComponent && AlphaComponent < p_Color.AlphaComponent;
+	}
+	/*********************************************************************************/
+	bool ColorRGBA::operator>(const ColorRGBA& p_Color)
+	{
+		return !this->operator<(p_Color);
+	}
+	/*********************************************************************************/
+	const ColorRGBA& ColorRGBA::operator=(const ColorRGBA& p_Color)
+	{
+		RedComponent = p_Color.RedComponent;
+		GreenComponent = p_Color.GreenComponent;
+		BlueComponent = p_Color.BlueComponent;
+		AlphaComponent = p_Color.AlphaComponent;
+
+		clamp();
+
+		return *this;
+	}
+	/*********************************************************************************/
+	const ColorRGBA& ColorRGBA::operator+=(const ColorRGBA& p_Color)
+	{
+		RedComponent += p_Color.RedComponent;
+		GreenComponent += p_Color.GreenComponent;
+		BlueComponent += p_Color.BlueComponent;
+		AlphaComponent += p_Color.AlphaComponent;
+
+		clamp();
+
+		return *this;
+	}
+	/*********************************************************************************/
+	const ColorRGBA& ColorRGBA::operator+=(float p_Value)
+	{
+		RedComponent += p_Value;
+		GreenComponent += p_Value;
+		BlueComponent += p_Value;
+		AlphaComponent += p_Value;
+
+		clamp();
+
+		return *this;
+	}
+	/*********************************************************************************/
+	const ColorRGBA& ColorRGBA::operator-=(const ColorRGBA& p_Color)
+	{
+		RedComponent -= p_Color.RedComponent;
+		GreenComponent -= p_Color.GreenComponent;
+		BlueComponent -= p_Color.BlueComponent;
+		AlphaComponent -= p_Color.AlphaComponent;
+
+		clamp();
+
+		return *this;
+	}
+	/*********************************************************************************/
+	const ColorRGBA& ColorRGBA::operator-=(float p_Value)
+	{
+		RedComponent -= p_Value;
+		GreenComponent -= p_Value;
+		BlueComponent -= p_Value;
+		AlphaComponent -= p_Value;
+
+		clamp();
+
+		return *this;
+	}
+	/*********************************************************************************/
+	const ColorRGBA& ColorRGBA::operator*=(const ColorRGBA& p_Color)
+	{
+		RedComponent *= p_Color.RedComponent;
+		GreenComponent *= p_Color.GreenComponent;
+		BlueComponent *= p_Color.BlueComponent;
+		AlphaComponent *= p_Color.AlphaComponent;
+
+		clamp();
+
+		return *this;
+	}
+	/*********************************************************************************/
+	const ColorRGBA& ColorRGBA::operator*=(float p_Value)
+	{
+		RedComponent *= p_Value;
+		GreenComponent *= p_Value;
+		BlueComponent *= p_Value;
+		AlphaComponent *= p_Value;
+
+		clamp();
+
+		return *this;
+	}
+	/*********************************************************************************/
+	const ColorRGBA& ColorRGBA::operator/=(const ColorRGBA& p_Color)
+	{
+		RedComponent /= p_Color.RedComponent;
+		GreenComponent /= p_Color.GreenComponent;
+		BlueComponent /= p_Color.BlueComponent;
+		AlphaComponent /= p_Color.AlphaComponent;
+
+		clamp();
+
+		return *this;
+	}
+	/*********************************************************************************/
+	const ColorRGBA& ColorRGBA::operator/=(float p_Value)
+	{
+		RedComponent /= p_Value;
+		GreenComponent /= p_Value;
+		BlueComponent /= p_Value;
+		AlphaComponent /= p_Value;
+
+		clamp();
+
+		return *this;
+	}
+	/*********************************************************************************/
+	ColorRGBA ColorRGBA::operator+(const ColorRGBA& p_Color)
+	{
+		ColorRGBA color(*this);
+
+		color += p_Color;
+
+		return color;
+	}
+	/*********************************************************************************/
+	ColorRGBA ColorRGBA::operator+(float p_Value)
+	{
+		ColorRGBA color(*this);
+
+		color += p_Value;
+
+		return color;
+	}
+	/*********************************************************************************/
+	ColorRGBA ColorRGBA::operator-(const ColorRGBA& p_Color)
+	{
+		ColorRGBA color(*this);
+
+		color -= p_Color;
+
+		return color;
+	}
+	/*********************************************************************************/
+	ColorRGBA ColorRGBA::operator-(float p_Value)
+	{
+		ColorRGBA color(*this);
+
+		color -= p_Value;
+
+		return color;
+	}
+	/*********************************************************************************/
+	ColorRGBA ColorRGBA::operator*(const ColorRGBA& p_Color)
+	{
+		ColorRGBA color(*this);
+
+		color *= p_Color;
+
+		return color;
+	}
+	/*********************************************************************************/
+	ColorRGBA ColorRGBA::operator*(float p_Value)
+	{
+		ColorRGBA color(*this);
+
+		color *= p_Value;
+
+		return color;
+	}
+	/*********************************************************************************/
+	ColorRGBA ColorRGBA::operator/(const ColorRGBA& p_Color)
+	{
+		ColorRGBA color(*this);
+
+		color /= p_Color;
+
+		return color;
+	}
+	/*********************************************************************************/
+	ColorRGBA ColorRGBA::operator/(float p_Value)
+	{
+		ColorRGBA color(*this);
+
+		color /= p_Value;
+
+		return color;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace

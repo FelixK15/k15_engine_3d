@@ -28,14 +28,14 @@
 #	include "K15_EventManager.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-#include "K15_PageAllocator.h"
+#include "K15_BlockAllocator.h"
 
 namespace K15_Engine { namespace Core { 
 	class K15_CORE_API GameEvent : public EventManagerAllocatedObject
 	{
 	public:
 		/*********************************************************************************/
-    typedef PageAllocator<128,8192> ArgAllocator;
+    typedef BlockAllocator ArgAllocator;
     static ArgAllocator ArgumentAllocator;
 		/*********************************************************************************/
 	public:

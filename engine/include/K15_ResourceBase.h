@@ -25,6 +25,7 @@
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
+#	include "K15_HashedString.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
 #include "K15_ResourceData.h"

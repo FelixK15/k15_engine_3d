@@ -23,5 +23,9 @@
 
 #ifdef K15_OS_WINDOWS
 #	pragma message("Compiling for Windows...")
+#elif K15_OS_LINUX
+#	pragma message("Compiling for Linux...")
+#elif K15_OS_APPLE
+#	pragma message("Compiling for Mac...")
 #endif //K15_OS_WINDOWS
 

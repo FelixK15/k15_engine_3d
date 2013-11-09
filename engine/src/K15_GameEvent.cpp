@@ -22,7 +22,7 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	GameEvent::ArgAllocator GameEvent::ArgumentAllocator = GameEvent::ArgAllocator(EventManagerAllocator);
+	GameEvent::ArgAllocator GameEvent::ArgumentAllocator = GameEvent::ArgAllocator(EventManagerAllocator,MEGABYTE,_N(GameEventArgumentAllocator));
 	/*********************************************************************************/
 	GameEvent::GameEvent(const EventName& p_Name,void* p_Argument,uint32 p_ArgumentSize)
 		: m_Name(p_Name),
@@ -54,9 +54,9 @@ namespace K15_Engine { namespace Core {
 		if(m_Argument != 0)
 		{
 #if defined(K15_DEBUG)
-			ArgumentAllocator.deallocate(m_Argument);
+			ArgumentAllocator.deallocateDebug(m_Argument,__FILE__,__LINE__,false,__FUNCTION__);
 #else
-      ArgumentAllocator.deallocateDebug(m_Argument,__FILE__,__LINE__,false,__FUNCTION__);
+			ArgumentAllocator.deallocate(m_Argument);
 #endif //K15_DEBUG
 		}
 	}
