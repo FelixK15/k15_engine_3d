@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Enet", "Dependencies\Enet\E
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nv_dds", "Dependencies\nv_dds\nv_dds.vcxproj", "{950B7848-E7E1-4CC1-8EAE-7A16E9EDAC52}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "freetype", "Dependencies\freetype\freetype.vcxproj", "{853AC481-3F24-4FF4-AF0A-728B019B670E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -43,6 +45,10 @@ Global
 		{950B7848-E7E1-4CC1-8EAE-7A16E9EDAC52}.Debug|Win32.Build.0 = Debug|Win32
 		{950B7848-E7E1-4CC1-8EAE-7A16E9EDAC52}.Release|Win32.ActiveCfg = Release|Win32
 		{950B7848-E7E1-4CC1-8EAE-7A16E9EDAC52}.Release|Win32.Build.0 = Release|Win32
+		{853AC481-3F24-4FF4-AF0A-728B019B670E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{853AC481-3F24-4FF4-AF0A-728B019B670E}.Debug|Win32.Build.0 = Debug|Win32
+		{853AC481-3F24-4FF4-AF0A-728B019B670E}.Release|Win32.ActiveCfg = Release|Win32
+		{853AC481-3F24-4FF4-AF0A-728B019B670E}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
