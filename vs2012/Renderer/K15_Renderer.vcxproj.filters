@@ -53,7 +53,9 @@
     <ClCompile Include="..\..\renderer\src\K15_ColorRGBA.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\renderer\src\K15_TextureSampler.cpp" />
+    <ClCompile Include="..\..\renderer\src\K15_TextureSampler.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\renderer\include\K15_GpuBuffer.inl">
@@ -65,6 +67,8 @@
     <None Include="..\..\renderer\include\K15_RendererBase.inl">
       <Filter>Core\include</Filter>
     </None>
-    <None Include="..\..\renderer\include\K15_TextureSampler.inl" />
+    <None Include="..\..\renderer\include\K15_TextureSampler.inl">
+      <Filter>Core\include</Filter>
+    </None>
   </ItemGroup>
 </Project>
