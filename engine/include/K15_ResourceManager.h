@@ -47,7 +47,7 @@ namespace K15_Engine { namespace Core {
 
 		void update(const GameTime &gtTime);
 
-		template<class ResourceType> ResourceHandle<ResourceType> getResource(const String& ResourceName,Enum p_Priority)
+		template<class ResourceType> ResourceHandle<ResourceType> getResource(const ResourceName& p_ResourceName,Enum p_Priority)
 		{
 			K15_PROFILE(ResourceManager_GetResource);
 
@@ -56,13 +56,7 @@ namespace K15_Engine { namespace Core {
 
 			if(iter == m_ResourceDataCache.end())
 			{
-				if(!cacheResource<ResourceType>(p_FileName,p_Priority))
-				{
-					//resource could not get loaded.
-					_LogError(String("Could not load resource. name:") + p_ResourceName.getString());
-					_LogError(String("Last Error:") + Application::getInstance()->getLastError());
-				}
-				else
+				if(cacheResource<ResourceType>(p_FileName,p_Priority))
 				{
 					iter = m_ResourceDataCache.find(p_ResourceName);
 
@@ -79,39 +73,40 @@ namespace K15_Engine { namespace Core {
 			K15_PROFILE(ResourceManager_CacheResource);
 
 			bool cachedResource = false;
-			ResourceData resourceData = {0};
+			RawData resourceData = {0};
 			ResourceFileBase* resourceFile = 0;
+			ResourceType resource = K15_NEW ResourceType(p_ResourceName);
 			//we need to load the resource from one of the resource files.
 			for(ResourceFileList::iterator iter = m_ResoureFiles.begin();iter != m_ResourceFiles.end();++iter)
 			{
 				resourceFile = (*iter);
 				//try to open the resource file
-				if(!resourceFile->isOpen())
+				
+				if(!resourceFile->open())
 				{
 					//log error and load debug resoure
-					_LogError("Could not open resource file " + resourceFile->getResourceFileName());
-					ResourceType::loadDebugResource(resourceData);
+					_LogError("Could not open asset file " + resourceFile->getResourceFileName());
 				}
 				else
 				{
-					if(!resourceFile->hasResource(p_ResourceName) || !resourceFile->getResource(p_ResourceName,resourceData))
+					if(resourceFile->hasResource(p_ResourceName))
 					{
-						//oh oh...that didn't go so well. Log Error and try to load the debug resource from that resource type.
-						String logMessage = "Could not load asset:";
-						logMessage += p_ResourceName.c_str();
-
-						_LogError(logMessage);
-
-						ResourceType::loadDebugResource(resourceData);
+						if(resourceFile->getResource(p_ResourceName,resourceData))
+						{
+							break;
+						}
 					}
 				}
 
+				if(!resourceData.data)
+				{
+					resource->loadDebug(resourceData);
+				}
+
 				//check if actual data has been written
-				if(resourceData.Data)
+				if(resourceData.data)
 				{
 					//load Resource using resource data from the resource file
-					ResourceType* resource = K15_NEW ResourceType(p_ResourceName);
-					
 					if((cachedResource = resource->load(resourceData)) == true)
 					{
 						m_ResourceDataChache.insert(Pair(ResourceName,ResourceBase*)(p_ResourceName,resource));

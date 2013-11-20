@@ -40,6 +40,8 @@ namespace K15_Engine { namespace Core {
 		ResourceHandle(const ResourceHandle<ResourceType> &rsHandle);
 		~ResourceHandle();
 
+		bool isValid() const;
+
 		void setResourceID(ResourceID p_ResourceID);
 		const ResourceID getResourceID() const;
 

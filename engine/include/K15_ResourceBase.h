@@ -28,7 +28,7 @@
 #	include "K15_HashedString.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-#include "K15_ResourceData.h"
+#include "K15_RawData.h"
 
 namespace K15_Engine { namespace Core { 
 
@@ -46,12 +46,13 @@ namespace K15_Engine { namespace Core {
 
 		virtual ~ResourceBase();
 
-		bool load(const ResourceData& p_Data);
+		bool load(const RawData& p_Data);
 
-		virtual void loadDebug(ResourceData& p_Data) = 0;
+		virtual void loadDebug(RawData& p_Data) = 0;
 
 		const TypeName& getResourceType() const;
 
+		inline void setAssetName(const ResourceName& p_AssetName);
 		inline const ResourceName& getAssetName() const;
 
 		inline Enum getPriority() const;
@@ -73,9 +74,6 @@ namespace K15_Engine { namespace Core {
 
 		inline void setResourceManager(ResourceManager* p_ResourceManager);
 		inline void setResourceFile(ResourceFileBase* p_ResourceFile);
-	public:
-		static const TypeName& getType();
-		static void loadDebugResource(ResourceData& p_ResourceData);
 
 	protected:
 		ResourceBase();
@@ -84,7 +82,7 @@ namespace K15_Engine { namespace Core {
 		inline byte* getRawData();
 		inline uint32 getRawDataSize();
 
-		virtual bool internalLoad(const ResourceData&) = 0;
+		virtual bool internalLoad(const RawData&) = 0;
 
 	protected:
 		byte* m_RawData;

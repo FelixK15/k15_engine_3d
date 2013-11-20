@@ -22,7 +22,7 @@
 #include "K15_ResourceBase.h"
 
 namespace K15_Engine { namespace Core { 
-
+	/*********************************************************************************/
 	ResourceBase::ResourceBase()
 		: m_AssetName(ResourceName::BLANK),
 		  m_Created(0.0),
@@ -37,7 +37,7 @@ namespace K15_Engine { namespace Core {
 	{
 
 	}
-
+	/*********************************************************************************/
 	ResourceBase::ResourceBase(const ResourceName& p_AssetName)
 		: m_AssetName(p_AssetName),
 		  m_Created(0.0),
@@ -52,17 +52,18 @@ namespace K15_Engine { namespace Core {
 	{
 
 	}
-
+	/*********************************************************************************/
 	ResourceBase::~ResourceBase()
 	{
 
 	}
-
-	bool ResourceBase::load(const ResourceData& p_Data)
+	/*********************************************************************************/
+	bool ResourceBase::load(const RawData& p_Data)
 	{
-		m_RawData = p_Data.Data;
-		m_RawDataSize = p_Data.DataSize;
+		m_RawData = p_Data.data;
+		m_RawDataSize = p_Data.size;
 
 		return internalLoad(p_Data);
 	}
+	/*********************************************************************************/
 }} //end of K15_Engine::Core namespace

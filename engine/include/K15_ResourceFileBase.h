@@ -36,7 +36,7 @@ namespace K15_Engine { namespace Core {
 		virtual bool open() = 0;
 		virtual bool close() = 0;
 
-		virtual bool getResource(const String&, ResourceData*) = 0;
+		virtual bool getResource(const String&, RawData*) = 0;
 		virtual bool hasResource(const String&) = 0;
 
 		virtual String getResourceFileName() = 0;

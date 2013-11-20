@@ -21,22 +21,20 @@
  * 
  */
 
-#ifndef _K15Engine_Core_ResourceData_h_
-#define _K15Engine_Core_ResourceData_h_
+#ifndef _K15Engine_Core_RawData_h_
+#define _K15Engine_Core_RawData_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace Core { 
-
-	class K15_CORE_API ResourceData
+	class K15_CORE_API RawData
 	{
 	public:
-		byte* Data;
-		uint32 DataSize;
-	};
-
+		byte* data;
+		uint32 size;
+	}; //end of RawData struct.
 }}//end of K15_Engine::Core namespace
 
 #endif

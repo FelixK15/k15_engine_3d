@@ -54,6 +54,12 @@ ResourceHandle<ResourceType>::~ResourceHandle()
 }
 /*********************************************************************************/
 template<class ResourceType>
+bool ResourceHandle<ResourceType>::isValid()
+{
+	return m_ResourceID != K15_INVALID_RESOURCE_ID;
+}
+/*********************************************************************************/
+template<class ResourceType>
 const ResourceHandle<ResourceType>& ResourceHandle<ResourceType>::operator=(const ResourceHandle<ResourceType>& p_Other)
 {
 	if(m_ResourceID != K15_INVALID_RESOURCE_ID)
