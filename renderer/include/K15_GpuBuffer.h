@@ -38,6 +38,8 @@ namespace K15_Engine { namespace Rendering {
 	public:
 		virtual ~GpuBufferImplBase();	
 
+		virtual bool allocate(uint32 p_Size) = 0;
+
 		virtual bool lock(uint32 p_StartPos,int32 p_Count) = 0;
 		virtual bool unlock() = 0;
 
@@ -111,11 +113,15 @@ namespace K15_Engine { namespace Rendering {
 		inline byte* getShadowCopy() const;
 		inline uint32 getShadowCopySize() const;
 
+		inline uint32 getSize() const;
+
 		inline bool isLocked();
 
 		void lock(uint32 p_StartPos = 0, int32 p_Count = LOCK_WHOLE_BUFFER);
 		void unlock();
 
+		bool allocate(uint32 p_Size);
+		
 		uint32 readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset = 0, bool p_FromShadowCopy = false);
 		uint32 writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset = 0);
 
@@ -127,6 +133,7 @@ namespace K15_Engine { namespace Rendering {
 		GpuBufferImplBase* m_Impl;
 		byte* m_ShadowCopy;
 		uint32 m_ShadowCopySize;
+		uint32 m_Size;
 		Enum m_LockOption;
 		Enum m_UsageOption;
 		Enum m_BufferType;

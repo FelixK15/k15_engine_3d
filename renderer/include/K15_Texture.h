@@ -32,6 +32,24 @@
 #include "K15_RenderWindowBase.h"
 
 namespace K15_Engine { namespace Rendering {
+	/*********************************************************************************/
+	struct TextureCreationOptions
+	{
+		uint32 width;
+		uint32 height;
+		uint32 depth;
+
+		RawData pixels;
+		
+		RendererBase::ePixelFormat pixelFormat;
+		Texture::eTextureUsage usage;
+		
+		bool createMipMaps;
+		bool useShadowCopy;
+
+		uint8 mipMapLevels;
+	}; // end of TextureCreationOptions struct
+	/*********************************************************************************/
 	class TextureImplBase
 	{
 	public:
@@ -40,6 +58,7 @@ namespace K15_Engine { namespace Rendering {
 
 		virtual uint32 writeData(uint32 p_Size,byte* p_Source,uint32 p_Offset) = 0;
 		virtual uint32 readData(uint32 p_Size,byte* p_Destination,uint32 p_Offset) = 0;
+		virtual bool resize(uint32 p_Width,uint32 p_Height,uint32 p_Depth,byte* p_PixelData,uint32 p_PixelDataSize) = 0;
 
 		void setTexture(Texture* p_Texture);
 		Texture* getTexture() const;
@@ -63,33 +82,22 @@ namespace K15_Engine { namespace Rendering {
 		/*********************************************************************************/
 		enum eTextureUsage
 		{
-			TU_DYNAMIC = 0,
-			TU_STATIC,
+			TU_MUTABLE = 0,
+			TU_IMMUTABLE,
 
 			TU_COUNT
 		};//TextureUsage
 		/*********************************************************************************/
-		enum eTextureWrapMode
-		{
-			TWM_CLAMP = 0,
-			TWM_MIRROR,
-			TWM_REPEAT,
-
-			TWM_COUNT
-		};//TextureWrapMode
-		/*********************************************************************************/
 	public:
 		Texture();
+		Texture(const TextureCreationOptions& p_Options);
 		~Texture();
 
-		void setTextureWrapMode(Enum p_TextureWrapMode);
-		inline Enum getTextureWrapMode() const;
+		void getType(Enum p_TextureType);
+		inline Enum getType() const;
 
-		void setTextureType(Enum p_TextureType);
-		inline Enum getTextureType() const;
-
-		void setTextureUsage(Enum p_TextureUsage);
-		inline Enum getTextureUsage() const;
+		void setUsage(Enum p_TextureUsage);
+		inline Enum getUsage() const;
 
 		void setMipMapCount(uint8 p_MipMapCount);
 		inline uint8 getMipMapCount() const;
@@ -109,18 +117,28 @@ namespace K15_Engine { namespace Rendering {
 		void setPixelFormat(Enum p_PixelFormat);
 		inline Enum getPixelFormat() const;
 
-		uint32 getTextureSize() const;
+		uint32 getSize() const;
 		uint32 getMipMapSize(uint8 p_Index) const;
 
-		bool hasAlpha() const;
+		uint32 writeData(uint32 p_Size,byte* p_Data,uint32 p_Offset = 0);
+		uint32 readData(uint32 p_Size,byte* p_Destination,uint32 p_Offset = 0);
 
-		virtual void loadDebug(ResourceData& p_Data);
-		virtual bool internalLoad(const ResourceData& p_Data);
+		bool resize(uint32 p_Width,uint32 p_Height,uint32 p_Depth = 0,byte* p_PixelData = 0,uint32 p_PixelDataSize = 0);
+		
+		inline bool hasAlpha() const;
+		inline bool hasShadowCopy() const;
+
+		virtual void loadDebug(RawData& p_Data);
+		virtual bool internalLoad(const RawData& p_Data);
+
+	private:
+		uint8 calculateMipMapLevels() const;
 
 	private:
 		TextureImplBase* m_Impl;
-		Enum m_TextureType;
-		Enum m_TextureUsage;
+		byte* m_ShadowCopy;
+		Enum m_Type;
+		Enum m_Usage;
 		Enum m_PixelFormat;
 		uint32 m_Height;
 		uint32 m_Width;
@@ -128,6 +146,7 @@ namespace K15_Engine { namespace Rendering {
 		uint32 m_Size;
 		uint8 m_MipMapCount;
 		bool m_HasAlpha;
+		bool m_HasShadowCopy;
 	};//end of Texture class declaration
 #	include "K15_Texture.inl"
 }}// end of K15_Engine::Rendering

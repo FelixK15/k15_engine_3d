@@ -46,13 +46,13 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		virtual bool lock(uint32 p_StartPos,int32 p_Count) OVERRIDE;
 		virtual bool unlock() OVERRIDE;
 
+		virtual bool allocate(uint32 p_Size) OVERRIDE;
+
 		virtual uint32 readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset) OVERRIDE;
 		virtual uint32 writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset) OVERRIDE;
 
 	private:
 		GLuint m_BufferHandle;
-		uint32 m_BufferMemorySize;
-		byte* m_BufferMemory;
 	};// end of GpuBufferImplOG class declaration
 }}}//end of K15_Engine::Rendering::OGL namespace
 

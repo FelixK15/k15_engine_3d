@@ -121,7 +121,9 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		K15_ASSERT(m_RenderWindow,"Render window has not been set. Can not initialize renderer without having a render window.");
 		
 		_LogNormal("Creating dummy OGL context to initialize GLEW library.");
-		if(!createDummyContext())
+		HWND tempHwnd = 0;
+		HDC tempDC = 0;
+		if(!createDummyContext(&tempHwnd,&tempDC))
 		{
 			_LogError("Could not create dummy OGL context (%s)",g_Application->getLastError());
 			return false;
@@ -141,6 +143,9 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 		_LogNormal("Destroying dummy OGL context...");
 		shutdown();
+		//destroy the objects for the temp handles
+		ReleaseDC(tempHwnd,tempDC);
+		DestroyWindow(tempHwnd);
 
 		RenderWindow_Win32* renderwindow = (RenderWindow_Win32*)m_RenderWindow;
 		m_DeviceContext = renderwindow->getDeviceContext();
@@ -165,8 +170,9 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		int pixelFormat = 0;
 		unsigned int formatCount = 1;
 
-		_LogNormal("Trying to create pixelformat\n\tColorbuffer size per pixel:%i\n\ntDepthbuffer size per pixel:%i\n\tStencilbuffer size per pixel:%i.",
+		_LogNormal("Trying to create pixelformat\n\tColorbuffer size per pixel:%i\n\tDepthbuffer size per pixel:%i\n\tStencilbuffer size per pixel:%i.",
 			       colorBits,depthBits,stencilBits);
+
 		wglChoosePixelFormatARB(m_DeviceContext,pixelFormatAttributes,0,1,&pixelFormat,&formatCount);
 
 		K15_ASSERT(pixelFormat,StringUtil::format("Can't create pixel format because the is not supported. Error:%s",glGetString(glGetError())));
@@ -225,7 +231,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		glViewport(0,0,p_Resolution.width,p_Resolution.height);
 	}
 	/*********************************************************************************/
-	bool RendererOGL::createDummyContext()
+	bool RendererOGL::createDummyContext(HWND* p_Hwnd,HDC* p_DC)
 	{
 		//Create dummy window
 		HWND tempHandle = 0;

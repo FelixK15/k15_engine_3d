@@ -46,9 +46,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	GpuBufferImplOGL::GpuBufferImplOGL()
 		: GpuBufferImplBase(),
-		  m_BufferHandle(0),
-		  m_BufferMemory(0),
-		  m_BufferMemorySize(0)
+		  m_BufferHandle(0)
 	{
 		glGenBuffers(1,&m_BufferHandle);
 	}
@@ -60,98 +58,91 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	bool GpuBufferImplOGL::lock(uint32 p_StartPos,int32 p_Count)
 	{
-		GLenum bufferType = GLBufferTypeConverter[m_Buffer->getType()];
-		GLenum bufferAccess = GLBufferAccessConverter[m_Buffer->getAccessOption()];
-		glBindBuffer(bufferType,m_BufferHandle);
-
-		m_BufferMemory = (byte*)glMapBufferRange(bufferType,p_StartPos,p_Count,bufferAccess);
-		
-		if(!m_BufferMemory)
+		if(m_Buffer->isLocked())
 		{
-			_LogError("Error mapping buffer from startpos %u with size %i. Error:%s",p_StartPos,p_Count,glGetString(glGetError()));
 			return false;
 		}
-
-		m_BufferMemorySize = p_Count;
-
-		glBindBuffer(bufferType,0);
 
 		return true;
 	}
 	/*********************************************************************************/
 	bool GpuBufferImplOGL::unlock()
 	{
-		GLenum bufferType = GLBufferTypeConverter[m_Buffer->getType()];
-		glBindBuffer(bufferType,m_BufferHandle);
-		if(glUnmapBuffer(bufferType) == GL_FALSE)
+		if(m_Buffer->isLocked())
 		{
-			_LogError("Error unmapping buffer. Error:%s",glGetString(glGetError()));
-			return false;
+			return true;
 		}
 
-		//ptr to memory is invalid now
-		m_BufferMemory = 0;
-		m_BufferMemorySize = 0;
-
-		glBindBuffer(bufferType,0);
-
+		return false;
+	}
+	/*********************************************************************************/
+	bool GpuBufferImplOGL::allocate(uint32 p_Size)
+	{
+		GLenum target = GLBufferTypeConverter[m_Buffer->getType()];
+		GLenum usage = GLBufferUsageConverter[m_Buffer->getUsageOption()];
+		glBindBuffer(target,m_BufferHandle);
+		glBufferData(target,p_Size,0,usage);
+		
+		if(glGetError() == GL_OUT_OF_MEMORY)
+		{
+			glBindBuffer(target,0);
+			_LogError("Video card is out of memory.");
+			return false;
+		}
+		
+		glBindBuffer(target,0);
 		return true;
 	}
 	/*********************************************************************************/
 	uint32 GpuBufferImplOGL::readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset)
 	{
-		K15_ASSERT(m_BufferMemory,"Buffer memory pointer is NULL! Buffer probably not locked.");
-		K15_ASSERT(p_Destination,"Destination memory is NULL!");
-
-		if(m_BufferMemory && p_Destination)
-		{
-			if(p_Size > m_BufferMemorySize)
-			{
-				_LogWarning("Buffer size is %ibyte and you want to read %ibyte. Clamping value to max buffer size.",m_BufferMemorySize,p_Size);
-				p_Size = m_BufferMemorySize;
-			}
-
-			if((p_Size + p_Offset) > m_BufferMemorySize)
-			{
-				uint32 newOffset = p_Size - m_BufferMemorySize;
-				_LogWarning("Buffer size is %ibyte and you want to read %ibyte starting at %ibyte. Setting offset = %i.",m_BufferMemorySize,p_Size,p_Offset,newOffset);
-				p_Offset = newOffset;
-			}
-
-			memcpy(p_Destination,m_BufferMemory + p_Offset,p_Size);
-
-			return p_Size;
-		}
+// 		K15_ASSERT(p_Destination,"Destination memory is NULL!");
+// 
+// 		if(p_Destination)
+// 		{
+// 			if(p_Size > m_Buffer->getSize())
+// 			{
+// 				_LogWarning("Buffer size is %ibyte and you want to read %ibyte. Clamping value to max buffer size.",m_Buffer->getSize(),p_Size);
+// 				p_Size = m_Buffer->getSize();
+// 			}
+// 
+// 			if((p_Size + p_Offset) > m_Buffer->getSize())
+// 			{
+// 				uint32 newOffset = p_Size - m_Buffer->getSize();
+// 				_LogWarning("Buffer size is %ibyte and you want to read %ibyte starting at %ibyte. Setting offset = %i.",m_Buffer->getSize(),p_Size,p_Offset,newOffset);
+// 				p_Offset = newOffset;
+// 			}
+// 
+// 			
+// 			return p_Size;
+// 		}
 
 		return 0;
 	}
 	/*********************************************************************************/
 	uint32 GpuBufferImplOGL::writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset)
 	{
-		K15_ASSERT(m_BufferMemory,"Buffer memory pointer is NULL! Buffer probably not locked.");
 		K15_ASSERT(p_Source,"Source memory is NULL!");
 
-		if(m_BufferMemory && p_Source)
+		if(p_Size > m_Buffer->getSize())
 		{
-			if(p_Size > m_BufferMemorySize)
-			{
-				_LogWarning("Buffer size is %ibyte and you want to write %ibyte. Clamping value to max buffer size.",m_BufferMemorySize,p_Size);
-				p_Size = m_BufferMemorySize;
-			}
-
-			if((p_Size + p_Offset) > m_BufferMemorySize)
-			{
-				uint32 newOffset = p_Size - m_BufferMemorySize;
-				_LogWarning("Buffer size is %ibyte and you want to write %ibyte starting at %ibyte. Setting offset = %i.",m_BufferMemorySize,p_Size,p_Offset,newOffset);
-				p_Offset = newOffset;
-			}
-
-			memcpy(m_BufferMemory + p_Offset,p_Source,p_Size);
-
-			return p_Size;
+			_LogWarning("Buffer size is %ibyte and you want to write %ibyte. Clamping value to max buffer size.",m_Buffer->getSize(),p_Size);
+			p_Size = m_Buffer->getSize();
 		}
+
+		if((p_Size + p_Offset) > m_Buffer->getSize())
+		{
+			uint32 newOffset = p_Size - m_Buffer->getSize();
+			_LogWarning("Buffer size is %ibyte and you want to write %ibyte starting at %ibyte. Setting offset = %i.",m_Buffer->getSize(),p_Size,p_Offset,newOffset);
+			p_Offset = newOffset;
+		}
+		GLenum target = GLBufferTypeConverter[m_Buffer->getType()];
 		
-		return 0;
+		glBindBuffer(target,m_BufferHandle);
+		glBufferSubData(target,p_Offset,p_Size,p_Source);
+		glBindBuffer(target,0);
+
+		return p_Size;
 	}
 	/*********************************************************************************/
 }}}//end of K15_Engine::Rendering::OGL namespace

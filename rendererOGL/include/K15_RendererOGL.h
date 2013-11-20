@@ -62,7 +62,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		//inline HGLRC getRenderContext() const;
 
 	protected:
-		bool createDummyContext();
+		bool createDummyContext(HWND*,HDC*);
 
 	protected:
 		int m_PixelFormat;

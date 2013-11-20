@@ -20,6 +20,7 @@
 #include "K15_RendererPrecompiledHeader.h"
 #include "K15_Texture.h"
 #include "K15_RendererBase.h"
+#include "K15_LogManager.h"
 
 #include "..\..\dependencies\nv_dds\include\nv_dds.h"
 
@@ -50,15 +51,74 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	Texture::Texture()
 		: m_Impl(0),
-		  m_MipMapCount(0),
-		  m_PixelFormat(0),
-		  m_TextureType(0),
-		  m_TextureUsage(0),
-		  m_Width(0),
-		  m_Height(0),
-		  m_Depth(0)
+		m_MipMapCount(0),
+		m_PixelFormat(0),
+		m_Type(0),
+		m_Usage(0),
+		m_Width(0),
+		m_Height(0),
+		m_Depth(0),
+		m_HasAlpha(true),
+		m_HasShadowCopy(true),
+		m_ShadowCopy(0)
 	{
 // 		m_Impl = g_Renderer->getTextureImpl();
+	}
+	/*********************************************************************************/
+	Texture::Texture(const TextureCreationOptions& p_Options)
+		: m_Impl(0),
+		m_MipMapCount(0),
+		m_PixelFormat(0),
+		m_Type(0),
+		m_Usage(0),
+		m_Width(0),
+		m_Height(0),
+		m_Depth(0),
+		m_HasAlpha(true),
+		m_HasShadowCopy(true),
+		m_ShadowCopy(0)
+	{
+		///m_Impl = g_Renderer->getTextureImpl();
+		Enum type = 0;
+
+		if(p_Options.width > 0 && p_Options.height > 0 && p_Options.depth > 0)
+		{
+			type = Texture::TT_3D;
+		}
+		else if(p_Options.width > 0 && p_Options.height > 0)
+		{
+			type = Texture::TT_2D;
+		}
+		else if(p_Options.width > 0)
+		{
+			type = Texture::TT_1D;
+		}
+
+		m_Type = type;
+		m_PixelFormat = p_Options.pixelFormat;
+
+		if(m_PixelFormat > RendererBase::PF_RGB_32_F)
+		{
+			m_HasAlpha = true;
+		}
+
+		m_HasShadowCopy = p_Options.useShadowCopy;
+		m_Usage = p_Options.usage;
+
+		int i = 0;
+		if(p_Options.mipMapLevels > 0)
+		{
+			i = p_Options.mipMapLevels;
+		}
+		else if(p_Options.createMipMaps)
+		{
+			i = calculateMipMapLevels();
+		}
+
+		m_MipMapCount = i;
+
+		_LogDebug("Resizing texture %s to %ux%ux%u",m_AssetName.c_str(),p_Options.width,p_Options.height,p_Options.depth);
+		resize(p_Options.width,p_Options.height,p_Options.depth,p_Options.pixels.data,p_Options.pixels.size);
 	}
 	/*********************************************************************************/
 	Texture::~Texture()
@@ -66,14 +126,14 @@ namespace K15_Engine { namespace Rendering {
 //		K15_DELETE m_Impl;
 	}
 	/*********************************************************************************/
-	void Texture::setTextureType(Enum p_TextureType)
+	void Texture::getType(Enum p_TextureType)
 	{
-		m_TextureType = p_TextureType;
+		m_Type = p_TextureType;
 	}
 	/*********************************************************************************/
-	void Texture::setTextureUsage(Enum p_TextureUsage)
+	void Texture::setUsage(Enum p_TextureUsage)
 	{
-		m_TextureUsage = p_TextureUsage;
+		m_Usage = p_TextureUsage;
 	}
 	/*********************************************************************************/
 	void Texture::setMipMapCount(uint8 p_MipMapCount)
@@ -112,17 +172,18 @@ namespace K15_Engine { namespace Rendering {
 		return m_HasAlpha;
 	}
 	/*********************************************************************************/
-	void Texture::loadDebug(ResourceData& p_Data)
+	void Texture::loadDebug(RawData& p_Data)
 	{
 		
 	}
 	/*********************************************************************************/
-	bool Texture::internalLoad(const ResourceData& p_Data)
+	bool Texture::internalLoad(const RawData& p_Data)
 	{
 		// K15 Texture are loaded as DDS 
 		nv_dds::DDS_HEADER *header;
-		byte* data = p_Data.Data;
+		byte* data = p_Data.data;
 		uint32 width, height, depth;
+		Enum type = 0;
 		uint8 bpp, mipmaps;
 		width = height = depth = bpp = mipmaps = 0;
 
@@ -142,18 +203,21 @@ namespace K15_Engine { namespace Rendering {
 		if(header->dwFlags & nv_dds::DDSF_WIDTH)
 		{
 			width = header->dwWidth;
+			type = TT_1D;
 		}
 		
 		//set height
 		if(header->dwFlags & nv_dds::DDSF_HEIGHT)
 		{
 			height = header->dwHeight;
+			type = TT_2D;
 		}
 
 		//set depth
 		if(header->dwFlags & nv_dds::DDSF_DEPTH)
 		{
 			depth = header->dwDepth;
+			type = TT_3D;
 		}
 		
 		//set mip map count
@@ -180,7 +244,7 @@ namespace K15_Engine { namespace Rendering {
 		return true;
 	}
 	/*********************************************************************************/
-	uint32 Texture::getTextureSize() const
+	uint32 Texture::getSize() const
 	{
 		uint32 size = 0;
 		for(int i = 0;i < m_MipMapCount;++i)
@@ -196,7 +260,6 @@ namespace K15_Engine { namespace Rendering {
 		uint32 width = m_Width;
 		uint32 height = m_Height > 0 ? m_Height : 1;
 		uint32 depth = m_Depth > 0 ? m_Depth : 1;
-
 		uint32 bitsPerPixel = RendererBase::PixelFormatSize[m_PixelFormat];
 
 		width *= (uint32)(0.5 / p_Index+1);	
@@ -204,6 +267,64 @@ namespace K15_Engine { namespace Rendering {
 		depth *= (uint32)(0.5 / p_Index+1);
 
 		return width * height * depth * bitsPerPixel;
+	}
+	/*********************************************************************************/
+	uint8 Texture::calculateMipMapLevels() const
+	{
+		int i = 1;
+		int dimension = max(m_Width,m_Height);
+
+		while(dimension > 1)
+		{
+			dimension *= 0.5;
+			++i;
+		}
+		return i;
+	}
+	/*********************************************************************************/
+	uint32 Texture::writeData(uint32 p_Size,byte* p_Data,uint32 p_Offset)
+	{
+		if(p_Size > getSize())
+		{
+			_LogError("Can't write to texture %s. Texture size is %uKB but you try to write %uKB.",m_AssetName.c_str(),getSize() / 1024,p_Size / 1024);
+			return 0;
+		}
+
+		if(m_Usage == TU_IMMUTABLE)
+		{
+			_LogError("Can't write to texture %s. Texture is immutable.",m_AssetName.c_str());
+			return 0;
+		}
+	
+		return m_Impl->writeData(p_Size,p_Data,p_Offset);		
+	}
+	/*********************************************************************************/
+	uint32 Texture::readData(uint32 p_Size,byte* p_Destination,uint32 p_Offset)
+	{
+		if(p_Size > getSize())
+		{
+			_LogError("Can't read from texture %s. Texture size is %uKB but you try to read %uKB.",m_AssetName.c_str(),getSize() / 1024,p_Size / 1024);
+			return 0;
+		}
+
+		return m_Impl->readData(p_Size,p_Destination,p_Offset);
+	}
+	/*********************************************************************************/
+	bool Texture::resize(uint32 p_Width,uint32 p_Height,uint32 p_Depth,byte* p_PixelData,uint32 p_PixelDataSize)
+	{
+		Enum type = TT_1D;
+
+		if(p_Height > 0)
+		{
+			type = TT_2D;
+		}
+		
+		if(p_Depth > 0)
+		{
+			type = TT_3D;
+		}
+
+		return m_Impl->resize(p_Width,p_Height,p_Depth,p_PixelData,p_PixelDataSize);
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace

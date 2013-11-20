@@ -18,14 +18,14 @@
  */
 
 /*********************************************************************************/
-inline Enum Texture::getTextureType() const
+inline Enum Texture::getType() const
 {
-	return m_TextureType;
+	return m_Type;
 }
 /*********************************************************************************/
-inline Enum Texture::getTextureUsage() const
+inline Enum Texture::getUsage() const
 {
-	return m_TextureUsage;
+	return m_Usage;
 }
 /*********************************************************************************/
 inline uint8 Texture::getMipMapCount() const

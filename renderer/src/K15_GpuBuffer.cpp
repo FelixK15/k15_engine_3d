@@ -53,6 +53,7 @@ namespace K15_Engine { namespace Rendering {
 		  m_ShadowCopyEnabled(true),
 		  m_ShadowCopySize(0),
 		  m_ShadowCopy(0),
+		  m_Size(0),
 		  m_BufferType(p_BufferType),
 		  m_AccessOption(p_AccessOption)
 	{
@@ -146,6 +147,12 @@ namespace K15_Engine { namespace Rendering {
 			writeToShadowCopy(p_Size,p_Source,p_Offset);
 		}
 
+		if(m_Size < p_Size + p_Offset)
+		{
+			K15_ASSERT(allocate(p_Size + p_Offset),"Could not allocate memory for GpuBuffer.");
+			m_Impl->writeData(m_ShadowCopySize,m_ShadowCopy,0); //write back shadow copy
+		}
+
 		if(!isLocked())
 		{
 			lock(p_Offset,p_Size);
@@ -189,6 +196,14 @@ namespace K15_Engine { namespace Rendering {
 		memcpy(p_Destination,m_ShadowCopy + p_Offset,p_Size);
 
 		return p_Size;
+	}
+	/*********************************************************************************/
+	bool GpuBuffer::allocate(uint32 p_Size)
+	{
+		if(m_Impl->allocate(p_Size))
+		{
+			m_Size = p_Size;
+		}
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace
