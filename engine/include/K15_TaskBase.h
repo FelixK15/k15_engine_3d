@@ -50,13 +50,13 @@ namespace K15_Engine { namespace Core {
 		inline uint32 getPriority() const;
 		inline void setPriority(uint32 p_Priority);
 
-    inline uint32 getFrameModFilter() const;
-    inline void setFrameModFilter(uint32 p_FrameModFilter);
+		inline uint32 getFrameModFilter() const;
+		inline void setFrameModFilter(uint32 p_FrameModFilter);
 
 		bool operator<(const TaskBase& p_Other);
 	protected:
 		uint32 m_Priority;
-    uint32 m_FrameModFilter;
+		uint32 m_FrameModFilter;
 	};// end of TaskBase class
 #include "K15_TaskBase.inl"
 }}//end of K15_Engine::Core namespace

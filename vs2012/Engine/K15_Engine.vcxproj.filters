@@ -240,11 +240,17 @@
     <ClInclude Include="..\..\engine\include\K15_BlockAllocator.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_MemoryProfiler.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_MemoryProfilingTask.h" />
     <ClInclude Include="..\..\engine\include\K15_NetworkManager.h" />
+    <ClInclude Include="..\..\engine\include\K15_Font.h" />
+    <ClInclude Include="..\..\engine\include\K15_FontManager.h" />
+    <ClInclude Include="..\..\engine\include\K15_MemoryProfiler.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_PoolAllocator.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_TrueTypeFont.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -376,6 +382,9 @@
     <ClCompile Include="..\..\engine\src\K15_MemoryProfiler.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MemoryProfilingTask.cpp" />
     <ClCompile Include="..\..\engine\src\K15_NetworkManager.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_Font.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_TrueTypeFont.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_FontManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -478,6 +487,8 @@
     <None Include="..\..\engine\include\K15_Node.inl">
       <Filter>Core\include</Filter>
     </None>
+    <None Include="..\..\engine\include\K15_PoolAllocator.inl" />
+    <None Include="..\..\engine\include\K15_FontManager.inl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />

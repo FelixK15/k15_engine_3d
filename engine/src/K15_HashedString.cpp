@@ -45,9 +45,16 @@ namespace K15_Engine { namespace Core {
 
 	}
 	/*********************************************************************************/
-	HashedString::~HashedString()
+	HashedString::HashedString(const String& p_String)
+		: m_Hash(createHash(p_String.c_str(),p_String.size())),
+		  m_String(p_String.c_str())
 	{
 
+	}
+	/*********************************************************************************/
+	HashedString::~HashedString()
+	{
+		
 	}
 	/*********************************************************************************/
 	unsigned long HashedString::getIdentifier() const

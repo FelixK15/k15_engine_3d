@@ -52,21 +52,39 @@ namespace K15_Engine { namespace Core {
 		pos = p_Format.find_first_of("hh");
 		if(pos != String::npos)
 		{
-			timeString.replace(pos,2,toString(tm.tm_hour));
+			static String hour = "";
+			hour = toString(tm.tm_hour);
+			if(tm.tm_hour < 10)
+			{
+				hour = "0" + hour;
+			}
+			timeString.replace(pos,2,hour);
 		}
 		
 		//minutes
 		pos = p_Format.find_first_of("mm");
 		if(pos != String::npos)
 		{
-			timeString.replace(pos,2,toString(tm.tm_min));
+			static String minute = "";
+			minute = toString(tm.tm_min);
+			if(tm.tm_min < 10)
+			{
+				minute = "0" + minute;
+			}
+			timeString.replace(pos,2,minute);
 		}
 		
 		//seconds
 		pos = p_Format.find_first_of("ss");
 		if(pos != String::npos)
 		{
-			timeString.replace(pos,2,toString(tm.tm_sec));
+			static String second = "";
+			second = toString(tm.tm_sec);
+			if(tm.tm_sec < 10)
+			{
+				second = "0" + second;
+			}
+			timeString.replace(pos,2,second);
 		}
 
 		return timeString;

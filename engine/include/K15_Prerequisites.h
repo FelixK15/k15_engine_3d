@@ -45,8 +45,10 @@
 
 #if defined (K15_64_BIT)
 #	define K15_PTR_SIZE 64
+#	define K15_PTR_HEX_MASK 0xFFFFFFFFFFFFFFFF
 #else
 #	define K15_PTR_SIZE 32
+#	define K15_PTR_HEX_MASK 0xFFFFFFFF
 #endif //K15_64_BIT
 
 //edit export defines
@@ -94,7 +96,7 @@ namespace K15_Engine
 		class ResourceBase;
 		class ResourceFileBase;
 		class EventTask;
-		class ResourceData;
+		class RawData;
 		class ProfilingNode;
 		class ProfilingManager;
 		class GameObject;
@@ -107,6 +109,9 @@ namespace K15_Engine
 		class MemoryProfiler;
 		class MemoryProfilingTask;
 		struct MemoryHeader;
+		class FontManager;
+		class Font;
+		class TrueTypeFont;
 		class StackAllocator;
 
 		template<unsigned __int16,unsigned __int32>
@@ -317,6 +322,7 @@ namespace K15_Engine
 
 typedef Set(String) StringSet;
 
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::FontManager> FontManagerAllocatedObject;
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::InputManager> InputManagerAllocatedObject;
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::Application> ApplicationAllocatedObject;
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::EventManager> EventManagerAllocatedObject;
@@ -325,6 +331,7 @@ typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::DynamicLibraryManage
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::LogManager> LogManagerAllocatedObject;
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::ProfilingManager> ProfilingManagerAllocatedObject;
 
+#define FontManagerAllocator K15_Engine::Core::FontManager::getInstance()
 #define InputManagerAllocator K15_Engine::Core::InputManager::getInstace()
 #define ApplicationAllocator K15_Engine::Core::Application::getInstance()
 #define EventManagerAllocator K15_Engine::Core::EventManager::getInstance()
@@ -332,6 +339,7 @@ typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::ProfilingManager> Pr
 #define DynamicLibraryManagerAllocator K15_Engine::Core::DynamicLibraryManager::getInstance()
 #define LogManagerAllocator K15_Engine::Core::LogManager::getInstance()
 
+#define g_FontManager K15_Engine::Core::FontManager::getInstance()
 #define g_MemoryProfiler K15_Engine::Core::MemoryProfiler::getInstance()
 #define g_InputManager K15_Engine::Core::InputManager::getInstance()
 #define g_Application K15_Engine::Core::Application::getInstance()

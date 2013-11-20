@@ -82,6 +82,8 @@ namespace K15_Engine { namespace Core {
     void onBeforeRender();
     void onAfterRender();
 
+	inline uint32 getFrameCount() const;
+
 	inline RenderTask* getRenderTask() const;
 	inline PhysicsTask* getPhysicsTask() const;
 
