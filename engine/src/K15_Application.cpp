@@ -241,11 +241,18 @@ namespace K15_Engine { namespace Core {
 		_LogNormal("Adding physics task...");
 		m_TaskManager->addTask(m_PhysicsTask);
 
-		m_RenderTask->getRenderer()->setRenderWindow(m_RenderWindow);
-		if(!m_RenderTask->getRenderer()->initialize())
-		{
-			_LogError("Could not initialize renderer.");
-		}
+    if(!m_RenderTask->getRenderer())
+    {
+      _LogError("No renderer defined!");
+    }
+    else
+    {
+      m_RenderTask->getRenderer()->setRenderWindow(m_RenderWindow);
+      if(!m_RenderTask->getRenderer()->initialize())
+      {
+        _LogError("Could not initialize renderer.");
+      }
+    }
 	}
 	/*********************************************************************************/
 	void Application::setWindowTitle(const String& p_WindowTitle) 

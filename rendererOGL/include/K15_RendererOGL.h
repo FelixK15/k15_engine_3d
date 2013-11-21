@@ -49,6 +49,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 		virtual GpuBufferImplBase* createGpuBufferImpl() OVERRIDE;
 		virtual TextureImplBase* createTextureImpl() OVERRIDE;
+    virtual TextureSamplerImplBase* createTextureSamplerImpl() OVERRIDE;
 		virtual GpuProgramImplBase* createGpuProgramImpl() OVERRIDE;
 
 		virtual void beginFrame() OVERRIDE;

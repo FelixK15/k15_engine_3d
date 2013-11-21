@@ -173,6 +173,7 @@ namespace K15_Engine { namespace Rendering {
 		virtual GpuBufferImplBase* createGpuBufferImpl() = 0;
 		virtual	TextureImplBase* createTextureImpl() = 0;
 		virtual GpuProgramImplBase* createGpuProgramImpl() = 0;
+    virtual TextureSamplerImplBase* createTextureSamplerBase() = 0;
 
 		virtual void beginFrame() = 0;
 		virtual void endFrame() = 0;

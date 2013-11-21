@@ -31,15 +31,18 @@ using namespace K15_Engine::Core;
 namespace K15_Engine { namespace Rendering {
 	class RenderTarget;
 	class Texture;
-	class VertexBuffer;
-	class IndexBuffer;
+  class TextureImplBase;
+	class GpuBuffer;
+  class GpuBufferImplBase;
 	class Material;
 	class RendererBase;
 	class Mesh;
 	class Camera;
 	class SubMesh;
   class TextureSampler;
+  class TextureSamplerImplBase;
 	class GpuProgram;
+  class GpuProgramImplBase;
   struct TextureCreationOptions;
 }}// end of K15_Engine::Rendering namespace
 
