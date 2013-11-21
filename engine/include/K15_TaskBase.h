@@ -54,6 +54,7 @@ namespace K15_Engine { namespace Core {
 		inline void setFrameModFilter(uint32 p_FrameModFilter);
 
 		bool operator<(const TaskBase& p_Other);
+
 	protected:
 		uint32 m_Priority;
 		uint32 m_FrameModFilter;

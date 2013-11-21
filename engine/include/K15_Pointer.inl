@@ -17,12 +17,13 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+/*********************************************************************************/
 template<class T>
 Pointer<T>::Pointer()
 {
 	m_pObject = 0;
 }
-
+/*********************************************************************************/
 template<class T>
 Pointer<T>::Pointer(T *pObject)
 {
@@ -31,26 +32,26 @@ Pointer<T>::Pointer(T *pObject)
 		pObject->IncreaseReferences();
 	}
 }
-
+/*********************************************************************************/
 template<class T>
 Pointer<T>::Pointer(const Pointer<T> &pPointer)
 {
 	_GetAndIncreasePointer(pPointer);
 }
-
+/*********************************************************************************/
 template<class T>
 Pointer<T>::~Pointer()
 {
 	m_pObject->DecreaseReferences();
 }
-
+/*********************************************************************************/
 template<class T>
 const Pointer<T> &Pointer<T>::operator=(const Pointer<T> &pPointer)
 {
 	_GetAndIncreasePointer(pPointer);
 	return *this;
 }
-
+/*********************************************************************************/
 template<class T>
 const Pointer<T> &Pointer<T>::operator=(T* pObject)
 {
@@ -70,49 +71,49 @@ const Pointer<T> &Pointer<T>::operator=(T* pObject)
 
 	return *this;
 }
-
+/*********************************************************************************/
 template<class T>
 Pointer<T>::operator T*() const
 {
 	return m_pObject;
 }
-
+/*********************************************************************************/
 template<class T>
 T* Pointer<T>::operator->() const
 {
 	return m_pObject;
 }
-
+/*********************************************************************************/
 template<class T>
 T& Pointer<T>::operator*() const
 {
 	return *m_pObject;
 }
-
+/*********************************************************************************/
 template<class T>
 bool Pointer<T>::operator==(T* pObject)
 {
 	return m_pObject == pObject;
 }
-
+/*********************************************************************************/
 template<class T>
 bool Pointer<T>::operator==(const Pointer<T> &pPointer)
 {
 	return m_pObject == pPointer.m_pObject;
 }
-
+/*********************************************************************************/
 template<class T>
 bool Pointer<T>::operator!=(T* pObject)
 {
 	return m_pObject != pObject;
 }
-
+/*********************************************************************************/
 template<class T>
 bool Pointer<T>::operator!=(const Pointer<T> &pPointer)
 {
 	return m_pObject != pPointer.m_pObject;
 }
-
+/*********************************************************************************/
 template<class T>
 void Pointer<T>::_GetAndIncreasePointer(const Pointer<T> &pPointer)
 {
@@ -129,3 +130,4 @@ void Pointer<T>::_GetAndIncreasePointer(const Pointer<T> &pPointer)
 		m_pObject->IncreaseReferences();
 	}
 }
+/*********************************************************************************/

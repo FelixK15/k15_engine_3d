@@ -18,87 +18,87 @@
  */
 
 /*********************************************************************************/
-inline void Node::setPosition(const Math::Vector3& p_Position)
+void Node::setPosition(const Math::Vector3& p_Position)
 {
 	m_Position = p_Position;
 }
 /*********************************************************************************/
-inline void Node::setOrientation(const Math::Quaternion& p_Orientation)
+void Node::setOrientation(const Math::Quaternion& p_Orientation)
 {
 	m_Orientation = p_Orientation;
 }
 /*********************************************************************************/
-inline void Node::setScale(const Math::Vector3& p_Scale)
+void Node::setScale(const Math::Vector3& p_Scale)
 {
 	m_Scale = p_Scale;
 }
 /*********************************************************************************/
-inline void Node::translate(const Math::Vector3& p_Translation)
+void Node::translate(const Math::Vector3& p_Translation)
 {
 	m_Position += p_Translation;
 }
 /*********************************************************************************/
-inline void Node::translate(float x, float y, float z)
+void Node::translate(float x, float y, float z)
 {
 	m_Position += Math::Vector3(x,y,z);
 }
 /*********************************************************************************/
-inline void Node::scale(const Math::Vector3& p_Scale)
+void Node::scale(const Math::Vector3& p_Scale)
 {
 	m_Scale += p_Scale;
 }
 /*********************************************************************************/
-inline void Node::scale(float x, float y, float z)
+void Node::scale(float x, float y, float z)
 {
 	m_Scale += Math::Vector3(x,y,z);
 }
 /*********************************************************************************/
-inline void Node::rotate(const Math::Quaternion& p_Rotation)
+void Node::rotate(const Math::Quaternion& p_Rotation)
 {
 	m_Orientation *= p_Rotation;
 }
 /*********************************************************************************/
-inline void Node::rotate(const Math::Vector3& p_Axis, float p_Angle)
+void Node::rotate(const Math::Vector3& p_Axis, float p_Angle)
 {
 	m_Orientation *= Math::Quaternion(p_Angle,p_Axis);
 }
 /*********************************************************************************/
-inline void Node::roll(float p_Angle)
+void Node::roll(float p_Angle)
 {
 	rotate(Math::Vector3::Forward,p_Angle);
 }
 /*********************************************************************************/
-inline void Node::pitch(float p_Angle)
+void Node::pitch(float p_Angle)
 {
 	rotate(Math::Vector3::Right,p_Angle);
 }
 /*********************************************************************************/
-inline void Node::yaw(float p_Angle)
+void Node::yaw(float p_Angle)
 {
 	rotate(Math::Vector3::Up,p_Angle);
 }
 /*********************************************************************************/
-inline const Math::Vector3& Node::getPosition() const
+const Math::Vector3& Node::getPosition() const
 {
 	return m_Position;
 }
 /*********************************************************************************/
-inline const Math::Vector3& Node::getScale() const
+const Math::Vector3& Node::getScale() const
 {
 	return m_Scale;
 }
 /*********************************************************************************/
-inline const Math::Quaternion& Node::getOrientation() const
+const Math::Quaternion& Node::getOrientation() const
 {
 	return m_Orientation;
 }
 /*********************************************************************************/
-inline bool Node::needUpdate() const
+bool Node::needUpdate() const
 {
 	return m_NeedUpdate;
 }
 /*********************************************************************************/
-inline Node* Node::getParent() const
+Node* Node::getParent() const
 {
 	return m_Parent;
 }

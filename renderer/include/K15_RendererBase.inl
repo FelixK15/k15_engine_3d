@@ -18,77 +18,77 @@
  */
 
 /*********************************************************************************/
-inline RenderWindowBase* RendererBase::getRenderWindow() const
+RenderWindowBase* RendererBase::getRenderWindow() const
 {
 	return m_RenderWindow;
 }
 /*********************************************************************************/
-inline RenderTarget* RendererBase::getRenderTarget() const
+RenderTarget* RendererBase::getRenderTarget() const
 {
 	return m_RenderTarget;
 }
 /*********************************************************************************/
-inline Camera* RendererBase::getActiveCamera() const
+Camera* RendererBase::getActiveCamera() const
 {
 	return m_ActiveCamera;
 }
 /*********************************************************************************/
-inline Enum RendererBase::getCullingMode() const
+Enum RendererBase::getCullingMode() const
 {
 	return m_CullingMode;
 }
 /*********************************************************************************/
-inline Enum RendererBase::getDepthTestMode() const
+Enum RendererBase::getDepthTestMode() const
 {
 	return m_DepthTestFunction;
 }
 /*********************************************************************************/
-inline Enum RendererBase::getTopology() const
+Enum RendererBase::getTopology() const
 {
 	return m_Topology;
 }
 /*********************************************************************************/
-inline bool RendererBase::getDepthTestEnabled() const
+bool RendererBase::getDepthTestEnabled() const
 {
 	return m_DepthTestEnabled;
 }
 /*********************************************************************************/
-inline bool RendererBase::getBackFaceCullingEnabled() const
+bool RendererBase::getBackFaceCullingEnabled() const
 {
 	return m_BackFaceCullingEnabled;
 }
 /*********************************************************************************/
-inline Enum RendererBase::getFrameBufferPixelFormat() const
+Enum RendererBase::getFrameBufferPixelFormat() const
 {
 	return m_FrameBufferFormat;
 }
 /*********************************************************************************/
-inline Enum RendererBase::getDepthBufferFormat() const
+Enum RendererBase::getDepthBufferFormat() const
 {
 	return m_DepthBufferFormat;
 }
 /*********************************************************************************/
-inline Enum RendererBase::getStencilBufferFormat() const
+Enum RendererBase::getStencilBufferFormat() const
 {
 	return m_StencilBufferFormat;
 }
 /*********************************************************************************/
-inline void RendererBase::setLightningEnabled(bool p_Enabled)
+void RendererBase::setLightningEnabled(bool p_Enabled)
 {
 	m_LightningEnabled = p_Enabled;
 }
 /*********************************************************************************/
-inline bool RendererBase::getLightningEnabled() const
+bool RendererBase::getLightningEnabled() const
 {
 	return m_LightningEnabled;
 }
 /*********************************************************************************/
-inline GpuProgram* RendererBase::getBoundGpuProgram(Enum p_GpuProgramType) const
+GpuProgram* RendererBase::getBoundGpuProgram(Enum p_GpuProgramType) const
 {
 	return m_GpuPrograms[p_GpuProgramType];
 }
 /*********************************************************************************/
-inline bool RendererBase::isBoundGpuProgram(Enum p_GpuProgramType) const
+bool RendererBase::isBoundGpuProgram(Enum p_GpuProgramType) const
 {
 	return m_GpuPrograms[p_GpuProgramType] != 0;
 }

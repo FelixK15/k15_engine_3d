@@ -59,9 +59,9 @@ namespace K15_Engine { namespace Core {
 		Rtti(const TypeName &p_Name,const Rtti *p_BaseType);
 		~Rtti();
 
-		const TypeName &getName() const;
+		inline const TypeName &getName() const;
 
-		bool isInstanceOf(const Rtti &p_OtherType) const;
+		inline bool isInstanceOf(const Rtti &p_OtherType) const;
 		bool isDerivedFrom(const Rtti &p_OtherType) const;
 
 	private:

@@ -19,6 +19,7 @@
 
 #include "K15_RendererPrecompiledHeader.h"
 #include "K15_TextureSampler.h"
+#include "K15_StringUtil.h"
 
 namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
@@ -39,7 +40,7 @@ namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
   Enum TextureSampler::getWrappingMode(uint8 p_Axis) const
   {
-    K15_ASSERT(p_Axis < 2,"Texture axis %u is unsufficient. Pass 0 for U - 1 for V - 2 for W.",p_Axis);
+    K15_ASSERT(p_Axis < 2,StringUtil::format("Texture axis %u is unsufficient. Pass 0 for U - 1 for V - 2 for W.",p_Axis));
 
     if(p_Axis == 0)
     {
@@ -55,7 +56,7 @@ namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
   void TextureSampler::setWrappingMode(uint8 p_Axis,Enum p_WrappingMode)
   {
-    K15_ASSERT(p_Axis < 2,"Texture axis %u is unsufficient. Pass 0 for U - 1 for V - 2 for W.",p_Axis);
+    K15_ASSERT(p_Axis < 2,StringUtil::format("Texture axis %u is unsufficient. Pass 0 for U - 1 for V - 2 for W.",p_Axis));
 
     if(p_Axis == 0)
     {

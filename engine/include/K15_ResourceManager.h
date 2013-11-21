@@ -29,6 +29,7 @@
 #	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
+#include "K15_ResourceFileBase.h"
 #include "K15_ResourceHandle.h"
 #include "K15_ResourceBase.h"
 
@@ -49,19 +50,19 @@ namespace K15_Engine { namespace Core {
 
 		template<class ResourceType> ResourceHandle<ResourceType> getResource(const ResourceName& p_ResourceName,Enum p_Priority)
 		{
-			K15_PROFILE(ResourceManager_GetResource);
+			//K15_PROFILE(ResourceManager_GetResource);
 
 			ResourceCache::iterator iter = m_ResourceDataCache.find(p_ResourceName);
 			ResourceHandle<ResourceType> handle(K15_INVALID_RESOURCE_ID);
 
 			if(iter == m_ResourceDataCache.end())
 			{
-				if(cacheResource<ResourceType>(p_FileName,p_Priority))
+				if(cacheResource<ResourceType>(p_ResourceName,p_Priority))
 				{
 					iter = m_ResourceDataCache.find(p_ResourceName);
 
-					m_Resources.push_back(resource);
-					handle.setResourceID(m_Resource.size() - 1);
+					m_Resources.push_back(iter->second);
+					handle.setResourceID(m_Resources.size() - 1);
 				}
 			}
 
@@ -70,14 +71,15 @@ namespace K15_Engine { namespace Core {
 
 		template<class ResourceType> bool cacheResource(const ResourceName& p_ResourceName,Enum p_Priority)
 		{
-			K15_PROFILE(ResourceManager_CacheResource);
+			//K15_PROFILE(ResourceManager_CacheResource);
 
 			bool cachedResource = false;
 			RawData resourceData = {0};
 			ResourceFileBase* resourceFile = 0;
-			ResourceType resource = K15_NEW ResourceType(p_ResourceName);
+			ResourceType* resource = K15_NEW ResourceType();
+      resource->setAssetName(p_ResourceName);
 			//we need to load the resource from one of the resource files.
-			for(ResourceFileList::iterator iter = m_ResoureFiles.begin();iter != m_ResourceFiles.end();++iter)
+			for(ResourceFileList::iterator iter = m_ResoureFiles.begin();iter != m_ResoureFiles.end();++iter)
 			{
 				resourceFile = (*iter);
 				//try to open the resource file
@@ -85,13 +87,13 @@ namespace K15_Engine { namespace Core {
 				if(!resourceFile->open())
 				{
 					//log error and load debug resoure
-					_LogError("Could not open asset file " + resourceFile->getResourceFileName());
+					_LogError("Could not open asset file %s.",resourceFile->getResourceFileName().c_str());
 				}
 				else
 				{
-					if(resourceFile->hasResource(p_ResourceName))
+					if(resourceFile->hasResource(p_ResourceName.c_str()))
 					{
-						if(resourceFile->getResource(p_ResourceName,resourceData))
+						if(resourceFile->getResource(p_ResourceName.c_str(),&resourceData))
 						{
 							break;
 						}
@@ -109,7 +111,7 @@ namespace K15_Engine { namespace Core {
 					//load Resource using resource data from the resource file
 					if((cachedResource = resource->load(resourceData)) == true)
 					{
-						m_ResourceDataChache.insert(Pair(ResourceName,ResourceBase*)(p_ResourceName,resource));
+						m_ResourceDataCache.insert(Pair(ResourceName,ResourceBase*)(p_ResourceName,resource));
 					}
 				}
 

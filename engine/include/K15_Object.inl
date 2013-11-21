@@ -17,47 +17,47 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 /*********************************************************************************/
-inline void Object::increaseReferences()
+void Object::increaseReferences()
 {
 	++m_References;
 }
 /*********************************************************************************/
-inline void Object::decreaseReferences()
+void Object::decreaseReferences()
 {
 	--m_References;
 }
 /*********************************************************************************/
-inline bool Object::isInstanceOf(const Rtti& p_Type) const
+bool Object::isInstanceOf(const Rtti& p_Type) const
 {
 	return TYPE.isInstanceOf(p_Type);
 }
 /*********************************************************************************/
-inline bool Object::isInstanceOf(const Object* p_Object) const
+bool Object::isInstanceOf(const Object* p_Object) const
 {
 	return p_Object && TYPE.isInstanceOf(p_Object->getType());
 }
 /*********************************************************************************/
-inline bool Object::isDerivedFrom(const Rtti& p_Type) const
+bool Object::isDerivedFrom(const Rtti& p_Type) const
 {
 	return TYPE.isDerivedFrom(p_Type);
 }
 /*********************************************************************************/
-inline bool Object::isDerivedFrom(const Object* p_Object) const
+bool Object::isDerivedFrom(const Object* p_Object) const
 {
 	return p_Object && TYPE.isDerivedFrom(p_Object->getType());
 }
 /*********************************************************************************/
-inline uint32 Object::getReferenceCount() const
+uint32 Object::getReferenceCount() const
 {
 	return m_References;
 }
 /*********************************************************************************/
-inline const TypeName& Object::getName() const
+const TypeName& Object::getName() const
 {
 	return m_Name;
 }
 /*********************************************************************************/
-inline void Object::setName(const TypeName& p_Name)
+void Object::setName(const TypeName& p_Name)
 {
 	m_Name = p_Name;
 }

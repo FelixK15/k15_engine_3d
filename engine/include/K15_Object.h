@@ -45,19 +45,19 @@ namespace K15_Engine { namespace Core {
 
 		virtual ~Object();
 	
-		void increaseReferences();
-		void decreaseReferences();
+		inline void increaseReferences();
+		inline void decreaseReferences();
 		
-		bool isInstanceOf(const Rtti& p_Type) const;
-		bool isInstanceOf(const Object* p_Object) const;
+		inline bool isInstanceOf(const Rtti& p_Type) const;
+		inline bool isInstanceOf(const Object* p_Object) const;
 
-		bool isDerivedFrom(const Rtti& p_Type) const;
-		bool isDerivedFrom(const Object* p_Object) const;
+		inline bool isDerivedFrom(const Rtti& p_Type) const;
+		inline bool isDerivedFrom(const Object* p_Object) const;
 
-		uint32 getReferenceCount() const;
+		inline uint32 getReferenceCount() const;
 		
-		void setName(const ObjectName& p_Name);
-		const ObjectName& getName() const;
+		inline void setName(const ObjectName& p_Name);
+		inline const ObjectName& getName() const;
 		
 	protected:
 		ObjectName m_Name;

@@ -29,13 +29,4 @@
 
 using namespace K15_Engine::Rendering;
 
-#if defined K15_OS_WINDOWS
-#	if defined K15_OGL_RENDERER_BUILD
-#		define K15_OGL_RENDERER_API __declspec(dllexport)
-#	else
-#		define K15_OGL_RENDERER_API __declspec(dllimport)
-#	endif //K15_OGL_RENDERER_BUILD
-#endif //K15_OS_WINDOWS
-
-
 #endif //_K15Engine_RendererOGL_Prerequisites_h_

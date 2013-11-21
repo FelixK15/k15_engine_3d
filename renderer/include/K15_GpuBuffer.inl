@@ -17,62 +17,62 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-inline void GpuBuffer::setShadowCopyEnabled(bool p_Enabled)
+void GpuBuffer::setShadowCopyEnabled(bool p_Enabled)
 {
 	m_ShadowCopyEnabled = p_Enabled;
 }
 /*********************************************************************************/
-inline void GpuBuffer::setLockOption(Enum p_LockOption)
+void GpuBuffer::setLockOption(Enum p_LockOption)
 {
 	m_LockOption = p_LockOption;
 }
 /*********************************************************************************/
-inline void GpuBuffer::setUsageOption(Enum p_UsageOption)
+void GpuBuffer::setUsageOption(Enum p_UsageOption)
 {
 	m_UsageOption = p_UsageOption;
 }
 /*********************************************************************************/
-inline Enum GpuBuffer::getLockOption() const
+Enum GpuBuffer::getLockOption() const
 {
 	return m_LockOption;
 }
 /*********************************************************************************/
-inline Enum GpuBuffer::getUsageOption() const
+Enum GpuBuffer::getUsageOption() const
 {
 	return m_UsageOption;
 }
 /*********************************************************************************/
-inline Enum GpuBuffer::getType() const
+Enum GpuBuffer::getType() const
 {
 	return m_BufferType;
 }
 /*********************************************************************************/
-inline Enum GpuBuffer::getAccessOption() const
+Enum GpuBuffer::getAccessOption() const
 {
 	return m_AccessOption;
 }
 /*********************************************************************************/
-inline bool GpuBuffer::getShadowCopyEnabled() const
+bool GpuBuffer::getShadowCopyEnabled() const
 {
 	return m_ShadowCopyEnabled;
 }
 /*********************************************************************************/
-inline byte* GpuBuffer::getShadowCopy() const
+byte* GpuBuffer::getShadowCopy() const
 {
 	return m_ShadowCopy;
 }
 /*********************************************************************************/
-inline uint32 GpuBuffer::getShadowCopySize() const
+uint32 GpuBuffer::getShadowCopySize() const
 {
 	return m_ShadowCopySize;
 }
 /*********************************************************************************/
-inline bool GpuBuffer::isLocked()
+bool GpuBuffer::isLocked() const
 {
 	return m_Locked;
 }
 /*********************************************************************************/
-inline uint32 GpuBuffer::getSize()
+uint32 GpuBuffer::getSize() const
 {
 	return m_Size;
 }

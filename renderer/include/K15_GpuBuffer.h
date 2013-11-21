@@ -115,7 +115,7 @@ namespace K15_Engine { namespace Rendering {
 
 		inline uint32 getSize() const;
 
-		inline bool isLocked();
+		inline bool isLocked() const;
 
 		void lock(uint32 p_StartPos = 0, int32 p_Count = LOCK_WHOLE_BUFFER);
 		void unlock();

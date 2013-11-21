@@ -20,17 +20,17 @@
  */
 
 /*********************************************************************************/
-inline const double GameTime::getDeltaTime() const
+const double GameTime::getDeltaTime() const
 {
 	return m_DeltaTime;
 }
 /*********************************************************************************/
-inline const double GameTime::getRawDeltaTime() const
+const double GameTime::getRawDeltaTime() const
 {
 	return m_RawDeltaTime;
 }
 /*********************************************************************************/
-inline const double GameTime::getMultiplier() const
+const double GameTime::getMultiplier() const
 {
 	return m_Mulitplicator;
 }

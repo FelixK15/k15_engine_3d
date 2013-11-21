@@ -41,7 +41,7 @@ PoolAllocator<T>::~PoolAllocator()
 template<class T>
 void* PoolAllocator<T>::alloc(uint32 p_Size)
 {
-	K15_ASSERT(p_Size % sizeof(T) == 0,"PoolAllocator %s Size unequal to object size. size:%i objectsize:%u",m_Name.c_str(),p_Size,sizeof(T));
+	K15_ASSERT(p_Size % sizeof(T) == 0,StringUtil::format("PoolAllocator %s Size unequal to object size. size:%i objectsize:%u",m_Name.c_str(),p_Size,sizeof(T)));
 
 	if(m_Position * sizeof(T) == m_MemorySize)
 	{
@@ -59,7 +59,7 @@ void* PoolAllocator<T>::alloc(uint32 p_Size)
 		}
 	}
 
-	return m_Memory[pos]
+	return (void*)m_Memory[pos];
 }
 /*********************************************************************************/
 template<class T>

@@ -34,7 +34,6 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	public:
 		/*********************************************************************************/
 		static const GLuint GLTextureTypeConverter[Texture::TT_COUNT];
-		static const GLuint GLTextureUsageConverter[Texture::TU_COUNT];
 		static const GLuint GLInternalFormatConverter[RendererBase::PF_COUNT];
 		static const GLenum GLPixelDataTypeConverter[RendererBase::PF_COUNT];
 		/*********************************************************************************/
@@ -42,11 +41,14 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		TextureImplOGL();
 		~TextureImplOGL();
 
-		virtual uint32 write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) OVERRIDE;
-		virtual uint32 readData(uint32 p_Size,byte* p_Destination,uint32 p_Offset) OVERRIDE{return 0;}
+		virtual bool write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) OVERRIDE;
+    virtual bool writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) OVERRIDE;
 
-		void createStorage();
-		void deleteStorage();
+    virtual bool read(byte** p_Destination, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) OVERRIDE;
+    virtual bool readMipmap(byte** p_Destination, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) OVERRIDE;
+
+    virtual bool resize(uint32 p_Width, uint32 p_Height, uint32 p_Depth) OVERRIDE;
+
 	private:
 		GLuint m_TextureHandle;
 		uint32 m_TextureStorageSize;

@@ -18,79 +18,79 @@
  */
 
 /*********************************************************************************/
-inline void TextureSamplerImplBase::setTextureSampler(TextureSampler* p_Sampler)
+void TextureSamplerImplBase::setTextureSampler(TextureSampler* p_Sampler)
 {
   m_Sampler = p_Sampler;
 }
 /*********************************************************************************/
-inline TextureSampler* TextureSamplerImplBase::getTextureSampler() const
+TextureSampler* TextureSamplerImplBase::getTextureSampler() const
 {
   return m_Sampler;
 }
 /*********************************************************************************/
 
 /*********************************************************************************/
-inline const ColorRGBA& TextureSampler::getBorderColor() const
+const ColorRGBA& TextureSampler::getBorderColor() const
 {
   return m_BorderColor;
 }
 /*********************************************************************************/
-inline Enum TextureSampler::getMinFilterMode() const
+Enum TextureSampler::getMinFilterMode() const
 {
   return m_MinFilterMode;
 }
 /*********************************************************************************/
-inline Enum TextureSampler::getMagFilterMode() const
+Enum TextureSampler::getMagFilterMode() const
 {
   return m_MagFilterMode;
 }
 /*********************************************************************************/
-inline Enum TextureSampler::getUWrappingMode() const
+Enum TextureSampler::getUWrappingMode() const
 {
   return m_UWrappingMode;
 }
 /*********************************************************************************/
-inline Enum TextureSampler::getVWrappingMode() const
+Enum TextureSampler::getVWrappingMode() const
 {
   return m_VWrappingMode;
 }
 /*********************************************************************************/
-inline Enum TextureSampler::getWWrappingMode() const
+Enum TextureSampler::getWWrappingMode() const
 {
   return m_WWrappingMode;
 }
 /*********************************************************************************/
-inline void TextureSampler::setMinFilterMode(Enum p_MinFilterMode)
+void TextureSampler::setMinFilterMode(Enum p_MinFilterMode)
 {
   m_MinFilterMode = p_MinFilterMode;
   p_Impl->setMinFilterMode(p_MinFilterMode);
 }
 /*********************************************************************************/
-inline void TextureSampler::setMagFilterMode(Enum p_MagFilterMode)
+void TextureSampler::setMagFilterMode(Enum p_MagFilterMode)
 {
   m_MagFilterMode = p_MagFilterMode;
   p_Impl->setMagFilterMode(p_MagFilterMode);
 }
 /*********************************************************************************/
-inline void TextureSampler::setUWrappingMode(Enum p_UWrappingMode)
+void TextureSampler::setUWrappingMode(Enum p_UWrappingMode)
 {
   m_UWrappingMode = p_UWrappingMode;
   p_Impl->setUWrappingMode(p_UWrappingMode);
 }
 /*********************************************************************************/
-inline void TextureSampler::setVWrappingMode(Enum p_VWrappingMode)
+void TextureSampler::setVWrappingMode(Enum p_VWrappingMode)
 {
   m_VWrappingMode = p_VWrappingMode;
   p_Impl->setVWrappingMode(p_VWrappingMode);
 }
 /*********************************************************************************/
-inline void TextureSampler::setWWrappingMode(Enum p_WWrappingMode)
+void TextureSampler::setWWrappingMode(Enum p_WWrappingMode)
 {
   m_WWrappingMode = p_WWrappingMode;
   p_Impl->setWWrappingMode(p_WWrappingMode);
 }
 /*********************************************************************************/
-inline void TextureSampler::setBorderColor(const ColorRGBA& p_BorderColor)
+void TextureSampler::setBorderColor(const ColorRGBA& p_BorderColor)
 {
   m_BorderColor = p_BorderColor;
 }

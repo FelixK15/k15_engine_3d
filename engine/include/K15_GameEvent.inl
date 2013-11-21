@@ -17,17 +17,17 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 /*********************************************************************************/
-inline const EventName& GameEvent::getName() const
+const EventName& GameEvent::getName() const
 {
 	return m_Name;
 }
 /*********************************************************************************/
-inline const uint32 GameEvent::getArgumentSize() const
+const uint32 GameEvent::getArgumentSize() const
 {
 	return m_ArgumentSize;
 }
 /*********************************************************************************/
-inline void* GameEvent::getArgument() const
+void* GameEvent::getArgument() const
 {
 	return m_Argument;
 }

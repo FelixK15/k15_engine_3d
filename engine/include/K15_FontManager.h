@@ -32,8 +32,8 @@
 #include "K15_PoolAllocator.h"
 #include "K15_Font.h"
 
-struct FT_Library;
-struct FT_Face;
+struct FT_LibraryRec_;
+struct FT_FaceRec_;
 
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API FontManager : public Singleton<FontManager>, public PoolAllocator<TrueTypeFont>

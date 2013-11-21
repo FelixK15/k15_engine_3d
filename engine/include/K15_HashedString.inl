@@ -17,14 +17,16 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+/*********************************************************************************/
 unsigned long HashedString::getIdentifier() const
 {
 	return m_Hash;
 }
-
+/*********************************************************************************/
 #ifndef K15_NO_STRINGS
 const char* HashedString::c_str() const
 {
 	return m_String;
 }
 #endif //K15_NO_STRINGS
+/*********************************************************************************/

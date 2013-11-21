@@ -38,7 +38,9 @@ namespace K15_Engine { namespace Rendering {
 	class Mesh;
 	class Camera;
 	class SubMesh;
+  class TextureSampler;
 	class GpuProgram;
+  struct TextureCreationOptions;
 }}// end of K15_Engine::Rendering namespace
 
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Rendering::RendererBase> RendererAllocatedObject;

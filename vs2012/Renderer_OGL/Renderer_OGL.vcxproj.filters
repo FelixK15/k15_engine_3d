@@ -53,7 +53,9 @@
     <ClCompile Include="..\..\rendererOGL\src\plugin.cpp">
       <Filter>Plugin\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\rendererOGL\src\K15_TextureSamplerImplOGL.cpp" />
+    <ClCompile Include="..\..\rendererOGL\src\K15_TextureSamplerImplOGL.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />

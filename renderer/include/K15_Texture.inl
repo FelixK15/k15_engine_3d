@@ -18,45 +18,37 @@
  */
 
 /*********************************************************************************/
-inline Enum Texture::getType() const
+Enum Texture::getType() const
 {
 	return m_Type;
 }
 /*********************************************************************************/
-inline Enum Texture::getUsage() const
+Enum Texture::getUsage() const
 {
 	return m_Usage;
 }
 /*********************************************************************************/
-inline uint8 Texture::getMipMapCount() const
+uint32 Texture::getMipmapLevels() const
 {
-	return m_MipMapCount;
+	return m_MipmapLevels;
 }
 /*********************************************************************************/
-inline uint32 Texture::getWidth() const
+uint32 Texture::getWidth() const
 {
 	return m_Width;
 }
 /*********************************************************************************/
-inline uint32 Texture::getHeight() const
+uint32 Texture::getHeight() const
 {
 	return m_Height;
 }
 /*********************************************************************************/
-inline Resolution Texture::getResolution() const
-{
-	Resolution resolution;
-	resolution.width = m_Width;
-	resolution.height = m_Height;
-	return resolution;
-}
-/*********************************************************************************/
-inline uint32 Texture::getDepth() const
+uint32 Texture::getDepth() const
 {
 	return m_Depth;
 }
 /*********************************************************************************/
-inline Enum Texture::getPixelFormat() const
+Enum Texture::getPixelFormat() const
 {
 	return m_PixelFormat;
 }

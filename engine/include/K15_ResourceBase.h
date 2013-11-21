@@ -50,7 +50,7 @@ namespace K15_Engine { namespace Core {
 
 		virtual void loadDebug(RawData& p_Data) = 0;
 
-		const TypeName& getResourceType() const;
+		inline const TypeName& getResourceType() const;
 
 		inline void setAssetName(const ResourceName& p_AssetName);
 		inline const ResourceName& getAssetName() const;

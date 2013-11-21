@@ -45,7 +45,7 @@ namespace K15_Engine { namespace Core {
 
 	private:
 		ResourceHandle<TrueTypeFont> m_Font;
-		ResourceHandle<Texture> m_Texture;
+		//ResourceHandle<Texture> m_Texture;
 		ObjectName m_FontName;
 		uint8 m_StartGlyph;
 		uint8 m_EndGlyph;

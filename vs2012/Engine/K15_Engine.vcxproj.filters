@@ -51,9 +51,6 @@
     <ClInclude Include="..\..\engine\include\K15_FrameStatistic.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Functor.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_GameTime.h">
       <Filter>Core\include</Filter>
     </ClInclude>
@@ -240,17 +237,27 @@
     <ClInclude Include="..\..\engine\include\K15_BlockAllocator.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_MemoryProfilingTask.h" />
-    <ClInclude Include="..\..\engine\include\K15_NetworkManager.h" />
-    <ClInclude Include="..\..\engine\include\K15_Font.h" />
-    <ClInclude Include="..\..\engine\include\K15_FontManager.h" />
     <ClInclude Include="..\..\engine\include\K15_MemoryProfiler.h">
       <Filter>Core\include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_PoolAllocator.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_TrueTypeFont.h" />
+    <ClInclude Include="..\..\engine\include\K15_Font.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_FontManager.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_MemoryProfilingTask.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_NetworkManager.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_TrueTypeFont.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -379,12 +386,24 @@
     <ClCompile Include="..\..\engine\src\K15_BlockAllocator.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_MemoryProfiler.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_MemoryProfilingTask.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_NetworkManager.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Font.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_TrueTypeFont.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_FontManager.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_Font.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_FontManager.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_MemoryProfiler.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_MemoryProfilingTask.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_NetworkManager.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_TrueTypeFont.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -400,9 +419,6 @@
     <None Include="..\..\engine\include\K15_Conversion.h">
       <Filter>Core\include</Filter>
     </None>
-    <None Include="..\..\engine\v\K15_Functor.inl">
-      <Filter>Core\include</Filter>
-    </None>
     <None Include="..\..\engine\include\K15_GameTime.inl">
       <Filter>Core\include</Filter>
     </None>
@@ -413,9 +429,6 @@
       <Filter>Core\include</Filter>
     </None>
     <None Include="..\..\engine\include\K15_TaskManager.inl">
-      <Filter>Core\include</Filter>
-    </None>
-    <None Include="..\..\engine\src\K15_ResourceHandle.inl">
       <Filter>Core\include</Filter>
     </None>
     <None Include="..\..\engine\include\K15_DynamicLibraryBase.inl">
@@ -487,8 +500,18 @@
     <None Include="..\..\engine\include\K15_Node.inl">
       <Filter>Core\include</Filter>
     </None>
-    <None Include="..\..\engine\include\K15_PoolAllocator.inl" />
-    <None Include="..\..\engine\include\K15_FontManager.inl" />
+    <None Include="..\..\engine\include\K15_ResourceHandle.inl">
+      <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_Functor.inl">
+      <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_FontManager.inl">
+      <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_PoolAllocator.inl">
+      <Filter>Core\include</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />

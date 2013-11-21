@@ -18,7 +18,7 @@
  */
 
 /*********************************************************************************/
-inline ProfilingNode* ProfilingManager::getRootNode()
+ProfilingNode* ProfilingManager::getRootNode()
 {
 	return m_Root;
 }

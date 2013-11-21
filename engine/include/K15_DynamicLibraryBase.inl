@@ -17,6 +17,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+/*********************************************************************************/
 template<class ReturnType>
 Functor0<ReturnType> DynamicLibraryBase::getSymbol(const String& p_SymbolName)
 {
@@ -43,3 +44,4 @@ Functor0<ReturnType> DynamicLibraryBase::getSymbol(const String& p_SymbolName)
 
 	return Functor0<ReturnType>();
 }
+/*********************************************************************************/

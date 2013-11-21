@@ -203,7 +203,10 @@ namespace K15_Engine { namespace Rendering {
 		if(m_Impl->allocate(p_Size))
 		{
 			m_Size = p_Size;
-		}
+		  return true;
+    }
+
+    return false;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace

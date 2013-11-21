@@ -32,7 +32,7 @@ namespace K15_Engine { namespace Core {
   typedef unsigned int ResourceID;
   /*********************************************************************************/
 	template<class ResourceType>
-	class K15_CORE_API ResourceHandle
+	class ResourceHandle
 	{
 	public:
 		ResourceHandle();

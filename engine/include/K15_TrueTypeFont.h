@@ -28,6 +28,7 @@
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
+#include "K15_FontManager.h"
 #include "K15_ResourceBase.h"
 
 struct FT_Face;

@@ -192,7 +192,7 @@ namespace K15_Engine
 #	define HashMap(K,V)		K15_Engine::Container::HashMap<K,V>
 #	define List(T)			K15_Engine::Container::List<T>
 #	define Stack(T)			K15_Engine::Container::Stack<T>
-#	define Set(T)			K15_Engine::Container::Set<T>
+//#	define Set(T)			K15_Engine::Container::Set<T>
 #	define FixedArray(T,C)  K15_Engine::Container::FixedArray<T,C>
 #else
 #	include <list>
@@ -206,7 +206,7 @@ namespace K15_Engine
 #	define HashMap(K,V)		std::map<K,V>
 #	define List(T)			std::list<T>
 #	define Stack(T)			std::stack<T>
-#	define Set(T)			std::set<T>
+//#	define Set(T)			std::set<T>
 #	define Pair(K,V)		std::pair<K,V>
 #	define FixedArray(T,C)	std::array<T,C>
 	
@@ -256,6 +256,7 @@ namespace K15_Engine
 #endif //K15_OS_WINDOWS
   
 #if defined K15_OS_WINDOWS
+# define NOMINMAX
 #	define WIN32_LEAN_AND_MEAN
 #endif //K15_OS_WINDOWS
 
@@ -301,26 +302,30 @@ namespace K15_Engine
 
 # define K15_PLACEMENT_NEW new(ptr)
 
+#if defined K15_DEBUG
 #define K15_ASSERT(condition,message)	\
-	if(!(condition)){ \
-		String debugMessage__ = "\""; \
-		debugMessage__ += message; \
-		debugMessage__ += "\"\n\n"; \
-		debugMessage__ += "The expression \""; \
-		debugMessage__ += #condition; \
-		debugMessage__ += "\" failed.\n"; \
-		debugMessage__ += "\"abort\" will terminate the application, \"retry\" will break the application for debugging and"; \
-		debugMessage__ += "\"ignore\" will ignore the failed condition and continue processing the application."; \
-		int returnValue__ = K15_DEBUG_MESSAGEBOX(debugMessage__.c_str(),"Assertion"); \
-		if(returnValue__ == K15_ID_ABORT){ \
-			K15_TERMINATE_APPLICATION(); \
-		}else if(returnValue__ == K15_ID_RETRY){ \
-			K15_BREAK_APPLICATION(); \
-		} \
-	} \
+	  if(!(condition)){ \
+      __analysis_assume(condition); \
+		  String debugMessage__ = message; \
+		  debugMessage__ += "\n\n"; \
+		  debugMessage__ += "The expression \""; \
+		  debugMessage__ += #condition; \
+		  debugMessage__ += "\" failed.\n"; \
+		  debugMessage__ += "\"abort\" will terminate the application, \"retry\" will break the application for debugging and"; \
+		  debugMessage__ += "\"ignore\" will ignore the failed condition and continue processing the application (application may be in an unstable state)."; \
+		  int returnValue__ = K15_DEBUG_MESSAGEBOX(debugMessage__.c_str(),"Assertion"); \
+		  if(returnValue__ == K15_ID_ABORT){ \
+			  K15_TERMINATE_APPLICATION(); \
+		  }else if(returnValue__ == K15_ID_RETRY){ \
+			  K15_BREAK_APPLICATION(); \
+		  } \
+	  } 
 
+#else
+#define K15_ASSERT(condition,message0)
+#endif //K15_DEBUG
 
-typedef Set(String) StringSet;
+typedef std::set<String> StringSet;
 
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::FontManager> FontManagerAllocatedObject;
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::InputManager> InputManagerAllocatedObject;
