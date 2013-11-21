@@ -33,6 +33,7 @@ namespace K15_Engine { namespace Math {
 		/*********************************************************************************/
 		static const Vector2 Up;
 		static const Vector2 Right;
+		static const Vector2 Zero;
 		/*********************************************************************************/
 	public:
 		Vector2();
