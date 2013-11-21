@@ -84,12 +84,14 @@
     <ClInclude Include="..\..\rendererOGL\include\K15_RendererOGL.h" />
     <ClInclude Include="..\..\rendererOGL\include\K15_RendererOGLPrerequisites.h" />
     <ClInclude Include="..\..\rendererOGL\include\K15_TextureImplOGL.h" />
+    <ClInclude Include="..\..\rendererOGL\include\K15_TextureSamplerImplOGL.h" />
     <ClInclude Include="..\..\rendererOGL\include\plugin.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\rendererOGL\src\K15_GpuBufferImplOGL.cpp" />
     <ClCompile Include="..\..\rendererOGL\src\K15_RendererOGL.cpp" />
     <ClCompile Include="..\..\rendererOGL\src\K15_TextureImplOGL.cpp" />
+    <ClCompile Include="..\..\rendererOGL\src\K15_TextureSamplerImplOGL.cpp" />
     <ClCompile Include="..\..\rendererOGL\src\plugin.cpp" />
   </ItemGroup>
   <ItemGroup>

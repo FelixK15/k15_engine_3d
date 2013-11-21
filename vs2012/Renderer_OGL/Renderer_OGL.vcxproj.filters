@@ -36,6 +36,9 @@
     <ClInclude Include="..\..\rendererOGL\include\plugin.h">
       <Filter>Plugin\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\rendererOGL\include\K15_TextureSamplerImplOGL.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\rendererOGL\src\K15_TextureImplOGL.cpp">
@@ -50,6 +53,7 @@
     <ClCompile Include="..\..\rendererOGL\src\plugin.cpp">
       <Filter>Plugin\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\K15_TextureSamplerImplOGL.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
