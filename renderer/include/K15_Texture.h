@@ -56,9 +56,9 @@ namespace K15_Engine { namespace Rendering {
 		TextureImplBase();
 		virtual ~TextureImplBase();
 
-		virtual uint32 writeData(uint32 p_Size,byte* p_Source,uint32 p_Offset) = 0;
-		virtual uint32 readData(uint32 p_Size,byte* p_Destination,uint32 p_Offset) = 0;
-		virtual bool resize(uint32 p_Width,uint32 p_Height,uint32 p_Depth,byte* p_PixelData,uint32 p_PixelDataSize) = 0;
+		virtual uint32 write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) = 0;
+		virtual uint32 read(const Math::Vector3& p_Offset, const Math::Vector3& p_Dimension, byte** p_Destination) = 0;
+		virtual bool resize(const Math::Vector3& p_Dimension) = 0;
 
 		void setTexture(Texture* p_Texture);
 		Texture* getTexture() const;
@@ -108,11 +108,10 @@ namespace K15_Engine { namespace Rendering {
 		void setWidth(uint32 p_Width);
 		inline uint32 getWidth() const;
 
-		void setResolution(const Resolution& p_Resolution);
-		inline Resolution getResolution() const;
-
 		void setDepth(uint32 p_Depth);
 		inline uint32 getDepth() const;
+
+		inline const Math::Vector3& getDimension() const;
 
 		void setPixelFormat(Enum p_PixelFormat);
 		inline Enum getPixelFormat() const;
@@ -120,8 +119,13 @@ namespace K15_Engine { namespace Rendering {
 		uint32 getSize() const;
 		uint32 getMipMapSize(uint8 p_Index) const;
 
-		uint32 writeData(uint32 p_Size,byte* p_Data,uint32 p_Offset = 0);
-		uint32 readData(uint32 p_Size,byte* p_Destination,uint32 p_Offset = 0);
+		uint32 write(byte* p_Pixels, uint32 p_Width, int32 p_OffsetX = 0, uint8 p_MipMapLevel = 0);
+		uint32 write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, int32 p_OffsetX = 0, int32 p_OffsetY = 0, uint8 p_MipMapLevel = 0);
+		uint32 write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX = 0, int32 p_OffsetY = 0, int32 p_OffsetZ = 0, uint8 p_MipMapLevel = 0);
+
+		uint32 read(byte** p_Destination, uint32 p_Width, int32 p_OffsetX = 0);
+		uint32 read(byte** p_Destination, uint32 p_Width, uint32 p_Height, int32 p_OffsetX = 0, int32 p_OffsetY = 0);
+		uint32 read(byte** p_Destination, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX = 0, int32 p_OffsetY = 0, int32 p_OffsetZ = 0);
 
 		bool resize(uint32 p_Width,uint32 p_Height,uint32 p_Depth = 0,byte* p_PixelData = 0,uint32 p_PixelDataSize = 0);
 		

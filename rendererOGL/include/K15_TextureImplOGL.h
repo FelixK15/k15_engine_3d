@@ -37,13 +37,12 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		static const GLuint GLTextureUsageConverter[Texture::TU_COUNT];
 		static const GLuint GLInternalFormatConverter[RendererBase::PF_COUNT];
 		static const GLenum GLPixelDataTypeConverter[RendererBase::PF_COUNT];
-		static const GLenum GLTextureWrapModeConverter[Texture::TWM_COUNT];
 		/*********************************************************************************/
 	public:
 		TextureImplOGL();
 		~TextureImplOGL();
 
-		virtual uint32 writeData(uint32 p_Size,byte* p_Source,uint32 p_Offset) OVERRIDE;
+		virtual uint32 write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) OVERRIDE;
 		virtual uint32 readData(uint32 p_Size,byte* p_Destination,uint32 p_Offset) OVERRIDE{return 0;}
 
 		void createStorage();

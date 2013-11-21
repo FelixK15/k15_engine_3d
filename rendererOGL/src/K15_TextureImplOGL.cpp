@@ -81,14 +81,6 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	const GLenum TextureImplOGL::GLTextureWrapModeConverter[Texture::TWM_COUNT] = {
-		GL_CLAMP,					//TWM_CLAMP
-		GL_MIRROR_CLAMP_TO_EDGE,	//TWM_MIRROR
-		GL_REPEAT					//TWM_REPEAT
-	};//GLTextureWrapModeConverter
-	/*********************************************************************************/
-
-	/*********************************************************************************/
 	TextureImplOGL::TextureImplOGL()
 		: m_TextureHandle(0),
 		  m_TextureStorageSize(0)
@@ -112,7 +104,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		height = m_Texture->getHeight();
 		depth = m_Texture->getDepth();
 
-		uint32 newSize = m_Texture->getTextureSize();
+		uint32 newSize = m_Texture->getSize();
 		if(newSize != m_TextureStorageSize)
 		{
 			_LogWarning("Texture size changed from %u to %u. Recreating texture storage.",m_TextureStorageSize,newSize);

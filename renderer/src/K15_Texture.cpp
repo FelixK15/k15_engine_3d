@@ -282,21 +282,65 @@ namespace K15_Engine { namespace Rendering {
 		return i;
 	}
 	/*********************************************************************************/
-	uint32 Texture::writeData(uint32 p_Size,byte* p_Data,uint32 p_Offset)
+	uint32 Texture::write(byte* p_Pixels, uint32 p_Width, int32 p_OffsetX, uint8 p_MipMapLevel)
 	{
-		if(p_Size > getSize())
+		if(p_MipMapLevel > m_MipMapCount)
 		{
-			_LogError("Can't write to texture %s. Texture size is %uKB but you try to write %uKB.",m_AssetName.c_str(),getSize() / 1024,p_Size / 1024);
+			_LogWarning("Trying to write to mipmap level %u from texture %s. Max mipmap level is %u. Clamping value.",p_MipMapLevel,m_AssetName.c_str(),m_MipMapCount);
+			p_MipMapLevel = m_MipMapCount;
+		}
+
+		if(p_Width + p_OffsetX > m_Width)
+		{
+			_LogWarning("Trying to write %u pixels to texture %s (starting from pixel %i) - This would write out of bounds.\n Clamping width to %u.",
+				         p_Width + p_OffsetX,m_AssetName.c_str(),p_OffsetX,m_Width - p_OffsetX);
+
+			p_Width = m_Width - p_OffsetX;
+		}
+	
+		return m_Impl->write(p_Pixels,p_Width,0,0,p_OffsetX,0,0);		
+	}
+	/*********************************************************************************/
+	uint32 Texture::write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, int32 p_OffsetX, int32 p_OffsetY, uint8 p_MipMapLevel)
+	{
+		if(m_Type == TT_1D)
+		{
+			_LogError("Trying to write 2 dimensional pixel data to 1D texture %s.",m_AssetName.c_str());
 			return 0;
 		}
 
-		if(m_Usage == TU_IMMUTABLE)
+		if(p_Width + p_OffsetX > m_Width || p_Height + p_OffsetY > m_Height)
 		{
-			_LogError("Can't write to texture %s. Texture is immutable.",m_AssetName.c_str());
+			_LogWarning("Trying to write %ux%u pixels to texture %s (starting from pixel %ix%i) - This would write out of bounds.\n Clamping width to %ux%u.",
+				p_Width + p_OffsetX,p_Height + p_OffsetY,m_AssetName.c_str(),p_OffsetX,p_OffsetY,m_Width - p_OffsetX,m_Height - p_OffsetY);
+
+			p_Width = m_Width - p_OffsetX;
+			p_Height = m_Height - p_OffsetY;
+		}
+
+		return m_Impl->write(p_Pixels,p_Width,p_Height,0,p_OffsetX,p_OffsetY,0);		
+	}
+	/*********************************************************************************/
+	uint32 Texture::write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ, uint8 p_MipMapLevel)
+	{
+		if(m_Type == TT_1D || m_Type == TT_2D)
+		{
+			_LogError("Trying to write 3 dimensional pixel data to %iD texture %s.",m_Type == TT_1D ? 1 : 2,m_AssetName.c_str());
 			return 0;
 		}
-	
-		return m_Impl->writeData(p_Size,p_Data,p_Offset);		
+
+		if(p_Width + p_OffsetX > m_Width || p_Height + p_OffsetY > m_Height || p_Depth + p_OffsetZ > m_Depth)
+		{
+			_LogWarning("Trying to write %ux%ux%u pixels to texture %s (starting from pixel %ix%ix%i) - This would write out of bounds.\n Clamping width to %ux%ux%u.",
+				p_Width + p_OffsetX,p_Height + p_OffsetY,p_Depth + p_OffsetZ,m_AssetName.c_str(),
+				p_OffsetX,p_OffsetY,p_OffsetZ,m_Width - p_OffsetX,m_Height - p_OffsetY,m_Depth - p_OffsetZ);
+
+			p_Width = m_Width - p_OffsetX;
+			p_Height = m_Height - p_OffsetY;
+			p_Depth = m_Depth - p_Depth;
+		}
+
+		return m_Impl->write(p_Pixels,p_Width,p_Height,p_Depth,p_OffsetX,p_OffsetY,p_OffsetZ);		
 	}
 	/*********************************************************************************/
 	uint32 Texture::readData(uint32 p_Size,byte* p_Destination,uint32 p_Offset)
