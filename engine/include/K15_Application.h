@@ -51,6 +51,7 @@ namespace K15_Engine { namespace Core {
 	  static const String SettingsFileName;
 	  static const String PluginFileName;
 	  static const String GameDirFileName;
+	  static const String InputFileName;
 	  static const uint32 FrameStatisticCount = 1024;
 	  static const uint32 FrameAllocatorSize = MEGABYTE;
 	  /*********************************************************************************/
@@ -117,9 +118,9 @@ namespace K15_Engine { namespace Core {
   private:
     void createCommandList(int p_CommandCount,char** p_Commands);
     void createApplicationParameterList();
-    void addSingleApplicationParameter(const String& p_Parameter,const String& p_Group);
     void loadSettingsFile();
     void loadPluginsFile();
+	void loadInputFile();
     void initializePlugins(const StringSet& p_PluginNames);
 	void loadGameDirFile();
 	void processSettings();

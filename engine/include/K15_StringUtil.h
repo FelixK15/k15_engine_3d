@@ -32,6 +32,10 @@ namespace K15_Engine { namespace Core {
 	class K15_CORE_API StringUtil
 	{
 	public:
+		/*********************************************************************************/
+		static const String EMPTY;
+		/*********************************************************************************/
+	public:
 		
 		/**
 		 * Formats a string using printf syntax
@@ -88,6 +92,8 @@ namespace K15_Engine { namespace Core {
 		* @return String - float value as string
 		*/
 		static String toString(float p_Value, int p_Precision = 2);
+
+		static String removeWhitespaces(const String& p_String);
 
 		/**
 		* Create an integer variable out of a string

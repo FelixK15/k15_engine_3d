@@ -23,6 +23,10 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
+	const String StringUtil::EMPTY = "";
+	/*********************************************************************************/
+
+	/*********************************************************************************/
 	String StringUtil::format(char* p_Message,...)
 	{
 		va_list list;
@@ -175,6 +179,14 @@ namespace K15_Engine { namespace Core {
 	bool StringUtil::toBool(const String& p_String)
 	{
 		return p_String.find_first_of("true") != String::npos || p_String.find_first_of("1") != String::npos;
+	}
+	/*********************************************************************************/
+	String StringUtil::removeWhitespaces(const String& p_String)
+	{
+		static String string;
+		string = p_String;
+		string.erase(std::remove_if(string.begin(),string.end(),isspace));
+		return string;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace
