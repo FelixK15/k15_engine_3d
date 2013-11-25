@@ -26,9 +26,9 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	HashedString::HashedString()
 		: m_Hash(0),
-		  m_String(0)
+		  m_String()
 	{
-
+		*this = BLANK;
 	}
 	/*********************************************************************************/
 	HashedString::HashedString(const char *pString)
@@ -40,14 +40,14 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	HashedString::HashedString(const HashedString& hsOther)
 		: m_Hash(hsOther.getIdentifier()),
-		  m_String(hsOther.c_str())
+		  m_String(hsOther.m_String)
 	{
 
 	}
 	/*********************************************************************************/
 	HashedString::HashedString(const String& p_String)
 		: m_Hash(createHash(p_String.c_str(),p_String.size())),
-		  m_String(p_String.c_str())
+		  m_String(p_String)
 	{
 
 	}
@@ -64,7 +64,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	const char* HashedString::c_str() const
 	{
-		return m_String;
+		return m_String.c_str();
 	}
 	/*********************************************************************************/
 	bool HashedString::operator< (HashedString const & otherString) const

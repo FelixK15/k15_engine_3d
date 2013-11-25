@@ -45,7 +45,7 @@ namespace K15_Engine { namespace Core {
 		 * to an EventListener list. If there hasn't been any listeners for this
 		 * EventType, just add a new entry to the map.	
 		 */
-		List(EventListener*) *list = 0;
+		EventListenerList* list = 0;
 
 		EventTypeListenerMap::iterator iter = m_Listener.find(p_EventName);
 		if(iter == m_Listener.end())

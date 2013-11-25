@@ -56,7 +56,7 @@ namespace K15_Engine { namespace Core {
 	private:
 		unsigned long m_Hash;
 #		ifndef K15_NO_STRINGS
-			const char* m_String;
+			String m_String;
 #		endif
 	};//end of HashedString class
 }}//end of K15_Engine::Core namespace

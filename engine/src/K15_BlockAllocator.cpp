@@ -25,8 +25,9 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	BlockAllocator::BlockAllocator(uint32 p_Size,const ObjectName& p_Name)
 		: BaseAllocator(p_Size,p_Name),
-		  m_First((MemoryBlock*)::malloc(sizeof(MemoryBlock)))
+		  m_First(0)
 	{
+		m_First = new MemoryBlock;
 		m_First->Memory = m_Memory;
 		m_First->Size = m_MemorySize;
 		m_First->Used = false;
@@ -36,8 +37,9 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	BlockAllocator::BlockAllocator(BaseAllocator* p_Allocator,uint32 p_Size,const ObjectName& p_Name)
 		: BaseAllocator(p_Allocator,p_Size,p_Name),
-		  m_First((MemoryBlock*)::malloc(sizeof(MemoryBlock)))
+		  m_First(0)
 	{
+		m_First = new MemoryBlock;
 		m_First->Memory = m_Memory;
 		m_First->Size = m_MemorySize;
 		m_First->Used = false;
@@ -48,7 +50,7 @@ namespace K15_Engine { namespace Core {
 	BlockAllocator::~BlockAllocator()
 	{
 		clear();
-		::free(m_First);
+		delete m_First;
 	}
 	/*********************************************************************************/
 	void BlockAllocator::clear()
@@ -128,7 +130,7 @@ namespace K15_Engine { namespace Core {
 				currentBlock->Size += currentBlock->Next->Size;
 				currentBlock->Next = currentBlock->Next->Next;
 				
-				::free(currentBlock->Next);
+				delete currentBlock->Next;
 			}
 
 			currentBlock = currentBlock->Next;
@@ -143,7 +145,7 @@ namespace K15_Engine { namespace Core {
 		}
 		else if((ptrdiff_t)(p_Successor->Memory + p_Successor->Size) != (ptrdiff_t)m_MemoryEndAddress)
 		{
-			MemoryBlock* newblock = (MemoryBlock*)::malloc(sizeof(MemoryBlock));
+			MemoryBlock* newblock = new MemoryBlock;
 			newblock->Used = false;
 			newblock->Memory = p_Successor->Memory + p_Successor->Size;
 			newblock->Size = m_MemorySize - (m_UsedMemory + p_Successor->Size);
