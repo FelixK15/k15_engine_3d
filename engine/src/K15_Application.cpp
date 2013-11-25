@@ -27,10 +27,15 @@
 #include "K15_StringUtil.h"
 #include "K15_Functor.h"
 #include "K15_RenderTask.h"
+#include "K15_IniFileParser.h"
+#include "K15_Texture.h"
 #include "K15_PhysicsTask.h"
 #include "K15_EventTask.h"
 #include "K15_ApplicationModule.h"
 #include "K15_ApplicationModuleDescription.h"
+
+#include "K15_Mouse.h"
+#include "K15_Keyboard.h"
 
 #ifdef K15_DEBUG
 #	include "K15_TextConsoleLog.h"
@@ -46,6 +51,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	const String Application::SettingsFileName = "settings.ini";
 	const String Application::PluginFileName = "plugins.ini";
+	const String Application::InputFileName = "input.ini";
 	const String Application::GameDirFileName = "gamedir.ini";
 	/*********************************************************************************/
 	Application::Application()
@@ -108,8 +114,12 @@ namespace K15_Engine { namespace Core {
 	{
 		for(StringSet::const_iterator iter = m_Commands.begin();iter != m_Commands.end();++iter)
 		{
-			const String& command = *iter;
-			addSingleApplicationParameter(command,"Application Parameter");
+			const String& command = StringUtil::removeWhitespaces(*iter);
+			ApplicationParameter param;
+			param.Group = "";
+			param.Name = command.substr(0,command.find_first_of('='));
+			param.Value = command.substr(command.find_first_of('=') + 1);
+			m_ApplicationParameter.push_back(param);
 		}
 	}
 	/*********************************************************************************/
@@ -117,63 +127,30 @@ namespace K15_Engine { namespace Core {
 	{
 		static String settingsFileName;
 		settingsFileName = m_GameRootDir + SettingsFileName;
+		_LogNormal("Trying to open settings file %s",SettingsFileName.c_str());
 
-		FileStream settingsFile(SettingsFileName);
+		IniFileParser settingsFile(settingsFileName);
 		
-		if(settingsFile.is_open())
+		if(settingsFile.isValid())
 		{
-			static const uint32 lineLength = 256;
-			String line; line.reserve(lineLength);
-			String group;
-
-			char* buffer = (char*)_malloca(lineLength);
-			while(!settingsFile.eof())
+			_LogSuccess("Successfully opened settings file!");
+			IniFileGroup group;
+			if(settingsFile.getGroupEntries("",&group))
 			{
-				settingsFile.getline(buffer,lineLength);
-				line = buffer;
-				//if this line is comment, just skip it.
-				if(line.find_first_of("\\\\") != String::npos)
+				for(IniFileGroup::IniEntryList::iterator iter = group.entries.begin();iter != group.entries.end();++iter)
 				{
-					continue;
-				}
-				else if(line.find_first_of('[') != String::npos)
-				{
-					group = line.substr(1,line.size() - 2);
-				}
-				else if(line.find_first_of('=') != String::npos)
-				{
-					addSingleApplicationParameter(line,group);
-				}
-				else
-				{
-					_LogWarning("(%s) Line \"%s\" cant get processed.",settingsFileName.c_str(),line.c_str());
-				}
+					ApplicationParameter param;
+					param.Name = iter->key;
+					param.Value = iter->value;
+					param.Group = group.name;
 
-				memset(buffer,0,lineLength);
-			}
-			
+					m_ApplicationParameter.push_back(param);
+				}
+			}	
 		}
-
-		settingsFile.close();
-	}
-	/*********************************************************************************/
-	void Application::addSingleApplicationParameter(const String& p_Parameter,const String& p_Group)
-	{
-		static String key;
-		static String value;
-		int32 pos = String::npos;
-
-		if((pos = p_Parameter.find_first_of('=')) != String::npos)
+		else
 		{
-			key = p_Parameter.substr(0,pos);
-			value = p_Parameter.substr(pos+1);
-
-			ApplicationParameter param;
-			param.Name = key;
-			param.Value = value;
-			param.Group = p_Group;
-
-			m_ApplicationParameter.push_back(param);
+			_LogError("Could not open settings file. Error:%s",settingsFile.getError().c_str());
 		}
 	}
 	/*********************************************************************************/
@@ -231,6 +208,9 @@ namespace K15_Engine { namespace Core {
 		//process settings
 		processSettings();
 
+		//load input file
+		loadInputFile();
+
 		_LogNormal("Tasks will get created and added to the task manager.");
 		_LogNormal("Adding event task...");
 		m_TaskManager->addTask(m_EventTask);
@@ -241,18 +221,30 @@ namespace K15_Engine { namespace Core {
 		_LogNormal("Adding physics task...");
 		m_TaskManager->addTask(m_PhysicsTask);
 
-    if(!m_RenderTask->getRenderer())
-    {
-      _LogError("No renderer defined!");
-    }
-    else
-    {
-      m_RenderTask->getRenderer()->setRenderWindow(m_RenderWindow);
-      if(!m_RenderTask->getRenderer()->initialize())
-      {
-        _LogError("Could not initialize renderer.");
-      }
-    }
+		if(!m_RenderTask->getRenderer())
+		{
+			_LogError("No renderer defined!");
+		}
+		else
+		{
+			m_RenderTask->getRenderer()->setRenderWindow(m_RenderWindow);
+			if(!m_RenderTask->getRenderer()->initialize())
+			{
+				_LogError("Could not initialize renderer.");
+			}
+
+			Texture tex;
+			TextureCreationOptions op;
+			ZeroMemory(&op,sizeof(op));
+
+			op.useShadowCopy = true;
+			op.createMipMaps = true;
+			op.width = 512;
+			op.height = 512;
+			op.pixelFormat = RendererBase::PF_RGB_8_I;
+
+			tex.create(op);
+		}
 	}
 	/*********************************************************************************/
 	void Application::setWindowTitle(const String& p_WindowTitle) 
@@ -269,6 +261,7 @@ namespace K15_Engine { namespace Core {
 		}
 
 		m_Running = true;
+		
 		while(m_Running)
 		{
 			tick();
@@ -368,6 +361,81 @@ namespace K15_Engine { namespace Core {
 		}
 	}
 	/*********************************************************************************/
+	void Application::loadInputFile()
+	{
+		_LogNormal("Trying to open input file \"%s\".",InputFileName.c_str());
+
+		static ObjectName actionName;
+		static String bindingComplete;
+		static String binding;
+		static String device;
+		static String deviceInput;
+		static String inputFileName;
+		inputFileName = m_GameRootDir + InputFileName;
+
+		IniFileParser inputFile(inputFileName);
+
+		if(inputFile.isValid())
+		{
+			IniFileGroup group;
+			if(inputFile.getGroupEntries("",&group))
+			{
+				for(IniFileGroup::IniEntryList::iterator iter = group.entries.begin();iter != group.entries.end();++iter)
+				{
+					actionName = (*iter).key;
+					bindingComplete = (*iter).value;
+					String::size_type pos = 0;
+					do 
+					{
+						pos = bindingComplete.find_first_of(',');
+						binding = bindingComplete.substr(0,pos == String::npos ? bindingComplete.size() : pos);
+						if(pos != String::npos)
+						{
+							bindingComplete = bindingComplete.substr(0,pos+1);
+						}
+						
+						if(!binding.empty())
+						{
+							pos = binding.find_first_of('.');
+							if(pos != String::npos)
+							{
+								device = binding.substr(0,pos);
+								deviceInput = binding.substr(pos+1);
+								
+								if(device == "Keyboard")
+								{
+									g_InputManager->addInputBinding(actionName,
+										K15_NEW InputDevices::Keyboard::InputTrigger(InputDevices::Keyboard::InputStringToEnum[_N(deviceInput)]));
+								}
+								else if(device == "Gamepad")
+								{
+
+								}
+								else if(device == "Mouse")
+								{
+									g_InputManager->addInputBinding(actionName,
+										K15_NEW InputDevices::Mouse::InputTrigger(InputDevices::Mouse::InputStringToEnum[_N(deviceInput)]));
+								}
+								else
+								{
+									_LogError("Invalid input device \"%s\"",device.c_str());
+								}
+							}
+							else
+							{
+								_LogError("invalid binding \"%s\"",bindingComplete.c_str());
+							}
+						}
+					} while(bindingComplete.find_first_of(',') != String::npos);
+				}
+			}
+		}
+		else
+		{
+			_LogError("Could not open input file.");
+		}
+	}
+	/*********************************************************************************/
 	void Application::loadPluginsFile()
 	{
 		_LogNormal("Trying to open plugin file \"%s\".",PluginFileName.c_str());
@@ -376,43 +444,26 @@ namespace K15_Engine { namespace Core {
 		pluginsFileName = m_GameRootDir + PluginFileName;
 
 		StringSet pluginsToLoad;
+		IniFileParser pluginFile(pluginsFileName);
 
-		FileStream pluginsFile(pluginsFileName);
-
-		if(pluginsFile.is_open())
+		if(pluginFile.isValid())
 		{
 			_LogSuccess("Opened plugin file \"%s\".",PluginFileName.c_str());
 
-			static const uint32 lineLength = 256;
-			char* buffer = (char*)_malloca(lineLength);
-			String line; line.reserve(lineLength);
-			String pluginName; uint32 pos = 0;
-			while(!pluginsFile.eof())
+			IniFileGroup group;
+			if(pluginFile.getGroupEntries("",&group))
 			{
-				pluginsFile.getline(buffer,lineLength);
-				line = buffer;
+				for(IniFileGroup::IniEntryList::iterator iter = group.entries.begin();iter != group.entries.end();++iter)
+				{
+					pluginsToLoad.insert(iter->value);
+				}
 
-				//if this line is comment, just skip it.
-				if(line.find_first_of("\\\\") != String::npos)
-				{
-					continue;
-				}
-				else if((pos = line.find_first_of('=')) != String::npos)
-				{
-					pluginName = line.substr(pos+1) + '.' + m_OSLayer.PluginExtension;
-					pluginsToLoad.insert(pluginName);
-				}
-				else
-				{
-					_LogWarning("(%s) Line \"%s\" cant get processed.",pluginsFileName.c_str(),line.c_str());
-				}
+				initializePlugins(pluginsToLoad);
 			}
-			pluginsFile.close();
-			initializePlugins(pluginsToLoad);
 		}
 		else
 		{
-			_LogError("Could not open plugin file \"%s\".",PluginFileName.c_str());
+			_LogError("Could not open plugin file \"%s\". Error:%s",pluginsFileName.c_str(),pluginFile.getError().c_str());
 		}
 	}
 	/*********************************************************************************/
@@ -543,6 +594,22 @@ namespace K15_Engine { namespace Core {
 				r.width = width;
 				r.height = height;
 				m_RenderWindow->setResolution(r);
+			}
+
+			if(currentParam.Name == "Renderer")
+			{
+				String rendererLibrary = StringUtil::format("%s.%s",currentParam.Value.c_str(),m_OSLayer.PluginExtension.c_str());
+				DynamicLibraryBase* rendererLib = g_DynamicLibraryManager->load(rendererLibrary);
+
+				if(rendererLib)
+				{
+					Functor0<void> pluginLoad = rendererLib->getSymbol<void>("pluginLoad");
+
+					if(pluginLoad.isValid())
+					{
+						pluginLoad();
+					}
+				}
 			}
 		}
 	}

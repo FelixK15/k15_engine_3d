@@ -42,7 +42,7 @@
     <OutDir>..\..\rendererOGL\bin\$(Platform)_$(Configuration)\</OutDir>
     <IntDir>..\..\rendererOGL\obj\</IntDir>
     <IncludePath>..\..\rendererOGL\include\;..\..\engine\include\;..\..\renderer\include\;..\..\dependencies\GLEW\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\engine\bin\$(Platform)_$(Configuration)\;..\..\renderer\bin\$(Platform)_$(Configuration)\;..\..\dependencies\GLEW\bin\$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\engine\bin\$(Platform)_$(Configuration)\;..\..\dependencies\GLEW\bin\$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>..\..\rendererOGL\bin\$(Configuration)\</OutDir>
@@ -55,11 +55,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>K15_OGL_RENDERER_BUILD;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>K15_Engine.lib;K15_Renderer.lib;OpenGL32.lib;GLEW.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>K15_Engine.lib;OpenGL32.lib;GLEW.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>module.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>

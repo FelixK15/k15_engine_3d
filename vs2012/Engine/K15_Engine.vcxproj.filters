@@ -31,6 +31,15 @@
     <Filter Include="Components\src">
       <UniqueIdentifier>{5e5c8d63-7902-4d58-8ac1-467015ed6222}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{dbb0a615-f811-4db2-8b5f-13e4190d9c65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering\include">
+      <UniqueIdentifier>{ed64dc30-306c-4ac3-9e78-0f55b1cffe2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering\src">
+      <UniqueIdentifier>{bf393d50-6783-456e-ad0a-4641078d4c6d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\engine\include\K15_Application.h">
@@ -258,6 +267,27 @@
     <ClInclude Include="..\..\engine\include\K15_TrueTypeFont.h">
       <Filter>Core\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ColorRGBA.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_GpuBuffer.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_GpuProgram.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_RendererBase.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Texture.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_TextureSampler.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_IniFileParser.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -356,9 +386,6 @@
     <ClCompile Include="..\..\engine\src\K15_RenderTask.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\renderer\src\K15_RenderProcessBase.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_GameObjectComponentBase.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
@@ -402,6 +429,27 @@
       <Filter>Core\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_TrueTypeFont.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ColorRGBA.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_GpuBuffer.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_RendererBase.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_Texture.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_TextureSampler.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_RenderProcessBase.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_IniFileParser.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -510,6 +558,24 @@
       <Filter>Core\include</Filter>
     </None>
     <None Include="..\..\engine\include\K15_PoolAllocator.inl">
+      <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_ColorRGBA.inl">
+      <Filter>Rendering\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_GpuBuffer.inl">
+      <Filter>Rendering\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_RendererBase.inl">
+      <Filter>Rendering\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_Texture.inl">
+      <Filter>Rendering\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_TextureSampler.inl">
+      <Filter>Rendering\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_IniFileParser.inl">
       <Filter>Core\include</Filter>
     </None>
   </ItemGroup>

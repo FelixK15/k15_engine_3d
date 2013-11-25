@@ -20,6 +20,8 @@
 #include "K15_PrecompiledHeader.h"
 
 #include "K15_InputManager.h"
+#include "K15_Mouse.h"
+#include "K15_Keyboard.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
@@ -27,7 +29,8 @@ namespace K15_Engine { namespace Core {
 		: BlockAllocator(ApplicationAllocator,2 * MEGABYTE,_N(InputManagerAllocator)),
 		  m_InputMap()
 	{
-
+		InputDevices::Mouse::initialize();
+		InputDevices::Keyboard::initialize();
 	}
 	/*********************************************************************************/
 	InputManager::~InputManager()

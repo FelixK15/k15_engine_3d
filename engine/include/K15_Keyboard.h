@@ -36,6 +36,9 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 	{
 	public:
 		/*********************************************************************************/
+		typedef HashMap(ObjectName,Enum) InputStringToEnumMap;
+		static InputStringToEnumMap InputStringToEnum;
+		/*********************************************************************************/
 		class K15_CORE_API InputTrigger : public InputTriggerBase
 		{
 		public:
@@ -132,6 +135,7 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		};//KeyboardKeys
 		/*********************************************************************************/
 	public:
+		static void initialize();
 		static bool isPressed(Enum p_Key);
 	};// end of Keybard class declaration
 

@@ -35,10 +35,16 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 	{
 	public:
 		/*********************************************************************************/
+		typedef HashMap(ObjectName,Enum) InputStringToEnumMap;
+		static InputStringToEnumMap InputStringToEnum;
+		/*********************************************************************************/
+
+		/*********************************************************************************/
 		class K15_CORE_API InputTrigger : public InputTriggerBase
 		{
 		public:
 			InputTrigger(Enum p_Button);
+			InputTrigger(const String& p_ButtonString);
 
 			virtual bool isActive() OVERRIDE;
 		private:
@@ -73,6 +79,8 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		/*********************************************************************************/
 
 	public:
+		static void initialize();
+
 		static void hideMouse();
 		static void showMouse();
 

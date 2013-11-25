@@ -30,6 +30,7 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 	/*********************************************************************************/
 	int g_LastMousePos_x = 0;
 	int g_LastMousePos_y = 0;
+	Mouse::InputStringToEnumMap Mouse::InputStringToEnum = Mouse::InputStringToEnumMap();
 	/*********************************************************************************/
 	Mouse::InputTrigger::InputTrigger(Enum p_Button)
 		: m_Button(p_Button)
@@ -92,6 +93,18 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		}
 	}
 	/*********************************************************************************/
+
+	/*********************************************************************************/
+	void Mouse::initialize()
+	{
+		InputStringToEnum[_N(LeftButton)] = BTN_LEFT;
+		InputStringToEnum.insert(Pair(ObjectName,Enum)(_N(LeftButton),BTN_LEFT));
+		InputStringToEnum.insert(Pair(ObjectName,Enum)(_N(RightButton),BTN_RIGHT));
+		InputStringToEnum.insert(Pair(ObjectName,Enum)(_N(MiddleButton),BTN_MIDDLE));
+		InputStringToEnum.insert(Pair(ObjectName,Enum)(_N(SpecialButton1),BTN_SPECIAL1));
+		InputStringToEnum.insert(Pair(ObjectName,Enum)(_N(SpecialButton2),BTN_SPECIAL2));
+	}
+	/*********************************************************************************/
 	void Mouse::getMousePosDelta(int32 *x,int32 *y)
 	{
 		static int temp_x;
@@ -118,7 +131,7 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 			}
 			else
 			{
-				*x = g_LastMousePos_y - temp_y;
+				*y = g_LastMousePos_y - temp_y;
 			}
 		}
 	}
