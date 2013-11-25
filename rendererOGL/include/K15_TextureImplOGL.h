@@ -42,12 +42,12 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		~TextureImplOGL();
 
 		virtual bool write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) OVERRIDE;
-    virtual bool writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) OVERRIDE;
+		virtual bool writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) OVERRIDE;
 
-    virtual bool read(byte** p_Destination, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) OVERRIDE;
-    virtual bool readMipmap(byte** p_Destination, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) OVERRIDE;
+// 		virtual bool read(byte** p_Destination, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) OVERRIDE;
+// 		virtual bool readMipmap(byte** p_Destination, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) OVERRIDE;
 
-    virtual bool resize(uint32 p_Width, uint32 p_Height, uint32 p_Depth) OVERRIDE;
+		virtual bool resize(uint32 p_Width, uint32 p_Height, uint32 p_Depth) OVERRIDE;
 
 	private:
 		GLuint m_TextureHandle;

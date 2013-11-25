@@ -44,7 +44,7 @@ namespace K15_Engine { namespace Core {
 	{
 	public:
 		/*********************************************************************************/
-		class Listener : public EventListener
+		class K15_CORE_API Listener : public EventListener
 		{
 		public:
 			Listener(){}

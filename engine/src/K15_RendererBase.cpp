@@ -17,14 +17,14 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_RendererPrecompiledHeader.h"
+#include "K15_PrecompiledHeader.h"
 #include "K15_RendererBase.h"
 
 namespace K15_Engine { namespace Rendering { 
 	/*********************************************************************************/
 	uint8 RendererBase::PixelFormatSize[PF_COUNT]= {
 		24,	//PF_RGB_8_I
-		24, //F_RGB_8_UI,
+		24, //PF_RGB_8_UI,
 		48, //PF_RGB_16_I
 		48, //PF_RGB_16_U
 		48, //PF_RGB_16_F

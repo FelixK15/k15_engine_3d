@@ -24,13 +24,13 @@
 #ifndef _K15Engine_Renderer_GpuBuffer_h_
 #define _K15Engine_Renderer_GpuBuffer_h_
 
-#ifndef K15_RENDERER_USE_PRECOMPILED_HEADERS
-#	include "K15_RendererPrerequisites.h"
-#endif //K15_RENDERER_USE_PRECOMPILED_HEADERS
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace Rendering { 
 	/*********************************************************************************/
-	class GpuBufferImplBase
+	class K15_CORE_API GpuBufferImplBase
 	{
 	protected:
 		GpuBufferImplBase();
@@ -53,7 +53,7 @@ namespace K15_Engine { namespace Rendering {
 		GpuBuffer *m_Buffer;
 	};// end of GpuBufferImplBase class declaration
 	/*********************************************************************************/
-	class GpuBuffer
+	class K15_CORE_API GpuBuffer
 	{
 	public:
 		/*********************************************************************************/

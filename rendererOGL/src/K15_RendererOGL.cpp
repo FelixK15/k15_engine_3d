@@ -26,6 +26,7 @@
 #include "K15_GpuBufferImplOGL.h"
 #include "K15_GpuProgramImplOGL.h"
 #include "K15_TextureImplOGL.h"
+#include "K15_TextureSamplerImplOGL.h"
 #include "Win32\K15_RenderWindow_Win32.h"
 
 namespace K15_Engine { namespace Rendering { namespace OGL {
@@ -281,6 +282,11 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	GpuProgramImplBase* RendererOGL::createGpuProgramImpl()
 	{
 		return 0;//new GpuProgramImplOGL();
+	}
+	/*********************************************************************************/
+	TextureSamplerImplBase* RendererOGL::createTextureSamplerImpl()
+	{
+		return new TextureSamplerImplOGL();
 	}
 	/*********************************************************************************/
 }}}// end of K15_Engine::Rendering::OGL

@@ -123,6 +123,8 @@ namespace K15_Engine
 	/*********************************************************************************/
 	namespace Rendering
 	{
+		class RenderTarget;
+		class Camera;
 		class RendererBase;
 		class GpuProgram;
 		class GpuProgramImplBase;
@@ -130,6 +132,95 @@ namespace K15_Engine
 		class GpuBufferImplBase;
 		class Texture;
 		class TextureImplBase;
+		class TextureSampler;
+		class TextureSamplerImplBase;
+		struct TextureCreationOptions;
+
+		// surface description flags
+		const unsigned int DDSF_CAPS           = 0x00000001l;
+		const unsigned int DDSF_HEIGHT         = 0x00000002l;
+		const unsigned int DDSF_WIDTH          = 0x00000004l;
+		const unsigned int DDSF_PITCH          = 0x00000008l;
+		const unsigned int DDSF_PIXELFORMAT    = 0x00001000l;
+		const unsigned int DDSF_MIPMAPCOUNT    = 0x00020000l;
+		const unsigned int DDSF_LINEARSIZE     = 0x00080000l;
+		const unsigned int DDSF_DEPTH          = 0x00800000l;
+
+		// pixel format flags
+		const unsigned int DDSF_ALPHAPIXELS    = 0x00000001l;
+		const unsigned int DDSF_FOURCC         = 0x00000004l;
+		const unsigned int DDSF_RGB            = 0x00000040l;
+		const unsigned int DDSF_RGBA           = 0x00000041l;
+
+		// dwCaps1 flags
+		const unsigned int DDSF_COMPLEX         = 0x00000008l;
+		const unsigned int DDSF_TEXTURE         = 0x00001000l;
+		const unsigned int DDSF_MIPMAP          = 0x00400000l;
+
+		// dwCaps2 flags
+		const unsigned int DDSF_CUBEMAP         = 0x00000200l;
+		const unsigned int DDSF_CUBEMAP_POSITIVEX  = 0x00000400l;
+		const unsigned int DDSF_CUBEMAP_NEGATIVEX  = 0x00000800l;
+		const unsigned int DDSF_CUBEMAP_POSITIVEY  = 0x00001000l;
+		const unsigned int DDSF_CUBEMAP_NEGATIVEY  = 0x00002000l;
+		const unsigned int DDSF_CUBEMAP_POSITIVEZ  = 0x00004000l;
+		const unsigned int DDSF_CUBEMAP_NEGATIVEZ  = 0x00008000l;
+		const unsigned int DDSF_CUBEMAP_ALL_FACES  = 0x0000FC00l;
+		const unsigned int DDSF_VOLUME          = 0x00200000l;
+
+		// compressed texture types
+		const unsigned int FOURCC_DXT1 = 0x31545844l; //(MAKEFOURCC('D','X','T','1'))
+		const unsigned int FOURCC_DXT3 = 0x33545844l; //(MAKEFOURCC('D','X','T','3'))
+		const unsigned int FOURCC_DXT5 = 0x35545844l; //(MAKEFOURCC('D','X','T','5'))
+
+		struct DXTColBlock
+		{
+			unsigned short col0;
+			unsigned short col1;
+
+			unsigned char row[4];
+		};
+
+		struct DXT3AlphaBlock
+		{
+			unsigned short row[4];
+		};
+
+		struct DXT5AlphaBlock
+		{
+			unsigned char alpha0;
+			unsigned char alpha1;
+
+			unsigned char row[6];
+		};
+
+		struct DDS_PIXELFORMAT
+		{
+			unsigned int dwSize;
+			unsigned int dwFlags;
+			unsigned int dwFourCC;
+			unsigned int dwRGBBitCount;
+			unsigned int dwRBitMask;
+			unsigned int dwGBitMask;
+			unsigned int dwBBitMask;
+			unsigned int dwABitMask;
+		};
+
+		struct DDS_HEADER
+		{
+			unsigned int dwSize;
+			unsigned int dwFlags;
+			unsigned int dwHeight;
+			unsigned int dwWidth;
+			unsigned int dwPitchOrLinearSize;
+			unsigned int dwDepth;
+			unsigned int dwMipMapCount;
+			unsigned int dwReserved1[11];
+			DDS_PIXELFORMAT ddspf;
+			unsigned int dwCaps1;
+			unsigned int dwCaps2;
+			unsigned int dwReserved2[3];
+		};
 	} //end of K15_Engine::Rendering namespace
 	/*********************************************************************************/
 	namespace Math
@@ -143,6 +234,13 @@ namespace K15_Engine
 	} //end of K15_Engine::Math namespace
 	/*********************************************************************************/
  }
+
+namespace K15_Engine
+{
+	using namespace Core;
+	using namespace Rendering;
+	using namespace Math;
+}// end of K15_Engine namespace
 
 #ifdef __GNUC__
 //http://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html
@@ -344,6 +442,7 @@ typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::ProfilingManager> Pr
 #define DynamicLibraryManagerAllocator K15_Engine::Core::DynamicLibraryManager::getInstance()
 #define LogManagerAllocator K15_Engine::Core::LogManager::getInstance()
 
+#define g_Renderer K15_Engine::Core::Application::getInstance()->getRenderer()
 #define g_FontManager K15_Engine::Core::FontManager::getInstance()
 #define g_MemoryProfiler K15_Engine::Core::MemoryProfiler::getInstance()
 #define g_InputManager K15_Engine::Core::InputManager::getInstance()

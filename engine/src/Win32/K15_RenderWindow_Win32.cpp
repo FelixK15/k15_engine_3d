@@ -123,6 +123,23 @@ namespace K15_Engine { namespace Core {
 			GameEvent* keyEvent = K15_NEW GameEvent(name,(void*)&key,32);
 			g_EventManager->triggerEvent(keyEvent);
 		}
+// 		else if(WM_SIZE)
+// 		{
+// 			if(p_wParam == SIZE_MAXIMIZED || p_wParam == SIZE_MINIMIZED || p_wParam == SIZE_RESTORED)
+// 			{
+// 				int16 width = LOWORD(p_lParam);
+// 				int16 height = HIWORD(p_lParam);
+// 				
+// 				Resolution res;
+// 				res.width = width;
+// 				res.height = height;
+// 
+// 				if(window)
+// 				{
+// 					window->setResolution(res);
+// 				}
+// 			}
+// 		}
 
 		return DefWindowProc(p_HandleWindow,p_MSG,p_wParam,p_lParam);
 	}

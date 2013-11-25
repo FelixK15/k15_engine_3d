@@ -17,12 +17,11 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_RendererPrecompiledHeader.h"
+#include "K15_PrecompiledHeader.h"
 #include "K15_Texture.h"
+#include "K15_RenderTask.h"
 #include "K15_RendererBase.h"
 #include "K15_LogManager.h"
-
-#include "..\..\dependencies\nv_dds\include\nv_dds.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
@@ -62,68 +61,13 @@ namespace K15_Engine { namespace Rendering {
 		m_HasShadowCopy(true),
 		m_ShadowCopy(0)
 	{
-// 		m_Impl = g_Renderer->getTextureImpl();
-	}
-	/*********************************************************************************/
-	Texture::Texture(const TextureCreationOptions& p_Options)
-		: m_Impl(0),
-		m_MipmapLevels(0),
-		m_PixelFormat(0),
-		m_Type(0),
-		m_Usage(0),
-		m_Width(0),
-		m_Height(0),
-		m_Depth(0),
-		m_HasAlpha(true),
-		m_HasShadowCopy(true),
-		m_ShadowCopy(0)
-	{
-		///m_Impl = g_Renderer->getTextureImpl();
-		Enum type = 0;
-
-		if(p_Options.width > 0 && p_Options.height > 0 && p_Options.depth > 0)
-		{
-			type = Texture::TT_3D;
-		}
-		else if(p_Options.width > 0 && p_Options.height > 0)
-		{
-			type = Texture::TT_2D;
-		}
-		else if(p_Options.width > 0)
-		{
-			type = Texture::TT_1D;
-		}
-
-		m_Type = type;
-		m_PixelFormat = p_Options.pixelFormat;
-
-		if(m_PixelFormat > RendererBase::PF_RGB_32_F)
-		{
-			m_HasAlpha = true;
-		}
-
-		m_HasShadowCopy = p_Options.useShadowCopy;
-		m_Usage = p_Options.usage;
-
-		int i = 0;
-		if(p_Options.mipmapLevels > 0)
-		{
-			i = p_Options.mipmapLevels;
-		}
-		else if(p_Options.createMipMaps)
-		{
-			i = calculateMipmapLevels();
-		}
-
-		m_MipmapLevels = i;
-
-		resize(p_Options.width,p_Options.height,p_Options.depth);
-    write(p_Options.pixels.data,m_Width,m_Height);
+ 		m_Impl = g_Application->getRenderTask()->getRenderer()->createTextureImpl();
+		m_Impl->setTexture(this);
 	}
 	/*********************************************************************************/
 	Texture::~Texture()
 	{
-//		K15_DELETE m_Impl;
+		K15_DELETE m_Impl;
 	}
 	/*********************************************************************************/
 	void Texture::setUsage(Enum p_TextureUsage)
@@ -135,41 +79,41 @@ namespace K15_Engine { namespace Rendering {
 	{
 		m_MipmapLevels = p_MipMapCount;
 
-    resize(m_Width,m_Height,m_Depth);
+		resize(m_Width,m_Height,m_Depth);
 	}
 	/*********************************************************************************/
 	void Texture::setHeight(uint32 p_Height)
 	{
 		m_Height = p_Height;
 
-    resize(m_Width,m_Height,m_Depth);
+		resize(m_Width,m_Height,m_Depth);
 	}
 	/*********************************************************************************/
 	void Texture::setWidth(uint32 p_Width)
 	{
 		m_Width = p_Width;
 
-    resize(m_Width,m_Height,m_Depth);
+		resize(m_Width,m_Height,m_Depth);
 	}
 	/*********************************************************************************/
 	void Texture::setDepth(uint32 p_Depth)
 	{
 		m_Depth = p_Depth;
 
-    resize(m_Width,m_Height,m_Depth);
+		resize(m_Width,m_Height,m_Depth);
 	}
 	/*********************************************************************************/
 	void Texture::setPixelFormat(Enum p_PixelFormat)
 	{
 		m_PixelFormat = p_PixelFormat;
 
-    if(m_PixelFormat > RendererBase::PF_RGB_32_F)
-    {
-      m_HasAlpha = true;
-    }
+		if(m_PixelFormat > RendererBase::PF_RGB_32_F)
+		{
+			m_HasAlpha = true;
+		}
 
-    //we need to "resize" the texture in order to let the graphics API recreate the texture storage
-    resize(m_Width,m_Height,m_Depth);
+		//we need to "resize" the texture in order to let the graphics API recreate the texture storage
+		resize(m_Width,m_Height,m_Depth);
 	}
 	/*********************************************************************************/
 	bool Texture::hasAlpha() const
@@ -185,7 +129,7 @@ namespace K15_Engine { namespace Rendering {
 	bool Texture::internalLoad(const RawData& p_Data)
 	{
 		// K15 Texture are loaded as DDS 
-		nv_dds::DDS_HEADER *header;
+		DDS_HEADER *header;
 		byte* data = p_Data.data;
 		uint32 width, height, depth;
 		Enum type = 0;
@@ -202,38 +146,38 @@ namespace K15_Engine { namespace Rendering {
 		data += 4; //increment dds offset
 
 		//get header data
-		header = (nv_dds::DDS_HEADER*)data;
+		header = (DDS_HEADER*)data;
 		
 		//set width
-		if(header->dwFlags & nv_dds::DDSF_WIDTH)
+		if(header->dwFlags & DDSF_WIDTH)
 		{
 			width = header->dwWidth;
 			type = TT_1D;
 		}
 		
 		//set height
-		if(header->dwFlags & nv_dds::DDSF_HEIGHT)
+		if(header->dwFlags & DDSF_HEIGHT)
 		{
 			height = header->dwHeight;
 			type = TT_2D;
 		}
 
 		//set depth
-		if(header->dwFlags & nv_dds::DDSF_DEPTH)
+		if(header->dwFlags & DDSF_DEPTH)
 		{
 			depth = header->dwDepth;
 			type = TT_3D;
 		}
 		
 		//set mip map count
-		if(header->dwFlags & nv_dds::DDSF_MIPMAPCOUNT)
+		if(header->dwFlags & DDSF_MIPMAPCOUNT)
 		{
 			mipmaps = header->dwMipMapCount;
 		}
 		//else default mip map count
 		
 		// check for alpha support
-		if(header->ddspf.dwFlags & nv_dds::DDSF_ALPHAPIXELS)
+		if(header->ddspf.dwFlags & DDSF_ALPHAPIXELS)
 		{
 			m_HasAlpha = true;
 		}
@@ -267,27 +211,27 @@ namespace K15_Engine { namespace Rendering {
 		uint32 depth = m_Depth > 0 ? m_Depth : 1;
 		uint32 bitsPerPixel = RendererBase::PixelFormatSize[m_PixelFormat];
 
-    if(p_Index == 0)
-    {
-      width = m_Width;
-      height = m_Height;
-      depth = m_Depth;
-    }
-    else
-    {
-      width *= (uint32)(0.5 / p_Index);	
-      height *= (uint32)(0.5 / p_Index);
-      depth *= (uint32)(0.5 / p_Index);
-    }
+		if(p_Index == 0)
+		{
+			width = m_Width;
+			height = m_Height;
+			depth = m_Depth;
+		}
+		else
+		{
+			width *= (uint32)(0.5 / p_Index);	
+			height *= (uint32)(0.5 / p_Index);
+			depth *= (uint32)(0.5 / p_Index);
+		}
 
-    if(m_Type == TT_1D)
-    {
-      return width * bitsPerPixel;
-    }
-    else if(m_Type == TT_2D)
-    {
-      return (width * height) * bitsPerPixel;
-    }
+		if(m_Type == TT_1D)
+		{
+			return width * bitsPerPixel;
+		}
+		else if(m_Type == TT_2D)
+		{
+			return (width * height) * bitsPerPixel;
+		}
 
 		return (width * height * depth) * bitsPerPixel;;
 	}
@@ -315,17 +259,17 @@ namespace K15_Engine { namespace Rendering {
 			p_Width = m_Width - p_OffsetX;
 		}
 	
-    if(m_Impl->write(p_Pixels,p_Width,0,0,p_OffsetX,0,0))
-    {
-      if(m_ShadowCopy)
-      {
-        //todo
-      }
+		if(m_Impl->write(p_Pixels,p_Width,0,0,p_OffsetX,0,0))
+		{
+		  if(m_ShadowCopy)
+		  {
+			//todo
+		  }
 
-      return p_Width;
-    }
+		  return p_Width;
+		}
 
-    return 0;
+		return 0;
 	}
 	/*********************************************************************************/
 	uint32 Texture::write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, int32 p_OffsetX, int32 p_OffsetY)
@@ -345,17 +289,17 @@ namespace K15_Engine { namespace Rendering {
 			p_Height = m_Height - p_OffsetY;
 		}
 
-    if(m_Impl->write(p_Pixels,p_Width,p_Height,0,p_OffsetX,p_OffsetY,0))
-    {
-      if(m_ShadowCopy)
-      {
-        //todo
-      }
+		if(m_Impl->write(p_Pixels,p_Width,p_Height,0,p_OffsetX,p_OffsetY,0))
+		{
+		  if(m_ShadowCopy)
+		  {
+			//todo
+		  }
 
-      return p_Width * p_Height;
-    }
+		  return p_Width * p_Height;
+		}
 
-    return 0;
+		return 0;
 	}
 	/*********************************************************************************/
 	uint32 Texture::write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ)
@@ -377,124 +321,178 @@ namespace K15_Engine { namespace Rendering {
 			p_Depth = m_Depth - p_Depth;
 		}
 
-    if(m_Impl->write(p_Pixels,p_Width,p_Height,p_Depth,p_OffsetX,p_OffsetY,p_OffsetZ))
-    {
-      if(m_ShadowCopy)
-      {
-        //todo
-      }
+		if(m_Impl->write(p_Pixels,p_Width,p_Height,p_Depth,p_OffsetX,p_OffsetY,p_OffsetZ))
+		{
+		  if(m_ShadowCopy)
+		  {
+			//todo
+		  }
 
-      return p_Width * p_Height * p_Depth;
-    }
+		  return p_Width * p_Height * p_Depth;
+		}
 
 		return 0;
 	}
-  /*********************************************************************************/
-  uint32 Texture::writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, int32 p_OffsetX)
-  {
-    if(p_MipmapLevel > m_MipmapLevels)
-    {
-      _LogWarning("Trying to write to mipmap %u of texture %s which only has %u mipmaps.Clamping value to %u",p_MipmapLevel,m_AssetName.c_str(),m_MipmapLevels,m_MipmapLevels);
+	/*********************************************************************************/
+	uint32 Texture::writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, int32 p_OffsetX)
+	{
+		if(p_MipmapLevel > m_MipmapLevels)
+		{
+			_LogWarning("Trying to write to mipmap %u of texture %s which only has %u mipmaps.Clamping value to %u",p_MipmapLevel,m_AssetName.c_str(),m_MipmapLevels,m_MipmapLevels);
+			p_MipmapLevel = m_MipmapLevels;
+		}
 
-      p_MipmapLevel = m_MipmapLevels;
-    }
+		uint32 width = 0;
+		getMipmapDimension(p_MipmapLevel,&width,0);
 
-    uint32 width = 0;
-    getMipmapDimension(p_MipmapLevel,&width,0);
+		if(p_Width + p_OffsetX > width)
+		{
+			_LogWarning("Trying to write %u pixels to texture %s (starting from pixel %i) - This would write out of bounds.\n Clamping width to %u.",
+			p_Width + p_OffsetX,m_AssetName.c_str(),p_OffsetX,width - p_OffsetX);
 
-    if(p_Width + p_OffsetX > width)
-    {
-      _LogWarning("Trying to write %u pixels to texture %s (starting from pixel %i) - This would write out of bounds.\n Clamping width to %u.",
-        p_Width + p_OffsetX,m_AssetName.c_str(),p_OffsetX,width - p_OffsetX);
+			p_Width = width - p_OffsetX;
+		}
 
-      p_Width = width - p_OffsetX;
-    }
+		if(m_Impl->write(p_Pixels,p_Width,0,0,p_OffsetX,0,0))
+		{
+			if(m_ShadowCopy)
+			{
+			//todo
+			}
 
-    if(m_Impl->write(p_Pixels,p_Width,0,0,p_OffsetX,0,0))
-    {
-      if(m_ShadowCopy)
-      {
-        //todo
-      }
+			return p_Width;
+		}
 
-      return p_Width;
-    }
+		return 0;
+	}
+	/*********************************************************************************/
+	uint32 Texture::writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, int32 p_OffsetX, int32 p_OffsetY)
+	{
+		if(p_MipmapLevel > m_MipmapLevels)
+		{
+			_LogWarning("Trying to write to mipmap %u of texture %s which only has %u mipmaps.Clamping value to %u",p_MipmapLevel,m_AssetName.c_str(),m_MipmapLevels,m_MipmapLevels);
 
-    return 0;
-  }
-  /*********************************************************************************/
-  uint32 Texture::writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, int32 p_OffsetX, int32 p_OffsetY)
-  {
-    if(p_MipmapLevel > m_MipmapLevels)
-    {
-      _LogWarning("Trying to write to mipmap %u of texture %s which only has %u mipmaps.Clamping value to %u",p_MipmapLevel,m_AssetName.c_str(),m_MipmapLevels,m_MipmapLevels);
+			p_MipmapLevel = m_MipmapLevels;
+		}
 
-      p_MipmapLevel = m_MipmapLevels;
-    }
+		uint32 width = 0;
+		uint32 height = 0;
+		getMipmapDimension(p_MipmapLevel,&width,&height);
 
-    uint32 width = 0;
-    uint32 height = 0;
-    getMipmapDimension(p_MipmapLevel,&width,&height);
+		if(p_Width + p_OffsetX > width || p_Height + p_OffsetY > height)
+		{
+			_LogWarning("Trying to write %ux%u pixels to texture %s (starting from pixel %ix%i) - This would write out of bounds.\n Clamping width to %ux%u.",
+			p_Width + p_OffsetX,p_Height + p_OffsetY,m_AssetName.c_str(),p_OffsetX,p_OffsetY,width - p_OffsetX,height - p_OffsetY);
 
-    if(p_Width + p_OffsetX > width || p_Height + p_OffsetY > height)
-    {
-      _LogWarning("Trying to write %ux%u pixels to texture %s (starting from pixel %ix%i) - This would write out of bounds.\n Clamping width to %ux%u.",
-        p_Width + p_OffsetX,p_Height + p_OffsetY,m_AssetName.c_str(),p_OffsetX,p_OffsetY,width - p_OffsetX,height - p_OffsetY);
+			p_Width = width - p_OffsetX;
+			p_Height = height - p_OffsetY;
+		}
 
-      p_Width = width - p_OffsetX;
-      p_Height = height - p_OffsetY;
-    }
+		if(m_Impl->write(p_Pixels,p_Width,p_Height,0,p_OffsetX,p_OffsetY,0))
+		{
+			if(m_ShadowCopy)
+			{
+			//todo
+			}
 
-    if(m_Impl->write(p_Pixels,p_Width,p_Height,0,p_OffsetX,p_OffsetY,0))
-    {
-      if(m_ShadowCopy)
-      {
-        //todo
-      }
+			return p_Width*p_Height;
+		}
 
-      return p_Width*p_Height;
-    }
+		return 0;
+	}
+	/*********************************************************************************/
+	uint32 Texture::writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ)
+	{
+		if(p_MipmapLevel > m_MipmapLevels)
+		{
+			_LogWarning("Trying to write to mipmap %u of texture %s which only has %u mipmaps.Clamping value to %u",p_MipmapLevel,m_AssetName.c_str(),m_MipmapLevels,m_MipmapLevels);
 
-    return 0;
-  }
-  /*********************************************************************************/
-  uint32 Texture::writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ)
-  {
-    if(p_MipmapLevel > m_MipmapLevels)
-    {
-      _LogWarning("Trying to write to mipmap %u of texture %s which only has %u mipmaps.Clamping value to %u",p_MipmapLevel,m_AssetName.c_str(),m_MipmapLevels,m_MipmapLevels);
+			p_MipmapLevel = m_MipmapLevels;
+		}
 
-      p_MipmapLevel = m_MipmapLevels;
-    }
+		uint32 width = 0;
+		uint32 height = 0;
+		uint32 depth = 0;
+		getMipmapDimension(p_MipmapLevel,&width,&height,&depth);
 
-    uint32 width = 0;
-    uint32 height = 0;
-    uint32 depth = 0;
-    getMipmapDimension(p_MipmapLevel,&width,&height,&depth);
+		if(p_Width + p_OffsetX > width || p_Height + p_OffsetY > height || p_Depth + p_OffsetZ > depth)
+		{
+			_LogWarning("Trying to write %ux%ux%u pixels to texture %s (starting from pixel %ix%ix%i) - This would write out of bounds.\n Clamping width to %ux%ux%u.",
+			p_Width + p_OffsetX,p_Height + p_OffsetY,p_Depth + p_OffsetZ,m_AssetName.c_str(),
+			p_OffsetX,p_OffsetY,p_OffsetZ,width - p_OffsetX,height - p_OffsetY,depth - p_OffsetZ);
 
-    if(p_Width + p_OffsetX > width || p_Height + p_OffsetY > height || p_Depth + p_OffsetZ > depth)
-    {
-      _LogWarning("Trying to write %ux%ux%u pixels to texture %s (starting from pixel %ix%ix%i) - This would write out of bounds.\n Clamping width to %ux%ux%u.",
-        p_Width + p_OffsetX,p_Height + p_OffsetY,p_Depth + p_OffsetZ,m_AssetName.c_str(),
-        p_OffsetX,p_OffsetY,p_OffsetZ,width - p_OffsetX,height - p_OffsetY,depth - p_OffsetZ);
+			p_Width = width - p_OffsetX;
+			p_Height = height - p_OffsetY;
+			p_Depth = depth - p_Depth;
+		}
 
-      p_Width = width - p_OffsetX;
-      p_Height = height - p_OffsetY;
-      p_Depth = depth - p_Depth;
-    }
+		if(m_Impl->write(p_Pixels,p_Width,p_Height,p_Depth,p_OffsetX,p_OffsetY,p_OffsetZ))
+		{
+			if(m_ShadowCopy)
+			{
+			//todo
+			}
 
-    if(m_Impl->write(p_Pixels,p_Width,p_Height,p_Depth,p_OffsetX,p_OffsetY,p_OffsetZ))
-    {
-      if(m_ShadowCopy)
-      {
-        //todo
-      }
+			return p_Width*p_Height*p_Depth;
+		}
 
-      return p_Width*p_Height*p_Depth;
-    }
+		return 0;
+	}
+	/*********************************************************************************/
+	bool Texture::create(const TextureCreationOptions& p_Options)
+	{
+		if(p_Options.width > 0 && p_Options.height > 0 && p_Options.depth > 0)
+		{
+			m_Type = Texture::TT_3D;
+			m_Width = p_Options.width;
+		}
+		else if(p_Options.width > 0 && p_Options.height > 0)
+		{
+			m_Type = Texture::TT_2D;
+			m_Width = p_Options.width;
+			m_Height = p_Options.height;
+		}
+		else if(p_Options.width > 0)
+		{
+			m_Type = Texture::TT_1D;
+			m_Width = p_Options.width;
+			m_Height = p_Options.height;
+			m_Depth = p_Options.depth;
+		}
 
-    return 0;
-  }
+		m_PixelFormat = p_Options.pixelFormat;
+
+		if(m_PixelFormat > RendererBase::PF_RGB_32_F)
+		{
+			m_HasAlpha = true;
+		}
+
+		m_HasShadowCopy = p_Options.useShadowCopy;
+
+		int i = 0;
+		if(p_Options.mipmapLevels > 0)
+		{
+			i = p_Options.mipmapLevels;
+		}
+		else if(p_Options.createMipMaps)
+		{
+			i = calculateMipmapLevels();
+		}
+
+		m_MipmapLevels = i-1;
+
+		if(resize(p_Options.width,p_Options.height,p_Options.depth))
+		{
+			if(p_Options.pixels.size > 0)
+			{
+				return write(p_Options.pixels.data,m_Width,m_Height) > 0;
+			}
+
+			return true;
+		}
+		
+		return false;
+	}
 	/*********************************************************************************/
 	bool Texture::resize(uint32 p_Width,uint32 p_Height,uint32 p_Depth)
 	{
@@ -510,29 +508,30 @@ namespace K15_Engine { namespace Rendering {
 			type = TT_3D;
 		}
 
-    m_Type = type;
+		m_Type = type;
 
 		if(m_Impl->resize(p_Width,p_Height,p_Depth))
-    {
-      m_Width = p_Width;
-      m_Height = p_Height;
-      m_Depth = p_Depth;
+		{
+		  m_Width = p_Width;
+		  m_Height = p_Height;
+		  m_Depth = p_Depth;
 
-      //create shadow copy buffer
-      if(m_HasShadowCopy)
-      {
-        if(m_ShadowCopy)
-        {
-          delete[] m_ShadowCopy;
-        }
+		  //create shadow copy buffer
+		  if(m_HasShadowCopy)
+		  {
+			if(m_ShadowCopy)
+			{
+			  delete[] m_ShadowCopy;
+			}
+			uint32 size = getSize();
 
-        m_ShadowCopy = new byte[getSize()];
-      }
+			m_ShadowCopy = new byte[size];
+			memset(m_ShadowCopy,0,size);
+		  }
+		  return true;
+		}
 
-      return true;
-    }
-
-    return false;
+		return false;
 	}
   /*********************************************************************************/
   void Texture::getMipmapDimension(uint32 p_MipmapLevel, uint32* p_Width, uint32* p_Height, uint32* p_Depth)

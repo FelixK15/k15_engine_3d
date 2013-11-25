@@ -24,16 +24,16 @@
 #ifndef _K15Engine_Renderer_RendererBase_h_
 #define _K15Engine_Renderer_RendererBase_h_
 
-#ifndef K15_RENDERER_USE_PRECOMPILED_HEADERS
-#	include "K15_RendererPrerequisites.h"
-#endif //K15_RENDERER_USE_PRECOMPILED_HEADERS
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
 
 #include "K15_RenderWindowBase.h"
 #include "K15_ColorRGBA.h"
 
 namespace K15_Engine { namespace Rendering { 
 	
-	class RendererBase : public RenderWindowBase::Listener
+	class K15_CORE_API RendererBase : public RenderWindowBase::Listener
 	{
 	public:
 		/*********************************************************************************/
@@ -78,6 +78,7 @@ namespace K15_Engine { namespace Rendering {
 		/*********************************************************************************/
 		enum ePixelFormat
 		{
+			//no alpha format
 			PF_RGB_8_I = 0,
 			PF_RGB_8_UI,
 			PF_RGB_16_I,
@@ -86,6 +87,9 @@ namespace K15_Engine { namespace Rendering {
 			PF_RGB_32_I,
 			PF_RGB_32_U,
 			PF_RGB_32_F,
+			PF_RGB_4_DXT1,
+
+			//alpha format
 			PF_RGBA_8_I,
 			PF_RGBA_8_U,
 			PF_RGBA_16_I,
@@ -94,6 +98,9 @@ namespace K15_Engine { namespace Rendering {
 			PF_RGBA_32_I,
 			PF_RGBA_32_U,
 			PF_RGBA_32_F,
+			PF_RGBA_4_DXT1,
+			PF_RGBA_8_DXT3,
+			PF_RGBA_8_DXT5,
 
 			PF_COUNT
 		}; //PixelFormat
@@ -173,7 +180,7 @@ namespace K15_Engine { namespace Rendering {
 		virtual GpuBufferImplBase* createGpuBufferImpl() = 0;
 		virtual	TextureImplBase* createTextureImpl() = 0;
 		virtual GpuProgramImplBase* createGpuProgramImpl() = 0;
-    virtual TextureSamplerImplBase* createTextureSamplerBase() = 0;
+		virtual TextureSamplerImplBase* createTextureSamplerImpl() = 0;
 
 		virtual void beginFrame() = 0;
 		virtual void endFrame() = 0;

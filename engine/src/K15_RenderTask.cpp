@@ -63,12 +63,15 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void RenderTask::update(const GameTime& p_GameTime)
 	{
-		m_Renderer->beginFrame();
-		if(m_RenderProcess)
+		if(m_Renderer)
 		{
-			m_RenderProcess->renderSingleFrame();
+			m_Renderer->beginFrame();
+			if(m_RenderProcess)
+			{
+				m_RenderProcess->renderSingleFrame();
+			}
+			m_Renderer->endFrame();
 		}
-		m_Renderer->endFrame();
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

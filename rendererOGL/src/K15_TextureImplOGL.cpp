@@ -40,6 +40,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		GL_RGB32I,	//PF_RGB_32_I
 		GL_RGB32UI, //PF_RGB_32_U
 		GL_RGB32F,	//PF_RGB_32_F
+		GL_COMPRESSED_RGB_S3TC_DXT1_EXT, //PF_RGB_4_DXT1
 
 		GL_RGBA8I,	//PF_RGBA_8_I
 		GL_RGBA8UI, //PF_RGBA_8_U
@@ -48,7 +49,11 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		GL_RGBA16F, //PF_RGBA_16_F
 		GL_RGBA32I, //PF_RGBA_32_I
 		GL_RGBA32UI,//PF_RGBA_32_U
-		GL_RGBA32F  //PF_RGBA_32_F
+		GL_RGBA32F,  //PF_RGBA_32_F,
+
+		GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, //PF_RGBA_4_DXT1
+		GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, //PF_RGBA_8_DXT3
+		GL_COMPRESSED_RGBA_S3TC_DXT5_EXT  //PF_RGBA_8_DXT5
 	};//GLInternalFormatConverter
 	/*********************************************************************************/
 
@@ -62,6 +67,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		GL_INT,				//PF_RGB_32_I
 		GL_UNSIGNED_INT,	//PF_RGB_32_U
 		GL_FLOAT,			//PF_RGB_32_F
+		0,					//PF_RGB_4_DXT1
 
 		GL_BYTE,			//PF_RGBA_8_I
 		GL_UNSIGNED_BYTE,	//PF_RGBA_8_UI
@@ -71,6 +77,9 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		GL_INT,				//PF_RGBA_32_I
 		GL_UNSIGNED_INT,	//PF_RGBA_32_U
 		GL_FLOAT,			//PF_RGBA_32_F
+		0,					//PF_RGBA_4_DXT1
+		0,					//PF_RGBA_8_DXT3
+		0					//PF_RGBA_8_DXT5
 	};//GLPixelDataTypeConverter
 	/*********************************************************************************/
 
@@ -86,82 +95,105 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	{
 		glDeleteTextures(1,&m_TextureHandle);
 	}
-  /*********************************************************************************/
-  bool TextureImplOGL::write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ)
-  {
-    GLenum target = GLTextureTypeConverter[m_Texture->getType()];
-    GLenum type = GLPixelDataTypeConverter[m_Texture->getPixelFormat()];
-    GLenum format = GLInternalFormatConverter[m_Texture->getPixelFormat()];
+	/*********************************************************************************/
+	bool TextureImplOGL::write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ)
+	{
+		GLenum target = GLTextureTypeConverter[m_Texture->getType()];
+		GLenum type = GLPixelDataTypeConverter[m_Texture->getPixelFormat()];
+		GLenum format = GLInternalFormatConverter[m_Texture->getPixelFormat()];
 
-    if(target == GL_TEXTURE_1D)
-    {
-      glTextureSubImage1DEXT(m_TextureHandle,target,0,p_OffsetX,p_Width,format,type,p_Pixels);
-    }
-    else if(target == GL_TEXTURE_2D)
-    {
-      glTextureSubImage2DEXT(m_TextureHandle,target,0,p_OffsetX,p_OffsetY,p_Width,p_Height,format,type,p_Pixels);
-    }
-    else if(target == GL_TEXTURE_3D)
-    {
-      glTextureSubImage3DEXT(m_TextureHandle,target,0,p_OffsetX,p_OffsetY,p_OffsetZ,p_Width,p_Height,p_Depth,format,type,p_Pixels);
-    }
+		if(target == GL_TEXTURE_1D)
+		{
+			glTextureSubImage1DEXT(m_TextureHandle,target,0,p_OffsetX,p_Width,format,type,p_Pixels);
+		}
+		else if(target == GL_TEXTURE_2D)
+		{
+			glTextureSubImage2DEXT(m_TextureHandle,target,0,p_OffsetX,p_OffsetY,p_Width,p_Height,format,type,p_Pixels);
+		}
+		else if(target == GL_TEXTURE_3D)
+		{
+			glTextureSubImage3DEXT(m_TextureHandle,target,0,p_OffsetX,p_OffsetY,p_OffsetZ,p_Width,p_Height,p_Depth,format,type,p_Pixels);
+		}
 
-    glGenerateTextureMipmapEXT(m_TextureHandle,target);
+		glGenerateTextureMipmapEXT(m_TextureHandle,target);
 
-    return true;
-  }
-  /*********************************************************************************/
-  bool TextureImplOGL::writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ)
-  {
-    GLenum target = GLTextureTypeConverter[m_Texture->getType()];
-    GLenum type = GLPixelDataTypeConverter[m_Texture->getPixelFormat()];
-    GLenum format = GLInternalFormatConverter[m_Texture->getPixelFormat()];
+		return true;
+	}
+	/*********************************************************************************/
+	bool TextureImplOGL::writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ)
+	{
+		GLenum target = GLTextureTypeConverter[m_Texture->getType()];
+		GLenum type = GLPixelDataTypeConverter[m_Texture->getPixelFormat()];
+		GLenum format = GLInternalFormatConverter[m_Texture->getPixelFormat()];
 
-    if(target == GL_TEXTURE_1D)
-    {
-      glTextureSubImage1DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetZ,p_Width,format,type,p_Pixels);
-    }
-    else if(target == GL_TEXTURE_2D)
-    {
-      glTextureSubImage2DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_OffsetY,p_Width,p_Height,format,type,p_Pixels);
-    }
-    else if(target == GL_TEXTURE_3D)
-    {
-      glTextureSubImage3DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_OffsetY,p_OffsetZ,p_Width,p_Height,p_Depth,format,type,p_Pixels);
-    }
+		if(target == GL_TEXTURE_1D)
+		{
+			if(type == GL_COMPRESSED_RGB_S3TC_DXT1_EXT || type == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT || 
+				type == GL_COMPRESSED_RGBA_S3TC_DXT3_EXT || type == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
+			{
+				uint32 blocksize = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ? 8 : 16;
+				GLsizei size = ((p_Width + 3) / 4) * blocksize;
 
-    return true;
-  }
-  /*********************************************************************************/
-  bool TextureImplOGL::read(byte** p_Destination, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ)
-  {
-    return false;
-  }
-  /*********************************************************************************/
-  bool TextureImplOGL::readMipmap(byte** p_Destination, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ)
-  {
-    return false;
-  }
-  /*********************************************************************************/
-  bool TextureImplOGL::resize(uint32 p_Width, uint32 p_Height, uint32 p_Depth)
-  {
-    GLenum target = GLTextureTypeConverter[m_Texture->getType()];
-    GLenum format = GLInternalFormatConverter[m_Texture->getPixelFormat()];
+				glCompressedTextureSubImage1DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_Width,format,size,p_Pixels);
+			}
+			else
+			{
+				glTextureSubImage1DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_Width,format,type,p_Pixels);
+			}
+		}
+		else if(target == GL_TEXTURE_2D)
+		{
+			if(type == GL_COMPRESSED_RGB_S3TC_DXT1_EXT || type == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT || 
+				type == GL_COMPRESSED_RGBA_S3TC_DXT3_EXT || type == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
+			{
+				uint32 blocksize = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ? 8 : 16;
+				GLsizei size = ((p_Width + 3) / 4) * ((p_Height + 3) / 4) * blocksize;
 
-    if(target == GL_TEXTURE_1D)
-    {
-      glTextureStorage1DEXT(m_TextureHandle,target,m_Texture->getMipmapLevels(),format,p_Width);
-    }
-    else if(target == GL_TEXTURE_2D)
-    {
-      glTextureStorage2DEXT(m_TextureHandle,target,m_Texture->getMipmapLevels(),format,p_Width,p_Height);
-    }
-    else if(target == GL_TEXTURE_3D)
-    {
-      glTextureStorage3DEXT(m_TextureHandle,target,m_Texture->getMipmapLevels(),format,p_Width,p_Height,p_Depth);
-    }
+				glCompressedTextureSubImage2DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_OffsetY,p_Width,p_Height,format,size,p_Pixels);
+			}
+			else
+			{
+				glTextureSubImage2DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_OffsetY,p_Width,p_Height,format,type,p_Pixels);
+			}
+		}
+		else if(target == GL_TEXTURE_3D)
+		{
+			if(type == GL_COMPRESSED_RGB_S3TC_DXT1_EXT || type == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT || 
+				type == GL_COMPRESSED_RGBA_S3TC_DXT3_EXT || type == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
+			{
+				uint32 blocksize = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ? 8 : 16;
+				GLsizei size = ((p_Width + 3) / 4) * ((p_Height + 3) / 4) * ((p_Depth + 3) / 4) * blocksize;
 
-    return true;
-  }
-  /*********************************************************************************/
+				glCompressedTextureSubImage3DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_OffsetY,p_OffsetZ,p_Width,p_Height,p_Depth,format,size,p_Pixels);
+			}
+			else
+			{
+				glTextureSubImage3DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_OffsetY,p_OffsetZ,p_Width,p_Height,p_Depth,format,type,p_Pixels);
+			}
+		}
+
+		return true;
+	}
+	/*********************************************************************************/
+	bool TextureImplOGL::resize(uint32 p_Width, uint32 p_Height, uint32 p_Depth)
+	{
+		GLenum target = GLTextureTypeConverter[m_Texture->getType()];
+		GLenum format = GLInternalFormatConverter[m_Texture->getPixelFormat()];
+		
+		if(target == GL_TEXTURE_1D)
+		{
+			glTextureStorage1DEXT(m_TextureHandle,target,m_Texture->getMipmapLevels(),format,p_Width);
+		}
+		else if(target == GL_TEXTURE_2D)
+		{
+			glTextureStorage2DEXT(m_TextureHandle,target,m_Texture->getMipmapLevels(),format,p_Width,p_Height);
+		}
+		else if(target == GL_TEXTURE_3D)
+		{
+			glTextureStorage3DEXT(m_TextureHandle,target,m_Texture->getMipmapLevels(),format,p_Width,p_Height,p_Depth);
+		}
+
+		return true;
+	}
+	/*********************************************************************************/
 }}}//end of K15_Engine::Rendering::OGL namespace

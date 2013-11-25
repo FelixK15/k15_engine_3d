@@ -24,19 +24,19 @@
 #ifndef _K15Engine_Renderer_GpuProgram_h_
 #define _K15Engine_Renderer_GpuProgram_h_
 
-#ifndef K15_RENDERER_USE_PRECOMPILED_HEADERS
-#	include "K15_RendererPrerequisites.h"
-#endif //K15_RENDERER_USE_PRECOMPILED_HEADERS
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace Rendering { 
-	class GpuProgramImplBase
+	class K15_CORE_API GpuProgramImplBase
 	{
 
 	};// end of GpuProgramImplBase class declaration
 
 	/*********************************************************************************/
 
-	class GpuProgram
+	class K15_CORE_API GpuProgram
 	{
 	public:
 		GpuProgram();

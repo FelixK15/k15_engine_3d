@@ -17,8 +17,10 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_RendererPrecompiledHeader.h"
+#include "K15_PrecompiledHeader.h"
 #include "K15_TextureSampler.h"
+#include "K15_RendererBase.h"
+#include "K15_RenderTask.h"
 #include "K15_StringUtil.h"
 
 namespace K15_Engine { namespace Rendering {
@@ -28,14 +30,16 @@ namespace K15_Engine { namespace Rendering {
       m_MinFilterMode(TFM_LINEAR),
       m_UWrappingMode(TWM_CLAMP),
       m_VWrappingMode(TWM_CLAMP),
-      m_WWrappingMode(TWM_CLAMP)
+      m_WWrappingMode(TWM_CLAMP),
+	  m_Impl(0)
   {
-
+	  m_Impl = g_Application->getRenderTask()->getRenderer()->createTextureSamplerImpl();
+	  m_Impl->setTextureSampler(this);
   }
   /*********************************************************************************/
   TextureSampler::~TextureSampler()
   {
-
+	  K15_DELETE m_Impl;
   }
   /*********************************************************************************/
   Enum TextureSampler::getWrappingMode(uint8 p_Axis) const
@@ -61,17 +65,17 @@ namespace K15_Engine { namespace Rendering {
     if(p_Axis == 0)
     {
       m_UWrappingMode = p_WrappingMode;
-      p_Impl->setUWrappingMode(p_WrappingMode);
+      m_Impl->setUWrappingMode(p_WrappingMode);
     }
     else if(p_Axis == 1)
     {
       m_VWrappingMode = p_WrappingMode;
-      p_Impl->setVWrappingMode(p_WrappingMode);
+      m_Impl->setVWrappingMode(p_WrappingMode);
     }
     else if(p_Axis == 2)
     {
       m_WWrappingMode = p_WrappingMode;
-      p_Impl->setWWrappingMode(p_WrappingMode);
+      m_Impl->setWWrappingMode(p_WrappingMode);
     }
   }
   /*********************************************************************************/

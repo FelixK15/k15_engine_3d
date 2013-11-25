@@ -24,12 +24,12 @@
 #ifndef _K15Engine_Renderer_Color_h_
 #define _K15Engine_Renderer_Color_h_
 
-#ifndef K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
-#	include "K15_RendererPrerequisites.h"
-#endif //K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace Rendering {
-	struct ColorRGBA 
+	struct K15_CORE_API ColorRGBA 
 	{
 		/*********************************************************************************/
 		static const ColorRGBA Transparent;

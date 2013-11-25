@@ -24,9 +24,9 @@
 #ifndef _K15Engine_Renderer_Texture_h_
 #define _K15Engine_Renderer_Texture_h_
 
-#ifndef K15_RENDERER_USE_PRECOMPILED_HEADER
-#	include "K15_RendererPrerequisites.h"
-#endif //K15_RENDERER_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
 
 #include "K15_RendererBase.h"
 #include "K15_ResourceBase.h"
@@ -34,27 +34,28 @@
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
-	class TextureImplBase
+	class K15_CORE_API TextureImplBase
 	{
 	public:
 		TextureImplBase();
 		virtual ~TextureImplBase();
 
 		virtual bool write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) = 0;
-    virtual bool read(byte** p_Destination, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) = 0;
+// 		virtual bool read(byte** p_Destination, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) = 0;
+// 
+// 		virtual bool readMipmap(byte** p_Destination, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) = 0;
+		virtual bool writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) = 0;
 
-    virtual bool readMipmap(byte** p_Destination, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) = 0;
-    virtual bool writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) = 0;
-
-    virtual bool resize(uint32 p_Width, uint32 p_Height, uint32 p_Depth) = 0;
+		virtual bool resize(uint32 p_Width, uint32 p_Height, uint32 p_Depth) = 0;
 
 		void setTexture(Texture* p_Texture);
 		Texture* getTexture() const;
+
 	protected:
 		Texture *m_Texture;
 	};// end of TexutreImpl class declaration
 	/*********************************************************************************/
-	class Texture : public ResourceBase
+	class K15_CORE_API Texture : public ResourceBase
 	{
 	public:
 		/*********************************************************************************/
@@ -68,17 +69,9 @@ namespace K15_Engine { namespace Rendering {
 			TT_COUNT
 		};//TextureType
 		/*********************************************************************************/
-		enum eTextureUsage
-		{
-			TU_MUTABLE = 0,
-			TU_IMMUTABLE,
 
-			TU_COUNT
-		};//TextureUsage
-		/*********************************************************************************/
 	public:
 		Texture();
-		Texture(const TextureCreationOptions& p_Options);
 		~Texture();
 
 		inline Enum getType() const;
@@ -101,8 +94,8 @@ namespace K15_Engine { namespace Rendering {
 		void setPixelFormat(Enum p_PixelFormat);
 		inline Enum getPixelFormat() const;
 
-    void getDimension(uint32* p_Width, uint32* p_Height, uint32* p_Depth = 0);
-    void getMipmapDimension(uint32 p_MipmapLevel, uint32* p_Width, uint32* p_Height, uint32* p_Depth = 0);
+		void getDimension(uint32* p_Width, uint32* p_Height, uint32* p_Depth = 0);
+		void getMipmapDimension(uint32 p_MipmapLevel, uint32* p_Width, uint32* p_Height, uint32* p_Depth = 0);
 
 		uint32 getSize() const;
 		uint32 getMipmapSize(uint32 p_Index) const;
@@ -111,16 +104,17 @@ namespace K15_Engine { namespace Rendering {
 		uint32 write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, int32 p_OffsetX = 0, int32 p_OffsetY = 0);
 		uint32 write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX = 0, int32 p_OffsetY = 0, int32 p_OffsetZ = 0);
 
-    uint32 writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, int32 p_OffsetX = 0);
-    uint32 writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, int32 p_OffsetX = 0, int32 p_OffsetY = 0);
-    uint32 writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX = 0, int32 p_OffsetY = 0, int32 p_OffsetZ = 0);
+		uint32 writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, int32 p_OffsetX = 0);
+		uint32 writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, int32 p_OffsetX = 0, int32 p_OffsetY = 0);
+		uint32 writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX = 0, int32 p_OffsetY = 0, int32 p_OffsetZ = 0);
 
-		uint32 read(byte** p_Destination, uint32 p_Width, int32 p_OffsetX = 0);
-		uint32 read(byte** p_Destination, uint32 p_Width, uint32 p_Height, int32 p_OffsetX = 0, int32 p_OffsetY = 0);
-		uint32 read(byte** p_Destination, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX = 0, int32 p_OffsetY = 0, int32 p_OffsetZ = 0);
+// 		uint32 read(byte** p_Destination, uint32 p_Width, int32 p_OffsetX = 0);
+// 		uint32 read(byte** p_Destination, uint32 p_Width, uint32 p_Height, int32 p_OffsetX = 0, int32 p_OffsetY = 0);
+// 		uint32 read(byte** p_Destination, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX = 0, int32 p_OffsetY = 0, int32 p_OffsetZ = 0);
 
 		bool resize(uint32 p_Width,uint32 p_Height,uint32 p_Depth = 0);
-		
+		bool create(const TextureCreationOptions& p_Options);
+
 		inline bool hasAlpha() const;
 		inline bool hasShadowCopy() const;
 
@@ -144,24 +138,23 @@ namespace K15_Engine { namespace Rendering {
 		bool m_HasAlpha;
 		bool m_HasShadowCopy;
 	};//end of Texture class declaration
-  /*********************************************************************************/
-  struct TextureCreationOptions
-  {
-    uint32 width;
-    uint32 height;
-    uint32 depth;
+	/*********************************************************************************/
+	struct TextureCreationOptions
+	{
+		uint32 width;
+		uint32 height;
+		uint32 depth;
 
-    RawData pixels;
+		RawData pixels;
 
-    RendererBase::ePixelFormat pixelFormat;
-    Texture::eTextureUsage usage;
+		RendererBase::ePixelFormat pixelFormat;
 
-    bool createMipMaps;
-    bool useShadowCopy;
+		bool createMipMaps;
+		bool useShadowCopy;
 
-    uint32 mipmapLevels;
-  }; // end of TextureCreationOptions struct
-  /*********************************************************************************/
+		uint32 mipmapLevels;
+	}; // end of TextureCreationOptions struct
+	/*********************************************************************************/
 #	include "K15_Texture.inl"
 }}// end of K15_Engine::Rendering
 

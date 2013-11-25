@@ -21,10 +21,6 @@
  * 
  */
 
-#ifndef K15_RENDERER_USE_PRECOMPILED_HEADERS
-#	include "K15_RendererPrerequisites.h"
-#endif //K15_RENDERER_USE_PRECOMPILED_HEADERS
-
 #include "K15_GpuProgram.h"
 
 namespace K15_Engine { namespace Rendering { namespace OGL {

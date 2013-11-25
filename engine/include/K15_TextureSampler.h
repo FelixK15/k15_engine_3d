@@ -24,15 +24,15 @@
 #ifndef _K15Engine_Renderer_TextureSampler_h_
 #define _K15Engine_Renderer_TextureSampler_h_
 
-#ifndef K15_RENDERER_USE_PRECOMPILED_HEADERS
-# include "K15_RendererPrerequisites.h"
-#endif //K15_RENDERER_USE_PRECOMPILED_HEADERS
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
 
 #include "K15_ColorRGBA.h"
 
 namespace K15_Engine { namespace Rendering { 
   /*********************************************************************************/
-  class TextureSamplerImplBase
+  class K15_CORE_API TextureSamplerImplBase
   {
   public:
     virtual void setMinFilterMode(Enum p_MinFilterMode) = 0;
@@ -51,7 +51,7 @@ namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
 
   /*********************************************************************************/
-  class TextureSampler
+  class K15_CORE_API TextureSampler
   {
   public:
     /*********************************************************************************/
@@ -101,7 +101,7 @@ namespace K15_Engine { namespace Rendering {
     void setWrappingMode(uint8 p_Axis,Enum p_WrappingMode);
 
   private:
-    TextureSamplerImplBase* p_Impl;
+    TextureSamplerImplBase* m_Impl;
     ColorRGBA m_BorderColor;
     Enum m_UWrappingMode;
     Enum m_VWrappingMode;

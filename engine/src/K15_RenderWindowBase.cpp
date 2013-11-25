@@ -51,7 +51,7 @@ namespace K15_Engine { namespace Core {
 		: m_WindowTitle(""),
 		m_CurrentResolution(),
 		m_IsFullscreen(false),
-    m_HasFocus(true)
+		m_HasFocus(true)
 	{
 
 	}
@@ -92,9 +92,9 @@ namespace K15_Engine { namespace Core {
 	{
 		return m_IsFullscreen;
 	}
-  /*********************************************************************************/
-  void RenderWindowBase::setHasFocus(bool p_HasFocus)
-  {
+	/*********************************************************************************/
+	void RenderWindowBase::setHasFocus(bool p_HasFocus)
+	{
   		if(m_HasFocus == p_HasFocus)
   		{
   				return;
@@ -114,11 +114,11 @@ namespace K15_Engine { namespace Core {
     	m_HasFocus = p_HasFocus;
 
     	g_EventManager->triggerEvent(focusEvent);
-  }
-  /*********************************************************************************/
-  bool RenderWindowBase::getHasFocus() const
-  {
-    return m_HasFocus;
-  }
-  /*********************************************************************************/
+	}
+	/*********************************************************************************/
+	bool RenderWindowBase::getHasFocus() const
+	{
+		return m_HasFocus;
+	}
+	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace

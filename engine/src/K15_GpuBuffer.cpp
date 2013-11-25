@@ -17,8 +17,10 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_RendererPrecompiledHeader.h"
+#include "K15_PrecompiledHeader.h"
 #include "K15_GpuBuffer.h"
+#include "K15_RendererBase.h"
+#include "K15_RenderTask.h"
 #include "K15_LogManager.h"
 
 namespace K15_Engine { namespace Rendering {
@@ -26,7 +28,7 @@ namespace K15_Engine { namespace Rendering {
 	GpuBufferImplBase::GpuBufferImplBase()
 		: m_Buffer(0)
 	{
-
+		
 	}
 	/*********************************************************************************/
 	GpuBufferImplBase::~GpuBufferImplBase()
@@ -57,7 +59,8 @@ namespace K15_Engine { namespace Rendering {
 		  m_BufferType(p_BufferType),
 		  m_AccessOption(p_AccessOption)
 	{
-// 		m_Impl = g_Renderer->getGpuBufferImpl();
+ 		m_Impl = g_Application->getRenderTask()->getRenderer()->createGpuBufferImpl();
+		m_Impl->setBuffer(this);
  	}
 	/*********************************************************************************/
 	GpuBuffer::GpuBuffer(Enum p_BufferType, uint32 p_InitialDataSize, byte* p_InitialData, uint32 p_InitialDataOffset, Enum p_LockOption, Enum p_UsageOption, Enum p_AccessOption, bool p_ShadowCopyEnabled)
@@ -72,6 +75,16 @@ namespace K15_Engine { namespace Rendering {
 	{
 // 		m_Impl = g_Renderer->getGpuBufferImpl();
 		writeData(p_InitialDataSize,p_InitialData,p_InitialDataOffset);
+	}
+	/*********************************************************************************/
+	GpuBuffer::~GpuBuffer()
+	{
+		K15_DELETE m_Impl;
+
+		if(m_ShadowCopy)
+		{
+			K15_DELETE[] m_ShadowCopy;
+		}
 	}
 	/*********************************************************************************/
 	void GpuBuffer::lock(uint32 p_StartPos, int32 p_Count)
@@ -103,7 +116,6 @@ namespace K15_Engine { namespace Rendering {
 			p_FromShadowCopy = true;
 		}
 
-		
 		if(p_FromShadowCopy)
 		{
 			if(getShadowCopyEnabled())
@@ -203,10 +215,10 @@ namespace K15_Engine { namespace Rendering {
 		if(m_Impl->allocate(p_Size))
 		{
 			m_Size = p_Size;
-		  return true;
-    }
+			return true;
+		}
 
-    return false;
+		return false;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace
