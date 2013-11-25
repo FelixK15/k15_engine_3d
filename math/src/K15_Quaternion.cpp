@@ -123,7 +123,7 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	Quaternion Quaternion::operator/(float p_Scalar) const
 	{
-		K15_ASSERT(p_Scalar != 0,"Can't divide quaternion by 0!");
+		assert(p_Scalar != 0);
 		Quaternion quaternion(*this);
 
 		quaternion /= p_Scalar;

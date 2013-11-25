@@ -71,7 +71,7 @@ namespace K15_Engine { namespace Math {
 	Matrix3 Matrix3::inverse() const
 	{
 		float tmpDet = determinant();
-		K15_ASSERT(tmpDet != 0,"Matrix is not inversable. Determinant == 0!");
+		assert(tmpDet != 0);
 
 		Matrix3 invMatrix;
 		invMatrix._1_1 = (m_MatrixArray[4]*m_MatrixArray[8] - m_MatrixArray[5]*m_MatrixArray[7])/tmpDet;
