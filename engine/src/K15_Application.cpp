@@ -391,7 +391,11 @@ namespace K15_Engine { namespace Core {
 						binding = bindingComplete.substr(0,pos == String::npos ? bindingComplete.size() : pos);
 						if(pos != String::npos)
 						{
-							bindingComplete = bindingComplete.substr(0,pos+1);
+							bindingComplete = bindingComplete.substr(pos+1);
+						}
+						else
+						{
+							bindingComplete.clear();
 						}
 						
 						if(!binding.empty())
@@ -404,8 +408,19 @@ namespace K15_Engine { namespace Core {
 								
 								if(device == "Keyboard")
 								{
-									g_InputManager->addInputBinding(actionName,
-										K15_NEW InputDevices::Keyboard::InputTrigger(InputDevices::Keyboard::InputStringToEnum[_N(deviceInput)]));
+									InputDevices::Keyboard::InputStringToEnumMap::iterator input_iter = 
+										InputDevices::Keyboard::InputStringToEnum.find(ObjectName(deviceInput));
+
+									if(input_iter != InputDevices::Keyboard::InputStringToEnum.end())
+									{
+										g_InputManager->addInputBinding(actionName,
+											K15_NEW InputDevices::Keyboard::InputTrigger(input_iter->second));
+									}
+									else
+									{
+										_LogError("Could not find input \"%s\".",binding.c_str());
+									}
+									
 								}
 								else if(device == "Gamepad")
 								{
@@ -413,8 +428,18 @@ namespace K15_Engine { namespace Core {
 								}
 								else if(device == "Mouse")
 								{
-									g_InputManager->addInputBinding(actionName,
-										K15_NEW InputDevices::Mouse::InputTrigger(InputDevices::Mouse::InputStringToEnum[_N(deviceInput)]));
+									InputDevices::Mouse::InputStringToEnumMap::iterator input_iter = 
+										InputDevices::Mouse::InputStringToEnum.find(ObjectName(deviceInput));
+
+									if(input_iter != InputDevices::Mouse::InputStringToEnum.end())
+									{
+										g_InputManager->addInputBinding(actionName,
+											K15_NEW InputDevices::Mouse::InputTrigger(input_iter->second));
+									}
+									else
+									{
+										_LogError("Could not find input \"%s\".",binding.c_str());
+									}
 								}
 								else
 								{
@@ -426,7 +451,7 @@ namespace K15_Engine { namespace Core {
 								_LogError("invalid binding \"%s\"",bindingComplete.c_str());
 							}
 						}
-					} while(bindingComplete.find_first_of(',') != String::npos);
+					} while(!bindingComplete.empty());
 				}
 			}
 		}

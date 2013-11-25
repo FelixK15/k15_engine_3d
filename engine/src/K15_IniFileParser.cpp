@@ -90,9 +90,9 @@ namespace K15_Engine { namespace Core {
 		{
 			++lineCount;
 			p_Stream.getline(bufferline,256);
-			line = bufferline;
+			line = StringUtil::removeWhitespaces(bufferline);
 
-			if(line.find_first_of("//") != String::npos) //comment?
+			if(line.find_first_of("//") != String::npos || line.find_first_of(";") != String::npos) //comment?
 			{
 				continue;
 			}
@@ -113,7 +113,6 @@ namespace K15_Engine { namespace Core {
 			}
 			else if(equalPos != String::npos)
 			{
-				line = StringUtil::removeWhitespaces(line);
 				key = line.substr(0,equalPos);
 				value = line.substr(equalPos+1);
 

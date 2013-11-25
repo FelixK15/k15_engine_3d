@@ -44,7 +44,6 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		{
 		public:
 			InputTrigger(Enum p_Button);
-			InputTrigger(const String& p_ButtonString);
 
 			virtual bool isActive() OVERRIDE;
 		private:
@@ -93,6 +92,9 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		static bool setMouseIcon(const String& p_IconPath);
 
 		static bool isPressed(Enum p_Button);
+
+	private:
+		static const InputStringToEnumMap& createStringToEnumMap();
 	};// end of Mouse class declaration
 }}}// end of K15_Engine::Core::InputDevice namespace
 

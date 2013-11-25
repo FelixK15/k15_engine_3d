@@ -29,8 +29,7 @@ namespace K15_Engine { namespace Core {
 		: BlockAllocator(ApplicationAllocator,2 * MEGABYTE,_N(InputManagerAllocator)),
 		  m_InputMap()
 	{
-		InputDevices::Mouse::initialize();
-		InputDevices::Keyboard::initialize();
+		//InputDevices::Keyboard::initialize();
 	}
 	/*********************************************************************************/
 	InputManager::~InputManager()
@@ -54,10 +53,6 @@ namespace K15_Engine { namespace Core {
 		{
 			m_InputMap.insert(Pair(ObjectName,InputTriggerBase*)(p_ActionName,p_Trigger));
 			return;
-		}
-		else
-		{
-			_LogError("Couldn't add another trigger for action \"%s\".",p_ActionName.c_str());
 		}
 	}
 	/*********************************************************************************/

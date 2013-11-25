@@ -185,7 +185,7 @@ namespace K15_Engine { namespace Core {
 	{
 		static String string;
 		string = p_String;
-		string.erase(std::remove_if(string.begin(),string.end(),isspace));
+		string.erase(std::remove_if(string.begin(),string.end(),isspace),string.end());
 		return string;
 	}
 	/*********************************************************************************/

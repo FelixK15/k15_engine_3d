@@ -137,6 +137,9 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 	public:
 		static void initialize();
 		static bool isPressed(Enum p_Key);
+
+	private:
+		static const InputStringToEnumMap& createStringToEnumMap();
 	};// end of Keybard class declaration
 
 }}} //end of K15_Engine::Core::InputDevices namespace
