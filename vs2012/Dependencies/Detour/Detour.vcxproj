@@ -39,12 +39,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\..\dependencies\Detour\bin\$(Platform)_$(Configuration)\</OutDir>
+    <OutDir>..\..\..\dependencies\Detour\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>..\..\..\dependencies\Detour\obj\</IntDir>
     <IncludePath>..\..\..\dependencies\Detour\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\..\..\dependencies\Detour\bin\$(Platform)_$(Configuration)\</OutDir>
+    <OutDir>..\..\..\dependencies\Detour\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>..\..\..\dependencies\Detour\obj\</IntDir>
     <IncludePath>..\..\..\dependencies\Detour\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>

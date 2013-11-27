@@ -41,7 +41,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\test\bin\$(Platform)_$(Configuration)\</OutDir>
+    <OutDir>..\..\test\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IntDir>..\..\test\obj\</IntDir>
@@ -54,7 +54,7 @@
     <LibraryPath>..\..\engine\bin\$(Platform)_$(Configuration)\;..\..\math\bin\$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\..\test\bin\$(Configuration)\</OutDir>
+    <OutDir>..\..\test\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IntDir>..\..\test\obj\</IntDir>

@@ -39,13 +39,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\rendererOGL\bin\$(Platform)_$(Configuration)\</OutDir>
+    <OutDir>..\..\rendererOGL\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>..\..\rendererOGL\obj\</IntDir>
     <IncludePath>..\..\rendererOGL\include\;..\..\engine\include\;..\..\renderer\include\;..\..\dependencies\GLEW\include\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\engine\bin\$(Platform)_$(Configuration)\;..\..\dependencies\GLEW\bin\$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\..\rendererOGL\bin\$(Configuration)\</OutDir>
+    <OutDir>..\..\rendererOGL\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>..\..\rendererOGL\obj\</IntDir>
     <IncludePath>..\..\engine\include\;..\..\renderer\include\;..\..\engine\src\win32\;..\..\engine\src\;..\..\engine\include\win32\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\engine\bin\$(Configuration)\;..\..\renderer\bin\$(Configuration)\;$(LibraryPath)</LibraryPath>

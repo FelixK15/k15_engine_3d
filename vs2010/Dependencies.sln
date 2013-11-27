@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyThread", "Dependencies\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyXML", "Dependencies\TinyXML\TinyXML.vcxproj", "{ED637AF1-F621-4899-9946-6B9C8AE9D1FD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Detour", "Dependencies\Detour\Detour.vcxproj", "{6BA03C58-C796-4B3E-B4B4-F5E48A3265C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -37,6 +39,10 @@ Global
 		{ED637AF1-F621-4899-9946-6B9C8AE9D1FD}.Debug|Win32.Build.0 = Debug|Win32
 		{ED637AF1-F621-4899-9946-6B9C8AE9D1FD}.Release|Win32.ActiveCfg = Release|Win32
 		{ED637AF1-F621-4899-9946-6B9C8AE9D1FD}.Release|Win32.Build.0 = Release|Win32
+		{6BA03C58-C796-4B3E-B4B4-F5E48A3265C7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6BA03C58-C796-4B3E-B4B4-F5E48A3265C7}.Debug|Win32.Build.0 = Debug|Win32
+		{6BA03C58-C796-4B3E-B4B4-F5E48A3265C7}.Release|Win32.ActiveCfg = Release|Win32
+		{6BA03C58-C796-4B3E-B4B4-F5E48A3265C7}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
