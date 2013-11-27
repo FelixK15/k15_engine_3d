@@ -23,50 +23,45 @@
 #include "K15_JobBase.h"
 
 namespace K15_Engine { namespace Core {
+  /*********************************************************************************/
+  bool ThreadWorker::Running = false;
+  const uint8 ThreadWorker::DefaultThreadCount = 3;
+  const uint8 ThreadWorker::HardwareThreads = Thread::hardware_concurrency() == 0 ? DefaultThreadCount : Thread::hardware_concurrency() - 1;
 	/*********************************************************************************/
-	K15_IMPLEMENT_RTTI(K15_Engine::Core,ThreadWorkerTask);
-	/*********************************************************************************/
+	void ThreadWorker::execute()
+	{
+    static Mutex mutex;
 
-	/*********************************************************************************/
-	ThreadWorkerTask::ThreadWorkerTask()
-		: TaskBase()
-	{
-		setName(_TN(ThreadWorkerTask));
-	}
-	/*********************************************************************************/
-	ThreadWorkerTask::~ThreadWorkerTask()
-	{
+    while(Running)
+    {
+      JobBase* job = 0;
+      mutex.lock();
 
-	}
-	/*********************************************************************************/
-	void ThreadWorkerTask::update(const GameTime& p_GameTime)
-	{
-		g_ThreadWorker->executeJobs();
-	}
-	/*********************************************************************************/
+      JobList& jobs = g_ThreadWorker->getJobs();
+      if(jobs.size() > 0)
+      {
+        job = (*jobs.begin());
+        jobs.pop_front();
+        _LogDebug("Thread %u will process job %s.",g_CurrentThread::get_id().hash(),job->getName().c_str());
+      }
 
-	/*********************************************************************************/
-	void ThreadWorker::execute(JobBase* p_Job)
-	{
-		p_Job->setStatus(JobBase::JS_RUNNING);
-		p_Job->execute();
-		p_Job->setStatus(JobBase::JS_FINISHED);
+      mutex.unlock();
+
+      if(job)
+      {
+        job->setStatus(JobBase::JS_RUNNING);
+        job->execute();
+        job->setStatus(JobBase::JS_FINISHED);
+      }
+    }
 	}
 	/*********************************************************************************/
 	ThreadWorker::ThreadWorker()
-		: m_Jobs(),
-		  m_Threads(),
-		  m_HardwareThreads(0)
+		: PoolAllocator<Thread>(ApplicationAllocator,HardwareThreads,_N(ThreadAllocator)),
+    m_Jobs(),
+		m_Threads()
 	{
-		m_HardwareThreads = Thread::hardware_concurrency() - 1;
 
-		if(m_HardwareThreads == 0)
-		{
-			_LogWarning("No hardware threading found. Creating 3 default threads.");
-			m_HardwareThreads = 3;
-		}
-
-		m_Threads.resize(m_HardwareThreads);
 	}
 	/*********************************************************************************/
 	ThreadWorker::~ThreadWorker()
@@ -83,10 +78,35 @@ namespace K15_Engine { namespace Core {
 		m_Jobs.clear();
 	}
 	/*********************************************************************************/
+  void ThreadWorker::initialize()
+  {
+    Running = true;
+    uint8 counter = 0;
+    while(counter++ < 0)
+    {
+      Thread* thread = K15_NEW_T(this,Thread) Thread(execute);
+      m_Threads.push_back(thread);
+    }
+  }
+  /*********************************************************************************/
+  void ThreadWorker::shutdown()
+  {
+    Running = false;
+    Thread* thread = 0;
+    while(m_Threads.size() > 0)
+    {
+      thread = (*m_Threads.begin());
+      thread->join();
+      K15_DELETE_T(this,thread);
+      m_Threads.pop_front();
+    }
+  }
+  /*********************************************************************************/
 	void ThreadWorker::addJob(JobBase* p_Job)
 	{		
 		m_Jobs.push_back(p_Job);
-	}
+	  p_Job->setStatus(JobBase::JS_QUEUED);
+  }
 	/*********************************************************************************/
 	void ThreadWorker::removeJob(JobBase* p_Job)
 	{
@@ -104,7 +124,7 @@ namespace K15_Engine { namespace Core {
 		}
 	}
 	/*********************************************************************************/
-	const ThreadWorker::JobList& ThreadWorker::getJobs() const
+	ThreadWorker::JobList& ThreadWorker::getJobs()
 	{
 		return m_Jobs;
 	}
@@ -113,48 +133,5 @@ namespace K15_Engine { namespace Core {
 	{
 		return m_Threads;
 	}
-	/*********************************************************************************/
-	void ThreadWorker::executeJobs()
-	{
-		while(m_Jobs.size() > 0)
-		{
-			bool success = false;
-			for(ThreadList::iterator iter = m_Threads.begin();iter != m_Threads.end();++iter)
-			{
-				if(!(*iter)->joinable())
-				{
-					success = true;
-					(*iter) = new Thread(execute,(*m_Jobs.begin()));
-					m_JobThreadMap.insert(Pair(JobBase*,Thread::id)((*m_Jobs.begin()),(*iter)->get_id()));
-					m_Jobs.pop_front();
-					break;
-				}
-			}
-
-			if(!success)
-			{
-				break;
-			}
-		}
-
-		for(JobThreadMap::iterator iter = m_JobThreadMap.begin();iter != m_JobThreadMap.end();++iter)
-		{
-			if(iter->first->getStatus() == JobBase::JS_FINISHED)
-			{
-				_LogDebug("Job %s finished.",iter->first->getName().c_str());
-				//find thread
-				for(ThreadList::iterator thread_iter = m_Threads.begin();thread_iter != m_Threads.end();++thread_iter)
-				{
-					if((*thread_iter)->get_id() == iter->second)
-					{
-						_LogDebug("Joining thread %u.",iter->second.hash());
-						(*thread_iter)->join();
-						m_JobThreadMap.erase(iter->first);
-						return;
-					}
-				}
-			}
-		}
-	}
-	/*********************************************************************************/
+/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

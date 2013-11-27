@@ -155,11 +155,11 @@ namespace K15_Engine { namespace Core {
 				LogManager* m_LogManager;
 				DynamicLibraryManager* m_DynamicLibraryManager;
 				InputManager* m_InputManager;
+        ThreadWorker* m_ThreadWorker;
 
 				RenderTask* m_RenderTask;
 				PhysicsTask* m_PhysicsTask;
 				EventTask* m_EventTask;
-				ThreadWorkerTask* m_ThreadTask;
   }; //end of Application class definition
 #include "K15_Application.inl"
 }} //end of K15_Engine::Core namespace

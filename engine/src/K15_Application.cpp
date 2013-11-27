@@ -67,7 +67,7 @@ namespace K15_Engine { namespace Core {
 		m_Plugins(),
 		m_RunningTime(0.0),
 		m_ApplicationParameter(),
-		m_ThreadTask(0),
+		m_ThreadWorker(0),
 		m_GameRootDir(),
 		m_GameTime(0.0,1.0),
 		m_FrameCounter(0),
@@ -85,7 +85,6 @@ namespace K15_Engine { namespace Core {
 		m_EventTask = K15_NEW EventTask();
 		m_RenderTask = K15_NEW RenderTask();
 		m_PhysicsTask = K15_NEW PhysicsTask();
-		m_ThreadTask = K15_NEW ThreadWorkerTask();
 	}
 	/*********************************************************************************/
 	Application::~Application()
@@ -181,19 +180,22 @@ namespace K15_Engine { namespace Core {
 		loadGameDirFile();
 		
 		_LogNormal("Initializing DynamicLibraryManager...");
-		m_DynamicLibraryManager = K15_NEW DynamicLibraryManager();
+		m_DynamicLibraryManager = g_DynamicLibraryManager;
 		
 		_LogNormal("Initializing EventManager...");
-		m_EventManager = K15_NEW EventManager();
+		m_EventManager = g_EventManager;
 		
 		_LogNormal("Initializing ProfilingManager...");
-		m_ProfileManager = K15_NEW ProfilingManager();
+		m_ProfileManager = g_ProfileManager;
 
 		_LogNormal("Initializing TaskManager...");
-		m_TaskManager = K15_NEW TaskManager();
+		m_TaskManager = g_TaskManager;
 
 		_LogNormal("Initializing InputManager...");
-		m_InputManager = K15_NEW InputManager();
+		m_InputManager = g_InputManager;
+
+//     _LogNormal("Initializing ThreadWorker...");
+//     m_ThreadWorker = g_ThreadWorker;
 
 		//Load plugins
 		loadPluginsFile();
@@ -204,8 +206,9 @@ namespace K15_Engine { namespace Core {
 			(*iter)->onInitialize();
 		}
 
+   // m_ThreadWorker->initialize();
 		m_RenderWindow = K15_NEW RenderWindowType();
-
+    
 		m_RenderWindow->initialize();
 	
 		//process settings
@@ -223,9 +226,6 @@ namespace K15_Engine { namespace Core {
 
 		_LogNormal("Adding physics task...");
 		m_TaskManager->addTask(m_PhysicsTask);
-
-		_LogNormal("Adding threadworker task...");
-		m_TaskManager->addTask(m_ThreadTask);
 
 		if(!m_RenderTask->getRenderer())
 		{
@@ -304,11 +304,6 @@ namespace K15_Engine { namespace Core {
 		}
 
 		endFrameTime = getTime();
-
-		if(m_InputManager->isActive(_N(Jump)))
-		{
-			_LogSuccess("JUMP!");
-		}
 
 		//so is there any frame time left?
 		diffTime = endFrameTime - startFrameTime;
@@ -557,24 +552,25 @@ namespace K15_Engine { namespace Core {
 
 		m_RenderWindow->shutdown();
 		m_OSLayer.shutdown();
+    m_ThreadWorker->shutdown();
 
 		_LogNormal("Destroying InputManager...");
-		K15_DELETE_T(m_InputManager);
+		K15_DELETE m_InputManager;
 
 		_LogNormal("Destroying RenderWindow...");
-		K15_DELETE_T(m_RenderWindow);
+		K15_DELETE m_RenderWindow;
 
 		_LogNormal("Destroying DynamicLibraryManager...");
-		K15_DELETE_T(m_DynamicLibraryManager);
+		K15_DELETE m_DynamicLibraryManager;
 
 		_LogNormal("Destroying EventManager...");
-		K15_DELETE_T(m_EventManager);
+		K15_DELETE m_EventManager;
 
 		_LogNormal("Destroying ProfilingManager...");
-		K15_DELETE_T(m_ProfileManager);
+		K15_DELETE m_ProfileManager;
 
 		_LogNormal("Destroying LogManager...");
-		K15_DELETE_T(m_LogManager);
+		K15_DELETE m_LogManager;
 	}
 	/*********************************************************************************/
 	void Application::loadGameDirFile()

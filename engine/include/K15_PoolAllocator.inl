@@ -20,14 +20,16 @@
 /*********************************************************************************/
 template<class T>
 PoolAllocator<T>::PoolAllocator(uint32 p_ObjectCount, const ObjectName& p_Name)
-	: BaseAllocator(p_ObjectCount * sizeof(T),p_Name)
+	: BaseAllocator(p_ObjectCount * sizeof(T),p_Name),
+  m_Position(0)
 {
 
 }
 /*********************************************************************************/
 template<class T>
 PoolAllocator<T>::PoolAllocator(BaseAllocator* p_Allocator,uint32 p_ObjectCount, const ObjectName& p_Name)
-	: BaseAllocator(p_Allocator,p_ObjectCount * sizeof(T),p_Name)
+  : BaseAllocator(p_Allocator,p_ObjectCount * sizeof(T),p_Name),
+  m_Position(0)
 {
 
 }
@@ -49,17 +51,17 @@ void* PoolAllocator<T>::alloc(uint32 p_Size)
 	}
 
 	uint32 pos = m_Position++ * sizeof(T);
-	while(m_Memory[pos] & sizeof(T) > 0)
-	{
-		pos = m_Position++ * sizeof(T);
-		if(pos == m_MemorySize)
-		{
-			m_Position = 0;
-			pos = 0;
-		}
-	}
+// 	while(((m_Memory + pos) & sizeof(T)) > 0)
+// 	{
+// 		pos = m_Position++ * sizeof(T);
+// 		if(pos == m_MemorySize)
+// 		{
+// 			m_Position = 0;
+// 			pos = 0;
+// 		}
+// 	}
 
-	return (void*)m_Memory[pos];
+	return (void*)(m_Memory + pos);
 }
 /*********************************************************************************/
 template<class T>

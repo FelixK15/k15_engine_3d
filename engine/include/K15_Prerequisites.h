@@ -87,7 +87,6 @@ namespace K15_Engine
 		class MemoryProfiler;
 		class JobBase;
 		class ThreadWorker;
-		class ThreadWorkerTask;
 		class MemoryProfilingTask;
 		class ResourceManager;
 		class PhysicsProcessBase;
@@ -324,11 +323,23 @@ namespace K15_Engine
 
 //Threading
 #if defined K15_DONT_USE_STL
-#	define K15_Thread(func,args) K15_Engine::Core::Thread<func,args>
+#   include "tinythread.h"
+#   define g_CurrentThread tthread::this_thread
+#   define SleepCurrentThread(ms) g_CurrentThread::sleep_for(tthread::chrono::milliseconds(ms))
+    typedef tthread::thread Thread;
+    typedef tthread::mutex Mutex;
+    typedef tthread::lock_guard<Mutex> LockGuard;
+
 #else
 #	if defined K15_CPP11_SUPPORT
 #		include <thread>		
+#   include <mutex>
+#   include <chrono>
+#   define g_CurrentThread std::this_thread
+#   define SleepCurrentThread(ms) g_CurrentThread::sleep_for(std::chrono::milliseconds(ms))
 		typedef std::thread Thread;
+    typedef std::mutex Mutex;
+    typedef std::lock_guard<Mutex> LockGuard;
 #	else
 //#		include "tinythread.h"
 //		typedef tthread::thread Thread;
@@ -390,15 +401,16 @@ namespace K15_Engine
 #	define K15_NEW	  new(__FILE__,__LINE__,__FUNCTION__) 
 #	define K15_DELETE delete
 
-#	define K15_NEW_T(objType) (objType*)objType::MemoryAllocator->allocateDebug(sizeof(objType),__FILE__,__LINE__,false,__FUNCTION__)
+#	define K15_NEW_T(allocator,objType) new(allocator->allocateDebug(sizeof(objType),__FILE__,__LINE__,false,__FUNCTION__))
 //#	define K15_NEW(objType,size) objType::MemoryAllocator->allocateDebug(size,__FILE__,__LINE__,false,__FUNCTION__)
 
-#	define K15_DELETE_T(ptr) if(ptr){ptr->MemoryAllocator->deallocateDebug(ptr,__FILE__,__LINE__,false,__FUNCTION__);}
+#	define K15_DELETE_T(allocator,ptr) if(ptr){allocator->deallocateDebug((void*)ptr,__FILE__,__LINE__,false,__FUNCTION__);}
 #else
 #	define K15_NEW    new
 #	define K15_DELETE delete
 
-#	define K15_NEW_T(objType) objType::MemoryAllocator->allocate(sizeof(objType));
+#	define K15_NEW_T(allocator,objType) new(allocator->allocate(sizeof(objType)))
+# define K15_DELETE_T(allocator,ptr) if(ptr){allocator->deallocate((void*)ptr);}
 #endif //K15_DEBUG
 
 # define K15_PLACEMENT_NEW new(ptr)

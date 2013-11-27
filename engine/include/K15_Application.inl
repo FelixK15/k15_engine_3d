@@ -157,3 +157,8 @@ const FrameStatistic& Application::getFrameStatistic(uint32 p_FrameNumber) const
 	return m_FrameStatistics[p_FrameNumber];
 }
 /*********************************************************************************/
+const ApplicationOSLayerType& Application::getOSLayer() const
+{
+  return m_OSLayer;
+}
+/*********************************************************************************/

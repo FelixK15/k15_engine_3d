@@ -104,16 +104,16 @@ namespace K15_Engine { namespace Core {
 
   		if(p_HasFocus)
   		{
-      		focusEvent = K15_NEW GameEvent(_EN(FocusGained));
+//      		focusEvent = K15_NEW GameEvent(_EN(FocusGained));
   		}
   		else
     	{
-      		focusEvent = K15_NEW GameEvent(_EN(FocusLost));
+//      		focusEvent = K15_NEW GameEvent(_EN(FocusLost));
     	}
 
     	m_HasFocus = p_HasFocus;
 
-    	g_EventManager->triggerEvent(focusEvent);
+//    	g_EventManager->triggerEvent(focusEvent);
 	}
 	/*********************************************************************************/
 	bool RenderWindowBase::getHasFocus() const
