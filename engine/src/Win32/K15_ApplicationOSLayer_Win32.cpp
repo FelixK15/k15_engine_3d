@@ -116,15 +116,15 @@ namespace K15_Engine { namespace Core {
 		
 		hwnd = ((RenderWindow_Win32*)Application::getInstance()->getRenderWindow())->getHandleWindow();
 		
-		if(PeekMessage(&msg,hwnd,0,0,PM_REMOVE))
+		if(PeekMessage(&msg,0,0,0,PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 
-			if(msg.message == WM_QUIT || msg.message == WM_CLOSE)
-			{
-				Application::getInstance()->setRunning(false);
-			}
+      if(msg.message == WM_QUIT)
+      {
+        Application::getInstance()->setRunning(false);
+      }
 		}
 	}
 	/*********************************************************************************/

@@ -40,6 +40,9 @@
 
 #ifdef K15_DEBUG
 #	include "K15_TextConsoleLog.h"
+# ifdef _MSC_VER
+#   include "Win32\K15_VisualStudioLog_Win32.h"
+#endif
 #endif //K15_DEBUG
 
 #ifdef K15_OS_WINDOWS
@@ -80,6 +83,9 @@ namespace K15_Engine { namespace Core {
 
 #		if defined (K15_DEBUG)
 			m_LogManager->addLog(K15_NEW TextConsoleLog(),true,LogManager::LP_ALL);
+#     if defined(_MSC_VER)
+      m_LogManager->addLog(K15_NEW VisualStudioLog(),false,LogManager::LP_ALL);
+#     endif //_MSC_VER
 #		endif //K15_DEBUG
 	}
 	/*********************************************************************************/

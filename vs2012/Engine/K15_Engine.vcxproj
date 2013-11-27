@@ -192,6 +192,7 @@
     <ClInclude Include="..\..\engine\include\win32\K15_ApplicationOSLayer_Win32.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_DynamicLibrary_Win32.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_RenderWindow_Win32.h" />
+    <ClInclude Include="..\..\engine\include\win32\K15_VisualStudioLog_Win32.h" />
     <None Include="..\..\engine\include\K15_ByteConversion.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
@@ -284,6 +285,7 @@
     </ClCompile>
     <ClCompile Include="..\..\engine\src\Win32\K15_DynamicLibrary_Win32.cpp" />
     <ClCompile Include="..\..\engine\src\win32\K15_RenderWindow_Win32.cpp" />
+    <ClCompile Include="..\..\engine\src\Win32\K15_VisualStudioLog_Win32.cpp" />
     <None Include="..\..\engine\include\K15_AllocatedObject.inl" />
     <None Include="..\..\engine\include\K15_Application.inl" />
     <None Include="..\..\engine\include\K15_ByteConversion.inl">

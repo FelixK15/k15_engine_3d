@@ -21,6 +21,8 @@
 
 #include "Win32\K15_RenderWindow_Win32.h"
 #include "K15_Mouse.h"
+#include "K15_RenderTask.h"
+#include "K15_RendererBase.h"
 #include "K15_Application.h"
 
 namespace K15_Engine { namespace Core {
@@ -47,6 +49,7 @@ namespace K15_Engine { namespace Core {
 				_LogError("Could not create raw input devices. %s.",g_Application->getLastError().c_str());
 			}
 
+      //return 0;
 		}
 		else if(p_MSG == WM_CLOSE)
 		{
@@ -57,6 +60,8 @@ namespace K15_Engine { namespace Core {
 		{
 			bool hasFocus = p_wParam > 0;
 			window->setHasFocus(hasFocus);
+
+      //return 0;
 		}
 		else if(p_MSG == WM_INPUT)
 		{
@@ -98,10 +103,12 @@ namespace K15_Engine { namespace Core {
 					g_EventManager->triggerEvent(deviceEvent);
 				}
 			}
+
+      return 0;
 		}
 		else if(p_MSG == WM_INPUT_DEVICE_CHANGE)
 		{
-
+      return 0;
 		}
 		else if(p_MSG == WM_MBUTTONDOWN || p_MSG == WM_MBUTTONUP || p_MSG == WM_MBUTTONDBLCLK ||
 			    p_MSG == WM_LBUTTONDOWN || p_MSG == WM_LBUTTONUP || p_MSG == WM_LBUTTONDBLCLK ||
@@ -180,23 +187,26 @@ namespace K15_Engine { namespace Core {
 			GameEvent* keyEvent = K15_NEW GameEvent(name,(void*)&key,32);
 			g_EventManager->triggerEvent(keyEvent);
 		}
-// 		else if(WM_SIZE)
-// 		{
-// 			if(p_wParam == SIZE_MAXIMIZED || p_wParam == SIZE_MINIMIZED || p_wParam == SIZE_RESTORED)
-// 			{
-// 				int16 width = LOWORD(p_lParam);
-// 				int16 height = HIWORD(p_lParam);
-// 				
-// 				Resolution res;
-// 				res.width = width;
-// 				res.height = height;
-// 
-// 				if(window)
-// 				{
-// 					window->setResolution(res);
-// 				}
-// 			}
-// 		}
+		else if(WM_SIZE)
+		{
+			if(p_wParam == SIZE_MAXIMIZED || p_wParam == SIZE_MINIMIZED || p_wParam == SIZE_RESTORED)
+			{
+        RECT clientRect;
+        GetClientRect(p_HandleWindow,&clientRect);
+
+				Resolution res;
+				res.width = clientRect.right - clientRect.left;
+				res.height = clientRect.bottom - clientRect.top;
+
+				if(res.width != 0 && res.height != 0)
+				{
+          if(g_Application->getRenderTask()->getRenderer())
+          {
+            g_Application->getRenderTask()->getRenderer()->onResolutionChanged(res);
+          }
+				}
+			}
+		}
 
 		return DefWindowProc(p_HandleWindow,p_MSG,p_wParam,p_lParam);
 	}
@@ -267,24 +277,54 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void RenderWindow_Win32::setResolution(const Resolution& p_Resolution)
 	{
-		DEVMODE dm = {0};
-		dm.dmSize = sizeof(dm);
-		dm.dmBitsPerPel = 32;
-		dm.dmPelsHeight = p_Resolution.height;
-		dm.dmPelsWidth = p_Resolution.width;
-		dm.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
-		DWORD flags = CDS_RESET;
-		if(isFullscreen())
-		{
-			flags |= CDS_FULLSCREEN;
-		}
+    if(m_IsFullscreen)
+    {
+      DEVMODE dm = {0};
+      dm.dmSize = sizeof(dm);
+      dm.dmBitsPerPel = g_Application->getRenderTask()->getRenderer() ? RendererBase::PixelFormatSize[g_Application->getRenderTask()->getRenderer()->getFrameBufferPixelFormat()] : 32;
+      dm.dmPelsHeight = p_Resolution.height;
+      dm.dmPelsWidth = p_Resolution.width;
+      dm.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+      DWORD flags = CDS_RESET;
+      if(isFullscreen())
+      {
+        flags |= CDS_FULLSCREEN;
+      }
 
-		DWORD result = 0;
-		if((result = ChangeDisplaySettings(&dm,flags)) != DISP_CHANGE_SUCCESSFUL)
-		{
-			_LogError("Could not change resolution to \"%ix%i\" Error:%s",p_Resolution.width,p_Resolution.height,Application::getInstance()->getLastError().c_str());
-			return;
-		}
+      DWORD result = 0;
+      if((result = ChangeDisplaySettings(&dm,flags)) != DISP_CHANGE_SUCCESSFUL)
+      {
+        char* error = 0;
+        if(result == DISP_CHANGE_BADMODE)
+        {
+          error = "Graphics mode not supported";
+        }
+        else if(result == DISP_CHANGE_FAILED)
+        {
+          error = "The display driver failed the specified graphics mode.";
+        }
+        else if(result == DISP_CHANGE_NOTUPDATED)
+        {
+          error = "Unable to write settings to registry";
+        }
+        else if(result == DISP_CHANGE_BADFLAGS)
+        {
+          error = "An invalid set of flags was passed in";
+        }
+
+        _LogError("Could not change fullscreen resolution to \"%ix%i\" Error:%s",p_Resolution.width,p_Resolution.height,error);
+        return;
+      }
+    }
+    else
+    {
+      if(SetWindowPos(m_HandleWindow,HWND_TOP,0,0,p_Resolution.width,p_Resolution.height,
+        SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOZORDER | SWP_NOSENDCHANGING) == FALSE)
+      {
+        _LogError("Could not change resolution to \"%ix%i\" Error:%s",p_Resolution.width,p_Resolution.height,g_Application->getLastError().c_str());
+        return;
+      }
+    }
 	}
 	/*********************************************************************************/
 	void RenderWindow_Win32::setIsFullscreen(bool p_Fullscreen)
