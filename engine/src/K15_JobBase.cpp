@@ -37,7 +37,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void JobBase::execute()
 	{
-		m_Status = internalExecute();
+		internalExecute();
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

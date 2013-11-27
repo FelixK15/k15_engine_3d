@@ -18,7 +18,7 @@
  */
 
 /*********************************************************************************/
-template<class Allocator> Allocator* AllocatedObject<Allocator>::MemoryAllocator = Allocator::getInstance();
+template<class Allocator> Allocator* AllocatedObject<Allocator>::MemoryAllocator = 0;
 /*********************************************************************************/
 template<class Allocator>
 AllocatedObject<Allocator>::AllocatedObject()

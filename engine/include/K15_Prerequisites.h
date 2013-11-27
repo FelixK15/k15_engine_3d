@@ -402,14 +402,16 @@ namespace K15_Engine
 #	define K15_DELETE delete
 
 #	define K15_NEW_T(allocator,objType) new(allocator->allocateDebug(sizeof(objType),__FILE__,__LINE__,false,__FUNCTION__))
-//#	define K15_NEW(objType,size) objType::MemoryAllocator->allocateDebug(size,__FILE__,__LINE__,false,__FUNCTION__)
+# define K15_NEW_SIZE(allocator,size) new(allocator->allocateDebug(size,__FILE__,__LINE__,false,__FUNCTION__))
 
 #	define K15_DELETE_T(allocator,ptr) if(ptr){allocator->deallocateDebug((void*)ptr,__FILE__,__LINE__,false,__FUNCTION__);}
 #else
 #	define K15_NEW    new
 #	define K15_DELETE delete
 
+# define K15_NEW_SIZE(allocator,size) new(allocator->allocate(size))
 #	define K15_NEW_T(allocator,objType) new(allocator->allocate(sizeof(objType)))
+
 # define K15_DELETE_T(allocator,ptr) if(ptr){allocator->deallocate((void*)ptr);}
 #endif //K15_DEBUG
 

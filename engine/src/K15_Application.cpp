@@ -81,10 +81,6 @@ namespace K15_Engine { namespace Core {
 #		if defined (K15_DEBUG)
 			m_LogManager->addLog(K15_NEW TextConsoleLog(),true,LogManager::LP_ALL);
 #		endif //K15_DEBUG
-
-		m_EventTask = K15_NEW EventTask();
-		m_RenderTask = K15_NEW RenderTask();
-		m_PhysicsTask = K15_NEW PhysicsTask();
 	}
 	/*********************************************************************************/
 	Application::~Application()
@@ -194,6 +190,22 @@ namespace K15_Engine { namespace Core {
 		_LogNormal("Initializing InputManager...");
 		m_InputManager = g_InputManager;
 
+    _LogNormal("Initializing ThreadWorker...");
+    m_ThreadWorker = g_ThreadWorker;
+
+    _LogNormal("Tasks will get created and added to the task manager.");
+    _LogNormal("Creating and adding event task...");
+    m_EventTask = K15_NEW EventTask();
+    m_TaskManager->addTask(m_EventTask);
+
+    _LogNormal("Creating and adding render task...");
+    m_RenderTask = K15_NEW RenderTask();
+    m_TaskManager->addTask(m_RenderTask);
+
+    _LogNormal("Creating and adding physics task...");
+    m_PhysicsTask = K15_NEW PhysicsTask();
+    m_TaskManager->addTask(m_PhysicsTask);
+
 //     _LogNormal("Initializing ThreadWorker...");
 //     m_ThreadWorker = g_ThreadWorker;
 
@@ -216,16 +228,6 @@ namespace K15_Engine { namespace Core {
 
 		//load input file
 		loadInputFile();
-
-		_LogNormal("Tasks will get created and added to the task manager.");
-		_LogNormal("Adding event task...");
-		m_TaskManager->addTask(m_EventTask);
-
-		_LogNormal("Adding render task...");
-		m_TaskManager->addTask(m_RenderTask);
-
-		_LogNormal("Adding physics task...");
-		m_TaskManager->addTask(m_PhysicsTask);
 
 		if(!m_RenderTask->getRenderer())
 		{
@@ -552,7 +554,9 @@ namespace K15_Engine { namespace Core {
 
 		m_RenderWindow->shutdown();
 		m_OSLayer.shutdown();
-    m_ThreadWorker->shutdown();
+
+    _LogNormal("Destroying ThreadWorker...");
+    K15_DELETE m_ThreadWorker;
 
 		_LogNormal("Destroying InputManager...");
 		K15_DELETE m_InputManager;

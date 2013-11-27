@@ -53,7 +53,7 @@ namespace K15_Engine { namespace Core {
 		inline const ObjectName& getName() const;
 
 	protected:
-		virtual Enum internalExecute() = 0;
+		virtual void internalExecute() = 0;
 
 	private:
 		ObjectName m_Name;

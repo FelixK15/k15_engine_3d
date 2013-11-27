@@ -53,6 +53,8 @@ namespace K15_Engine { namespace Core {
         job->execute();
         job->setStatus(JobBase::JS_FINISHED);
       }
+
+      SleepCurrentThread(10); //sleep for 10 ms
     }
 	}
 	/*********************************************************************************/
@@ -61,36 +63,17 @@ namespace K15_Engine { namespace Core {
     m_Jobs(),
 		m_Threads()
 	{
-
-	}
-	/*********************************************************************************/
-	ThreadWorker::~ThreadWorker()
-	{
-		for(ThreadList::iterator iter = m_Threads.begin();iter != m_Threads.end();++iter)
-		{
-			if((*iter)->joinable())
-			{
-				(*iter)->join();
-			}
-		}
-
-		m_Threads.clear();
-		m_Jobs.clear();
-	}
-	/*********************************************************************************/
-  void ThreadWorker::initialize()
-  {
     Running = true;
     uint8 counter = 0;
-    while(counter++ < 0)
+    while(counter++ < HardwareThreads)
     {
       Thread* thread = K15_NEW_T(this,Thread) Thread(execute);
       m_Threads.push_back(thread);
     }
-  }
-  /*********************************************************************************/
-  void ThreadWorker::shutdown()
-  {
+	}
+	/*********************************************************************************/
+	ThreadWorker::~ThreadWorker()
+	{
     Running = false;
     Thread* thread = 0;
     while(m_Threads.size() > 0)
@@ -100,7 +83,10 @@ namespace K15_Engine { namespace Core {
       K15_DELETE_T(this,thread);
       m_Threads.pop_front();
     }
-  }
+
+		m_Threads.clear();
+		m_Jobs.clear();
+	}
   /*********************************************************************************/
 	void ThreadWorker::addJob(JobBase* p_Job)
 	{		

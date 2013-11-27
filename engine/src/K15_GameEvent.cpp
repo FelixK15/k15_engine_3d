@@ -22,8 +22,6 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	GameEvent::ArgAllocator GameEvent::ArgumentAllocator = GameEvent::ArgAllocator(EventManagerAllocator,MEGABYTE,_N(GameEventArgumentAllocator));
-	/*********************************************************************************/
 	GameEvent::GameEvent(const EventName& p_Name,void* p_Argument,uint32 p_ArgumentSize)
 		: m_Name(p_Name),
 		  m_ArgumentSize(p_ArgumentSize),
@@ -31,11 +29,12 @@ namespace K15_Engine { namespace Core {
 	{
 		if(m_ArgumentSize > 0)
 		{
-#		if defined(K15_DEBUG)
-			m_Argument = ArgumentAllocator.allocateDebug(p_ArgumentSize,__FILE__,__LINE__,false,__FUNCTION__);
-#		else
-			m_Argument = ArgumentAllocator.allocate(p_ArgumentSize);
-#		endif //K15_DEBUG
+      m_Argument = K15_NEW_SIZE(MemoryAllocator,m_ArgumentSize) byte[m_ArgumentSize];
+// #		if defined(K15_DEBUG)
+// 			m_Argument = ArgumentAllocator.allocateDebug(p_ArgumentSize,__FILE__,__LINE__,false,__FUNCTION__);
+// #		else
+// 			m_Argument = ArgumentAllocator.allocate(p_ArgumentSize);
+// #		endif //K15_DEBUG
 
 			memcpy(m_Argument,p_Argument,m_ArgumentSize);
 		}
@@ -53,11 +52,7 @@ namespace K15_Engine { namespace Core {
 	{
 		if(m_Argument != 0)
 		{
-#if defined(K15_DEBUG)
-			ArgumentAllocator.deallocateDebug(m_Argument,__FILE__,__LINE__,false,__FUNCTION__);
-#else
-			ArgumentAllocator.deallocate(m_Argument);
-#endif //K15_DEBUG
+      K15_DELETE_T(MemoryAllocator,m_Argument);
 		}
 	}
 	/*********************************************************************************/
@@ -68,11 +63,12 @@ namespace K15_Engine { namespace Core {
 
 		if(p_Other.m_Argument)
 		{
-#		if defined(K15_DEBUG)
-			m_Argument = ArgumentAllocator.allocateDebug(m_ArgumentSize,__FILE__,__LINE__,false,__FUNCTION__);
-#		else
-			m_Argument = ArgumentAllocator.allocate(m_ArgumentSize);
-#		endif //K15_DEBUG
+      m_Argument = K15_NEW_SIZE(MemoryAllocator,m_ArgumentSize) byte[m_ArgumentSize];
+// #		if defined(K15_DEBUG)
+// 			m_Argument = ArgumentAllocator.allocateDebug(m_ArgumentSize,__FILE__,__LINE__,false,__FUNCTION__);
+// #		else
+// 			m_Argument = ArgumentAllocator.allocate(m_ArgumentSize);
+// #		endif //K15_DEBUG
 			memcpy(m_Argument,p_Other.m_Argument,m_ArgumentSize);
 		}
 	}

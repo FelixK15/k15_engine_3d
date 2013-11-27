@@ -51,9 +51,6 @@ namespace K15_Engine { namespace Core {
 		ThreadWorker();
 		virtual ~ThreadWorker();
 
-    void initialize();
-    void shutdown();
-
 		void addJob(JobBase* p_Job);
 
 		void removeJob(JobBase* p_Job);

@@ -32,7 +32,7 @@
 
 namespace K15_Engine { namespace Core {
 	template<class T>
-	class K15_CORE_API PoolAllocator : public BaseAllocator
+	class PoolAllocator : public BaseAllocator
 	{
 	public:
 		PoolAllocator(uint32 p_ObjectCount, const ObjectName& p_Name);

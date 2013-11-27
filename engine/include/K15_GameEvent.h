@@ -34,11 +34,6 @@ namespace K15_Engine { namespace Core {
 	class K15_CORE_API GameEvent : public EventManagerAllocatedObject
 	{
 	public:
-		/*********************************************************************************/
-    typedef BlockAllocator ArgAllocator;
-    static ArgAllocator ArgumentAllocator;
-		/*********************************************************************************/
-	public:
 		/**
 		* Event constructor.
 		*
