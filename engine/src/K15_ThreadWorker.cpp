@@ -52,14 +52,19 @@ namespace K15_Engine { namespace Core {
         job->setStatus(JobBase::JS_RUNNING);
         job->execute();
         job->setStatus(JobBase::JS_FINISHED);
+
+        if(job->getAutoDelete())
+        {
+          K15_DELETE job;
+        }
       }
 
-      SleepCurrentThread(10); //sleep for 10 ms
+      K15_SleepCurrentThread(10); //sleep for 10 ms
     }
 	}
 	/*********************************************************************************/
 	ThreadWorker::ThreadWorker()
-		: PoolAllocator<Thread>(ApplicationAllocator,HardwareThreads,_N(ThreadAllocator)),
+		: StackAllocator(ApplicationAllocator,HardwareThreads * sizeof(Thread),_N(ThreadAllocator)),
     m_Jobs(),
 		m_Threads()
 	{
@@ -67,8 +72,9 @@ namespace K15_Engine { namespace Core {
     uint8 counter = 0;
     while(counter++ < HardwareThreads)
     {
-      Thread* thread = K15_NEW_T(this,Thread) Thread(execute,0);
-      m_Threads.push_back(thread);
+      Thread* thread = K15_NEW_T(this,Thread) Thread(execute,(void*)0);
+      
+      m_Threads.push_front(thread);
     }
 	}
 	/*********************************************************************************/
@@ -76,12 +82,24 @@ namespace K15_Engine { namespace Core {
 	{
     Running = false;
     Thread* thread = 0;
+    JobBase* job = 0;
     while(m_Threads.size() > 0)
     {
       thread = (*m_Threads.begin());
       thread->join();
       K15_DELETE_T(this,thread);
       m_Threads.pop_front();
+    }
+
+    while(m_Jobs.size() > 0)
+    {
+      job = (*m_Jobs.begin());
+      if(job->getAutoDelete())
+      {
+        K15_DELETE job;
+      }
+
+      m_Jobs.pop_front();
     }
 
 		m_Threads.clear();

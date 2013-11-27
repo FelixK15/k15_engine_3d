@@ -23,9 +23,10 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	JobBase::JobBase(const ObjectName& p_Name)
+	JobBase::JobBase(const ObjectName& p_Name,bool p_AutoDelete)
 		: m_Name(p_Name),
-		m_Status(JS_UNITITIALIZED)
+		m_Status(JS_UNITITIALIZED),
+    m_AutoDelete(p_AutoDelete)
 	{
 
 	}

@@ -325,7 +325,7 @@ namespace K15_Engine
 #if defined K15_DONT_USE_STL || (!defined K15_DONT_USE_STL && !defined K15_CPP11_SUPPORT)
 #   include "..\..\dependencies\TinyThread\include\tinythread.h"
 #   define g_CurrentThread tthread::this_thread
-#   define SleepCurrentThread(ms) g_CurrentThread::sleep_for(tthread::chrono::milliseconds(ms))
+#   define K15_SleepCurrentThread(ms) g_CurrentThread::sleep_for(tthread::chrono::milliseconds(ms))
     typedef tthread::thread Thread;
     typedef tthread::mutex Mutex;
     typedef tthread::lock_guard<Mutex> LockGuard;
@@ -335,7 +335,7 @@ namespace K15_Engine
 #   include <mutex>
 #   include <chrono>
 #   define g_CurrentThread std::this_thread
-#   define SleepCurrentThread(ms) g_CurrentThread::sleep_for(std::chrono::milliseconds(ms))
+#   define K15_SleepCurrentThread(ms) g_CurrentThread::sleep_for(std::chrono::milliseconds(ms))
 		typedef std::thread Thread;
     typedef std::mutex Mutex;
     typedef std::lock_guard<Mutex> LockGuard;

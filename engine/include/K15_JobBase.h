@@ -42,7 +42,7 @@ namespace K15_Engine { namespace Core {
 		};//JobStatus
 
 	public:
-		JobBase(const ObjectName& p_Name);
+		JobBase(const ObjectName& p_Name,bool p_AutoDelete = true);
 		~JobBase();
 
 		void execute();
@@ -52,12 +52,15 @@ namespace K15_Engine { namespace Core {
 
 		inline const ObjectName& getName() const;
 
+    inline bool getAutoDelete() const;
+
 	protected:
 		virtual void internalExecute() = 0;
 
 	private:
 		ObjectName m_Name;
 		Enum m_Status;
+    bool m_AutoDelete;
 	};// end of * class declaration
 #include "K15_JobBase.inl"
 }}// end of K15_Engine::Core namespace

@@ -31,11 +31,11 @@
 #endif //K15_USE_PRECOMPILED_HEADER
 
 #include "K15_Application.h"
-#include "K15_PoolAllocator.h"
+#include "K15_StackAllocator.h"
 #include "K15_TaskBase.h"
 
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API ThreadWorker : public Singleton<ThreadWorker>, public ApplicationAllocatedObject, public PoolAllocator<Thread>
+	class K15_CORE_API ThreadWorker : public Singleton<ThreadWorker>, public ApplicationAllocatedObject, public StackAllocator
 	{
 	public:
 		/*********************************************************************************/
