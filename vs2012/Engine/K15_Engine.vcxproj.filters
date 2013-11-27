@@ -288,6 +288,8 @@
     <ClInclude Include="..\..\engine\include\K15_IniFileParser.h">
       <Filter>Core\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_JobBase.h" />
+    <ClInclude Include="..\..\engine\include\K15_ThreadWorker.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -452,6 +454,8 @@
     <ClCompile Include="..\..\engine\src\K15_IniFileParser.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_JobBase.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_ThreadWorker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -578,6 +582,7 @@
     <None Include="..\..\engine\include\K15_IniFileParser.inl">
       <Filter>Core\include</Filter>
     </None>
+    <None Include="..\..\engine\include\K15_JobBase.inl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />

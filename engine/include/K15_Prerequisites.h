@@ -85,6 +85,9 @@ namespace K15_Engine
 		class LogBase;
 		class NetworkManager;
 		class MemoryProfiler;
+		class JobBase;
+		class ThreadWorker;
+		class ThreadWorkerTask;
 		class MemoryProfilingTask;
 		class ResourceManager;
 		class PhysicsProcessBase;
@@ -433,6 +436,7 @@ typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::TaskManager> TaskMan
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::DynamicLibraryManager> DynamicLibraryManagerAllocatedObject;
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::LogManager> LogManagerAllocatedObject;
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::ProfilingManager> ProfilingManagerAllocatedObject;
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::ThreadWorker> ThreadWorkerAllocatedObject;
 
 #define FontManagerAllocator K15_Engine::Core::FontManager::getInstance()
 #define InputManagerAllocator K15_Engine::Core::InputManager::getInstace()
@@ -441,6 +445,7 @@ typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::ProfilingManager> Pr
 #define TaskManagerAllocator K15_Engine::Core::TaskManager::getInstance()
 #define DynamicLibraryManagerAllocator K15_Engine::Core::DynamicLibraryManager::getInstance()
 #define LogManagerAllocator K15_Engine::Core::LogManager::getInstance()
+#define ThreadWorkerAllocator K15_Engine::Core::LogManager::getInstance()
 
 #define g_Renderer K15_Engine::Core::Application::getInstance()->getRenderer()
 #define g_FontManager K15_Engine::Core::FontManager::getInstance()
@@ -452,6 +457,7 @@ typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::ProfilingManager> Pr
 #define g_DynamicLibraryManager K15_Engine::Core::DynamicLibraryManager::getInstance()
 #define g_LogManager K15_Engine::Core::LogManager::getInstance()
 #define g_ProfileManager K15_Engine::Core::ProfilingManager::getInstance()
+#define g_ThreadWorker K15_Engine::Core::ThreadWorker::getInstance()
 
 typedef signed char byte;
 

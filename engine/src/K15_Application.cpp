@@ -30,6 +30,7 @@
 #include "K15_IniFileParser.h"
 #include "K15_Texture.h"
 #include "K15_PhysicsTask.h"
+#include "K15_ThreadWorker.h"
 #include "K15_EventTask.h"
 #include "K15_ApplicationModule.h"
 #include "K15_ApplicationModuleDescription.h"
@@ -66,6 +67,7 @@ namespace K15_Engine { namespace Core {
 		m_Plugins(),
 		m_RunningTime(0.0),
 		m_ApplicationParameter(),
+		m_ThreadTask(0),
 		m_GameRootDir(),
 		m_GameTime(0.0,1.0),
 		m_FrameCounter(0),
@@ -83,6 +85,7 @@ namespace K15_Engine { namespace Core {
 		m_EventTask = K15_NEW EventTask();
 		m_RenderTask = K15_NEW RenderTask();
 		m_PhysicsTask = K15_NEW PhysicsTask();
+		m_ThreadTask = K15_NEW ThreadWorkerTask();
 	}
 	/*********************************************************************************/
 	Application::~Application()
@@ -221,6 +224,9 @@ namespace K15_Engine { namespace Core {
 		_LogNormal("Adding physics task...");
 		m_TaskManager->addTask(m_PhysicsTask);
 
+		_LogNormal("Adding threadworker task...");
+		m_TaskManager->addTask(m_ThreadTask);
+
 		if(!m_RenderTask->getRenderer())
 		{
 			_LogError("No renderer defined!");
@@ -232,18 +238,6 @@ namespace K15_Engine { namespace Core {
 			{
 				_LogError("Could not initialize renderer.");
 			}
-
-			Texture tex;
-			TextureCreationOptions op;
-			ZeroMemory(&op,sizeof(op));
-
-			op.useShadowCopy = true;
-			op.createMipMaps = true;
-			op.width = 512;
-			op.height = 512;
-			op.pixelFormat = RendererBase::PF_RGB_8_I;
-
-			tex.create(op);
 		}
 	}
 	/*********************************************************************************/
