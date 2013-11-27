@@ -50,7 +50,7 @@
     <TargetName>EngineTest</TargetName>
     <IncludePath>..\..\engine\include\;..\..\test\unittest++\src\;..\Dependencies\unittest-cpp\UnitTest++\src\;$(IncludePath);..\..\math\include\</IncludePath>
     <LibraryPath>..\..\engine\bin\$(Configuration)\;..\..\test\unittest++\$(Configuration)\;..\Dependencies\unittest-cpp\UnitTest++\bin\$(Configuration)\;$(LibraryPath);..\..\math\bin\$(Configuration)\</LibraryPath>
-    <IncludePath>..\..\engine\include\;..\..\math\include\;..\..\dependencies\nv_dds\include\;..\..\dependencies\GLEW\include\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\engine\include\;..\..\math\include\;..\..\dependencies\GLEW\include\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\engine\bin\$(Platform)_$(Configuration)\;..\..\math\bin\$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

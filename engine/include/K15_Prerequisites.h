@@ -344,7 +344,7 @@ namespace K15_Engine
 //Streams
 #if defined K15_DONT_USE_STL
 #	include "K15_FileStream.h"
-#	include "k15_StringStream.h"
+#	include "K15_StringStream.h"
 	typedef K15_Engine::Core::FileStream FileStream;
 	typedef K15_Engine::Core::StringStream StringStream;
 #else

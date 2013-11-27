@@ -46,7 +46,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>K15_Engine</TargetName>
-    <IncludePath>..\..\dependencies\Enet\include\;..\..\dependencies\LuaPlus\include\;..\..\dependencies\freetype\include\;..\..\dependencies\nv_dds\include\;..\..\engine\include\;..\..\math\include\;..\..\renderer\include\;..\..\dependencies\TinyThread\include\;..\..\dependencies\TinyXML\include\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\dependencies\Enet\include\;..\..\dependencies\LuaPlus\include\;..\..\dependencies\freetype\include\;..\..\engine\include\;..\..\math\include\;..\..\renderer\include\;..\..\dependencies\TinyThread\include\;..\..\dependencies\TinyXML\include\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\dependencies\Enet\bin\$(Platform)_$(Configuration)\;..\..\dependencies\nv_dds\bin\$(Platform)_$Configuration)\;..\..\dependencies\TinyThread\bin\$(Platform)_$(Configuration)\;..\..\dependencies\TinyXML\bin\$(Platform)_$(Configuration)\;..\..\dependencies\LuaPlus\bin\$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
