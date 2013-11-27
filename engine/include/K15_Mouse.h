@@ -78,8 +78,6 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		/*********************************************************************************/
 
 	public:
-		static void initialize();
-
 		static void hideMouse();
 		static void showMouse();
 

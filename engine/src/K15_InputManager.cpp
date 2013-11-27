@@ -29,7 +29,7 @@ namespace K15_Engine { namespace Core {
 		: BlockAllocator(ApplicationAllocator,2 * MEGABYTE,_N(InputManagerAllocator)),
 		  m_InputMap()
 	{
-		//InputDevices::Keyboard::initialize();
+	
 	}
 	/*********************************************************************************/
 	InputManager::~InputManager()

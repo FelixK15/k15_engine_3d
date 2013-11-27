@@ -21,13 +21,34 @@
 
 #include "Win32\K15_RenderWindow_Win32.h"
 #include "K15_Mouse.h"
+#include "K15_Application.h"
 
 namespace K15_Engine { namespace Core {
 	LRESULT CALLBACK K15_WindowProc(HWND p_HandleWindow,UINT p_MSG,WPARAM p_wParam,LPARAM p_lParam)
 	{
 	    RenderWindowBase* window = (RenderWindowBase*)GetWindowLong(p_HandleWindow,GWL_USERDATA);
+		if(p_MSG == WM_CREATE)
+		{
+			//setup raw input for mouse and gamepads
+			RAWINPUTDEVICE devices[2];
+			devices[0].usUsagePage = 0x01;
+			devices[0].usUsage = 0x05; //gamepad
+			devices[0].dwFlags = RIDEV_DEVNOTIFY; //notify us about device removal
+			devices[0].hwndTarget = p_HandleWindow;
 
-		if(p_MSG == WM_CLOSE)
+			//raw mouse input is only used for mouse move events
+			devices[1].usUsage = 0x01;
+			devices[1].usUsage = 0x02; //mouse
+			devices[1].dwFlags = 0;
+			devices[1].hwndTarget = p_HandleWindow;
+
+			if(RegisterRawInputDevices(devices,2,sizeof(devices[0]) == FALSE))
+			{
+				_LogError("Could not create raw input devices. %s.",g_Application->getLastError().c_str());
+			}
+
+		}
+		else if(p_MSG == WM_CLOSE)
 		{
 			PostQuitMessage(0);
 			return 0;
@@ -36,6 +57,51 @@ namespace K15_Engine { namespace Core {
 		{
 			bool hasFocus = p_wParam > 0;
 			window->setHasFocus(hasFocus);
+		}
+		else if(p_MSG == WM_INPUT)
+		{
+			uint32 size = 0;
+			GetRawInputData((HRAWINPUT)p_lParam,RID_INPUT,0,&size,sizeof(RAWINPUTHEADER));
+			byte* buffer = (byte*)_malloca(size);
+
+			if(GetRawInputData((HRAWINPUT)p_lParam,RID_INPUT,buffer,&size,sizeof(RAWINPUTHEADER)) == size)
+			{
+				EventName name;
+				RAWINPUT *raw = (RAWINPUT*)buffer;
+				if(raw->header.dwType == RIM_TYPEMOUSE && raw->data.mouse.usFlags & MOUSE_MOVE_ABSOLUTE)
+				{
+					// mouse input
+					int x = raw->data.mouse.lLastX;
+					int y = raw->data.mouse.lLastY;
+
+					name = _EN(onMouseMoved);
+
+					uint32 eventArguments[2] = {x,y};
+
+					GameEvent* mouseMoveEvent = K15_NEW GameEvent(name,(void*)eventArguments,64);
+					g_EventManager->triggerEvent(mouseMoveEvent);
+				}
+				else if(raw->header.dwType == RIM_TYPEHID)
+				{
+					if(p_wParam == GIDC_ARRIVAL)
+					{
+						name = _EN(onInputDeviceConnected);
+					}
+					else if(p_wParam == GIDC_REMOVAL)
+					{
+						name = _EN(onInputDeviceDisconnected);
+					}
+
+					//todo get raw input device informations.
+
+					GameEvent* deviceEvent = K15_NEW GameEvent(name,0,0);
+					g_EventManager->triggerEvent(deviceEvent);
+				}
+			}
+		}
+		else if(p_MSG == WM_INPUT_DEVICE_CHANGE)
+		{
+
 		}
 		else if(p_MSG == WM_MBUTTONDOWN || p_MSG == WM_MBUTTONUP || p_MSG == WM_MBUTTONDBLCLK ||
 			    p_MSG == WM_LBUTTONDOWN || p_MSG == WM_LBUTTONUP || p_MSG == WM_LBUTTONDBLCLK ||
@@ -59,15 +125,6 @@ namespace K15_Engine { namespace Core {
 			else if(p_MSG == WM_MBUTTONDBLCLK || p_MSG == WM_LBUTTONDBLCLK || p_MSG == WM_RBUTTONDBLCLK || p_MSG == WM_XBUTTONDBLCLK)
 			{
 				name = _EN(onMouseDoubleClicked);
-			}
-			else if(p_MSG == WM_MOUSEMOVE)
-			{
-				name = _EN(onMouseMove);
-
-				uint32 eventArguments[2] = {x,y};
-
-				GameEvent* mouseMoveEvent = K15_NEW GameEvent(name,(void*)eventArguments,64);
-				g_EventManager->triggerEvent(mouseMoveEvent);
 			}
 			else if(p_MSG == WM_MOUSEWHEEL)
 			{

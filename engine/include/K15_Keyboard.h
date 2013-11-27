@@ -135,7 +135,6 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		};//KeyboardKeys
 		/*********************************************************************************/
 	public:
-		static void initialize();
 		static bool isPressed(Enum p_Key);
 
 	private:
