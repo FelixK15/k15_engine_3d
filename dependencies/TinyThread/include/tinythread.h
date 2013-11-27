@@ -616,6 +616,11 @@ class thread::id {
       return (aId1.mId > aId2.mId);
     }
 
+    inline unsigned long int hash() const
+    {
+      return mId;
+    }
+
 //     inline friend std::ostream& operator <<(std::ostream &os, const id &obj)
 //     {
 //       os << obj.mId;

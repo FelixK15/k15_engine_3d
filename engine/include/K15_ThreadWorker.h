@@ -42,7 +42,7 @@ namespace K15_Engine { namespace Core {
 		typedef List(JobBase*) JobList;
 		typedef List(Thread*) ThreadList;
 		typedef HashMap(JobBase*,Thread::id) JobThreadMap;
-		static void execute();
+		static void execute(void*);
     static bool Running;
     static const uint8 HardwareThreads;
     static const uint8 DefaultThreadCount;

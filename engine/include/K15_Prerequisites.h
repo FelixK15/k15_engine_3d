@@ -262,7 +262,7 @@ namespace K15_Engine
 #endif //__cplusplus > 199711L || _MSC_VER >= 1700 || K15_GCC_VERSION > 40800
 
 #define K15_VERSION_MAJOR 1
-#define K15_VERSION_MINOR 1
+#define K15_VERSION_MINOR 0
 
 #define K15_ENGINE_VERSION (K15_VERSION_MAJOR * 10 + K15_VERSION_MINOR)
 
@@ -322,8 +322,8 @@ namespace K15_Engine
 #endif //K15_DONT_USE_STL
 
 //Threading
-#if defined K15_DONT_USE_STL
-#   include "tinythread.h"
+#if defined K15_DONT_USE_STL || (!defined K15_DONT_USE_STL && !defined K15_CPP11_SUPPORT)
+#   include "..\..\dependencies\TinyThread\include\tinythread.h"
 #   define g_CurrentThread tthread::this_thread
 #   define SleepCurrentThread(ms) g_CurrentThread::sleep_for(tthread::chrono::milliseconds(ms))
     typedef tthread::thread Thread;
@@ -331,7 +331,6 @@ namespace K15_Engine
     typedef tthread::lock_guard<Mutex> LockGuard;
 
 #else
-#	if defined K15_CPP11_SUPPORT
 #		include <thread>		
 #   include <mutex>
 #   include <chrono>
@@ -340,11 +339,7 @@ namespace K15_Engine
 		typedef std::thread Thread;
     typedef std::mutex Mutex;
     typedef std::lock_guard<Mutex> LockGuard;
-#	else
-//#		include "tinythread.h"
-//		typedef tthread::thread Thread;
-#	endif //K15_CPP11_SUPPORT
-#endif //K15_DONT_USE_STL
+#endif //K15_DONT_USE_STL || (!defined K15_DONT_USE_STL && !defined K15_CPP11_SUPPORT)
 
 //Streams
 #if defined K15_DONT_USE_STL

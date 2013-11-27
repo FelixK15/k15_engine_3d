@@ -28,7 +28,7 @@ namespace K15_Engine { namespace Core {
   const uint8 ThreadWorker::DefaultThreadCount = 3;
   const uint8 ThreadWorker::HardwareThreads = Thread::hardware_concurrency() == 0 ? DefaultThreadCount : Thread::hardware_concurrency() - 1;
 	/*********************************************************************************/
-	void ThreadWorker::execute()
+	void ThreadWorker::execute(void*)
 	{
     static Mutex mutex;
 
@@ -67,7 +67,7 @@ namespace K15_Engine { namespace Core {
     uint8 counter = 0;
     while(counter++ < HardwareThreads)
     {
-      Thread* thread = K15_NEW_T(this,Thread) Thread(execute);
+      Thread* thread = K15_NEW_T(this,Thread) Thread(execute,0);
       m_Threads.push_back(thread);
     }
 	}
