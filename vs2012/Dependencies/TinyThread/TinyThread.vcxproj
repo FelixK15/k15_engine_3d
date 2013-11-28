@@ -39,12 +39,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(ProjectDir)..\..\..\dependencies\$(ProjectToolset)_$(ProjectName)\bin\$(Platform)_$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\obj\</IntDir>
     <IncludePath>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(ProjectDir)..\..\..\dependencies\$(ProjectToolset)_$(ProjectName)\bin\$(Platform)_$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\obj\</IntDir>
     <IncludePath>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>

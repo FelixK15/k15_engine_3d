@@ -80,7 +80,7 @@
       </IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)\..\..\engine\bin\$(Platform)_$(Configuration)\K15_Engine.dll" "$(ProjectDir)\..\..\test\bin\$(Platform)_$(Configuration)\" /y</Command>
+      <Command>xcopy "$(ProjectDir)\..\..\engine\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\K15_Engine.dll" "$(ProjectDir)\..\..\test\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\" /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

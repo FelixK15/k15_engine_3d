@@ -39,13 +39,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\..\dependencies\$(ProjectName)\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
-    <IntDir>..\..\..\dependencies\$(ProjectName)\obj\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\obj\</IntDir>
     <IncludePath>..\..\..\dependencies\$(ProjectName)\include\GL\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\..\..\dependencies\$(ProjectName)\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
-    <IntDir>..\..\..\dependencies\$(ProjectName)\obj\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\obj\</IntDir>
     <IncludePath>..\..\..\dependencies\$(ProjectName)\include\GL\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

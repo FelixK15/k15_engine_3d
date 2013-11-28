@@ -26,6 +26,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -38,15 +39,15 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\..\dependencies\TinyXML\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IntDir>..\..\..\dependencies\TinyXML\obj\</IntDir>
+    <IntDir>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\obj\</IntDir>
     <IncludePath>..\..\..\dependencies\TinyXML\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\..\..\dependencies\TinyXML\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
-    <IntDir>..\..\..\dependencies\TinyXML\obj\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\obj\</IntDir>
     <IncludePath>..\..\..\dependencies\TinyXML\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
