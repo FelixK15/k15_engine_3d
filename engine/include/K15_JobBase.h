@@ -33,6 +33,7 @@ namespace K15_Engine { namespace Core {
 	class K15_CORE_API JobBase
 	{
 	public:
+		/*********************************************************************************/
 		enum eJobStatus
 		{
 			JS_UNITITIALIZED,
@@ -40,7 +41,7 @@ namespace K15_Engine { namespace Core {
 			JS_RUNNING,
 			JS_FINISHED
 		};//JobStatus
-
+		/*********************************************************************************/
 	public:
 		JobBase(const ObjectName& p_Name,bool p_AutoDelete = true);
 		~JobBase();
@@ -52,7 +53,7 @@ namespace K15_Engine { namespace Core {
 
 		inline const ObjectName& getName() const;
 
-    inline bool getAutoDelete() const;
+		inline bool getAutoDelete() const;
 
 	protected:
 		virtual void internalExecute() = 0;
@@ -60,8 +61,8 @@ namespace K15_Engine { namespace Core {
 	private:
 		ObjectName m_Name;
 		Enum m_Status;
-    bool m_AutoDelete;
-	};// end of * class declaration
+		bool m_AutoDelete;
+	};// end of JobBase class declaration
 #include "K15_JobBase.inl"
 }}// end of K15_Engine::Core namespace
 

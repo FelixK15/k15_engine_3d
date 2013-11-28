@@ -182,6 +182,9 @@ namespace K15_Engine { namespace Rendering {
 		virtual GpuProgramImplBase* createGpuProgramImpl() = 0;
 		virtual TextureSamplerImplBase* createTextureSamplerImpl() = 0;
 
+		inline const String& getLastError();
+		inline void setLastError(const String& p_String);
+
 		virtual void beginFrame() = 0;
 		virtual void endFrame() = 0;
 
@@ -192,6 +195,7 @@ namespace K15_Engine { namespace Rendering {
 
 	protected:
 		ColorRGBA m_ClearColor;
+		String m_LastError;
 		RenderWindowBase* m_RenderWindow;
 		Camera* m_ActiveCamera;
 		RenderTarget* m_RenderTarget;

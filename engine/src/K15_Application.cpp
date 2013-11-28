@@ -81,12 +81,12 @@ namespace K15_Engine { namespace Core {
 		//creating the Log Manager is first thing we'll do.
 		m_LogManager = K15_NEW LogManager();
 
-#		if defined (K15_DEBUG)
-			m_LogManager->addLog(K15_NEW TextConsoleLog(),true,LogManager::LP_ALL);
-#     if defined(_MSC_VER)
-      m_LogManager->addLog(K15_NEW VisualStudioLog(),false,LogManager::LP_ALL);
-#     endif //_MSC_VER
-#		endif //K15_DEBUG
+#if defined (K15_DEBUG)
+		m_LogManager->addLog(K15_NEW TextConsoleLog(),true,LogManager::LP_ALL);
+#	if defined(_MSC_VER)
+		m_LogManager->addLog(K15_NEW VisualStudioLog(),false,LogManager::LP_ALL);
+#	endif //_MSC_VER
+#endif //K15_DEBUG
 	}
 	/*********************************************************************************/
 	Application::~Application()
@@ -196,24 +196,21 @@ namespace K15_Engine { namespace Core {
 		_LogNormal("Initializing InputManager...");
 		m_InputManager = g_InputManager;
 
-    _LogNormal("Initializing ThreadWorker...");
-    m_ThreadWorker = g_ThreadWorker;
+		_LogNormal("Initializing ThreadWorker...");
+		m_ThreadWorker = g_ThreadWorker;
 
-    _LogNormal("Tasks will get created and added to the task manager.");
-    _LogNormal("Creating and adding event task...");
-    m_EventTask = K15_NEW EventTask();
-    m_TaskManager->addTask(m_EventTask);
+		_LogNormal("Tasks will get created and added to the task manager.");
+		_LogNormal("Creating and adding event task...");
+		m_EventTask = K15_NEW EventTask();
+		m_TaskManager->addTask(m_EventTask);
 
-    _LogNormal("Creating and adding render task...");
-    m_RenderTask = K15_NEW RenderTask();
-    m_TaskManager->addTask(m_RenderTask);
+		_LogNormal("Creating and adding render task...");
+		m_RenderTask = K15_NEW RenderTask();
+		m_TaskManager->addTask(m_RenderTask);
 
-    _LogNormal("Creating and adding physics task...");
-    m_PhysicsTask = K15_NEW PhysicsTask();
-    m_TaskManager->addTask(m_PhysicsTask);
-
-//     _LogNormal("Initializing ThreadWorker...");
-//     m_ThreadWorker = g_ThreadWorker;
+		_LogNormal("Creating and adding physics task...");
+		m_PhysicsTask = K15_NEW PhysicsTask();
+		m_TaskManager->addTask(m_PhysicsTask);
 
 		//Load plugins
 		loadPluginsFile();
@@ -224,7 +221,6 @@ namespace K15_Engine { namespace Core {
 			(*iter)->onInitialize();
 		}
 
-   // m_ThreadWorker->initialize();
 		m_RenderWindow = K15_NEW RenderWindowType();
     
 		m_RenderWindow->initialize();
@@ -561,8 +557,8 @@ namespace K15_Engine { namespace Core {
 		m_RenderWindow->shutdown();
 		m_OSLayer.shutdown();
 
-    _LogNormal("Destroying ThreadWorker...");
-    K15_DELETE m_ThreadWorker;
+		_LogNormal("Destroying ThreadWorker...");
+		K15_DELETE m_ThreadWorker;
 
 		_LogNormal("Destroying InputManager...");
 		K15_DELETE m_InputManager;

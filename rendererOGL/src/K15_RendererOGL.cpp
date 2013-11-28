@@ -40,6 +40,50 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		GL_GREATER
 	};//DepthTestConverter
 	/*********************************************************************************/
+	void APIENTRY glLogError(GLenum p_Source, GLenum p_Type, GLuint p_ID, GLenum p_Severity, GLsizei p_Length, const GLchar* p_Message, GLvoid* p_UserParam)
+	{
+#if defined (K15_DEBUG)
+		static const uint32 filter = GL_DEBUG_SEVERITY_MEDIUM;
+#else
+		static const uint32 filter = GL_DEBUG_SEVERITY_HIGH;
+#endif //K15_DEBUG
+
+		static String msg;
+		if(p_Source == GL_DEBUG_SOURCE_API)
+		{
+			msg = "API error:";
+		}
+		else if(p_Source == GL_DEBUG_SOURCE_WINDOW_SYSTEM)
+		{
+			msg = "Window system error:";
+		}
+		else if(p_Source == GL_DEBUG_SOURCE_SHADER_COMPILER)
+		{
+			msg = "Shader compiler error:";
+		}
+		else if(p_Source == GL_DEBUG_SOURCE_THIRD_PARTY)
+		{
+			msg = "Third party error:";
+		}
+		else if(p_Source == GL_DEBUG_SOURCE_APPLICATION)
+		{
+			msg = "Application error:";
+		}
+		else
+		{
+			msg = "Undefined OGL error:";
+		}
+
+		msg += p_Message;
+
+		RendererBase* renderer = (RendererBase*)p_UserParam;
+			
+		if(renderer)
+		{
+			renderer->setLastError(msg);
+		}
+	}
+	/*********************************************************************************/
 
 	/*********************************************************************************/
 	RendererOGL::RendererOGL()
@@ -183,9 +227,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		const int contextAttributes[] = {
 			WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
 			WGL_CONTEXT_MINOR_VERSION_ARB, 3,
-#			if defined (_DEBUG)
-			WGL_CONTEXT_DEBUG_BIT_ARB,
-#			endif
+			WGL_CONTEXT_FLAGS_ARB,WGL_CONTEXT_DEBUG_BIT_ARB,
 			0 //END
 		};
 
@@ -207,6 +249,14 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 		_LogSuccess("Succesfully set OGL rendering context.");
 		_LogSuccess("Supported OpenGL Version:\"%s\"",glGetString(GL_VERSION));
+
+		PFNGLDEBUGMESSAGECALLBACKARBPROC debugfunc = (PFNGLDEBUGMESSAGECALLBACKARBPROC)wglGetProcAddress("glDebugMessageCallbackARB");
+
+		if(debugfunc)
+		{
+			debugfunc(glLogError,(const void*)(this));
+			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		}
 
 		const Resolution& resolution = renderwindow->getResolution();
 

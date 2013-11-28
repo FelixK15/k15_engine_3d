@@ -20,6 +20,9 @@
 #include "K15_TextureImplOGL.h"
 #include "K15_LogManager.h"
 
+#include "K15_RenderTask.h"
+#include "K15_RendererBase.h"
+
 namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	const GLuint TextureImplOGL::GLTextureTypeConverter[Texture::TT_COUNT] = {
@@ -115,7 +118,18 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 			glTextureSubImage3DEXT(m_TextureHandle,target,0,p_OffsetX,p_OffsetY,p_OffsetZ,p_Width,p_Height,p_Depth,format,type,p_Pixels);
 		}
 
+		if(glGetError() != GL_NO_ERROR)
+		{
+			_LogError("Could not write to texture %s. %s",m_Texture->getAssetName().c_str(),g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
+			return false;
+		}
+
 		glGenerateTextureMipmapEXT(m_TextureHandle,target);
+		if(glGetError() != GL_NO_ERROR)
+		{
+			_LogError("Could not create mipmaps for texture %s. %s",m_Texture->getAssetName().c_str(),g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
+			return false;
+		}
 
 		return true;
 	}

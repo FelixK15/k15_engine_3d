@@ -78,44 +78,42 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	bool GpuBufferImplOGL::allocate(uint32 p_Size)
 	{
-		GLenum target = GLBufferTypeConverter[m_Buffer->getType()];
 		GLenum usage = GLBufferUsageConverter[m_Buffer->getUsageOption()];
-		glBindBuffer(target,m_BufferHandle);
-		glBufferData(target,p_Size,0,usage);
-		
+
+		glNamedBufferDataEXT(m_BufferHandle,p_Size,0,usage);
+
 		if(glGetError() == GL_OUT_OF_MEMORY)
 		{
-			glBindBuffer(target,0);
 			_LogError("Video card is out of memory.");
 			return false;
 		}
 		
-		glBindBuffer(target,0);
 		return true;
 	}
 	/*********************************************************************************/
 	uint32 GpuBufferImplOGL::readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset)
 	{
-// 		K15_ASSERT(p_Destination,"Destination memory is NULL!");
-// 
-// 		if(p_Destination)
-// 		{
-// 			if(p_Size > m_Buffer->getSize())
-// 			{
-// 				_LogWarning("Buffer size is %ibyte and you want to read %ibyte. Clamping value to max buffer size.",m_Buffer->getSize(),p_Size);
-// 				p_Size = m_Buffer->getSize();
-// 			}
-// 
-// 			if((p_Size + p_Offset) > m_Buffer->getSize())
-// 			{
-// 				uint32 newOffset = p_Size - m_Buffer->getSize();
-// 				_LogWarning("Buffer size is %ibyte and you want to read %ibyte starting at %ibyte. Setting offset = %i.",m_Buffer->getSize(),p_Size,p_Offset,newOffset);
-// 				p_Offset = newOffset;
-// 			}
-// 
-// 			
-// 			return p_Size;
-// 		}
+		K15_ASSERT(p_Destination,"Destination memory is NULL!");
+
+		if(p_Destination)
+		{
+			if(p_Size > m_Buffer->getSize())
+			{
+				_LogWarning("Buffer size is %ibyte and you want to read %ibyte. Clamping value to max buffer size.",m_Buffer->getSize(),p_Size);
+				p_Size = m_Buffer->getSize();
+			}
+
+			if((p_Size + p_Offset) > m_Buffer->getSize())
+			{
+				uint32 newOffset = p_Size - m_Buffer->getSize();
+				_LogWarning("Buffer size is %ibyte and you want to read %ibyte starting at %ibyte. Setting offset = %i.",m_Buffer->getSize(),p_Size,p_Offset,newOffset);
+				p_Offset = newOffset;
+			}
+
+			glGetNamedBufferSubDataEXT(m_BufferHandle,p_Offset,p_Size,p_Destination);
+			
+			return p_Size;
+		}
 
 		return 0;
 	}
@@ -138,9 +136,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		}
 		GLenum target = GLBufferTypeConverter[m_Buffer->getType()];
 		
-		glBindBuffer(target,m_BufferHandle);
-		glBufferSubData(target,p_Offset,p_Size,p_Source);
-		glBindBuffer(target,0);
+		glNamedBufferSubDataEXT(m_BufferHandle,p_Offset,p_Size,p_Source);
 
 		return p_Size;
 	}

@@ -18,3 +18,4 @@ Jamfile
 *.mk
 *.py
 *.user
+/math/bin

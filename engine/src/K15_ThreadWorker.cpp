@@ -23,84 +23,84 @@
 #include "K15_JobBase.h"
 
 namespace K15_Engine { namespace Core {
-  /*********************************************************************************/
-  bool ThreadWorker::Running = false;
-  const uint8 ThreadWorker::DefaultThreadCount = 3;
-  const uint8 ThreadWorker::HardwareThreads = Thread::hardware_concurrency() == 0 ? DefaultThreadCount : Thread::hardware_concurrency() - 1;
+	/*********************************************************************************/
+	bool ThreadWorker::Running = false;
+	const uint8 ThreadWorker::DefaultThreadCount = 3;
+	const uint8 ThreadWorker::HardwareThreads = Thread::hardware_concurrency() == 0 ? DefaultThreadCount : Thread::hardware_concurrency() - 1;
 	/*********************************************************************************/
 	void ThreadWorker::execute(void*)
 	{
-    static Mutex mutex;
+		static Mutex mutex;
 
-    while(Running)
-    {
-      JobBase* job = 0;
-      mutex.lock();
+		while(Running)
+		{
+			JobBase* job = 0;
+			mutex.lock();
 
-      JobList& jobs = g_ThreadWorker->getJobs();
-      if(jobs.size() > 0)
-      {
-        job = (*jobs.begin());
-        jobs.pop_front();
-        _LogDebug("Thread %u will process job %s.",g_CurrentThread::get_id().hash(),job->getName().c_str());
-      }
+			JobList& jobs = g_ThreadWorker->getJobs();
+			if(jobs.size() > 0)
+			{
+				job = (*jobs.begin());
+				jobs.pop_front();
+				_LogDebug("Thread %u will process job %s.",g_CurrentThread::get_id().hash(),job->getName().c_str());
+			}
 
-      mutex.unlock();
+			mutex.unlock();
 
-      if(job)
-      {
-        job->setStatus(JobBase::JS_RUNNING);
-        job->execute();
-        job->setStatus(JobBase::JS_FINISHED);
+			if(job)
+			{
+				job->setStatus(JobBase::JS_RUNNING);
+				job->execute();
+				job->setStatus(JobBase::JS_FINISHED);
 
-        if(job->getAutoDelete())
-        {
-          K15_DELETE job;
-        }
-      }
+				if(job->getAutoDelete())
+				{
+					K15_DELETE job;
+				}
+			}
 
-      K15_SleepCurrentThread(10); //sleep for 10 ms
-    }
+			K15_SleepCurrentThread(10); //sleep for 10 ms
+		}
 	}
 	/*********************************************************************************/
 	ThreadWorker::ThreadWorker()
 		: StackAllocator(ApplicationAllocator,HardwareThreads * sizeof(Thread),_N(ThreadAllocator)),
-    m_Jobs(),
+		m_Jobs(),
 		m_Threads()
 	{
-    Running = true;
-    uint8 counter = 0;
-    while(counter++ < HardwareThreads)
-    {
-      Thread* thread = K15_NEW_T(this,Thread) Thread(execute,(void*)0);
-      
-      m_Threads.push_front(thread);
-    }
+		Running = true;
+		uint8 counter = 0;
+		while(counter++ < HardwareThreads)
+		{
+			Thread* thread = K15_NEW_T(this,Thread) Thread(execute,(void*)0);
+
+			m_Threads.push_front(thread);
+		}
 	}
 	/*********************************************************************************/
 	ThreadWorker::~ThreadWorker()
 	{
-    Running = false;
-    Thread* thread = 0;
-    JobBase* job = 0;
-    while(m_Threads.size() > 0)
-    {
-      thread = (*m_Threads.begin());
-      thread->join();
-      K15_DELETE_T(this,thread);
-      m_Threads.pop_front();
-    }
+		Running = false;
+		Thread* thread = 0;
+		JobBase* job = 0;
+		while(m_Threads.size() > 0)
+		{
+			thread = (*m_Threads.begin());
+			thread->join();
+			K15_DELETE_T(this,thread);
+			m_Threads.pop_front();
+		}
 
-    while(m_Jobs.size() > 0)
-    {
-      job = (*m_Jobs.begin());
-      if(job->getAutoDelete())
-      {
-        K15_DELETE job;
-      }
+		while(m_Jobs.size() > 0)
+		{
+			job = (*m_Jobs.begin());
+			if(job->getAutoDelete())
+			{
+				K15_DELETE job;
+			}
 
-      m_Jobs.pop_front();
-    }
+			m_Jobs.pop_front();
+		}
 
 		m_Threads.clear();
 		m_Jobs.clear();
@@ -109,8 +109,8 @@ namespace K15_Engine { namespace Core {
 	void ThreadWorker::addJob(JobBase* p_Job)
 	{		
 		m_Jobs.push_back(p_Job);
-	  p_Job->setStatus(JobBase::JS_QUEUED);
-  }
+		p_Job->setStatus(JobBase::JS_QUEUED);
+	}
 	/*********************************************************************************/
 	void ThreadWorker::removeJob(JobBase* p_Job)
 	{
@@ -137,5 +137,5 @@ namespace K15_Engine { namespace Core {
 	{
 		return m_Threads;
 	}
-/*********************************************************************************/
+	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace
