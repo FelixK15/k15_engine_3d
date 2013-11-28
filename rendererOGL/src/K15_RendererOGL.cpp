@@ -22,6 +22,7 @@
 
 #include "GL\glew.h"
 #include "GL\wglew.h"
+#include "K15_RenderTask.h"
 #include "K15_LogManager.h"
 #include "K15_GpuBufferImplOGL.h"
 #include "K15_GpuProgramImplOGL.h"
@@ -42,12 +43,6 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	void APIENTRY glLogError(GLenum p_Source, GLenum p_Type, GLuint p_ID, GLenum p_Severity, GLsizei p_Length, const GLchar* p_Message, GLvoid* p_UserParam)
 	{
-#if defined (K15_DEBUG)
-		static const uint32 filter = GL_DEBUG_SEVERITY_MEDIUM;
-#else
-		static const uint32 filter = GL_DEBUG_SEVERITY_HIGH;
-#endif //K15_DEBUG
-
 		static String msg;
 		if(p_Source == GL_DEBUG_SOURCE_API)
 		{
@@ -89,8 +84,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	RendererOGL::RendererOGL()
 		: RendererBase(),
 		  m_RenderContext(0),
-		  m_DeviceContext(0),
-		  m_PixelFormat(0)
+		  m_DeviceContext(0)
 	{
 		
 	}
@@ -102,6 +96,8 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	void RendererOGL::setCullingMode(Enum p_CullingMode)
 	{
+		RendererBase::setCullingMode(p_CullingMode);
+
 		if(p_CullingMode == CM_CCW)
 		{
 			glFrontFace(GL_CCW);
@@ -114,7 +110,46 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	void RendererOGL::setDepthTestFunction(Enum p_DepthTest)
 	{
+		RendererBase::setDepthTestFunction(p_DepthTest);
+
 		glDepthFunc(GLFunctionTestConverter[p_DepthTest]);
+	}
+	/*********************************************************************************/
+	void RendererOGL::bindGpuProgram(GpuProgram* p_GpuProgram)
+	{
+		K15_ASSERT(p_GpuProgram,"Given GpuProgram instance is NULL!");
+
+		GLbitfield stages = GL_NONE;
+
+		if(p_GpuProgram->getStage() == GpuProgram::PS_VERTEX)
+		{
+			stages |= GL_VERTEX_SHADER_BIT;
+		}
+		else if(p_GpuProgram->getStage() == GpuProgram::PS_FRAGMENT)
+		{
+			stages |= GL_FRAGMENT_SHADER_BIT;
+		}
+		else if(p_GpuProgram->getStage() == GpuProgram::PS_GEOMETRY)
+		{
+			stages |= GL_GEOMETRY_SHADER_BIT;
+		}
+		else if(p_GpuProgram->getStage() == GpuProgram::PS_COMPUTE)
+		{
+			stages |= GL_COMPUTE_SHADER_BIT;
+		}
+		
+		const GpuProgramImplOGL* programOGL = static_cast<const GpuProgramImplOGL*>(p_GpuProgram->getImpl());
+		glUseProgramStages(m_ProgramPipeline,stages,programOGL->getProgramGL());
+
+		if(glGetError() != GL_NO_ERROR)
+		{
+			_LogError("Could not set program stage %u. %s",p_GpuProgram->getStage(),
+				g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
+		}
+		else
+		{
+			RendererBase::bindGpuProgram(p_GpuProgram);
+		}
 	}
 	/*********************************************************************************/
 	void RendererOGL::setClearColor(float p_Red, float p_Green, float p_Blue)
@@ -140,6 +175,8 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	void RendererOGL::setBackFaceCullingEnabled(bool p_Enabled)
 	{
+		RendererBase::setBackFaceCullingEnabled(p_Enabled);
+
 		if(p_Enabled)
 		{
 			glEnable(GL_CULL_FACE);
@@ -158,7 +195,6 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	void RendererOGL::endFrame()
 	{
 		SwapBuffers(m_DeviceContext);
-		//wglSwapLayerBuffers(m_DeviceContext,WGL_SWAP_MAIN_PLANE);
 	}
 	/*********************************************************************************/
 	bool RendererOGL::initialize()
@@ -195,7 +231,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		RenderWindow_Win32* renderwindow = (RenderWindow_Win32*)m_RenderWindow;
 		m_DeviceContext = renderwindow->getDeviceContext();
 
-		int colorBits = PixelFormatSize[m_PixelFormat];
+		int colorBits = PixelFormatSize[m_FrameBufferFormat];
 		int depthBits = DepthFormatSize[m_DepthBufferFormat];
 		int stencilBits = StencilFormatSize[m_StencilBufferFormat];
 
@@ -258,8 +294,13 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 		}
 
-		const Resolution& resolution = renderwindow->getResolution();
+		//create program pipeline
+		glGenProgramPipelines(1,&m_ProgramPipeline);
+		glBindProgramPipeline(m_ProgramPipeline);
 
+		
+		const Resolution& resolution = renderwindow->getResolution();
+		//force viewport resizing
 		onResolutionChanged(resolution);
 		setDepthTestEnabled(true); //enable depth testing
 		setClearColor(0.8f,0.2224f,0.005f);
@@ -270,6 +311,10 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	void RendererOGL::shutdown()
 	{
+		glBindProgramPipeline(0);
+		glDeleteProgramPipelines(1,&m_ProgramPipeline);
+		m_ProgramPipeline = 0;
+
 		if(m_RenderContext)
 		{
 			wglMakeCurrent(0,0);

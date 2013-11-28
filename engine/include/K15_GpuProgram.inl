@@ -1,8 +1,8 @@
 /**
- * @file K15_GpuBuffer.inl
+ * @file K15_GpuProgram.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/07/11
+ * @date 2013/11/28
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -17,67 +17,48 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-void GpuBuffer::setShadowCopyEnabled(bool p_Enabled)
+/*********************************************************************************/
+void GpuProgramImplBase::setGpuProgram(GpuProgram* p_GpuProgram)
 {
-	m_ShadowCopyEnabled = p_Enabled;
+	m_GpuProgram = p_GpuProgram;
 }
 /*********************************************************************************/
-void GpuBuffer::setLockOption(Enum p_LockOption)
+GpuProgram* GpuProgramImplBase::getGpuProgram() const
 {
-	m_LockOption = p_LockOption;
+	return m_GpuProgram;
 }
 /*********************************************************************************/
-void GpuBuffer::setUsageOption(Enum p_UsageOption)
+bool GpuProgram::isCompiled() const
 {
-	m_UsageOption = p_UsageOption;
+	return m_Compiled;
 }
 /*********************************************************************************/
-Enum GpuBuffer::getLockOption() const
+const String& GpuProgram::getError() const
 {
-	return m_LockOption;
+	return m_Error;
 }
 /*********************************************************************************/
-Enum GpuBuffer::getUsageOption() const
+const String& GpuProgram::getShaderCode() const
 {
-	return m_UsageOption;
+	return m_ShaderCode;
 }
 /*********************************************************************************/
-Enum GpuBuffer::getType() const
+const RawData* GpuProgram::getBinaryCode() const
 {
-	return m_BufferType;
+	return &m_BinaryCode;
 }
 /*********************************************************************************/
-Enum GpuBuffer::getAccessOption() const
+Enum GpuProgram::getStage() const
 {
-	return m_AccessOption;
+	return m_Stage;
 }
 /*********************************************************************************/
-bool GpuBuffer::getShadowCopyEnabled() const
+void GpuProgram::setError(const String& p_Error)
 {
-	return m_ShadowCopyEnabled;
+	m_Error = p_Error;
 }
 /*********************************************************************************/
-byte* GpuBuffer::getShadowCopy() const
-{
-	return m_ShadowCopy;
-}
-/*********************************************************************************/
-uint32 GpuBuffer::getShadowCopySize() const
-{
-	return m_ShadowCopySize;
-}
-/*********************************************************************************/
-bool GpuBuffer::isLocked() const
-{
-	return m_Locked;
-}
-/*********************************************************************************/
-uint32 GpuBuffer::getSize() const
-{
-	return m_Size;
-}
-/*********************************************************************************/
-const GpuBufferImplBase* GpuBuffer::getImpl() const
+const GpuProgramImplBase* GpuProgram::getImpl() const
 {
 	return m_Impl;
 }

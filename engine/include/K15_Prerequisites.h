@@ -98,7 +98,7 @@ namespace K15_Engine
 		class ResourceBase;
 		class ResourceFileBase;
 		class EventTask;
-		class RawData;
+		struct RawData;
 		class ProfilingNode;
 		class ProfilingManager;
 		class GameObject;

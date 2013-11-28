@@ -53,3 +53,8 @@ Enum Texture::getPixelFormat() const
 	return m_PixelFormat;
 }
 /*********************************************************************************/
+const TextureImplBase* Texture::getImpl() const
+{
+	return m_Impl;
+}
+/*********************************************************************************/

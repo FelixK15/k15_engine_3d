@@ -121,6 +121,8 @@ namespace K15_Engine { namespace Rendering {
 		virtual void loadDebug(RawData& p_Data);
 		virtual bool internalLoad(const RawData& p_Data);
 
+		inline const TextureImplBase* getImpl() const;
+
 	private:
 		uint32 calculateMipmapLevels() const;
 

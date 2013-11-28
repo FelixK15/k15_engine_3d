@@ -186,6 +186,14 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 			}
 		}
 
+		if(glGetError() != GL_NO_ERROR)
+		{
+			_LogError("Could not upload texture data to texture %s. %s",m_Texture->getAssetName().c_str(),
+				g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
+
+			return false;
+		}
+
 		return true;
 	}
 	/*********************************************************************************/
@@ -205,6 +213,14 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		else if(target == GL_TEXTURE_3D)
 		{
 			glTextureStorage3DEXT(m_TextureHandle,target,m_Texture->getMipmapLevels(),format,p_Width,p_Height,p_Depth);
+		}
+
+		if(glGetError() != GL_NO_ERROR)
+		{
+			_LogError("Could not resize texture %s. %s",m_Texture->getAssetName().c_str(),
+				g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
+
+			return false;
 		}
 
 		return true;

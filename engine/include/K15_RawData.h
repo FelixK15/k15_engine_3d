@@ -29,9 +29,13 @@
 #endif //K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace Core { 
-	class K15_CORE_API RawData
+	struct K15_CORE_API RawData
 	{
 	public:
+		RawData();
+		RawData(byte* p_Data,uint32 p_Size);
+		~RawData();
+
 		byte* data;
 		uint32 size;
 	}; //end of RawData struct.

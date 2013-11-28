@@ -470,6 +470,10 @@
     <ClCompile Include="..\..\engine\src\Win32\K15_VisualStudioLog_Win32.cpp">
       <Filter>Core\src\Win32</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_GpuProgram.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_RawData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -598,6 +602,9 @@
     </None>
     <None Include="..\..\engine\include\K15_JobBase.inl">
       <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_GpuProgram.inl">
+      <Filter>Rendering\include</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

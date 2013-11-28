@@ -254,6 +254,7 @@
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_GameObjectComponentBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GpuBuffer.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_GpuProgram.cpp" />
     <ClCompile Include="..\..\engine\src\K15_IniFileParser.cpp" />
     <ClCompile Include="..\..\engine\src\K15_InputManager.cpp" />
     <ClCompile Include="..\..\engine\src\K15_JobBase.cpp" />
@@ -272,6 +273,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_RawData.cpp" />
     <ClCompile Include="..\..\engine\src\K15_RendererBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_RenderProcessBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_RenderTask.cpp" />
@@ -305,6 +307,7 @@
     </None>
     <None Include="..\..\engine\include\K15_GameObjectComponentBase.inl" />
     <None Include="..\..\engine\include\K15_GpuBuffer.inl" />
+    <None Include="..\..\engine\include\K15_GpuProgram.inl" />
     <None Include="..\..\engine\include\K15_IniFileParser.inl" />
     <None Include="..\..\engine\include\K15_JobBase.inl" />
     <None Include="..\..\engine\include\K15_Node.inl">

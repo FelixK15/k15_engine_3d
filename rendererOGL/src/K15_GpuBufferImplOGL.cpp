@@ -20,6 +20,9 @@
 #include "K15_GpuBufferImplOGL.h"
 #include "K15_LogManager.h"
 
+#include "K15_RenderTask.h"
+#include "K15_RendererBase.h"
+
 namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	const GLenum GpuBufferImplOGL::GLBufferTypeConverter[GpuBuffer::BT_COUNT] = {
@@ -82,9 +85,11 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 		glNamedBufferDataEXT(m_BufferHandle,p_Size,0,usage);
 
-		if(glGetError() == GL_OUT_OF_MEMORY)
+		if(glGetError() != GL_NO_ERROR)
 		{
-			_LogError("Video card is out of memory.");
+			_LogError("Could not allocate %ukB from GPU. %s",p_Size / 1024,
+				g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
+
 			return false;
 		}
 		
@@ -112,6 +117,14 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 			glGetNamedBufferSubDataEXT(m_BufferHandle,p_Offset,p_Size,p_Destination);
 			
+			if(glGetError() != GL_NO_ERROR)
+			{
+				_LogError("Could not read buffer data. %s",
+					g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
+			
+				p_Size = 0;
+			}
+
 			return p_Size;
 		}
 
@@ -137,6 +150,14 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		GLenum target = GLBufferTypeConverter[m_Buffer->getType()];
 		
 		glNamedBufferSubDataEXT(m_BufferHandle,p_Offset,p_Size,p_Source);
+
+		if(glGetError() != GL_NO_ERROR)
+		{
+			_LogError("Could not read buffer data. %s",
+				g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
+
+			p_Size = 0;
+		}
 
 		return p_Size;
 	}

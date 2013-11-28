@@ -21,18 +21,36 @@
  * 
  */
 
+#ifndef _K15Engine_RendererOGL_GpuProgramImpl_h_
+#define _K15Engine_RendererOGL_GpuProgramImpl_h_
+
+#ifndef K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
+#	include "K15_RendererOGLPrerequisites.h"
+#endif //K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
+
 #include "K15_GpuProgram.h"
 
 namespace K15_Engine { namespace Rendering { namespace OGL {
 	class GpuProgramImplOGL : public GpuProgramImplBase
 	{
 	public:
-		GpuProgramImplOGL(Enum p_Type);
+		/*********************************************************************************/
+		static const GLenum GLShaderStageConverter[GpuProgram::PS_COUNT];
+		/*********************************************************************************/
+	public:
+		GpuProgramImplOGL();
 		virtual ~GpuProgramImplOGL();
-// 
-// 		virtual void init(Enum p_Type) OVERRIDE;
-// 		virtual void shutdown() OVERRIDE;
-// 
-// 		virtual void setProgramCode(const String& p_Code) OVERRIDE;
+
+		virtual bool compileShaderCode() OVERRIDE;
+		virtual bool loadBinaryCode() OVERRIDE;
+
+		virtual bool getBinaryCode(RawData* p_Buffer) OVERRIDE;
+
+		GLuint getProgramGL() const;
+
+	private:
+		GLuint m_Program;
 	};// end of GpuProgramImplOGL class declaration
 }}}// end of K15_Engine::Rendering::OGL namespace
+
+#endif //_K15Engine_RendererOGL_GpuProgramImpl_h_
