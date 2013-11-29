@@ -115,25 +115,25 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		glDepthFunc(GLFunctionTestConverter[p_DepthTest]);
 	}
 	/*********************************************************************************/
-	void RendererOGL::bindGpuProgram(GpuProgram* p_GpuProgram)
+	void RendererOGL::bindGpuProgram(GpuProgram* p_GpuProgram, Enum p_Stage)
 	{
 		K15_ASSERT(p_GpuProgram,"Given GpuProgram instance is NULL!");
 
 		GLbitfield stages = GL_NONE;
 
-		if(p_GpuProgram->getStage() == GpuProgram::PS_VERTEX)
+		if(p_Stage== GpuProgram::PS_VERTEX)
 		{
 			stages |= GL_VERTEX_SHADER_BIT;
 		}
-		else if(p_GpuProgram->getStage() == GpuProgram::PS_FRAGMENT)
+		else if(p_Stage == GpuProgram::PS_FRAGMENT)
 		{
 			stages |= GL_FRAGMENT_SHADER_BIT;
 		}
-		else if(p_GpuProgram->getStage() == GpuProgram::PS_GEOMETRY)
+		else if(p_Stage == GpuProgram::PS_GEOMETRY)
 		{
 			stages |= GL_GEOMETRY_SHADER_BIT;
 		}
-		else if(p_GpuProgram->getStage() == GpuProgram::PS_COMPUTE)
+		else if(p_Stage == GpuProgram::PS_COMPUTE)
 		{
 			stages |= GL_COMPUTE_SHADER_BIT;
 		}
@@ -148,7 +148,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		}
 		else
 		{
-			RendererBase::bindGpuProgram(p_GpuProgram);
+			RendererBase::bindGpuProgram(p_GpuProgram,p_Stage);
 		}
 	}
 	/*********************************************************************************/

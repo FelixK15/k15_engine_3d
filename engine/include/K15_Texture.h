@@ -69,7 +69,6 @@ namespace K15_Engine { namespace Rendering {
 			TT_COUNT
 		};//TextureType
 		/*********************************************************************************/
-
 	public:
 		Texture();
 		~Texture();

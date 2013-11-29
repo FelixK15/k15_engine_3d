@@ -146,9 +146,9 @@ namespace K15_Engine { namespace Rendering {
 		m_ClearColor = ColorRGBA(p_Red,p_Green,p_Blue);
 	}
 	/*********************************************************************************/
-	void RendererBase::bindGpuProgram(GpuProgram* p_GpuProgram)
+	void RendererBase::bindGpuProgram(GpuProgram* p_GpuProgram,Enum p_Stage)
 	{
-
+		m_GpuPrograms[p_Stage] = p_GpuProgram;
 	}
 	/*********************************************************************************/
 

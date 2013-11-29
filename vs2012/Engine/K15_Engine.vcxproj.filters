@@ -297,6 +297,9 @@
     <ClInclude Include="..\..\engine\include\win32\K15_VisualStudioLog_Win32.h">
       <Filter>Core\include\Win32</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Material.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -473,7 +476,10 @@
     <ClCompile Include="..\..\engine\src\K15_GpuProgram.cpp">
       <Filter>Rendering\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_RawData.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_RawData.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_Material.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -606,6 +612,7 @@
     <None Include="..\..\engine\include\K15_GpuProgram.inl">
       <Filter>Rendering\include</Filter>
     </None>
+    <None Include="..\..\engine\include\K15_Material.inl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />

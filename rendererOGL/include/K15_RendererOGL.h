@@ -42,7 +42,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		//virtual void setActiveCamera(Camera* p_Camera);
 		virtual void setCullingMode(Enum p_CullingMode) OVERRIDE;
 		virtual void setDepthTestFunction(Enum p_DepthTest) OVERRIDE;
-		virtual void bindGpuProgram(GpuProgram* p_GpuProgram) OVERRIDE;
+		virtual void bindGpuProgram(GpuProgram* p_GpuProgram,Enum p_Stage) OVERRIDE;
 		virtual void setClearColor(float p_Red, float p_Green, float p_Blue) OVERRIDE;
 		virtual void setDepthTestEnabled(bool p_Enabled) OVERRIDE;
 		virtual void setBackFaceCullingEnabled(bool p_Enabled) OVERRIDE;

@@ -145,6 +145,7 @@
     <ClInclude Include="..\..\engine\include\K15_ManagerBase.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Material.h" />
     <ClInclude Include="..\..\engine\include\K15_MemberFunctor.h" />
     <ClInclude Include="..\..\engine\include\K15_MemoryHeader.h" />
     <ClInclude Include="..\..\engine\include\K15_MemoryProfiler.h" />
@@ -260,6 +261,7 @@
     <ClCompile Include="..\..\engine\src\K15_JobBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Keyboard.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Keyboard_Win32.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_Material.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MemoryProfiler.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MemoryProfilingTask.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Mouse.cpp" />
@@ -310,6 +312,7 @@
     <None Include="..\..\engine\include\K15_GpuProgram.inl" />
     <None Include="..\..\engine\include\K15_IniFileParser.inl" />
     <None Include="..\..\engine\include\K15_JobBase.inl" />
+    <None Include="..\..\engine\include\K15_Material.inl" />
     <None Include="..\..\engine\include\K15_Node.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>

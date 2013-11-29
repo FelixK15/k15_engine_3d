@@ -136,6 +136,7 @@ namespace K15_Engine
 		class TextureImplBase;
 		class TextureSampler;
 		class TextureSamplerImplBase;
+		class Material;
 		struct TextureCreationOptions;
 
 		// surface description flags

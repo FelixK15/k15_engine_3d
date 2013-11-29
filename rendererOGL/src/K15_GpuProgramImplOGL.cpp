@@ -1,5 +1,5 @@
 /**
- * @file K15_ShaderImplOGL.cpp
+ * @file K15_GpuProgramImpl.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2012/07/11

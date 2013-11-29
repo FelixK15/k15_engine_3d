@@ -73,7 +73,7 @@ namespace K15_Engine { namespace Rendering {
 		  m_BufferType(p_BufferType),
 		  m_AccessOption(p_AccessOption)
 	{
-// 		m_Impl = g_Renderer->getGpuBufferImpl();
+ 		m_Impl = g_Application->getRenderTask()->getRenderer()->createGpuBufferImpl();
 		writeData(p_InitialDataSize,p_InitialData,p_InitialDataOffset);
 	}
 	/*********************************************************************************/
