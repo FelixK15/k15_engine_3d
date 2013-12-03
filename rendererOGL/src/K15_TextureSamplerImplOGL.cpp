@@ -22,7 +22,7 @@
 namespace K15_Engine { namespace Rendering { namespace OGL {
   /*********************************************************************************/
   const GLenum TextureSamplerImplOGL::GLFilterModeConverter[TextureSampler::TFM_COUNT] = {
-    GL_LINEAR,     //TFM_LINEAR
+    GL_LINEAR,    //TFM_LINEAR
     GL_NEAREST    //TFM_NEAREST
   }; //GLFilterModeConverter
   /*********************************************************************************/

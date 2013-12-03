@@ -43,7 +43,7 @@ namespace K15_Engine { namespace Core {
   typedef List(ApplicationModule*) ApplicationModuleList;
   typedef List(ApplicationParameter) ApplicationParameterList;
   /*********************************************************************************/
-  exposed_class K15_CORE_API Application : public Singleton<Application>,
+  class K15_CORE_API Application : public Singleton<Application>,
 											 public StackAllocator
   {
   public:

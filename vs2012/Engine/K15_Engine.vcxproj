@@ -148,6 +148,7 @@
     <ClInclude Include="..\..\engine\include\K15_Material.h" />
     <ClInclude Include="..\..\engine\include\K15_MemberFunctor.h" />
     <ClInclude Include="..\..\engine\include\K15_MemoryHeader.h" />
+    <ClInclude Include="..\..\engine\include\K15_MemoryPools.h" />
     <ClInclude Include="..\..\engine\include\K15_MemoryProfiler.h" />
     <ClInclude Include="..\..\engine\include\K15_MemoryProfilingTask.h" />
     <ClInclude Include="..\..\engine\include\K15_Mouse.h" />
@@ -190,6 +191,7 @@
     <ClInclude Include="..\..\engine\include\K15_TrueTypeFont.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_VertexDeclaration.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_ApplicationOSLayer_Win32.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_DynamicLibrary_Win32.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_RenderWindow_Win32.h" />
@@ -287,6 +289,7 @@
     <ClCompile Include="..\..\engine\src\K15_TrueTypeFont.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_VertexDeclaration.cpp" />
     <ClCompile Include="..\..\engine\src\Win32\K15_DynamicLibrary_Win32.cpp" />
     <ClCompile Include="..\..\engine\src\win32\K15_RenderWindow_Win32.cpp" />
     <ClCompile Include="..\..\engine\src\Win32\K15_VisualStudioLog_Win32.cpp" />

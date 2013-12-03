@@ -33,7 +33,7 @@
 #include "K15_GpuProgram.h"
 
 namespace K15_Engine { namespace Rendering { 
-	exposed_class K15_CORE_API Material
+	class K15_CORE_API Material
 	{
 	public:
 		Material();

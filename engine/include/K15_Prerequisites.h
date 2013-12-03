@@ -54,7 +54,7 @@
 //edit export defines
 #define expose //read + write
 #define expose_read //read only
-#define exposed_class class
+#define K15_EXPOSE_TO_EDITOR
 
 namespace K15_Engine
 {
@@ -137,6 +137,9 @@ namespace K15_Engine
 		class TextureSampler;
 		class TextureSamplerImplBase;
 		class Material;
+    class VertexDeclaration;
+    class VertexDeclarationImplBase;
+    struct VertexElement;
 		struct TextureCreationOptions;
 
 		// surface description flags
