@@ -80,10 +80,12 @@ namespace K15_Engine { namespace Rendering {
   public:
     /*********************************************************************************/
     typedef DynamicArray(VertexElement) VertexElementArray;
+    static const char SemanticToCharConverter[VertexElement::ES_COUNT];
+    static const char* TypeToCharConverter[VertexElement::ET_COUNT];
     /*********************************************************************************/
   public:
     VertexDeclaration();
-    VertexDeclaration(VertexElementArray& p_Elements);
+    VertexDeclaration(const VertexElementArray& p_Elements);
     VertexDeclaration(const String& p_DeclarationString);
 
     ~VertexDeclaration();
@@ -103,6 +105,7 @@ namespace K15_Engine { namespace Rendering {
     void removeElement(uint32 p_Index);
     void removeAllElements();
 
+    String getDeclarationString();
     const VertexElement& getElement(uint32 p_Index);
     
     uint32 getVertexSize();
