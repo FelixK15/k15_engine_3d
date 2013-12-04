@@ -95,7 +95,7 @@ namespace K15_Engine { namespace Core {
     inline RenderWindowBase* getRenderWindow() const;
     inline LogManager* getLogManager() const;
 	inline InputManager* getInputManager() const;
-	inline const StackAllocator& getFrameAllocator() const;
+	inline const StackAllocator* getFrameAllocator() const;
 	inline const ApplicationOSLayerType& getOSLayer() const;
 
 	inline double getRunningTime() const;
@@ -110,11 +110,14 @@ namespace K15_Engine { namespace Core {
     inline const double getDeltaTime() const;
     inline const double getRawDeltaTime() const;
 
-	inline void setMaxFPS(uint16 p_MaxFPS);
-	inline uint16 getMaxFPS() const;
+	inline void setMaxFPS(uint32 p_MaxFPS);
+	inline uint32 getMaxFPS() const;
 
 	inline const FrameStatistic& getFrameStatistic(uint32 p_FrameNumber) const;
-  
+  inline FrameStatistic& getCurrentFrameStatistic();
+
+  inline float getFramePerSecond() const;
+
   private:
     void createCommandList(int p_CommandCount,char** p_Commands);
     void createApplicationParameterList();
@@ -127,14 +130,15 @@ namespace K15_Engine { namespace Core {
 
   private:
 				bool m_Running;
-	
-	expose		uint16 m_MaxFPS;
+
+	expose		uint32 m_MaxFPS;
 	expose_read uint32 m_FrameCounter;
+  expose_read float m_AvgFramesPerSecond;
 	expose_read double m_AvgFrameTime;
 				double m_RunningTime;
 				double m_TimeLastFrame;
 
-				StackAllocator m_FrameAllocator; //allocator which will get reset each frame.
+				StackAllocator* m_FrameAllocator; //allocator which will get reset each frame.
 				FrameStatistic m_FrameStatistics[FrameStatisticCount];
 				GameTime m_GameTime;
 
@@ -156,6 +160,7 @@ namespace K15_Engine { namespace Core {
 				DynamicLibraryManager* m_DynamicLibraryManager;
 				InputManager* m_InputManager;
         ThreadWorker* m_ThreadWorker;
+        MemoryPools* m_MemoryPools;
 
 				RenderTask* m_RenderTask;
 				PhysicsTask* m_PhysicsTask;

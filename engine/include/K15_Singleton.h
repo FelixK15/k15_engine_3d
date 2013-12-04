@@ -23,6 +23,10 @@
 #ifndef _K15Engine_Core_Singleton_h_
 #define _K15Engine_Core_Singleton_h_
 
+#ifndef K15_USE_PRECOMPILED_HEADER
+# include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
+
 namespace K15_Engine { namespace Core { 
 
 	template<class T>
@@ -31,21 +35,27 @@ namespace K15_Engine { namespace Core {
 	public:
 		static T* getInstance()
 		{
-			if(m_Instance == 0){
-				m_Instance = ::new T();
-			}
+			if(!m_Instance)
+      {
+        m_Instance = ::new T();
+      }
 
 			return m_Instance; 
 		}
-
 	private:
 		static T* m_Instance;
 
 	protected:
 		Singleton()
 		{
+      K15_ASSERT(!m_Instance,"Instance already set!");
 			m_Instance = (T*)this;
 		}
+
+    ~Singleton()
+    {
+      m_Instance = 0;
+    }
 	};
 }} //end of K15_Engine::Core namespace
 

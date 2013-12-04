@@ -87,7 +87,7 @@ namespace K15_Engine { namespace Core {
 		{
 			thread = (*m_Threads.begin());
 			thread->join();
-			K15_DELETE_T(this,thread);
+			K15_DELETE_T(this,thread,sizeof(Thread));
 			m_Threads.pop_front();
 		}
 

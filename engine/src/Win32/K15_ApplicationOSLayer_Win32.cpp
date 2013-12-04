@@ -68,7 +68,7 @@ namespace K15_Engine { namespace Core {
 		DWORD writtenChars = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,0,lastError,MAKELANGID(LANG_ENGLISH,SUBLANG_ENGLISH_UK),(LPSTR)&errorBuffer,0,0);
 		if(writtenChars == 0 && !errorBuffer)
 		{
-			errorBuffer = (char*)_malloca(K15_ERROR_BUFFER_SIZE);
+			errorBuffer = (char*)alloca(K15_ERROR_BUFFER_SIZE);
 			sprintf(errorBuffer,"Could not retrieve last error from OS.");
 		}
 

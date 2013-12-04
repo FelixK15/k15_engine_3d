@@ -93,7 +93,7 @@ InputManager* Application::getInputManager() const
 	return m_InputManager;
 }
 /*********************************************************************************/
-const StackAllocator& Application::getFrameAllocator() const
+const StackAllocator* Application::getFrameAllocator() const
 {
 	return m_FrameAllocator;
 }
@@ -128,13 +128,13 @@ double Application::getTime() const
 	return m_OSLayer.getTime();
 }
 /*********************************************************************************/
-void Application::setMaxFPS(uint16 p_MaxFPS)
+void Application::setMaxFPS(uint32 p_MaxFPS)
 {
 	m_MaxFPS = p_MaxFPS;
 	m_AvgFrameTime = 1.0 / p_MaxFPS;
 }
 /*********************************************************************************/
-uint16 Application::getMaxFPS() const
+uint32 Application::getMaxFPS() const
 {
 	return m_MaxFPS;
 }
@@ -160,5 +160,15 @@ const FrameStatistic& Application::getFrameStatistic(uint32 p_FrameNumber) const
 const ApplicationOSLayerType& Application::getOSLayer() const
 {
   return m_OSLayer;
+}
+/*********************************************************************************/
+FrameStatistic& Application::getCurrentFrameStatistic()
+{
+  return m_FrameStatistics[m_FrameCounter % (FrameStatisticCount - 1)];
+}
+/*********************************************************************************/
+float Application::getFramePerSecond() const
+{
+  return m_AvgFramesPerSecond;
 }
 /*********************************************************************************/

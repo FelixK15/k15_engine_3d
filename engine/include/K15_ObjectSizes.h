@@ -1,8 +1,8 @@
 /**
- * @file K15_FrameStatistic.h
+ * @file K15_ObjectSizes.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/10/16
+ * @date 2013/11/12
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,23 +21,8 @@
  * 
  */
 
-#ifndef _K15Engine_Core_FrameStatistic_h_
-#define _K15Engine_Core_FrameStatistic_h_
-
-#ifndef K15_USE_PRECOMPILED_HEADER
-#	include "K15_Prerequisites.h"
-#endif// K15_USE_PRECOMPILED_HEADER
-
-namespace K15_Engine { namespace Core {
-	struct FrameStatistic
-	{
-		double Time;
-		uint32 ObjectsRendered;
-		uint32 FrameNumber;
-    uint32 MemoryAllocated;
-    uint32 MemoryFreed;
-    uint32 Allocations;
-    uint32 Deallocations;
-	};
-}}//end of K15_Engine::Core namespace
-#endif //_K15Engine_Core_FrameStatistic_h_
+#ifdef K15_64_BIT
+#define K15_SIZE_MATERIAL 928
+#else
+#define K15_SIZE_MATERIAL 736
+#endif //K15_64_BIT

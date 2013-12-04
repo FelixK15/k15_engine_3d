@@ -52,7 +52,7 @@ namespace K15_Engine { namespace Core {
 				setDefaultLog(p_Log);
 			}
 
-			m_Logs.push_back(p_Log);
+			m_Logs.push_front(p_Log);
 		}
 	}
 	/*********************************************************************************/

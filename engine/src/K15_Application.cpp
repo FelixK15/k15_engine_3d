@@ -34,6 +34,7 @@
 #include "K15_EventTask.h"
 #include "K15_ApplicationModule.h"
 #include "K15_ApplicationModuleDescription.h"
+#include "K15_MemoryPools.h"
 
 #include "K15_Mouse.h"
 #include "K15_Keyboard.h"
@@ -67,6 +68,8 @@ namespace K15_Engine { namespace Core {
 		m_ProfileManager(0),
 		m_TaskManager(0),
 		m_LogManager(0),
+    m_MemoryPools(0),
+    m_AvgFramesPerSecond(0.0f),
 		m_Plugins(),
 		m_RunningTime(0.0),
 		m_ApplicationParameter(),
@@ -75,11 +78,17 @@ namespace K15_Engine { namespace Core {
 		m_GameTime(0.0,1.0),
 		m_FrameCounter(0),
 		m_MaxFPS(30),
-		m_AvgFrameTime(0.33),
-		m_FrameAllocator(this,FrameAllocatorSize,_N(FrameAllocator))
+		m_AvgFrameTime(0.033),
+		m_FrameAllocator(0)
 	{
-		//creating the Log Manager is first thing we'll do.
-		m_LogManager = K15_NEW LogManager();
+    memset(m_FrameStatistics,0,sizeof(FrameStatistic) * FrameStatisticCount);
+
+    m_FrameAllocator = K15_NEW_T(this,StackAllocator) StackAllocator(this,FrameAllocatorSize,_N(FrameAllocator));
+
+    //creating the Log Manager is first thing we'll do.
+    m_LogManager = K15_NEW LogManager();
+
+    m_MemoryPools = K15_NEW MemoryPools();
 
 #if defined (K15_DEBUG)
 		m_LogManager->addLog(K15_NEW TextConsoleLog(),true,LogManager::LP_ALL);
@@ -182,22 +191,22 @@ namespace K15_Engine { namespace Core {
 		loadGameDirFile();
 		
 		_LogNormal("Initializing DynamicLibraryManager...");
-		m_DynamicLibraryManager = g_DynamicLibraryManager;
+		m_DynamicLibraryManager = K15_NEW DynamicLibraryManager();
 		
 		_LogNormal("Initializing EventManager...");
-		m_EventManager = g_EventManager;
+		m_EventManager = K15_NEW EventManager();
 		
 		_LogNormal("Initializing ProfilingManager...");
-		m_ProfileManager = g_ProfileManager;
+		m_ProfileManager = K15_NEW ProfilingManager();;
 
 		_LogNormal("Initializing TaskManager...");
-		m_TaskManager = g_TaskManager;
+		m_TaskManager = K15_NEW TaskManager;
 
 		_LogNormal("Initializing InputManager...");
-		m_InputManager = g_InputManager;
+		m_InputManager = K15_NEW InputManager;
 
 		_LogNormal("Initializing ThreadWorker...");
-		m_ThreadWorker = g_ThreadWorker;
+		m_ThreadWorker = K15_NEW ThreadWorker;
 
 		_LogNormal("Tasks will get created and added to the task manager.");
 		_LogNormal("Creating and adding event task...");
@@ -285,9 +294,10 @@ namespace K15_Engine { namespace Core {
 		static double startFrameTime = 0.0;
 		static double endFrameTime = 0.0;
 		static double diffTime = m_AvgFrameTime;
-
+    static double secondTime = 0.0; //counting to 1 second and then restarts
+    static uint32 secondFrameCounter = 0;
 		//clear the frame allocator on the start of each frame
-		m_FrameAllocator.clear();
+		m_FrameAllocator->clear();
 
 		startFrameTime = getTime();
 
@@ -312,11 +322,12 @@ namespace K15_Engine { namespace Core {
 		//so is there any frame time left?
 		diffTime = endFrameTime - startFrameTime;
 
-		//update running time
-		m_RunningTime += diffTime;
-
 		if(diffTime < m_AvgFrameTime)
 		{
+      //update running time
+      m_RunningTime += m_AvgFrameTime;
+      secondTime += m_AvgFrameTime;
+
 			static double sleepTime = 0.0;
 			sleepTime = m_AvgFrameTime - diffTime;
 
@@ -328,22 +339,34 @@ namespace K15_Engine { namespace Core {
 			//and then clip diffTime to the max frame time
 			_LogWarning("Frame %i took %.3f seconds to render! (%.3f seconds is average)",m_FrameCounter,diffTime,m_AvgFrameTime);
 
+      //update running time
+      m_RunningTime += diffTime;
+      secondTime += diffTime;
+
 			diffTime = m_AvgFrameTime;
 		}
-		
+
 		//update game time
 		m_GameTime.setDeltaTime(diffTime);
 
+    if(secondTime >= 1.0)
+    {
+      m_AvgFramesPerSecond = (float)(secondFrameCounter / secondTime);
+      secondTime = 0.0;
+      secondFrameCounter = 0;
+    }
+    
+
 		//increase frame counter
 		if(++m_FrameCounter == UINT_MAX) m_FrameCounter = 0;
-
-		//save stastic for this frame
+    ++secondFrameCounter;
+		//save statistic for this frame
 		static uint32 FrameStatisticIndex = 0;
 		FrameStatisticIndex = m_FrameCounter % (FrameStatisticCount - 1);
 		m_FrameStatistics[FrameStatisticIndex].Time = diffTime;
 		m_FrameStatistics[FrameStatisticIndex].FrameNumber = m_FrameCounter;
 
-		//m_RenderWindow->setWindowTitle(StringUtil::format("msec: %.3f - Frame Index: %i",diffTime * 100,m_FrameCounter));
+		m_RenderWindow->setWindowTitle(StringUtil::format("msec: %.3f - FPS:%.3f Frame Index: %i",diffTime * 100,m_AvgFramesPerSecond,m_FrameCounter));
 	}
 	/*********************************************************************************/
 	void Application::onPostTick()
@@ -488,7 +511,7 @@ namespace K15_Engine { namespace Core {
 	void Application::initializePlugins(const StringSet& p_PluginNames)
 	{
 		DynamicLibraryBase* lib = 0;
-		char* messageBuffer = (char*)_malloca(K15_PLUGIN_INFO_BUFFER_SIZE);
+		char* messageBuffer = (char*)alloca(K15_PLUGIN_INFO_BUFFER_SIZE);
 		for(StringSet::const_iterator iter = p_PluginNames.begin();iter != p_PluginNames.end();++iter)
 		{
 			_LogNormal("Trying to initialize plugin \"%s\"",iter->c_str());
@@ -557,26 +580,34 @@ namespace K15_Engine { namespace Core {
 		m_RenderWindow->shutdown();
 		m_OSLayer.shutdown();
 
+    _LogNormal("Destroying RenderWindow...");
+    K15_DELETE m_RenderWindow;
+
 		_LogNormal("Destroying ThreadWorker...");
 		K15_DELETE m_ThreadWorker;
 
 		_LogNormal("Destroying InputManager...");
 		K15_DELETE m_InputManager;
 
-		_LogNormal("Destroying RenderWindow...");
-		K15_DELETE m_RenderWindow;
+    _LogNormal("Destroying TaskMananger...");
+    K15_DELETE m_TaskManager;
+
+    _LogNormal("Destroying ProfilingManager...");
+    K15_DELETE m_ProfileManager;
+
+    _LogNormal("Destroying EventManager...");
+    K15_DELETE m_EventManager;
 
 		_LogNormal("Destroying DynamicLibraryManager...");
 		K15_DELETE m_DynamicLibraryManager;
 
-		_LogNormal("Destroying EventManager...");
-		K15_DELETE m_EventManager;
-
-		_LogNormal("Destroying ProfilingManager...");
-		K15_DELETE m_ProfileManager;
+    _LogNormal("Destroying Memorypools...");
+    K15_DELETE m_MemoryPools;
 
 		_LogNormal("Destroying LogManager...");
 		K15_DELETE m_LogManager;
+
+    K15_DELETE m_FrameAllocator;
 	}
 	/*********************************************************************************/
 	void Application::loadGameDirFile()
@@ -585,7 +616,7 @@ namespace K15_Engine { namespace Core {
 
 		if(gameDirFile.is_open())
 		{
-			char* buffer = (char*)_malloca(K15_GAMEDIR_BUFFER_SIZE);
+			char* buffer = (char*)alloca(K15_GAMEDIR_BUFFER_SIZE);
 			buffer = '\0';
 			gameDirFile.getline(buffer,K15_GAMEDIR_BUFFER_SIZE);
 			m_GameRootDir = buffer;

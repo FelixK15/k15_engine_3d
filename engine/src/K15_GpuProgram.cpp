@@ -86,7 +86,7 @@ namespace K15_Engine { namespace Rendering {
 		if(p_Data.data)
 		{
 			static char* shaderCode;
-			shaderCode = (char*)_malloca(p_Data.size);
+			shaderCode = (char*)alloca(p_Data.size);
 
 			memcpy(shaderCode,p_Data.data,p_Data.size);
 

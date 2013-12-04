@@ -306,6 +306,10 @@
     <ClInclude Include="..\..\engine\include\K15_MemoryPools.h">
       <Filter>Core\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ObjectSizes.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -491,6 +495,10 @@
     <ClCompile Include="..\..\engine\src\K15_VertexDeclaration.cpp">
       <Filter>Rendering\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_MemoryPools.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\Win32\K15_Timer_Win32.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -626,6 +634,7 @@
     <None Include="..\..\engine\include\K15_Material.inl">
       <Filter>Rendering\include</Filter>
     </None>
+    <None Include="..\..\engine\include\K15_Timer.inl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />

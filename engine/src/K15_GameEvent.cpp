@@ -30,12 +30,6 @@ namespace K15_Engine { namespace Core {
 		if(m_ArgumentSize > 0)
 		{
       m_Argument = K15_NEW_SIZE(MemoryAllocator,m_ArgumentSize) byte[m_ArgumentSize];
-// #		if defined(K15_DEBUG)
-// 			m_Argument = ArgumentAllocator.allocateDebug(p_ArgumentSize,__FILE__,__LINE__,false,__FUNCTION__);
-// #		else
-// 			m_Argument = ArgumentAllocator.allocate(p_ArgumentSize);
-// #		endif //K15_DEBUG
-
 			memcpy(m_Argument,p_Argument,m_ArgumentSize);
 		}
 	}
@@ -52,7 +46,7 @@ namespace K15_Engine { namespace Core {
 	{
 		if(m_Argument != 0)
 		{
-      K15_DELETE_T(MemoryAllocator,m_Argument);
+      K15_DELETE_T(MemoryAllocator,m_Argument,m_ArgumentSize);
 		}
 	}
 	/*********************************************************************************/
@@ -64,11 +58,6 @@ namespace K15_Engine { namespace Core {
 		if(p_Other.m_Argument)
 		{
       m_Argument = K15_NEW_SIZE(MemoryAllocator,m_ArgumentSize) byte[m_ArgumentSize];
-// #		if defined(K15_DEBUG)
-// 			m_Argument = ArgumentAllocator.allocateDebug(m_ArgumentSize,__FILE__,__LINE__,false,__FUNCTION__);
-// #		else
-// 			m_Argument = ArgumentAllocator.allocate(m_ArgumentSize);
-// #		endif //K15_DEBUG
 			memcpy(m_Argument,p_Other.m_Argument,m_ArgumentSize);
 		}
 	}

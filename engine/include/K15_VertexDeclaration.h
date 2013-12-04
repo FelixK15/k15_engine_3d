@@ -58,22 +58,12 @@ namespace K15_Engine { namespace Rendering {
     }; //ElementType
     /*********************************************************************************/
 
-    Enum Semantic;
-    Enum Type;
-    uint32 Offset;
-    uint32 Index;
+    Enum semantic;
+    Enum type;
+    uint32 offset;
+    uint32 index;
+    uint32 slot;
   }; //end of VertexElement struct
-  /*********************************************************************************/
-  class K15_CORE_API VertexDeclarationImplBase 
-  {
-  public:
-      virtual void setElement(uint32 p_Index, const VertexElement& p_Element) = 0;
-
-      void setVertexDeclaration(VertexDeclaration* p_Declaration);
-      VertexDeclaration* getVertexDeclaration() const;
-  protected:
-    VertexDeclaration* m_VertexDeclaration;
-  }; // end of VertexDeclarationImplBase class declaration
   /*********************************************************************************/
   class K15_CORE_API VertexDeclaration
   {
@@ -114,10 +104,12 @@ namespace K15_Engine { namespace Rendering {
   private:
     void _parseDeclarationString(const String& p_DeclarationString);
     void _recalculateOffsets();
+    void _updateElements();
     bool _validateElement(const VertexElement& p_Element);
 
   private:
     VertexElementArray m_Elements;
+    ObjectName m_Declaration;
     uint32 m_Size;
     bool m_Dirty;
   }; //end of VertexDeclaration class declaration

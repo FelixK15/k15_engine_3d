@@ -18,39 +18,39 @@
  */
 
 /*********************************************************************************/
-template<class T>
-PoolAllocator<T>::PoolAllocator(uint32 p_ObjectCount, const ObjectName& p_Name)
-	: BaseAllocator(p_ObjectCount * sizeof(T),p_Name),
+template<size_t SIZE_T>
+PoolAllocator<SIZE_T>::PoolAllocator(size_t p_ObjectCount, const ObjectName& p_Name)
+	: BaseAllocator(p_ObjectCount * SIZE_T,p_Name),
   m_Position(0)
 {
 
 }
 /*********************************************************************************/
-template<class T>
-PoolAllocator<T>::PoolAllocator(BaseAllocator* p_Allocator,uint32 p_ObjectCount, const ObjectName& p_Name)
-  : BaseAllocator(p_Allocator,p_ObjectCount * sizeof(T),p_Name),
+template<size_t SIZE_T>
+PoolAllocator<SIZE_T>::PoolAllocator(BaseAllocator* p_Allocator,uint32 p_ObjectCount, const ObjectName& p_Name)
+  : BaseAllocator(p_Allocator,p_ObjectCount * SIZE_T,p_Name),
   m_Position(0)
 {
 
 }
 /*********************************************************************************/
-template<class T>
-PoolAllocator<T>::~PoolAllocator()
+template<size_t SIZE_T>
+PoolAllocator<SIZE_T>::~PoolAllocator()
 {
 
 }
 /*********************************************************************************/
-template<class T>
-void* PoolAllocator<T>::alloc(uint32 p_Size)
+template<size_t SIZE_T>
+void* PoolAllocator<SIZE_T>::alloc(size_t p_Size)
 {
-	K15_ASSERT(p_Size % sizeof(T) == 0,StringUtil::format("PoolAllocator %s Size unequal to object size. size:%i objectsize:%u",m_Name.c_str(),p_Size,sizeof(T)));
+	K15_ASSERT(p_Size % SIZE_T == 0,StringUtil::format("PoolAllocator %s Size unequal to object size. size:%i objectsize:%u",m_Name.c_str(),p_Size,SIZE_T));
 
-	if(m_Position * sizeof(T) == m_MemorySize)
+	if(m_Position * SIZE_T == m_MemorySize)
 	{
 		m_Position = 0;
 	}
 
-	uint32 pos = m_Position++ * sizeof(T);
+	uint32 pos = m_Position++ * SIZE_T;
 // 	while(((m_Memory + pos) & sizeof(T)) > 0)
 // 	{
 // 		pos = m_Position++ * sizeof(T);
@@ -64,9 +64,9 @@ void* PoolAllocator<T>::alloc(uint32 p_Size)
 	return (void*)(m_Memory + pos);
 }
 /*********************************************************************************/
-template<class T>
-void PoolAllocator<T>::free(void* p_Pointer)
+template<size_t SIZE_T>
+void PoolAllocator<SIZE_T>::free(void* p_Pointer, size_t p_Size)
 {
-	memset(p_Pointer,0,sizeof(T));
+	memset(p_Pointer,0,SIZE_T);
 }
 /*********************************************************************************/

@@ -39,16 +39,16 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/	
   public:
 	//allocate memory from another allocator
-	StackAllocator(BaseAllocator* p_Allocator,uint32 p_Size,const ObjectName& p_Name);
+	StackAllocator(BaseAllocator* p_Allocator,size_t p_Size,const ObjectName& p_Name);
     
 	//allocate memory using malloc
-    StackAllocator(uint32 p_Size,const ObjectName& p_Name);
+    StackAllocator(size_t p_Size,const ObjectName& p_Name);
 
     virtual void clear();
 
   protected:
-    virtual void* alloc(uint32 p_Size);
-    virtual void free(void* p_Pointer);
+    virtual void* alloc(size_t p_Size);
+    virtual void free(void* p_Pointer,size_t p_Size);
 
   protected:
     byte* m_Marker;

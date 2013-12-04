@@ -66,7 +66,7 @@ namespace K15_Engine { namespace Rendering {
 		  m_DepthBufferFormat(DBF_COMPONENT_24_I),
 		  m_DepthTestFunction(DF_GREATER_EQUAL),
 		  m_DepthTestEnabled(true),
-		  m_FrameBufferFormat(PF_RGB_32_F),
+		  m_FrameBufferFormat(PF_RGB_8_I),
 		  m_LightningEnabled(true),
 		  m_RenderTarget(0),
 		  m_RenderWindow(g_Application->getRenderWindow()),

@@ -31,16 +31,16 @@
 #include "K15_BaseAllocator.h"
 
 namespace K15_Engine { namespace Core {
-	template<class T>
+	template<uint32 SIZE_T>
 	class PoolAllocator : public BaseAllocator
 	{
 	public:
-		PoolAllocator(uint32 p_ObjectCount, const ObjectName& p_Name);
+		PoolAllocator(size_t p_ObjectCount, const ObjectName& p_Name);
 		PoolAllocator(BaseAllocator* p_Allocator,uint32 p_ObjectCount, const ObjectName& p_Name);
 		virtual ~PoolAllocator();
 
-		virtual void* alloc(uint32 p_Size) OVERRIDE;
-		virtual void free(void* p_Pointer) OVERRIDE;
+		virtual void* alloc(size_t p_Size) OVERRIDE;
+		virtual void free(void* p_Pointer,size_t p_Size) OVERRIDE;
 
 	private:
 		uint32 m_Position;

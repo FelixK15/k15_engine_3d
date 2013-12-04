@@ -56,6 +56,8 @@
 #define expose_read //read only
 #define K15_EXPOSE_TO_EDITOR
 
+#include "K15_ObjectSizes.h"
+
 namespace K15_Engine
 {
 	/*********************************************************************************/
@@ -110,6 +112,7 @@ namespace K15_Engine
 		class Functor0;
 		class MemoryProfiler;
 		class MemoryProfilingTask;
+    class MemoryPools;
 		struct MemoryHeader;
 		class FontManager;
 		class Font;
@@ -274,6 +277,7 @@ namespace K15_Engine
 #	define _CRT_SECURE_NO_WARNINGS //don't throw a "unsafe function" warning when using printf, sprintf, etc. 
 #	pragma warning(disable : 4251) //dll export for std::string, std::list etc.
 #	pragma warning(disable : 4530) //c++ exception used, but not enabled (xlocale.h)
+# pragma warning(disable : 6255) //unprotected use of alloca
 #endif //_MSC_VER
 
 //c std libs
@@ -403,7 +407,7 @@ namespace K15_Engine
 #	define K15_NEW_T(allocator,objType) new(allocator->allocateDebug(sizeof(objType),__FILE__,__LINE__,false,__FUNCTION__))
 # define K15_NEW_SIZE(allocator,size) new(allocator->allocateDebug(size,__FILE__,__LINE__,false,__FUNCTION__))
 
-#	define K15_DELETE_T(allocator,ptr) if(ptr){allocator->deallocateDebug((void*)ptr,__FILE__,__LINE__,false,__FUNCTION__);}
+#	define K15_DELETE_T(allocator,ptr,size) if(ptr){allocator->deallocateDebug((void*)ptr,size,__FILE__,__LINE__,false,__FUNCTION__);}
 #else
 #	define K15_NEW    new
 #	define K15_DELETE delete
@@ -411,7 +415,7 @@ namespace K15_Engine
 # define K15_NEW_SIZE(allocator,size) new(allocator->allocate(size))
 #	define K15_NEW_T(allocator,objType) new(allocator->allocate(sizeof(objType)))
 
-# define K15_DELETE_T(allocator,ptr) if(ptr){allocator->deallocate((void*)ptr);}
+# define K15_DELETE_T(allocator,ptr,size) if(ptr){allocator->deallocate((void*)ptr,size);}
 #endif //K15_DEBUG
 
 # define K15_PLACEMENT_NEW new(ptr)
@@ -450,6 +454,7 @@ typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::DynamicLibraryManage
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::LogManager> LogManagerAllocatedObject;
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::ProfilingManager> ProfilingManagerAllocatedObject;
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::ThreadWorker> ThreadWorkerAllocatedObject;
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::MemoryPools> MemoryPoolsAllocatedObject;
 
 #define FontManagerAllocator K15_Engine::Core::FontManager::getInstance()
 #define InputManagerAllocator K15_Engine::Core::InputManager::getInstace()
@@ -459,8 +464,9 @@ typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::ThreadWorker> Thread
 #define DynamicLibraryManagerAllocator K15_Engine::Core::DynamicLibraryManager::getInstance()
 #define LogManagerAllocator K15_Engine::Core::LogManager::getInstance()
 #define ThreadWorkerAllocator K15_Engine::Core::LogManager::getInstance()
+#define MemoryPoolsAllocator K15_Engine::Core::MemoryPools::getInstance()
 
-#define g_Renderer K15_Engine::Core::Application::getInstance()->getRenderer()
+#define g_MemoryPools K15_Engine::Core::MemoryPools::getInstance()
 #define g_FontManager K15_Engine::Core::FontManager::getInstance()
 #define g_MemoryProfiler K15_Engine::Core::MemoryProfiler::getInstance()
 #define g_InputManager K15_Engine::Core::InputManager::getInstance()

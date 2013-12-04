@@ -159,6 +159,7 @@
     <ClInclude Include="..\..\engine\include\K15_NTreeNode.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ObjectSizes.h" />
     <ClInclude Include="..\..\engine\include\K15_PhysicsProcessBase.h" />
     <ClInclude Include="..\..\engine\include\K15_PhysicsTask.h" />
     <ClInclude Include="..\..\engine\include\K15_Pointer.h" />
@@ -188,6 +189,7 @@
     <ClInclude Include="..\..\engine\include\K15_Texture.h" />
     <ClInclude Include="..\..\engine\include\K15_TextureSampler.h" />
     <ClInclude Include="..\..\engine\include\K15_ThreadWorker.h" />
+    <ClInclude Include="..\..\engine\include\K15_Timer.h" />
     <ClInclude Include="..\..\engine\include\K15_TrueTypeFont.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
@@ -264,6 +266,7 @@
     <ClCompile Include="..\..\engine\src\K15_Keyboard.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Keyboard_Win32.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Material.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_MemoryPools.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MemoryProfiler.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MemoryProfilingTask.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Mouse.cpp" />
@@ -292,6 +295,7 @@
     <ClCompile Include="..\..\engine\src\K15_VertexDeclaration.cpp" />
     <ClCompile Include="..\..\engine\src\Win32\K15_DynamicLibrary_Win32.cpp" />
     <ClCompile Include="..\..\engine\src\win32\K15_RenderWindow_Win32.cpp" />
+    <ClCompile Include="..\..\engine\src\Win32\K15_Timer_Win32.cpp" />
     <ClCompile Include="..\..\engine\src\Win32\K15_VisualStudioLog_Win32.cpp" />
     <None Include="..\..\engine\include\K15_AllocatedObject.inl" />
     <None Include="..\..\engine\include\K15_Application.inl" />
@@ -400,6 +404,7 @@
     <None Include="..\..\engine\include\K15_TaskManager.inl" />
     <None Include="..\..\engine\include\K15_Texture.inl" />
     <None Include="..\..\engine\include\K15_TextureSampler.inl" />
+    <None Include="..\..\engine\include\K15_Timer.inl" />
     <None Include="module.def" />
   </ItemGroup>
   <ItemGroup>

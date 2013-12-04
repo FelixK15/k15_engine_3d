@@ -31,9 +31,11 @@
 #include "K15_Texture.h"
 #include "K15_TextureSampler.h"
 #include "K15_GpuProgram.h"
+#include "K15_MemoryPools.h"
+#include "K15_AllocatedObject.h"
 
 namespace K15_Engine { namespace Rendering { 
-	class K15_CORE_API Material
+	class K15_CORE_API Material : public AllocatedObject<MaterialAllocator>
 	{
 	public:
 		Material();

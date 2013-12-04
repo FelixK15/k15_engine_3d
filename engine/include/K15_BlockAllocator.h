@@ -38,18 +38,18 @@ namespace K15_Engine { namespace Core {
 		{
 			bool Used;
 			byte* Memory;
-			uint32 Size;
+			size_t Size;
 			MemoryBlock* Next;
 		};
 		/*********************************************************************************/
 	public:
-		BlockAllocator(uint32 p_Size,const ObjectName& p_Name);
-		BlockAllocator(BaseAllocator* p_Allocator,uint32 p_Size,const ObjectName& p_Name);
+		BlockAllocator(size_t p_Size,const ObjectName& p_Name);
+		BlockAllocator(BaseAllocator* p_Allocator,size_t p_Size,const ObjectName& p_Name);
 		virtual ~BlockAllocator();
 
 		virtual void clear() OVERRIDE;
-		virtual void* alloc(uint32 p_Size) OVERRIDE;
-		virtual void free(void* p_Pointer) OVERRIDE;
+		virtual void* alloc(size_t p_Size) OVERRIDE;
+		virtual void free(void* p_Pointer,size_t p_Size) OVERRIDE;
 
 	private:
 		void mergeBlocks();

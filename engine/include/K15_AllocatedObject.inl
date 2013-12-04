@@ -44,9 +44,9 @@ void* AllocatedObject<Allocator>::alloc(size_t p_Size,const char* p_File,uint32 
 }
 /*********************************************************************************/
 template<class Allocator>
-void AllocatedObject<Allocator>::free(void* p_Pointer,const char* p_File,uint32 p_Line,bool p_Array,const char* p_Function)
+void AllocatedObject<Allocator>::free(void* p_Pointer,size_t p_Size,const char* p_File,uint32 p_Line,bool p_Array,const char* p_Function)
 {
-	return Allocator::getInstance()->deallocateDebug(p_Pointer,p_File,p_Line,p_Array,p_Function);
+	return Allocator::getInstance()->deallocateDebug(p_Pointer,p_Size,p_File,p_Line,p_Array,p_Function);
 }
 /*********************************************************************************/
 template<class Allocator>
@@ -65,14 +65,14 @@ template<class Allocator>
 void AllocatedObject<Allocator>::operator delete(void* p_Pointer,size_t p_Size)
 {
 	//return MemoryAllocator->deallocateDebug(p_Pointer,p_File,p_Line,false,p_Function);
-	return Allocator::getInstance()->deallocateDebug(p_Pointer,"",0,false,"");
+	return Allocator::getInstance()->deallocateDebug(p_Pointer,p_Size,"",0,false,"");
 }
 /*********************************************************************************/
 template<class Allocator>
 void AllocatedObject<Allocator>::operator delete[](void* p_Pointer,size_t p_Size)
 {
 	//return MemoryAllocator->deallocateDebug(p_Pointer,p_File,p_Line,true,p_Function);
-	return Allocator::getInstance()->deallocateDebug(p_Pointer,"",0,true,"");
+	return Allocator::getInstance()->deallocateDebug(p_Pointer,p_Size,"",0,true,"");
 }
 /*********************************************************************************/
 
@@ -86,9 +86,9 @@ void* AllocatedObject<Allocator>::alloc(size_t p_Size)
 }
 /*********************************************************************************/
 template<class Allocator>
-void AllocatedObject<Allocator>::free(void* p_Pointer)
+void AllocatedObject<Allocator>::free(void* p_Pointer,size_t p_Size)
 {
-	MemoryAllocator->deallocate(p_Pointer);
+	MemoryAllocator->deallocate(p_Pointer,p_Size);
 }
 /*********************************************************************************/
 template<class Allocator>
@@ -98,7 +98,7 @@ void* AllocatedObject<Allocator>::new(size_t p_Size)
 }
 /*********************************************************************************/
 template<class Allocator>
-void AllocatedObject<Allocator>::delete(void* p_Pointer)
+void AllocatedObject<Allocator>::delete(void* p_Pointer,size_t p_Size)
 {
 	MemoryAllocator->deallocate(p_Pointer);
 }
@@ -110,7 +110,7 @@ void* AllocatedObject<Allocator>::new[](size_t p_Size)
 }
 /*********************************************************************************/
 template<class Allocator>
-void AllocatedObject<Allocator>::delete[](void* p_Pointer)
+void AllocatedObject<Allocator>::delete[](void* p_Pointer,size_t p_Size)
 {
 	MemoryAllocator->deallocate(p_Pointer);
 }

@@ -28,7 +28,7 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	BaseAllocator::BaseAllocator(uint32 p_Size,const ObjectName& p_Name)
+	BaseAllocator::BaseAllocator(size_t p_Size,const ObjectName& p_Name)
 	: m_Allocator(0),
 		m_Memory(0),
 		m_MemorySize(p_Size),
@@ -43,7 +43,7 @@ namespace K15_Engine { namespace Core {
 		m_MemoryEndAddress = m_Memory + m_MemorySize;
 	}
 	/*********************************************************************************/
-	BaseAllocator::BaseAllocator(BaseAllocator* p_Allocator,uint32 p_Size,const ObjectName& p_Name)
+	BaseAllocator::BaseAllocator(BaseAllocator* p_Allocator,size_t p_Size,const ObjectName& p_Name)
 	: m_Allocator(p_Allocator),
 		m_Memory(0),
 		m_MemorySize(p_Size),
@@ -67,7 +67,7 @@ namespace K15_Engine { namespace Core {
 		{
 #     if defined K15_DEBUG
 			g_MemoryProfiler->removeAllocator(this);
-			m_Allocator->deallocateDebug(m_Memory,__FILE__,__LINE__,false,__FUNCTION__);
+			m_Allocator->deallocateDebug(m_Memory,m_MemorySize,__FILE__,__LINE__,false,__FUNCTION__);
 #     else
 			m_Allocator->deallocate(m_Memory);
 #     endif //K15_DEBUG
@@ -76,31 +76,42 @@ namespace K15_Engine { namespace Core {
 		{
 	#     if defined K15_DEBUG
 			g_MemoryProfiler->removeAllocator(this);
-			deallocateDebug(m_Memory,__FILE__,__LINE__,false,__FUNCTION__);
+			deallocateDebug(m_Memory,m_MemorySize,__FILE__,__LINE__,false,__FUNCTION__);
 	#     else
 			deallocate(m_Memory);
 	#     endif //K15_DEBUG
 		}
 	}
 	/*********************************************************************************/
-	void* BaseAllocator::allocate(uint32 p_Size)
+	void* BaseAllocator::allocate(size_t p_Size)
 	{
 		K15_ASSERT(p_Size + m_UsedMemory <= m_MemorySize,StringUtil::format("Cannot satisfy memory request. Allocator:%s",m_Name.c_str()));
 		void* memory = alloc(p_Size);
 		memset(memory,0,p_Size);
 		m_UsedMemory += p_Size;
+
+    g_Application->getCurrentFrameStatistic().MemoryAllocated += p_Size;
+    g_Application->getCurrentFrameStatistic().Allocations += 1;
+
 		return memory;
 	}
 	/*********************************************************************************/
-	void BaseAllocator::deallocate(void* p_Pointer)
+	void BaseAllocator::deallocate(void* p_Pointer, size_t p_Size)
 	{
 		K15_ASSERT((ptrdiff_t)p_Pointer >= (ptrdiff_t)m_Memory && (ptrdiff_t)p_Pointer < (ptrdiff_t)m_MemoryEndAddress,
 			StringUtil::format("Pointer %p is not part of Allocator:%s",m_Name.c_str()));
 
-		return free(p_Pointer);
+    K15_ASSERT((m_UsedMemory - p_Size) > 0,"Trying to release more memory than there is available.");
+
+		free(p_Pointer, p_Size);
+
+    g_Application->getCurrentFrameStatistic().MemoryFreed += p_Size;
+    g_Application->getCurrentFrameStatistic().Deallocations += 1;
+
+    m_UsedMemory -= p_Size;
 	}
 	/*********************************************************************************/
-	void* BaseAllocator::allocateDebug(uint32 p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function)
+	void* BaseAllocator::allocateDebug(size_t p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function)
 	{
 		//p_Size += sizeof(MemoryHeader);
 		K15_ASSERT(p_Size + m_UsedMemory <= m_MemorySize,StringUtil::format("Cannot satisfy memory request. Allocator:%s",m_Name.c_str()));
@@ -116,20 +127,30 @@ namespace K15_Engine { namespace Core {
 
 		m_UsedMemory += p_Size;
 
+    g_Application->getCurrentFrameStatistic().MemoryAllocated += p_Size;
+    g_Application->getCurrentFrameStatistic().Allocations += 1;
+
 		//return (void*)(memory += sizeof(MemoryHeader)); //shift and return memory
 		return (void*)memory;
 	}
 	/*********************************************************************************/
-	void BaseAllocator::deallocateDebug(void* p_Pointer,const char* p_File,int p_Line,bool p_Array,const char* p_Function)
+	void BaseAllocator::deallocateDebug(void* p_Pointer,size_t p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function)
 	{
 // 		MemoryHeader* header = (MemoryHeader*)p_Pointer;
 // 		//shift memory to real memoryheader data
 // 		--header;
 // 
-// 		K15_ASSERT(p_Array == header->IsArray,StringUtil::format("Memory %p was allocated as array and free'd as non array. %s(%i) %s",
-// 			p_Pointer,p_File,p_Line,p_Function));
+    K15_ASSERT((ptrdiff_t)p_Pointer >= (ptrdiff_t)m_Memory && (ptrdiff_t)p_Pointer < (ptrdiff_t)m_MemoryEndAddress,
+      StringUtil::format("Pointer %p is not part of Allocator:%s",m_Name.c_str()));
 
-		free(p_Pointer);
+    K15_ASSERT((m_UsedMemory - p_Size) >= 0,"Trying to release more memory than there is available.");
+
+		free(p_Pointer, p_Size);
+
+    m_UsedMemory -= p_Size;
+
+    g_Application->getCurrentFrameStatistic().MemoryFreed += p_Size;
+    g_Application->getCurrentFrameStatistic().Deallocations += 1;
 	}
 	/*********************************************************************************/
 	const ObjectName& BaseAllocator::getName() const

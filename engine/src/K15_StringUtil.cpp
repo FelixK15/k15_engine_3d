@@ -33,7 +33,7 @@ namespace K15_Engine { namespace Core {
 		uint32 length = strlen(p_Message);
 		length += K15_FORMAT_MESSAGE_ADDITIONAL_LENGTH;
 
-		char* buffer = (char*)_malloca(length);
+		char* buffer = (char*)alloca(length);
 		va_start(list,p_Message);
 		vsprintf(buffer,p_Message,list);
 		va_end(list);

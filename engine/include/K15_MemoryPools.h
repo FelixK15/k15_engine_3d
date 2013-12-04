@@ -28,13 +28,29 @@
 # include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
+#include "K15_BlockAllocator.h"
 #include "K15_PoolAllocator.h"
 
 namespace K15_Engine { namespace Core {
-  class K15_CORE_API MemoryPools
+  /*********************************************************************************/
+  class K15_CORE_API MaterialAllocator : public Singleton<MaterialAllocator>, public PoolAllocator<K15_SIZE_MATERIAL>, public MemoryPoolsAllocatedObject
   {
   public:
-    static PoolAllocator<Rendering::VertexElement> VertexElementAllocator;
+    /*********************************************************************************/
+    static const uint32 MaterialCount = 512;
+    /*********************************************************************************/
+    MaterialAllocator();
+    virtual ~MaterialAllocator();
+  }; // end of MaterialAllocator class declaration
+  /*********************************************************************************/
+  class K15_CORE_API MemoryPools : public Singleton<MemoryPools>, public BlockAllocator, public ApplicationAllocatedObject
+  {
+  public:
+    MemoryPools();
+    virtual ~MemoryPools();
+
+  private:
+    MaterialAllocator* m_MaterialAllocator;
   }; // end of MemoryPools class declaration
 }} //end of K15_Engine::Core namespace
 

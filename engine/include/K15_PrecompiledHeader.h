@@ -25,6 +25,7 @@
 #include "K15_Application.h"
 #include "K15_LogManager.h"
 #include "K15_HashedString.h"
+//#include "K15_MemoryPools.h"
 /*#include "K15_ProfilingManager.h"*/
 #include "K15_EventManager.h"
 #include "K15_GameEvent.h"

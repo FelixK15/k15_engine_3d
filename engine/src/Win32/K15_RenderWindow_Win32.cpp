@@ -67,7 +67,7 @@ namespace K15_Engine { namespace Core {
 		{
 			uint32 size = 0;
 			GetRawInputData((HRAWINPUT)p_lParam,RID_INPUT,0,&size,sizeof(RAWINPUTHEADER));
-			byte* buffer = (byte*)_malloca(size);
+			byte* buffer = (byte*)alloca(size);
 
 			if(GetRawInputData((HRAWINPUT)p_lParam,RID_INPUT,buffer,&size,sizeof(RAWINPUTHEADER)) == size)
 			{

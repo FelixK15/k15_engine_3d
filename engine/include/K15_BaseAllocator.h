@@ -33,17 +33,17 @@ namespace K15_Engine { namespace Core {
   class K15_CORE_API BaseAllocator
   {
   public:
-    BaseAllocator(uint32 p_Size,const ObjectName& p_Name);
-    BaseAllocator(BaseAllocator* p_Allocator,uint32 p_Size,const ObjectName& p_Name);
+    BaseAllocator(size_t p_Size,const ObjectName& p_Name);
+    BaseAllocator(BaseAllocator* p_Allocator,size_t p_Size,const ObjectName& p_Name);
     virtual ~BaseAllocator();
 
-    void* allocate(uint32 p_Size);
+    void* allocate(size_t p_Size);
 #if defined K15_DEBUG
-    void* allocateDebug(uint32 p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function);
+    void* allocateDebug(size_t p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function);
 #endif //K15_DEBUG
-    void  deallocate(void* p_Pointer);
+    void  deallocate(void* p_Pointer,size_t p_Size);
 #if defined K15_DEBUG
-    void  deallocateDebug(void* p_Pointer,const char* p_File,int p_Line,bool p_Array,const char* p_Function);
+    void  deallocateDebug(void* p_Pointer,size_t p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function);
 #endif //K15_DEBUG
 
 	const ObjectName& getName() const;
@@ -51,8 +51,8 @@ namespace K15_Engine { namespace Core {
     virtual void clear(){}
 
   protected:
-    virtual void* alloc(uint32 p_Size) = 0;
-    virtual void  free(void* p_Pointer) = 0;
+    virtual void* alloc(size_t p_Size) = 0;
+    virtual void  free(void* p_Pointer,size_t p_Size) = 0;
 
   protected:
 	ObjectName m_Name;

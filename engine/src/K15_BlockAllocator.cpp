@@ -23,7 +23,7 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	BlockAllocator::BlockAllocator(uint32 p_Size,const ObjectName& p_Name)
+	BlockAllocator::BlockAllocator(size_t p_Size,const ObjectName& p_Name)
 		: BaseAllocator(p_Size,p_Name),
 		  m_First(0)
 	{
@@ -35,7 +35,7 @@ namespace K15_Engine { namespace Core {
 		clear();
 	}
 	/*********************************************************************************/
-	BlockAllocator::BlockAllocator(BaseAllocator* p_Allocator,uint32 p_Size,const ObjectName& p_Name)
+	BlockAllocator::BlockAllocator(BaseAllocator* p_Allocator,size_t p_Size,const ObjectName& p_Name)
 		: BaseAllocator(p_Allocator,p_Size,p_Name),
 		  m_First(0)
 	{
@@ -65,7 +65,7 @@ namespace K15_Engine { namespace Core {
 		}
 	}
 	/*********************************************************************************/
-	void* BlockAllocator::alloc(uint32 p_Size)
+	void* BlockAllocator::alloc(size_t p_Size)
 	{
 		MemoryBlock* currentBlock = m_First;
 		bool merged = false;
@@ -102,7 +102,7 @@ namespace K15_Engine { namespace Core {
 		return memory;
 	}
 	/*********************************************************************************/
-	void BlockAllocator::free(void* p_Pointer)
+	void BlockAllocator::free(void* p_Pointer,size_t p_Size)
 	{
 		MemoryBlock* currentBlock = m_First;
 
@@ -113,7 +113,6 @@ namespace K15_Engine { namespace Core {
 			K15_ASSERT(currentBlock,StringUtil::format("Address %p does not belong to BlockAllocator \"%s\".",p_Pointer,m_Name.c_str()));
 		}
 
-		m_UsedMemory -= currentBlock->Size;
 		currentBlock->Used = false;
 	}
 	/*********************************************************************************/
