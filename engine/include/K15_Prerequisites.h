@@ -114,6 +114,7 @@ namespace K15_Engine
 		class MemoryProfilingTask;
     class MemoryPools;
 		struct MemoryHeader;
+    struct MemoryBlock;
 		class FontManager;
 		class Font;
 		class TrueTypeFont;
@@ -275,9 +276,13 @@ namespace K15_Engine
 
 #if defined _MSC_VER
 #	define _CRT_SECURE_NO_WARNINGS //don't throw a "unsafe function" warning when using printf, sprintf, etc. 
+# if defined K15_DEBUG
+#   define _CRTDBG_MAP_ALLOC
+# endif //K15_DEBUG
 #	pragma warning(disable : 4251) //dll export for std::string, std::list etc.
 #	pragma warning(disable : 4530) //c++ exception used, but not enabled (xlocale.h)
 # pragma warning(disable : 6255) //unprotected use of alloca
+# pragma warning(disable : 6330) //'char' passes as _Param_(1) when 'unsigned char' is required in call to 'isdigit'
 #endif //_MSC_VER
 
 //c std libs
@@ -314,6 +319,7 @@ namespace K15_Engine
 #	define HashMap(K,V)		std::map<K,V>
 #	define List(T)			std::list<T>
 #	define Stack(T)			std::stack<T>
+# define Deque(T)     std::deque<T>
 //#	define Set(T)			std::set<T>
 #	define Pair(K,V)		std::pair<K,V>
 #	define FixedArray(T,C)	std::array<T,C>

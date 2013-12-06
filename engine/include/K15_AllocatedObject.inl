@@ -44,7 +44,7 @@ void* AllocatedObject<Allocator>::alloc(size_t p_Size,const char* p_File,uint32 
 }
 /*********************************************************************************/
 template<class Allocator>
-void AllocatedObject<Allocator>::free(void* p_Pointer,size_t p_Size,const char* p_File,uint32 p_Line,bool p_Array,const char* p_Function)
+void AllocatedObject<Allocator>::dealloc(void* p_Pointer,size_t p_Size,const char* p_File,uint32 p_Line,bool p_Array,const char* p_Function)
 {
 	return Allocator::getInstance()->deallocateDebug(p_Pointer,p_Size,p_File,p_Line,p_Array,p_Function);
 }
@@ -86,7 +86,7 @@ void* AllocatedObject<Allocator>::alloc(size_t p_Size)
 }
 /*********************************************************************************/
 template<class Allocator>
-void AllocatedObject<Allocator>::free(void* p_Pointer,size_t p_Size)
+void AllocatedObject<Allocator>::dealloc(void* p_Pointer,size_t p_Size)
 {
 	MemoryAllocator->deallocate(p_Pointer,p_Size);
 }

@@ -20,6 +20,7 @@
 #include "K15_PrecompiledHeader.h"
 
 #include "K15_BlockAllocator.h"
+#include "K15_MemoryBlock.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
@@ -27,7 +28,7 @@ namespace K15_Engine { namespace Core {
 		: BaseAllocator(p_Size,p_Name),
 		  m_First(0)
 	{
-		m_First = new MemoryBlock;
+		m_First = K15_NEW MemoryBlock;
 		m_First->Memory = m_Memory;
 		m_First->Size = m_MemorySize;
 		m_First->Used = false;
@@ -39,7 +40,7 @@ namespace K15_Engine { namespace Core {
 		: BaseAllocator(p_Allocator,p_Size,p_Name),
 		  m_First(0)
 	{
-		m_First = new MemoryBlock;
+		m_First = K15_NEW MemoryBlock;
 		m_First->Memory = m_Memory;
 		m_First->Size = m_MemorySize;
 		m_First->Used = false;
@@ -50,7 +51,7 @@ namespace K15_Engine { namespace Core {
 	BlockAllocator::~BlockAllocator()
 	{
 		clear();
-		delete m_First;
+		K15_DELETE m_First;
 	}
 	/*********************************************************************************/
 	void BlockAllocator::clear()
@@ -60,7 +61,7 @@ namespace K15_Engine { namespace Core {
 		while(currentBlock)
 		{
 			nextBlock = currentBlock->Next;
-			::free(currentBlock);
+			K15_DELETE currentBlock;
 			currentBlock = nextBlock;
 		}
 	}
@@ -102,7 +103,7 @@ namespace K15_Engine { namespace Core {
 		return memory;
 	}
 	/*********************************************************************************/
-	void BlockAllocator::free(void* p_Pointer,size_t p_Size)
+	void BlockAllocator::dealloc(void* p_Pointer,size_t p_Size)
 	{
 		MemoryBlock* currentBlock = m_First;
 
@@ -129,7 +130,7 @@ namespace K15_Engine { namespace Core {
 				currentBlock->Size += currentBlock->Next->Size;
 				currentBlock->Next = currentBlock->Next->Next;
 				
-				delete currentBlock->Next;
+				K15_DELETE currentBlock->Next;
 			}
 
 			currentBlock = currentBlock->Next;
@@ -144,7 +145,7 @@ namespace K15_Engine { namespace Core {
 		}
 		else if((ptrdiff_t)(p_Successor->Memory + p_Successor->Size) != (ptrdiff_t)m_MemoryEndAddress)
 		{
-			MemoryBlock* newblock = new MemoryBlock;
+			MemoryBlock* newblock = K15_NEW MemoryBlock;
 			newblock->Used = false;
 			newblock->Memory = p_Successor->Memory + p_Successor->Size;
 			newblock->Size = m_MemorySize - (m_UsedMemory + p_Successor->Size);

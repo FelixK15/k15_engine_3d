@@ -39,6 +39,10 @@ namespace K15_Engine { namespace Core {
 	{
 		for(DynamicLibraryMap::iterator iter = m_LoadedLibs.begin();iter != m_LoadedLibs.end();++iter)
 		{
+      if(iter->second->isLoaded())
+      {
+        unload(iter->second);
+      }
 			K15_DELETE iter->second;
 		}
 

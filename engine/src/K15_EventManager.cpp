@@ -50,12 +50,8 @@ namespace K15_Engine { namespace Core {
 		EventTypeListenerMap::iterator iter = m_Listener.find(p_EventName);
 		if(iter == m_Listener.end())
 		{
-#if defined (K15_DEBUG)
-		list = new(MemoryAllocator->allocateDebug(sizeof(EventListenerList),__FILE__,__LINE__,false,__FUNCTION__)) EventListenerList();
-#else
-		list = new(MemoryAllocator->allocate(sizeof(EventListenerList))) EventListenerList();
-#endif
-		m_Listener.insert(Pair(EventName,EventListenerList*)(p_EventName,list));
+      list = K15_NEW_T(MemoryAllocator,EventListenerList) EventListenerList();
+		  m_Listener.insert(Pair(EventName,EventListenerList*)(p_EventName,list));
 		}
 		else
 		{

@@ -29,19 +29,11 @@
 #	include "K15_BaseAllocator.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
+#include "K15_AllocatedObject.h"
+
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API BlockAllocator : public BaseAllocator
 	{
-	private:
-		/*********************************************************************************/
-		struct MemoryBlock
-		{
-			bool Used;
-			byte* Memory;
-			size_t Size;
-			MemoryBlock* Next;
-		};
-		/*********************************************************************************/
 	public:
 		BlockAllocator(size_t p_Size,const ObjectName& p_Name);
 		BlockAllocator(BaseAllocator* p_Allocator,size_t p_Size,const ObjectName& p_Name);
@@ -49,7 +41,7 @@ namespace K15_Engine { namespace Core {
 
 		virtual void clear() OVERRIDE;
 		virtual void* alloc(size_t p_Size) OVERRIDE;
-		virtual void free(void* p_Pointer,size_t p_Size) OVERRIDE;
+		virtual void dealloc(void* p_Pointer,size_t p_Size) OVERRIDE;
 
 	private:
 		void mergeBlocks();

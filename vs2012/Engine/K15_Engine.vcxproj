@@ -147,6 +147,7 @@
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_Material.h" />
     <ClInclude Include="..\..\engine\include\K15_MemberFunctor.h" />
+    <ClInclude Include="..\..\engine\include\K15_MemoryBlock.h" />
     <ClInclude Include="..\..\engine\include\K15_MemoryHeader.h" />
     <ClInclude Include="..\..\engine\include\K15_MemoryPools.h" />
     <ClInclude Include="..\..\engine\include\K15_MemoryProfiler.h" />
@@ -189,7 +190,6 @@
     <ClInclude Include="..\..\engine\include\K15_Texture.h" />
     <ClInclude Include="..\..\engine\include\K15_TextureSampler.h" />
     <ClInclude Include="..\..\engine\include\K15_ThreadWorker.h" />
-    <ClInclude Include="..\..\engine\include\K15_Timer.h" />
     <ClInclude Include="..\..\engine\include\K15_TrueTypeFont.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
@@ -295,7 +295,6 @@
     <ClCompile Include="..\..\engine\src\K15_VertexDeclaration.cpp" />
     <ClCompile Include="..\..\engine\src\Win32\K15_DynamicLibrary_Win32.cpp" />
     <ClCompile Include="..\..\engine\src\win32\K15_RenderWindow_Win32.cpp" />
-    <ClCompile Include="..\..\engine\src\Win32\K15_Timer_Win32.cpp" />
     <ClCompile Include="..\..\engine\src\Win32\K15_VisualStudioLog_Win32.cpp" />
     <None Include="..\..\engine\include\K15_AllocatedObject.inl" />
     <None Include="..\..\engine\include\K15_Application.inl" />
@@ -404,7 +403,6 @@
     <None Include="..\..\engine\include\K15_TaskManager.inl" />
     <None Include="..\..\engine\include\K15_Texture.inl" />
     <None Include="..\..\engine\include\K15_TextureSampler.inl" />
-    <None Include="..\..\engine\include\K15_Timer.inl" />
     <None Include="module.def" />
   </ItemGroup>
   <ItemGroup>

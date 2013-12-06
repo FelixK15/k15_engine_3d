@@ -41,6 +41,9 @@ namespace K15_Engine { namespace Core {
 			if(jobs.size() > 0)
 			{
 				job = (*jobs.begin());
+
+        K15_ASSERT(job,"NULL job in job list.");
+
 				jobs.pop_front();
 				_LogDebug("Thread %u will process job %s.",g_CurrentThread::get_id().hash(),job->getName().c_str());
 			}
@@ -86,7 +89,11 @@ namespace K15_Engine { namespace Core {
 		while(m_Threads.size() > 0)
 		{
 			thread = (*m_Threads.begin());
+
+      K15_ASSERT(thread,"NULL thread in ThreadWorker list.");
+
 			thread->join();
+      thread->~thread();
 			K15_DELETE_T(this,thread,sizeof(Thread));
 			m_Threads.pop_front();
 		}
@@ -94,6 +101,9 @@ namespace K15_Engine { namespace Core {
 		while(m_Jobs.size() > 0)
 		{
 			job = (*m_Jobs.begin());
+
+      K15_ASSERT(job,"NULL job in job list.");
+
 			if(job->getAutoDelete())
 			{
 				K15_DELETE job;

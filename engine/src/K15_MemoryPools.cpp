@@ -20,9 +20,34 @@
 #include "K15_PrecompiledHeader.h"
 
 #include "K15_MemoryPools.h"
-#include "K15_Material.h"
 
 namespace K15_Engine { namespace Core {
+  /*********************************************************************************/
+  STLBlockAllocator::STLBlockAllocator()
+    : BlockAllocator(MemoryPoolsAllocator,STLBlockAllocatorSize,_N(STLBlockAllocator))
+  {
+
+  }
+  /*********************************************************************************/
+  STLBlockAllocator::~STLBlockAllocator()
+  {
+
+  }
+  /*********************************************************************************/
+
+  /*********************************************************************************/
+  MemoryBlockAllocator::MemoryBlockAllocator()
+    : PoolAllocator<K15_SIZE_MEMORY_BLOCK>(MemoryPoolsAllocator,MemoryBlockCount,_N(MemoryBlockAllocator))
+  {
+
+  }
+  /*********************************************************************************/
+  MemoryBlockAllocator::~MemoryBlockAllocator()
+  {
+
+  }
+  /*********************************************************************************/
+
   /*********************************************************************************/
   MaterialAllocator::MaterialAllocator()
     : PoolAllocator<K15_SIZE_MATERIAL>(MemoryPoolsAllocator,MaterialCount,_N(MaterialAllocator))
@@ -38,14 +63,26 @@ namespace K15_Engine { namespace Core {
 
   /*********************************************************************************/
   MemoryPools::MemoryPools()
-    : BlockAllocator(ApplicationAllocator,10 * MEGABYTE,_N(MemoryPools))
+    : StackAllocator(ApplicationAllocator,10 * MEGABYTE,_N(MemoryPools))
   {
-    _LogNormal("Creating Material Memory Pool...");
+    _LogNormal("Creating Material memory pool...");
     m_MaterialAllocator = K15_NEW MaterialAllocator();
+
+    _LogNormal("Creating MemoryBlock memory pool...");
+    m_MemoryBlockAllocator = K15_NEW MemoryBlockAllocator();
+
+//     _LogNormal("Creating STLBlock memory pool...");
+//     m_STLBlockAllocator = K15_NEW STLBlockAllocator();
   }
   /*********************************************************************************/
   MemoryPools::~MemoryPools()
   {
+//     _LogNormal("Destroying STLBlock memory pool...");
+//     K15_DELETE m_STLBlockAllocator;
+
+    _LogNormal("Destroying MemoryBlock memory pool...");
+    K15_DELETE m_MemoryBlockAllocator;
+
     _LogNormal("Destroying Material memory pool...");
     K15_DELETE m_MaterialAllocator;
   }

@@ -1,8 +1,8 @@
 /**
- * @file K15_ObjectSizes.h
+ * @file K15_MemoryHeader.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/11/12
+ * @date 2012/08/06
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,10 +21,24 @@
  * 
  */
 
-#ifdef K15_64_BIT
-# define K15_SIZE_MATERIAL 116
-# define K15_SIZE_MEMORY_BLOCK 28
-#else
-# define K15_SIZE_MATERIAL 92
-# define K15_SIZE_MEMORY_BLOCK 20
-#endif //K15_64_BIT
+#ifndef _K15Engine_Core_MemoryBlock_h_
+#define _K15Engine_Core_MemoryBlock_h_
+
+#ifndef K15_USE_PRECOMPILED_HEADER
+# include "K15_Prerequisites.h"
+#endif //K15_USE_PRECOMPILED_HEADER
+
+#include "K15_MemoryPools.h"
+#include "K15_AllocatedObject.h"
+
+namespace K15_Engine { namespace Core {
+  struct MemoryBlock : public AllocatedObject<MemoryBlockAllocator>
+  {
+    bool Used;
+    byte* Memory;
+    size_t Size;
+    MemoryBlock* Next;
+  };
+}}//end of K15_Engine::Core namespace
+
+#endif //_K15Engine_Core_MemoryBlock_h_

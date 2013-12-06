@@ -36,6 +36,8 @@
 #include "K15_ApplicationModuleDescription.h"
 #include "K15_MemoryPools.h"
 
+#include "K15_MemoryProfiler.h"
+
 #include "K15_Mouse.h"
 #include "K15_Keyboard.h"
 
@@ -101,9 +103,6 @@ namespace K15_Engine { namespace Core {
 	Application::~Application()
 	{
 		m_Commands.clear();
-		
-		K15_DELETE m_RenderTask;
-		K15_DELETE m_PhysicsTask;
 	}
 	/*********************************************************************************/
 	void Application::createCommandList(int p_CommandCount,char** p_Commands)
@@ -297,7 +296,7 @@ namespace K15_Engine { namespace Core {
     static double secondTime = 0.0; //counting to 1 second and then restarts
     static uint32 secondFrameCounter = 0;
 		//clear the frame allocator on the start of each frame
-		m_FrameAllocator->clear();
+		//m_FrameAllocator->clear();
 
 		startFrameTime = getTime();
 
@@ -607,7 +606,12 @@ namespace K15_Engine { namespace Core {
 		_LogNormal("Destroying LogManager...");
 		K15_DELETE m_LogManager;
 
-    K15_DELETE m_FrameAllocator;
+    m_FrameAllocator->~StackAllocator();
+    K15_DELETE_T(this,m_FrameAllocator,sizeof(StackAllocator));
+
+    K15_DELETE this; //evil
+
+    K15_DELETE g_MemoryProfiler;
 	}
 	/*********************************************************************************/
 	void Application::loadGameDirFile()

@@ -52,7 +52,7 @@ namespace K15_Engine { namespace Core {
 
   protected:
     virtual void* alloc(size_t p_Size) = 0;
-    virtual void  free(void* p_Pointer,size_t p_Size) = 0;
+    virtual void  dealloc(void* p_Pointer,size_t p_Size) = 0;
 
   protected:
 	ObjectName m_Name;

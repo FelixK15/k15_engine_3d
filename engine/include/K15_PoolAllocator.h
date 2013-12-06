@@ -40,7 +40,7 @@ namespace K15_Engine { namespace Core {
 		virtual ~PoolAllocator();
 
 		virtual void* alloc(size_t p_Size) OVERRIDE;
-		virtual void free(void* p_Pointer,size_t p_Size) OVERRIDE;
+		virtual void dealloc(void* p_Pointer,size_t p_Size) OVERRIDE;
 
 	private:
 		uint32 m_Position;

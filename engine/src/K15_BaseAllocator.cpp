@@ -76,10 +76,13 @@ namespace K15_Engine { namespace Core {
 		{
 	#     if defined K15_DEBUG
 			g_MemoryProfiler->removeAllocator(this);
-			deallocateDebug(m_Memory,m_MemorySize,__FILE__,__LINE__,false,__FUNCTION__);
+			//deallocateDebug(m_Memory,m_MemorySize,__FILE__,__LINE__,false,__FUNCTION__);
 	#     else
-			deallocate(m_Memory);
+			//deallocate(m_Memory);
 	#     endif //K15_DEBUG
+
+      free(m_Memory);
+      m_Memory = 0;
 		}
 	}
 	/*********************************************************************************/
@@ -103,7 +106,7 @@ namespace K15_Engine { namespace Core {
 
     K15_ASSERT((m_UsedMemory - p_Size) > 0,"Trying to release more memory than there is available.");
 
-		free(p_Pointer, p_Size);
+		dealloc(p_Pointer, p_Size);
 
     g_Application->getCurrentFrameStatistic().MemoryFreed += p_Size;
     g_Application->getCurrentFrameStatistic().Deallocations += 1;
@@ -145,7 +148,7 @@ namespace K15_Engine { namespace Core {
 
     K15_ASSERT((m_UsedMemory - p_Size) >= 0,"Trying to release more memory than there is available.");
 
-		free(p_Pointer, p_Size);
+		dealloc(p_Pointer, p_Size);
 
     m_UsedMemory -= p_Size;
 

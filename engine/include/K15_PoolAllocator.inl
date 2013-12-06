@@ -65,7 +65,7 @@ void* PoolAllocator<SIZE_T>::alloc(size_t p_Size)
 }
 /*********************************************************************************/
 template<size_t SIZE_T>
-void PoolAllocator<SIZE_T>::free(void* p_Pointer, size_t p_Size)
+void PoolAllocator<SIZE_T>::dealloc(void* p_Pointer, size_t p_Size)
 {
 	memset(p_Pointer,0,SIZE_T);
 }

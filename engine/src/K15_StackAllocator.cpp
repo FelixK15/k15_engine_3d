@@ -51,7 +51,7 @@ namespace K15_Engine { namespace Core {
 		return address;
 	}
 	/*********************************************************************************/
-	void StackAllocator::free(void* p_Pointer, size_t p_Size)
+	void StackAllocator::dealloc(void* p_Pointer, size_t p_Size)
 	{
     K15_ASSERT((byte*)p_Pointer + p_Size == m_Marker,
       StringUtil::format("Trying to free not in-order from StackAllocator %s. StackAllocator deallocations have to be in the reversed order as the allocations.",m_Name.c_str()));

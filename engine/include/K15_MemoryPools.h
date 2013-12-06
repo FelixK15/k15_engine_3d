@@ -32,6 +32,25 @@
 #include "K15_PoolAllocator.h"
 
 namespace K15_Engine { namespace Core {
+  class K15_CORE_API STLBlockAllocator : public Singleton<STLBlockAllocator>, public BlockAllocator, public MemoryPoolsAllocatedObject
+  {
+  public:
+    /*********************************************************************************/
+    static const uint32 STLBlockAllocatorSize = 5 * MEGABYTE;
+    /*********************************************************************************/
+    STLBlockAllocator();
+    virtual ~STLBlockAllocator();
+  }; // end of STLBlockAllocator class declaration
+  /*********************************************************************************/
+  class K15_CORE_API MemoryBlockAllocator : public Singleton<MemoryBlockAllocator>, public PoolAllocator<K15_SIZE_MEMORY_BLOCK>, public MemoryPoolsAllocatedObject
+  {
+  public:
+    /*********************************************************************************/
+    static const uint32 MemoryBlockCount = 512;
+    /*********************************************************************************/
+    MemoryBlockAllocator();
+    virtual ~MemoryBlockAllocator();
+  }; // end of MemoryBlockAllocator class declaration
   /*********************************************************************************/
   class K15_CORE_API MaterialAllocator : public Singleton<MaterialAllocator>, public PoolAllocator<K15_SIZE_MATERIAL>, public MemoryPoolsAllocatedObject
   {
@@ -43,7 +62,7 @@ namespace K15_Engine { namespace Core {
     virtual ~MaterialAllocator();
   }; // end of MaterialAllocator class declaration
   /*********************************************************************************/
-  class K15_CORE_API MemoryPools : public Singleton<MemoryPools>, public BlockAllocator, public ApplicationAllocatedObject
+  class K15_CORE_API MemoryPools : public Singleton<MemoryPools>, public StackAllocator, public ApplicationAllocatedObject
   {
   public:
     MemoryPools();
@@ -51,6 +70,8 @@ namespace K15_Engine { namespace Core {
 
   private:
     MaterialAllocator* m_MaterialAllocator;
+    MemoryBlockAllocator* m_MemoryBlockAllocator;
+    STLBlockAllocator* m_STLBlockAllocator;
   }; // end of MemoryPools class declaration
 }} //end of K15_Engine::Core namespace
 

@@ -40,7 +40,7 @@ namespace K15_Engine { namespace Core {
 #	if defined (K15_DEBUG)
 		/*********************************************************************************/
 		static void* alloc(size_t,const char*,uint32,bool,const char*);
-		static void  free(void*,size_t,const char*,uint32,bool,const char*);
+		static void  dealloc(void*,size_t,const char*,uint32,bool,const char*);
 		/*********************************************************************************/
 		static void* operator new(size_t,const char*,uint32,const char*);
 		static void* operator new[](size_t,const char*,uint32,const char*);
@@ -53,7 +53,7 @@ namespace K15_Engine { namespace Core {
 #	else
 		/*********************************************************************************/
 		static void* alloc(size_t);
-		static void  free(void*,size_t);
+		static void  dealloc(void*,size_t);
 		/*********************************************************************************/
 		static void* operator new(size_t);
 		static void* operator new[](size_t);
