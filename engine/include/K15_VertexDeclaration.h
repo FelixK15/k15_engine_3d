@@ -103,7 +103,6 @@ namespace K15_Engine { namespace Rendering {
 
   private:
     void _parseDeclarationString(const String& p_DeclarationString);
-    void _recalculateOffsets();
     void _updateElements();
     bool _validateElement(const VertexElement& p_Element);
 

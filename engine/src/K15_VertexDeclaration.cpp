@@ -56,11 +56,10 @@ namespace K15_Engine { namespace Rendering {
   {
     for(VertexElementArray::const_iterator iter = p_Elements.begin();iter != p_Elements.end();++iter)
     {
-      if(_validateElement((*iter)))
-      {
-        m_Elements.push_back((*iter));
-      }
+      m_Elements.push_back((*iter));
     }
+
+    _updateElements();
   }
   /*********************************************************************************/
   VertexDeclaration::VertexDeclaration(const String& p_DeclarationString)
@@ -75,12 +74,10 @@ namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
   void VertexDeclaration::addElement(VertexElement p_Element)
   {
-    if(_validateElement(p_Element))
-    {
       p_Element.offset = getVertexSize();
       p_Element.index = getElementCount();
       m_Elements.push_back(p_Element);
-    }
+      _updateElements();
   }
   /*********************************************************************************/
   void VertexDeclaration::addElement(Enum p_Semantic, Enum p_Type)
@@ -94,12 +91,10 @@ namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
   void VertexDeclaration::insertElement(uint32 p_Index, VertexElement p_Element)
   {
-    if(_validateElement(p_Element))
-    {
       p_Element.index = p_Index;
       p_Element.offset = getVertexSize();
       m_Elements[p_Index] = p_Element;
-    }
+      _updateElements();
   }
   /*********************************************************************************/
   void VertexDeclaration::insertElement(uint32 p_Index, Enum p_Semantic, Enum p_Type)
@@ -130,7 +125,7 @@ namespace K15_Engine { namespace Rendering {
     {
       m_Elements[p_Index].type = p_Element.type;
       m_Elements[p_Index].semantic = p_Element.semantic;
-      _recalculateOffsets();
+      _updateElements();
     }
   }
   /*********************************************************************************/
@@ -237,35 +232,35 @@ namespace K15_Engine { namespace Rendering {
         continue;
       }
 
-      if(elementStr.find_first_of("F1") != String::npos)
+      if(elementStr.find("F1") != String::npos)
       {
         element.type = VertexElement::ET_FLOAT1;
       }
-      else if(elementStr.find_first_of("F2") != String::npos)
+      else if(elementStr.find("F2") != String::npos)
       {
         element.type = VertexElement::ET_FLOAT2;
       }
-      else if(elementStr.find_first_of("F3") != String::npos)
+      else if(elementStr.find("F3") != String::npos)
       {
         element.type = VertexElement::ET_FLOAT3;
       }
-      else if(elementStr.find_first_of("F4") != String::npos)
+      else if(elementStr.find("F4") != String::npos)
       {
         element.type = VertexElement::ET_FLOAT4;
       }
-      else if(elementStr.find_first_of("H1") != String::npos)
+      else if(elementStr.find("H1") != String::npos)
       {
         element.type = VertexElement::ET_HALF1;
       }
-      else if(elementStr.find_first_of("H2") != String::npos)
+      else if(elementStr.find("H2") != String::npos)
       {
         element.type = VertexElement::ET_HALF2;
       }
-      else if(elementStr.find_first_of("H3") != String::npos)
+      else if(elementStr.find("H3") != String::npos)
       {
         element.type = VertexElement::ET_HALF3;
       }
-      else if(elementStr.find_first_of("H4") != String::npos)
+      else if(elementStr.find("H4") != String::npos)
       {
         element.type = VertexElement::ET_HALF4;
       }
@@ -279,23 +274,8 @@ namespace K15_Engine { namespace Rendering {
     }
 
     m_Declaration = ObjectName(p_DeclarationString);
-  }
-  /*********************************************************************************/
-  void VertexDeclaration::_recalculateOffsets()
-  {
-    int counter = 0;
 
-    for(VertexElementArray::iterator iter = m_Elements.begin();iter != m_Elements.end();++iter)
-    {
-      if(iter->type > 0 && iter->type < VertexElement::ET_HALF1)
-      {
-        iter->offset = (uint32)(sizeof(float) * (iter->type+1) * counter++); 
-      }
-      else if(iter->type >= VertexElement::ET_HALF1)
-      {
-        iter->offset = (uint32)(sizeof(uint16) * ((iter->type+1)*0.5) * counter++);
-      }
-    }
+    m_Dirty = true;
   }
   /*********************************************************************************/
   bool VertexDeclaration::_validateElement(const VertexElement& p_Element)
@@ -327,6 +307,31 @@ namespace K15_Engine { namespace Rendering {
     m_Declaration = ObjectName(declarationString);
 
     return declarationString;
+  }
+  /*********************************************************************************/
+  void VertexDeclaration::_updateElements()
+  {
+    static uint32 slots[VertexElement::ES_COUNT] = {0};
+    memset(slots,0,sizeof(slots));
+
+    uint32 offset = 0;
+    uint32 counter = 0;
+    for(VertexElementArray::iterator iter = m_Elements.begin();iter != m_Elements.end();++iter)
+    {
+      (*iter).slot = slots[(*iter).semantic]++;
+      (*iter).offset = offset;
+
+      if(iter->type > 0 && iter->type < VertexElement::ET_HALF1)
+      {
+        offset += (uint32)(sizeof(float) * (iter->type+1)); 
+      }
+      else if(iter->type >= VertexElement::ET_HALF1)
+      {
+        offset += (uint32)(sizeof(uint16) * ((iter->type+1)*0.5));
+      }
+    }
+
+    m_Dirty = false;
   }
   /*********************************************************************************/
 }} //end of K15_Engine::Rendering namespace
