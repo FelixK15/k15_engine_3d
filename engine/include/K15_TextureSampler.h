@@ -42,8 +42,8 @@ namespace K15_Engine { namespace Rendering {
     virtual void setVWrappingMode(Enum p_WrappingMode) = 0;
     virtual void setWWrappingMode(Enum p_WrappingMode) = 0;
 
-    inline void setTextureSampler(TextureSampler* p_Sampler);
-    inline TextureSampler* getTextureSampler() const;
+    INLINE void setTextureSampler(TextureSampler* p_Sampler);
+    INLINE TextureSampler* getTextureSampler() const;
 
   protected:
     TextureSampler* m_Sampler;
@@ -78,29 +78,29 @@ namespace K15_Engine { namespace Rendering {
     TextureSampler();
     ~TextureSampler();
 
-    inline const ColorRGBA& getBorderColor() const;
+    INLINE const ColorRGBA& getBorderColor() const;
 
-    inline Enum getMinFilterMode() const;
-    inline Enum getMagFilterMode() const;
+    INLINE Enum getMinFilterMode() const;
+    INLINE Enum getMagFilterMode() const;
 
-    inline Enum getUWrappingMode() const;
-    inline Enum getVWrappingMode() const;
-    inline Enum getWWrappingMode() const;
+    INLINE Enum getUWrappingMode() const;
+    INLINE Enum getVWrappingMode() const;
+    INLINE Enum getWWrappingMode() const;
 
     Enum getWrappingMode(uint8 p_Axis) const;
 
-    inline void setMinFilterMode(Enum p_MinFilterMode);
-    inline void setMagFilterMode(Enum p_MagFilterMode);
+    INLINE void setMinFilterMode(Enum p_MinFilterMode);
+    INLINE void setMagFilterMode(Enum p_MagFilterMode);
 
-    inline void setUWrappingMode(Enum p_UWrappingMode);
-    inline void setVWrappingMode(Enum p_VWrappingMode);
-    inline void setWWrappingMode(Enum p_WWrappingMode);
+    INLINE void setUWrappingMode(Enum p_UWrappingMode);
+    INLINE void setVWrappingMode(Enum p_VWrappingMode);
+    INLINE void setWWrappingMode(Enum p_WWrappingMode);
 
-    inline void setBorderColor(const ColorRGBA& p_BorderColor);
+    INLINE void setBorderColor(const ColorRGBA& p_BorderColor);
 
     void setWrappingMode(uint8 p_Axis,Enum p_WrappingMode);
 
-	inline const TextureSamplerImplBase* getImpl() const;
+	INLINE const TextureSamplerImplBase* getImpl() const;
 
   private:
     TextureSamplerImplBase* m_Impl;

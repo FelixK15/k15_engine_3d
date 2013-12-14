@@ -50,37 +50,37 @@ namespace K15_Engine { namespace Core {
 
 		virtual void loadDebug(RawData& p_Data) = 0;
 
-		inline const TypeName& getResourceType() const;
+		INLINE const TypeName& getResourceType() const;
 
-		inline void setAssetName(const ResourceName& p_AssetName);
-		inline const ResourceName& getAssetName() const;
+		INLINE void setAssetName(const ResourceName& p_AssetName);
+		INLINE const ResourceName& getAssetName() const;
 
-		inline Enum getPriority() const;
-		inline void setPriority(Enum p_Priority);
+		INLINE Enum getPriority() const;
+		INLINE void setPriority(Enum p_Priority);
 
-		inline double getLastUsed() const;
-		inline double getCreated() const;
+		INLINE double getLastUsed() const;
+		INLINE double getCreated() const;
 
-		inline void increseResourceReference();
-		inline void decreaseResourceReference();
+		INLINE void increseResourceReference();
+		INLINE void decreaseResourceReference();
 
-		inline uint32 getResourceReferences() const;
+		INLINE uint32 getResourceReferences() const;
 
-		inline bool isMarkedAsUnreferenced() const;
-		inline void setMarkedAsUnreferenced(bool p_MarkAsUnreferenced);
+		INLINE bool isMarkedAsUnreferenced() const;
+		INLINE void setMarkedAsUnreferenced(bool p_MarkAsUnreferenced);
 
-		inline ResourceManager* getResourceManager() const;
-		inline ResourceFileBase* getResourceFile() const;
+		INLINE ResourceManager* getResourceManager() const;
+		INLINE ResourceFileBase* getResourceFile() const;
 
-		inline void setResourceManager(ResourceManager* p_ResourceManager);
-		inline void setResourceFile(ResourceFileBase* p_ResourceFile);
+		INLINE void setResourceManager(ResourceManager* p_ResourceManager);
+		INLINE void setResourceFile(ResourceFileBase* p_ResourceFile);
 
 	protected:
 		ResourceBase();
 		ResourceBase(const ResourceName& p_AssetName);
 
-		inline byte* getRawData();
-		inline uint32 getRawDataSize();
+		INLINE byte* getRawData();
+		INLINE uint32 getRawDataSize();
 
 		virtual bool internalLoad(const RawData&) = 0;
 

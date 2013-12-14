@@ -121,12 +121,11 @@ namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
   void VertexDeclaration::changeElement(uint32 p_Index, VertexElement p_Element)
   {
-    if(_validateElement(p_Element))
-    {
+	  K15_ASSERT(p_Index < m_Elements.size(),"Trying to change an element out of bounds.");
+
       m_Elements[p_Index].type = p_Element.type;
       m_Elements[p_Index].semantic = p_Element.semantic;
       _updateElements();
-    }
   }
   /*********************************************************************************/
   void VertexDeclaration::changeElement(uint32 p_Index, uint32 p_Offset, Enum p_Semantic, Enum p_Type)
@@ -140,10 +139,15 @@ namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
   void VertexDeclaration::removeElement(uint32 p_Index)
   {
-    if(m_Elements.size() > p_Index)
-    {
-      //todo
-    }
+    for(VertexElementArray::iterator iter = m_Elements.begin();iter != m_Elements.end();++iter)
+	{
+		if(iter->index == p_Index)
+		{
+			m_Elements.erase(iter);
+		}
+	}
+
+	_updateElements();
   }
   /*********************************************************************************/
   void VertexDeclaration::removeAllElements()
@@ -278,20 +282,6 @@ namespace K15_Engine { namespace Rendering {
     m_Dirty = true;
   }
   /*********************************************************************************/
-  bool VertexDeclaration::_validateElement(const VertexElement& p_Element)
-  {
-    bool valid = false;
-
-
-
-    if(valid)
-    {
-      m_Dirty = true;
-    }
-
-    return valid;
-  }
-  /*********************************************************************************/
   String VertexDeclaration::getDeclarationString()
   {
     static String declarationString;
@@ -311,14 +301,14 @@ namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
   void VertexDeclaration::_updateElements()
   {
-    static uint32 slots[VertexElement::ES_COUNT] = {0};
-    memset(slots,0,sizeof(slots));
+    static uint32 elementSlots[VertexElement::ES_COUNT] = {0};
+    memset(elementSlots,0,sizeof(elementSlots));
 
     uint32 offset = 0;
     uint32 counter = 0;
     for(VertexElementArray::iterator iter = m_Elements.begin();iter != m_Elements.end();++iter)
     {
-      (*iter).slot = slots[(*iter).semantic]++;
+      (*iter).slot = elementSlots[(*iter).semantic]++;
       (*iter).offset = offset;
 
       if(iter->type > 0 && iter->type < VertexElement::ET_HALF1)
@@ -332,6 +322,11 @@ namespace K15_Engine { namespace Rendering {
     }
 
     m_Dirty = false;
+  }
+  /*********************************************************************************/
+  void VertexDeclaration::fromDeclarationString(const String& p_DeclarationString)
+  {
+	  _parseDeclarationString(p_DeclarationString);
   }
   /*********************************************************************************/
 }} //end of K15_Engine::Rendering namespace

@@ -43,30 +43,30 @@ namespace K15_Engine { namespace Core {
 		Node(const ObjectName& p_Name = ObjectName::BLANK,Node* p_Parent = 0);
 		~Node();
 
-		inline void setPosition(const Math::Vector3& p_Position);
-		inline void setOrientation(const Math::Quaternion& p_Orientation);
-		inline void setScale(const Math::Vector3& p_Scale);
+		INLINE void setPosition(const Math::Vector3& p_Position);
+		INLINE void setOrientation(const Math::Quaternion& p_Orientation);
+		INLINE void setScale(const Math::Vector3& p_Scale);
 
-		inline void translate(const Math::Vector3& p_Translation);
-		inline void translate(float x, float y, float z);
+		INLINE void translate(const Math::Vector3& p_Translation);
+		INLINE void translate(float x, float y, float z);
 
-		inline void scale(const Math::Vector3& p_Scale);
-		inline void scale(float x, float y, float z);
+		INLINE void scale(const Math::Vector3& p_Scale);
+		INLINE void scale(float x, float y, float z);
 
-		inline void rotate(const Math::Quaternion& p_Rotation);
-		inline void rotate(const Math::Vector3& p_Axis, float p_Angle);
+		INLINE void rotate(const Math::Quaternion& p_Rotation);
+		INLINE void rotate(const Math::Vector3& p_Axis, float p_Angle);
 
-		inline void roll(float p_Angle);
-		inline void pitch(float p_Angle);
-		inline void yaw(float p_Angle);
+		INLINE void roll(float p_Angle);
+		INLINE void pitch(float p_Angle);
+		INLINE void yaw(float p_Angle);
 
-		inline const Math::Vector3& getPosition() const;
-		inline const Math::Vector3& getScale() const;
-		inline const Math::Quaternion& getOrientation() const;
+		INLINE const Math::Vector3& getPosition() const;
+		INLINE const Math::Vector3& getScale() const;
+		INLINE const Math::Quaternion& getOrientation() const;
 		
 		const Math::Matrix4& getTransformation();
 
-		inline bool needUpdate() const;
+		INLINE bool needUpdate() const;
 		void setNeedUpdate(bool p_Value);
 
 		Node* createChild(const ObjectName& p_Name = ObjectName::BLANK);
@@ -76,7 +76,7 @@ namespace K15_Engine { namespace Core {
 		void removeChild(const ObjectName& p_Name);
 
 		void setParent(Node* p_Parent);
-		inline Node* getParent() const;
+		INLINE Node* getParent() const;
 
 	protected:
 		Node* m_Parent;

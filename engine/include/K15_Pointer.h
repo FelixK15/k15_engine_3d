@@ -20,8 +20,6 @@
  *
  * 
  */
-#pragma once
-
 #ifndef _K15Engine_Core_Memory_Pointer_h_
 #define _K15Engine_Core_Memory_Pointer_h_
 
@@ -29,7 +27,7 @@
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-namespace K15_Engine { namespace Core { namespace Memory {
+namespace K15_Engine { namespace Core {
 
 	template<class T>
 	class Pointer
@@ -55,12 +53,12 @@ namespace K15_Engine { namespace Core { namespace Memory {
 		bool operator!=(const Pointer<T> &pPointer);
 
 	private:
-		void _GetAndIncreasePointer(const Pointer<T> &pPointer);
+		void _getAndIncreasePointer(const Pointer<T> &pPointer);
 
 	private:
 		T* m_pObject;
 	};
 	#include "K15_Pointer.inl"
-}}} //end of K15_Engine::Core::Memory namespace
+}} //end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_Memory_Pointer_h_

@@ -18,7 +18,7 @@
  */
 
 /*********************************************************************************/
-inline GameObject* GameObjectComponentBase::getGameObject() const
+GameObject* GameObjectComponentBase::getGameObject() const
 {
 	return m_GameObject;
 }

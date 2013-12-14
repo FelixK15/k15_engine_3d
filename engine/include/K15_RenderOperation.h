@@ -1,8 +1,8 @@
 /**
- * @file K15_JobBase.h
+ * @file K15_RenderOperation.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/11/26
+ * @date 2013/12/10
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,49 +21,37 @@
  * 
  */
 
-#ifndef _K15Engine_Core_JobBase_h_
-#define _K15Engine_Core_JobBase_h_
+#ifndef _K15Engine_Renderer_RenderOperation_h_
+#define _K15Engine_Renderer_RenderOperation_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
-#	include "K15_HashedString.h"
+#	include "K15_MemoryPools.h"
+#	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-namespace K15_Engine { namespace Core {
-	class K15_CORE_API JobBase
+
+namespace K15_Engine { namespace Rendering {
+	struct K15_CORE_API RenderOperation : public Core::AllocatedObject<Core::RenderOperationAllocator>
 	{
-	public:
 		/*********************************************************************************/
-		enum eJobStatus
+		enum eTopology
 		{
-			JS_UNITITIALIZED,
-			JS_QUEUED,
-			JS_RUNNING,
-			JS_FINISHED
-		};//JobStatus
+			T_DOT = 0,
+			T_LINE,
+			T_TRIANGLE,
+			T_QUAD,
+
+			T_COUNT
+		}; //Topology
 		/*********************************************************************************/
-	public:
-		JobBase(const ObjectName& p_Name,bool p_AutoDelete = true);
-		~JobBase();
 
-		void execute();
+		IndexBuffer* indexBuffer;
+		VertexBuffer* vertexBuffer;
+		Material* material;
+		SubMesh* subMesh;
+		Enum topology;
+	};// end of RenderOperation struct
+}}// end of K15_Engine::Rendering namespace
 
-		INLINE Enum getStatus() const;
-		INLINE void setStatus(Enum p_Status);
-
-		INLINE const ObjectName& getName() const;
-
-		INLINE bool getAutoDelete() const;
-
-	protected:
-		virtual void internalExecute() = 0;
-
-	private:
-		ObjectName m_Name;
-		Enum m_Status;
-		bool m_AutoDelete;
-	};// end of JobBase class declaration
-#include "K15_JobBase.inl"
-}}// end of K15_Engine::Core namespace
-
-#endif //_K15Engine_Core_JobBase_h_
+#endif //

@@ -1,8 +1,8 @@
 /**
- * @file K15_FontManager.h
+ * @file K15_VertexBuffer.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/11/12
+ * @date 2013/11/29
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,40 +21,33 @@
  * 
  */
 
-#ifndef _K15Engine_Core_FontManager_h_
-#define _K15Engine_Core_FontManager_h_
+#ifndef _K15Engine_Rendering_VertexBuffer_h_
+#define _K15Engine_Rendering_VertexBuffer_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-#include "K15_Singleton.h"
-#include "K15_PoolAllocator.h"
-#include "K15_Font.h"
+#include "K15_GpuBuffer.h"
+#include "K15_VertexDeclaration.h"
 
-struct FT_LibraryRec_;
-struct FT_FaceRec_;
-
-namespace K15_Engine { namespace Core {
-	class K15_CORE_API FontManager : public Singleton<FontManager>, public PoolAllocator<TrueTypeFont>
+namespace K15_Engine { namespace Rendering {
+	class K15_CORE_API VertexBuffer : public GpuBuffer
 	{
 	public:
-		FontManager();
-		~FontManager();
+		VertexBuffer();
+		virtual ~VertexBuffer();
+		
+		INLINE uint32 getVertexSize() const;
+		INLINE const VertexDeclaration* getVertexDeclaration() const;
 
-		bool init();
-		void shutdown();
+		INLINE void setVertexDeclaration(VertexDeclaration* p_Declaration);
+		INLINE void setVertexDeclaration(const String& p_DeclarationString);
 
-		INLINE FT_Library* getFreeTypeLibrary() const;
-
-		FT_Face* createFontFromMemory(const byte* p_Data,uint32 p_Size);
-		FT_Face* createFontFromFile(const String& p_FileName);
-
-		void destroyFace(FT_Face* p_Face);
 	private:
-		FT_Library* m_FreeType;
-	};// end of FontManager class declaration
-#	include "K15_FontManager.inl"
+		VertexDeclaration* m_Declaration;
+	};// end of VertexBuffer class declaration
+#include "K15_VertexBuffer.inl"
 }}// end of K15_Engine::Core namespace
 
-#endif //_K15Engine_Core_FontManager_h_
+#endif //_K15Engine_Rendering_VertexBuffer_h_

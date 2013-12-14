@@ -17,7 +17,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-inline bool File::IsOpen()
+bool File::IsOpen()
 {
 	return m_pFile != 0;
 }

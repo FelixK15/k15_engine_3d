@@ -35,6 +35,7 @@
 #include "K15_InputManager.h"
 #include "K15_DynamicLibraryManager.h"
 #include "K15_HashedString.h"
+#include "K15_MemoryPools.h"
 #include "K15_AllocatedObject.h"
 #include "K15_StringUtil.h"
 #include "K15_Object.h"

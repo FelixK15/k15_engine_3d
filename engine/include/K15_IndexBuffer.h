@@ -1,8 +1,8 @@
 /**
- * @file K15_JobBase.h
+ * @file K15_IndexBuffer.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/11/26
+ * @date 2013/12/09
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,49 +21,43 @@
  * 
  */
 
-#ifndef _K15Engine_Core_JobBase_h_
-#define _K15Engine_Core_JobBase_h_
+#ifndef _K15Engine_Renderer_IndexBuffer_h_
+#define _K15Engine_Renderer_IndexBuffer_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
-#	include "K15_HashedString.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-namespace K15_Engine { namespace Core {
-	class K15_CORE_API JobBase
+#include "K15_GpuBuffer.h"
+
+namespace K15_Engine { namespace Rendering {
+	class K15_CORE_API IndexBuffer : public GpuBuffer
 	{
 	public:
 		/*********************************************************************************/
-		enum eJobStatus
+		enum eIndexType
 		{
-			JS_UNITITIALIZED,
-			JS_QUEUED,
-			JS_RUNNING,
-			JS_FINISHED
-		};//JobStatus
+			IT_UINT8 = 0,
+			IT_UINT16,
+			IT_UINT32,
+
+			IT_COUNT
+		};// IndexType
 		/*********************************************************************************/
+		static const uint32 IndexSize[IT_COUNT];
+		/*********************************************************************************/
+
 	public:
-		JobBase(const ObjectName& p_Name,bool p_AutoDelete = true);
-		~JobBase();
+		IndexBuffer();
+		virtual ~IndexBuffer();
 
-		void execute();
-
-		INLINE Enum getStatus() const;
-		INLINE void setStatus(Enum p_Status);
-
-		INLINE const ObjectName& getName() const;
-
-		INLINE bool getAutoDelete() const;
+		INLINE Enum getIndexType() const;
+		INLINE void setIndexType(Enum p_IndexType);
 
 	protected:
-		virtual void internalExecute() = 0;
+		Enum m_IndexType;
+	};// end of IndexBuffer class declaration
+#include "K15_IndexBuffer.inl"
+}}// end of K15_Engine::Rendering namespace
 
-	private:
-		ObjectName m_Name;
-		Enum m_Status;
-		bool m_AutoDelete;
-	};// end of JobBase class declaration
-#include "K15_JobBase.inl"
-}}// end of K15_Engine::Core namespace
-
-#endif //_K15Engine_Core_JobBase_h_
+#endif //_K15Engine_Renderer_IndexBuffer_h_

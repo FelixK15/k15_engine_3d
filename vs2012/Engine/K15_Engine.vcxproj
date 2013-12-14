@@ -105,6 +105,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\engine\include\K15_AllocatedObject.h" />
+    <ClInclude Include="..\..\engine\include\K15_AlphaState.h" />
     <ClInclude Include="..\..\engine\include\K15_Application.h" />
     <ClInclude Include="..\..\engine\include\K15_ApplicationModule.h" />
     <ClInclude Include="..\..\engine\include\K15_ApplicationModuleDescription.h" />
@@ -135,6 +136,7 @@
     <ClInclude Include="..\..\engine\include\K15_GameObjectComponentBase.h" />
     <ClInclude Include="..\..\engine\include\K15_GpuBuffer.h" />
     <ClInclude Include="..\..\engine\include\K15_GpuProgram.h" />
+    <ClInclude Include="..\..\engine\include\K15_IndexBuffer.h" />
     <ClInclude Include="..\..\engine\include\K15_IniFileParser.h" />
     <ClInclude Include="..\..\engine\include\K15_InputManager.h" />
     <ClInclude Include="..\..\engine\include\K15_InputTriggerBase.h" />
@@ -176,6 +178,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_RendererBase.h" />
+    <ClInclude Include="..\..\engine\include\K15_RenderOperation.h" />
     <ClInclude Include="..\..\engine\include\K15_RenderProcessBase.h" />
     <ClInclude Include="..\..\engine\include\K15_RenderTask.h" />
     <ClInclude Include="..\..\engine\include\K15_RenderWindowBase.h" />
@@ -185,6 +188,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_StringUtil.h" />
+    <ClInclude Include="..\..\engine\include\K15_SubMesh.h" />
     <ClInclude Include="..\..\engine\include\K15_TaskBase.h" />
     <ClInclude Include="..\..\engine\include\K15_TextConsoleLog.h" />
     <ClInclude Include="..\..\engine\include\K15_Texture.h" />
@@ -193,11 +197,13 @@
     <ClInclude Include="..\..\engine\include\K15_TrueTypeFont.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_VertexBuffer.h" />
     <ClInclude Include="..\..\engine\include\K15_VertexDeclaration.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_ApplicationOSLayer_Win32.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_DynamicLibrary_Win32.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_RenderWindow_Win32.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_VisualStudioLog_Win32.h" />
+    <ClInclude Include="..\..\engine\inline\K15_GpuProgramParameter.h" />
     <None Include="..\..\engine\include\K15_ByteConversion.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
@@ -260,6 +266,7 @@
     <ClCompile Include="..\..\engine\src\K15_GameObjectComponentBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GpuBuffer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GpuProgram.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_IndexBuffer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_IniFileParser.cpp" />
     <ClCompile Include="..\..\engine\src\K15_InputManager.cpp" />
     <ClCompile Include="..\..\engine\src\K15_JobBase.cpp" />
@@ -285,6 +292,7 @@
     <ClCompile Include="..\..\engine\src\K15_RenderProcessBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_RenderTask.cpp" />
     <ClCompile Include="..\..\engine\src\K15_RenderWindowBase.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_SubMesh.cpp" />
     <ClCompile Include="..\..\engine\src\K15_TextConsoleLog.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Texture.cpp" />
     <ClCompile Include="..\..\engine\src\K15_TextureSampler.cpp" />
@@ -292,6 +300,7 @@
     <ClCompile Include="..\..\engine\src\K15_TrueTypeFont.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_VertexBuffer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_VertexDeclaration.cpp" />
     <ClCompile Include="..\..\engine\src\Win32\K15_DynamicLibrary_Win32.cpp" />
     <ClCompile Include="..\..\engine\src\win32\K15_RenderWindow_Win32.cpp" />
@@ -316,6 +325,7 @@
     <None Include="..\..\engine\include\K15_GameObjectComponentBase.inl" />
     <None Include="..\..\engine\include\K15_GpuBuffer.inl" />
     <None Include="..\..\engine\include\K15_GpuProgram.inl" />
+    <None Include="..\..\engine\include\K15_IndexBuffer.inl" />
     <None Include="..\..\engine\include\K15_IniFileParser.inl" />
     <None Include="..\..\engine\include\K15_JobBase.inl" />
     <None Include="..\..\engine\include\K15_Material.inl" />
@@ -403,6 +413,7 @@
     <None Include="..\..\engine\include\K15_TaskManager.inl" />
     <None Include="..\..\engine\include\K15_Texture.inl" />
     <None Include="..\..\engine\include\K15_TextureSampler.inl" />
+    <None Include="..\..\engine\include\K15_VertexBuffer.inl" />
     <None Include="module.def" />
   </ItemGroup>
   <ItemGroup>

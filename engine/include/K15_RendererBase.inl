@@ -93,7 +93,7 @@ bool RendererBase::isBoundGpuProgram(Enum p_GpuProgramType) const
 	return m_GpuPrograms[p_GpuProgramType] != 0;
 }
 /*********************************************************************************/
-inline const String& RendererBase::getLastError()
+const String& RendererBase::getLastError()
 {
 	static String errString;
 	errString = m_LastError;
@@ -103,7 +103,7 @@ inline const String& RendererBase::getLastError()
 	return errString;
 }
 /*********************************************************************************/
-inline void RendererBase::setLastError(const String& p_String)
+void RendererBase::setLastError(const String& p_String)
 {
 	m_LastError = p_String;
 }

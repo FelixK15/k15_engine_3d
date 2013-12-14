@@ -32,47 +32,70 @@
 #include "K15_PoolAllocator.h"
 
 namespace K15_Engine { namespace Core {
-  class K15_CORE_API STLBlockAllocator : public Singleton<STLBlockAllocator>, public BlockAllocator, public MemoryPoolsAllocatedObject
-  {
-  public:
-    /*********************************************************************************/
-    static const uint32 STLBlockAllocatorSize = 5 * MEGABYTE;
-    /*********************************************************************************/
-    STLBlockAllocator();
-    virtual ~STLBlockAllocator();
-  }; // end of STLBlockAllocator class declaration
-  /*********************************************************************************/
-  class K15_CORE_API MemoryBlockAllocator : public Singleton<MemoryBlockAllocator>, public PoolAllocator<K15_SIZE_MEMORY_BLOCK>, public MemoryPoolsAllocatedObject
-  {
-  public:
-    /*********************************************************************************/
-    static const uint32 MemoryBlockCount = 512;
-    /*********************************************************************************/
-    MemoryBlockAllocator();
-    virtual ~MemoryBlockAllocator();
-  }; // end of MemoryBlockAllocator class declaration
-  /*********************************************************************************/
-  class K15_CORE_API MaterialAllocator : public Singleton<MaterialAllocator>, public PoolAllocator<K15_SIZE_MATERIAL>, public MemoryPoolsAllocatedObject
-  {
-  public:
-    /*********************************************************************************/
-    static const uint32 MaterialCount = 512;
-    /*********************************************************************************/
-    MaterialAllocator();
-    virtual ~MaterialAllocator();
-  }; // end of MaterialAllocator class declaration
-  /*********************************************************************************/
-  class K15_CORE_API MemoryPools : public Singleton<MemoryPools>, public StackAllocator, public ApplicationAllocatedObject
-  {
-  public:
-    MemoryPools();
-    virtual ~MemoryPools();
+	/*********************************************************************************/
+	class K15_CORE_API AlphaStateAllocator : public Singleton<AlphaStateAllocator>, public PoolAllocator<K15_SIZE_ALPHA_STATE>, public MemoryPoolsAllocatedObject
+	{
+	public:
+		/*********************************************************************************/
+		static const uint32 AlphaStateCount;
+		/*********************************************************************************/
+		AlphaStateAllocator();
+		virtual ~AlphaStateAllocator();
+	}; //end of RenderOperationAllocator class declaration
+	/*********************************************************************************/
+	class K15_CORE_API RenderOperationAllocator : public Singleton<RenderOperationAllocator>, public PoolAllocator<K15_SIZE_RENDER_OPERATION>, public MemoryPoolsAllocatedObject
+	{
+	public:
+		/*********************************************************************************/
+		static const uint32 RenderOperationCount;
+		/*********************************************************************************/
+		RenderOperationAllocator();
+		virtual ~RenderOperationAllocator();
+	}; //end of RenderOperationAllocator class declaration
+	/*********************************************************************************/
+	class K15_CORE_API STLBlockAllocator : public Singleton<STLBlockAllocator>, public BlockAllocator, public MemoryPoolsAllocatedObject
+	{
+	public:
+		/*********************************************************************************/
+		static const uint32 STLBlockAllocatorSize;
+		/*********************************************************************************/
+		STLBlockAllocator();
+		virtual ~STLBlockAllocator();
+	}; // end of STLBlockAllocator class declaration
+	/*********************************************************************************/
+	class K15_CORE_API MemoryBlockAllocator : public Singleton<MemoryBlockAllocator>, public PoolAllocator<K15_SIZE_MEMORY_BLOCK>, public MemoryPoolsAllocatedObject
+	{
+	public:
+		/*********************************************************************************/
+		static const uint32 MemoryBlockCount;
+		/*********************************************************************************/
+		MemoryBlockAllocator();
+		virtual ~MemoryBlockAllocator();
+	}; // end of MemoryBlockAllocator class declaration
+	/*********************************************************************************/
+	class K15_CORE_API MaterialAllocator : public Singleton<MaterialAllocator>, public PoolAllocator<K15_SIZE_MATERIAL>, public MemoryPoolsAllocatedObject
+	{
+	public:
+		/*********************************************************************************/
+		static const uint32 MaterialCount;
+		/*********************************************************************************/
+		MaterialAllocator();
+		virtual ~MaterialAllocator();
+	}; // end of MaterialAllocator class declaration
+	/*********************************************************************************/
+	class K15_CORE_API MemoryPools : public Singleton<MemoryPools>, public StackAllocator, public ApplicationAllocatedObject
+	{
+	public:
+		MemoryPools();
+		virtual ~MemoryPools();
 
-  private:
-    MaterialAllocator* m_MaterialAllocator;
-    MemoryBlockAllocator* m_MemoryBlockAllocator;
-    STLBlockAllocator* m_STLBlockAllocator;
-  }; // end of MemoryPools class declaration
+	private:
+		MaterialAllocator* m_MaterialAllocator;
+		MemoryBlockAllocator* m_MemoryBlockAllocator;
+		STLBlockAllocator* m_STLBlockAllocator;
+		RenderOperationAllocator* m_RopAllocator;
+	}; // end of MemoryPools class declaration
+	/*********************************************************************************/
 }} //end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_MemoryPools_h_

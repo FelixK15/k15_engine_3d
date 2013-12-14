@@ -66,14 +66,14 @@ namespace K15_Engine { namespace Core {
 		*
 		* @return const EventName& - unique name of this event
 		*/
-		inline const EventName& getName() const;
+		INLINE const EventName& getName() const;
 
 		/**
 		* Returns the size of the argument of this event
 		*
 		* @return const uint32 - size of the argument
 		*/
-		inline const uint32 getArgumentSize() const;
+		INLINE const uint32 getArgumentSize() const;
 
 		/**
 		* Get the argument of this event.
@@ -81,7 +81,7 @@ namespace K15_Engine { namespace Core {
 		*
 		* @return void* - raw void pointer to argument
 		*/
-		inline void* getArgument() const;
+		INLINE void* getArgument() const;
 
 		/**
 		* Get the argument of this event.(Template)

@@ -50,7 +50,7 @@ namespace K15_Engine { namespace Core {
 		void removeNode(ProfilingNode* p_Node);
 		void clear();
 
-		inline ProfilingNode* getRootNode();
+		INLINE ProfilingNode* getRootNode();
 	private:
 		ProflingNodeList m_Nodes;
 		ProfilingNode* m_Root;

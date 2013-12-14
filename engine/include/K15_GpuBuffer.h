@@ -98,24 +98,24 @@ namespace K15_Engine { namespace Rendering {
 		GpuBuffer(Enum p_BufferType, uint32 p_InitialDataSize, byte* p_InitialData, uint32 p_InitialDataOffset = 0,Enum p_LockOption = UO_DYNAMIC, Enum p_UsageOption = UO_DYNAMIC, Enum p_AccessOption = BA_READ_WRITE, bool p_ShadowCopyEnabled = false);
 		~GpuBuffer();
 
-		inline void setShadowCopyEnabled(bool p_Enabled);
-		inline void setLockOption(Enum p_LockOption);
-		inline void setUsageOption(Enum p_UsageOption);
-		inline void setAccessOption(Enum p_AccessOption);
+		INLINE void setShadowCopyEnabled(bool p_Enabled);
+		INLINE void setLockOption(Enum p_LockOption);
+		INLINE void setUsageOption(Enum p_UsageOption);
+		INLINE void setAccessOption(Enum p_AccessOption);
 
-		inline Enum getType() const;
-		inline Enum getLockOption() const;
-		inline Enum getUsageOption() const;
-		inline Enum getAccessOption() const;
+		INLINE Enum getType() const;
+		INLINE Enum getLockOption() const;
+		INLINE Enum getUsageOption() const;
+		INLINE Enum getAccessOption() const;
 
-		inline bool getShadowCopyEnabled() const;
+		INLINE bool getShadowCopyEnabled() const;
 
-		inline byte* getShadowCopy() const;
-		inline uint32 getShadowCopySize() const;
+		INLINE byte* getShadowCopy() const;
+		INLINE uint32 getShadowCopySize() const;
 
-		inline uint32 getSize() const;
+		INLINE uint32 getSize() const;
 
-		inline bool isLocked() const;
+		INLINE bool isLocked() const;
 
 		void lock(uint32 p_StartPos = 0, int32 p_Count = LOCK_WHOLE_BUFFER);
 		void unlock();
@@ -125,7 +125,7 @@ namespace K15_Engine { namespace Rendering {
 		uint32 readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset = 0, bool p_FromShadowCopy = false);
 		uint32 writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset = 0);
 
-		inline const GpuBufferImplBase* getImpl() const;
+		INLINE const GpuBufferImplBase* getImpl() const;
 
 	private:
 		void writeToShadowCopy(uint32 p_Size, byte* p_Destination, uint32 p_Offset);

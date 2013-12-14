@@ -312,6 +312,14 @@
     <ClInclude Include="..\..\engine\include\K15_MemoryBlock.h">
       <Filter>Core\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_VertexBuffer.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_IndexBuffer.h" />
+    <ClInclude Include="..\..\engine\include\K15_SubMesh.h" />
+    <ClInclude Include="..\..\engine\include\K15_RenderOperation.h" />
+    <ClInclude Include="..\..\engine\inline\K15_GpuProgramParameter.h" />
+    <ClInclude Include="..\..\engine\include\K15_AlphaState.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -500,6 +508,9 @@
     <ClCompile Include="..\..\engine\src\K15_MemoryPools.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_VertexBuffer.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_IndexBuffer.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_SubMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -635,6 +646,10 @@
     <None Include="..\..\engine\include\K15_Material.inl">
       <Filter>Rendering\include</Filter>
     </None>
+    <None Include="..\..\engine\include\K15_VertexBuffer.inl">
+      <Filter>Rendering\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_IndexBuffer.inl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />

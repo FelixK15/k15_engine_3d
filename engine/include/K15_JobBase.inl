@@ -28,12 +28,12 @@ void JobBase::setStatus(Enum p_Status)
 	m_Status = p_Status;
 }
 /*********************************************************************************/
-inline const ObjectName& JobBase::getName() const
+const ObjectName& JobBase::getName() const
 {
 	return m_Name;
 }
 /*********************************************************************************/
-inline bool JobBase::getAutoDelete() const
+bool JobBase::getAutoDelete() const
 {
   return m_AutoDelete;
 }

@@ -45,26 +45,26 @@ namespace K15_Engine { namespace Core {
 
 		virtual ~Object();
 	
-		inline void increaseReferences();
-		inline void decreaseReferences();
+		INLINE void increaseReferences();
+		INLINE void decreaseReferences();
 		
-		inline bool isInstanceOf(const Rtti& p_Type) const;
-		inline bool isInstanceOf(const Object* p_Object) const;
+		INLINE bool isInstanceOf(const Rtti& p_Type) const;
+		INLINE bool isInstanceOf(const Object* p_Object) const;
 
-		inline bool isDerivedFrom(const Rtti& p_Type) const;
-		inline bool isDerivedFrom(const Object* p_Object) const;
+		INLINE bool isDerivedFrom(const Rtti& p_Type) const;
+		INLINE bool isDerivedFrom(const Object* p_Object) const;
 
-		inline uint32 getReferenceCount() const;
+		INLINE uint32 getReferenceCount() const;
 		
-		inline void setName(const ObjectName& p_Name);
-		inline const ObjectName& getName() const;
+		INLINE void setName(const ObjectName& p_Name);
+		INLINE const ObjectName& getName() const;
 		
 	protected:
 		ObjectName m_Name;
 		uint32 m_References;
 	};
   
-	K15_SMART_POINTER(Object);
+	K15_PTR(Object);
    
 	#include "K15_Object.inl"
 }} //end of K15_Engine::Core namespace

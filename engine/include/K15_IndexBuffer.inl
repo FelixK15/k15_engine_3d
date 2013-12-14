@@ -1,8 +1,8 @@
 /**
- * @file K15_MemoryHeader.h
+ * @file K15_IndexBuffer.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/08/06
+ * @date 2013/12/09
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -15,29 +15,18 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
- *
- * @section DESCRIPTION
- *
- * 
  */
 
-#ifndef _K15Engine_Core_MemoryBlock_h_
-#define _K15Engine_Core_MemoryBlock_h_
+/*********************************************************************************/
+Enum IndexBuffer::getIndexType() const
+{
+	return m_IndexType;
+}
+/*********************************************************************************/
+void IndexBuffer::setIndexType(Enum p_IndexType) 
+{
+	K15_ASSERT(p_IndexType > 0 && p_IndexType < IT_COUNT,"Invalid index type.");
 
-#ifndef K15_USE_PRECOMPILED_HEADER
-#	include "K15_Prerequisites.h"
-#	include "K15_MemoryPools.h"
-#	include "K15_AllocatedObject.h"
-#endif //K15_USE_PRECOMPILED_HEADER
-
-namespace K15_Engine { namespace Core {
-  struct MemoryBlock : public AllocatedObject<MemoryBlockAllocator>
-  {
-    bool Used;
-    byte* Memory;
-    size_t Size;
-    MemoryBlock* Next;
-  };
-}}//end of K15_Engine::Core namespace
-
-#endif //_K15Engine_Core_MemoryBlock_h_
+	m_IndexType = p_IndexType;
+}
+/*********************************************************************************/

@@ -73,25 +73,25 @@ namespace K15_Engine { namespace Rendering {
 		Texture();
 		~Texture();
 
-		inline Enum getType() const;
+		INLINE Enum getType() const;
 
 		void setUsage(Enum p_TextureUsage);
-		inline Enum getUsage() const;
+		INLINE Enum getUsage() const;
 
 		void setMipmapLevels(uint32 p_MipMapCount);
-		inline uint32 getMipmapLevels() const;
+		INLINE uint32 getMipmapLevels() const;
 
 		void setHeight(uint32 p_Height);
-		inline uint32 getHeight() const;
+		INLINE uint32 getHeight() const;
 
 		void setWidth(uint32 p_Width);
-		inline uint32 getWidth() const;
+		INLINE uint32 getWidth() const;
 
 		void setDepth(uint32 p_Depth);
-		inline uint32 getDepth() const;
+		INLINE uint32 getDepth() const;
 
 		void setPixelFormat(Enum p_PixelFormat);
-		inline Enum getPixelFormat() const;
+		INLINE Enum getPixelFormat() const;
 
 		void getDimension(uint32* p_Width, uint32* p_Height, uint32* p_Depth = 0);
 		void getMipmapDimension(uint32 p_MipmapLevel, uint32* p_Width, uint32* p_Height, uint32* p_Depth = 0);
@@ -114,13 +114,13 @@ namespace K15_Engine { namespace Rendering {
 		bool resize(uint32 p_Width,uint32 p_Height,uint32 p_Depth = 0);
 		bool create(const TextureCreationOptions& p_Options);
 
-		inline bool hasAlpha() const;
-		inline bool hasShadowCopy() const;
+		INLINE bool hasAlpha() const;
+		INLINE bool hasShadowCopy() const;
 
 		virtual void loadDebug(RawData& p_Data);
 		virtual bool internalLoad(const RawData& p_Data);
 
-		inline const TextureImplBase* getImpl() const;
+		INLINE const TextureImplBase* getImpl() const;
 
 	private:
 		uint32 calculateMipmapLevels() const;

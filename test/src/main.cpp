@@ -1,9 +1,11 @@
 #include "K15_Application.h"
 
+#include "K15_VertexDeclaration.h"
+
 int main(int argc,char** argv)
 {
  	g_Application->initialize(argc,argv);
- 	g_Application->run();
+	g_Application->run();
  	g_Application->shutdown();
 
 #if defined K15_DEBUG

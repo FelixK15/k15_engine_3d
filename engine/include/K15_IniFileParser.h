@@ -59,8 +59,8 @@ namespace K15_Engine { namespace Core {
 		bool getGroupEntries(const String& p_GroupName,IniFileGroup* p_Group) const;
 		const String& getValue(const String& p_Key) const;
 
-		inline bool isValid() const;
-		inline const String& getError() const;
+		INLINE bool isValid() const;
+		INLINE const String& getError() const;
 
 	private:
 		bool parseContent(FileStream& p_Stream);

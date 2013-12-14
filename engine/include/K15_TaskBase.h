@@ -47,11 +47,11 @@ namespace K15_Engine { namespace Core {
 
 		virtual void update(const GameTime& p_GameTime) = 0;
 		
-		inline uint32 getPriority() const;
-		inline void setPriority(uint32 p_Priority);
+		INLINE uint32 getPriority() const;
+		INLINE void setPriority(uint32 p_Priority);
 
-		inline uint32 getFrameModFilter() const;
-		inline void setFrameModFilter(uint32 p_FrameModFilter);
+		INLINE uint32 getFrameModFilter() const;
+		INLINE void setFrameModFilter(uint32 p_FrameModFilter);
 
 		bool operator<(const TaskBase& p_Other);
 

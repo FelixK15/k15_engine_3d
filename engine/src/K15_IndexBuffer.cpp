@@ -1,8 +1,8 @@
 /**
- * @file K15_Material.cpp
+ * @file K15_IndexBuffer.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/07/11
+ * @date 2013/12/09
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -19,38 +19,28 @@
 
 #include "K15_PrecompiledHeader.h"
 
-#include "K15_Material.h"
+#include "K15_IndexBuffer.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
-	MaterialPass::MaterialPass()
-		: m_Programs(),
-		m_Shininess(0.0f),
-		m_Specular(ColorRGBA::White),
-		m_Diffuse(ColorRGBA::White),
-		m_Ambient(ColorRGBA::White),
-		m_DiffuseMap(0),
-		m_DiffuseSampler(0)
-	{
-	
-	}
+	const uint32 IndexBuffer::IndexSize[IndexBuffer::IT_COUNT] = {
+		1, //IT_UINT8
+		2, //IT_UINT16
+		4  //IT_UINT32
+	};//IndexSize
 	/*********************************************************************************/
-	MaterialPass::~MaterialPass()
+
+	/*********************************************************************************/
+	IndexBuffer::IndexBuffer()
+		: GpuBuffer(GpuBuffer::BT_INDEX_BUFFER,GpuBuffer::LO_DISCARD,GpuBuffer::UO_STATIC,GpuBuffer::BA_WRITE_ONLY,false),
+		m_IndexType(IT_UINT8)
 	{
 
 	}
 	/*********************************************************************************/
+	IndexBuffer::~IndexBuffer()
+	{
 
-	/*********************************************************************************/
-	Material::Material()
-		: m_Passes()
-	{
-	
-	}
-	/*********************************************************************************/
-	Material::~Material()
-	{
-		
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Rendering namespace

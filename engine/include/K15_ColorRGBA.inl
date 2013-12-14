@@ -18,22 +18,22 @@
  */
 
 /*********************************************************************************/
-inline float ColorRGBA::getRed() const
+float ColorRGBA::getRed() const
 {
 	return m_Red;
 }
 /*********************************************************************************/
-inline float ColorRGBA::getGreen() const
+float ColorRGBA::getGreen() const
 {
 	return m_Green;
 }
 /*********************************************************************************/
-inline float ColorRGBA::getBlue() const
+float ColorRGBA::getBlue() const
 {
 	return m_Blue;
 }
 /*********************************************************************************/
-inline float ColorRGBA::getAlpha() const
+float ColorRGBA::getAlpha() const
 {
 	return m_Alpha;
 }

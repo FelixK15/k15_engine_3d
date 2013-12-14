@@ -22,69 +22,93 @@
 #include "K15_MemoryPools.h"
 
 namespace K15_Engine { namespace Core {
-  /*********************************************************************************/
-  STLBlockAllocator::STLBlockAllocator()
-    : BlockAllocator(MemoryPoolsAllocator,STLBlockAllocatorSize,_N(STLBlockAllocator))
-  {
+	/*********************************************************************************/
+	const uint32 RenderOperationAllocator::RenderOperationCount = 512;
+	/*********************************************************************************/
+	RenderOperationAllocator::RenderOperationAllocator()
+		: PoolAllocator<K15_SIZE_RENDER_OPERATION>(MemoryPoolsAllocator,RenderOperationCount,_N(RenderOperationAllocator))
+	{
 
-  }
-  /*********************************************************************************/
-  STLBlockAllocator::~STLBlockAllocator()
-  {
+	}
+	/*********************************************************************************/
+	RenderOperationAllocator::~RenderOperationAllocator()
+	{
 
-  }
-  /*********************************************************************************/
+	}
+	/*********************************************************************************/
 
-  /*********************************************************************************/
-  MemoryBlockAllocator::MemoryBlockAllocator()
-    : PoolAllocator<K15_SIZE_MEMORY_BLOCK>(MemoryPoolsAllocator,MemoryBlockCount,_N(MemoryBlockAllocator))
-  {
+	/*********************************************************************************/
+	const uint32 STLBlockAllocator::STLBlockAllocatorSize = 5 * MEGABYTE;
+	/*********************************************************************************/
+	STLBlockAllocator::STLBlockAllocator()
+	: BlockAllocator(MemoryPoolsAllocator,STLBlockAllocatorSize,_N(STLBlockAllocator))
+	{
 
-  }
-  /*********************************************************************************/
-  MemoryBlockAllocator::~MemoryBlockAllocator()
-  {
+	}
+	/*********************************************************************************/
+	STLBlockAllocator::~STLBlockAllocator()
+	{
 
-  }
-  /*********************************************************************************/
+	}
+	/*********************************************************************************/
 
-  /*********************************************************************************/
-  MaterialAllocator::MaterialAllocator()
-    : PoolAllocator<K15_SIZE_MATERIAL>(MemoryPoolsAllocator,MaterialCount,_N(MaterialAllocator))
-  {
+	/*********************************************************************************/
+	const uint32 MemoryBlockAllocator::MemoryBlockCount = 512;
+	/*********************************************************************************/
+	MemoryBlockAllocator::MemoryBlockAllocator()
+	: PoolAllocator<K15_SIZE_MEMORY_BLOCK>(MemoryPoolsAllocator,MemoryBlockCount,_N(MemoryBlockAllocator))
+	{
 
-  }
-  /*********************************************************************************/
-  MaterialAllocator::~MaterialAllocator()
-  {
+	}
+	/*********************************************************************************/
+	MemoryBlockAllocator::~MemoryBlockAllocator()
+	{
 
-  }
-  /*********************************************************************************/
+	}
+	/*********************************************************************************/
 
-  /*********************************************************************************/
-  MemoryPools::MemoryPools()
-    : StackAllocator(ApplicationAllocator,10 * MEGABYTE,_N(MemoryPools))
-  {
-    _LogNormal("Creating Material memory pool...");
-    m_MaterialAllocator = K15_NEW MaterialAllocator();
+	/*********************************************************************************/
+	const uint32 MaterialAllocator::MaterialCount = 512;
+	/*********************************************************************************/
+	MaterialAllocator::MaterialAllocator()
+	: PoolAllocator<K15_SIZE_MATERIAL>(MemoryPoolsAllocator,MaterialCount,_N(MaterialAllocator))
+	{
 
-    _LogNormal("Creating MemoryBlock memory pool...");
-    m_MemoryBlockAllocator = K15_NEW MemoryBlockAllocator();
+	}
+	/*********************************************************************************/
+	MaterialAllocator::~MaterialAllocator()
+	{
+
+	}
+	/*********************************************************************************/
+
+	/*********************************************************************************/
+	MemoryPools::MemoryPools()
+	: StackAllocator(ApplicationAllocator,10 * MEGABYTE,_N(MemoryPools))
+	{
+		_LogNormal("Creating RenderOperation memory pool...");
+		m_RopAllocator = K15_NEW RenderOperationAllocator();
+
+		_LogNormal("Creating Material memory pool...");
+		m_MaterialAllocator = K15_NEW MaterialAllocator();
+
+		_LogNormal("Creating MemoryBlock memory pool...");
+		m_MemoryBlockAllocator = K15_NEW MemoryBlockAllocator();
 
 //     _LogNormal("Creating STLBlock memory pool...");
 //     m_STLBlockAllocator = K15_NEW STLBlockAllocator();
-  }
-  /*********************************************************************************/
-  MemoryPools::~MemoryPools()
-  {
+	}
+	/*********************************************************************************/
+	MemoryPools::~MemoryPools()
+	{
 //     _LogNormal("Destroying STLBlock memory pool...");
 //     K15_DELETE m_STLBlockAllocator;
 
-    _LogNormal("Destroying MemoryBlock memory pool...");
-    K15_DELETE m_MemoryBlockAllocator;
+		_LogNormal("Destroying MemoryBlock memory pool...");
+		K15_DELETE m_MemoryBlockAllocator;
 
-    _LogNormal("Destroying Material memory pool...");
-    K15_DELETE m_MaterialAllocator;
-  }
+		_LogNormal("Destroying Material memory pool...");
+		K15_DELETE m_MaterialAllocator;
+	}
   /*********************************************************************************/
 }} // end of K15_Engine::Core namespace

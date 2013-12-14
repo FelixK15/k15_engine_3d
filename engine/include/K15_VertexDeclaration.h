@@ -95,6 +95,8 @@ namespace K15_Engine { namespace Rendering {
     void removeElement(uint32 p_Index);
     void removeAllElements();
 
+	void fromDeclarationString(const String& p_DeclarationString);
+
     String getDeclarationString();
     const VertexElement& getElement(uint32 p_Index);
     
@@ -104,8 +106,7 @@ namespace K15_Engine { namespace Rendering {
   private:
     void _parseDeclarationString(const String& p_DeclarationString);
     void _updateElements();
-    bool _validateElement(const VertexElement& p_Element);
-
+    
   private:
     VertexElementArray m_Elements;
     ObjectName m_Declaration;

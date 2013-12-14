@@ -31,6 +31,9 @@
 #include "K15_RenderWindowBase.h"
 #include "K15_ColorRGBA.h"
 
+#include "K15_GpuProgram.h"
+#include "K15_GpuBuffer.h"
+
 namespace K15_Engine { namespace Rendering { 
 	
 	class K15_CORE_API RendererBase : public RenderWindowBase::Listener
@@ -54,27 +57,8 @@ namespace K15_Engine { namespace Rendering {
 			DF_GREATER_EQUAL,
 			DF_GREATER,
 
-			DT_COUNT
+			DF_COUNT
 		}; //DepthFunction
-		/*********************************************************************************/
-		enum eTopology
-		{
-			T_DOT = 0,
-			T_LINE,
-			T_TRIANGLE,
-			T_QUAD,
-
-			T_COUNT
-		}; //Topology
-		/*********************************************************************************/
-		enum eGpuProgramType
-		{
-			GPT_VERTEX = 0,
-			GPT_GEOMETRY,
-			GPT_PIXEL,
-
-			GPT_COUNT
-		}; //GpuProgramType
 		/*********************************************************************************/
 		enum ePixelFormat
 		{
@@ -133,57 +117,62 @@ namespace K15_Engine { namespace Rendering {
 		RendererBase();
 		virtual ~RendererBase();
 
-		virtual void setRenderWindow(RenderWindowBase* p_RenderWindow);
-		inline RenderWindowBase* getRenderWindow() const;
+		void draw(RenderOperation* p_Rop);
 
-		virtual void setRenderTarget(RenderTarget* p_RenderTarget);
-		inline RenderTarget* getRenderTarget() const;
+		void setRenderWindow(RenderWindowBase* p_RenderWindow);
+		INLINE RenderWindowBase* getRenderWindow() const;
 
-		virtual void setActiveCamera(Camera* p_Camera);
-		inline Camera* getActiveCamera() const;
+		void setRenderTarget(RenderTarget* p_RenderTarget);
+		INLINE RenderTarget* getRenderTarget() const;
 
-		virtual void setCullingMode(Enum p_CullingMode);
-		inline Enum getCullingMode() const;
+		void setActiveCamera(Camera* p_Camera);
+		INLINE Camera* getActiveCamera() const;
 
-		virtual void setDepthTestFunction(Enum p_DepthTestFunction);
-		inline Enum getDepthTestMode() const;
+		void setCullingMode(Enum p_CullingMode);
+		INLINE Enum getCullingMode() const;
 
-		virtual void setTopology(Enum p_Topology);
-		inline Enum getTopology() const;
+		void setDepthTestFunction(Enum p_DepthTestFunction);
+		INLINE Enum getDepthTestMode() const;
 
-		virtual void setDepthTestEnabled(bool p_Enabled);
-		inline bool getDepthTestEnabled() const;
+		void setTopology(Enum p_Topology);
+		INLINE Enum getTopology() const;
 
-		virtual void setBackFaceCullingEnabled(bool p_Enabled);
-		inline bool getBackFaceCullingEnabled() const;
+		void setDepthTestEnabled(bool p_Enabled);
+		INLINE bool getDepthTestEnabled() const;
 
-		virtual void setFrameBufferPixelFormat(Enum p_PixelFormat);
-		inline Enum getFrameBufferPixelFormat() const;
+		void setBackFaceCullingEnabled(bool p_Enabled);
+		INLINE bool getBackFaceCullingEnabled() const;
 
-		virtual void setDepthBufferFormat(Enum p_DepthFormat);
-		inline Enum getDepthBufferFormat() const;
+		void setFrameBufferPixelFormat(Enum p_PixelFormat);
+		INLINE Enum getFrameBufferPixelFormat() const;
 
-		virtual void setStencilBufferFormat(Enum p_StencilFormat);
-		inline Enum getStencilBufferFormat() const;
+		void setDepthBufferFormat(Enum p_DepthFormat);
+		INLINE Enum getDepthBufferFormat() const;
 
-		virtual void setClearColor(const ColorRGBA& p_ClearColor);
-		virtual void setClearColor(float p_Red = 1.0f, float p_Green = 1.0f, float p_Blue = 1.0f);
-		inline const ColorRGBA& getClearColor() const;
+		void setStencilBufferFormat(Enum p_StencilFormat);
+		INLINE Enum getStencilBufferFormat() const;
 
-		inline void setLightningEnabled(bool p_Enabled);
-		inline bool getLightningEnabled() const;
+		void setClearColor(const ColorRGBA& p_ClearColor);
+		void setClearColor(float p_Red = 1.0f, float p_Green = 1.0f, float p_Blue = 1.0f);
+		INLINE const ColorRGBA& getClearColor() const;
 
-		virtual void bindGpuProgram(GpuProgram* p_GpuProgram,Enum p_Stage);
-		inline GpuProgram* getBoundGpuProgram(Enum p_GpuProgramType) const;
-		inline bool isBoundGpuProgram(Enum p_GpuProgramType) const;
+		INLINE void setLightningEnabled(bool p_Enabled);
+		INLINE bool getLightningEnabled() const;
+
+		void bindGpuProgram(GpuProgram* p_GpuProgram,Enum p_Stage);
+		INLINE GpuProgram* getBoundGpuProgram(Enum p_GpuProgramType) const;
+		INLINE bool isBoundGpuProgram(Enum p_GpuProgramType) const;
+
+		INLINE void bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType);
+		void bindMaterial(Material* p_Material);
 
 		virtual GpuBufferImplBase* createGpuBufferImpl() = 0;
 		virtual	TextureImplBase* createTextureImpl() = 0;
 		virtual GpuProgramImplBase* createGpuProgramImpl() = 0;
 		virtual TextureSamplerImplBase* createTextureSamplerImpl() = 0;
 
-		inline const String& getLastError();
-		inline void setLastError(const String& p_String);
+		INLINE const String& getLastError();
+		INLINE void setLastError(const String& p_String);
 
 		virtual void beginFrame() = 0;
 		virtual void endFrame() = 0;
@@ -192,6 +181,23 @@ namespace K15_Engine { namespace Rendering {
 		virtual void shutdown() = 0;
 
 		virtual void onResolutionChanged(const Resolution& p_Resolution){};
+
+	protected:
+		virtual void _setRenderWindow(RenderWindowBase* p_RenderWindow){}
+		virtual void _setRenderTarget(RenderTarget* p_RenderTarget){}
+		virtual void _setActiveCamera(Camera* p_Camera){}
+		virtual void _setCullingMode(Enum p_CullingMode){}
+		virtual void _setDepthTestFunction(Enum p_DepthTestFunction){}
+		virtual void _setTopology(Enum p_Topology){}
+		virtual void _setDepthTestEnabled(bool p_Enabled){}
+		virtual void _setBackFaceCullingEnabled(bool p_Enabled){}
+		virtual void _setFrameBufferPixelFormat(Enum p_PixelFormat){}
+		virtual void _setDepthBufferPixelFormat(Enum p_DepthFormat){}
+		virtual void _setStencilBufferPixelFormat(Enum p_StencilFormat){}
+		virtual void _setClearColor(const ColorRGBA& p_ClearColor){}
+		virtual void _bindBuffer(GpuBuffer* p_Buffer){}
+		virtual void _bindProgram(GpuProgram* p_Program){}
+		virtual void _draw(RenderOperation* p_Rop){}
 
 	protected:
 		ColorRGBA m_ClearColor;
@@ -206,7 +212,9 @@ namespace K15_Engine { namespace Rendering {
 		Enum m_FrameBufferFormat;
 		Enum m_DepthBufferFormat;
 		Enum m_StencilBufferFormat;
-		GpuProgram* m_GpuPrograms[GPT_COUNT];
+		GpuProgram* m_GpuPrograms[GpuProgram::PS_COUNT];
+		GpuBuffer* m_GpuBuffers[GpuBuffer::BT_COUNT];
+		Material* m_Material;
 		bool m_LightningEnabled;
 		bool m_BackFaceCullingEnabled;
 		bool m_DepthTestEnabled;

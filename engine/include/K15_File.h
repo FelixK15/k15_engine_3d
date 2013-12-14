@@ -111,7 +111,7 @@ namespace K15_Engine { namespace Core {
 		*
 		* @return bool true if file is open and false if not.
 		*/
-		inline bool IsOpen();
+		INLINE bool IsOpen();
 
 		/**
 		* This function will close the file.

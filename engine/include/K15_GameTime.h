@@ -40,7 +40,7 @@ namespace K15_Engine { namespace Core {
 		*
 		* @return double - modified delta time (unmodified if getMultiplier() == 1.0)
 		*/
-		inline const double getDeltaTime() const{return m_DeltaTime * m_Mulitplicator;}
+		INLINE const double getDeltaTime() const{return m_DeltaTime * m_Mulitplicator;}
 
 		/**
 		* get the delta time (e.g. the time it took to process the last frame).
@@ -48,18 +48,18 @@ namespace K15_Engine { namespace Core {
 		*
 		* @return double - unmodified delta time (unmodified if getMultiplier() == 1.0)
 		*/
-		inline const double getRawDeltaTime() const{return m_RawDeltaTime;}
+		INLINE const double getRawDeltaTime() const{return m_RawDeltaTime;}
 
 		/**
 		* Returns the multiplier that affects the value of getDeltaTime()
 		*
 		* @return double - multiplier that affects the value of getDeltaTime()
 		*/
-		inline const double getMultiplier() const{return m_Mulitplicator;}
+		INLINE const double getMultiplier() const{return m_Mulitplicator;}
 
-		inline void setDeltaTime(double p_DeltaTime){m_DeltaTime = p_DeltaTime;}
+		INLINE void setDeltaTime(double p_DeltaTime){m_DeltaTime = p_DeltaTime;}
 
-		inline void setMultiplier(double p_Multiplier){m_Mulitplicator = p_Multiplier;}
+		INLINE void setMultiplier(double p_Multiplier){m_Mulitplicator = p_Multiplier;}
 	private:
 		double m_DeltaTime;
 		double m_Mulitplicator;

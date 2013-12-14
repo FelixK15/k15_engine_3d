@@ -50,7 +50,7 @@ namespace K15_Engine { namespace Core {
 
 		void update(const GameTime&);
 
-		inline void addTask(TaskBase*);
+		INLINE void addTask(TaskBase*);
 		void removeTask(TaskBase*);
 
 	protected:

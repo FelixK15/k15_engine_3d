@@ -18,7 +18,7 @@
  */
 
 /*********************************************************************************/
-inline FT_Library* FontManager::getFreeTypeLibrary() const
+FT_Library* FontManager::getFreeTypeLibrary() const
 {
 	return m_FreeType;
 }

@@ -59,12 +59,12 @@ namespace K15_Engine { namespace Core {
     Application();
     ~Application();
     
-	inline void setGameRootDir(const String& p_GameRootDir);
+	INLINE void setGameRootDir(const String& p_GameRootDir);
 
-    inline const String& getGameRootDir() const;
-    inline const StringSet& getPluginList() const;
-    inline const StringSet& getCommandList() const;
-    inline const ApplicationParameterList& getApplicationParameter() const;
+    INLINE const String& getGameRootDir() const;
+    INLINE const StringSet& getPluginList() const;
+    INLINE const StringSet& getCommandList() const;
+    INLINE const ApplicationParameterList& getApplicationParameter() const;
 
     void setWindowTitle(const String& p_WindowTitle);
 
@@ -83,40 +83,40 @@ namespace K15_Engine { namespace Core {
     void onBeforeRender();
     void onAfterRender();
 
-	inline uint32 getFrameCount() const;
+	INLINE uint32 getFrameCount() const;
 
-	inline RenderTask* getRenderTask() const;
-	inline PhysicsTask* getPhysicsTask() const;
+	INLINE RenderTask* getRenderTask() const;
+	INLINE PhysicsTask* getPhysicsTask() const;
 
-    inline TaskManager* getTaskManager() const;
-    inline ProfilingManager* getProfileManager() const;
-    inline EventManager* getEventManager() const;
-    inline DynamicLibraryManager* getDynamicLibraryManager() const;
-    inline RenderWindowBase* getRenderWindow() const;
-    inline LogManager* getLogManager() const;
-	inline InputManager* getInputManager() const;
-	inline const StackAllocator* getFrameAllocator() const;
-	inline const ApplicationOSLayerType& getOSLayer() const;
+    INLINE TaskManager* getTaskManager() const;
+    INLINE ProfilingManager* getProfileManager() const;
+    INLINE EventManager* getEventManager() const;
+    INLINE DynamicLibraryManager* getDynamicLibraryManager() const;
+    INLINE RenderWindowBase* getRenderWindow() const;
+    INLINE LogManager* getLogManager() const;
+	INLINE InputManager* getInputManager() const;
+	INLINE const StackAllocator* getFrameAllocator() const;
+	INLINE const ApplicationOSLayerType& getOSLayer() const;
 
-	inline double getRunningTime() const;
+	INLINE double getRunningTime() const;
 
-	inline void setRunning(bool p_Running);
-	inline bool getRunning() const;
+	INLINE void setRunning(bool p_Running);
+	INLINE bool getRunning() const;
 
-	inline String getLastError() const;
-	inline double getTime() const;
+	INLINE String getLastError() const;
+	INLINE double getTime() const;
 
-    inline const GameTime& getGameTime() const;
-    inline const double getDeltaTime() const;
-    inline const double getRawDeltaTime() const;
+    INLINE const GameTime& getGameTime() const;
+    INLINE const double getDeltaTime() const;
+    INLINE const double getRawDeltaTime() const;
 
-	inline void setMaxFPS(uint32 p_MaxFPS);
-	inline uint32 getMaxFPS() const;
+	INLINE void setMaxFPS(uint32 p_MaxFPS);
+	INLINE uint32 getMaxFPS() const;
 
-	inline const FrameStatistic& getFrameStatistic(uint32 p_FrameNumber) const;
-  inline FrameStatistic& getCurrentFrameStatistic();
+	INLINE const FrameStatistic& getFrameStatistic(uint32 p_FrameNumber) const;
+  INLINE FrameStatistic& getCurrentFrameStatistic();
 
-  inline float getFramePerSecond() const;
+  INLINE float getFramePerSecond() const;
 
   private:
     void createCommandList(int p_CommandCount,char** p_Commands);

@@ -1,8 +1,8 @@
 /**
- * @file K15_Material.cpp
+ * @file K15_VertexBuffer.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/07/11
+ * @date 2013/12/09
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -19,38 +19,35 @@
 
 #include "K15_PrecompiledHeader.h"
 
-#include "K15_Material.h"
+#include "K15_VertexBuffer.h"
+#include "K15_VertexDeclaration.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
-	MaterialPass::MaterialPass()
-		: m_Programs(),
-		m_Shininess(0.0f),
-		m_Specular(ColorRGBA::White),
-		m_Diffuse(ColorRGBA::White),
-		m_Ambient(ColorRGBA::White),
-		m_DiffuseMap(0),
-		m_DiffuseSampler(0)
-	{
-	
-	}
-	/*********************************************************************************/
-	MaterialPass::~MaterialPass()
+	VertexBuffer::VertexBuffer()
+		: GpuBuffer(GpuBuffer::BT_VERTEX_BUFFER,GpuBuffer::LO_DISCARD,GpuBuffer::UO_STATIC,GpuBuffer::BA_WRITE_ONLY,false)
 	{
 
 	}
 	/*********************************************************************************/
+	VertexBuffer::~VertexBuffer()
+	{
 
-	/*********************************************************************************/
-	Material::Material()
-		: m_Passes()
-	{
-	
 	}
 	/*********************************************************************************/
-	Material::~Material()
+	uint32 VertexBuffer::getVertexSize() const
 	{
-		
+		return m_Declaration->getVertexSize();
 	}
 	/*********************************************************************************/
-}}// end of K15_Engine::Rendering namespace
+	const VertexDeclaration* VertexBuffer::getVertexDeclaration() const
+	{
+		return m_Declaration;
+	}
+	/*********************************************************************************/
+	void VertexBuffer::setVertexDeclaration(const String& p_DeclarationString)
+	{
+		m_Declaration->fromDeclarationString(p_DeclarationString);
+	}
+	/*********************************************************************************/
+}}// end of K15_Engine::Core namespace

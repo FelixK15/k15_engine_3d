@@ -112,9 +112,9 @@ namespace K15_Engine
 		class Functor0;
 		class MemoryProfiler;
 		class MemoryProfilingTask;
-    class MemoryPools;
+		class MemoryPools;
 		struct MemoryHeader;
-    struct MemoryBlock;
+		struct MemoryBlock;
 		class FontManager;
 		class Font;
 		class TrueTypeFont;
@@ -141,9 +141,14 @@ namespace K15_Engine
 		class TextureSampler;
 		class TextureSamplerImplBase;
 		class Material;
-    class VertexDeclaration;
-    class VertexDeclarationImplBase;
-    struct VertexElement;
+		class SubMesh;
+		class Mesh;
+		class VertexDeclaration;
+		class VertexBuffer;
+		class IndexBuffer;
+		class AlphaState;
+		struct RenderOperation;
+		struct VertexElement;
 		struct TextureCreationOptions;
 
 		// surface description flags
@@ -281,8 +286,8 @@ namespace K15_Engine
 # endif //K15_DEBUG
 #	pragma warning(disable : 4251) //dll export for std::string, std::list etc.
 #	pragma warning(disable : 4530) //c++ exception used, but not enabled (xlocale.h)
-# pragma warning(disable : 6255) //unprotected use of alloca
-# pragma warning(disable : 6330) //'char' passes as _Param_(1) when 'unsigned char' is required in call to 'isdigit'
+#	pragma warning(disable : 6255) //unprotected use of alloca
+#	pragma warning(disable : 6330) //'char' passes as _Param_(1) when 'unsigned char' is required in call to 'isdigit'
 #endif //_MSC_VER
 
 //c std libs
@@ -319,7 +324,7 @@ namespace K15_Engine
 #	define HashMap(K,V)		std::map<K,V>
 #	define List(T)			std::list<T>
 #	define Stack(T)			std::stack<T>
-# define Deque(T)     std::deque<T>
+#	define Deque(T)     std::deque<T>
 //#	define Set(T)			std::set<T>
 #	define Pair(K,V)		std::pair<K,V>
 #	define FixedArray(T,C)	std::array<T,C>
@@ -345,12 +350,12 @@ namespace K15_Engine
     typedef tthread::lock_guard<Mutex> LockGuard;
 
 #else
-#		include <thread>		
+#	include <thread>		
 #   include <mutex>
 #   include <chrono>
 #   define g_CurrentThread std::this_thread
 #   define K15_SleepCurrentThread(ms) g_CurrentThread::sleep_for(std::chrono::milliseconds(ms))
-		typedef std::thread Thread;
+	typedef std::thread Thread;
     typedef std::mutex Mutex;
     typedef std::lock_guard<Mutex> LockGuard;
 #endif //K15_DONT_USE_STL || (!defined K15_DONT_USE_STL && !defined K15_CPP11_SUPPORT)
@@ -377,7 +382,7 @@ namespace K15_Engine
 #endif //K15_OS_WINDOWS
   
 #if defined K15_OS_WINDOWS
-# define NOMINMAX
+#	define NOMINMAX
 #	define WIN32_LEAN_AND_MEAN
 #endif //K15_OS_WINDOWS
 
@@ -411,17 +416,17 @@ namespace K15_Engine
 #	define K15_DELETE delete
 
 #	define K15_NEW_T(allocator,objType) new(allocator->allocateDebug(sizeof(objType),__FILE__,__LINE__,false,__FUNCTION__))
-# define K15_NEW_SIZE(allocator,size) new(allocator->allocateDebug(size,__FILE__,__LINE__,false,__FUNCTION__))
+#	define K15_NEW_SIZE(allocator,size) new(allocator->allocateDebug(size,__FILE__,__LINE__,false,__FUNCTION__))
 
 #	define K15_DELETE_T(allocator,ptr,size) if(ptr){allocator->deallocateDebug((void*)ptr,size,__FILE__,__LINE__,false,__FUNCTION__);}
 #else
 #	define K15_NEW    new
 #	define K15_DELETE delete
 
-# define K15_NEW_SIZE(allocator,size) new(allocator->allocate(size))
+#	define K15_NEW_SIZE(allocator,size) new(allocator->allocate(size))
 #	define K15_NEW_T(allocator,objType) new(allocator->allocate(sizeof(objType)))
 
-# define K15_DELETE_T(allocator,ptr,size) if(ptr){allocator->deallocate((void*)ptr,size);}
+#	define K15_DELETE_T(allocator,ptr,size) if(ptr){allocator->deallocate((void*)ptr,size);}
 #endif //K15_DEBUG
 
 # define K15_PLACEMENT_NEW new(ptr)
@@ -554,10 +559,22 @@ typedef K15_Engine::Core::HashedString ResourceName;
 #define MEGABYTE	1048576
 #define KILOBYTE	1024
 
+#define K15_PTR(T) typedef Pointer<T> T##Ptr;
+
 #if defined (K15_CPP11_SUPPORT)
-#		define OVERRIDE override
+#	define OVERRIDE override
 #else
-#		define OVERRIDE
+#	define OVERRIDE
 #endif //K15_CPP11_SUPPORT
+
+#if defined (K15_NO_INLINE)
+#	define INLINE
+#else
+#	if defined (K15_FORCE_INLINE)
+#		define INLINE __forceinline
+#	else
+#		define INLINE inline
+#	endif //K15_FORCE_INLINE
+#endif //K15_NO_INLINE
 
 #endif //_K15Engine_Prerequisites_h_

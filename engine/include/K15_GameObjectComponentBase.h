@@ -39,7 +39,7 @@ namespace K15_Engine { namespace Core {
 		GameObjectComponentBase(){}
 		virtual ~GameObjectComponentBase(){}
 
-		inline GameObject* getGameObject() const;
+		INLINE GameObject* getGameObject() const;
 
 		virtual void update(const GameTime& p_GameTime){}
 

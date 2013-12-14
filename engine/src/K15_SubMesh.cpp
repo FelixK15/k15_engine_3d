@@ -1,8 +1,8 @@
 /**
- * @file K15_Material.cpp
+ * @file K15_SubMesh.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/07/11
+ * @date 2013/12/10
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -19,38 +19,27 @@
 
 #include "K15_PrecompiledHeader.h"
 
-#include "K15_Material.h"
+#include "K15_SubMesh.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
-	MaterialPass::MaterialPass()
-		: m_Programs(),
-		m_Shininess(0.0f),
-		m_Specular(ColorRGBA::White),
-		m_Diffuse(ColorRGBA::White),
-		m_Ambient(ColorRGBA::White),
-		m_DiffuseMap(0),
-		m_DiffuseSampler(0)
-	{
-	
-	}
-	/*********************************************************************************/
-	MaterialPass::~MaterialPass()
+	SubMesh::SubMesh()
+		: m_Material(0),
+		m_IndexBuffer(0),
+		m_VertexBuffer(0)
 	{
 
 	}
 	/*********************************************************************************/
+	SubMesh::~SubMesh()
+	{
 
-	/*********************************************************************************/
-	Material::Material()
-		: m_Passes()
-	{
-	
 	}
 	/*********************************************************************************/
-	Material::~Material()
+	RenderOperation* SubMesh::createRenderOperation() const
 	{
-		
+		K15_ASSERT(true,"Not yet implemented.");
+		return 0;
 	}
 	/*********************************************************************************/
-}}// end of K15_Engine::Rendering namespace
+}}// end of K15_Engine::Core namespace

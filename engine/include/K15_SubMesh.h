@@ -1,8 +1,8 @@
 /**
- * @file K15_MemoryHeader.h
+ * @file K15_SubMesh.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/08/06
+ * @date 2013/12/09
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,23 +21,26 @@
  * 
  */
 
-#ifndef _K15Engine_Core_MemoryBlock_h_
-#define _K15Engine_Core_MemoryBlock_h_
+#ifndef _K15Engine_Core_SubMesh_h_
+#define _K15Engine_Core_SubMesh_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
-#	include "K15_MemoryPools.h"
-#	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-namespace K15_Engine { namespace Core {
-  struct MemoryBlock : public AllocatedObject<MemoryBlockAllocator>
-  {
-    bool Used;
-    byte* Memory;
-    size_t Size;
-    MemoryBlock* Next;
-  };
-}}//end of K15_Engine::Core namespace
+namespace K15_Engine { namespace Rendering {
+	class K15_CORE_API SubMesh
+	{
+	public:
+		SubMesh();
+		virtual ~SubMesh();
 
-#endif //_K15Engine_Core_MemoryBlock_h_
+		RenderOperation* createRenderOperation() const;
+	protected:
+		VertexBuffer* m_VertexBuffer;
+		IndexBuffer* m_IndexBuffer;
+		Material* m_Material;
+	};// end of SubMesh class declaration
+}}// end of K15_Engine::Rendering namespace
+
+#endif //_K15Engine_Core_SubMesh_h_

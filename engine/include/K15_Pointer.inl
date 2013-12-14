@@ -29,26 +29,26 @@ Pointer<T>::Pointer(T *pObject)
 {
 	m_pObject = pObject;
 	if(pObject != 0){
-		pObject->IncreaseReferences();
+		pObject->increaseReferences();
 	}
 }
 /*********************************************************************************/
 template<class T>
 Pointer<T>::Pointer(const Pointer<T> &pPointer)
 {
-	_GetAndIncreasePointer(pPointer);
+	_getAndIncreasePointer(pPointer);
 }
 /*********************************************************************************/
 template<class T>
 Pointer<T>::~Pointer()
 {
-	m_pObject->DecreaseReferences();
+	m_pObject->decreaseReferences();
 }
 /*********************************************************************************/
 template<class T>
 const Pointer<T> &Pointer<T>::operator=(const Pointer<T> &pPointer)
 {
-	_GetAndIncreasePointer(pPointer);
+	_getAndIncreasePointer(pPointer);
 	return *this;
 }
 /*********************************************************************************/
@@ -57,7 +57,7 @@ const Pointer<T> &Pointer<T>::operator=(T* pObject)
 {
 	if(pObject != m_pObject){
 		if(m_pObject){
-			m_pObject->DecreaseReferences();
+			m_pObject->decreaseReferences();
 			if(m_pObject->GetReferenceCount() == 0)
 			{
 				K15_SAFE_DELETE(m_pObject);
@@ -65,7 +65,7 @@ const Pointer<T> &Pointer<T>::operator=(T* pObject)
 		}
 		m_pObject = pObject;
 		if(pObject){
-			pObject->IncreaseReferences();
+			pObject->increaseReferences();
 		}
 	}
 
@@ -115,19 +115,19 @@ bool Pointer<T>::operator!=(const Pointer<T> &pPointer)
 }
 /*********************************************************************************/
 template<class T>
-void Pointer<T>::_GetAndIncreasePointer(const Pointer<T> &pPointer)
+void Pointer<T>::_getAndIncreasePointer(const Pointer<T> &pPointer)
 {
 	if(m_pObject != 0)
 	{
-		m_pObject->DecreaseReference();
-		if(m_pObject->GetReferenceCount() == 0)
+		m_pObject->decreaseReferences();
+		if(m_pObject->getReferenceCount() == 0)
 		{
 			K15_SAFE_DELETE(m_pObject);
 		}
 	}
 	if(pPointer.m_pObject != 0){
 		m_pObject = pPointer.m_pObject;
-		m_pObject->IncreaseReferences();
+		m_pObject->increaseReferences();
 	}
 }
 /*********************************************************************************/

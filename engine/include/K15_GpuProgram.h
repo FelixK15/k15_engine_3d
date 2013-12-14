@@ -38,8 +38,8 @@ namespace K15_Engine { namespace Rendering {
 		virtual bool loadBinaryCode() = 0;
 		virtual bool getBinaryCode(RawData* p_Buffer) = 0;
 
-		inline void setGpuProgram(GpuProgram* p_GpuProgram);
-		inline GpuProgram* getGpuProgram() const;
+		INLINE void setGpuProgram(GpuProgram* p_GpuProgram);
+		INLINE GpuProgram* getGpuProgram() const;
 
 	protected:
 		GpuProgram* m_GpuProgram;
@@ -63,21 +63,21 @@ namespace K15_Engine { namespace Rendering {
 		GpuProgram();
 		virtual ~GpuProgram();
 
-		inline bool isCompiled() const;
-		inline const RawData* getBinaryCode() const;
-		inline const String& getError() const;
-		inline const String& getShaderCode() const;
-		inline Enum getStage() const;
+		INLINE bool isCompiled() const;
+		INLINE const RawData* getBinaryCode() const;
+		INLINE const String& getError() const;
+		INLINE const String& getShaderCode() const;
+		INLINE Enum getStage() const;
 
 		bool compile();
 		void setProgramCode(const String& p_Code);
 
-		inline void setError(const String& p_Error);
+		INLINE void setError(const String& p_Error);
 
 		virtual void loadDebug(RawData& p_Data);
 		virtual bool internalLoad(const RawData& p_Data);
 
-		inline const GpuProgramImplBase* getImpl() const;
+		INLINE const GpuProgramImplBase* getImpl() const;
 
 	protected:
 		GpuProgramImplBase* m_Impl;
