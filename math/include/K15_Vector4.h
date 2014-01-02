@@ -39,7 +39,7 @@ namespace K15_Engine { namespace Math {
 	public:
 		Vector4();
 		Vector4(float p_Values[4]);
-		Vector4(float x, float y, float z,float w);
+		Vector4(float x, float y, float z,float w = 1.0f);
 		Vector4(const Vector4& p_Vector);
 
 		~Vector4();

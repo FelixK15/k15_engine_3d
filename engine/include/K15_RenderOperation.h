@@ -50,6 +50,7 @@ namespace K15_Engine { namespace Rendering {
 		VertexBuffer* vertexBuffer;
 		Material* material;
 		SubMesh* subMesh;
+		AlphaState* alphaState;
 		Enum topology;
 	};// end of RenderOperation struct
 }}// end of K15_Engine::Rendering namespace

@@ -51,6 +51,8 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		virtual uint32 readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset) OVERRIDE;
 		virtual uint32 writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset) OVERRIDE;
 
+    GLuint getBufferGL() const;
+
 	private:
 		GLuint m_BufferHandle;
 	};// end of GpuBufferImplOG class declaration

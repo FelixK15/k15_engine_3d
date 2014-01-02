@@ -31,17 +31,15 @@
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API GameObjectComponentBase : public Object
 	{
-	/*********************************************************************************/
-	K15_DECLARE_RTTI;
-	/*********************************************************************************/
+		K15_DECLARE_RTTI;
 
 	public:
-		GameObjectComponentBase(){}
-		virtual ~GameObjectComponentBase(){}
+		GameObjectComponentBase(GameObject* p_Parent = 0, const ObjectName& p_Name = ObjectName::BLANK);
+		virtual ~GameObjectComponentBase();
 
 		INLINE GameObject* getGameObject() const;
 
-		virtual void update(const GameTime& p_GameTime){}
+		virtual void update(const GameTime& p_GameTime) = 0;
 
 	protected:
 		GameObject* m_GameObject;

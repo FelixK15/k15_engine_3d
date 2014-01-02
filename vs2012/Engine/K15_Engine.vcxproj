@@ -77,7 +77,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>module.def</ModuleDefinitionFile>
-      <AdditionalDependencies>LuaPlus.lib;Enet.lib;TinyThread.lib;TinyXML.lib;Ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>K15_Math.lib;LuaPlus.lib;Enet.lib;TinyThread.lib;TinyXML.lib;Ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -104,6 +104,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\engine\include\K15_AABB.h" />
     <ClInclude Include="..\..\engine\include\K15_AllocatedObject.h" />
     <ClInclude Include="..\..\engine\include\K15_AlphaState.h" />
     <ClInclude Include="..\..\engine\include\K15_Application.h" />
@@ -113,7 +114,9 @@
     <ClInclude Include="..\..\engine\include\K15_ApplicationParameter.h" />
     <ClInclude Include="..\..\engine\include\K15_BaseAllocator.h" />
     <ClInclude Include="..\..\engine\include\K15_BlockAllocator.h" />
+    <ClInclude Include="..\..\engine\include\K15_CameraComponent.h" />
     <ClInclude Include="..\..\engine\include\K15_ColorRGBA.h" />
+    <ClInclude Include="..\..\engine\include\K15_DepthState.h" />
     <ClInclude Include="..\..\engine\include\K15_Directory.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
@@ -133,31 +136,36 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_FrameStatistic.h" />
+    <ClInclude Include="..\..\engine\include\K15_GameObject.h" />
     <ClInclude Include="..\..\engine\include\K15_GameObjectComponentBase.h" />
     <ClInclude Include="..\..\engine\include\K15_GpuBuffer.h" />
     <ClInclude Include="..\..\engine\include\K15_GpuProgram.h" />
+    <ClInclude Include="..\..\engine\include\K15_GpuProgramParameter.h" />
     <ClInclude Include="..\..\engine\include\K15_IndexBuffer.h" />
     <ClInclude Include="..\..\engine\include\K15_IniFileParser.h" />
     <ClInclude Include="..\..\engine\include\K15_InputManager.h" />
     <ClInclude Include="..\..\engine\include\K15_InputTriggerBase.h" />
     <ClInclude Include="..\..\engine\include\K15_JobBase.h" />
     <ClInclude Include="..\..\engine\include\K15_Keyboard.h" />
+    <ClInclude Include="..\..\engine\include\K15_Light.h" />
     <ClInclude Include="..\..\engine\include\K15_LogBase.h" />
     <ClInclude Include="..\..\engine\include\K15_LogManager.h" />
     <ClInclude Include="..\..\engine\include\K15_ManagerBase.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_Material.h" />
+    <ClInclude Include="..\..\engine\include\K15_MatrixUtil.h" />
     <ClInclude Include="..\..\engine\include\K15_MemberFunctor.h" />
     <ClInclude Include="..\..\engine\include\K15_MemoryBlock.h" />
     <ClInclude Include="..\..\engine\include\K15_MemoryHeader.h" />
     <ClInclude Include="..\..\engine\include\K15_MemoryPools.h" />
     <ClInclude Include="..\..\engine\include\K15_MemoryProfiler.h" />
     <ClInclude Include="..\..\engine\include\K15_MemoryProfilingTask.h" />
+    <ClInclude Include="..\..\engine\include\K15_Mesh.h" />
     <ClInclude Include="..\..\engine\include\K15_Mouse.h" />
     <ClInclude Include="..\..\engine\include\K15_NetworkManager.h" />
     <ClInclude Include="..\..\engine\include\K15_Node.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_NTreeNode.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -180,6 +188,7 @@
     <ClInclude Include="..\..\engine\include\K15_RendererBase.h" />
     <ClInclude Include="..\..\engine\include\K15_RenderOperation.h" />
     <ClInclude Include="..\..\engine\include\K15_RenderProcessBase.h" />
+    <ClInclude Include="..\..\engine\include\K15_RenderQueue.h" />
     <ClInclude Include="..\..\engine\include\K15_RenderTask.h" />
     <ClInclude Include="..\..\engine\include\K15_RenderWindowBase.h" />
     <ClInclude Include="..\..\engine\include\K15_ResourceData.h" />
@@ -203,10 +212,12 @@
     <ClInclude Include="..\..\engine\include\win32\K15_DynamicLibrary_Win32.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_RenderWindow_Win32.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_VisualStudioLog_Win32.h" />
-    <ClInclude Include="..\..\engine\inline\K15_GpuProgramParameter.h" />
+    <None Include="..\..\engine\include\K15_AABB.inl" />
+    <None Include="..\..\engine\include\K15_AlphaState.inl" />
     <None Include="..\..\engine\include\K15_ByteConversion.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
+    <None Include="..\..\engine\include\K15_CameraComponent.inl" />
     <None Include="..\..\engine\include\K15_ColorRGBA.inl" />
     <None Include="..\..\engine\include\K15_Conversion.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -253,8 +264,11 @@
     <ClInclude Include="..\..\engine\include\K15_TaskManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\engine\src\K15_AABB.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_AlphaState.cpp" />
     <ClCompile Include="..\..\engine\src\K15_BlockAllocator.cpp" />
     <ClCompile Include="..\..\engine\src\K15_ColorRGBA.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_DepthState.cpp" />
     <ClCompile Include="..\..\engine\src\K15_DynamicLibraryBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_EventTask.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Font.cpp">
@@ -263,9 +277,11 @@
     <ClCompile Include="..\..\engine\src\K15_FontManager.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_GameObject.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GameObjectComponentBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GpuBuffer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GpuProgram.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_GpuProgramParameter.cpp" />
     <ClCompile Include="..\..\engine\src\K15_IndexBuffer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_IniFileParser.cpp" />
     <ClCompile Include="..\..\engine\src\K15_InputManager.cpp" />
@@ -273,6 +289,7 @@
     <ClCompile Include="..\..\engine\src\K15_Keyboard.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Keyboard_Win32.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Material.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_MatrixUtil.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MemoryPools.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MemoryProfiler.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MemoryProfilingTask.cpp" />
@@ -280,7 +297,7 @@
     <ClCompile Include="..\..\engine\src\K15_Mouse_Win32.cpp" />
     <ClCompile Include="..\..\engine\src\K15_NetworkManager.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Node.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_PhysicsTask.cpp" />
     <ClCompile Include="..\..\engine\src\K15_PrecompiledHeader.cpp">
@@ -310,6 +327,7 @@
     <None Include="..\..\engine\include\K15_ByteConversion.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
+    <None Include="..\..\engine\include\K15_DepthState.inl" />
     <None Include="..\..\engine\include\K15_DynamicArray.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
@@ -322,15 +340,17 @@
     <None Include="..\..\engine\include\K15_File.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
+    <None Include="..\..\engine\include\K15_GameObject.inl" />
     <None Include="..\..\engine\include\K15_GameObjectComponentBase.inl" />
     <None Include="..\..\engine\include\K15_GpuBuffer.inl" />
     <None Include="..\..\engine\include\K15_GpuProgram.inl" />
+    <None Include="..\..\engine\include\K15_GpuProgramParameter.inl" />
     <None Include="..\..\engine\include\K15_IndexBuffer.inl" />
     <None Include="..\..\engine\include\K15_IniFileParser.inl" />
     <None Include="..\..\engine\include\K15_JobBase.inl" />
     <None Include="..\..\engine\include\K15_Material.inl" />
     <None Include="..\..\engine\include\K15_Node.inl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </None>
     <None Include="..\..\engine\include\K15_PoolAllocator.inl" />
     <None Include="..\..\engine\include\K15_GameTime.inl">
@@ -414,6 +434,7 @@
     <None Include="..\..\engine\include\K15_Texture.inl" />
     <None Include="..\..\engine\include\K15_TextureSampler.inl" />
     <None Include="..\..\engine\include\K15_VertexBuffer.inl" />
+    <None Include="..\..\engine\src\K15_CameraComponent.cpp" />
     <None Include="module.def" />
   </ItemGroup>
   <ItemGroup>

@@ -109,6 +109,9 @@ namespace K15_Engine { namespace Core {
 
 		_LogNormal("Destroying Material memory pool...");
 		K15_DELETE m_MaterialAllocator;
+
+    _LogNormal("Creating RenderOperation memory pool...");
+    K15_DELETE m_RopAllocator;
 	}
   /*********************************************************************************/
 }} // end of K15_Engine::Core namespace

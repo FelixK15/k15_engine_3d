@@ -32,27 +32,34 @@
 
 #include "K15_ProfilingNode.h"
 
-#define K15_PROFILE(profile_name) K15_Engine::Core::ProfilingNode n_##__COUNTER__(_N(profile_name));
+#define K15_PROFILE(profile_name) K15_Engine::Core::AutoProfilingNode p_##__COUNTER__(K15_NEW ProfilingNode(profile_name));
+#define K15_PROFILE_BLOCK(profile_name,code) { K15_PROFILE(profile_name); code;}
 
 namespace K15_Engine { namespace Core { 
 
- 	class ProfilingManager : public Singleton<ProfilingManager>, public ApplicationAllocatedObject							
+ 	class ProfilingManager : public Singleton<ProfilingManager>, public ApplicationAllocatedObject, public PoolAllocator<K15_SIZE_PROFILING_NODE>				
 	{
 	public:
 		/*********************************************************************************/
-		typedef DynamicArray(ProfilingNode*) ProflingNodeList;
+		typedef List(ProfilingNode*) ProfilingNodeList;
 		/*********************************************************************************/
 	public:
 		ProfilingManager();
 		~ProfilingManager();
 
-		void addNode(ProfilingNode* p_Node);
-		void removeNode(ProfilingNode* p_Node);
+		void startProfiling(ProfilingNode* p_Node);
+		void stopProfiling(ProfilingNode* p_Node);
+    void eraseProfilingForFrame(uint32 p_FrameIndex);
 		void clear();
 
 		INLINE ProfilingNode* getRootNode();
+    INLINE ProfilingNode* getCurrentNode();
+
+  private:
+    void _eraseNode_r(ProfilingNode* p_Node);
+
 	private:
-		ProflingNodeList m_Nodes;
+		ProfilingNodeList m_Nodes;
 		ProfilingNode* m_Root;
 		ProfilingNode* m_LastNode;
 	};// end of ProfilingManager class

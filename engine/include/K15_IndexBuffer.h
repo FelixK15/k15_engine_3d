@@ -54,6 +54,8 @@ namespace K15_Engine { namespace Rendering {
 		INLINE Enum getIndexType() const;
 		INLINE void setIndexType(Enum p_IndexType);
 
+    INLINE uint32 getIndexCount() const;
+
 	protected:
 		Enum m_IndexType;
 	};// end of IndexBuffer class declaration

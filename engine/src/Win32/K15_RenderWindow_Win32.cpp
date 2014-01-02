@@ -191,8 +191,8 @@ namespace K15_Engine { namespace Core {
 		{
 			if(p_wParam == SIZE_MAXIMIZED || p_wParam == SIZE_MINIMIZED || p_wParam == SIZE_RESTORED)
 			{
-        RECT clientRect;
-        GetClientRect(p_HandleWindow,&clientRect);
+				RECT clientRect;
+				GetClientRect(p_HandleWindow,&clientRect);
 
 				Resolution res;
 				res.width = clientRect.right - clientRect.left;
@@ -200,10 +200,10 @@ namespace K15_Engine { namespace Core {
 
 				if(res.width != 0 && res.height != 0)
 				{
-          if(g_Application->getRenderTask()->getRenderer())
-          {
-            g_Application->getRenderTask()->getRenderer()->onResolutionChanged(res);
-          }
+					if(g_Application->getRenderTask()->getRenderer())
+					{
+						g_Application->getRenderTask()->getRenderer()->onResolutionChanged(res);
+					}
 				}
 			}
 		}

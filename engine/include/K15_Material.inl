@@ -118,32 +118,22 @@ void MaterialPass::setCullingMode(Enum p_CullingMode)
 	m_CullingMode = p_CullingMode;
 }
 /*********************************************************************************/
-Enum MaterialPass::getDepthTestFunction() const
+const DepthState& MaterialPass::getDepthState() const
 {
-	return m_DepthTestFunction;
+	return m_DepthState;
 }
 /*********************************************************************************/
-void MaterialPass::setDepthTestFunction(Enum p_DepthTestFunction)
+void MaterialPass::setDepthState(const DepthState& p_DepthState)
 {
-	m_DepthTestFunction = p_DepthTestFunction;
+	m_DepthState = p_DepthState;
 }
 /*********************************************************************************/
-bool MaterialPass::isDepthTestEnabled() const
-{
-	return m_DepthTestEnabled;
-}
-/*********************************************************************************/
-void MaterialPass::setDepthTestEnabled(bool p_DepthTestEnabled)
-{
-	m_DepthTestEnabled = p_DepthTestEnabled;
-}
-/*********************************************************************************/
-AlphaState* MaterialPass::getAlphaState() const
+const AlphaState& MaterialPass::getAlphaState() const
 {
 	return m_AlphaState;
 }
 /*********************************************************************************/
-void MaterialPass::setAlphaState(AlphaState* p_AlphaState)
+void MaterialPass::setAlphaState(const AlphaState& p_AlphaState)
 {
 	m_AlphaState = p_AlphaState;
 }

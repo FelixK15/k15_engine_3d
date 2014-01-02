@@ -73,6 +73,11 @@ namespace K15_Engine { namespace Rendering {
 			}
 		}
 
+		if(!m_Impl->reflect())
+		{
+			_LogError("Could not reflect shader %s.",m_AssetName.c_str());
+		}
+
 		return m_Compiled;
 	}
 	/*********************************************************************************/
@@ -90,16 +95,64 @@ namespace K15_Engine { namespace Rendering {
 
 			memcpy(shaderCode,p_Data.data,p_Data.size);
 
-			m_ShaderCode = shaderCode;
-			m_Compiled = false;
-			delete m_BinaryCode.data;
-			m_BinaryCode.data = 0;
-			m_BinaryCode.size = 0;
+			m_ShaderCode = _resolveIncludes(shaderCode);
 
+			m_Compiled = false;
+// 			K15_DELETE m_BinaryCode.data;
+// 			m_BinaryCode.data = 0;
+// 			m_BinaryCode.size = 0;
+      
 			return compile();
 		}
 		
 		return false;
 	}
-	/*********************************************************************************/
+  /*********************************************************************************/
+  const String& GpuProgram::_resolveIncludes(const char* p_ShaderCode)
+  {
+    static String shaderCode;
+    static String includeLine;
+    static String includeFile;
+    static String foreignShaderCode;
+    FileStream stream;
+
+    shaderCode = p_ShaderCode;
+
+    String::size_type pos = 0;
+    String::size_type eol = 0;
+
+    while((pos = shaderCode.find("#include"),pos) != String::npos)
+    {
+      eol = shaderCode.find_first_of('\n',pos);
+      includeLine = StringUtil::removeWhitespaces(shaderCode.substr(pos,eol - pos));
+      includeFile = includeLine.substr(includeLine.find_first_of('"'),includeLine.find_last_of('"'));
+
+      if(includeFile.empty())
+      {
+        _LogError("Invalid line in GpuProgram. Line: %s, Program: %s",includeLine.c_str(),m_AssetName.c_str());
+        continue;
+      }
+
+      stream.open(includeFile);
+
+      if(!stream.is_open())
+      {
+        _LogError("Could not open GpuProgram include \"%s\".",includeFile);
+        continue;
+      }
+      
+      stream.seekg(0, FileStream::end); //move cursor to end
+      foreignShaderCode.resize((size_t)stream.tellg()); //stream.tellg = where are we?
+      stream.seekg(0, FileStream::beg); //move cursor to begin
+      stream.read(&foreignShaderCode[0], foreignShaderCode.size());
+      stream.close();
+
+      shaderCode.replace(pos,shaderCode.size(),foreignShaderCode);
+      
+      pos = 0;
+    }
+
+    return shaderCode;
+  }
+  /*********************************************************************************/
 }}// end of K15_Engine::Core namespace

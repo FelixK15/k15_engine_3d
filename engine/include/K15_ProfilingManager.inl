@@ -23,3 +23,8 @@ ProfilingNode* ProfilingManager::getRootNode()
 	return m_Root;
 }
 /*********************************************************************************/
+ProfilingNode* ProfilingManager::getCurrentNode()
+{
+  return m_LastNode;
+}
+/*********************************************************************************/

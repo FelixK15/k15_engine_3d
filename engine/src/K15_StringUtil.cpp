@@ -188,5 +188,21 @@ namespace K15_Engine { namespace Core {
 		string.erase(std::remove_if(string.begin(),string.end(),isspace),string.end());
 		return string;
 	}
-	/*********************************************************************************/
+  /*********************************************************************************/
+  String StringUtil::toUpperString(const String& p_String)
+  {
+    static String string;
+    string = p_String;
+    std::transform(string.begin(),string.end(),string.begin(),::toupper);
+    return string;
+  }
+  /*********************************************************************************/
+  String StringUtil::toLowerString(const String& p_String)
+  {
+    static String string;
+    string = p_String;
+    std::transform(string.begin(),string.end(),string.begin(),::tolower);
+    return string;
+  }
+  /*********************************************************************************/
 }}//end of K15_Engine::Core namespace

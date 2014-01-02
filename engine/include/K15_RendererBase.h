@@ -34,11 +34,17 @@
 #include "K15_GpuProgram.h"
 #include "K15_GpuBuffer.h"
 
+#include "K15_AlphaState.h"
+#include "K15_DepthState.h"
+
 namespace K15_Engine { namespace Rendering { 
 	
 	class K15_CORE_API RendererBase : public RenderWindowBase::Listener
 	{
 	public:
+		/*********************************************************************************/
+		typedef FixedArray(GpuProgram*,GpuProgram::PS_COUNT) GpuProgramArray;
+		typedef FixedArray(GpuBuffer*,GpuBuffer::BT_COUNT) GpuBufferArray;
 		/*********************************************************************************/
 		enum eCullingMode
 		{
@@ -48,17 +54,17 @@ namespace K15_Engine { namespace Rendering {
 			CM_COUNT
 		};// CullingMode
 		/*********************************************************************************/
-		enum eDepthFunction
+		enum eFunctionType
 		{
-			DF_NONE = 0,		//<! Pixels are always written.
- 			DF_LESS,
-			DF_LESS_EQUAL,
-			DF_EQUAL,
-			DF_GREATER_EQUAL,
-			DF_GREATER,
+			FT_NONE = 0,
+ 			FT_LESS,
+			FT_LESS_EQUAL,
+			FT_EQUAL,
+			FT_GREATER_EQUAL,
+			FT_GREATER,
 
-			DF_COUNT
-		}; //DepthFunction
+			FT_COUNT
+		}; //eFunctionType
 		/*********************************************************************************/
 		enum ePixelFormat
 		{
@@ -125,20 +131,14 @@ namespace K15_Engine { namespace Rendering {
 		void setRenderTarget(RenderTarget* p_RenderTarget);
 		INLINE RenderTarget* getRenderTarget() const;
 
-		void setActiveCamera(Camera* p_Camera);
-		INLINE Camera* getActiveCamera() const;
+		void setActiveCamera(CameraComponent* p_Camera);
+		INLINE CameraComponent* getActiveCamera() const;
 
 		void setCullingMode(Enum p_CullingMode);
 		INLINE Enum getCullingMode() const;
 
-		void setDepthTestFunction(Enum p_DepthTestFunction);
-		INLINE Enum getDepthTestMode() const;
-
 		void setTopology(Enum p_Topology);
 		INLINE Enum getTopology() const;
-
-		void setDepthTestEnabled(bool p_Enabled);
-		INLINE bool getDepthTestEnabled() const;
 
 		void setBackFaceCullingEnabled(bool p_Enabled);
 		INLINE bool getBackFaceCullingEnabled() const;
@@ -158,6 +158,12 @@ namespace K15_Engine { namespace Rendering {
 
 		INLINE void setLightningEnabled(bool p_Enabled);
 		INLINE bool getLightningEnabled() const;
+
+		void setAlphaState(const AlphaState& p_AlphaState);
+		INLINE const AlphaState& getAlphaState() const;
+
+    void setDepthState(const DepthState& p_DepthState);
+    INLINE const DepthState& getDepthState() const;
 
 		void bindGpuProgram(GpuProgram* p_GpuProgram,Enum p_Stage);
 		INLINE GpuProgram* getBoundGpuProgram(Enum p_GpuProgramType) const;
@@ -183,13 +189,13 @@ namespace K15_Engine { namespace Rendering {
 		virtual void onResolutionChanged(const Resolution& p_Resolution){};
 
 	protected:
+		virtual void _setAlphaState(const AlphaState& p_AlphaState){}
+    virtual void _setDepthState(const DepthState& p_DepthState){}
 		virtual void _setRenderWindow(RenderWindowBase* p_RenderWindow){}
 		virtual void _setRenderTarget(RenderTarget* p_RenderTarget){}
-		virtual void _setActiveCamera(Camera* p_Camera){}
+		virtual void _setActiveCamera(CameraComponent* p_Camera){}
 		virtual void _setCullingMode(Enum p_CullingMode){}
-		virtual void _setDepthTestFunction(Enum p_DepthTestFunction){}
 		virtual void _setTopology(Enum p_Topology){}
-		virtual void _setDepthTestEnabled(bool p_Enabled){}
 		virtual void _setBackFaceCullingEnabled(bool p_Enabled){}
 		virtual void _setFrameBufferPixelFormat(Enum p_PixelFormat){}
 		virtual void _setDepthBufferPixelFormat(Enum p_DepthFormat){}
@@ -200,24 +206,24 @@ namespace K15_Engine { namespace Rendering {
 		virtual void _draw(RenderOperation* p_Rop){}
 
 	protected:
-		ColorRGBA m_ClearColor;
-		String m_LastError;
 		RenderWindowBase* m_RenderWindow;
-		Camera* m_ActiveCamera;
+		AlphaState m_AlphaState;
+    DepthState m_DepthState;
+		CameraComponent* m_ActiveCamera;
 		RenderTarget* m_RenderTarget;
 		RenderTarget* m_DefaultRenderTarget;
+		Material* m_Material;
+		GpuProgramArray m_GpuPrograms;
+		GpuBufferArray m_GpuBuffers;
+		ColorRGBA m_ClearColor;
+		String m_LastError;
 		Enum m_CullingMode;
-		Enum m_DepthTestFunction;
 		Enum m_Topology;
 		Enum m_FrameBufferFormat;
 		Enum m_DepthBufferFormat;
 		Enum m_StencilBufferFormat;
-		GpuProgram* m_GpuPrograms[GpuProgram::PS_COUNT];
-		GpuBuffer* m_GpuBuffers[GpuBuffer::BT_COUNT];
-		Material* m_Material;
 		bool m_LightningEnabled;
 		bool m_BackFaceCullingEnabled;
-		bool m_DepthTestEnabled;
 	};// end of RendererBase class definition
 #include "K15_RendererBase.inl"
 }}//end of K15_Engine::Rendering class

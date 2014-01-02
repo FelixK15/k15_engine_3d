@@ -32,6 +32,7 @@ namespace K15_Engine { namespace Core {
 	struct FrameStatistic
 	{
 		double Time;
+    ProfilingNode* ProfilingNode;
 		uint32 ObjectsRendered;
 		uint32 FrameNumber;
     uint32 MemoryAllocated;

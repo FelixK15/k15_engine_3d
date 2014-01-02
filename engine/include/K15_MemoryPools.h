@@ -33,16 +33,16 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	class K15_CORE_API AlphaStateAllocator : public Singleton<AlphaStateAllocator>, public PoolAllocator<K15_SIZE_ALPHA_STATE>, public MemoryPoolsAllocatedObject
-	{
-	public:
-		/*********************************************************************************/
-		static const uint32 AlphaStateCount;
-		/*********************************************************************************/
-		AlphaStateAllocator();
-		virtual ~AlphaStateAllocator();
-	}; //end of RenderOperationAllocator class declaration
-	/*********************************************************************************/
+// 	class K15_CORE_API AlphaStateAllocator : public Singleton<AlphaStateAllocator>, public PoolAllocator<200>, public MemoryPoolsAllocatedObject
+// 	{
+// 	public:
+// 		/*********************************************************************************/
+// 		static const uint32 AlphaStateCount;
+// 		/*********************************************************************************/
+// 		AlphaStateAllocator();
+// 		virtual ~AlphaStateAllocator();
+// 	}; //end of RenderOperationAllocator class declaration
+// 	/*********************************************************************************/
 	class K15_CORE_API RenderOperationAllocator : public Singleton<RenderOperationAllocator>, public PoolAllocator<K15_SIZE_RENDER_OPERATION>, public MemoryPoolsAllocatedObject
 	{
 	public:

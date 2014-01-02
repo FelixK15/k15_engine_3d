@@ -74,8 +74,6 @@ namespace K15_Engine { namespace Rendering {
 		  m_CullingMode(CM_CCW),
 		  m_DefaultRenderTarget(0),
 		  m_DepthBufferFormat(DBF_COMPONENT_24_I),
-		  m_DepthTestFunction(DF_GREATER_EQUAL),
-		  m_DepthTestEnabled(true),
 		  m_FrameBufferFormat(PF_RGB_8_I),
 		  m_LightningEnabled(true),
 		  m_RenderTarget(0),
@@ -113,7 +111,7 @@ namespace K15_Engine { namespace Rendering {
 		}
 	}
 	/*********************************************************************************/
-	void RendererBase::setActiveCamera(Camera* p_Camera)
+	void RendererBase::setActiveCamera(CameraComponent* p_Camera)
 	{
 		K15_ASSERT(p_Camera,"Camera is NULL.");
 
@@ -126,7 +124,7 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	void RendererBase::setCullingMode(Enum p_CullingMode)
 	{
-		K15_ASSERT(p_CullingMode > 0 && p_CullingMode < CM_COUNT,StringUtil::format("Invalid culling mode \"%u\"",p_CullingMode));
+		K15_ASSERT(p_CullingMode < CM_COUNT,StringUtil::format("Invalid culling mode \"%u\"",p_CullingMode));
 
 		if(m_CullingMode != p_CullingMode)
 		{
@@ -135,34 +133,14 @@ namespace K15_Engine { namespace Rendering {
 		}
 	}
 	/*********************************************************************************/
-	void RendererBase::setDepthTestFunction(Enum p_DepthTestFunction)
-	{
-		K15_ASSERT(p_DepthTestFunction > 0 && p_DepthTestFunction < DF_COUNT,StringUtil::format("Invalid topology \"%u\"",p_DepthTestFunction));
-
-		if(m_DepthTestFunction != p_DepthTestFunction)
-		{
-			m_DepthTestFunction = p_DepthTestFunction;
-			_setDepthTestFunction(m_DepthTestFunction);
-		}
-	}
-	/*********************************************************************************/
 	void RendererBase::setTopology(Enum p_Topology)
 	{
-		K15_ASSERT(p_Topology > 0 && p_Topology < RenderOperation::T_COUNT,StringUtil::format("Invalid topology \"%u\"",p_Topology));
+		K15_ASSERT(p_Topology < RenderOperation::T_COUNT,StringUtil::format("Invalid topology \"%u\"",p_Topology));
 
 		if(p_Topology != m_Topology)
 		{
 			m_Topology = p_Topology;
 			_setTopology(m_Topology);
-		}
-	}
-	/*********************************************************************************/
-	void RendererBase::setDepthTestEnabled(bool p_Enabled)
-	{
-		if(p_Enabled != m_DepthTestEnabled)
-		{
-			m_DepthTestEnabled = p_Enabled;
-			_setDepthTestEnabled(p_Enabled);
 		}
 	}
 	/*********************************************************************************/
@@ -177,7 +155,7 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	void RendererBase::setFrameBufferPixelFormat(Enum p_PixelFormat)
 	{
-		K15_ASSERT(p_PixelFormat > 0 && p_PixelFormat < PF_COUNT,StringUtil::format("Invalid frame buffer format \"%u\"",p_PixelFormat));
+		K15_ASSERT(p_PixelFormat < PF_COUNT,StringUtil::format("Invalid frame buffer format \"%u\"",p_PixelFormat));
 
 		if(m_FrameBufferFormat != p_PixelFormat)
 		{
@@ -188,7 +166,7 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	void RendererBase::setDepthBufferFormat(Enum p_DepthFormat)
 	{
-		K15_ASSERT(p_DepthFormat > 0 && p_DepthFormat < DBF_COUNT,StringUtil::format("Invalid depth buffer format \"%u\"",p_DepthFormat));
+		K15_ASSERT(p_DepthFormat < DBF_COUNT,StringUtil::format("Invalid depth buffer format \"%u\"",p_DepthFormat));
 
 		if(m_DepthBufferFormat != p_DepthFormat)
 		{
@@ -199,7 +177,7 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	void RendererBase::setStencilBufferFormat(Enum p_StencilFormat)
 	{
-		K15_ASSERT(p_StencilFormat > 0 && p_StencilFormat < SBF_COUNT,StringUtil::format("Invalid stencil buffer format \"%u\"",p_StencilFormat));
+		K15_ASSERT(p_StencilFormat < SBF_COUNT,StringUtil::format("Invalid stencil buffer format \"%u\"",p_StencilFormat));
 
 		if(m_StencilBufferFormat != p_StencilFormat)
 		{
@@ -224,7 +202,7 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	void RendererBase::bindGpuProgram(GpuProgram* p_GpuProgram,Enum p_Stage)
 	{
-		K15_ASSERT(p_Stage > 0 && p_Stage < GpuProgram::PS_COUNT,StringUtil::format("Invalid GpuProgram stage. %u",p_Stage));
+		K15_ASSERT(p_Stage < GpuProgram::PS_COUNT,StringUtil::format("Invalid GpuProgram stage. %u",p_Stage));
 
 		if(m_GpuPrograms[p_Stage] != p_GpuProgram && p_GpuProgram)
 		{
@@ -235,7 +213,7 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	void RendererBase::bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType)
 	{
-		K15_ASSERT(p_BufferType > 0 && p_BufferType < GpuBuffer::BT_COUNT,StringUtil::format("Invalid GpuBuffer type. %u",p_BufferType));
+		K15_ASSERT(p_BufferType < GpuBuffer::BT_COUNT,StringUtil::format("Invalid GpuBuffer type. %u",p_BufferType));
 
 		if(m_GpuBuffers[p_BufferType] != p_Buffer && p_Buffer)
 		{
@@ -251,7 +229,7 @@ namespace K15_Engine { namespace Rendering {
 		bindBuffer(p_Rop->indexBuffer,GpuBuffer::BT_INDEX_BUFFER);
 		bindMaterial(p_Rop->material);
 		setTopology(p_Rop->topology);
-		
+
 		MaterialPass* pass = 0;
 		for(uint32 i = 0;i < m_Material->getAmountPasses();++i)
 		{
@@ -259,7 +237,8 @@ namespace K15_Engine { namespace Rendering {
 			bindGpuProgram(pass->getProgram(GpuProgram::PS_VERTEX),GpuProgram::PS_VERTEX);
 			bindGpuProgram(pass->getProgram(GpuProgram::PS_FRAGMENT),GpuProgram::PS_FRAGMENT);
 			setCullingMode(pass->getCullingMode());
-			setDepthTestFunction(pass->getDepthTestFunction());
+      setAlphaState(pass->getAlphaState());
+			setDepthState(pass->getDepthState());
 			setLightningEnabled(pass->isLightningEnabled());
 			
 			_draw(p_Rop);
@@ -290,4 +269,22 @@ namespace K15_Engine { namespace Rendering {
 		}
 	}
 	/*********************************************************************************/
+	void RendererBase::setAlphaState(const AlphaState& p_AlphaState)
+	{
+		if(p_AlphaState != m_AlphaState)
+		{
+      m_AlphaState = p_AlphaState;
+			_setAlphaState(p_AlphaState);
+		}
+	}
+	/*********************************************************************************/
+  void RendererBase::setDepthState(const DepthState& p_DepthState)
+  {
+    if(p_DepthState != m_DepthState)
+    {
+      m_DepthState = p_DepthState;
+      _setDepthState(p_DepthState);
+    }
+  }
+  /*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace

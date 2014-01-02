@@ -37,8 +37,11 @@
 # include <nmmintrin.h> //SSE4.2
 #endif //K15_SIMD_SUPPORT
 
-const float _Pi = 4.0f*atan(1.0f);
-const float _HalfPi = _Pi * 0.5f;
-const float _TwoPi = _Pi + _Pi;
-
+namespace K15_Engine { namespace Math {
+  const float Pi = 4.0f*atan(1.0f);
+  const float HalfPi = Pi * 0.5f;
+  const float TwoPi = Pi + Pi;
+  const float DegreeToRadian = Pi / 180.f;
+  const float RadianToDegree = 180.f / Pi;
+}} // end of K15_Engine::Math namespace
 #endif //_K15Engine_Math_Prerequisites_h_

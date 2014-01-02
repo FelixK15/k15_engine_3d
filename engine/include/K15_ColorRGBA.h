@@ -62,11 +62,11 @@ namespace K15_Engine { namespace Rendering {
 
 		void clamp();
 
-		bool operator==(const ColorRGBA& p_Color);
-		bool operator!=(const ColorRGBA& p_Color);
+		bool operator==(const ColorRGBA& p_Color) const;
+		bool operator!=(const ColorRGBA& p_Color) const;
 
-		bool operator<(const ColorRGBA& p_Color);
-		bool operator>(const ColorRGBA& p_Color);
+		bool operator<(const ColorRGBA& p_Color) const;
+		bool operator>(const ColorRGBA& p_Color) const;
 
 		const ColorRGBA& operator=(const ColorRGBA& p_Color);
 

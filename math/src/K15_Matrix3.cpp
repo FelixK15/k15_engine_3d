@@ -43,7 +43,7 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	Matrix3::Matrix3(float p_Values[9])
 	{
-		memcpy(m_MatrixArray,p_Values,288);
+		memcpy(m_MatrixArray,p_Values,sizeof(p_Values));
 	}
 	/*********************************************************************************/
 	Matrix3::Matrix3(float _1_1,float _1_2,float _1_3,
@@ -53,6 +53,11 @@ namespace K15_Engine { namespace Math {
 		this->_1_1 = _1_1; this->_1_2 = _1_2; this->_1_3 = _1_3;
 		this->_2_1 = _2_1; this->_2_2 = _2_2; this->_2_3 = _2_3;
 		this->_3_1 = _3_1; this->_3_2 = _3_2; this->_3_3 = _3_3;
+	}
+	/*********************************************************************************/
+	Matrix3::Matrix3(const Matrix3& p_Other)
+	{
+		memcpy(m_MatrixArray,p_Other.m_MatrixArray,sizeof(m_MatrixArray));
 	}
 	/*********************************************************************************/
 	Matrix3::~Matrix3()

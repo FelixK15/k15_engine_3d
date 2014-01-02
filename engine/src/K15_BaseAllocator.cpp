@@ -27,6 +27,7 @@
 #endif //K15_DEBUG
 
 namespace K15_Engine { namespace Core {
+
 	/*********************************************************************************/
 	BaseAllocator::BaseAllocator(size_t p_Size,const ObjectName& p_Name)
 	: m_Allocator(0),
@@ -104,7 +105,7 @@ namespace K15_Engine { namespace Core {
 		K15_ASSERT((ptrdiff_t)p_Pointer >= (ptrdiff_t)m_Memory && (ptrdiff_t)p_Pointer < (ptrdiff_t)m_MemoryEndAddress,
 			StringUtil::format("Pointer %p is not part of Allocator:%s",m_Name.c_str()));
 
-    K15_ASSERT((m_UsedMemory - p_Size) > 0,"Trying to release more memory than there is available.");
+    K15_ASSERT((m_UsedMemory - p_Size) >= 0,StringUtil::format("Trying to release more memory than there is available. Allocator:%s",m_Name.c_str()));
 
 		dealloc(p_Pointer, p_Size);
 
@@ -121,7 +122,7 @@ namespace K15_Engine { namespace Core {
 		byte* memory = (byte*)alloc(p_Size);
 		memset(memory,0,p_Size);
 
-// 	 	MemoryHeader* header = (MemoryHeader*)memory;
+// 	 	MemoryHeader* header = (MemoryHeader*)&m_MemoryHeaderPool[m_MemoryHeaderCounter++];
 // 	 	header->File = p_File;
 // 	 	header->Function = p_Function;
 // 	 	header->IsArray = p_Array;
@@ -146,7 +147,7 @@ namespace K15_Engine { namespace Core {
     K15_ASSERT((ptrdiff_t)p_Pointer >= (ptrdiff_t)m_Memory && (ptrdiff_t)p_Pointer < (ptrdiff_t)m_MemoryEndAddress,
       StringUtil::format("Pointer %p is not part of Allocator:%s",m_Name.c_str()));
 
-    K15_ASSERT((m_UsedMemory - p_Size) >= 0,"Trying to release more memory than there is available.");
+    K15_ASSERT((m_UsedMemory - p_Size) >= 0,StringUtil::format("Trying to release more memory than there is available. Allocator:%s",m_Name.c_str()));
 
 		dealloc(p_Pointer, p_Size);
 
@@ -159,6 +160,11 @@ namespace K15_Engine { namespace Core {
 	const ObjectName& BaseAllocator::getName() const
 	{
 		return m_Name;
+	}
+	/*********************************************************************************/
+	void BaseAllocator::clear()
+	{
+		m_UsedMemory = 0;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Core

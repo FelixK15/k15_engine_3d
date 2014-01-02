@@ -22,6 +22,8 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
+	K15_IMPLEMENT_RTTI_BASE(Core,Node,Core::Object);
+	/*********************************************************************************/
 	Node::Node(const ObjectName& p_Name,Node* p_Parent)
 		: Object(p_Name),
 		  m_NeedUpdate(false),

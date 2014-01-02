@@ -26,26 +26,19 @@
 #endif //K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
 
 #include "K15_RendererBase.h"
+#include "K15_RenderOperation.h"
 
 namespace K15_Engine { namespace Rendering { namespace OGL {
 	class RendererOGL : public RendererBase
 	{
 	public:
 		/*********************************************************************************/
-		static const GLenum GLFunctionTestConverter[DT_COUNT];
+		static const GLenum GLFunctionTestConverter[RendererBase::FT_COUNT];
+    static const GLenum GLTopologyConverter[RenderOperation::T_COUNT];
 		/*********************************************************************************/
 	public:
 		RendererOGL();
 		virtual ~RendererOGL();
-
-		//virtual void setRenderTarget(RenderTarget* p_RenderTarget) OVERRIDE;
-		//virtual void setActiveCamera(Camera* p_Camera);
-		virtual void setCullingMode(Enum p_CullingMode) OVERRIDE;
-		virtual void setDepthTestFunction(Enum p_DepthTest) OVERRIDE;
-		virtual void bindGpuProgram(GpuProgram* p_GpuProgram,Enum p_Stage) OVERRIDE;
-		virtual void setClearColor(float p_Red, float p_Green, float p_Blue) OVERRIDE;
-		virtual void setDepthTestEnabled(bool p_Enabled) OVERRIDE;
-		virtual void setBackFaceCullingEnabled(bool p_Enabled) OVERRIDE;
 
 		virtual GpuBufferImplBase* createGpuBufferImpl() OVERRIDE;
 		virtual TextureImplBase* createTextureImpl() OVERRIDE;
@@ -64,6 +57,22 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 	protected:
 		bool createDummyContext(HWND*,HDC*);
+
+    virtual void _setAlphaState(const AlphaState& p_AlphaState) OVERRIDE;
+    virtual void _setDepthState(const DepthState& p_DepthState) OVERRIDE;
+    virtual void _setRenderWindow(RenderWindowBase* p_RenderWindow) OVERRIDE;
+    virtual void _setRenderTarget(RenderTarget* p_RenderTarget) OVERRIDE;
+    virtual void _setActiveCamera(CameraComponent* p_Camera) OVERRIDE;
+    virtual void _setCullingMode(Enum p_CullingMode) OVERRIDE;
+    virtual void _setTopology(Enum p_Topology) OVERRIDE;
+    virtual void _setBackFaceCullingEnabled(bool p_Enabled) OVERRIDE;
+    virtual void _setFrameBufferPixelFormat(Enum p_PixelFormat) OVERRIDE;
+    virtual void _setDepthBufferPixelFormat(Enum p_DepthFormat) OVERRIDE;
+    virtual void _setStencilBufferPixelFormat(Enum p_StencilFormat) OVERRIDE;
+    virtual void _setClearColor(const ColorRGBA& p_ClearColor) OVERRIDE;
+    virtual void _bindBuffer(GpuBuffer* p_Buffer) OVERRIDE;
+    virtual void _bindProgram(GpuProgram* p_Program) OVERRIDE;
+    virtual void _draw(RenderOperation* p_Rop) OVERRIDE;
 
 	protected:
 		GLuint m_ProgramPipeline;

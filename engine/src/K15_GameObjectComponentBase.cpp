@@ -22,6 +22,20 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	K15_IMPLEMENT_RTTI(Core,GameObjectComponentBase);
+	K15_IMPLEMENT_RTTI_BASE(Core,GameObjectComponentBase,Core::Object);
+	/*********************************************************************************/
+
+	/*********************************************************************************/
+	GameObjectComponentBase::GameObjectComponentBase(GameObject* p_Parent, const ObjectName& p_Name)
+		: Object(p_Name),
+		m_GameObject(p_Parent)
+	{
+
+	}
+	/*********************************************************************************/
+	GameObjectComponentBase::~GameObjectComponentBase()
+	{
+
+	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace

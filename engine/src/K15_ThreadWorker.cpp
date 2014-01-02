@@ -90,10 +90,10 @@ namespace K15_Engine { namespace Core {
 		{
 			thread = (*m_Threads.begin());
 
-      K15_ASSERT(thread,"NULL thread in ThreadWorker list.");
+			K15_ASSERT(thread,"NULL thread in ThreadWorker list.");
 
 			thread->join();
-      thread->~thread();
+			thread->~thread();
 			K15_DELETE_T(this,thread,sizeof(Thread));
 			m_Threads.pop_front();
 		}
@@ -102,7 +102,7 @@ namespace K15_Engine { namespace Core {
 		{
 			job = (*m_Jobs.begin());
 
-      K15_ASSERT(job,"NULL job in job list.");
+			K15_ASSERT(job,"NULL job in job list.");
 
 			if(job->getAutoDelete())
 			{

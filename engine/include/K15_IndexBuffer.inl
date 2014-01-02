@@ -30,3 +30,19 @@ void IndexBuffer::setIndexType(Enum p_IndexType)
 	m_IndexType = p_IndexType;
 }
 /*********************************************************************************/
+uint32 IndexBuffer::getIndexCount() const
+{
+  uint32 sizeElement = 4;
+
+  if(m_IndexType == IT_UINT8)
+  {
+    sizeElement = 1;
+  }
+  else if(m_IndexType == IT_UINT16)
+  {
+    sizeElement = 2;
+  }
+
+  return m_Size / sizeElement;
+}
+/*********************************************************************************/

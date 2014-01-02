@@ -100,6 +100,7 @@ namespace K15_Engine
 		class ResourceBase;
 		class ResourceFileBase;
 		class EventTask;
+    class Node;
 		struct RawData;
 		class ProfilingNode;
 		class ProfilingManager;
@@ -130,10 +131,11 @@ namespace K15_Engine
 	namespace Rendering
 	{
 		class RenderTarget;
-		class Camera;
+		class CameraComponent;
 		class RendererBase;
 		class GpuProgram;
 		class GpuProgramImplBase;
+		class GpuProgramParameter;
 		class GpuBuffer;
 		class GpuBufferImplBase;
 		class Texture;
@@ -143,10 +145,13 @@ namespace K15_Engine
 		class Material;
 		class SubMesh;
 		class Mesh;
+		class AABB;
 		class VertexDeclaration;
 		class VertexBuffer;
 		class IndexBuffer;
+		class RenderQueue;
 		class AlphaState;
+		class DepthState;
 		struct RenderOperation;
 		struct VertexElement;
 		struct TextureCreationOptions;
@@ -281,9 +286,6 @@ namespace K15_Engine
 
 #if defined _MSC_VER
 #	define _CRT_SECURE_NO_WARNINGS //don't throw a "unsafe function" warning when using printf, sprintf, etc. 
-# if defined K15_DEBUG
-#   define _CRTDBG_MAP_ALLOC
-# endif //K15_DEBUG
 #	pragma warning(disable : 4251) //dll export for std::string, std::list etc.
 #	pragma warning(disable : 4530) //c++ exception used, but not enabled (xlocale.h)
 #	pragma warning(disable : 6255) //unprotected use of alloca
@@ -387,7 +389,7 @@ namespace K15_Engine
 #endif //K15_OS_WINDOWS
 
 #if defined K15_OS_WINDOWS
-#	define K15_DEBUG_MESSAGEBOX(msg,title) MessageBox(0,msg,title,MB_ABORTRETRYIGNORE | MB_ICONERROR)
+#	define K15_DEBUG_MESSAGEBOX(msg,title) MessageBox(0,msg,title,MB_ABORTRETRYIGNORE | MB_ICONERROR | MB_TASKMODAL)
 #endif //K15_OS_WINDOWS
 
 #if defined K15_OS_WINDOWS
@@ -453,6 +455,12 @@ namespace K15_Engine
 #else
 #define K15_ASSERT(condition,message0)
 #endif //K15_DEBUG
+
+#ifdef K15_DEBUG
+#	define K15_DEBUG_ONLY(code) {code}
+#else
+#	define K15_DEBUG_ONLY(code)
+#endif
 
 typedef std::set<String> StringSet;
 

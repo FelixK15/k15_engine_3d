@@ -131,7 +131,7 @@ namespace K15_Engine { namespace Rendering {
 		void writeToShadowCopy(uint32 p_Size, byte* p_Destination, uint32 p_Offset);
 		uint32 readFromShadowCopy(uint32 p_Size, byte* p_Destination, uint32 p_Offset);
 
-	private:
+	protected:
 		GpuBufferImplBase* m_Impl;
 		byte* m_ShadowCopy;
 		uint32 m_ShadowCopySize;

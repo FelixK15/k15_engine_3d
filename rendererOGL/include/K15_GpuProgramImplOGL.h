@@ -43,10 +43,14 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 		virtual bool compileShaderCode() OVERRIDE;
 		virtual bool loadBinaryCode() OVERRIDE;
+		virtual bool reflect() OVERRIDE;
 
 		virtual bool getBinaryCode(RawData* p_Buffer) OVERRIDE;
 
 		GLuint getProgramGL() const;
+
+	private:
+		Enum _getParameterType(GLenum p_GLType);
 
 	private:
 		GLuint m_Program;

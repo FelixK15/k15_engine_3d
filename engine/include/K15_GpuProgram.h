@@ -37,6 +37,7 @@ namespace K15_Engine { namespace Rendering {
 		virtual bool compileShaderCode() = 0;
 		virtual bool loadBinaryCode() = 0;
 		virtual bool getBinaryCode(RawData* p_Buffer) = 0;
+    virtual bool reflect() = 0;
 
 		INLINE void setGpuProgram(GpuProgram* p_GpuProgram);
 		INLINE GpuProgram* getGpuProgram() const;
@@ -48,6 +49,8 @@ namespace K15_Engine { namespace Rendering {
 	class K15_CORE_API GpuProgram : public ResourceBase
 	{
 	public:
+    /*********************************************************************************/
+    typedef List(GpuProgramParameter*) ParameterList;
 		/*********************************************************************************/
 		enum eProgramStage
 		{
@@ -57,8 +60,8 @@ namespace K15_Engine { namespace Rendering {
 			PS_COMPUTE,
 
 			PS_COUNT
-		};
-		/*********************************************************************************/
+		}; //ProgramStage
+    /*********************************************************************************/
 	public:
 		GpuProgram();
 		virtual ~GpuProgram();
@@ -77,10 +80,16 @@ namespace K15_Engine { namespace Rendering {
 		virtual void loadDebug(RawData& p_Data);
 		virtual bool internalLoad(const RawData& p_Data);
 
+    void addParameter(const String& p_Name, Enum p_Type, uint32 p_Size);
+
 		INLINE const GpuProgramImplBase* getImpl() const;
+
+  private:
+    const String& _resolveIncludes(const char* p_ShaderCode);
 
 	protected:
 		GpuProgramImplBase* m_Impl;
+    ParameterList m_Parameter;
 		RawData m_BinaryCode;
 		Enum m_Stage;
 		String m_Error;

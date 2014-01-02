@@ -19,6 +19,7 @@
 
 #include "K15_GpuProgramImplOGL.h"
 
+#include "K15_GpuProgramParameter.h"
 #include "K15_LogManager.h"
 #include "K15_RenderTask.h"
 #include "K15_RendererBase.h"
@@ -45,6 +46,35 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		{
 			glDeleteProgram(m_Program);
 		}
+	}
+	/*********************************************************************************/
+	bool GpuProgramImplOGL::reflect()
+	{
+		if(m_GpuProgram->isCompiled())
+		{
+			GLint countActiveUniforms = 0;
+			glGetProgramiv(m_Program,GL_ACTIVE_UNIFORMS,&countActiveUniforms);
+			GLuint* activeUniforms = (GLuint*)alloca(sizeof(GLuint) * countActiveUniforms);
+			GLint* uniformTypes = (GLint*)alloca(sizeof(GLint) * countActiveUniforms);
+			GLint* uniformSizes = (GLint*)alloca(sizeof(GLint) * countActiveUniforms);
+			GLint* uniformNameLength = (GLint*)alloca(sizeof(GLint) * countActiveUniforms);
+
+			glGetActiveUniformsiv(m_Program,countActiveUniforms,activeUniforms,GL_UNIFORM_TYPE,uniformTypes); //get type of uniforms
+			glGetActiveUniformsiv(m_Program,countActiveUniforms,activeUniforms,GL_UNIFORM_SIZE,uniformSizes); //get size of uniforms
+			glGetActiveUniformsiv(m_Program,countActiveUniforms,activeUniforms,GL_UNIFORM_NAME_LENGTH,uniformNameLength); //get length of uniform names
+
+			for(int i = 0;i < countActiveUniforms;++i)
+			{
+				GLchar* uniformName = (GLchar*)alloca(uniformNameLength[i]);
+				glGetActiveUniformName(m_Program,activeUniforms[i],uniformNameLength[i],0,uniformName);
+
+				m_GpuProgram->addParameter(String(uniformName),_getParameterType(uniformTypes[i]),uniformSizes[i]);
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 	/*********************************************************************************/
 	bool GpuProgramImplOGL::compileShaderCode()
@@ -119,5 +149,43 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	{
 		return m_Program;
 	}
-	/*********************************************************************************/
+  /*********************************************************************************/
+  Enum GpuProgramImplOGL::_getParameterType(GLenum p_GLType)
+  {
+    if(p_GLType == GL_FLOAT)
+    {
+      return GpuProgramParameter::VT_FLOAT;
+    }
+    else if(p_GLType == GL_FLOAT_VEC2)
+    {
+      return GpuProgramParameter::VT_VECTOR2;
+    }
+    else if(p_GLType == GL_FLOAT_VEC3)
+    {
+      return GpuProgramParameter::VT_VECTOR3;
+    }
+    else if(p_GLType == GL_FLOAT_VEC4)
+    {
+      return GpuProgramParameter::VT_VECTOR4;
+    }
+    else if(p_GLType == GL_BOOL)
+    {
+      return GpuProgramParameter::VT_BOOL;
+    }
+    else if(p_GLType == GL_FLOAT_MAT2)
+    {
+      return GpuProgramParameter::VT_MATRIX2;
+    }
+    else if(p_GLType == GL_FLOAT_MAT3)
+    {
+      return GpuProgramParameter::VT_MATRIX3;
+    }
+    else if(p_GLType == GL_FLOAT_MAT4)
+    {
+      return GpuProgramParameter::VT_MATRIX4;
+    }
+
+    return GpuProgramParameter::VT_UNKNOW;
+  }
+  /*********************************************************************************/
 }}}// end of K15_Engine::Rendering::OGL namespace

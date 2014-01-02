@@ -1,8 +1,8 @@
 /**
- * @file K15_GpuProgramParameter.h
+ * @file K15_Mesh.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/12/12
+ * @date 2013/12/16
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,23 +21,33 @@
  * 
  */
 
-#ifndef _K15Engine_Rendering_GpuProgramParameter_h_
-#define _K15Engine_Rendering_GpuProgramParameter_h_
+#ifndef _K15Engine_Rendering_Mesh_h_
+#define _K15Engine_Rendering_Mesh_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
-#	include "K15_Object.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-namespace K15_Engine { namespace Core {
-	class K15_CORE_API GpuProgramParameter : public Object
+#include "K15_AABB.h"
+
+namespace K15_Engine { namespace Rendering {
+	class K15_CORE_API Mesh
 	{
 	public:
-		GpuProgramParameter();
-		virtual ~GpuProgramParameter();
+		/*********************************************************************************/
+		const uint32 MaxSubMeshes = 12;
+		typedef FixedArray(SubMesh*,MaxSubMeshes) SubMeshArray;
+		/*********************************************************************************/
+	public:
+		Mesh();
+		virtual ~Mesh();
 
-
-	};// end of GpuProgramParameter class declaration
+		INLINE AABB* getAABB() const;
+		void calculateAABB();
+	private:
+		SubMeshArray m_SubMeshses;
+		AABB m_AxisAlignedBoundingBox;
+	};// end of Mesh class declaration
 }}// end of K15_Engine::Core namespace
 
-#endif //_K15Engine_Rendering_GpuProgramParameter_h_
+#endif //_K15Engine_Rendering_Mesh_h_

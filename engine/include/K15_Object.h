@@ -29,6 +29,7 @@
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
+#include "K15_HashedString.h"
 #include "K15_Rtti.h"
 #include "K15_Pointer.h"
 
@@ -45,6 +46,8 @@ namespace K15_Engine { namespace Core {
 
 		virtual ~Object();
 	
+    INLINE const TypeName& getTypeName() const;
+
 		INLINE void increaseReferences();
 		INLINE void decreaseReferences();
 		

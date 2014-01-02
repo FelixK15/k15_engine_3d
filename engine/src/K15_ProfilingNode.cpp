@@ -28,31 +28,35 @@
 
 namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
-	ProfilingNode::ProfilingNode(const ProfilingNode& p_Other)
-		: Name(p_Other.Name),
-		  StartTime(p_Other.StartTime),
-		  EndTime(p_Other.EndTime),
-		  Time(p_Other.Time),
-		  Parent(p_Other.Parent)
+	AutoProfilingNode::AutoProfilingNode(ProfilingNode* p_Node)
+		: m_Node(p_Node)
 	{
-
+		g_ProfileManager->startProfiling(p_Node);
 	}
 	/*********************************************************************************/
-	ProfilingNode::ProfilingNode(const ProfilingName& p_Name)
+	AutoProfilingNode::~AutoProfilingNode()
+	{
+		g_ProfileManager->stopProfiling(m_Node);
+	}
+	/*********************************************************************************/
+
+	/*********************************************************************************/
+	ProfilingNode::ProfilingNode(const String& p_Name)
 		: Name(p_Name),
-		  StartTime(0.0),
 		  EndTime(0.0),
 		  Time(0.0),
-		  Parent(0)
+		  Parent(0),
+      CountChildren(0),
+      ThreadID(g_CurrentThread::get_id().hash()),
+      FrameIndex(g_Application->getFrameCount()),
+      StartTime(g_Application->getTime())
 	{
-		StartTime = g_Application->getTime();
-		//g_ProfileManager->addNode(this);
+    memset(Children,0,sizeof(Children));
 	}
 	/*********************************************************************************/
 	ProfilingNode::~ProfilingNode()
 	{
-		EndTime = g_Application->getTime();
-		Time = EndTime - StartTime;
+
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace

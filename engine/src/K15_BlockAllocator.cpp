@@ -56,6 +56,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void BlockAllocator::clear()
 	{
+		BaseAllocator::clear();
 		MemoryBlock* currentBlock = m_First->Next;
 		MemoryBlock* nextBlock = 0;
 		while(currentBlock)
@@ -70,6 +71,7 @@ namespace K15_Engine { namespace Core {
 	{
 		MemoryBlock* currentBlock = m_First;
 		bool merged = false;
+    bool perfectMatch = false;
 		while(true)
 		{
 			if(!currentBlock->Used)
@@ -86,19 +88,57 @@ namespace K15_Engine { namespace Core {
 				merged = true;
 				currentBlock = m_First;
 			}
-			else
+			else if(currentBlock->Next)
 			{
 				currentBlock = currentBlock->Next;
-
-				K15_ASSERT(currentBlock,StringUtil::format("BlockAllocator \"%s\" has not enough free memory to satisfy memory request.",m_Name.c_str()));
 			}
 		}
 
+    K15_DEBUG_ONLY(
+      MemoryBlock* block = m_First;
+      int counter = 0;
+      int usedBlocks = 0;
+      uint32 usedSize = 0;
+      uint32 size = 0;
+      while(block)
+      {
+        ++counter;
+        size += block->Size;
+        usedSize += block->Used ? block->Size : 0;
+        usedBlocks += block->Used ? 1 : 0;
+        block = block->Next;
+      }
+      _LogDebug("Pre BlockAllocator::createBlock from %s - %i blocks(%i used) - total size: %u bytes(%u used).",m_Name.c_str(),counter,usedBlocks,size,usedSize);
+    );
+
+    K15_ASSERT(currentBlock,StringUtil::format("BlockAllocator \"%s\" has not enough free memory to satisfy memory request.",m_Name.c_str()));
+
 		byte* memory = currentBlock->Memory;
+    perfectMatch = currentBlock->Size == p_Size;
 		currentBlock->Size = p_Size;
 		currentBlock->Used = true;
-
-		createBlock(currentBlock);
+		
+    if(!perfectMatch)
+    {
+      createBlock(currentBlock);
+    }
+		
+		K15_DEBUG_ONLY(
+      MemoryBlock* block = m_First;
+      int counter = 0;
+      int usedBlocks = 0;
+      uint32 usedSize = 0;
+      uint32 size = 0;
+      while(block)
+      {
+        ++counter;
+        size += block->Size;
+        usedSize += block->Used ? block->Size : 0;
+        usedBlocks += block->Used ? 1 : 0;
+        block = block->Next;
+      }
+      _LogDebug("Pre BlockAllocator::createBlock from %s - %i blocks(%i used) - total size: %u bytes(%u used).",m_Name.c_str(),counter,usedBlocks,size,usedSize);
+		);
 
 		return memory;
 	}
@@ -113,6 +153,8 @@ namespace K15_Engine { namespace Core {
 			
 			K15_ASSERT(currentBlock,StringUtil::format("Address %p does not belong to BlockAllocator \"%s\".",p_Pointer,m_Name.c_str()));
 		}
+
+    K15_ASSERT(currentBlock->Used,StringUtil::format("Cannot free block %p from BlockAllocator \"%s\" (has been freed before).",currentBlock,m_Name.c_str()));
 
 		currentBlock->Used = false;
 	}
@@ -143,7 +185,7 @@ namespace K15_Engine { namespace Core {
 		{
 			_LogWarning("BlockAllocator \"%s\" is full.",m_Name.c_str());
 		}
-		else if((ptrdiff_t)(p_Successor->Memory + p_Successor->Size) != (ptrdiff_t)m_MemoryEndAddress)
+		else
 		{
 			MemoryBlock* newblock = K15_NEW MemoryBlock;
 			newblock->Used = false;

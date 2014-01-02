@@ -315,11 +315,45 @@
     <ClInclude Include="..\..\engine\include\K15_VertexBuffer.h">
       <Filter>Rendering\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_IndexBuffer.h" />
-    <ClInclude Include="..\..\engine\include\K15_SubMesh.h" />
-    <ClInclude Include="..\..\engine\include\K15_RenderOperation.h" />
-    <ClInclude Include="..\..\engine\inline\K15_GpuProgramParameter.h" />
-    <ClInclude Include="..\..\engine\include\K15_AlphaState.h" />
+    <ClInclude Include="..\..\engine\include\K15_AlphaState.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_IndexBuffer.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_RenderOperation.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_SubMesh.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Mesh.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_AABB.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_RenderQueue.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Light.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_GpuProgramParameter.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_DepthState.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_CameraComponent.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_MatrixUtil.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_GameObject.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -508,9 +542,33 @@
     <ClCompile Include="..\..\engine\src\K15_MemoryPools.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_VertexBuffer.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_IndexBuffer.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_SubMesh.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_AlphaState.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_IndexBuffer.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_SubMesh.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_VertexBuffer.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_AABB.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_GpuProgramParameter.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_DepthState.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_MatrixUtil.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_GameObject.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -649,7 +707,30 @@
     <None Include="..\..\engine\include\K15_VertexBuffer.inl">
       <Filter>Rendering\include</Filter>
     </None>
-    <None Include="..\..\engine\include\K15_IndexBuffer.inl" />
+    <None Include="..\..\engine\include\K15_AlphaState.inl">
+      <Filter>Rendering\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_IndexBuffer.inl">
+      <Filter>Rendering\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_AABB.inl">
+      <Filter>Rendering\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_DepthState.inl">
+      <Filter>Rendering\include</Filter>
+    </None>
+    <None Include="..\..\engine\src\K15_CameraComponent.cpp">
+      <Filter>Components\src</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_CameraComponent.inl">
+      <Filter>Components\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_GameObject.inl">
+      <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_GpuProgramParameter.inl">
+      <Filter>Rendering\include</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />

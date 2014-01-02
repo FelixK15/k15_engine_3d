@@ -21,8 +21,8 @@
  * 
  */
 
-#ifndef _K15Engine_Core_SubMesh_h_
-#define _K15Engine_Core_SubMesh_h_
+#ifndef _K15Engine_Rendering_SubMesh_h_
+#define _K15Engine_Rendering_SubMesh_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
@@ -43,4 +43,4 @@ namespace K15_Engine { namespace Rendering {
 	};// end of SubMesh class declaration
 }}// end of K15_Engine::Rendering namespace
 
-#endif //_K15Engine_Core_SubMesh_h_
+#endif //_K15Engine_Rendering_SubMesh_h_

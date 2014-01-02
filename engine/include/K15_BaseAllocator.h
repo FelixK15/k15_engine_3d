@@ -28,6 +28,8 @@
 #	include "K15_HashedString.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
+#include "K15_MemoryHeader.h"
+
 namespace K15_Engine { namespace Core {
   
   class K15_CORE_API BaseAllocator
@@ -48,7 +50,7 @@ namespace K15_Engine { namespace Core {
 
 	const ObjectName& getName() const;
 
-    virtual void clear(){}
+    virtual void clear();
 
   protected:
     virtual void* alloc(size_t p_Size) = 0;

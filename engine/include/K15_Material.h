@@ -73,29 +73,29 @@ namespace K15_Engine { namespace Rendering {
 		INLINE Enum getCullingMode() const;
 		INLINE void setCullingMode(Enum p_CullingMode);
 
-		INLINE Enum getDepthTestFunction() const;
-		INLINE void setDepthTestFunction(Enum p_DepthTestFunction);
-
 		INLINE bool isDepthTestEnabled() const;
 		INLINE void setDepthTestEnabled(bool p_DepthTestEnabled);
 		
-		INLINE AlphaState* getAlphaState() const;
-		INLINE void setAlphaState(AlphaState* p_AlphaState);
+		INLINE const AlphaState& getAlphaState() const;
+		INLINE void setAlphaState(const AlphaState& p_AlphaState);
+
+		INLINE const DepthState& getDepthState() const;
+		INLINE void setDepthState(const DepthState& p_DepthState);
+
 	private:
 		expose GpuProgramArray m_Programs; 
 		expose Texture* m_DiffuseMap;
 		expose TextureSampler* m_DiffuseSampler;
-		expose AlphaState* m_AlphaState;
+		expose AlphaState m_AlphaState;
+		expose DepthState m_DepthState;
 
 		expose ColorRGBA m_Specular;
 		expose ColorRGBA m_Diffuse;
 		expose ColorRGBA m_Ambient;
 		expose Enum m_CullingMode;
-		expose Enum m_DepthTestFunction;
 		expose float m_Shininess;
 		expose bool m_Transparent;
 		expose bool m_BackFaceCullingEnabled;
-		expose bool m_DepthTestEnabled;
 		expose bool m_LightningEnabled;
 	}; //end of MaterialPass class declaration
 	K15_PTR(MaterialPass);
@@ -113,8 +113,6 @@ namespace K15_Engine { namespace Rendering {
 
 		INLINE uint32 getAmountPasses() const;
 		INLINE MaterialPass* getPass(uint32 p_Index) const;
-// 		Texture* getNormalMap() const;
-// 		Texture* getGlossMap() const;
 
 	private:
 		MaterialPassArray m_Passes;
@@ -123,4 +121,4 @@ namespace K15_Engine { namespace Rendering {
 #include "K15_Material.inl"
 }}// end of K15_Engine::Rendering namespace
 
-#endif //_K15Engine_Renderer_TextureSampler_h_
+#endif //_K15Engine_Renderer_Material_h_

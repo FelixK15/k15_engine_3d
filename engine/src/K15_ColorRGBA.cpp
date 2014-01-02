@@ -73,24 +73,24 @@ namespace K15_Engine { namespace Rendering {
 		if(AlphaComponent < 0.0f) AlphaComponent = 0.0f;
 	}
 	/*********************************************************************************/
-	bool ColorRGBA::operator==(const ColorRGBA& p_Color)
+	bool ColorRGBA::operator==(const ColorRGBA& p_Color) const
 	{
 		return RedComponent == p_Color.RedComponent && GreenComponent == p_Color.GreenComponent && 
 			BlueComponent == p_Color.BlueComponent && AlphaComponent == p_Color.AlphaComponent;
 	}
 	/*********************************************************************************/
-	bool ColorRGBA::operator!=(const ColorRGBA& p_Color)
+	bool ColorRGBA::operator!=(const ColorRGBA& p_Color) const
 	{
 		return !this->operator==(p_Color);
 	}
 	/*********************************************************************************/
-	bool ColorRGBA::operator<(const ColorRGBA& p_Color)
+	bool ColorRGBA::operator<(const ColorRGBA& p_Color) const
 	{
 		return RedComponent < p_Color.RedComponent && GreenComponent < p_Color.GreenComponent && 
 			BlueComponent < p_Color.BlueComponent && AlphaComponent < p_Color.AlphaComponent;
 	}
 	/*********************************************************************************/
-	bool ColorRGBA::operator>(const ColorRGBA& p_Color)
+	bool ColorRGBA::operator>(const ColorRGBA& p_Color) const
 	{
 		return !this->operator<(p_Color);
 	}

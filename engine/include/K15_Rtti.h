@@ -20,6 +20,7 @@
  *
  * 
  */
+
 #ifndef _K15Engine_Core_RTTI_h_
 #define _K15Engine_Core_RTTI_h_
 
@@ -30,11 +31,6 @@
 #define K15_DECLARE_RTTI \
 public:	\
   static const K15_Engine::Core::Rtti TYPE;	\
-  virtual const K15_Engine::Core::Rtti &getType() const{ return TYPE; }	
-
-#define K15_DECLARE_RTTI_TEMPLATE \
-public: \
-  static const K15_Engine::Core::Rtti TYPE; \
   virtual const K15_Engine::Core::Rtti &getType() const{ return TYPE; }	
 
 #define K15_IMPLEMENT_RTTI_BASE(namespace,classtype,basetype)	\

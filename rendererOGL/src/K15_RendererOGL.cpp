@@ -28,18 +28,26 @@
 #include "K15_GpuProgramImplOGL.h"
 #include "K15_TextureImplOGL.h"
 #include "K15_TextureSamplerImplOGL.h"
+#include "K15_IndexBuffer.h"
 #include "Win32\K15_RenderWindow_Win32.h"
 
 namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
-	const GLenum RendererOGL::GLFunctionTestConverter[DT_COUNT] = {
-		GL_NONE,
-		GL_LESS,
-		GL_LEQUAL,
-		GL_EQUAL,
-		GL_GEQUAL,
-		GL_GREATER
+	const GLenum RendererOGL::GLFunctionTestConverter[RendererBase::FT_COUNT] = {
+    GL_NONE, 	  //FT_NONE
+		GL_LESS,    //FT_LESS
+		GL_LEQUAL,  //FT_LESS_EQUAL
+		GL_EQUAL,   //FT_EQUAL
+		GL_GEQUAL,  //FT_GREATER_EQUAL
+		GL_GREATER  //FT_GREATER
 	};//DepthTestConverter
+  /*********************************************************************************/
+  const GLenum RendererOGL::GLTopologyConverter[RenderOperation::T_COUNT] = {
+    GL_POINTS,    //T_DOT
+    GL_LINES,     //T_LINE
+    GL_TRIANGLES, //T_TRIANGLE
+    GL_QUADS      //T_QUAD
+  }; //TopologyConverter
 	/*********************************************************************************/
 	void APIENTRY glLogError(GLenum p_Source, GLenum p_Type, GLuint p_ID, GLenum p_Severity, GLsizei p_Length, const GLchar* p_Message, GLvoid* p_UserParam)
 	{
@@ -92,99 +100,6 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	RendererOGL::~RendererOGL()
 	{
 
-	}
-	/*********************************************************************************/
-	void RendererOGL::setCullingMode(Enum p_CullingMode)
-	{
-		RendererBase::setCullingMode(p_CullingMode);
-
-		if(p_CullingMode == CM_CCW)
-		{
-			glFrontFace(GL_CCW);
-		}
-		else
-		{
-			glFrontFace(GL_CW);
-		}
-	}
-	/*********************************************************************************/
-	void RendererOGL::setDepthTestFunction(Enum p_DepthTest)
-	{
-		RendererBase::setDepthTestFunction(p_DepthTest);
-
-		glDepthFunc(GLFunctionTestConverter[p_DepthTest]);
-	}
-	/*********************************************************************************/
-	void RendererOGL::bindGpuProgram(GpuProgram* p_GpuProgram, Enum p_Stage)
-	{
-		K15_ASSERT(p_GpuProgram,"Given GpuProgram instance is NULL!");
-
-		GLbitfield stages = GL_NONE;
-
-		if(p_Stage== GpuProgram::PS_VERTEX)
-		{
-			stages |= GL_VERTEX_SHADER_BIT;
-		}
-		else if(p_Stage == GpuProgram::PS_FRAGMENT)
-		{
-			stages |= GL_FRAGMENT_SHADER_BIT;
-		}
-		else if(p_Stage == GpuProgram::PS_GEOMETRY)
-		{
-			stages |= GL_GEOMETRY_SHADER_BIT;
-		}
-		else if(p_Stage == GpuProgram::PS_COMPUTE)
-		{
-			stages |= GL_COMPUTE_SHADER_BIT;
-		}
-		
-		const GpuProgramImplOGL* programOGL = static_cast<const GpuProgramImplOGL*>(p_GpuProgram->getImpl());
-		glUseProgramStages(m_ProgramPipeline,stages,programOGL->getProgramGL());
-
-		if(glGetError() != GL_NO_ERROR)
-		{
-			_LogError("Could not set program stage %u. %s",p_GpuProgram->getStage(),
-				g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
-		}
-		else
-		{
-			RendererBase::bindGpuProgram(p_GpuProgram,p_Stage);
-		}
-	}
-	/*********************************************************************************/
-	void RendererOGL::setClearColor(float p_Red, float p_Green, float p_Blue)
-	{
-		RendererBase::setClearColor(p_Red,p_Green,p_Blue);
-
-		glClearColor(p_Red,p_Green,p_Blue,1.0f);
-	}
-	/*********************************************************************************/
-	void RendererOGL::setDepthTestEnabled(bool p_Enabled)
-	{
-		RendererBase::setDepthTestEnabled(p_Enabled);
-
-		if(p_Enabled)
-		{
-			glEnable(GL_DEPTH_TEST);
-		}
-		else
-		{
-			glDisable(GL_DEPTH_TEST);
-		}
-	}
-	/*********************************************************************************/
-	void RendererOGL::setBackFaceCullingEnabled(bool p_Enabled)
-	{
-		RendererBase::setBackFaceCullingEnabled(p_Enabled);
-
-		if(p_Enabled)
-		{
-			glEnable(GL_CULL_FACE);
-		}
-		else
-		{
-			glDisable(GL_CULL_FACE);
-		}
 	}
 	/*********************************************************************************/
 	void RendererOGL::beginFrame()
@@ -302,7 +217,6 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		const Resolution& resolution = renderwindow->getResolution();
 		//force viewport resizing
 		onResolutionChanged(resolution);
-		setDepthTestEnabled(true); //enable depth testing
 		setClearColor(0.8f,0.2224f,0.005f);
 		glEnable(GL_STENCIL_TEST); //enable stencil testing
 
@@ -376,12 +290,141 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	GpuProgramImplBase* RendererOGL::createGpuProgramImpl()
 	{
-		return 0;//new GpuProgramImplOGL();
+		return new GpuProgramImplOGL();
 	}
 	/*********************************************************************************/
 	TextureSamplerImplBase* RendererOGL::createTextureSamplerImpl()
 	{
 		return new TextureSamplerImplOGL();
 	}
-	/*********************************************************************************/
+  /*********************************************************************************/
+  void RendererOGL::_setAlphaState(const AlphaState& p_AlphaState)
+  {
+    throw std::exception("The method or operation is not implemented.");
+  }
+  /*********************************************************************************/
+  void RendererOGL::_setDepthState(const DepthState& p_DepthState)
+  {
+    if(p_DepthState.getEnabled())
+    {
+      glEnable(GL_DEPTH_TEST);
+    }
+    else
+    {
+      glDisable(GL_DEPTH_TEST);
+    } 
+
+    glDepthFunc(GLFunctionTestConverter[p_DepthState.getFunction()]);
+  }
+  /*********************************************************************************/
+  void RendererOGL::_setRenderWindow(RenderWindowBase* p_RenderWindow)
+  {
+    //throw std::exception("The method or operation is not implemented.");
+  }
+  /*********************************************************************************/
+  void RendererOGL::_setRenderTarget(RenderTarget* p_RenderTarget)
+  {
+    //throw std::exception("The method or operation is not implemented.");
+  }
+  /*********************************************************************************/
+  void RendererOGL::_setActiveCamera(CameraComponent* p_Camera)
+  {
+    //throw std::exception("The method or operation is not implemented.");
+  }
+  /*********************************************************************************/
+  void RendererOGL::_setCullingMode(Enum p_CullingMode)
+  {
+    if(p_CullingMode == CM_CCW)
+    {
+      glFrontFace(GL_CCW);
+    }
+    else
+    {
+      glFrontFace(GL_CW);
+    }
+  }
+  /*********************************************************************************/
+  void RendererOGL::_setBackFaceCullingEnabled(bool p_Enabled)
+  {
+    if(p_Enabled)
+    {
+      glEnable(GL_CULL_FACE);
+    }
+    else
+    {
+      glDisable(GL_CULL_FACE);
+    }
+  }
+  /*********************************************************************************/
+  void RendererOGL::_setFrameBufferPixelFormat(Enum p_PixelFormat)
+  {
+    throw std::exception("The method or operation is not implemented.");
+  }
+  /*********************************************************************************/
+  void RendererOGL::_setDepthBufferPixelFormat(Enum p_DepthFormat)
+  {
+    throw std::exception("The method or operation is not implemented.");
+  }
+  /*********************************************************************************/
+  void RendererOGL::_setStencilBufferPixelFormat(Enum p_StencilFormat)
+  {
+    throw std::exception("The method or operation is not implemented.");
+  }
+  /*********************************************************************************/
+  void RendererOGL::_setClearColor(const ColorRGBA& p_ClearColor)
+  {
+    glClearColor(p_ClearColor.RedComponent,p_ClearColor.GreenComponent,p_ClearColor.BlueComponent,1.0f);
+  }
+  /*********************************************************************************/
+  void RendererOGL::_bindBuffer(GpuBuffer* p_Buffer)
+  {
+    const GpuBufferImplOGL* bufferOGL = static_cast<const GpuBufferImplOGL*>(p_Buffer->getImpl());
+    GLenum target = GpuBufferImplOGL::GLBufferTypeConverter[p_Buffer->getType()];
+
+    glBindBuffer(target,bufferOGL->getBufferGL());
+
+    if(glGetError() != GL_NO_ERROR)
+    {
+      _LogError("Could not bind buffer. %s",
+        g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
+    }
+  }
+  /*********************************************************************************/
+  void RendererOGL::_bindProgram(GpuProgram* p_Program)
+  {
+    GLbitfield stages = GL_NONE;
+    Enum programStage = p_Program->getStage();
+    if(programStage == GpuProgram::PS_VERTEX)
+    {
+      stages |= GL_VERTEX_SHADER_BIT;
+    }
+    else if(programStage == GpuProgram::PS_FRAGMENT)
+    {
+      stages |= GL_FRAGMENT_SHADER_BIT;
+    }
+    else if(programStage == GpuProgram::PS_GEOMETRY)
+    {
+      stages |= GL_GEOMETRY_SHADER_BIT;
+    }
+    else if(programStage == GpuProgram::PS_COMPUTE)
+    {
+      stages |= GL_COMPUTE_SHADER_BIT;
+    }
+
+    const GpuProgramImplOGL* programOGL = static_cast<const GpuProgramImplOGL*>(p_Program->getImpl());
+    glUseProgramStages(m_ProgramPipeline,stages,programOGL->getProgramGL());
+
+    if(glGetError() != GL_NO_ERROR)
+    {
+      _LogError("Could not set program stage %u. %s",p_Program->getStage(),
+        g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
+    }
+  }
+  /*********************************************************************************/
+  void RendererOGL::_draw(RenderOperation* p_Rop)
+  {
+    //only triangles for now
+    glDrawArrays(GLTopologyConverter[p_Rop->topology],0,p_Rop->indexBuffer->getIndexCount());
+  }
+  /*********************************************************************************/
 }}}// end of K15_Engine::Rendering::OGL

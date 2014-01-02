@@ -16,6 +16,12 @@
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
  */
+
+/*********************************************************************************/
+const TypeName& Object::getTypeName() const
+{
+  return TYPE.getName();
+}
 /*********************************************************************************/
 void Object::increaseReferences()
 {

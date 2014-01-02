@@ -161,5 +161,10 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 		return p_Size;
 	}
-	/*********************************************************************************/
+  /*********************************************************************************/
+  GLuint GpuBufferImplOGL::getBufferGL() const
+  {
+    return m_BufferHandle;
+  }
+  /*********************************************************************************/
 }}}//end of K15_Engine::Rendering::OGL namespace

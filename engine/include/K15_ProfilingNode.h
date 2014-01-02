@@ -31,23 +31,36 @@
 #endif //K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace Core { 
-
-	class K15_CORE_API ProfilingNode/* : public ProfilingManagerAllocatedObject*/
+	class K15_CORE_API AutoProfilingNode
 	{
 	public:
-		typedef List(ProfilingNode*) ProfilingNodeList;
+		AutoProfilingNode(ProfilingNode* p_Node);
+		~AutoProfilingNode();
+
+	private:
+		ProfilingNode* m_Node;
+	};// end of AutoProfilingNode class declaration
+	/*********************************************************************************/
+	class K15_CORE_API ProfilingNode : public ProfilingManagerAllocatedObject
+	{
+	public:
+    /*********************************************************************************/
+    static const uint32 MaxChildren = 20;
+    /*********************************************************************************/
 
 	public:
-		ProfilingNode(const ProfilingNode& p_Other);
-		ProfilingNode(const ObjectName& p_Name);
-		~ProfilingNode();
+		ProfilingNode(const String& p_Name);
+		virtual ~ProfilingNode();
 
 		ProfilingNode* Parent;
-		ObjectName Name;
-		int ThreadID;
+    ProfilingNode* Children[MaxChildren];
+		String Name;
+    int CountChildren;
+    const int ThreadID;
+    const int FrameIndex;
+    const double StartTime;
 		double Time;
-		double EndTime;
-		double StartTime;
+		double EndTime;		
 	};
 }} //end of K15_Engine::Core namespace
 

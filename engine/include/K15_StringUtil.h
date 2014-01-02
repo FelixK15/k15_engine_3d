@@ -93,7 +93,32 @@ namespace K15_Engine { namespace Core {
 		*/
 		static String toString(float p_Value, int p_Precision = 2);
 
+    /**
+		* Removes all white spaces out of a given string and returns a new string without white spaces
+		*
+		* @param p_String - String to remove white spaces from
+		*
+		* @return String - String without white spaces
+		*/
 		static String removeWhitespaces(const String& p_String);
+
+    /**
+		* Transforms a string to a string with only capital letters
+		*
+		* @param p_String - Input string
+		*
+		* @return String - String with only capital letters
+		*/
+    static String toUpperString(const String& p_String);
+
+    /**
+		* Transforms a string to a string with only small letters
+		*
+		* @param p_String - Input string
+		*
+		* @return String - String with only small letters
+		*/
+    static String toLowerString(const String& p_String);
 
 		/**
 		* Create an integer variable out of a string

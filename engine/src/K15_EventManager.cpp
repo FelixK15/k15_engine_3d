@@ -29,7 +29,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	EventManager::EventManager()
 		: AllocatedObject(),
-		  BlockAllocator(ApplicationAllocator,MEGABYTE,_N(EventManagerAllocator))
+		  BlockAllocator(ApplicationAllocator,512,_N(EventManagerAllocator))
 	{
 
 	}
@@ -99,20 +99,22 @@ namespace K15_Engine { namespace Core {
 			}
 		}
 
-    //delete event after it has been processed
-    K15_DELETE p_Event;
+		//delete event after it has been processed
+		K15_DELETE p_Event;
 	}
 	/*********************************************************************************/
 	void EventManager::update()
 	{
-		K15_PROFILE(EventManager_Update);
+		//K15_PROFILE_BLOCK("EventManager::update",
+      if(m_Events.size() > 0)
+      {
+        GameEvent* gameEvent = m_Events.top();
+        triggerEvent(gameEvent);
+        m_Events.pop();
+      }
 
-		if(m_Events.size() > 0)
-		{
-			GameEvent* gameEvent = m_Events.top();
-			triggerEvent(gameEvent);
-			m_Events.pop();
-		}
+      printf("sizeof(ProfilingNode):%u\n",sizeof(K15_Engine::Core::ProfilingNode));
+    //);
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

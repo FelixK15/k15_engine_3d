@@ -270,7 +270,9 @@ namespace K15_Engine { namespace Core {
 		
 		while(m_Running)
 		{
-			tick();
+      K15_PROFILE_BLOCK("Application::tick",
+			  tick();
+      );
 		}
 
 		for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
@@ -293,28 +295,24 @@ namespace K15_Engine { namespace Core {
 		static double startFrameTime = 0.0;
 		static double endFrameTime = 0.0;
 		static double diffTime = m_AvgFrameTime;
-    static double secondTime = 0.0; //counting to 1 second and then restarts
-    static uint32 secondFrameCounter = 0;
+		static double FPSTime = 0.0; //counting to 1 second and then restarts
+		static uint32 FPSFrameCounter = 0;
 		//clear the frame allocator on the start of each frame
-		//m_FrameAllocator->clear();
+		m_FrameAllocator->clear();
 
 		startFrameTime = getTime();
 
-		{
-			K15_PROFILE("Application::onPreTick");
+    K15_PROFILE_BLOCK("Application::onPreTick",
 			onPreTick();
-		}
+    );
 		
-		{
-			K15_PROFILE(Application_TaskManager_Tick);
-			//update tasks (render frame)
-			m_TaskManager->update(m_GameTime);
-		}
-		
-		{
-			K15_PROFILE(Application_Post_Tick);
-			onPostTick();
-		}
+    K15_PROFILE_BLOCK("TaskManager::update",
+      m_TaskManager->update(m_GameTime);
+    );
+	
+    K15_PROFILE_BLOCK("Application::onPostTick",
+      onPostTick();
+    );
 
 		endFrameTime = getTime();
 
@@ -323,14 +321,16 @@ namespace K15_Engine { namespace Core {
 
 		if(diffTime < m_AvgFrameTime)
 		{
-      //update running time
-      m_RunningTime += m_AvgFrameTime;
-      secondTime += m_AvgFrameTime;
+			//update running time
+			m_RunningTime += m_AvgFrameTime;
+			FPSTime += m_AvgFrameTime;
 
 			static double sleepTime = 0.0;
 			sleepTime = m_AvgFrameTime - diffTime;
 
-			m_OSLayer.sleep(sleepTime);
+      K15_PROFILE_BLOCK("Application::sleep",
+			  m_OSLayer.sleep(sleepTime);
+      );
 		}
 		else if(diffTime > m_AvgFrameTime)
 		{
@@ -338,9 +338,9 @@ namespace K15_Engine { namespace Core {
 			//and then clip diffTime to the max frame time
 			_LogWarning("Frame %i took %.3f seconds to render! (%.3f seconds is average)",m_FrameCounter,diffTime,m_AvgFrameTime);
 
-      //update running time
-      m_RunningTime += diffTime;
-      secondTime += diffTime;
+			//update running time
+			m_RunningTime += diffTime;
+			FPSTime += diffTime;
 
 			diffTime = m_AvgFrameTime;
 		}
@@ -348,24 +348,29 @@ namespace K15_Engine { namespace Core {
 		//update game time
 		m_GameTime.setDeltaTime(diffTime);
 
-    if(secondTime >= 1.0)
-    {
-      m_AvgFramesPerSecond = (float)(secondFrameCounter / secondTime);
-      secondTime = 0.0;
-      secondFrameCounter = 0;
-    }
+		if(FPSTime >= 1.0)
+		{
+		  m_AvgFramesPerSecond = (float)(FPSFrameCounter / FPSTime);
+		  FPSTime = 0.0;
+		  FPSFrameCounter = 0;
+	  }
     
 
 		//increase frame counter
 		if(++m_FrameCounter == UINT_MAX) m_FrameCounter = 0;
-    ++secondFrameCounter;
+		++FPSFrameCounter;
 		//save statistic for this frame
 		static uint32 FrameStatisticIndex = 0;
 		FrameStatisticIndex = m_FrameCounter % (FrameStatisticCount - 1);
 		m_FrameStatistics[FrameStatisticIndex].Time = diffTime;
 		m_FrameStatistics[FrameStatisticIndex].FrameNumber = m_FrameCounter;
-
+    m_FrameStatistics[FrameStatisticIndex].ProfilingNode = g_ProfileManager->getRootNode();
 		m_RenderWindow->setWindowTitle(StringUtil::format("msec: %.3f - FPS:%.3f Frame Index: %i",diffTime * 100,m_AvgFramesPerSecond,m_FrameCounter));
+
+    if(m_FrameCounter > FrameStatisticCount)
+    {
+		  g_ProfileManager->eraseProfilingForFrame((m_FrameCounter - 1) - FrameStatisticCount);
+    }
 	}
 	/*********************************************************************************/
 	void Application::onPostTick()
@@ -418,10 +423,10 @@ namespace K15_Engine { namespace Core {
 							pos = binding.find_first_of('.');
 							if(pos != String::npos)
 							{
-								device = binding.substr(0,pos);
+								device = StringUtil::toLowerString(binding.substr(0,pos));
 								deviceInput = binding.substr(pos+1);
 								
-								if(device == "Keyboard")
+								if(device == "keyboard")
 								{
 									InputDevices::Keyboard::InputStringToEnumMap::iterator input_iter = 
 										InputDevices::Keyboard::InputStringToEnum.find(ObjectName(deviceInput));
@@ -437,11 +442,11 @@ namespace K15_Engine { namespace Core {
 									}
 									
 								}
-								else if(device == "Gamepad")
+								else if(device == "gamepad")
 								{
 
 								}
-								else if(device == "Mouse")
+								else if(device == "mouse")
 								{
 									InputDevices::Mouse::InputStringToEnumMap::iterator input_iter = 
 										InputDevices::Mouse::InputStringToEnum.find(ObjectName(deviceInput));
@@ -541,7 +546,6 @@ namespace K15_Engine { namespace Core {
 				//initialize plugin
 				initFunc();
 
-
 				//get the plugins module description to check what kind of module we're loading
 				ApplicationModuleDescription description = moduleDescFunc();
 				
@@ -578,6 +582,7 @@ namespace K15_Engine { namespace Core {
 
 		m_RenderWindow->shutdown();
 		m_OSLayer.shutdown();
+    m_ProfileManager->clear();
 
     _LogNormal("Destroying RenderWindow...");
     K15_DELETE m_RenderWindow;

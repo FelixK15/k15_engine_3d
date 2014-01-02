@@ -28,7 +28,7 @@ RenderTarget* RendererBase::getRenderTarget() const
 	return m_RenderTarget;
 }
 /*********************************************************************************/
-Camera* RendererBase::getActiveCamera() const
+CameraComponent* RendererBase::getActiveCamera() const
 {
 	return m_ActiveCamera;
 }
@@ -38,19 +38,9 @@ Enum RendererBase::getCullingMode() const
 	return m_CullingMode;
 }
 /*********************************************************************************/
-Enum RendererBase::getDepthTestMode() const
-{
-	return m_DepthTestFunction;
-}
-/*********************************************************************************/
 Enum RendererBase::getTopology() const
 {
 	return m_Topology;
-}
-/*********************************************************************************/
-bool RendererBase::getDepthTestEnabled() const
-{
-	return m_DepthTestEnabled;
 }
 /*********************************************************************************/
 bool RendererBase::getBackFaceCullingEnabled() const
@@ -81,6 +71,16 @@ void RendererBase::setLightningEnabled(bool p_Enabled)
 bool RendererBase::getLightningEnabled() const
 {
 	return m_LightningEnabled;
+}
+/*********************************************************************************/
+const AlphaState& RendererBase::getAlphaState() const
+{
+	return m_AlphaState;
+}
+/*********************************************************************************/
+const DepthState& RendererBase::getDepthState() const
+{
+  return m_DepthState;
 }
 /*********************************************************************************/
 GpuProgram* RendererBase::getBoundGpuProgram(Enum p_GpuProgramType) const
