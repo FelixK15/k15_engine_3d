@@ -94,23 +94,6 @@ namespace K15_Engine { namespace Core {
 			}
 		}
 
-    K15_DEBUG_ONLY(
-      MemoryBlock* block = m_First;
-      int counter = 0;
-      int usedBlocks = 0;
-      uint32 usedSize = 0;
-      uint32 size = 0;
-      while(block)
-      {
-        ++counter;
-        size += block->Size;
-        usedSize += block->Used ? block->Size : 0;
-        usedBlocks += block->Used ? 1 : 0;
-        block = block->Next;
-      }
-      _LogDebug("Pre BlockAllocator::createBlock from %s - %i blocks(%i used) - total size: %u bytes(%u used).",m_Name.c_str(),counter,usedBlocks,size,usedSize);
-    );
-
     K15_ASSERT(currentBlock,StringUtil::format("BlockAllocator \"%s\" has not enough free memory to satisfy memory request.",m_Name.c_str()));
 
 		byte* memory = currentBlock->Memory;
@@ -122,23 +105,6 @@ namespace K15_Engine { namespace Core {
     {
       createBlock(currentBlock);
     }
-		
-		K15_DEBUG_ONLY(
-      MemoryBlock* block = m_First;
-      int counter = 0;
-      int usedBlocks = 0;
-      uint32 usedSize = 0;
-      uint32 size = 0;
-      while(block)
-      {
-        ++counter;
-        size += block->Size;
-        usedSize += block->Used ? block->Size : 0;
-        usedBlocks += block->Used ? 1 : 0;
-        block = block->Next;
-      }
-      _LogDebug("Pre BlockAllocator::createBlock from %s - %i blocks(%i used) - total size: %u bytes(%u used).",m_Name.c_str(),counter,usedBlocks,size,usedSize);
-		);
 
 		return memory;
 	}

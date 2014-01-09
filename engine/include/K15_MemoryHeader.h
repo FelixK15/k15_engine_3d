@@ -28,8 +28,9 @@ namespace K15_Engine { namespace Core {
 
 	struct MemoryHeader
 	{
-		const char *File;		  /*File the allocation occurred*/
-		const char *Function;	/*Function the allocation occured*/
+    void* Allocator;      /*The allocator this memory is from.*/
+		const char* File;		  /*File the allocation occurred*/
+		const char* Function;	/*Function the allocation occured*/
 		unsigned int Line;		/*Line at which the new call happened*/
 		unsigned int Size;		/*Size of the allocated memory*/
 		bool IsArray;			    /*Was the memory allocated by new[]?*/

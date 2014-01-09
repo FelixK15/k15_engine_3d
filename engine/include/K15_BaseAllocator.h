@@ -29,11 +29,18 @@
 #endif //K15_USE_PRECOMPILED_HEADER
 
 #include "K15_MemoryHeader.h"
+#include "K15_AllocatorSizes.h"
 
 namespace K15_Engine { namespace Core {
   
   class K15_CORE_API BaseAllocator
   {
+  public:
+#if defined K15_DEBUG
+    //---------------------------------------------------------------------------//
+    typedef HashMap(size_t,MemoryHeader*) PointerMemoryHeaderMap;
+    //---------------------------------------------------------------------------//
+#endif //K15_DEBUG
   public:
     BaseAllocator(size_t p_Size,const ObjectName& p_Name);
     BaseAllocator(BaseAllocator* p_Allocator,size_t p_Size,const ObjectName& p_Name);
@@ -50,18 +57,22 @@ namespace K15_Engine { namespace Core {
 
 	const ObjectName& getName() const;
 
-    virtual void clear();
+  virtual void clear();
 
   protected:
     virtual void* alloc(size_t p_Size) = 0;
     virtual void  dealloc(void* p_Pointer,size_t p_Size) = 0;
 
   protected:
-	ObjectName m_Name;
+#if defined K15_DEBUG
+    PointerMemoryHeaderMap m_MemoryHeaderMap;
+#endif //K15_DEBUG
+	  ObjectName m_Name;
     BaseAllocator* m_Allocator;
+    Mutex m_Mutex;
     byte* m_Memory;
     byte* m_MemoryEndAddress;
-	uint32 m_MemorySize;
+	  uint32 m_MemorySize;
     uint32 m_UsedMemory;
   };//end of BaseAllocator class
 }}//end of K15_Engine::Core namespace
