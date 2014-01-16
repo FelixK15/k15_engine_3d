@@ -106,7 +106,7 @@ DWORD RunSilent(const char* cmd)
 	commandBuffer = (char*)malloc(strlen(comspec) + 4 + strlen(cmd) + 2 + 1);
 	strcpy(commandBuffer, comspec);
 	strcat(commandBuffer, " /c ");
-	strlwr(commandBuffer);
+	_strlwr(commandBuffer);
 	isCmd = strstr(commandBuffer, "cmd.exe") != NULL;
 	if (isCmd)
 		strcat(commandBuffer, "\"");
@@ -164,7 +164,7 @@ FILE* pt_popen(const char *cmd, const char *mode)
 	commandBuffer = (char*)malloc(strlen(comspec) + 4 + strlen(cmd) + 2 + 1);
 	strcpy(commandBuffer, comspec);
 	strcat(commandBuffer, " /c ");
-	strlwr(commandBuffer);
+	_strlwr(commandBuffer);
 	isCmd = strstr(commandBuffer, "cmd.exe") != NULL;
 	if (isCmd)
 		strcat(commandBuffer, "\"");

@@ -53,7 +53,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -66,7 +66,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -92,6 +92,29 @@
     <ClInclude Include="..\..\..\dependencies\LuaPlus\include\LuaStateCD.h" />
     <ClInclude Include="..\..\..\dependencies\LuaPlus\include\LuaStateOutFile.h" />
     <ClInclude Include="..\..\..\dependencies\LuaPlus\include\LuaTableIterator.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\lapi.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\lauxlib.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\lcode.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\ldebug.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\ldo.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\lfunc.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\lgc.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\llex.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\llimits.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\lmem.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\lobject.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\lopcodes.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\lparser.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\lstate.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\lstring.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\ltable.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\ltm.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\lua.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\luaconf.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\lualib.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\lundump.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\lvm.h" />
+    <ClInclude Include="..\..\..\dependencies\LuaPlus\include\src\lzio.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\dependencies\LuaPlus\include\LuaCall.inl" />
@@ -101,6 +124,36 @@
     <None Include="..\..\..\dependencies\LuaPlus\include\LuaState.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\lapi.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\lauxlib.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\lbaselib.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\lcode.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\ldblib.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\ldebug.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\ldo.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\ldump.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\lfunc.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\lgc.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\linit.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\liolib.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\llex.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\lmathlib.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\lmem.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\loadlib.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\lobject.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\lopcodes.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\loslib.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\lparser.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\lstate.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\lstring.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\lstrlib.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\ltable.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\ltablib.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\ltm.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\lundump.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\lvm.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\lzio.c" />
+    <ClCompile Include="..\..\..\dependencies\LuaPlus\include\src\print.c" />
     <ClCompile Include="..\..\..\dependencies\LuaPlus\src\LuaObject.cpp" />
     <ClCompile Include="..\..\..\dependencies\LuaPlus\src\LuaPlus.cpp" />
     <ClCompile Include="..\..\..\dependencies\LuaPlus\src\LuaPlusAddons.c" />
