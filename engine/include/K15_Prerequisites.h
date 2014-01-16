@@ -130,6 +130,8 @@ namespace K15_Engine
 	/*********************************************************************************/
 	namespace Rendering
 	{
+		class MaterialManager;
+		class MaterialData;
 		class RenderTarget;
 		class CameraComponent;
 		class RendererBase;
@@ -147,11 +149,14 @@ namespace K15_Engine
 		class Mesh;
 		class AABB;
 		class VertexDeclaration;
+		class VertexDeclarationImplBase;
 		class VertexBuffer;
 		class IndexBuffer;
 		class RenderQueue;
 		class AlphaState;
 		class DepthState;
+		class VertexManager;
+		class VertexBufferBinding;
 		struct RenderOperation;
 		struct VertexElement;
 		struct TextureCreationOptions;
@@ -474,6 +479,8 @@ typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::LogManager> LogManag
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::ProfilingManager> ProfilingManagerAllocatedObject;
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::ThreadWorker> ThreadWorkerAllocatedObject;
 typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::MemoryPools> MemoryPoolsAllocatedObject;
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Rendering::MaterialManager> MaterialManagerAllocatedObject;
+typedef K15_Engine::Core::AllocatedObject<K15_Engine::Rendering::VertexManager> VertexManagerAllocatedObject;
 
 #define FontManagerAllocator K15_Engine::Core::FontManager::getInstance()
 #define InputManagerAllocator K15_Engine::Core::InputManager::getInstace()
@@ -484,6 +491,7 @@ typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::MemoryPools> MemoryP
 #define LogManagerAllocator K15_Engine::Core::LogManager::getInstance()
 #define ThreadWorkerAllocator K15_Engine::Core::LogManager::getInstance()
 #define MemoryPoolsAllocator K15_Engine::Core::MemoryPools::getInstance()
+#define MaterialManagerAllocator K15_Engine::Rendering::MaterialManager::getInstance()
 
 #define g_MemoryPools K15_Engine::Core::MemoryPools::getInstance()
 #define g_FontManager K15_Engine::Core::FontManager::getInstance()
@@ -496,6 +504,8 @@ typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::MemoryPools> MemoryP
 #define g_LogManager K15_Engine::Core::LogManager::getInstance()
 #define g_ProfileManager K15_Engine::Core::ProfilingManager::getInstance()
 #define g_ThreadWorker K15_Engine::Core::ThreadWorker::getInstance()
+#define g_MaterialManager K15_Engine::Rendering::MaterialManager::getInstance()
+#define g_VertexManager K15_Engine::Rendering::VertexManager::getInstance()
 
 typedef signed char byte;
 
@@ -568,6 +578,15 @@ typedef K15_Engine::Core::HashedString ResourceName;
 #define KILOBYTE	1024
 
 #define K15_PTR(T) typedef Pointer<T> T##Ptr;
+
+#if defined K15_CPP11_SUPPORT
+# define K15_NON_COPYABLE(T) public: T(const T&) = delete; const T& operator=(const T&) = delete;
+#else
+# define K15_NON_COPYABLE(T) protected: T(const T&){}; const T& operator=(const T&){};
+#endif //K15_CPP11_SUPPORT
+
+#define K15_EXECUTE_CRITICAL_FUNCTION(obj,func) {obj.lockMutex();obj.func;obj.unlockMutex();}
+#define K15_EXECUTE_CRITICAL_FUNCTION_PTR(obj,func) {obj->lockMutex();obj->func;obj->unlockMutex();}
 
 #if defined (K15_CPP11_SUPPORT)
 #	define OVERRIDE override

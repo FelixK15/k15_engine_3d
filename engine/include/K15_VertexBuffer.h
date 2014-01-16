@@ -29,7 +29,6 @@
 #endif //K15_USE_PRECOMPILED_HEADER
 
 #include "K15_GpuBuffer.h"
-#include "K15_VertexDeclaration.h"
 
 namespace K15_Engine { namespace Rendering {
 	class K15_CORE_API VertexBuffer : public GpuBuffer
@@ -37,15 +36,11 @@ namespace K15_Engine { namespace Rendering {
 	public:
 		VertexBuffer();
 		virtual ~VertexBuffer();
-		
-		INLINE uint32 getVertexSize() const;
-		INLINE const VertexDeclaration* getVertexDeclaration() const;
 
-		INLINE void setVertexDeclaration(VertexDeclaration* p_Declaration);
-		INLINE void setVertexDeclaration(const String& p_DeclarationString);
-
+		INLINE uint32 getVertexCount() const;
+		INLINE void setVertexCount(uint32 p_VertexCount);
 	private:
-		VertexDeclaration* m_Declaration;
+		uint32 m_VertexCount;
 	};// end of VertexBuffer class declaration
 #include "K15_VertexBuffer.inl"
 }}// end of K15_Engine::Core namespace

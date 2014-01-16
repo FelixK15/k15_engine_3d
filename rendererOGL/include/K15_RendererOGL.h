@@ -35,6 +35,8 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		/*********************************************************************************/
 		static const GLenum GLFunctionTestConverter[RendererBase::FT_COUNT];
     static const GLenum GLTopologyConverter[RenderOperation::T_COUNT];
+    static const GLenum GLBlendOperationConverter[AlphaState::BO_COUNT];
+    static const GLenum GLBlendFunctionConverter[AlphaState::BF_COUNT];
 		/*********************************************************************************/
 	public:
 		RendererOGL();
@@ -44,6 +46,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		virtual TextureImplBase* createTextureImpl() OVERRIDE;
 		virtual TextureSamplerImplBase* createTextureSamplerImpl() OVERRIDE;
 		virtual GpuProgramImplBase* createGpuProgramImpl() OVERRIDE;
+    virtual VertexDeclarationImplBase* createVertexDeclarationImpl() OVERRIDE;
 
 		virtual void beginFrame() OVERRIDE;
 		virtual void endFrame() OVERRIDE;
@@ -58,21 +61,24 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	protected:
 		bool createDummyContext(HWND*,HDC*);
 
+    virtual void _setFillMode(Enum p_FillMode) OVERRIDE;
     virtual void _setAlphaState(const AlphaState& p_AlphaState) OVERRIDE;
     virtual void _setDepthState(const DepthState& p_DepthState) OVERRIDE;
     virtual void _setRenderWindow(RenderWindowBase* p_RenderWindow) OVERRIDE;
     virtual void _setRenderTarget(RenderTarget* p_RenderTarget) OVERRIDE;
     virtual void _setActiveCamera(CameraComponent* p_Camera) OVERRIDE;
+    virtual void _setVertexDeclaration(VertexDeclaration* p_Declaration) OVERRIDE;
     virtual void _setCullingMode(Enum p_CullingMode) OVERRIDE;
-    virtual void _setTopology(Enum p_Topology) OVERRIDE;
     virtual void _setBackFaceCullingEnabled(bool p_Enabled) OVERRIDE;
     virtual void _setFrameBufferPixelFormat(Enum p_PixelFormat) OVERRIDE;
     virtual void _setDepthBufferPixelFormat(Enum p_DepthFormat) OVERRIDE;
     virtual void _setStencilBufferPixelFormat(Enum p_StencilFormat) OVERRIDE;
     virtual void _setClearColor(const ColorRGBA& p_ClearColor) OVERRIDE;
-    virtual void _bindBuffer(GpuBuffer* p_Buffer) OVERRIDE;
-    virtual void _bindProgram(GpuProgram* p_Program) OVERRIDE;
-    virtual void _draw(RenderOperation* p_Rop) OVERRIDE;
+    virtual void _bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType) OVERRIDE;
+    virtual void _bindProgram(GpuProgram* p_Program, Enum p_ProgramType) OVERRIDE;
+    virtual void _bindProgramParameter(const GpuProgramParameter& p_Parameter,const RawData& p_Data) OVERRIDE;
+    virtual void _drawIndexed(uint32 p_Offset) OVERRIDE;
+    virtual void _drawDirect(uint32 p_Offset) OVERRIDE;
 
 	protected:
 		GLuint m_ProgramPipeline;

@@ -46,9 +46,6 @@ namespace K15_Engine { namespace Core {
 	class K15_CORE_API RenderOperationAllocator : public Singleton<RenderOperationAllocator>, public PoolAllocator<K15_SIZE_RENDER_OPERATION>, public MemoryPoolsAllocatedObject
 	{
 	public:
-		/*********************************************************************************/
-		static const uint32 RenderOperationCount;
-		/*********************************************************************************/
 		RenderOperationAllocator();
 		virtual ~RenderOperationAllocator();
 	}; //end of RenderOperationAllocator class declaration
@@ -66,9 +63,6 @@ namespace K15_Engine { namespace Core {
 	class K15_CORE_API MemoryBlockAllocator : public Singleton<MemoryBlockAllocator>, public PoolAllocator<K15_SIZE_MEMORY_BLOCK>, public MemoryPoolsAllocatedObject
 	{
 	public:
-		/*********************************************************************************/
-		static const uint32 MemoryBlockCount;
-		/*********************************************************************************/
 		MemoryBlockAllocator();
 		virtual ~MemoryBlockAllocator();
 	}; // end of MemoryBlockAllocator class declaration
@@ -76,9 +70,6 @@ namespace K15_Engine { namespace Core {
 	class K15_CORE_API MaterialAllocator : public Singleton<MaterialAllocator>, public PoolAllocator<K15_SIZE_MATERIAL>, public MemoryPoolsAllocatedObject
 	{
 	public:
-		/*********************************************************************************/
-		static const uint32 MaterialCount;
-		/*********************************************************************************/
 		MaterialAllocator();
 		virtual ~MaterialAllocator();
 	}; // end of MaterialAllocator class declaration

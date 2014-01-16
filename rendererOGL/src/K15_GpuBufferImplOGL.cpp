@@ -20,13 +20,12 @@
 #include "K15_GpuBufferImplOGL.h"
 #include "K15_LogManager.h"
 
-#include "K15_RenderTask.h"
 #include "K15_RendererBase.h"
 
 namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	const GLenum GpuBufferImplOGL::GLBufferTypeConverter[GpuBuffer::BT_COUNT] = {
-		GL_VERTEX_ARRAY,		 //BT_VERTEX_BUFFER
+		GL_ARRAY_BUFFER,		 //BT_VERTEX_BUFFER
 		GL_ELEMENT_ARRAY_BUFFER, //BT_INDEX_BUFFER
 	};//GLBufferTypeConverter
 	/*********************************************************************************/
@@ -45,6 +44,12 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		GL_READ_WRITE	//BA_READ_WRITE
 	};//GLBufferAccessConverter
 	/*********************************************************************************/
+
+  const GLenum GpuBufferImplOGL::GLIndexBufferTypeConverter[IndexBuffer::IT_COUNT] = {
+    GL_UNSIGNED_BYTE,   //IT_UINT8
+    GL_UNSIGNED_SHORT,  //IT_UINT16
+    GL_UNSIGNED_INT     //IT_UINT32
+  };//GLIndexBufferTypeConverter
 
 	/*********************************************************************************/
 	GpuBufferImplOGL::GpuBufferImplOGL()
@@ -88,7 +93,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		if(glGetError() != GL_NO_ERROR)
 		{
 			_LogError("Could not allocate %ukB from GPU. %s",p_Size / 1024,
-				g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
+				g_Application->getRenderer()->getLastError().c_str());
 
 			return false;
 		}
@@ -120,7 +125,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 			if(glGetError() != GL_NO_ERROR)
 			{
 				_LogError("Could not read buffer data. %s",
-					g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
+					g_Application->getRenderer()->getLastError().c_str());
 			
 				p_Size = 0;
 			}
@@ -137,14 +142,14 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 		if(p_Size > m_Buffer->getSize())
 		{
-			_LogWarning("Buffer size is %ibyte and you want to write %ibyte. Clamping value to max buffer size.",m_Buffer->getSize(),p_Size);
+			_LogWarning("Buffer size is %i byte and you want to write %i byte. Clamping value to max buffer size.",m_Buffer->getSize(),p_Size);
 			p_Size = m_Buffer->getSize();
 		}
 
 		if((p_Size + p_Offset) > m_Buffer->getSize())
 		{
 			uint32 newOffset = p_Size - m_Buffer->getSize();
-			_LogWarning("Buffer size is %ibyte and you want to write %ibyte starting at %ibyte. Setting offset = %i.",m_Buffer->getSize(),p_Size,p_Offset,newOffset);
+			_LogWarning("Buffer size is %i byte and you want to write %i byte starting at %i byte. Setting offset = %i.",m_Buffer->getSize(),p_Size,p_Offset,newOffset);
 			p_Offset = newOffset;
 		}
 		GLenum target = GLBufferTypeConverter[m_Buffer->getType()];
@@ -154,7 +159,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		if(glGetError() != GL_NO_ERROR)
 		{
 			_LogError("Could not read buffer data. %s",
-				g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
+				g_Application->getRenderer()->getLastError().c_str());
 
 			p_Size = 0;
 		}

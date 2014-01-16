@@ -28,6 +28,13 @@ GpuProgram* GpuProgramImplBase::getGpuProgram() const
 	return m_GpuProgram;
 }
 /*********************************************************************************/
+
+/*********************************************************************************/
+uint32 GpuProgram::getAmountUniforms() const
+{
+  return m_UsedUniforms;
+}
+/*********************************************************************************/
 bool GpuProgram::isCompiled() const
 {
 	return m_Compiled;

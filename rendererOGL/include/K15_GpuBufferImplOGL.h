@@ -29,6 +29,7 @@
 #endif //K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
 
 #include "K15_GpuBuffer.h"
+#include "K15_IndexBuffer.h"
 
 namespace K15_Engine { namespace Rendering { namespace OGL {
 	class GpuBufferImplOGL : public GpuBufferImplBase
@@ -38,6 +39,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		static const GLenum GLBufferTypeConverter[GpuBuffer::BT_COUNT];
 		static const GLenum GLBufferUsageConverter[GpuBuffer::UO_COUNT];
 		static const GLenum GLBufferAccessConverter[GpuBuffer::BA_COUNT];
+    static const GLenum GLIndexBufferTypeConverter[IndexBuffer::IT_COUNT];
 		/*********************************************************************************/
 	public:
 		GpuBufferImplOGL();

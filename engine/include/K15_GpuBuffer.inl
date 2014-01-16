@@ -17,6 +17,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+/*********************************************************************************/
 void GpuBuffer::setShadowCopyEnabled(bool p_Enabled)
 {
 	m_ShadowCopyEnabled = p_Enabled;
@@ -30,6 +31,11 @@ void GpuBuffer::setLockOption(Enum p_LockOption)
 void GpuBuffer::setUsageOption(Enum p_UsageOption)
 {
 	m_UsageOption = p_UsageOption;
+}
+/*********************************************************************************/
+void GpuBuffer::setAccessOption(Enum p_AccessOption)
+{
+  m_AccessOption = p_AccessOption;
 }
 /*********************************************************************************/
 Enum GpuBuffer::getLockOption() const
@@ -75,6 +81,11 @@ bool GpuBuffer::isLocked() const
 uint32 GpuBuffer::getSize() const
 {
 	return m_Size;
+}
+/*********************************************************************************/
+uint32 GpuBuffer::getUsedSize() const
+{
+  return m_UsedSize;
 }
 /*********************************************************************************/
 const GpuBufferImplBase* GpuBuffer::getImpl() const

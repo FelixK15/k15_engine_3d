@@ -20,6 +20,7 @@
 #include "K15_PrecompiledHeader.h"
 
 #include "K15_VertexDeclaration.h"
+#include "K15_RendererBase.h"
 
 namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
@@ -44,16 +45,46 @@ namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
 
   /*********************************************************************************/
-  VertexDeclaration::VertexDeclaration()
-    : m_Dirty(true),
-      m_Elements(),
-      m_Size(0)
+  VertexDeclarationImplBase::VertexDeclarationImplBase()
   {
 
   }
   /*********************************************************************************/
-  VertexDeclaration::VertexDeclaration(const VertexElementArray& p_Elements)
+  VertexDeclarationImplBase::~VertexDeclarationImplBase()
   {
+
+  }
+  /*********************************************************************************/
+
+  /*********************************************************************************/
+  const uint32 VertexDeclaration::ElementTypeSize[VertexElement::ET_COUNT] = {
+    1,  //ET_FLOAT1
+    2,  //ET_FLOAT2
+    3,  //ET_FLOAT3
+    4,  //ET_FLOAT4
+
+    1,  //ET_HALF1
+    2,  //ET_HALF2
+    3,  //ET_HALF3
+    4   //ET_HALF4
+  }; //ElementTypeSize
+  /*********************************************************************************/
+
+  /*********************************************************************************/
+  VertexDeclaration::VertexDeclaration()
+    : m_Dirty(true),
+      m_Elements(),
+      m_Size(0),
+      m_Impl(g_Application->getRenderer()->createVertexDeclarationImpl())
+  {
+    m_Impl->setVertexDeclaration(this);
+  }
+  /*********************************************************************************/
+  VertexDeclaration::VertexDeclaration(const VertexElementArray& p_Elements)
+    : m_Impl(g_Application->getRenderer()->createVertexDeclarationImpl())
+  {
+    m_Impl->setVertexDeclaration(this);
+
     for(VertexElementArray::const_iterator iter = p_Elements.begin();iter != p_Elements.end();++iter)
     {
       m_Elements.push_back((*iter));
@@ -63,12 +94,16 @@ namespace K15_Engine { namespace Rendering {
   }
   /*********************************************************************************/
   VertexDeclaration::VertexDeclaration(const String& p_DeclarationString)
+    : m_Impl(g_Application->getRenderer()->createVertexDeclarationImpl())
   {
+    m_Impl->setVertexDeclaration(this);
+
     _parseDeclarationString(p_DeclarationString);
   }
   /*********************************************************************************/
   VertexDeclaration::~VertexDeclaration()
   {
+    K15_DELETE m_Impl;
     removeAllElements();
   }
   /*********************************************************************************/
@@ -310,6 +345,7 @@ namespace K15_Engine { namespace Rendering {
     {
       (*iter).slot = elementSlots[(*iter).semantic]++;
       (*iter).offset = offset;
+      (*iter).size = ElementTypeSize[iter->type];
 
       if(iter->type > 0 && iter->type < VertexElement::ET_HALF1)
       {
@@ -320,6 +356,8 @@ namespace K15_Engine { namespace Rendering {
         offset += (uint32)(sizeof(uint16) * ((iter->type+1)*0.5));
       }
     }
+
+    m_Impl->updateElements(m_Elements);
 
     m_Dirty = false;
   }

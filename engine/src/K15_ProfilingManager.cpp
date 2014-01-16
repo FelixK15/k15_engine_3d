@@ -24,7 +24,7 @@
 namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	ProfilingManager::ProfilingManager()
-		: PoolAllocator(MemoryAllocator,10000,_N(ProfilingManagerAllocator)), 
+		: PoolAllocator(MemoryAllocator,K15_PROFILING_NODE_POOLSIZE,_N(ProfilingManagerAllocator)), 
 		AllocatedObject(),
 		m_Root(0),
 		m_LastNode(0)
@@ -34,7 +34,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	ProfilingManager::~ProfilingManager()
 	{
-		
+		clear();
 	}
 	/*********************************************************************************/
 	void ProfilingManager::startProfiling(ProfilingNode* p_Node)

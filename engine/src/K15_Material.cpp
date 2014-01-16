@@ -30,7 +30,12 @@ namespace K15_Engine { namespace Rendering {
 		m_Diffuse(ColorRGBA::White),
 		m_Ambient(ColorRGBA::White),
 		m_DiffuseMap(0),
-		m_DiffuseSampler(0)
+		m_DiffuseSampler(0),
+		m_CullingMode(RendererBase::CM_CW),
+		m_FillMode(RendererBase::FM_SOLID),
+		m_Transparent(false),
+		m_LightningEnabled(true),
+		m_BackFaceCullingEnabled(true)
 	{
 	
 	}

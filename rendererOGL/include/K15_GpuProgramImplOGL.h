@@ -42,10 +42,10 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		virtual ~GpuProgramImplOGL();
 
 		virtual bool compileShaderCode() OVERRIDE;
-		virtual bool loadBinaryCode() OVERRIDE;
-		virtual bool reflect() OVERRIDE;
+		virtual void loadBinaryCode() OVERRIDE;
+		virtual void reflect() OVERRIDE;
 
-		virtual bool getBinaryCode(RawData* p_Buffer) OVERRIDE;
+		virtual void getBinaryCode(RawData* p_Buffer) OVERRIDE;
 
 		GLuint getProgramGL() const;
 

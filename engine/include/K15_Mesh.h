@@ -29,22 +29,28 @@
 #endif //K15_USE_PRECOMPILED_HEADER
 
 #include "K15_AABB.h"
+#include "K15_ResourceBase.h"
 
 namespace K15_Engine { namespace Rendering {
-	class K15_CORE_API Mesh
+	class K15_CORE_API Mesh : public ResourceBase
 	{
 	public:
 		/*********************************************************************************/
-		const uint32 MaxSubMeshes = 12;
+		static const uint32 MaxSubMeshes = 12;
 		typedef FixedArray(SubMesh*,MaxSubMeshes) SubMeshArray;
 		/*********************************************************************************/
 	public:
 		Mesh();
+    Mesh(const ObjectName& p_Name);
 		virtual ~Mesh();
 
 		INLINE AABB* getAABB() const;
 		void calculateAABB();
-	private:
+
+    virtual void loadDebug(RawData& p_Data);
+    virtual bool internalLoad(const RawData& p_Data);
+
+  /*private:*/
 		SubMeshArray m_SubMeshses;
 		AABB m_AxisAlignedBoundingBox;
 	};// end of Mesh class declaration

@@ -30,6 +30,14 @@ namespace K15_Engine { namespace Rendering {
 
 	/*********************************************************************************/
 	GpuProgramParameter::GpuProgramParameter()
+    : m_AutoParameter(false),
+    m_Offset(0),
+    m_Size(0),
+    m_Type(0),
+    m_Name(),
+    m_AutoName(ObjectName::BLANK),
+    m_RegisterIndex(0),
+    m_BufferIndex(-1)
 	{
 
 	}

@@ -25,7 +25,8 @@
 #define _K15Engine_Renderer_VertexDeclaration_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
-# include "K15_Prerequisites.h"
+#	include "K15_Prerequisites.h"
+#	include "K15_HashedString.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace Rendering {
@@ -63,6 +64,7 @@ namespace K15_Engine { namespace Rendering {
     uint32 offset;
     uint32 index;
     uint32 slot;
+    uint32 size;
   }; //end of VertexElement struct
   /*********************************************************************************/
   class K15_CORE_API VertexDeclaration
@@ -70,6 +72,7 @@ namespace K15_Engine { namespace Rendering {
   public:
     /*********************************************************************************/
     typedef DynamicArray(VertexElement) VertexElementArray;
+    static const uint32 ElementTypeSize[VertexElement::ET_COUNT];
     static const char SemanticToCharConverter[VertexElement::ES_COUNT];
     static const char* TypeToCharConverter[VertexElement::ET_COUNT];
     /*********************************************************************************/
@@ -95,7 +98,7 @@ namespace K15_Engine { namespace Rendering {
     void removeElement(uint32 p_Index);
     void removeAllElements();
 
-	void fromDeclarationString(const String& p_DeclarationString);
+	  void fromDeclarationString(const String& p_DeclarationString);
 
     String getDeclarationString();
     const VertexElement& getElement(uint32 p_Index);
@@ -103,16 +106,34 @@ namespace K15_Engine { namespace Rendering {
     uint32 getVertexSize();
     uint32 getElementCount() const;
 
+    INLINE VertexDeclarationImplBase* getImpl() const;
+
   private:
     void _parseDeclarationString(const String& p_DeclarationString);
     void _updateElements();
     
   private:
     VertexElementArray m_Elements;
+    VertexDeclarationImplBase* m_Impl;
     ObjectName m_Declaration;
     uint32 m_Size;
     bool m_Dirty;
   }; //end of VertexDeclaration class declaration
+  /*********************************************************************************/
+  class K15_CORE_API VertexDeclarationImplBase
+  {
+  public:
+	  VertexDeclarationImplBase();
+	  virtual ~VertexDeclarationImplBase();
+
+	  INLINE VertexDeclaration* getVertexDeclaration() const;
+	  INLINE void setVertexDeclaration(VertexDeclaration* p_Declaration);
+
+	  virtual void updateElements(const VertexDeclaration::VertexElementArray& p_Elements) = 0;
+  protected:
+	  VertexDeclaration* m_Declaration;
+  }; // end of VertexDeclarationImplBase class declaration
+#include "K15_VertexDeclaration.inl"
 }} //end of K15_Engine::Rendering namespace
 
 #endif //_K15Engine_Renderer_VertexDeclaration_h_

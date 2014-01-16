@@ -43,9 +43,19 @@ Enum RendererBase::getTopology() const
 	return m_Topology;
 }
 /*********************************************************************************/
+Enum RendererBase::getFillMode() const
+{
+  return m_FillMode;
+}
+/*********************************************************************************/
 bool RendererBase::getBackFaceCullingEnabled() const
 {
 	return m_BackFaceCullingEnabled;
+}
+/*********************************************************************************/
+bool RendererBase::errorOccured() const
+{
+	return !m_LastError.empty();
 }
 /*********************************************************************************/
 Enum RendererBase::getFrameBufferPixelFormat() const
@@ -86,6 +96,11 @@ const DepthState& RendererBase::getDepthState() const
 GpuProgram* RendererBase::getBoundGpuProgram(Enum p_GpuProgramType) const
 {
 	return m_GpuPrograms[p_GpuProgramType];
+}
+/*********************************************************************************/
+VertexDeclaration* RendererBase::getVertexDeclaration() const
+{
+  return m_VertexDeclaration;
 }
 /*********************************************************************************/
 bool RendererBase::isBoundGpuProgram(Enum p_GpuProgramType) const

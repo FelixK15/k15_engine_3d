@@ -154,6 +154,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_Material.h" />
+    <ClInclude Include="..\..\engine\include\K15_MaterialData.h" />
+    <ClInclude Include="..\..\engine\include\K15_MaterialManager.h" />
     <ClInclude Include="..\..\engine\include\K15_MatrixUtil.h" />
     <ClInclude Include="..\..\engine\include\K15_MemberFunctor.h" />
     <ClInclude Include="..\..\engine\include\K15_MemoryBlock.h" />
@@ -175,6 +177,7 @@
     <ClInclude Include="..\..\engine\include\K15_PhysicsTask.h" />
     <ClInclude Include="..\..\engine\include\K15_Pointer.h" />
     <ClInclude Include="..\..\engine\include\K15_PoolAllocator.h" />
+    <ClInclude Include="..\..\engine\include\K15_AllocatorSizes.h" />
     <ClInclude Include="..\..\engine\include\K15_PrecompiledHeader.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
@@ -192,6 +195,7 @@
     <ClInclude Include="..\..\engine\include\K15_RenderTask.h" />
     <ClInclude Include="..\..\engine\include\K15_RenderWindowBase.h" />
     <ClInclude Include="..\..\engine\include\K15_ResourceData.h" />
+    <ClInclude Include="..\..\engine\include\K15_Serializer.h" />
     <ClInclude Include="..\..\engine\include\K15_StackAllocator.h" />
     <ClInclude Include="..\..\engine\include\K15_String.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -202,6 +206,7 @@
     <ClInclude Include="..\..\engine\include\K15_TextConsoleLog.h" />
     <ClInclude Include="..\..\engine\include\K15_Texture.h" />
     <ClInclude Include="..\..\engine\include\K15_TextureSampler.h" />
+    <ClInclude Include="..\..\engine\include\K15_ThreadSafe.h" />
     <ClInclude Include="..\..\engine\include\K15_ThreadWorker.h" />
     <ClInclude Include="..\..\engine\include\K15_TrueTypeFont.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -289,10 +294,13 @@
     <ClCompile Include="..\..\engine\src\K15_Keyboard.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Keyboard_Win32.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Material.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_MaterialData.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_MaterialManager.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MatrixUtil.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MemoryPools.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MemoryProfiler.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MemoryProfilingTask.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_Mesh.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Mouse.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Mouse_Win32.cpp" />
     <ClCompile Include="..\..\engine\src\K15_NetworkManager.cpp" />
@@ -309,10 +317,12 @@
     <ClCompile Include="..\..\engine\src\K15_RenderProcessBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_RenderTask.cpp" />
     <ClCompile Include="..\..\engine\src\K15_RenderWindowBase.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_Serializer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_SubMesh.cpp" />
     <ClCompile Include="..\..\engine\src\K15_TextConsoleLog.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Texture.cpp" />
     <ClCompile Include="..\..\engine\src\K15_TextureSampler.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_ThreadSafe.cpp" />
     <ClCompile Include="..\..\engine\src\K15_ThreadWorker.cpp" />
     <ClCompile Include="..\..\engine\src\K15_TrueTypeFont.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -433,7 +443,9 @@
     <None Include="..\..\engine\include\K15_TaskManager.inl" />
     <None Include="..\..\engine\include\K15_Texture.inl" />
     <None Include="..\..\engine\include\K15_TextureSampler.inl" />
+    <None Include="..\..\engine\include\K15_ThreadSafe.inl" />
     <None Include="..\..\engine\include\K15_VertexBuffer.inl" />
+    <None Include="..\..\engine\include\K15_VertexDeclaration.inl" />
     <None Include="..\..\engine\src\K15_CameraComponent.cpp" />
     <None Include="module.def" />
   </ItemGroup>

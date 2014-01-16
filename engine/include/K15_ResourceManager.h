@@ -50,7 +50,7 @@ namespace K15_Engine { namespace Core {
 
 		template<class ResourceType> ResourceHandle<ResourceType> getResource(const ResourceName& p_ResourceName,Enum p_Priority)
 		{
-			//K15_PROFILE(ResourceManager_GetResource);
+			K15_PROFILE(StringUtil::format("ResourceManager::getResource (%s)",p_ResourceName.c_str()));
 
 			ResourceCache::iterator iter = m_ResourceDataCache.find(p_ResourceName);
 			ResourceHandle<ResourceType> handle(K15_INVALID_RESOURCE_ID);
@@ -71,7 +71,7 @@ namespace K15_Engine { namespace Core {
 
 		template<class ResourceType> bool cacheResource(const ResourceName& p_ResourceName,Enum p_Priority)
 		{
-			//K15_PROFILE(ResourceManager_CacheResource);
+			K15_PROFILE("ResourceManager::cacheResource (%s)",p_ResourceName.c_str());
 
 			bool cachedResource = false;
 			RawData resourceData = {0};

@@ -25,16 +25,27 @@
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
+	const uint32 GpuProgram::MaxParameter = 32;
+	/*********************************************************************************/
+
+	/*********************************************************************************/
 	GpuProgram::GpuProgram()
 		: ResourceBase(),
 		  m_BinaryCode(),
 		  m_Compiled(false),
 		  m_Error(),
 		  m_ShaderCode(),
-		  m_Impl(0)
+		  m_Impl(0),
+		  m_Attributes(),
+		  m_Uniforms(),
+		  m_UsedUniforms(0),
+		  m_UsedAttributes(0)
 	{
 		m_Impl = g_Application->getRenderTask()->getRenderer()->createGpuProgramImpl();
 		m_Impl->setGpuProgram(this);
+		
+		m_Attributes.reserve(MaxParameter);
+		m_Uniforms.reserve(MaxParameter);
 	}
 	/*********************************************************************************/
 	GpuProgram::~GpuProgram()
@@ -48,11 +59,15 @@ namespace K15_Engine { namespace Rendering {
 		{
 			if(m_BinaryCode.size > 0)
 			{
-				if(!m_Impl->loadBinaryCode())
+				m_Impl->loadBinaryCode();
+
+				if(g_Application->getRenderer()->errorOccured())
 				{
+					m_Error = g_Application->getRenderer()->getLastError();
 					_LogError("Could not load binary code for shader %s. %s",m_AssetName.c_str(),m_Error.c_str());
 					m_Compiled = false;
 				}
+
 				else
 				{
 					m_Compiled = true;
@@ -62,20 +77,24 @@ namespace K15_Engine { namespace Rendering {
 			{
 				if(!m_Impl->compileShaderCode())
 				{
+					m_Error = g_Application->getRenderer()->getLastError();
 					_LogError("Could not compile shader code for shader %s. %s",m_AssetName.c_str(),m_Error.c_str());
 					m_Compiled = false;
 				}
 				else
 				{
 					m_Compiled = true;
-					m_Impl->getBinaryCode(&m_BinaryCode);
+//					m_Impl->getBinaryCode(&m_BinaryCode);
 				}
 			}
 		}
 
-		if(!m_Impl->reflect())
+		m_Impl->reflect();
+
+		if(g_Application->getRenderer()->errorOccured())
 		{
-			_LogError("Could not reflect shader %s.",m_AssetName.c_str());
+			_LogError("Could not reflect shader %s. %s.",m_AssetName.c_str(),g_Application->getRenderer()->getLastError().c_str());
+			return false;
 		}
 
 		return m_Compiled;
@@ -107,52 +126,80 @@ namespace K15_Engine { namespace Rendering {
 		
 		return false;
 	}
-  /*********************************************************************************/
-  const String& GpuProgram::_resolveIncludes(const char* p_ShaderCode)
-  {
-    static String shaderCode;
-    static String includeLine;
-    static String includeFile;
-    static String foreignShaderCode;
-    FileStream stream;
+	/*********************************************************************************/
+	void GpuProgram::setAmountAttributes(uint32 p_Amount)
+	{
+		K15_ASSERT(p_Amount <= MaxParameter,StringUtil::format("Trying to set more than %u attributes to GpuProgram %s.",MaxParameter,m_AssetName.c_str()));
 
-    shaderCode = p_ShaderCode;
+		m_UsedAttributes = p_Amount;
+	}
+	/*********************************************************************************/
+	void GpuProgram::setAmountUniforms(uint32 p_Amount)
+	{
+		K15_ASSERT(p_Amount <= MaxParameter,StringUtil::format("Trying to set more than %u parameters to GpuProgram %s.",MaxParameter,m_AssetName.c_str()));
 
-    String::size_type pos = 0;
-    String::size_type eol = 0;
+		m_UsedUniforms = p_Amount;
+	}
+	/*********************************************************************************/
+	GpuProgramParameter& GpuProgram::getUniform(uint32 p_Index)
+	{
+		K15_ASSERT(p_Index <= m_UsedUniforms,StringUtil::format("Trying to access out of bounds. GpuProgram %s",m_AssetName.c_str()));
+		m_Uniforms.push_back(GpuProgramParameter());
+		return m_Uniforms[p_Index];
+	}
+	/*********************************************************************************/
+	GpuProgramParameter& GpuProgram::getAttribute(uint32 p_Index)
+	{
+		K15_ASSERT(p_Index <= m_UsedAttributes,StringUtil::format("Trying to acces out of bounds. GpuProgram %s",m_AssetName.c_str()));
+		m_Attributes.push_back(GpuProgramParameter());
+		return m_Attributes[p_Index];
+	}
+	/*********************************************************************************/
+	const String& GpuProgram::_resolveIncludes(const char* p_ShaderCode)
+	{
+		static String shaderCode;
+		static String includeLine;
+		static String includeFile;
+		static String foreignShaderCode;
+		FileStream stream;
 
-    while((pos = shaderCode.find("#include"),pos) != String::npos)
-    {
-      eol = shaderCode.find_first_of('\n',pos);
-      includeLine = StringUtil::removeWhitespaces(shaderCode.substr(pos,eol - pos));
-      includeFile = includeLine.substr(includeLine.find_first_of('"'),includeLine.find_last_of('"'));
+		shaderCode = p_ShaderCode;
 
-      if(includeFile.empty())
-      {
-        _LogError("Invalid line in GpuProgram. Line: %s, Program: %s",includeLine.c_str(),m_AssetName.c_str());
-        continue;
-      }
+		String::size_type pos = 0;
+		String::size_type eol = 0;
 
-      stream.open(includeFile);
+		while((pos = shaderCode.find("#include"),pos) != String::npos)
+		{
+			eol = shaderCode.find_first_of('\n',pos);
+			includeLine = StringUtil::removeWhitespaces(shaderCode.substr(pos,eol - pos));
+			includeFile = includeLine.substr(includeLine.find_first_of('"'),includeLine.find_last_of('"'));
 
-      if(!stream.is_open())
-      {
-        _LogError("Could not open GpuProgram include \"%s\".",includeFile);
-        continue;
-      }
+			if(includeFile.empty())
+			{
+				_LogError("Invalid line in GpuProgram. Line: %s, Program: %s",includeLine.c_str(),m_AssetName.c_str());
+				continue;
+			}
+
+			stream.open(includeFile);
+
+			if(!stream.is_open())
+			{
+				_LogError("Could not open GpuProgram include \"%s\".",includeFile);
+				continue;
+			}
       
-      stream.seekg(0, FileStream::end); //move cursor to end
-      foreignShaderCode.resize((size_t)stream.tellg()); //stream.tellg = where are we?
-      stream.seekg(0, FileStream::beg); //move cursor to begin
-      stream.read(&foreignShaderCode[0], foreignShaderCode.size());
-      stream.close();
+			stream.seekg(0, FileStream::end); //move cursor to end
+			foreignShaderCode.resize((size_t)stream.tellg()); //stream.tellg = where are we?
+			stream.seekg(0, FileStream::beg); //move cursor to begin
+			stream.read(&foreignShaderCode[0], foreignShaderCode.size());
+			stream.close();
 
-      shaderCode.replace(pos,shaderCode.size(),foreignShaderCode);
+			shaderCode.replace(pos,shaderCode.size(),foreignShaderCode);
       
-      pos = 0;
-    }
+			pos = 0;
+		}
 
-    return shaderCode;
-  }
-  /*********************************************************************************/
+		return shaderCode;
+	}
+	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

@@ -31,9 +31,10 @@
 #endif //K15_USE_PRECOMPILED_HEADER
 
 #include "K15_ColorRGBA.h"
+#include "K15_Serializer.h"
 
 namespace K15_Engine { namespace Rendering {
-	class K15_CORE_API AlphaState
+	class K15_CORE_API AlphaState : public SerializableObject<AlphaState>
 	{
 	public:
 		/*********************************************************************************/

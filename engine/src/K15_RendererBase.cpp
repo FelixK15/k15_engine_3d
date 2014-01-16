@@ -20,10 +20,12 @@
 #include "K15_PrecompiledHeader.h"
 #include "K15_RendererBase.h"
 
+#include "K15_GpuProgramParameter.h"
 #include "K15_GpuProgram.h"
 #include "K15_GpuBuffer.h"
 
 #include "K15_VertexBuffer.h"
+#include "K15_VertexManager.h"
 #include "K15_IndexBuffer.h"
 
 #include "K15_Material.h"
@@ -69,19 +71,31 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	RendererBase::RendererBase()
 		: m_ActiveCamera(0),
-		  m_BackFaceCullingEnabled(true),
-		  m_ClearColor(ColorRGBA::DarkBlue),
-		  m_CullingMode(CM_CCW),
-		  m_DefaultRenderTarget(0),
-		  m_DepthBufferFormat(DBF_COMPONENT_24_I),
-		  m_FrameBufferFormat(PF_RGB_8_I),
-		  m_LightningEnabled(true),
-		  m_RenderTarget(0),
-		  m_RenderWindow(g_Application->getRenderWindow()),
-		  m_StencilBufferFormat(SBF_COMPONENT_8_I),
-		  m_Topology(RenderOperation::T_TRIANGLE)
+		m_BackFaceCullingEnabled(true),
+		m_ClearColor(ColorRGBA::DarkBlue),
+		m_CullingMode(CM_CCW),
+		m_DefaultRenderTarget(0),
+		m_DepthBufferFormat(DBF_COMPONENT_24_I),
+		m_FrameBufferFormat(PF_RGB_8_I),
+		m_LightningEnabled(true),
+		m_RenderTarget(0),
+		m_VertexDeclaration(0),
+		m_Material(0),
+		m_GpuBuffers(),
+		m_GpuPrograms(),
+		m_RenderWindow(g_Application->getRenderWindow()),
+		m_StencilBufferFormat(SBF_COMPONENT_8_I),
+		m_Topology(RenderOperation::T_TRIANGLE)
 	{
-		
+		for(int i = 0;i < GpuBuffer::BT_COUNT;++i)
+		{
+			m_GpuBuffers[i] = 0;
+		}
+
+		for(int i = 0;i < GpuProgram::PS_COUNT;++i)
+		{
+			m_GpuPrograms[i] = 0;
+		}
 	}
 	/*********************************************************************************/
 	RendererBase::~RendererBase()
@@ -89,7 +103,7 @@ namespace K15_Engine { namespace Rendering {
 
 	}
 	/*********************************************************************************/
-	void RendererBase::setRenderWindow(RenderWindowBase* p_RenderWindow)
+	bool RendererBase::setRenderWindow(RenderWindowBase* p_RenderWindow)
 	{
 		K15_ASSERT(p_RenderWindow,"Render Window is NULL.");
 
@@ -97,10 +111,18 @@ namespace K15_Engine { namespace Rendering {
 		{
 			m_RenderWindow = p_RenderWindow;
 			_setRenderWindow(m_RenderWindow);
+
+			if(errorOccured())
+			{
+				_LogError("Error setting render window. %s",getLastError().c_str());
+				return false;
+			}
 		}
+
+		return true;
 	}
 	/*********************************************************************************/
-	void RendererBase::setRenderTarget(RenderTarget* p_RenderTarget)
+	bool RendererBase::setRenderTarget(RenderTarget* p_RenderTarget)
 	{
 		K15_ASSERT(p_RenderTarget,"Render Target is NULL.");
 
@@ -108,10 +130,18 @@ namespace K15_Engine { namespace Rendering {
 		{
 			m_RenderTarget = p_RenderTarget;
 			_setRenderTarget(m_RenderTarget);
+
+			if(errorOccured())
+			{
+				_LogError("Error setting render target. %s",getLastError().c_str());
+				return false;
+			}
 		}
+
+		return true;
 	}
 	/*********************************************************************************/
-	void RendererBase::setActiveCamera(CameraComponent* p_Camera)
+	bool RendererBase::setActiveCamera(CameraComponent* p_Camera)
 	{
 		K15_ASSERT(p_Camera,"Camera is NULL.");
 
@@ -119,10 +149,18 @@ namespace K15_Engine { namespace Rendering {
 		{
 			m_ActiveCamera = p_Camera;
 			_setActiveCamera(m_ActiveCamera);
+
+			if(errorOccured())
+			{
+				_LogError("Error setting active camera. %s",getLastError().c_str());
+				return false;
+			}
 		}
+
+		return true;
 	}
 	/*********************************************************************************/
-	void RendererBase::setCullingMode(Enum p_CullingMode)
+	bool RendererBase::setCullingMode(Enum p_CullingMode)
 	{
 		K15_ASSERT(p_CullingMode < CM_COUNT,StringUtil::format("Invalid culling mode \"%u\"",p_CullingMode));
 
@@ -130,10 +168,28 @@ namespace K15_Engine { namespace Rendering {
 		{
 			m_CullingMode = p_CullingMode;
 			_setCullingMode(m_CullingMode);
+
+			if(errorOccured())
+			{
+				char* mode = 0;
+				switch(p_CullingMode)
+				{
+					case CM_CCW:
+						mode = "Counterclockwise";
+					break;
+					case CM_CW:
+						mode = "Clockwise";
+					break;
+				}
+				_LogError("Error setting culling mode to %s. %s",mode,getLastError().c_str());
+				return false;
+			}
 		}
+		
+		return true;
 	}
 	/*********************************************************************************/
-	void RendererBase::setTopology(Enum p_Topology)
+	bool RendererBase::setTopology(Enum p_Topology)
 	{
 		K15_ASSERT(p_Topology < RenderOperation::T_COUNT,StringUtil::format("Invalid topology \"%u\"",p_Topology));
 
@@ -141,19 +197,83 @@ namespace K15_Engine { namespace Rendering {
 		{
 			m_Topology = p_Topology;
 			_setTopology(m_Topology);
+
+			if(errorOccured())
+			{
+				char* topology = 0;
+				switch(p_Topology)
+				{
+					case RenderOperation::T_DOT:
+						topology = "Dots";
+					break;
+					case RenderOperation::T_LINE:
+						topology = "Lines";
+					break;
+					case RenderOperation::T_QUAD:
+						topology = "Quads";
+					break;
+					case RenderOperation::T_TRIANGLE:
+						topology = "Triangles";
+					break;
+				}
+
+				_LogError("Error setting topology to %s. %s",topology,getLastError().c_str());
+				return false;
+			}
 		}
+
+		return true;
 	}
 	/*********************************************************************************/
-	void RendererBase::setBackFaceCullingEnabled(bool p_Enabled)
+	bool RendererBase::setFillMode(Enum p_FillMode)
+	{
+		K15_ASSERT(p_FillMode < RendererBase::FM_COUNT,StringUtil::format("Invalid fillmode \"%u\"",p_FillMode));
+
+		if(p_FillMode != m_FillMode)
+		{
+			m_FillMode = p_FillMode;
+			_setFillMode(m_FillMode);
+
+			if(errorOccured())
+			{
+				char* fillmode = 0;
+
+				switch(p_FillMode)
+				{
+					case FM_SOLID:
+						fillmode = "Solid";
+					break;
+					case FM_WIREFRAME:
+						fillmode = "Wireframe";
+					break;
+				}
+
+				_LogError("Error setting fill mode to %s. %s",fillmode,getLastError().c_str());
+				return false;
+			}
+		}
+
+		return true;
+	}
+	/*********************************************************************************/
+	bool RendererBase::setBackFaceCullingEnabled(bool p_Enabled)
 	{
 		if(p_Enabled != m_BackFaceCullingEnabled)
 		{
 			m_BackFaceCullingEnabled = p_Enabled;
 			_setBackFaceCullingEnabled(p_Enabled);
+
+			if(errorOccured())
+			{
+				_LogError("Error %s backface culling. %s.",p_Enabled ? "enabling" : "disabling",getLastError().c_str());
+				return false;
+			}
 		}
+
+		return true;
 	}
 	/*********************************************************************************/
-	void RendererBase::setFrameBufferPixelFormat(Enum p_PixelFormat)
+	bool RendererBase::setFrameBufferPixelFormat(Enum p_PixelFormat)
 	{
 		K15_ASSERT(p_PixelFormat < PF_COUNT,StringUtil::format("Invalid frame buffer format \"%u\"",p_PixelFormat));
 
@@ -161,10 +281,18 @@ namespace K15_Engine { namespace Rendering {
 		{
 			m_FrameBufferFormat = p_PixelFormat;
 			_setFrameBufferPixelFormat(m_FrameBufferFormat);
+
+			if(errorOccured())
+			{
+				_LogError("Error setting frame buffer pixelformat. %s",getLastError().c_str());
+				return false;
+			}
 		}
+
+		return true;
 	}
 	/*********************************************************************************/
-	void RendererBase::setDepthBufferFormat(Enum p_DepthFormat)
+	bool RendererBase::setDepthBufferFormat(Enum p_DepthFormat)
 	{
 		K15_ASSERT(p_DepthFormat < DBF_COUNT,StringUtil::format("Invalid depth buffer format \"%u\"",p_DepthFormat));
 
@@ -172,10 +300,18 @@ namespace K15_Engine { namespace Rendering {
 		{
 			m_DepthBufferFormat = p_DepthFormat;
 			_setDepthBufferPixelFormat(m_DepthBufferFormat);
+
+			if(errorOccured())
+			{
+				_LogError("Error setting depth buffer format. %s",getLastError().c_str());
+				return false;
+			}
 		}
+
+		return true;
 	}
 	/*********************************************************************************/
-	void RendererBase::setStencilBufferFormat(Enum p_StencilFormat)
+	bool RendererBase::setStencilBufferFormat(Enum p_StencilFormat)
 	{
 		K15_ASSERT(p_StencilFormat < SBF_COUNT,StringUtil::format("Invalid stencil buffer format \"%u\"",p_StencilFormat));
 
@@ -183,69 +319,165 @@ namespace K15_Engine { namespace Rendering {
 		{
 			m_StencilBufferFormat = p_StencilFormat;
 			_setStencilBufferPixelFormat(m_StencilBufferFormat);
+
+			if(errorOccured())
+			{
+				_LogError("Error setting stencil buffer format. %s",getLastError().c_str());
+				return false;
+			}
 		}
+
+		return true;
 	}
 	/*********************************************************************************/
-	void RendererBase::setClearColor(const ColorRGBA& p_ClearColor)
+	bool RendererBase::setClearColor(const ColorRGBA& p_ClearColor)
 	{
 		if(m_ClearColor != p_ClearColor)
 		{
 			m_ClearColor = p_ClearColor;
 			_setClearColor(m_ClearColor);
+
+			if(errorOccured())
+			{
+				_LogError("Error setting clear color to %.3f %.3f %.3f %.3f (RGBA). %s",
+					p_ClearColor.RedComponent,p_ClearColor.GreenComponent,p_ClearColor.BlueComponent,p_ClearColor.AlphaComponent,
+					getLastError().c_str());
+
+				return false;
+			}
 		}
+
+		return true;
 	}
 	/*********************************************************************************/
-	void RendererBase::setClearColor(float p_Red, float p_Green, float p_Blue)
+	bool RendererBase::setClearColor(float p_Red, float p_Green, float p_Blue)
 	{
-		setClearColor(ColorRGBA(p_Red,p_Green,p_Blue));
+		return setClearColor(ColorRGBA(p_Red,p_Green,p_Blue));
 	}
 	/*********************************************************************************/
-	void RendererBase::bindGpuProgram(GpuProgram* p_GpuProgram,Enum p_Stage)
+	bool RendererBase::bindGpuProgram(GpuProgram* p_GpuProgram,Enum p_Stage)
 	{
 		K15_ASSERT(p_Stage < GpuProgram::PS_COUNT,StringUtil::format("Invalid GpuProgram stage. %u",p_Stage));
 
 		if(m_GpuPrograms[p_Stage] != p_GpuProgram && p_GpuProgram)
 		{
 			m_GpuPrograms[p_Stage] = p_GpuProgram;
-			_bindProgram(p_GpuProgram);
+			_bindProgram(p_GpuProgram,p_Stage);
+
+			for(uint32 i = 0;i < p_GpuProgram->getAmountUniforms();++i)
+			{
+
+			}
+
+			if(errorOccured())
+			{
+				char* stage = 0;
+				
+				switch(p_Stage)
+				{
+					case GpuProgram::PS_VERTEX:
+						stage = "Vertex Stage";
+					break;
+					case GpuProgram::PS_FRAGMENT:
+						stage = "Fragment Stage";
+					break;
+					case GpuProgram::PS_COMPUTE:
+						stage = "Compute Stage";
+					break;
+				}
+				
+				_LogError("Error binding gpu program for program stage \"%s\". %s",
+					p_GpuProgram->getName().c_str(),stage,getLastError().c_str());
+
+				return false;
+			}
 		}
+
+		return true;
 	}
 	/*********************************************************************************/
-	void RendererBase::bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType)
+	bool RendererBase::bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType)
 	{
 		K15_ASSERT(p_BufferType < GpuBuffer::BT_COUNT,StringUtil::format("Invalid GpuBuffer type. %u",p_BufferType));
 
 		if(m_GpuBuffers[p_BufferType] != p_Buffer && p_Buffer)
 		{
 			m_GpuBuffers[p_BufferType] = p_Buffer;
-			_bindBuffer(p_Buffer);
+			_bindBuffer(p_Buffer,p_BufferType);
+
+			if(errorOccured())
+			{
+				char* type = 0;
+
+				switch(p_BufferType)
+				{
+					case GpuBuffer::BT_INDEX_BUFFER:
+						type = "Index Buffer";
+					break;
+					case GpuBuffer::BT_VERTEX_BUFFER:
+						type = "Vertex Buffer";
+					break;
+				}
+
+				_LogError("Error during buffer binding. Buffer type \"%s\". %s",type,getLastError().c_str());
+				return false;
+			}
 		}
+
+		return true;
 	}
 	/*********************************************************************************/
-	void RendererBase::draw(RenderOperation* p_Rop)
+	bool RendererBase::draw(RenderOperation* p_Rop)
 	{
 		K15_ASSERT(p_Rop,"RenderOperation is NULL.");
-		bindBuffer(p_Rop->vertexBuffer,GpuBuffer::BT_VERTEX_BUFFER);
-		bindBuffer(p_Rop->indexBuffer,GpuBuffer::BT_INDEX_BUFFER);
-		bindMaterial(p_Rop->material);
-		setTopology(p_Rop->topology);
-
+		K15_ASSERT(p_Rop->vertexBufferBinding,"RenderOperation has no vertex buffer.");
+		
+		if(!bindBuffer(p_Rop->vertexBufferBinding->getVertexBuffer(),GpuBuffer::BT_VERTEX_BUFFER) ||
+		   !bindBuffer(p_Rop->indexBuffer,GpuBuffer::BT_INDEX_BUFFER) ||
+		   !bindMaterial(p_Rop->material) || !setVertexDeclaration(p_Rop->vertexBufferBinding->getVertexDeclaration()) ||
+		   !setTopology(p_Rop->topology))
+		{
+			return false;
+		}
+		
 		MaterialPass* pass = 0;
 		for(uint32 i = 0;i < m_Material->getAmountPasses();++i)
 		{
 			pass = 	m_Material->getPass(i);
-			bindGpuProgram(pass->getProgram(GpuProgram::PS_VERTEX),GpuProgram::PS_VERTEX);
-			bindGpuProgram(pass->getProgram(GpuProgram::PS_FRAGMENT),GpuProgram::PS_FRAGMENT);
-			setCullingMode(pass->getCullingMode());
-      setAlphaState(pass->getAlphaState());
-			setDepthState(pass->getDepthState());
+      
+			if(!bindGpuProgram(pass->getProgram(GpuProgram::PS_VERTEX),GpuProgram::PS_VERTEX) ||
+			   !bindGpuProgram(pass->getProgram(GpuProgram::PS_FRAGMENT),GpuProgram::PS_FRAGMENT) ||
+			   !setCullingMode(pass->getCullingMode()) ||
+			   !setFillMode(pass->getFillMode()) ||
+			   !setAlphaState(pass->getAlphaState()) ||
+			   !setDepthState(pass->getDepthState()))
+			{
+				continue;
+			}
+			
 			setLightningEnabled(pass->isLightningEnabled());
 			
-			_draw(p_Rop);
+// 			if(p_Rop->indexBuffer != 0)
+// 			{
+// 				_drawIndexed(p_Rop->vertexBufferBinding->getOffset());
+// 			}
+// 			else
+			{
+				_drawDirect(p_Rop->vertexBufferBinding->getOffset());
+			}
+
+			if(errorOccured())
+			{
+				_LogError("Error during draw. Material: %s (pass %u) %s",
+					m_Material->getName().c_str(),i+1,getLastError().c_str());
+				continue;
+			}
 		}
+
+		return true;
 	}
 	/*********************************************************************************/
-	void RendererBase::bindMaterial(Material* p_Material)
+	bool RendererBase::bindMaterial(Material* p_Material)
 	{
 		K15_ASSERT(p_Material,"Material is NULL.");
 
@@ -267,24 +499,79 @@ namespace K15_Engine { namespace Rendering {
 		{
 			m_Material = p_Material;
 		}
+
+		return true;
 	}
 	/*********************************************************************************/
-	void RendererBase::setAlphaState(const AlphaState& p_AlphaState)
+	bool RendererBase::setAlphaState(const AlphaState& p_AlphaState)
 	{
 		if(p_AlphaState != m_AlphaState)
 		{
-      m_AlphaState = p_AlphaState;
+			m_AlphaState = p_AlphaState;
 			_setAlphaState(p_AlphaState);
+
+      if(errorOccured())
+      {
+        _LogError("Error setting alpha state. %s",getLastError().c_str());
+        return false;
+      }
 		}
+
+    return true;
 	}
 	/*********************************************************************************/
-  void RendererBase::setDepthState(const DepthState& p_DepthState)
-  {
-    if(p_DepthState != m_DepthState)
-    {
-      m_DepthState = p_DepthState;
-      _setDepthState(p_DepthState);
+	bool RendererBase::setDepthState(const DepthState& p_DepthState)
+	{
+		if(p_DepthState != m_DepthState)
+		{
+			m_DepthState = p_DepthState;
+			_setDepthState(p_DepthState);
+
+      if(errorOccured())
+      {
+        _LogError("Error setting depth state. %s",getLastError().c_str());
+        return false;
+      }
     }
-  }
-  /*********************************************************************************/
+
+    return true;
+	}
+	/*********************************************************************************/
+	bool RendererBase::setVertexDeclaration(VertexDeclaration* p_Declaration)
+	{
+		K15_ASSERT(p_Declaration,"VertexDeclaration is NULL!");
+
+		if(m_VertexDeclaration != p_Declaration)
+		{
+			m_VertexDeclaration = p_Declaration;
+			_setVertexDeclaration(p_Declaration);
+
+			if(errorOccured())
+			{
+				_LogError("Error setting vertex declaration \"%s\".%s",
+					p_Declaration->getDeclarationString().c_str(),getLastError().c_str());
+
+				return false;
+			}
+		}
+
+		return true;
+	}
+	/*********************************************************************************/
+	void RendererBase::bindGpuProgramParameter(const GpuProgramParameter& p_Parameter)
+	{
+		RawData data;
+		if(p_Parameter.isAutoParameter())
+		{
+			if(p_Parameter.getAutoName() == GpuProgramParameter::Default::WorldViewProjectionMatrix)
+			{
+        
+			}
+			else if(p_Parameter.getAutoName() == GpuProgramParameter::Default::InverseWorldViewProjectionMatrix)
+			{
+
+			}
+		}
+	}
+/*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace

@@ -47,7 +47,7 @@ namespace K15_Engine { namespace Rendering {
 		/*********************************************************************************/
 
 		IndexBuffer* indexBuffer;
-		VertexBuffer* vertexBuffer;
+		VertexBufferBinding* vertexBufferBinding;
 		Material* material;
 		SubMesh* subMesh;
 		AlphaState* alphaState;

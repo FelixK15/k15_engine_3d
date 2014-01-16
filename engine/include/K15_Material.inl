@@ -53,6 +53,11 @@ void MaterialPass::setSpecular(const ColorRGBA& p_Specular)
 	m_Specular = p_Specular;
 }
 /*********************************************************************************/
+void MaterialPass::setFillMode(Enum p_FillMode)
+{
+  m_FillMode = p_FillMode;
+}
+/*********************************************************************************/
 void MaterialPass::setDiffuse(const ColorRGBA& p_Diffuse)
 {
 	m_Diffuse = p_Diffuse;
@@ -66,6 +71,11 @@ void MaterialPass::setAmbient(const ColorRGBA& p_Ambient)
 void MaterialPass::setShininess(float p_Hightlight)
 {
 	m_Shininess = p_Hightlight;
+}
+/*********************************************************************************/
+Enum MaterialPass::getFillMode() const
+{
+  return m_FillMode;
 }
 /*********************************************************************************/
 Texture* MaterialPass::getDiffuseMap() const

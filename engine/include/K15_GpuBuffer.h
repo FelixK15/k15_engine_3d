@@ -114,6 +114,7 @@ namespace K15_Engine { namespace Rendering {
 		INLINE uint32 getShadowCopySize() const;
 
 		INLINE uint32 getSize() const;
+    INLINE uint32 getUsedSize() const;
 
 		INLINE bool isLocked() const;
 
@@ -136,6 +137,7 @@ namespace K15_Engine { namespace Rendering {
 		byte* m_ShadowCopy;
 		uint32 m_ShadowCopySize;
 		uint32 m_Size;
+    uint32 m_UsedSize;
 		Enum m_LockOption;
 		Enum m_UsageOption;
 		Enum m_BufferType;

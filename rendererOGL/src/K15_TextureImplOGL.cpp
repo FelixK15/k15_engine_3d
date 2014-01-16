@@ -120,14 +120,14 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 		if(glGetError() != GL_NO_ERROR)
 		{
-			_LogError("Could not write to texture %s. %s",m_Texture->getAssetName().c_str(),g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
+			_LogError("Could not write to texture %s. %s",m_Texture->getName().c_str(),g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
 			return false;
 		}
 
 		glGenerateTextureMipmapEXT(m_TextureHandle,target);
 		if(glGetError() != GL_NO_ERROR)
 		{
-			_LogError("Could not create mipmaps for texture %s. %s",m_Texture->getAssetName().c_str(),g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
+			_LogError("Could not create mipmaps for texture %s. %s",m_Texture->getName().c_str(),g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
 			return false;
 		}
 
@@ -188,7 +188,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 		if(glGetError() != GL_NO_ERROR)
 		{
-			_LogError("Could not upload texture data to texture %s. %s",m_Texture->getAssetName().c_str(),
+			_LogError("Could not upload texture data to texture %s. %s",m_Texture->getName().c_str(),
 				g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
 
 			return false;
@@ -217,7 +217,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 		if(glGetError() != GL_NO_ERROR)
 		{
-			_LogError("Could not resize texture %s. %s",m_Texture->getAssetName().c_str(),
+			_LogError("Could not resize texture %s. %s",m_Texture->getName().c_str(),
 				g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
 
 			return false;

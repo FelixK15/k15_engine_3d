@@ -18,6 +18,16 @@
  */
 
 /*********************************************************************************/
+uint32 VertexBuffer::getVertexCount() const
+{
+  return m_VertexCount;
+}
+/*********************************************************************************/
+void VertexBuffer::setVertexCount(uint32 p_VertexCount)
+{
+  m_VertexCount = p_VertexCount;
+}
+/*********************************************************************************/
 void VertexBuffer::setVertexDeclaration(VertexDeclaration* p_Declaration)
 {
 	m_Declaration = p_Declaration;

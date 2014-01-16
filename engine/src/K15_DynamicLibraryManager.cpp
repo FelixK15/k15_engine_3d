@@ -29,7 +29,7 @@
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	DynamicLibraryManager::DynamicLibraryManager()
-		: StackAllocator(MemoryAllocator,5 * MEGABYTE,_N(DynamlicLibraryManagerAllocator)),
+		: StackAllocator(MemoryAllocator,K15_DYNAMICLIBRARYMANAGER_ALLOCATOR_SIZE,_N(DynamlicLibraryManagerAllocator)),
 		  m_LoadedLibs()
 	{
 	  _LogNormal("Initializing DynamicLibraryManager...");

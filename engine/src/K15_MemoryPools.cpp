@@ -22,11 +22,8 @@
 #include "K15_MemoryPools.h"
 
 namespace K15_Engine { namespace Core {
-	/*********************************************************************************/
-	const uint32 RenderOperationAllocator::RenderOperationCount = 512;
-	/*********************************************************************************/
 	RenderOperationAllocator::RenderOperationAllocator()
-		: PoolAllocator<K15_SIZE_RENDER_OPERATION>(MemoryPoolsAllocator,RenderOperationCount,_N(RenderOperationAllocator))
+		: PoolAllocator<K15_SIZE_RENDER_OPERATION>(MemoryPoolsAllocator,K15_RENDER_OPERATION_POOLSIZE,_N(RenderOperationAllocator))
 	{
 
 	}
@@ -52,11 +49,8 @@ namespace K15_Engine { namespace Core {
 	}
 	/*********************************************************************************/
 
-	/*********************************************************************************/
-	const uint32 MemoryBlockAllocator::MemoryBlockCount = 512;
-	/*********************************************************************************/
 	MemoryBlockAllocator::MemoryBlockAllocator()
-	: PoolAllocator<K15_SIZE_MEMORY_BLOCK>(MemoryPoolsAllocator,MemoryBlockCount,_N(MemoryBlockAllocator))
+	: PoolAllocator<K15_SIZE_MEMORY_BLOCK>(MemoryPoolsAllocator,K15_MEMORY_BLOCK_POOLSIZE,_N(MemoryBlockAllocator))
 	{
 
 	}
@@ -67,11 +61,8 @@ namespace K15_Engine { namespace Core {
 	}
 	/*********************************************************************************/
 
-	/*********************************************************************************/
-	const uint32 MaterialAllocator::MaterialCount = 512;
-	/*********************************************************************************/
 	MaterialAllocator::MaterialAllocator()
-	: PoolAllocator<K15_SIZE_MATERIAL>(MemoryPoolsAllocator,MaterialCount,_N(MaterialAllocator))
+	: PoolAllocator<K15_SIZE_MATERIAL>(MemoryPoolsAllocator,K15_MATERIAL_POOLSIZE,_N(MaterialAllocator))
 	{
 
 	}

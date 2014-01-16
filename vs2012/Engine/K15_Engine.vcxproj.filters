@@ -354,6 +354,19 @@
     <ClInclude Include="..\..\engine\include\K15_GameObject.h">
       <Filter>Core\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Serializer.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_MaterialManager.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_AllocatorSizes.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ThreadSafe.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_MaterialData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -569,6 +582,19 @@
     <ClCompile Include="..\..\engine\src\K15_GameObject.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_Serializer.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_Mesh.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_MaterialManager.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ThreadSafe.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_MaterialData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -730,6 +756,12 @@
     </None>
     <None Include="..\..\engine\include\K15_GpuProgramParameter.inl">
       <Filter>Rendering\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_VertexDeclaration.inl">
+      <Filter>Rendering\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_ThreadSafe.inl">
+      <Filter>Core\include</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

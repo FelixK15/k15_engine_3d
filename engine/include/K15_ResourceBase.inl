@@ -33,16 +33,6 @@ uint32 ResourceBase::getResourceReferences() const
 	return m_ReferenceCount;
 }
 /*********************************************************************************/
-void ResourceBase::setAssetName(const ResourceName& p_AssetName)
-{
-	m_AssetName = p_AssetName;
-}
-/*********************************************************************************/
-const ResourceName& ResourceBase::getAssetName() const
-{
-	return m_AssetName;
-}
-/*********************************************************************************/
 void ResourceBase::increseResourceReference()
 {
 	++m_ReferenceCount;

@@ -68,7 +68,7 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		/*********************************************************************************/
 		enum eButton
 		{
-			BTN_LEFT,		//<! Left Mouse Button
+			BTN_LEFT = 0,		//<! Left Mouse Button
 			BTN_RIGHT,		//<! Right Mouse Button
 			BTN_MIDDLE,		//<! Middle Mouse Button
 

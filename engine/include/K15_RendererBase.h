@@ -46,6 +46,16 @@ namespace K15_Engine { namespace Rendering {
 		typedef FixedArray(GpuProgram*,GpuProgram::PS_COUNT) GpuProgramArray;
 		typedef FixedArray(GpuBuffer*,GpuBuffer::BT_COUNT) GpuBufferArray;
 		/*********************************************************************************/
+
+		/*********************************************************************************/
+		enum eFillMode
+		{
+		  FM_SOLID = 0,
+		  FM_WIREFRAME,
+
+		  FM_COUNT
+		};// FillMode
+		/*********************************************************************************/
 		enum eCullingMode
 		{
 			CM_CCW = 0,
@@ -123,59 +133,70 @@ namespace K15_Engine { namespace Rendering {
 		RendererBase();
 		virtual ~RendererBase();
 
-		void draw(RenderOperation* p_Rop);
+		bool draw(RenderOperation* p_Rop);
 
-		void setRenderWindow(RenderWindowBase* p_RenderWindow);
+		bool setRenderWindow(RenderWindowBase* p_RenderWindow);
 		INLINE RenderWindowBase* getRenderWindow() const;
 
-		void setRenderTarget(RenderTarget* p_RenderTarget);
+		bool setRenderTarget(RenderTarget* p_RenderTarget);
 		INLINE RenderTarget* getRenderTarget() const;
 
-		void setActiveCamera(CameraComponent* p_Camera);
+		bool setActiveCamera(CameraComponent* p_Camera);
 		INLINE CameraComponent* getActiveCamera() const;
 
-		void setCullingMode(Enum p_CullingMode);
+		bool setCullingMode(Enum p_CullingMode);
 		INLINE Enum getCullingMode() const;
 
-		void setTopology(Enum p_Topology);
+		bool setTopology(Enum p_Topology);
 		INLINE Enum getTopology() const;
 
-		void setBackFaceCullingEnabled(bool p_Enabled);
+		bool setBackFaceCullingEnabled(bool p_Enabled);
 		INLINE bool getBackFaceCullingEnabled() const;
 
-		void setFrameBufferPixelFormat(Enum p_PixelFormat);
+		bool setFrameBufferPixelFormat(Enum p_PixelFormat);
 		INLINE Enum getFrameBufferPixelFormat() const;
 
-		void setDepthBufferFormat(Enum p_DepthFormat);
+		bool setDepthBufferFormat(Enum p_DepthFormat);
 		INLINE Enum getDepthBufferFormat() const;
 
-		void setStencilBufferFormat(Enum p_StencilFormat);
+		bool setStencilBufferFormat(Enum p_StencilFormat);
 		INLINE Enum getStencilBufferFormat() const;
 
-		void setClearColor(const ColorRGBA& p_ClearColor);
-		void setClearColor(float p_Red = 1.0f, float p_Green = 1.0f, float p_Blue = 1.0f);
+		bool setFillMode(Enum p_FillMode);
+		INLINE Enum getFillMode() const;
+
+		bool setClearColor(const ColorRGBA& p_ClearColor);
+		bool setClearColor(float p_Red = 1.0f, float p_Green = 1.0f, float p_Blue = 1.0f);
 		INLINE const ColorRGBA& getClearColor() const;
 
 		INLINE void setLightningEnabled(bool p_Enabled);
 		INLINE bool getLightningEnabled() const;
 
-		void setAlphaState(const AlphaState& p_AlphaState);
+		bool setAlphaState(const AlphaState& p_AlphaState);
 		INLINE const AlphaState& getAlphaState() const;
 
-    void setDepthState(const DepthState& p_DepthState);
-    INLINE const DepthState& getDepthState() const;
+		bool setDepthState(const DepthState& p_DepthState);
+		INLINE const DepthState& getDepthState() const;
 
-		void bindGpuProgram(GpuProgram* p_GpuProgram,Enum p_Stage);
+		bool bindGpuProgram(GpuProgram* p_GpuProgram,Enum p_Stage);
 		INLINE GpuProgram* getBoundGpuProgram(Enum p_GpuProgramType) const;
 		INLINE bool isBoundGpuProgram(Enum p_GpuProgramType) const;
 
-		INLINE void bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType);
-		void bindMaterial(Material* p_Material);
+		INLINE bool errorOccured() const;
+
+		void bindGpuProgramParameter(const GpuProgramParameter& p_Parameter);
+
+		bool bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType);
+		bool bindMaterial(Material* p_Material);
+
+		bool setVertexDeclaration(VertexDeclaration* p_Declaration);
+		INLINE VertexDeclaration* getVertexDeclaration() const; 
 
 		virtual GpuBufferImplBase* createGpuBufferImpl() = 0;
 		virtual	TextureImplBase* createTextureImpl() = 0;
 		virtual GpuProgramImplBase* createGpuProgramImpl() = 0;
 		virtual TextureSamplerImplBase* createTextureSamplerImpl() = 0;
+		virtual VertexDeclarationImplBase* createVertexDeclarationImpl() = 0;
 
 		INLINE const String& getLastError();
 		INLINE void setLastError(const String& p_String);
@@ -189,11 +210,13 @@ namespace K15_Engine { namespace Rendering {
 		virtual void onResolutionChanged(const Resolution& p_Resolution){};
 
 	protected:
+		virtual void _setFillMode(Enum p_FillMode){}
 		virtual void _setAlphaState(const AlphaState& p_AlphaState){}
-    virtual void _setDepthState(const DepthState& p_DepthState){}
+		virtual void _setDepthState(const DepthState& p_DepthState){}
 		virtual void _setRenderWindow(RenderWindowBase* p_RenderWindow){}
 		virtual void _setRenderTarget(RenderTarget* p_RenderTarget){}
 		virtual void _setActiveCamera(CameraComponent* p_Camera){}
+		virtual void _setVertexDeclaration(VertexDeclaration* p_Declaration){}
 		virtual void _setCullingMode(Enum p_CullingMode){}
 		virtual void _setTopology(Enum p_Topology){}
 		virtual void _setBackFaceCullingEnabled(bool p_Enabled){}
@@ -201,22 +224,27 @@ namespace K15_Engine { namespace Rendering {
 		virtual void _setDepthBufferPixelFormat(Enum p_DepthFormat){}
 		virtual void _setStencilBufferPixelFormat(Enum p_StencilFormat){}
 		virtual void _setClearColor(const ColorRGBA& p_ClearColor){}
-		virtual void _bindBuffer(GpuBuffer* p_Buffer){}
-		virtual void _bindProgram(GpuProgram* p_Program){}
-		virtual void _draw(RenderOperation* p_Rop){}
+		virtual void _bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType){}
+		virtual void _bindProgram(GpuProgram* p_Program, Enum p_ProgramType){}
+		virtual void _bindProgramParameter(const GpuProgramParameter& p_Parameter,const RawData& p_Data){}
+
+		virtual void _drawIndexed(uint32 p_Offset = 0){}
+		virtual void _drawDirect(uint32 p_Offset = 0){}
 
 	protected:
 		RenderWindowBase* m_RenderWindow;
 		AlphaState m_AlphaState;
-    DepthState m_DepthState;
+		DepthState m_DepthState;
 		CameraComponent* m_ActiveCamera;
 		RenderTarget* m_RenderTarget;
 		RenderTarget* m_DefaultRenderTarget;
 		Material* m_Material;
+		VertexDeclaration* m_VertexDeclaration;
 		GpuProgramArray m_GpuPrograms;
 		GpuBufferArray m_GpuBuffers;
 		ColorRGBA m_ClearColor;
 		String m_LastError;
+		Enum m_FillMode;
 		Enum m_CullingMode;
 		Enum m_Topology;
 		Enum m_FrameBufferFormat;

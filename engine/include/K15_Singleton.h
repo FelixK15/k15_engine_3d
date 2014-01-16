@@ -36,9 +36,9 @@ namespace K15_Engine { namespace Core {
 		static T* getInstance()
 		{
 			if(!m_Instance)
-      {
-        m_Instance = ::new T();
-      }
+			{
+				m_Instance = ::new T();
+			}
 
 			return m_Instance; 
 		}
@@ -48,14 +48,14 @@ namespace K15_Engine { namespace Core {
 	protected:
 		Singleton()
 		{
-      K15_ASSERT(!m_Instance,"Instance already set!");
+			K15_ASSERT(!m_Instance,"Instance already set!");
 			m_Instance = (T*)this;
 		}
 
-    ~Singleton()
-    {
-      m_Instance = 0;
-    }
+		~Singleton()
+		{
+		  m_Instance = 0;
+		}
 	};
 }} //end of K15_Engine::Core namespace
 

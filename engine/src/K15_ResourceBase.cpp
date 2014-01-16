@@ -23,8 +23,12 @@
 
 namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
+	K15_IMPLEMENT_RTTI_BASE(Core,ResourceBase,Object);
+	/*********************************************************************************/
+
+	/*********************************************************************************/
 	ResourceBase::ResourceBase()
-		: m_AssetName(ResourceName::BLANK),
+		: Object(),
 		  m_Created(0.0),
 		  m_LastUsed(0.0),
 		  m_ReferenceCount(0),
@@ -38,8 +42,8 @@ namespace K15_Engine { namespace Core {
 
 	}
 	/*********************************************************************************/
-	ResourceBase::ResourceBase(const ResourceName& p_AssetName)
-		: m_AssetName(p_AssetName),
+	ResourceBase::ResourceBase(const ObjectName& p_AssetName)
+		: Object(p_AssetName),
 		  m_Created(0.0),
 		  m_LastUsed(0.0),
 		  m_ReferenceCount(0),

@@ -29,15 +29,16 @@
 #endif //K15_USE_PRECOMPILED_HEADER
 
 #include "K15_ResourceBase.h"
+#include "K15_GpuProgramParameter.h"
 
 namespace K15_Engine { namespace Rendering { 
 	class K15_CORE_API GpuProgramImplBase
 	{
 	public:
 		virtual bool compileShaderCode() = 0;
-		virtual bool loadBinaryCode() = 0;
-		virtual bool getBinaryCode(RawData* p_Buffer) = 0;
-    virtual bool reflect() = 0;
+		virtual void loadBinaryCode() = 0;
+		virtual void getBinaryCode(RawData* p_Buffer) = 0;
+		virtual void reflect() = 0;
 
 		INLINE void setGpuProgram(GpuProgram* p_GpuProgram);
 		INLINE GpuProgram* getGpuProgram() const;
@@ -49,8 +50,9 @@ namespace K15_Engine { namespace Rendering {
 	class K15_CORE_API GpuProgram : public ResourceBase
 	{
 	public:
-    /*********************************************************************************/
-    typedef List(GpuProgramParameter*) ParameterList;
+		/*********************************************************************************/
+		static const uint32 MaxParameter;
+		typedef DynamicArray(GpuProgramParameter) ParameterList;
 		/*********************************************************************************/
 		enum eProgramStage
 		{
@@ -61,7 +63,7 @@ namespace K15_Engine { namespace Rendering {
 
 			PS_COUNT
 		}; //ProgramStage
-    /*********************************************************************************/
+		/*********************************************************************************/
 	public:
 		GpuProgram();
 		virtual ~GpuProgram();
@@ -70,6 +72,8 @@ namespace K15_Engine { namespace Rendering {
 		INLINE const RawData* getBinaryCode() const;
 		INLINE const String& getError() const;
 		INLINE const String& getShaderCode() const;
+		INLINE uint32 getAmountUniforms() const;
+		INLINE uint32 getAmountAttributes() const;
 		INLINE Enum getStage() const;
 
 		bool compile();
@@ -77,21 +81,28 @@ namespace K15_Engine { namespace Rendering {
 
 		INLINE void setError(const String& p_Error);
 
+		void setAmountUniforms(uint32 p_Amount);
+		void setAmountAttributes(uint32 p_Amount);
+		
 		virtual void loadDebug(RawData& p_Data);
 		virtual bool internalLoad(const RawData& p_Data);
 
-    void addParameter(const String& p_Name, Enum p_Type, uint32 p_Size);
-
+		GpuProgramParameter& getUniform(uint32 p_Index);
+		GpuProgramParameter& getAttribute(uint32 p_Index);
+		
 		INLINE const GpuProgramImplBase* getImpl() const;
 
-  private:
-    const String& _resolveIncludes(const char* p_ShaderCode);
+	private:
+		const String& _resolveIncludes(const char* p_ShaderCode);
 
 	protected:
 		GpuProgramImplBase* m_Impl;
-    ParameterList m_Parameter;
+		ParameterList m_Uniforms;
+		ParameterList m_Attributes;
 		RawData m_BinaryCode;
 		Enum m_Stage;
+		uint32 m_UsedUniforms;
+		uint32 m_UsedAttributes;
 		String m_Error;
 		String m_ShaderCode;
 		bool m_Compiled;

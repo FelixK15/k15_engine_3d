@@ -30,10 +30,11 @@
 
 #include "K15_MemoryHeader.h"
 #include "K15_AllocatorSizes.h"
+#include "K15_ThreadSafe.h"
 
 namespace K15_Engine { namespace Core {
   
-  class K15_CORE_API BaseAllocator
+  class K15_CORE_API BaseAllocator : public ThreadSafe
   {
   public:
 #if defined K15_DEBUG
@@ -55,9 +56,9 @@ namespace K15_Engine { namespace Core {
     void  deallocateDebug(void* p_Pointer,size_t p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function);
 #endif //K15_DEBUG
 
-	const ObjectName& getName() const;
+	  const ObjectName& getName() const;
 
-  virtual void clear();
+    virtual void clear();
 
   protected:
     virtual void* alloc(size_t p_Size) = 0;
@@ -69,7 +70,6 @@ namespace K15_Engine { namespace Core {
 #endif //K15_DEBUG
 	  ObjectName m_Name;
     BaseAllocator* m_Allocator;
-    Mutex m_Mutex;
     byte* m_Memory;
     byte* m_MemoryEndAddress;
 	  uint32 m_MemorySize;

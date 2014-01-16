@@ -28,6 +28,7 @@
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
+#include "K15_RendererBase.h"
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API RenderProcessBase
 	{
@@ -42,6 +43,7 @@ namespace K15_Engine { namespace Core {
 	
 	protected:
 		Rendering::RendererBase* m_Renderer;
+		
 	};// end of RenderProcessBase class declaration
 }}//end of K15_Engine::Core namespace
 

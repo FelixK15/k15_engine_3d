@@ -54,6 +54,24 @@
 
 #include "K15_RendererBase.h"
 
+
+
+
+
+#include "K15_RenderProcessBase.h"
+
+
+
+
+
+
+#include "K15_RenderOperation.h"
+#include "K15_Material.h"
+#include "K15_GpuProgram.h"
+#include "K15_IndexBuffer.h"
+#include "K15_VertexBuffer.h"
+#include "K15_VertexManager.h"
+
 namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	const String Application::SettingsFileName = "settings.ini";
@@ -62,7 +80,7 @@ namespace K15_Engine { namespace Core {
 	const String Application::GameDirFileName = "gamedir.ini";
 	/*********************************************************************************/
 	Application::Application()
-		: StackAllocator(30 * MEGABYTE,_N(ApplicationAllocator)),
+		: StackAllocator(K15_APPLICATION_ALLOCATOR_SIZE,_N(ApplicationAllocator)),
 		m_Commands(),
 		m_DynamicLibraryManager(0),
 		m_EventManager(0),
@@ -83,14 +101,14 @@ namespace K15_Engine { namespace Core {
 		m_AvgFrameTime(0.033),
 		m_FrameAllocator(0)
 	{
-    memset(m_FrameStatistics,0,sizeof(FrameStatistic) * FrameStatisticCount);
+		memset(m_FrameStatistics,0,sizeof(FrameStatistic) * FrameStatisticCount);
 
-    m_FrameAllocator = K15_NEW_T(this,StackAllocator) StackAllocator(this,FrameAllocatorSize,_N(FrameAllocator));
+		m_FrameAllocator = K15_NEW_T(this,StackAllocator) StackAllocator(this,FrameAllocatorSize,_N(FrameAllocator));
 
-    //creating the Log Manager is first thing we'll do.
-    m_LogManager = K15_NEW LogManager();
+		//creating the Log Manager is first thing we'll do.
+		m_LogManager = K15_NEW LogManager();
 
-    m_MemoryPools = K15_NEW MemoryPools();
+		m_MemoryPools = K15_NEW MemoryPools();
 
 #if defined (K15_DEBUG)
 		m_LogManager->addLog(K15_NEW TextConsoleLog(),true,LogManager::LP_ALL);
@@ -103,6 +121,18 @@ namespace K15_Engine { namespace Core {
 	Application::~Application()
 	{
 		m_Commands.clear();
+	}
+	/*********************************************************************************/
+	RendererBase* Application::getRenderer() const
+	{
+		RendererBase* renderer = 0;
+
+		if(m_RenderTask)
+		{
+			renderer = m_RenderTask->getRenderer();
+		}
+
+		return renderer;
 	}
 	/*********************************************************************************/
 	void Application::createCommandList(int p_CommandCount,char** p_Commands)
@@ -173,6 +203,7 @@ namespace K15_Engine { namespace Core {
 
 		initialize();
 	}
+	
 	/*********************************************************************************/
 	void Application::initialize()
 	{
@@ -270,9 +301,9 @@ namespace K15_Engine { namespace Core {
 		
 		while(m_Running)
 		{
-      K15_PROFILE_BLOCK("Application::tick",
-			  tick();
-      );
+			K15_PROFILE_BLOCK("Application::tick",
+					tick();
+			);
 		}
 
 		for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
@@ -302,17 +333,17 @@ namespace K15_Engine { namespace Core {
 
 		startFrameTime = getTime();
 
-    K15_PROFILE_BLOCK("Application::onPreTick",
-			onPreTick();
-    );
+		K15_PROFILE_BLOCK("Application::onPreTick",
+				onPreTick();
+		);
 		
-    K15_PROFILE_BLOCK("TaskManager::update",
-      m_TaskManager->update(m_GameTime);
-    );
+		K15_PROFILE_BLOCK("TaskManager::update",
+		  m_TaskManager->update(m_GameTime);
+		);
 	
-    K15_PROFILE_BLOCK("Application::onPostTick",
-      onPostTick();
-    );
+		K15_PROFILE_BLOCK("Application::onPostTick",
+		  onPostTick();
+		);
 
 		endFrameTime = getTime();
 
@@ -328,9 +359,9 @@ namespace K15_Engine { namespace Core {
 			static double sleepTime = 0.0;
 			sleepTime = m_AvgFrameTime - diffTime;
 
-      K15_PROFILE_BLOCK("Application::sleep",
-			  m_OSLayer.sleep(sleepTime);
-      );
+			K15_PROFILE_BLOCK("Application::sleep",
+					m_OSLayer.sleep(sleepTime);
+			);
 		}
 		else if(diffTime > m_AvgFrameTime)
 		{
@@ -350,10 +381,10 @@ namespace K15_Engine { namespace Core {
 
 		if(FPSTime >= 1.0)
 		{
-		  m_AvgFramesPerSecond = (float)(FPSFrameCounter / FPSTime);
-		  FPSTime = 0.0;
-		  FPSFrameCounter = 0;
-	  }
+			m_AvgFramesPerSecond = (float)(FPSFrameCounter / FPSTime);
+			FPSTime = 0.0;
+			FPSFrameCounter = 0;
+		}
     
 
 		//increase frame counter
@@ -364,13 +395,13 @@ namespace K15_Engine { namespace Core {
 		FrameStatisticIndex = m_FrameCounter % (FrameStatisticCount - 1);
 		m_FrameStatistics[FrameStatisticIndex].Time = diffTime;
 		m_FrameStatistics[FrameStatisticIndex].FrameNumber = m_FrameCounter;
-    m_FrameStatistics[FrameStatisticIndex].ProfilingNode = g_ProfileManager->getRootNode();
+		m_FrameStatistics[FrameStatisticIndex].ProfilingNode = g_ProfileManager->getRootNode();
 		m_RenderWindow->setWindowTitle(StringUtil::format("msec: %.3f - FPS:%.3f Frame Index: %i",diffTime * 100,m_AvgFramesPerSecond,m_FrameCounter));
 
-    if(m_FrameCounter > FrameStatisticCount)
-    {
-		  g_ProfileManager->eraseProfilingForFrame((m_FrameCounter - 1) - FrameStatisticCount);
-    }
+		if(m_FrameCounter > FrameStatisticCount)
+		{
+			  g_ProfileManager->eraseProfilingForFrame((m_FrameCounter - 1) - FrameStatisticCount);
+		}
 	}
 	/*********************************************************************************/
 	void Application::onPostTick()

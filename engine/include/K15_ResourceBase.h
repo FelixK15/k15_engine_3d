@@ -32,11 +32,14 @@
 
 namespace K15_Engine { namespace Core { 
 
-	class K15_CORE_API ResourceBase
+	class K15_CORE_API ResourceBase : public Object
 	{
 	public:
-		static TypeName Type;
+		/*********************************************************************************/
+		K15_DECLARE_RTTI;
+		/*********************************************************************************/
 
+	public:
 		enum eResourcePriority 
 		{
 			RP_HIGH,	/*!<High priority - stays in the cache for quite some time after it isn't used anymore*/
@@ -49,11 +52,6 @@ namespace K15_Engine { namespace Core {
 		bool load(const RawData& p_Data);
 
 		virtual void loadDebug(RawData& p_Data) = 0;
-
-		INLINE const TypeName& getResourceType() const;
-
-		INLINE void setAssetName(const ResourceName& p_AssetName);
-		INLINE const ResourceName& getAssetName() const;
 
 		INLINE Enum getPriority() const;
 		INLINE void setPriority(Enum p_Priority);
@@ -77,7 +75,7 @@ namespace K15_Engine { namespace Core {
 
 	protected:
 		ResourceBase();
-		ResourceBase(const ResourceName& p_AssetName);
+		ResourceBase(const ObjectName& p_AssetName);
 
 		INLINE byte* getRawData();
 		INLINE uint32 getRawDataSize();
@@ -90,7 +88,6 @@ namespace K15_Engine { namespace Core {
 		bool m_MarkAsUnreferenced;
 		ResourceManager* m_ResourceManager;
 		ResourceFileBase* m_ResourceFile;
-		ResourceName m_AssetName;
 		eResourcePriority m_Priority;
 		double m_Created;
 		double m_LastUsed;

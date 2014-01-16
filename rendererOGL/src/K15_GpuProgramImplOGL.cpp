@@ -21,7 +21,6 @@
 
 #include "K15_GpuProgramParameter.h"
 #include "K15_LogManager.h"
-#include "K15_RenderTask.h"
 #include "K15_RendererBase.h"
 
 namespace K15_Engine { namespace Rendering { namespace OGL {
@@ -48,57 +47,165 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		}
 	}
 	/*********************************************************************************/
-	bool GpuProgramImplOGL::reflect()
+	void GpuProgramImplOGL::reflect()
 	{
 		if(m_GpuProgram->isCompiled())
 		{
+			GLint countActiveAttribs = 0;
+			GLint attribBufferSize = 0;
+			GLint actualAttribBufferSize = 0;
+			GLint attribSize = 0;
+			GLint attribLocation = 0;
+			GLenum attribType = GL_NONE;
+
 			GLint countActiveUniforms = 0;
+			GLint uniformBufferSize = 0;
+			GLint actualUniformBufferSize = 0;
+			GLint uniformSize = 0;
+			GLint uniformLocation = 0;
+			GLint uniformBlock = 0;
+			GLenum uniformType = 0;
+
+			char* buffer = 0;
+
 			glGetProgramiv(m_Program,GL_ACTIVE_UNIFORMS,&countActiveUniforms);
-			GLuint* activeUniforms = (GLuint*)alloca(sizeof(GLuint) * countActiveUniforms);
-			GLint* uniformTypes = (GLint*)alloca(sizeof(GLint) * countActiveUniforms);
-			GLint* uniformSizes = (GLint*)alloca(sizeof(GLint) * countActiveUniforms);
-			GLint* uniformNameLength = (GLint*)alloca(sizeof(GLint) * countActiveUniforms);
+			glGetProgramiv(m_Program,GL_ACTIVE_ATTRIBUTES,&countActiveAttribs);
+			glGetProgramiv(m_Program,GL_ACTIVE_ATTRIBUTE_MAX_LENGTH,&attribBufferSize);
+			glGetProgramiv(m_Program,GL_ACTIVE_UNIFORM_MAX_LENGTH,&uniformBufferSize);
 
-			glGetActiveUniformsiv(m_Program,countActiveUniforms,activeUniforms,GL_UNIFORM_TYPE,uniformTypes); //get type of uniforms
-			glGetActiveUniformsiv(m_Program,countActiveUniforms,activeUniforms,GL_UNIFORM_SIZE,uniformSizes); //get size of uniforms
-			glGetActiveUniformsiv(m_Program,countActiveUniforms,activeUniforms,GL_UNIFORM_NAME_LENGTH,uniformNameLength); //get length of uniform names
+			m_GpuProgram->setAmountUniforms(countActiveUniforms);
+			m_GpuProgram->setAmountAttributes(countActiveAttribs);
 
-			for(int i = 0;i < countActiveUniforms;++i)
+			buffer = (char*)alloca(attribBufferSize);
+			for(int i = 0;i < countActiveAttribs;++i)
 			{
-				GLchar* uniformName = (GLchar*)alloca(uniformNameLength[i]);
-				glGetActiveUniformName(m_Program,activeUniforms[i],uniformNameLength[i],0,uniformName);
+				glGetActiveAttrib(m_Program,i,attribBufferSize,&actualAttribBufferSize,&attribSize,&attribType,buffer);
+				attribLocation = glGetAttribLocation(m_Program,buffer);
 
-				m_GpuProgram->addParameter(String(uniformName),_getParameterType(uniformTypes[i]),uniformSizes[i]);
+				GpuProgramParameter& currentAttrib = m_GpuProgram->getAttribute(i);
+
+				currentAttrib.setRegisterIndex(attribLocation);
+				currentAttrib.setName(buffer);
+				currentAttrib.setSize(attribSize);
+				currentAttrib.setType(_getParameterType(attribType));
 			}
 
-			return true;
-		}
+			buffer = (char*)alloca(uniformBufferSize);
+			for(int i = 0;i < countActiveUniforms;++i)
+			{
+				glGetActiveUniform(m_Program,i,uniformBufferSize,&actualAttribBufferSize,&uniformSize,&uniformType,buffer);
+				uniformLocation = glGetUniformLocation(m_Program,buffer);
+				
+				GpuProgramParameter& currentUniform = m_GpuProgram->getUniform(i);
 
-		return false;
+				currentUniform.setRegisterIndex(uniformLocation);
+				currentUniform.setName(buffer);
+				currentUniform.setSize(uniformSize);
+				currentUniform.setType(_getParameterType(attribType));
+			}
+			
+// 			for(int i = 0;i < countActiveUniforms;++i)
+// 			{
+// 				GLchar* uniformName = (GLchar*)alloca(uniformNameLength[i]);
+// 				GLuint uniformLocation = 0;
+// 
+// 				glGetActiveUniformName(m_Program,activeUniforms[i],uniformNameLength[i],0,uniformName);
+// 				uniformLocation = glGetUniformLocation(m_Program,uniformName);
+//         
+// 				GpuProgramParameter& parameter = m_GpuProgram->getUniform(i);
+// 				uniformString = String(uniformName);
+// 
+// 				GpuProgramParameter::DefaultVariableNameMap::const_iterator defaultIter = GpuProgramParameter::DefaultVariableNames.end();
+// 
+// 				//check if this parameter is an auto parameter
+// 				for(GpuProgramParameter::DefaultVariableNameMap::const_iterator iter = GpuProgramParameter::DefaultVariableNames.begin();iter != 
+// 				  GpuProgramParameter::DefaultVariableNames.end();++iter)
+// 				{
+// 				  if(iter->second == uniformString)
+// 				  {
+// 					defaultIter = iter;
+// 					break;
+// 				  }
+// 				}
+// 
+// 				parameter.setAutoParameter(defaultIter != GpuProgramParameter::DefaultVariableNames.end());
+// 				if(parameter.isAutoParameter())
+// 				{
+// 				  parameter.setAutoName(defaultIter->first);
+// 				} 
+// 				parameter.setName(uniformName);
+// 				parameter.setSize(uniformSizes[i]);
+// 				parameter.setType(_getParameterType(uniformTypes[i]));
+// 				parameter.setBufferIndex(uniformBlocks[i]);
+// 				parameter.setOffset(uniformOffset[i]);
+// 				parameter.setRegisterIndex(uniformLocation);
+// 			}
+		}
 	}
 	/*********************************************************************************/
 	bool GpuProgramImplOGL::compileShaderCode()
 	{
 		GLenum shaderStage = GLShaderStageConverter[m_GpuProgram->getStage()];
-
+		bool compiledSuccessful = false;
 		if(m_Program)
 		{
 			glDeleteProgram(m_Program);
 			m_Program = 0;
 		}
-
-		m_Program = glCreateShaderProgramv(shaderStage,1,(const GLchar**)m_GpuProgram->getShaderCode().c_str());
-
-		if(glGetError() != GL_NO_ERROR)
+		
+		const char* shaderCode = m_GpuProgram->getShaderCode().c_str();
+		
+		const GLuint shader = glCreateShader(shaderStage);
+		if (shader) 
 		{
-			m_GpuProgram->setError(g_Application->getRenderTask()->getRenderer()->getLastError());
-			return false;
-		}
+			glShaderSource(shader, 1, &shaderCode, NULL);
+			glCompileShader(shader);
+			m_Program = glCreateProgram();
+			if (m_Program) 
+			{
+				GLint compiled = GL_FALSE;
+				glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+				glProgramParameteri(m_Program, GL_PROGRAM_SEPARABLE, GL_TRUE);
+				glProgramParameteri(m_Program, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
+			
+				if (compiled) 
+				{
+					compiledSuccessful = true;
+					glAttachShader(m_Program, shader);
+					glLinkProgram(m_Program);
+					glDetachShader(m_Program, shader);
 
-		return true;
+					GLint linkStatus = GL_FALSE;
+					glGetProgramiv(m_Program,GL_LINK_STATUS,&linkStatus);
+
+					if(linkStatus == GL_FALSE)
+					{
+						GLint infoLogLength = 0;
+						glGetProgramiv(m_Program,GL_INFO_LOG_LENGTH,&infoLogLength);
+						if(infoLogLength == 0)
+						{
+							compiledSuccessful = false;
+							String errorMsg = "gpu program linking and info log retrieval failed.\n" + g_Application->getRenderer()->getLastError();
+							g_Application->getRenderer()->setLastError(errorMsg);
+						}
+						else
+						{
+							char* infoLogBuffer = (char*)alloca(infoLogLength);
+							compiledSuccessful = false;
+							String errorMsg = infoLogBuffer;
+							errorMsg += "\n" + g_Application->getRenderer()->getLastError();
+							g_Application->getRenderer()->setLastError(errorMsg);
+						}
+					}
+				}
+			}
+		}
+		glDeleteShader(shader);
+
+		return compiledSuccessful;
 	}
-	/*********************************************************************************/
-	bool GpuProgramImplOGL::loadBinaryCode()
+/*********************************************************************************/
+	void GpuProgramImplOGL::loadBinaryCode()
 	{
 		const RawData* binaryShader = m_GpuProgram->getBinaryCode();
 		GLenum binaryFormat = GL_NONE;
@@ -107,23 +214,16 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		memcpy(&binaryFormat,binaryShader->data,sizeof(GLenum));
 
 		glProgramBinary(m_Program,binaryFormat,binaryShader->data + sizeof(GLenum),binaryShader->size - sizeof(GLenum));
-
-		if(glGetError() != GL_NO_ERROR)
-		{
-			_LogError("Could not load compiled shader-binary from shader %s. %s",m_GpuProgram->getAssetName().c_str(),
-				g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
-
-			return false;
-		}
-
-		return true;
 	}
-	/*********************************************************************************/
-	bool GpuProgramImplOGL::getBinaryCode(RawData* p_Buffer)
+/*********************************************************************************/
+	void GpuProgramImplOGL::getBinaryCode(RawData* p_Buffer)
 	{
 		GLint sizeShader = 0;
 		GLenum binaryFormat = GL_NONE;
 		glGetProgramiv(m_Program,GL_PROGRAM_BINARY_LENGTH,&sizeShader);
+		
+		K15_ASSERT(sizeShader,StringUtil::format("Size of binary for shader %s is 0.",m_GpuProgram->getName().c_str()));
+
 		sizeShader += sizeof(GLenum);
 
 		p_Buffer->size = sizeShader;
@@ -133,16 +233,6 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 		//store format at the beginning of the buffer
 		memcpy(p_Buffer->data,&binaryFormat,sizeof(GLenum));
-
-		if(glGetError() != GL_NO_ERROR)
-		{
-			_LogError("Could not get compiled shader-binary from shader %s. %s",m_GpuProgram->getAssetName().c_str(),
-				g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
-
-			return false;
-		}
-
-		return true;
 	}
 	/*********************************************************************************/
 	GLuint GpuProgramImplOGL::getProgramGL() const
@@ -183,6 +273,18 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
     else if(p_GLType == GL_FLOAT_MAT4)
     {
       return GpuProgramParameter::VT_MATRIX4;
+    }
+    else if(p_GLType == GL_SAMPLER_1D)
+    {
+      return GpuProgramParameter::VT_SAMPLER_1D;
+    }
+    else if(p_GLType == GL_SAMPLER_2D)
+    {
+      return GpuProgramParameter::VT_SAMPLER_2D;
+    }
+    else if(p_GLType == GL_SAMPLER_3D)
+    {
+      return GpuProgramParameter::VT_SAMPLER_3D;
     }
 
     return GpuProgramParameter::VT_UNKNOW;

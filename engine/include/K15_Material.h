@@ -61,6 +61,9 @@ namespace K15_Engine { namespace Rendering {
 		INLINE void setAmbient(const ColorRGBA& p_Ambient);
 		INLINE void setShininess(float p_Shininess);
 
+		INLINE void setFillMode(Enum p_FillMode);
+		INLINE Enum getFillMode() const;
+
 		INLINE void setDiffuseMap(Texture* p_DiffuseMap);
 		INLINE void setDiffuseSampler(TextureSampler* p_DiffuseSampler);
 
@@ -92,6 +95,7 @@ namespace K15_Engine { namespace Rendering {
 		expose ColorRGBA m_Specular;
 		expose ColorRGBA m_Diffuse;
 		expose ColorRGBA m_Ambient;
+		expose Enum m_FillMode;
 		expose Enum m_CullingMode;
 		expose float m_Shininess;
 		expose bool m_Transparent;
@@ -104,8 +108,8 @@ namespace K15_Engine { namespace Rendering {
 	{
 	public:
 		/*********************************************************************************/
-		static const uint32 MaximumMaterialPasses = 8;
-		typedef FixedArray(MaterialPassPtr,MaximumMaterialPasses) MaterialPassArray;
+		static const uint32 MaximumMaterialPasses;
+		typedef DynamicArray(MaterialPass*) MaterialPassArray;
 		/*********************************************************************************/
 	public:
 		Material();
@@ -115,6 +119,7 @@ namespace K15_Engine { namespace Rendering {
 		INLINE MaterialPass* getPass(uint32 p_Index) const;
 
 	private:
+		MaterialData* m_Data;
 		MaterialPassArray m_Passes;
 	}; // end of Material class declaration
 	K15_PTR(Material);

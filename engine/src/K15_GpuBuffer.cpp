@@ -20,7 +20,6 @@
 #include "K15_PrecompiledHeader.h"
 #include "K15_GpuBuffer.h"
 #include "K15_RendererBase.h"
-#include "K15_RenderTask.h"
 #include "K15_LogManager.h"
 
 namespace K15_Engine { namespace Rendering {
@@ -50,30 +49,33 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	GpuBuffer::GpuBuffer(Enum p_BufferType, Enum p_LockOption, Enum p_UsageOption, Enum p_AccessOption, bool p_ShadowCopyEnabled)
 		: m_Locked(false),
-		  m_LockOption(p_LockOption),
-		  m_UsageOption(p_UsageOption),
-		  m_ShadowCopyEnabled(true),
-		  m_ShadowCopySize(0),
-		  m_ShadowCopy(0),
-		  m_Size(0),
-		  m_BufferType(p_BufferType),
-		  m_AccessOption(p_AccessOption)
+		m_LockOption(p_LockOption),
+		m_UsageOption(p_UsageOption),
+		m_ShadowCopyEnabled(true),
+		m_ShadowCopySize(0),
+		m_ShadowCopy(0),
+		m_Size(0),
+		m_UsedSize(0),
+		m_BufferType(p_BufferType),
+		m_AccessOption(p_AccessOption)
 	{
- 		m_Impl = g_Application->getRenderTask()->getRenderer()->createGpuBufferImpl();
+ 		m_Impl = g_Application->getRenderer()->createGpuBufferImpl();
 		m_Impl->setBuffer(this);
  	}
 	/*********************************************************************************/
 	GpuBuffer::GpuBuffer(Enum p_BufferType, uint32 p_InitialDataSize, byte* p_InitialData, uint32 p_InitialDataOffset, Enum p_LockOption, Enum p_UsageOption, Enum p_AccessOption, bool p_ShadowCopyEnabled)
 		: m_Locked(false),
-		  m_LockOption(p_LockOption),
-		  m_ShadowCopy(p_InitialData),
-		  m_ShadowCopyEnabled(true),
-		  m_ShadowCopySize(p_InitialDataSize),
-		  m_UsageOption(p_UsageOption),
-		  m_BufferType(p_BufferType),
-		  m_AccessOption(p_AccessOption)
+		m_LockOption(p_LockOption),
+		m_ShadowCopy(p_InitialData),
+		m_ShadowCopyEnabled(true),
+		m_ShadowCopySize(p_InitialDataSize),
+		m_UsageOption(p_UsageOption),
+		m_BufferType(p_BufferType),
+		m_AccessOption(p_AccessOption),
+		m_Size(0),
+		m_UsedSize(0)
 	{
- 		m_Impl = g_Application->getRenderTask()->getRenderer()->createGpuBufferImpl();
+ 		m_Impl = g_Application->getRenderer()->createGpuBufferImpl();
 		writeData(p_InitialDataSize,p_InitialData,p_InitialDataOffset);
 	}
 	/*********************************************************************************/
@@ -89,7 +91,7 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	void GpuBuffer::lock(uint32 p_StartPos, int32 p_Count)
 	{
-		K15_ASSERT(isLocked(),"GpuBuffer is already locked.");
+		K15_ASSERT(!isLocked(),"GpuBuffer is already locked.");
 
 		if(m_Impl->lock(p_StartPos,p_Count))
 		{
@@ -99,7 +101,7 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	void GpuBuffer::unlock()
 	{
-		K15_ASSERT(!isLocked(),"GpuBuffer is not locked.");
+		K15_ASSERT(isLocked(),"GpuBuffer is not locked.");
 
 		if(m_Impl->unlock())
 		{
@@ -148,7 +150,7 @@ namespace K15_Engine { namespace Rendering {
 	uint32 GpuBuffer::writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset)
 	{
 		bool wasLocked = false;
-		if(!m_AccessOption == BA_READ_ONLY)
+		if(m_AccessOption == BA_READ_ONLY)
 		{
 			_LogWarning("Not allowed to write directly to GPU buffer due to limited access option. (Buffer is read only)");
 			return 0;
@@ -172,6 +174,8 @@ namespace K15_Engine { namespace Rendering {
 		}
 
 		uint32 dataCount = m_Impl->writeData(p_Size,p_Source,p_Offset);
+
+    m_UsedSize += dataCount;
 
 		if(wasLocked)
 		{
@@ -215,6 +219,7 @@ namespace K15_Engine { namespace Rendering {
 		if(m_Impl->allocate(p_Size))
 		{
 			m_Size = p_Size;
+			m_UsedSize = 0;
 			return true;
 		}
 

@@ -43,8 +43,8 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	String StringUtil::timeAsString(const String& p_Format /*= "hh:mm:ss"*/)
 	{
-		static String timeString;
-		static String::size_type pos;
+		String timeString;
+		String::size_type pos;
 
 		pos = 0;
 		timeString = p_Format;
@@ -96,8 +96,8 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	String StringUtil::dateAsString(const String& p_Format)
 	{
-		static String dateString;
-		static String::size_type pos;
+		String dateString;
+		String::size_type pos;
 
 		pos = 0;
 		dateString = p_Format;
@@ -183,7 +183,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	String StringUtil::removeWhitespaces(const String& p_String)
 	{
-		static String string;
+		String string;
 		string = p_String;
 		string.erase(std::remove_if(string.begin(),string.end(),isspace),string.end());
 		return string;
@@ -191,7 +191,7 @@ namespace K15_Engine { namespace Core {
   /*********************************************************************************/
   String StringUtil::toUpperString(const String& p_String)
   {
-    static String string;
+    String string;
     string = p_String;
     std::transform(string.begin(),string.end(),string.begin(),::toupper);
     return string;
@@ -199,7 +199,7 @@ namespace K15_Engine { namespace Core {
   /*********************************************************************************/
   String StringUtil::toLowerString(const String& p_String)
   {
-    static String string;
+    String string;
     string = p_String;
     std::transform(string.begin(),string.end(),string.begin(),::tolower);
     return string;

@@ -21,15 +21,22 @@
  * 
  */
 
+#ifndef _K15Engine_Core_ObjectSizes_h_
+#define _K15Engine_Core_ObjectSizes_h_
+
 #ifdef K15_64_BIT
 #	define K15_SIZE_MATERIAL 116
 #	define K15_SIZE_MEMORY_BLOCK 28
 #	define K15_SIZE_RENDER_OPERATION 36
 #	define K15_SIZE_PROFILING_NODE 48
+# define K15_SIZE_VERTEXBUFFERBINDING 16
 #else
-#	define K15_SIZE_MATERIAL 92
+# define K15_SIZE_VERTEXBUFFERBINDING 20
+#	define K15_SIZE_MATERIAL 60
 #	define K15_SIZE_MEMORY_BLOCK 20
-#	define K15_SIZE_RENDER_OPERATION 20
+#	define K15_SIZE_RENDER_OPERATION 28
 #	define K15_SIZE_ALPHA_STATE 32
 # define K15_SIZE_PROFILING_NODE 152
 #endif //K15_64_BIT
+
+#endif //_K15Engine_Core_ObjectSizes_h_

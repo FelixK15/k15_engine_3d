@@ -25,7 +25,8 @@
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	VertexBuffer::VertexBuffer()
-		: GpuBuffer(GpuBuffer::BT_VERTEX_BUFFER,GpuBuffer::LO_DISCARD,GpuBuffer::UO_STATIC,GpuBuffer::BA_WRITE_ONLY,false)
+		: GpuBuffer(GpuBuffer::BT_VERTEX_BUFFER,GpuBuffer::LO_DISCARD,GpuBuffer::UO_STATIC,GpuBuffer::BA_WRITE_ONLY,false),
+		m_VertexCount(0)
 	{
 
 	}
@@ -37,9 +38,14 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	uint32 VertexBuffer::getVertexSize() const
 	{
-		return m_Declaration->getVertexSize();
-	}
-	/*********************************************************************************/
+    if(m_Declaration)
+    {
+		  return m_Declaration->getVertexSize();
+    }
+
+    return 0;
+  }
+  /*********************************************************************************/
 	const VertexDeclaration* VertexBuffer::getVertexDeclaration() const
 	{
 		return m_Declaration;
