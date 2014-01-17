@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-  <command></command>
-  <working_directory></working_directory>
+  <command>D:\private repos\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe</command>
+  <working_directory>D:\private repos\k15-engine-3d\parser\bin\v110_Win32_Debug</working_directory>
   <symbols_directory></symbols_directory>
-  <command_arguments></command_arguments>
+  <command_arguments>"..\..\..\engine\include\K15_AlphaState.h" -d</command_arguments>
   <scc>
     <provider></provider>
     <user></user>
@@ -11,4 +11,12 @@
     <local_path></local_path>
     <aux_project_path></aux_project_path>
   </scc>
+  <files>
+    <file>
+      <filename>parser.lua</filename>
+      <breakpoint>
+        <line>59</line>
+      </breakpoint>
+    </file>
+  </files>
 </project>
