@@ -19,6 +19,12 @@
       </breakpoint>
     </file>
     <file>
+      <filename>parserCPPEnums.lua</filename>
+      <breakpoint>
+        <line>9</line>
+      </breakpoint>
+    </file>
+    <file>
       <filename>writerCPPEnums.lua</filename>
       <breakpoint>
         <line>46</line>

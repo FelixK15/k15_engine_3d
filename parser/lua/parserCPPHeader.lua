@@ -6,7 +6,7 @@ require(".\\parserCPPEnums")
 enums = {}
 
 function parseCPPHeader(file)
-    local content = file:read("*all")
+    local content = cleanCPPSnippet(file:read("*all"))
     local currentClass = nil
     
     enums = parseCPPEnums(content)
@@ -14,7 +14,7 @@ function parseCPPHeader(file)
     repeat
         currentClass = string.match(content,"class.+{.+};")
         if currentClass ~= nil then
-            parseCPPClass(cleanCPPSnippet(currentClass))
+            parseCPPClass(currentClass)
             content = content:sub(content:find("class.+{.+};") + currentClass:len())
         end
     until currentClass == nil

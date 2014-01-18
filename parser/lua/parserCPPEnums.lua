@@ -2,48 +2,29 @@ require(".\\parserDebug")
 
 function parseCPPEnums(content)
     local foundEnums = {}
+    local currentEnum = nil
 	local enumTable = nil
-	local currentEnum = nil
-	local currentValue = 1
+	local value = 0
 	
-	for line in content:gmatch("[^\r\n]+") do
-	    if line ~= nil or line ~= "" then
-            if currentEnum ~= nil then
-                --check if this is the end of the enum block
-                if string.find(line,"}") ~= nil then
-                    currentEnum = nil
-                    currentValue = 1
-                elseif string.find(line,"{") == nil then --skip the start of the enum block
-                    line = string.gsub(line,"%s*","") -- remove white spaces
-                    line = string.gsub(line,"%=*","") --remove equal symbol
-                    line = string.gsub(line,",","") --remove comma
-                    line = string.gsub(line,"//%a+","") --remove comments
-                    if string.find(line,"%d") ~= nil then
-                        currentValue = string.gsub(line,"%D","")
-                        currentValue = tonumber(currentValue)
-                        
-                        if currentValue == 0 then
-                            currentValue = 1 -- Lua's indices start at 1, no 0
-                        end
-                        
-                        line = string.gsub(line,"%d*","")
-                    else
-                        currentValue = currentValue + 1
-                    end
-                    
-                    enumTable = foundEnums[currentEnum]
-                    enumTable[currentValue] = line
-                end
+	for enum in content:gmatch("enum%s+[%a%p%d]+%s*{.-}") do
+	    local enumName = string.match(enum,"enum%s*([%a%p%d]+)")
+	    currentEnum = {}
+	    
+	    local enumValues = string.gsub(string.match(enum,"{(.-)}"),",","")
+	    for enumKey in enumValues:gmatch("%s*([%a%p%d]+%s*=?%s*%d?)") do
+	        enumKey = enumKey:gsub("[\n%s*]","")
+            enumValue = enumKey:match(".+=+(%d+)")
+            enumKey = enumKey:gsub("=%d*","")
+            if enumValue ~= nil then
+                value = tonumber(enumValue) + 1
             else
-                if string.find(line,"enum") ~= nil then
-                    -- found line with "enum" in it. Trying to extract enum name.
-                    line = string.gsub(line,"enum","") -- remove 'enum' keyword
-                    line = string.gsub(line,"%a+%s*","%1")
-                    currentEnum = string.gsub(line,"%s*","") -- remove white spaces
-                    foundEnums[currentEnum] = {} --new table for the new enum
-                end
+                value = value + 1
             end
+            
+            currentEnum[value] = enumKey
 	    end
+	    
+	    foundEnums[enumName] = currentEnum
 	end
 	
 	return foundEnums
