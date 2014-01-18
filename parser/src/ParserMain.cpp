@@ -19,6 +19,7 @@
 
 #define _CRT_SECURE_NO_WARNINGS //don't throw a "unsafe function" warning when using printf, sprintf, etc. 
 
+#include <string>
 #include "LuaPlus.h"
 
 /*********************************************************************************/
@@ -33,6 +34,14 @@ void printHelp()
 /*********************************************************************************/
 int main(int argc,char** argv)
 {
+	static std::string appPath = argv[0];
+	std::string::size_type pos = std::string::npos;
+
+	if((pos = appPath.find_last_of('\\')) != std::string::npos)
+	{
+		appPath = appPath.substr(0,pos+1);
+	}
+
 	bool debugOutput = false;
 	bool ignoreErrors = false;
 
@@ -69,10 +78,10 @@ int main(int argc,char** argv)
 
 	//create new lua state
 	LuaPlus::LuaStateOwner state(true);
-	
-	if(state->DoFile(".\\scripts\\parser.lua") != 0)
+	std::string scriptPath = appPath + "lua\\parser.lua";
+	if(state->DoFile(scriptPath.c_str()) != 0)
 	{
-		printf("Could not load script file \".\\scripts\\parser.lua\".");
+		printf("Could not load script file \"%s\"\nError:%s.",scriptPath.c_str(),state->ToString(-1));
 		return ignoreErrors ? 0 : -1;
 	}
 	

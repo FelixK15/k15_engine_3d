@@ -267,24 +267,6 @@
     <ClInclude Include="..\..\engine\include\K15_TrueTypeFont.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ColorRGBA.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_GpuBuffer.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_GpuProgram.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_RendererBase.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Texture.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_TextureSampler.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_IniFileParser.h">
       <Filter>Core\include</Filter>
     </ClInclude>
@@ -297,12 +279,6 @@
     <ClInclude Include="..\..\engine\include\win32\K15_VisualStudioLog_Win32.h">
       <Filter>Core\include\Win32</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Material.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_VertexDeclaration.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_MemoryPools.h">
       <Filter>Core\include</Filter>
     </ClInclude>
@@ -312,41 +288,8 @@
     <ClInclude Include="..\..\engine\include\K15_MemoryBlock.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_VertexBuffer.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_AlphaState.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_IndexBuffer.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_RenderOperation.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_SubMesh.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Mesh.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_AABB.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_RenderQueue.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Light.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_GpuProgramParameter.h">
       <Filter>Core\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_DepthState.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_CameraComponent.h">
-      <Filter>Rendering\include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_MatrixUtil.h">
       <Filter>Core\include</Filter>
@@ -357,9 +300,6 @@
     <ClInclude Include="..\..\engine\include\K15_Serializer.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_MaterialManager.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_AllocatorSizes.h">
       <Filter>Core\include</Filter>
     </ClInclude>
@@ -367,6 +307,66 @@
       <Filter>Core\include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_MaterialData.h" />
+    <ClInclude Include="..\..\engine\include\K15_AABB.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_AlphaState.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_CameraComponent.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ColorRGBA.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_DepthState.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_GpuBuffer.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_GpuProgram.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_IndexBuffer.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Light.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Material.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_MaterialManager.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Mesh.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_RendererBase.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_RenderOperation.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_RenderQueue.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_SubMesh.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Texture.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_TextureSampler.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_VertexBuffer.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_VertexDeclaration.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
