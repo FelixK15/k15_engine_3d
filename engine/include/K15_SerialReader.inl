@@ -1,8 +1,8 @@
 /**
- * @file K15_Serializer.cpp
+ * @file K15_SerialReader.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2014/01/03
+ * @date 2014/01/20
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -17,22 +17,15 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_PrecompiledHeader.h"
-
-#include "K15_Serializer.h"
-#include "K15_SerializerBase.h"
-
-#include "K15_AlphaState.h"
-
-namespace K15_Engine { namespace Core {
-// 	void Serializer::serialize(SerializerBase& p_Serializer, Application* application)
-// 	{
-// 		p_Serializer & application->getGameRootDir();
-// 	}
-// 
-// 	void Serializer::serialize(SerializerBase* p_Serializer, AlphaState* alphastate)
-// 	{
-// 		StringStream stream;
-// 		stream << alphastate->getEnabled();
-// 	}
-}}// end of K15_Engine::Core namespace
+/*********************************************************************************/
+INLINE uint32 SerialReader::getInputBufferSize() const
+{
+  return m_InputBufferSize;
+}
+/*********************************************************************************/
+INLINE void SerialReader::setInputBuffer(byte* p_InputBuffer, uint32 p_InputBufferSize)
+{
+  m_InputBuffer = p_InputBuffer;
+  m_InputBufferSize = p_InputBufferSize;
+}
+/*********************************************************************************/

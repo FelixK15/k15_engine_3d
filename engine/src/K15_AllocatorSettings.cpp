@@ -1,8 +1,8 @@
 /**
- * @file K15_Serializer.cpp
+ * @file Source.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2014/01/03
+ * @date 2014/01/23
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -19,20 +19,8 @@
 
 #include "K15_PrecompiledHeader.h"
 
-#include "K15_Serializer.h"
-#include "K15_SerializerBase.h"
-
-#include "K15_AlphaState.h"
+#include "Source.h"
 
 namespace K15_Engine { namespace Core {
-// 	void Serializer::serialize(SerializerBase& p_Serializer, Application* application)
-// 	{
-// 		p_Serializer & application->getGameRootDir();
-// 	}
-// 
-// 	void Serializer::serialize(SerializerBase* p_Serializer, AlphaState* alphastate)
-// 	{
-// 		StringStream stream;
-// 		stream << alphastate->getEnabled();
-// 	}
+
 }}// end of K15_Engine::Core namespace

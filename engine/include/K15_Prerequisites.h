@@ -260,6 +260,24 @@ namespace K15_Engine
 	/*********************************************************************************/
  }
 
+ /*********************************************************************************/
+ namespace Json 
+ {
+	 class FastWriter;
+	 class StyledWriter;
+	 class Reader;
+	 class Features;
+	 typedef unsigned int ArrayIndex;
+	 class StaticString;
+	 class Path;
+	 class PathArgument;
+	 class Value;
+	 class ValueIteratorBase;
+	 class ValueIterator;
+	 class ValueConstIterator;
+ }
+ /*********************************************************************************/
+
 namespace K15_Engine
 {
 	using namespace Core;
@@ -507,7 +525,7 @@ typedef K15_Engine::Core::AllocatedObject<K15_Engine::Rendering::VertexManager> 
 #define g_MaterialManager K15_Engine::Rendering::MaterialManager::getInstance()
 #define g_VertexManager K15_Engine::Rendering::VertexManager::getInstance()
 
-typedef signed char byte;
+typedef unsigned char byte;
 
 #ifdef K15_OS_WINDOWS
 
@@ -566,7 +584,7 @@ typedef K15_Engine::Core::HashedString ResourceName;
 #define K15_INVALID_RESOURCE_ID -1
 
 // #if defined _MSC_VER || K15_GCC_VERSION
-// #	define K15_USE_PRECOMPILED_HEADER
+// #	define K15_USE_PRECOMPILED_HEADERS
 // #endif //_MSC_VER || K15_GCC_VERSION
 #define K15_GAMEDIR_BUFFER_SIZE 512
 #define K15_ERROR_BUFFER_SIZE 1024
@@ -579,11 +597,7 @@ typedef K15_Engine::Core::HashedString ResourceName;
 
 #define K15_PTR(T) typedef Pointer<T> T##Ptr;
 
-#if defined K15_CPP11_SUPPORT
-# define K15_NON_COPYABLE(T) public: T(const T&) = delete; const T& operator=(const T&) = delete;
-#else
-# define K15_NON_COPYABLE(T) protected: T(const T&){}; const T& operator=(const T&){};
-#endif //K15_CPP11_SUPPORT
+#define K15_NON_COPYABLE(T) protected: T(const T&){}; T& operator=(const T&){return *this;};
 
 #define K15_EXECUTE_CRITICAL_FUNCTION(obj,func) {obj.lockMutex();obj.func;obj.unlockMutex();}
 #define K15_EXECUTE_CRITICAL_FUNCTION_PTR(obj,func) {obj->lockMutex();obj->func;obj->unlockMutex();}

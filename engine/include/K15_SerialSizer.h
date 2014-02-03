@@ -1,8 +1,8 @@
 /**
- * @file K15_Serializer.h
+ * @file K15_SerialSizer.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2014/01/03
+ * @date 2014/01/31
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,31 +21,29 @@
  * 
  */
 
-#ifndef _K15Engine_Core_Serializer_h_
-#define _K15Engine_Core_Serializer_h_
+#ifndef _K15Engine_Serialization_SerialSizer_h_
+#define _K15Engine_Serialization_SerialSizer_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
+#ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
-#	include "K15_Object.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
+#endif //K15_USE_PRECOMPILED_HEADER
 
-namespace K15_Engine { namespace Core {
-	template<class T>
-	class SerializableObject
+#include "K15_SerializerBase.h"
+
+namespace K15_Engine { namespace Serialization {
+	class K15_CORE_API SerialSizer : public SerializerBase
 	{
 	public:
-		void serialize(const String& p_FileName)
-		{
-			//Serializer::serialize(&serializer,(T*)this);
-		}
-	};// end of * class declaration
+		SerialSizer();
+		~SerialSizer();
 
-// 	class K15_CORE_API Serializer
-// 	{
-// 	public:
-// 		static void serialize(SerializerBase& p_Serializer,Application* application);
-// 		static void serialize(SerializerBase* p_Serializer,AlphaState* alphastate);
-// 	};
+		virtual byte* getBufferPointer() const OVERRIDE;
+	protected:
+		virtual void _io(byte* p_Data, uint32 p_Size) OVERRIDE;
+		virtual void _io(int32& p_Integer) OVERRIDE;
+		virtual void _io(uint32& p_Integer) OVERRIDE;
+		virtual void _io(float& p_Float) OVERRIDE;
+	};// end of SerialSizer class declaration
 }}// end of K15_Engine::Core namespace
 
 #endif //
