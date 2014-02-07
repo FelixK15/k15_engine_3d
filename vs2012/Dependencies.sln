@@ -7,13 +7,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLEW", "Dependencies\GLEW\G
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyThread", "Dependencies\TinyThread\TinyThread.vcxproj", "{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyXML", "Dependencies\TinyXML\TinyXML.vcxproj", "{ED637AF1-F621-4899-9946-6B9C8AE9D1FD}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Enet", "Dependencies\Enet\Enet.vcxproj", "{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "freetype", "Dependencies\freetype\freetype.vcxproj", "{853AC481-3F24-4FF4-AF0A-728B019B670E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Detour", "Dependencies\Detour\Detour.vcxproj", "{6BA03C58-C796-4B3E-B4B4-F5E48A3265C7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JsonCPP", "Dependencies\JsonCPP\JsonCPP.vcxproj", "{F9B0EC03-C8A7-4EF9-B5FA-CCD143A520B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +33,6 @@ Global
 		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Debug|Win32.Build.0 = Debug|Win32
 		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Release|Win32.ActiveCfg = Release|Win32
 		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Release|Win32.Build.0 = Release|Win32
-		{ED637AF1-F621-4899-9946-6B9C8AE9D1FD}.Debug|Win32.ActiveCfg = Debug|Win32
-		{ED637AF1-F621-4899-9946-6B9C8AE9D1FD}.Debug|Win32.Build.0 = Debug|Win32
-		{ED637AF1-F621-4899-9946-6B9C8AE9D1FD}.Release|Win32.ActiveCfg = Release|Win32
-		{ED637AF1-F621-4899-9946-6B9C8AE9D1FD}.Release|Win32.Build.0 = Release|Win32
 		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Debug|Win32.ActiveCfg = Debug|Win32
 		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Debug|Win32.Build.0 = Debug|Win32
 		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Release|Win32.ActiveCfg = Release|Win32
@@ -49,6 +45,10 @@ Global
 		{6BA03C58-C796-4B3E-B4B4-F5E48A3265C7}.Debug|Win32.Build.0 = Debug|Win32
 		{6BA03C58-C796-4B3E-B4B4-F5E48A3265C7}.Release|Win32.ActiveCfg = Release|Win32
 		{6BA03C58-C796-4B3E-B4B4-F5E48A3265C7}.Release|Win32.Build.0 = Release|Win32
+		{F9B0EC03-C8A7-4EF9-B5FA-CCD143A520B1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F9B0EC03-C8A7-4EF9-B5FA-CCD143A520B1}.Debug|Win32.Build.0 = Debug|Win32
+		{F9B0EC03-C8A7-4EF9-B5FA-CCD143A520B1}.Release|Win32.ActiveCfg = Release|Win32
+		{F9B0EC03-C8A7-4EF9-B5FA-CCD143A520B1}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

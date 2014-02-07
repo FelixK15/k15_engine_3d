@@ -24,10 +24,10 @@
 #ifndef _K15Engine_Renderer_VertexDeclaration_h_
 #define _K15Engine_Renderer_VertexDeclaration_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
 #	include "K15_HashedString.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 namespace K15_Engine { namespace Rendering {
   struct K15_CORE_API VertexElement
@@ -98,7 +98,7 @@ namespace K15_Engine { namespace Rendering {
     void removeElement(uint32 p_Index);
     void removeAllElements();
 
-	  void fromDeclarationString(const String& p_DeclarationString);
+	void fromDeclarationString(const String& p_DeclarationString);
 
     String getDeclarationString();
     const VertexElement& getElement(uint32 p_Index);
@@ -109,7 +109,7 @@ namespace K15_Engine { namespace Rendering {
     INLINE VertexDeclarationImplBase* getImpl() const;
 
   private:
-    void _parseDeclarationString(const String& p_DeclarationString);
+	void _parseDeclarationString(const String& p_DeclarationString);
     void _updateElements();
     
   private:
@@ -123,15 +123,15 @@ namespace K15_Engine { namespace Rendering {
   class K15_CORE_API VertexDeclarationImplBase
   {
   public:
-	  VertexDeclarationImplBase();
-	  virtual ~VertexDeclarationImplBase();
+	VertexDeclarationImplBase();
+	virtual ~VertexDeclarationImplBase();
 
-	  INLINE VertexDeclaration* getVertexDeclaration() const;
-	  INLINE void setVertexDeclaration(VertexDeclaration* p_Declaration);
+	INLINE VertexDeclaration* getVertexDeclaration() const;
+	INLINE void setVertexDeclaration(VertexDeclaration* p_Declaration);
 
-	  virtual void updateElements(const VertexDeclaration::VertexElementArray& p_Elements) = 0;
+	virtual void updateElements(const VertexDeclaration::VertexElementArray& p_Elements) = 0;
   protected:
-	  VertexDeclaration* m_Declaration;
+	VertexDeclaration* m_Declaration;
   }; // end of VertexDeclarationImplBase class declaration
 #include "K15_VertexDeclaration.inl"
 }} //end of K15_Engine::Rendering namespace

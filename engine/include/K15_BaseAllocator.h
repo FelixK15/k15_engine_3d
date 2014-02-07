@@ -23,10 +23,10 @@
 #ifndef _K15Engine_Core_BaseAllocator_h_
 #define _K15Engine_Core_BaseAllocator_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
 #	include "K15_HashedString.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_MemoryHeader.h"
 #include "K15_AllocatorSizes.h"
@@ -38,13 +38,12 @@ namespace K15_Engine { namespace Core {
   {
   public:
 #if defined K15_DEBUG
-    //---------------------------------------------------------------------------//
+    /*********************************************************************************/
     typedef HashMap(size_t,MemoryHeader*) PointerMemoryHeaderMap;
-    //---------------------------------------------------------------------------//
+    /*********************************************************************************/
 #endif //K15_DEBUG
   public:
-    BaseAllocator(size_t p_Size,const ObjectName& p_Name);
-    BaseAllocator(BaseAllocator* p_Allocator,size_t p_Size,const ObjectName& p_Name);
+	BaseAllocator(size_t p_Size,const ObjectName& p_Name,BaseAllocator* p_BaseAllocator = 0);
     virtual ~BaseAllocator();
 
     void* allocate(size_t p_Size);
@@ -56,8 +55,9 @@ namespace K15_Engine { namespace Core {
     void  deallocateDebug(void* p_Pointer,size_t p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function);
 #endif //K15_DEBUG
 
-	  const ObjectName& getName() const;
-
+	const ObjectName& getName() const;
+	uint32 getSize() const;
+	uint32 getFreeSize() const;
     virtual void clear();
 
   protected:
@@ -68,11 +68,11 @@ namespace K15_Engine { namespace Core {
 #if defined K15_DEBUG
     PointerMemoryHeaderMap m_MemoryHeaderMap;
 #endif //K15_DEBUG
-	  ObjectName m_Name;
-    BaseAllocator* m_Allocator;
+	BaseAllocator* m_BaseAllocator;
+	ObjectName m_Name;
     byte* m_Memory;
     byte* m_MemoryEndAddress;
-	  uint32 m_MemorySize;
+	uint32 m_MemorySize;
     uint32 m_UsedMemory;
   };//end of BaseAllocator class
 }}//end of K15_Engine::Core namespace

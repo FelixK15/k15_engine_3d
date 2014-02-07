@@ -25,8 +25,7 @@
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	NetworkManager::NetworkManager()
-		: BlockAllocator(ApplicationAllocator,K15_NETWORKMANAGER_ALLOCATOR_SIZE,_N(NetworkManagerAllocator)),
-		  m_Initialized(false)
+		: m_Initialized(false)
 	{
 
 	}

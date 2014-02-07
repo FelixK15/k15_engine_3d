@@ -24,11 +24,11 @@
 #ifndef _K15Engine_Rendering_GpuProgramParameter_h_
 #define _K15Engine_Rendering_GpuProgramParameter_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
 #	include "K15_Object.h"
 #	include "K15_HashedString.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 namespace K15_Engine { namespace Rendering {
 	class K15_CORE_API GpuProgramParameter

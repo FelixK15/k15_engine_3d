@@ -64,7 +64,7 @@ namespace K15_Engine { namespace Rendering {
 				if(g_Application->getRenderer()->errorOccured())
 				{
 					m_Error = g_Application->getRenderer()->getLastError();
-					_LogError("Could not load binary code for shader %s. %s",m_AssetName.c_str(),m_Error.c_str());
+					_LogError("Could not load binary code for shader %s. %s",m_Name.c_str(),m_Error.c_str());
 					m_Compiled = false;
 				}
 
@@ -78,7 +78,7 @@ namespace K15_Engine { namespace Rendering {
 				if(!m_Impl->compileShaderCode())
 				{
 					m_Error = g_Application->getRenderer()->getLastError();
-					_LogError("Could not compile shader code for shader %s. %s",m_AssetName.c_str(),m_Error.c_str());
+					_LogError("Could not compile shader code for shader %s. %s",m_Name.c_str(),m_Error.c_str());
 					m_Compiled = false;
 				}
 				else
@@ -93,7 +93,7 @@ namespace K15_Engine { namespace Rendering {
 
 		if(g_Application->getRenderer()->errorOccured())
 		{
-			_LogError("Could not reflect shader %s. %s.",m_AssetName.c_str(),g_Application->getRenderer()->getLastError().c_str());
+			_LogError("Could not reflect shader %s. %s.",m_Name.c_str(),g_Application->getRenderer()->getLastError().c_str());
 			return false;
 		}
 
@@ -129,28 +129,28 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	void GpuProgram::setAmountAttributes(uint32 p_Amount)
 	{
-		K15_ASSERT(p_Amount <= MaxParameter,StringUtil::format("Trying to set more than %u attributes to GpuProgram %s.",MaxParameter,m_AssetName.c_str()));
+		K15_ASSERT(p_Amount <= MaxParameter,StringUtil::format("Trying to set more than %u attributes to GpuProgram %s.",MaxParameter,m_Name.c_str()));
 
 		m_UsedAttributes = p_Amount;
 	}
 	/*********************************************************************************/
 	void GpuProgram::setAmountUniforms(uint32 p_Amount)
 	{
-		K15_ASSERT(p_Amount <= MaxParameter,StringUtil::format("Trying to set more than %u parameters to GpuProgram %s.",MaxParameter,m_AssetName.c_str()));
+		K15_ASSERT(p_Amount <= MaxParameter,StringUtil::format("Trying to set more than %u parameters to GpuProgram %s.",MaxParameter,m_Name.c_str()));
 
 		m_UsedUniforms = p_Amount;
 	}
 	/*********************************************************************************/
 	GpuProgramParameter& GpuProgram::getUniform(uint32 p_Index)
 	{
-		K15_ASSERT(p_Index <= m_UsedUniforms,StringUtil::format("Trying to access out of bounds. GpuProgram %s",m_AssetName.c_str()));
+		K15_ASSERT(p_Index <= m_UsedUniforms,StringUtil::format("Trying to access out of bounds. GpuProgram %s",m_Name.c_str()));
 		m_Uniforms.push_back(GpuProgramParameter());
 		return m_Uniforms[p_Index];
 	}
 	/*********************************************************************************/
 	GpuProgramParameter& GpuProgram::getAttribute(uint32 p_Index)
 	{
-		K15_ASSERT(p_Index <= m_UsedAttributes,StringUtil::format("Trying to acces out of bounds. GpuProgram %s",m_AssetName.c_str()));
+		K15_ASSERT(p_Index <= m_UsedAttributes,StringUtil::format("Trying to acces out of bounds. GpuProgram %s",m_Name.c_str()));
 		m_Attributes.push_back(GpuProgramParameter());
 		return m_Attributes[p_Index];
 	}
@@ -176,7 +176,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(includeFile.empty())
 			{
-				_LogError("Invalid line in GpuProgram. Line: %s, Program: %s",includeLine.c_str(),m_AssetName.c_str());
+				_LogError("Invalid line in GpuProgram. Line: %s, Program: %s",includeLine.c_str(),m_Name.c_str());
 				continue;
 			}
 

@@ -24,15 +24,13 @@
 #ifndef _K15Engine_Renderer_RenderOperation_h_
 #define _K15Engine_Renderer_RenderOperation_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
-#	include "K15_MemoryPools.h"
 #	include "K15_AllocatedObject.h"
-#endif //K15_USE_PRECOMPILED_HEADER
-
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 namespace K15_Engine { namespace Rendering {
-	struct K15_CORE_API RenderOperation : public Core::AllocatedObject<Core::RenderOperationAllocator>
+	struct K15_CORE_API RenderOperation : public AllocatedObject<BaseAllocatedObject::AC_RENDEROP_POOL>
 	{
 		/*********************************************************************************/
 		enum eTopology
@@ -47,7 +45,8 @@ namespace K15_Engine { namespace Rendering {
 		/*********************************************************************************/
 
 		IndexBuffer* indexBuffer;
-		VertexBufferBinding* vertexBufferBinding;
+		VertexBuffer* vertexBuffer;
+		VertexDeclaration* vertexDeclaration;
 		Material* material;
 		SubMesh* subMesh;
 		AlphaState* alphaState;

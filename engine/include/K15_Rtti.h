@@ -24,9 +24,9 @@
 #ifndef _K15Engine_Core_RTTI_h_
 #define _K15Engine_Core_RTTI_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 #define K15_DECLARE_RTTI \
 public:	\

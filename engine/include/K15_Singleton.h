@@ -23,9 +23,9 @@
 #ifndef _K15Engine_Core_Singleton_h_
 #define _K15Engine_Core_Singleton_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 # include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 namespace K15_Engine { namespace Core { 
 
@@ -37,7 +37,7 @@ namespace K15_Engine { namespace Core {
 		{
 			if(!m_Instance)
 			{
-				m_Instance = ::new T();
+				m_Instance = K15_NEW T();
 			}
 
 			return m_Instance; 

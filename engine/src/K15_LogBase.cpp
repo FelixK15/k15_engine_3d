@@ -24,12 +24,14 @@
 namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	LogBase::LogBase()
+		: AllocatedObject()
 	{
 
 	}
 	/*********************************************************************************/
 	LogBase::LogBase(const String &p_Name)
-		: m_Name(p_Name)
+		: AllocatedObject(),
+		m_Name(p_Name)
 	{
 
 	}

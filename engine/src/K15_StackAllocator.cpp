@@ -20,24 +20,12 @@
 #include "K15_PrecompiledHeader.h"
 
 #include "K15_StackAllocator.h"
-#include "K15_MemoryHeader.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	const TypeName StackAllocator::Type = _TN(StackAllocator);
-	/*********************************************************************************/
-
-	/*********************************************************************************/
-	StackAllocator::StackAllocator(BaseAllocator* p_Allocator,size_t p_Size,const ObjectName& p_Name)
-		: BaseAllocator(p_Allocator,p_Size,p_Name),
-			m_Marker(m_Memory)
-	{
-
-	}
-	/*********************************************************************************/
-	StackAllocator::StackAllocator(size_t p_Size,const ObjectName& p_Name)
-		: BaseAllocator(p_Size,p_Name),
-			m_Marker(m_Memory)
+	StackAllocator::StackAllocator(size_t p_Size,const String& p_Name,BaseAllocator* p_BaseAllocator)
+		: BaseAllocator(p_Size,p_Name,p_BaseAllocator),
+		m_Marker(m_Memory)
 	{
 
 	}
@@ -53,8 +41,8 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void StackAllocator::dealloc(void* p_Pointer, size_t p_Size)
 	{
-    K15_ASSERT((byte*)p_Pointer + p_Size == m_Marker,
-      StringUtil::format("Trying to free not in-order from StackAllocator %s. StackAllocator deallocations have to be in the reversed order as the allocations.",m_Name.c_str()));
+		K15_ASSERT((byte*)p_Pointer + p_Size == m_Marker,
+		StringUtil::format("Trying to free not in-order from StackAllocator %s. StackAllocator deallocations have to be in the reversed order as the allocations.",m_Name.c_str()));
 		m_Marker = (byte*)p_Pointer;
 	}
 	/*********************************************************************************/

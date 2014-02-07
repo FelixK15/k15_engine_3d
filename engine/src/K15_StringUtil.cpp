@@ -136,15 +136,6 @@ namespace K15_Engine { namespace Core {
 		return dateString;
 	}
 	/*********************************************************************************/
-	String StringUtil::toString(int p_Value)
-	{
-		StringStream stream;
-
-		stream << p_Value;
-
-		return stream.str();
-	}
-	/*********************************************************************************/
 	String StringUtil::toString(float p_Value, int p_Precision)
 	{
 		StringStream stream;

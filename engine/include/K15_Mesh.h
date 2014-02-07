@@ -24,9 +24,9 @@
 #ifndef _K15Engine_Rendering_Mesh_h_
 #define _K15Engine_Rendering_Mesh_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_AABB.h"
 #include "K15_ResourceBase.h"
@@ -41,16 +41,16 @@ namespace K15_Engine { namespace Rendering {
 		/*********************************************************************************/
 	public:
 		Mesh();
-    Mesh(const ObjectName& p_Name);
+		Mesh(const ObjectName& p_Name);
 		virtual ~Mesh();
 
 		INLINE AABB* getAABB() const;
 		void calculateAABB();
 
-    virtual void loadDebug(RawData& p_Data);
-    virtual bool internalLoad(const RawData& p_Data);
+		virtual void loadDebug(RawData& p_Data);
+		virtual bool internalLoad(const RawData& p_Data);
 
-  /*private:*/
+  private:
 		SubMeshArray m_SubMeshses;
 		AABB m_AxisAlignedBoundingBox;
 	};// end of Mesh class declaration

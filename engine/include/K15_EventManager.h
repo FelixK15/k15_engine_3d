@@ -29,14 +29,12 @@
 #ifndef _K15Engine_Core_EventManager_h_
 #define _K15Engine_Core_EventManager_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
 #	include "K15_Application.h"
 #	include "K15_AllocatedObject.h"
 #	include "K15_Singleton.h"
-#endif //K15_USE_PRECOMPILED_HEADER
-
-#include "K15_BlockAllocator.h"
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
@@ -44,7 +42,8 @@ namespace K15_Engine { namespace Core {
 	typedef HashMap(EventName,EventListenerList*) EventTypeListenerMap;
 	typedef Stack(GameEvent*) EventStack;
 	/*********************************************************************************/
-	class K15_CORE_API EventManager : public ApplicationAllocatedObject, public Singleton<EventManager>, public BlockAllocator
+	class K15_CORE_API EventManager : public CoreAllocatedObject, 
+									  public Singleton<EventManager>
 	{
 	public:
 		/**

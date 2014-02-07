@@ -25,9 +25,8 @@
 namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	LogManager::LogManager()
-		:	StackAllocator(MemoryAllocator,K15_LOGMANAGER_ALLOCATOR_SIZE,_N(LogManagerAllocator)),
-			m_DefaultLog(0),
-			m_Logs()
+		: m_DefaultLog(0),
+		m_Logs()
 	{
 
 	}

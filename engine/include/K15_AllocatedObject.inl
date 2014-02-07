@@ -18,101 +18,94 @@
  */
 
 /*********************************************************************************/
-template<class Allocator> Allocator* AllocatedObject<Allocator>::MemoryAllocator = 0;
-/*********************************************************************************/
-template<class Allocator>
-AllocatedObject<Allocator>::AllocatedObject()
+template<Enum Category>
+AllocatedObject<Category>::AllocatedObject()
 {
-	if(!MemoryAllocator)
-	{
-		MemoryAllocator = Allocator::getInstance();
-	}
+	
 }
 /*********************************************************************************/
-template<class Allocator>
-AllocatedObject<Allocator>::~AllocatedObject()
+template<Enum Category>
+AllocatedObject<Category>::~AllocatedObject()
 {
 
 }
 /*********************************************************************************/
 #if defined (K15_DEBUG)
 /*********************************************************************************/
-template<class Allocator>
-void* AllocatedObject<Allocator>::alloc(size_t p_Size,const char* p_File,uint32 p_Line,bool p_Array,const char* p_Function)
+template<Enum Category>
+void* AllocatedObject<Category>::alloc(size_t p_Size,const char* p_File,uint32 p_Line,bool p_Array,const char* p_Function)
 {
-	return Allocator::getInstance()->allocateDebug(p_Size,p_File,p_Line,p_Array,p_Function);
+	return Allocators[Category]->allocateDebug(p_Size,p_File,p_Line,p_Array,p_Function);
 }
 /*********************************************************************************/
-template<class Allocator>
-void AllocatedObject<Allocator>::dealloc(void* p_Pointer,size_t p_Size,const char* p_File,uint32 p_Line,bool p_Array,const char* p_Function)
+template<Enum Category>
+void AllocatedObject<Category>::dealloc(void* p_Pointer,size_t p_Size,const char* p_File,uint32 p_Line,bool p_Array,const char* p_Function)
 {
-	return Allocator::getInstance()->deallocateDebug(p_Pointer,p_Size,p_File,p_Line,p_Array,p_Function);
+	return Allocators[Category]->deallocateDebug(p_Pointer,p_Size,p_File,p_Line,p_Array,p_Function);
 }
 /*********************************************************************************/
-template<class Allocator>
-void* AllocatedObject<Allocator>::operator new(size_t p_Size,const char* p_File,uint32 p_Line,const char* p_Function)
+template<Enum Category>
+void* AllocatedObject<Category>::operator new(size_t p_Size,const char* p_File,uint32 p_Line,const char* p_Function)
 {
-	return Allocator::getInstance()->allocateDebug(p_Size,p_File,p_Line,false,p_Function);
+	return Allocators[Category]->allocateDebug(p_Size,p_File,p_Line,false,p_Function);
 }
 /*********************************************************************************/
-template<class Allocator>
-void* AllocatedObject<Allocator>::operator new[](size_t p_Size,const char* p_File,uint32 p_Line,const char* p_Function)
+template<Enum Category>
+void* AllocatedObject<Category>::operator new[](size_t p_Size,const char* p_File,uint32 p_Line,const char* p_Function)
 {
-	return Allocator::getInstance()->allocateDebug(p_Size,p_File,p_Line,true,p_Function);
+	return Allocators[Category]->allocateDebug(p_Size,p_File,p_Line,true,p_Function);
 }
 /*********************************************************************************/
-template<class Allocator>
-void AllocatedObject<Allocator>::operator delete(void* p_Pointer,size_t p_Size)
+template<Enum Category>
+void AllocatedObject<Category>::operator delete(void* p_Pointer,size_t p_Size)
 {
-	//return MemoryAllocator->deallocateDebug(p_Pointer,p_File,p_Line,false,p_Function);
-	return Allocator::getInstance()->deallocateDebug(p_Pointer,p_Size,"",0,false,"");
+	return Allocators[Category]->deallocateDebug(p_Pointer,p_Size,"",0,false,"");
 }
 /*********************************************************************************/
-template<class Allocator>
-void AllocatedObject<Allocator>::operator delete[](void* p_Pointer,size_t p_Size)
+template<Enum Category>
+void AllocatedObject<Category>::operator delete[](void* p_Pointer,size_t p_Size)
 {
-	//return MemoryAllocator->deallocateDebug(p_Pointer,p_File,p_Line,true,p_Function);
-	return Allocator::getInstance()->deallocateDebug(p_Pointer,p_Size,"",0,true,"");
+	return Allocators[Category]->deallocateDebug(p_Pointer,p_Size,"",0,true,"");
 }
 /*********************************************************************************/
 
 #else //K15_DEBUG
 
 /*********************************************************************************/
-template<class Allocator>
-void* AllocatedObject<Allocator>::alloc(size_t p_Size)
+template<Enum Category>
+void* AllocatedObject<Category>::alloc(size_t p_Size)
 {
-	return MemoryAllocator->allocate(p_Size);
+	return Allocators[Category]->allocate(p_Size);
 }
 /*********************************************************************************/
-template<class Allocator>
-void AllocatedObject<Allocator>::dealloc(void* p_Pointer,size_t p_Size)
+template<Enum Category>
+void AllocatedObject<Category>::dealloc(void* p_Pointer,size_t p_Size)
 {
-	MemoryAllocator->deallocate(p_Pointer,p_Size);
+	Allocators[Category]->deallocate(p_Pointer,p_Size);
 }
 /*********************************************************************************/
-template<class Allocator>
-void* AllocatedObject<Allocator>::new(size_t p_Size)
+template<Enum Category>
+void* AllocatedObject<Category>::new(size_t p_Size)
 {
 	return alloc(p_Size);
 }
 /*********************************************************************************/
-template<class Allocator>
-void AllocatedObject<Allocator>::delete(void* p_Pointer,size_t p_Size)
+template<Enum Category>
+void AllocatedObject<Category>::delete(void* p_Pointer,size_t p_Size)
 {
-	MemoryAllocator->deallocate(p_Pointer);
+	Allocators[Category]->deallocate(p_Pointer);
 }
 /*********************************************************************************/
-template<class Allocator>
-void* AllocatedObject<Allocator>::new[](size_t p_Size)
+template<Enum Category>
+void* AllocatedObject<Category>::new[](size_t p_Size)
 {
-	return MemoryAllocator->allocate(p_Size);
+	return Allocators[Category]->allocate(p_Size);
 }
 /*********************************************************************************/
-template<class Allocator>
-void AllocatedObject<Allocator>::delete[](void* p_Pointer,size_t p_Size)
+template<Enum Category>
+void AllocatedObject<Category>::delete[](void* p_Pointer,size_t p_Size)
 {
-	MemoryAllocator->deallocate(p_Pointer);
+	Allocators[Category]->deallocate(p_Pointer);
 }
 /*********************************************************************************/
 

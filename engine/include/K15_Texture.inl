@@ -18,7 +18,7 @@
  */
 
 /*********************************************************************************/
-Enum Texture::getType() const
+Enum Texture::getTextureType() const
 {
 	return m_Type;
 }

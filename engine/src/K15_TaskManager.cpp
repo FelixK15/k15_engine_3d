@@ -24,20 +24,19 @@
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	TaskManager::TaskManager()
-		: BlockAllocator(MemoryAllocator,K15_TASKMANAGER_ALLOCATOR_SIZE,_N(TaskManagerAllocator)),
-		  m_Tasks()
+		: m_Tasks()
 	{
 
 	}
 	/*********************************************************************************/
 	TaskManager::~TaskManager()
 	{
-    for(TaskList::iterator iter = m_Tasks.begin();iter != m_Tasks.end();++iter)
-    {
-      K15_DELETE (*iter);
-    }
+		for(TaskList::iterator iter = m_Tasks.begin();iter != m_Tasks.end();++iter)
+		{
+		  K15_DELETE (*iter);
+		}
 
-    m_Tasks.clear();
+		m_Tasks.clear();
 	}
 	/*********************************************************************************/
 	void TaskManager::update(const GameTime& p_GameTime)

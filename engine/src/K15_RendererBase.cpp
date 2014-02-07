@@ -25,8 +25,8 @@
 #include "K15_GpuBuffer.h"
 
 #include "K15_VertexBuffer.h"
-#include "K15_VertexManager.h"
 #include "K15_IndexBuffer.h"
+#include "K15_VertexDeclaration.h"
 
 #include "K15_Material.h"
 
@@ -430,11 +430,11 @@ namespace K15_Engine { namespace Rendering {
 	bool RendererBase::draw(RenderOperation* p_Rop)
 	{
 		K15_ASSERT(p_Rop,"RenderOperation is NULL.");
-		K15_ASSERT(p_Rop->vertexBufferBinding,"RenderOperation has no vertex buffer.");
+		K15_ASSERT(p_Rop->vertexBuffer,"RenderOperation has no vertex buffer.");
 		
-		if(!bindBuffer(p_Rop->vertexBufferBinding->getVertexBuffer(),GpuBuffer::BT_VERTEX_BUFFER) ||
+		if(!bindBuffer(p_Rop->vertexBuffer,GpuBuffer::BT_VERTEX_BUFFER) ||
 		   !bindBuffer(p_Rop->indexBuffer,GpuBuffer::BT_INDEX_BUFFER) ||
-		   !bindMaterial(p_Rop->material) || !setVertexDeclaration(p_Rop->vertexBufferBinding->getVertexDeclaration()) ||
+		   !bindMaterial(p_Rop->material) || !setVertexDeclaration(p_Rop->vertexDeclaration) ||
 		   !setTopology(p_Rop->topology))
 		{
 			return false;
@@ -457,13 +457,13 @@ namespace K15_Engine { namespace Rendering {
 			
 			setLightningEnabled(pass->isLightningEnabled());
 			
-// 			if(p_Rop->indexBuffer != 0)
-// 			{
-// 				_drawIndexed(p_Rop->vertexBufferBinding->getOffset());
-// 			}
-// 			else
+			if(p_Rop->indexBuffer != 0)
 			{
-				_drawDirect(p_Rop->vertexBufferBinding->getOffset());
+				_drawIndexed();
+			}
+			else
+			{
+				_drawDirect();
 			}
 
 			if(errorOccured())

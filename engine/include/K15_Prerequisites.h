@@ -100,7 +100,7 @@ namespace K15_Engine
 		class ResourceBase;
 		class ResourceFileBase;
 		class EventTask;
-    class Node;
+		class Node;
 		struct RawData;
 		class ProfilingNode;
 		class ProfilingManager;
@@ -124,7 +124,7 @@ namespace K15_Engine
 		template<unsigned __int16,unsigned __int32>
 		class PageAllocator;
 
-		template<class Allocator>
+		template<unsigned int Category>
 		class AllocatedObject;
 	} // end of K15_Engine::Core namespace
 	/*********************************************************************************/
@@ -440,18 +440,21 @@ namespace K15_Engine
 #	define K15_NEW	  new(__FILE__,__LINE__,__FUNCTION__) 
 #	define K15_DELETE delete
 
+#	define K15_NEW_T2(objType) new(Allocators[Category]->allocateDebug(sizeof(objType),__FILE__,__LINE__,false,__FUNCTION__))
 #	define K15_NEW_T(allocator,objType) new(allocator->allocateDebug(sizeof(objType),__FILE__,__LINE__,false,__FUNCTION__))
 #	define K15_NEW_SIZE(allocator,size) new(allocator->allocateDebug(size,__FILE__,__LINE__,false,__FUNCTION__))
 
-#	define K15_DELETE_T(allocator,ptr,size) if(ptr){allocator->deallocateDebug((void*)ptr,size,__FILE__,__LINE__,false,__FUNCTION__);}
+#	define K15_DELETE_SIZE(allocator,ptr,size) if(ptr){allocator->deallocateDebug((void*)ptr,size,__FILE__,__LINE__,false,__FUNCTION__);}
+#	define K15_DELETE_T(allocator,ptr,type) if(ptr){((type*)ptr)->~type();K15_DELETE_SIZE(allocator,ptr,sizeof(type));}
 #else
 #	define K15_NEW    new
 #	define K15_DELETE delete
 
 #	define K15_NEW_SIZE(allocator,size) new(allocator->allocate(size))
 #	define K15_NEW_T(allocator,objType) new(allocator->allocate(sizeof(objType)))
+#	define K15_NEW_T2(objType) new(Allocators[Category]->allocate(sizeof(objType)))
 
-#	define K15_DELETE_T(allocator,ptr,size) if(ptr){allocator->deallocate((void*)ptr,size);}
+#	define K15_DELETE_SIZE(allocator,ptr,size) if(ptr){allocator->deallocate((void*)ptr,size);}
 #endif //K15_DEBUG
 
 # define K15_PLACEMENT_NEW new(ptr)
@@ -486,30 +489,6 @@ namespace K15_Engine
 #endif
 
 typedef std::set<String> StringSet;
-
-typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::FontManager> FontManagerAllocatedObject;
-typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::InputManager> InputManagerAllocatedObject;
-typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::Application> ApplicationAllocatedObject;
-typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::EventManager> EventManagerAllocatedObject;
-typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::TaskManager> TaskManagerAllocatedObject;
-typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::DynamicLibraryManager> DynamicLibraryManagerAllocatedObject;
-typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::LogManager> LogManagerAllocatedObject;
-typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::ProfilingManager> ProfilingManagerAllocatedObject;
-typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::ThreadWorker> ThreadWorkerAllocatedObject;
-typedef K15_Engine::Core::AllocatedObject<K15_Engine::Core::MemoryPools> MemoryPoolsAllocatedObject;
-typedef K15_Engine::Core::AllocatedObject<K15_Engine::Rendering::MaterialManager> MaterialManagerAllocatedObject;
-typedef K15_Engine::Core::AllocatedObject<K15_Engine::Rendering::VertexManager> VertexManagerAllocatedObject;
-
-#define FontManagerAllocator K15_Engine::Core::FontManager::getInstance()
-#define InputManagerAllocator K15_Engine::Core::InputManager::getInstace()
-#define ApplicationAllocator K15_Engine::Core::Application::getInstance()
-#define EventManagerAllocator K15_Engine::Core::EventManager::getInstance()
-#define TaskManagerAllocator K15_Engine::Core::TaskManager::getInstance()
-#define DynamicLibraryManagerAllocator K15_Engine::Core::DynamicLibraryManager::getInstance()
-#define LogManagerAllocator K15_Engine::Core::LogManager::getInstance()
-#define ThreadWorkerAllocator K15_Engine::Core::LogManager::getInstance()
-#define MemoryPoolsAllocator K15_Engine::Core::MemoryPools::getInstance()
-#define MaterialManagerAllocator K15_Engine::Rendering::MaterialManager::getInstance()
 
 #define g_MemoryPools K15_Engine::Core::MemoryPools::getInstance()
 #define g_FontManager K15_Engine::Core::FontManager::getInstance()

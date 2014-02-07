@@ -24,9 +24,9 @@
 #ifndef _K15Engine_Core_StringUtil_h_
 #define _K15Engine_Core_StringUtil_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
-#endif
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 namespace K15_Engine { namespace Core { 
 	class K15_CORE_API StringUtil
@@ -75,15 +75,6 @@ namespace K15_Engine { namespace Core {
 		static String dateAsString(const String& p_Format = "dd/yyyy/mm");
 
 		/**
-		* Create a string representing an integer value
-		*
-		* @param  p_Value - integer value
-		*
-		* @return String - integer value as string
-		*/
-		static String toString(int p_Value);
-
-		/**
 		* Create a string representing a float value
 		*
 		* @param  p_Value - float value
@@ -93,7 +84,7 @@ namespace K15_Engine { namespace Core {
 		*/
 		static String toString(float p_Value, int p_Precision = 2);
 
-    /**
+		/**
 		* Removes all white spaces out of a given string and returns a new string without white spaces
 		*
 		* @param p_String - String to remove white spaces from
@@ -102,23 +93,23 @@ namespace K15_Engine { namespace Core {
 		*/
 		static String removeWhitespaces(const String& p_String);
 
-    /**
+		/**
 		* Transforms a string to a string with only capital letters
 		*
 		* @param p_String - Input string
 		*
 		* @return String - String with only capital letters
 		*/
-    static String toUpperString(const String& p_String);
+		static String toUpperString(const String& p_String);
 
-    /**
+		/**
 		* Transforms a string to a string with only small letters
 		*
 		* @param p_String - Input string
 		*
 		* @return String - String with only small letters
 		*/
-    static String toLowerString(const String& p_String);
+		static String toLowerString(const String& p_String);
 
 		/**
 		* Create an integer variable out of a string
@@ -185,14 +176,13 @@ namespace K15_Engine { namespace Core {
 			static T returnValue;
 			StringStream stream;
 
-			tempString = p_String;
+			tempString.clear();
 
-			for(String::size_type i = 0;i < tempString.size();++i)
+			for(String::size_type i = 0;i < p_String.size();++i)
 			{
-				if(!isdigit(tempString.at(i)) && tempString.at(i) != p_Delimiter)
+				if(isdigit(p_String.at(i)) || p_String.at(i) == p_Delimiter)
 				{
-					tempString = tempString.substr(i,1);
-					--i;
+					tempString += p_String.at(i);
 				}
 			}
 
@@ -204,6 +194,25 @@ namespace K15_Engine { namespace Core {
 			K15_ASSERT(!stream.fail(),format("Could not convert \"%s\" to numerical value.",p_String.c_str()));
 
 			return returnValue;
+		}
+
+		/**
+		* Creates a string out of a given object
+		*
+		* @param  p_Value - value that should be converted to string
+		*
+		* @return String - value as string
+		*/
+		template<typename T>
+		static String toString(const T& p_Value)
+		{
+			StringStream stream;
+
+			stream << p_Value;
+
+			K15_ASSERT(!stream.fail(),"Could not convert to string.");
+
+			return stream.str();
 		}
 	};//end of StringUtil class
 }}//end of K15_Engine::Core namespace

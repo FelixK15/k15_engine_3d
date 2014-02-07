@@ -29,20 +29,19 @@
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	DynamicLibraryManager::DynamicLibraryManager()
-		: StackAllocator(MemoryAllocator,K15_DYNAMICLIBRARYMANAGER_ALLOCATOR_SIZE,_N(DynamlicLibraryManagerAllocator)),
-		  m_LoadedLibs()
+		: m_LoadedLibs()
 	{
-	  _LogNormal("Initializing DynamicLibraryManager...");
+		_LogNormal("Initializing DynamicLibraryManager...");
 	}
 	/*********************************************************************************/
 	DynamicLibraryManager::~DynamicLibraryManager()
 	{
 		for(DynamicLibraryMap::iterator iter = m_LoadedLibs.begin();iter != m_LoadedLibs.end();++iter)
 		{
-      if(iter->second->isLoaded())
-      {
-        unload(iter->second);
-      }
+			if(iter->second->isLoaded())
+			{
+				unload(iter->second);
+			}
 			K15_DELETE iter->second;
 		}
 

@@ -42,7 +42,7 @@ namespace K15_Engine { namespace Core {
 			{
 				job = (*jobs.begin());
 
-        K15_ASSERT(job,"NULL job in job list.");
+				K15_ASSERT(job,"NULL job in job list.");
 
 				jobs.pop_front();
 				_LogDebug("Thread %u will process job %s.",g_CurrentThread::get_id().hash(),job->getName().c_str());
@@ -67,15 +67,14 @@ namespace K15_Engine { namespace Core {
 	}
 	/*********************************************************************************/
 	ThreadWorker::ThreadWorker()
-		: StackAllocator(ApplicationAllocator,HardwareThreads * sizeof(Thread),_N(ThreadAllocator)),
-		m_Jobs(),
+		: m_Jobs(),
 		m_Threads()
 	{
 		Running = true;
 		uint8 counter = 0;
 		while(counter++ < HardwareThreads)
 		{
-			Thread* thread = K15_NEW_T(this,Thread) Thread(execute,(void*)0);
+			Thread* thread = K15_NEW_T(Allocators[AC_THREADING],Thread) Thread(execute,(void*)0);
 
 			m_Threads.push_front(thread);
 		}
@@ -94,7 +93,7 @@ namespace K15_Engine { namespace Core {
 
 			thread->join();
 			thread->~thread();
-			K15_DELETE_T(this,thread,sizeof(Thread));
+			K15_DELETE_SIZE(Allocators[AC_THREADING],thread,sizeof(Thread));
 			m_Threads.pop_front();
 		}
 

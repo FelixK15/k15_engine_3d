@@ -18,55 +18,53 @@
  */
 
 /*********************************************************************************/
-template<size_t SIZE_T>
-PoolAllocator<SIZE_T>::PoolAllocator(size_t p_ObjectCount, const ObjectName& p_Name)
-	: BaseAllocator(p_ObjectCount * SIZE_T,p_Name),
+template<class Type>
+PoolAllocator<Type>::PoolAllocator(uint32 p_ObjectCount, const String& p_Name, BaseAllocator* p_BaseAllocator)
+	: BasePoolAllocator(p_ObjectCount,p_Name,p_BaseAllocator)
+{
+
+}
+/*********************************************************************************/
+template<class Type>
+PoolAllocator<Type>::~PoolAllocator()
+{
+
+}
+/*********************************************************************************/
+
+/*********************************************************************************/
+template<size_t TypeSize>
+BasePoolAllocator<TypeSize>::BasePoolAllocator(uint32 p_ObjectCount, const String& p_Name, BaseAllocator* p_BaseAllocator)
+	: BaseAllocator(p_ObjectCount * TypeSize,p_Name,p_BaseAllocator),
   m_Position(0)
 {
 
 }
 /*********************************************************************************/
-template<size_t SIZE_T>
-PoolAllocator<SIZE_T>::PoolAllocator(BaseAllocator* p_Allocator,uint32 p_ObjectCount, const ObjectName& p_Name)
-  : BaseAllocator(p_Allocator,p_ObjectCount * SIZE_T,p_Name),
-  m_Position(0)
+template<size_t TypeSize>
+BasePoolAllocator<TypeSize>::~BasePoolAllocator()
 {
 
 }
 /*********************************************************************************/
-template<size_t SIZE_T>
-PoolAllocator<SIZE_T>::~PoolAllocator()
+template<size_t TypeSize>
+void* BasePoolAllocator<TypeSize>::alloc(size_t p_Size)
 {
+	K15_ASSERT(p_Size % TypeSize == 0,StringUtil::format("PoolAllocator %s Size unequal to object size. size:%i objectsize:%u",m_Name.c_str(),p_Size,TypeSize));
 
-}
-/*********************************************************************************/
-template<size_t SIZE_T>
-void* PoolAllocator<SIZE_T>::alloc(size_t p_Size)
-{
-	K15_ASSERT(p_Size % SIZE_T == 0,StringUtil::format("PoolAllocator %s Size unequal to object size. size:%i objectsize:%u",m_Name.c_str(),p_Size,SIZE_T));
-
-	if(m_Position * SIZE_T == m_MemorySize)
+	if(m_Position * TypeSize == m_MemorySize)
 	{
 		m_Position = 0;
 	}
 
-	uint32 pos = m_Position++ * SIZE_T;
-// 	while(((m_Memory + pos) & sizeof(T)) > 0)
-// 	{
-// 		pos = m_Position++ * sizeof(T);
-// 		if(pos == m_MemorySize)
-// 		{
-// 			m_Position = 0;
-// 			pos = 0;
-// 		}
-// 	}
+	uint32 pos = m_Position++ * TypeSize;
 
 	return (void*)(m_Memory + pos);
 }
 /*********************************************************************************/
-template<size_t SIZE_T>
-void PoolAllocator<SIZE_T>::dealloc(void* p_Pointer, size_t p_Size)
+template<size_t TypeSize>
+void BasePoolAllocator<TypeSize>::dealloc(void* p_Pointer, size_t p_Size)
 {
-	memset(p_Pointer,0,SIZE_T);
+	memset(p_Pointer,0,TypeSize);
 }
 /*********************************************************************************/

@@ -23,20 +23,19 @@
 #ifndef _K15Engine_Core_DynamicLibraryManager_h_
 #define _K15Engine_Core_DynamicLibraryManager_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
 #	include "K15_Application.h"
 #	include "K15_AllocatedObject.h"
 #	include "K15_Singleton.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_DynamicLibraryBase.h"
 
 namespace K15_Engine { namespace Core {
 
-	class DynamicLibraryManager : public ApplicationAllocatedObject,
-								  public Singleton<DynamicLibraryManager>,
-								  public StackAllocator
+	class DynamicLibraryManager : public CoreAllocatedObject,
+								  public Singleton<DynamicLibraryManager>
 	{
 	public:
 		typedef HashMap(String,DynamicLibraryBase*) DynamicLibraryMap;

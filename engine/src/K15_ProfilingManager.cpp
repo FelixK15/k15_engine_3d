@@ -24,8 +24,7 @@
 namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	ProfilingManager::ProfilingManager()
-		: PoolAllocator(MemoryAllocator,K15_PROFILING_NODE_POOLSIZE,_N(ProfilingManagerAllocator)), 
-		AllocatedObject(),
+		: AllocatedObject(),
 		m_Root(0),
 		m_LastNode(0)
 	{
@@ -39,72 +38,71 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void ProfilingManager::startProfiling(ProfilingNode* p_Node)
 	{
-    p_Node->Parent = m_LastNode;
+		p_Node->Parent = m_LastNode;
 
 		if(!m_Root)
 		{
 			m_Root = p_Node;
 		}
-    else
-    {
-      m_LastNode->Children[m_LastNode->CountChildren++] = p_Node;
-    }
+		else
+		{
+			m_LastNode->Children[m_LastNode->CountChildren++] = p_Node;
+		}
 		
 		m_LastNode = p_Node;
 	}
 	/*********************************************************************************/
 	void ProfilingManager::stopProfiling(ProfilingNode* p_Node)
 	{
-    p_Node->EndTime = g_Application->getTime();
-    p_Node->Time = p_Node->EndTime - p_Node->StartTime;
+		p_Node->EndTime = g_Application->getTime();
+		p_Node->Time = p_Node->EndTime - p_Node->StartTime;
 
 		m_LastNode = p_Node->Parent;
 
-    if(p_Node == m_Root)
-    {
-      m_Nodes.push_back(p_Node);
-      m_Root = 0;
-    }
+		if(p_Node == m_Root)
+		{
+			m_Nodes.push_back(p_Node);
+			m_Root = 0;
+		}
 	}
 	/*********************************************************************************/
 	void ProfilingManager::clear()
 	{
-		PoolAllocator::clear();
 		m_Root = 0;
 		m_LastNode = 0;
 
-    for(ProfilingNodeList::iterator iter = m_Nodes.begin();iter != m_Nodes.end();++iter)
-    {
-      _eraseNode_r((*iter));
-    }
+		for(ProfilingNodeList::iterator iter = m_Nodes.begin();iter != m_Nodes.end();++iter)
+		{
+			_eraseNode_r((*iter));
+		}
 
-    m_Nodes.clear();
+		m_Nodes.clear();
 	}
-  /*********************************************************************************/
-  void ProfilingManager::eraseProfilingForFrame(uint32 p_FrameIndex)
-  {
-    if(m_Nodes.size() > 0)
-    {
-      ProfilingNode* node = (*m_Nodes.begin());
-      K15_ASSERT(node->FrameIndex == p_FrameIndex,"Trying to erase ProflingData outside of the GameLoop.");
+	/*********************************************************************************/
+	void ProfilingManager::eraseProfilingForFrame(uint32 p_FrameIndex)
+	{
+		if(m_Nodes.size() > 0)
+		{
+			ProfilingNode* node = (*m_Nodes.begin());
+			K15_ASSERT(node->FrameIndex == p_FrameIndex,"Trying to erase ProflingData outside of the GameLoop.");
 
-      _eraseNode_r(node);
+			_eraseNode_r(node);
 
-      m_Nodes.pop_front();
-    }
-  }
-  /*********************************************************************************/
-  void ProfilingManager::_eraseNode_r(ProfilingNode* p_Node)
-  {
-    if(p_Node->CountChildren > 0)
-    {
-      for(int i = 0;i < p_Node->CountChildren;++i)
-      {
-        _eraseNode_r(p_Node->Children[i]);
-      }
-    }
+			m_Nodes.pop_front();
+		}
+	}
+	/*********************************************************************************/
+	void ProfilingManager::_eraseNode_r(ProfilingNode* p_Node)
+	{
+		if(p_Node->CountChildren > 0)
+		{
+			for(int i = 0;i < p_Node->CountChildren;++i)
+			{
+				_eraseNode_r(p_Node->Children[i]);
+			}
+		}
 
-    K15_DELETE p_Node;
-  }
-  /*********************************************************************************/
+		K15_DELETE p_Node;
+	}
+	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace

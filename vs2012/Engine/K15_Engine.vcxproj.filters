@@ -40,6 +40,15 @@
     <Filter Include="Rendering\src">
       <UniqueIdentifier>{bf393d50-6783-456e-ad0a-4641078d4c6d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Serialization">
+      <UniqueIdentifier>{98421085-9aae-4ebe-8922-b1c08ef3cd6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Serialization\include">
+      <UniqueIdentifier>{4fa53327-f93f-429e-b5b7-e613f0f003c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Serialization\src">
+      <UniqueIdentifier>{6c1747fa-fead-48bf-9834-da844fb9a7b2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\engine\include\K15_Application.h">
@@ -279,9 +288,6 @@
     <ClInclude Include="..\..\engine\include\win32\K15_VisualStudioLog_Win32.h">
       <Filter>Core\include\Win32</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_MemoryPools.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_ObjectSizes.h">
       <Filter>Core\include</Filter>
     </ClInclude>
@@ -306,7 +312,6 @@
     <ClInclude Include="..\..\engine\include\K15_ThreadSafe.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_MaterialData.h" />
     <ClInclude Include="..\..\engine\include\K15_AABB.h">
       <Filter>Rendering\include</Filter>
     </ClInclude>
@@ -337,9 +342,6 @@
     <ClInclude Include="..\..\engine\include\K15_Material.h">
       <Filter>Rendering\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_MaterialManager.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_Mesh.h">
       <Filter>Rendering\include</Filter>
     </ClInclude>
@@ -366,6 +368,27 @@
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_VertexDeclaration.h">
       <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_MaterialData.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_JsonSerializer.h">
+      <Filter>Serialization\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_SerializerBase.h">
+      <Filter>Serialization\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_SerialWriter.h">
+      <Filter>Serialization\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_SerialReader.h">
+      <Filter>Serialization\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_SerialSizer.h">
+      <Filter>Serialization\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_AllocatorSettings.h">
+      <Filter>Serialization\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -552,9 +575,6 @@
     <ClCompile Include="..\..\engine\src\K15_VertexDeclaration.cpp">
       <Filter>Rendering\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_MemoryPools.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_AlphaState.cpp">
       <Filter>Rendering\src</Filter>
     </ClCompile>
@@ -588,13 +608,34 @@
     <ClCompile Include="..\..\engine\src\K15_Mesh.cpp">
       <Filter>Rendering\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_MaterialManager.cpp">
-      <Filter>Rendering\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_ThreadSafe.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_MaterialData.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_MaterialData.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_JsonSerializer.cpp">
+      <Filter>Serialization\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_SerializerBase.cpp">
+      <Filter>Serialization\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_SerialWriter.cpp">
+      <Filter>Serialization\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_SerialReader.cpp">
+      <Filter>Serialization\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_MemoryBlock.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_AllocatorSettings.cpp">
+      <Filter>Serialization\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_SerialSizer.cpp">
+      <Filter>Serialization\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_AllocatedObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -762,6 +803,12 @@
     </None>
     <None Include="..\..\engine\include\K15_ThreadSafe.inl">
       <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_SerializerBase.inl">
+      <Filter>Serialization\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_SerialReader.inl">
+      <Filter>Serialization\include</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

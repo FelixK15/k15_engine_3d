@@ -25,13 +25,13 @@
 #ifndef _K15Engine_Core_LogManager_h_
 #define _K15Engine_Core_LogManager_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
 #	include "K15_Application.h"
 #	include "K15_AllocatedObject.h"
 #	include "K15_Singleton.h"
 #	include "K15_StringUtil.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 #define _LogNormal(msg, ...)  K15_Engine::Core::LogManager::getInstance()->logMessage(K15_Engine::Core::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::Core::LogManager::LP_NORMAL)
 #define _LogError(msg, ...)   K15_Engine::Core::LogManager::getInstance()->logMessage(K15_Engine::Core::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::Core::LogManager::LP_ERROR)
@@ -45,9 +45,8 @@
 
 namespace K15_Engine { namespace Core {
 
-	class K15_CORE_API LogManager : public ApplicationAllocatedObject, 
-									  public Singleton<LogManager>,
-									  public StackAllocator
+	class K15_CORE_API LogManager : public CoreAllocatedObject,
+									public Singleton<LogManager>
 	{
 	public:
 		typedef List(LogBase*) LogList;

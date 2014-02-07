@@ -20,12 +20,12 @@
  * 
  */
 
-#ifndef _K15Engine_Core_StackAllocationPattern_h_
-#define _K15Engine_Core_StackAllocationPattern_h_
+#ifndef _K15Engine_Core_StackAllocator_h_
+#define _K15Engine_Core_StackAllocator_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_BaseAllocator.h"
 
@@ -34,15 +34,7 @@ namespace K15_Engine { namespace Core {
   class K15_CORE_API StackAllocator : public BaseAllocator
   {
   public:
-	/*********************************************************************************/
-	static const TypeName Type;
-	/*********************************************************************************/	
-  public:
-	//allocate memory from another allocator
-	StackAllocator(BaseAllocator* p_Allocator,size_t p_Size,const ObjectName& p_Name);
-    
-	//allocate memory using malloc
-    StackAllocator(size_t p_Size,const ObjectName& p_Name);
+    StackAllocator(size_t p_Size,const String& p_Name,BaseAllocator* p_BaseAllocator = 0);
 
     virtual void clear();
 
@@ -55,4 +47,4 @@ namespace K15_Engine { namespace Core {
   };// end of stack allocator class
 }} //end of K15_Engine::Core namespace
 
-#endif //_K15Engine_Core_StackAllocationPattern_h_
+#endif //_K15Engine_Core_StackAllocator_h_

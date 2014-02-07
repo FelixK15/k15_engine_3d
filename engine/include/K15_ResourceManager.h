@@ -23,11 +23,11 @@
 #ifndef _K15Engine_Core_Resourcemanager_h_
 #define _K15Engine_Core_Resourcemanager_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
 #	include "K15_Application.h"
 #	include "K15_AllocatedObject.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_ResourceFileBase.h"
 #include "K15_ResourceHandle.h"
@@ -35,7 +35,8 @@
 
 namespace K15_Engine { namespace Core { 
 
-	class K15_CORE_API ResourceManager : public ApplicationAllocatedObject, public Singleton<ResourceManager>  //Singleton?
+	class K15_CORE_API ResourceManager : public CoreAllocatedObject,
+										 public Singleton<ResourceManager>  //Singleton?
 	{
 	public:
 		typedef DynamicArray(ResourceBase*)			ResourceList;

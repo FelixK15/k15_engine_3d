@@ -43,11 +43,6 @@ void ResourceBase::decreaseResourceReference()
 	--m_ReferenceCount;
 }
 /*********************************************************************************/
-const TypeName& ResourceBase::getResourceType() const
-{
-	return TypeName::BLANK;
-}
-/*********************************************************************************/
 bool ResourceBase::isMarkedAsUnreferenced() const
 {
 	return m_MarkAsUnreferenced;

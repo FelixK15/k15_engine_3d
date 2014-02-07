@@ -24,19 +24,19 @@
 #ifndef _K15Engine_Core_BlockAllocator_h_
 #define _K15Engine_Core_BlockAllocator_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
 #	include "K15_BaseAllocator.h"
 #	include "K15_AllocatedObject.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API BlockAllocator : public BaseAllocator
 	{
 	public:
-		BlockAllocator(size_t p_Size,const ObjectName& p_Name);
-		BlockAllocator(BaseAllocator* p_Allocator,size_t p_Size,const ObjectName& p_Name);
+		BlockAllocator(size_t p_Size,const String& p_Name,BaseAllocator* p_BaseAllocator = 0);
+	
 		virtual ~BlockAllocator();
 
 		virtual void clear() OVERRIDE;
@@ -44,8 +44,9 @@ namespace K15_Engine { namespace Core {
 		virtual void dealloc(void* p_Pointer,size_t p_Size) OVERRIDE;
 
 	private:
-		void mergeBlocks();
-		void createBlock(MemoryBlock* p_Successor);
+		void defragment_R(MemoryBlock* p_Block);
+		void dealloc_R(MemoryBlock* p_Block,void* p_Pointer,size_t p_Size);
+		MemoryBlock* findBlock_R(MemoryBlock* p_Block,size_t p_Size);
 
 	private:
 		MemoryBlock* m_First;

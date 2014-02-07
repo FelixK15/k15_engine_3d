@@ -105,7 +105,7 @@ namespace K15_Engine { namespace Core {
 	void ApplicationOSLayer_Win32::sleep(double p_TimeInSeconds) const
 	{
 		static DWORD msecs = 0;
-		msecs = (DWORD)(p_TimeInSeconds * 100);
+		msecs = (DWORD)(p_TimeInSeconds * 1000);
 		Sleep(msecs);
 	}
 	/*********************************************************************************/

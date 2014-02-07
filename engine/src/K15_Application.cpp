@@ -34,7 +34,6 @@
 #include "K15_EventTask.h"
 #include "K15_ApplicationModule.h"
 #include "K15_ApplicationModuleDescription.h"
-#include "K15_MemoryPools.h"
 
 #include "K15_MemoryProfiler.h"
 
@@ -53,24 +52,8 @@
 #endif //K15_OS_WINDOWS
 
 #include "K15_RendererBase.h"
-
-
-
-
-
 #include "K15_RenderProcessBase.h"
-
-
-
-
-
-
-#include "K15_RenderOperation.h"
-#include "K15_Material.h"
-#include "K15_GpuProgram.h"
-#include "K15_IndexBuffer.h"
-#include "K15_VertexBuffer.h"
-#include "K15_VertexManager.h"
+#include "K15_AllocatorSettings.h"
 
 namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
@@ -80,16 +63,14 @@ namespace K15_Engine { namespace Core {
 	const String Application::GameDirFileName = "gamedir.ini";
 	/*********************************************************************************/
 	Application::Application()
-		: StackAllocator(K15_APPLICATION_ALLOCATOR_SIZE,_N(ApplicationAllocator)),
-		m_Commands(),
+		: m_Commands(),
 		m_DynamicLibraryManager(0),
 		m_EventManager(0),
 		m_RenderWindow(0),
 		m_ProfileManager(0),
 		m_TaskManager(0),
 		m_LogManager(0),
-    m_MemoryPools(0),
-    m_AvgFramesPerSecond(0.0f),
+		m_AvgFramesPerSecond(0.0f),
 		m_Plugins(),
 		m_RunningTime(0.0),
 		m_ApplicationParameter(),
@@ -103,12 +84,10 @@ namespace K15_Engine { namespace Core {
 	{
 		memset(m_FrameStatistics,0,sizeof(FrameStatistic) * FrameStatisticCount);
 
-		m_FrameAllocator = K15_NEW_T(this,StackAllocator) StackAllocator(this,FrameAllocatorSize,_N(FrameAllocator));
+		m_FrameAllocator = K15_NEW_T(Allocators[AC_CORE],StackAllocator) StackAllocator(1*MEGABYTE,"FrameAllocator",Allocators[AC_CORE]);
 
 		//creating the Log Manager is first thing we'll do.
 		m_LogManager = K15_NEW LogManager();
-
-		m_MemoryPools = K15_NEW MemoryPools();
 
 #if defined (K15_DEBUG)
 		m_LogManager->addLog(K15_NEW TextConsoleLog(),true,LogManager::LP_ALL);
@@ -613,10 +592,10 @@ namespace K15_Engine { namespace Core {
 
 		m_RenderWindow->shutdown();
 		m_OSLayer.shutdown();
-    m_ProfileManager->clear();
+		m_ProfileManager->clear();
 
-    _LogNormal("Destroying RenderWindow...");
-    K15_DELETE m_RenderWindow;
+		_LogNormal("Destroying RenderWindow...");
+		K15_DELETE m_RenderWindow;
 
 		_LogNormal("Destroying ThreadWorker...");
 		K15_DELETE m_ThreadWorker;
@@ -624,30 +603,29 @@ namespace K15_Engine { namespace Core {
 		_LogNormal("Destroying InputManager...");
 		K15_DELETE m_InputManager;
 
-    _LogNormal("Destroying TaskMananger...");
-    K15_DELETE m_TaskManager;
+		_LogNormal("Destroying TaskMananger...");
+		K15_DELETE m_TaskManager;
 
-    _LogNormal("Destroying ProfilingManager...");
-    K15_DELETE m_ProfileManager;
+		_LogNormal("Destroying ProfilingManager...");
+		K15_DELETE m_ProfileManager;
 
-    _LogNormal("Destroying EventManager...");
-    K15_DELETE m_EventManager;
+		_LogNormal("Destroying EventManager...");
+		K15_DELETE m_EventManager;
 
 		_LogNormal("Destroying DynamicLibraryManager...");
 		K15_DELETE m_DynamicLibraryManager;
 
-    _LogNormal("Destroying Memorypools...");
-    K15_DELETE m_MemoryPools;
-
 		_LogNormal("Destroying LogManager...");
 		K15_DELETE m_LogManager;
 
-    m_FrameAllocator->~StackAllocator();
-    K15_DELETE_T(this,m_FrameAllocator,sizeof(StackAllocator));
+		m_FrameAllocator->~StackAllocator();
+		K15_DELETE_SIZE(Allocators[AC_CORE],m_FrameAllocator,sizeof(StackAllocator));
 
-    K15_DELETE this; //evil
+		K15_DELETE this; //evil
 
-    K15_DELETE g_MemoryProfiler;
+		BaseAllocatedObject::removeAllocators();
+
+		//K15_DELETE g_MemoryProfiler;
 	}
 	/*********************************************************************************/
 	void Application::loadGameDirFile()

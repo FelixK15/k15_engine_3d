@@ -1,8 +1,8 @@
 /**
- * @file K15_Font.h
+ * @file K15_MemoryManager.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/11/12
+ * @date 2014/02/05
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,37 +21,30 @@
  * 
  */
 
-#ifndef _K15Engine_Core_Font_h_
-#define _K15Engine_Core_Font_h_
+#ifndef _K15Engine_Core_MemoryManager_h_
+#define _K15Engine_Core_MemoryManager_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
+#ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
-
-#include "K15_ResourceBase.h"
-#include "K15_ResourceHandle.h"
-
-struct FT_Face;
+#	include "K15_Singleton.h"
+#endif //K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API Font : public ResourceBase
+	class K15_CORE_API MemoryManager : public Singleton<MemoryManager>
 	{
 	public:
-		Font();
-		virtual ~Font();
+		enum eMemoryCategories
+		{
+			MC_GENERAL = 0,
+			MC_LOGGING,
+			MC_MEMORY,
+			MC_RENDERING
+		}; //MemoryCategores
 
-		virtual void loadDebug(RawData& p_Data);
-		virtual bool internalLoad(const RawData& p_Data);
-
-	private:
-		ResourceHandle<TrueTypeFont> m_Font;
-		//ResourceHandle<Texture> m_Texture;
-		ObjectName m_FontName;
-		uint8 m_StartGlyph;
-		uint8 m_EndGlyph;
-		uint8 m_GlyphSize;
-		uint8 m_Resolution;
-	};// end of Font class declaration
+	public:
+		MemoryManager();
+		~MemoryManager();
+	};// end of * class declaration
 }}// end of K15_Engine::Core namespace
 
-#endif //_K15Engine_Core_Font_h_
+#endif //_K15Engine_Core_MemoryManager_h_

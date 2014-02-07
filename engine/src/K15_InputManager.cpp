@@ -26,8 +26,7 @@
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	InputManager::InputManager()
-		: BlockAllocator(ApplicationAllocator,K15_INPUTMANAGER_ALLOCATOR_SIZE,_N(InputManagerAllocator)),
-		  m_InputMap()
+		:  m_InputMap()
 	{
 	
 	}

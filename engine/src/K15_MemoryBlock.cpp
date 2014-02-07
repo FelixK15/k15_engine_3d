@@ -17,20 +17,20 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+#include "K15_PrecompiledHeader.h"
+
 #include "K15_MemoryBlock.h"
 
-using namespace K15_EngineV2;
+namespace K15_Engine { namespace Core {
+	/*********************************************************************************/
+	MemoryBlock::MemoryBlock()
+	{
 
-MemoryHeapNode::MemoryHeapNode()
-{
-	m_pPointer = NULL;
-	m_iSize = 0;
-	m_bFree = true;
-}
+	}
+	/*********************************************************************************/
+	MemoryBlock::~MemoryBlock()
+	{
 
-MemoryHeapNode::MemoryHeapNode(void* pPointer,size_t iSize,bool bFree)
-{
-	this->m_pPointer = pPointer;
-	this->m_iSize = iSize;
-	this->m_bFree = bFree;
-}
+	}
+	/*********************************************************************************/
+}}// end of K15_Engine::Core namespace

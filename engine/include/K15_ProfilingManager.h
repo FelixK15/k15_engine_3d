@@ -24,11 +24,11 @@
 #ifndef _K15Engine_Core_ProfilingManager_h_
 #define _K15Engine_Core_ProfilingManager_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
 #	include "K15_AllocatedObject.h"
 #	include "K15_Singleton.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_ProfilingNode.h"
 
@@ -37,7 +37,8 @@
 
 namespace K15_Engine { namespace Core { 
 
- 	class ProfilingManager : public Singleton<ProfilingManager>, public ApplicationAllocatedObject, public PoolAllocator<K15_SIZE_PROFILING_NODE>				
+ 	class ProfilingManager : public Singleton<ProfilingManager>,
+							 public CoreAllocatedObject
 	{
 	public:
 		/*********************************************************************************/
@@ -49,14 +50,14 @@ namespace K15_Engine { namespace Core {
 
 		void startProfiling(ProfilingNode* p_Node);
 		void stopProfiling(ProfilingNode* p_Node);
-    void eraseProfilingForFrame(uint32 p_FrameIndex);
+		void eraseProfilingForFrame(uint32 p_FrameIndex);
 		void clear();
 
 		INLINE ProfilingNode* getRootNode();
-    INLINE ProfilingNode* getCurrentNode();
+		INLINE ProfilingNode* getCurrentNode();
 
   private:
-    void _eraseNode_r(ProfilingNode* p_Node);
+		void _eraseNode_r(ProfilingNode* p_Node);
 
 	private:
 		ProfilingNodeList m_Nodes;

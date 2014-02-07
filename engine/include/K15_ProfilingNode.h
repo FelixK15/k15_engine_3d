@@ -24,11 +24,11 @@
 #ifndef _K15Engine_Core_ProfileNode_h_
 #define _K15Engine_Core_ProfileNode_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
 #	include "K15_ProfilingManager.h"
 #	include "K15_AllocatedObject.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 namespace K15_Engine { namespace Core { 
 	class K15_CORE_API AutoProfilingNode
@@ -41,7 +41,7 @@ namespace K15_Engine { namespace Core {
 		ProfilingNode* m_Node;
 	};// end of AutoProfilingNode class declaration
 	/*********************************************************************************/
-	class K15_CORE_API ProfilingNode : public ProfilingManagerAllocatedObject
+	class K15_CORE_API ProfilingNode : public AllocatedObject<BaseAllocatedObject::AC_PROFILING_NODE_POOL>
 	{
 	public:
     /*********************************************************************************/
@@ -53,12 +53,12 @@ namespace K15_Engine { namespace Core {
 		virtual ~ProfilingNode();
 
 		ProfilingNode* Parent;
-    ProfilingNode* Children[MaxChildren];
+		ProfilingNode* Children[MaxChildren];
 		String Name;
-    int CountChildren;
-    const int ThreadID;
-    const int FrameIndex;
-    const double StartTime;
+		int CountChildren;
+		const int ThreadID;
+		const int FrameIndex;
+		const double StartTime;
 		double Time;
 		double EndTime;		
 	};

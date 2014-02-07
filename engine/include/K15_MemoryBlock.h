@@ -24,20 +24,22 @@
 #ifndef _K15Engine_Core_MemoryBlock_h_
 #define _K15Engine_Core_MemoryBlock_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
-#	include "K15_MemoryPools.h"
 #	include "K15_AllocatedObject.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 namespace K15_Engine { namespace Core {
-  struct MemoryBlock : public AllocatedObject<MemoryBlockAllocator>
-  {
-    bool Used;
-    byte* Memory;
-    size_t Size;
-    MemoryBlock* Next;
-  };
+	struct MemoryBlock
+	{
+		MemoryBlock();
+		~MemoryBlock();
+
+		bool Used;
+		byte* Memory;
+		size_t Size;
+		MemoryBlock* Next;
+	};
 }}//end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_MemoryBlock_h_

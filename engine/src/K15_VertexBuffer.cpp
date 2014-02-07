@@ -36,24 +36,14 @@ namespace K15_Engine { namespace Rendering {
 
 	}
 	/*********************************************************************************/
-	uint32 VertexBuffer::getVertexSize() const
-	{
-    if(m_Declaration)
-    {
-		  return m_Declaration->getVertexSize();
-    }
-
-    return 0;
-  }
-  /*********************************************************************************/
-	const VertexDeclaration* VertexBuffer::getVertexDeclaration() const
-	{
-		return m_Declaration;
-	}
-	/*********************************************************************************/
-	void VertexBuffer::setVertexDeclaration(const String& p_DeclarationString)
-	{
-		m_Declaration->fromDeclarationString(p_DeclarationString);
-	}
+// 	uint32 VertexBuffer::getVertexSize() const
+// 	{
+//     if(m_Declaration)
+//     {
+// 		  return m_Declaration->getVertexSize();
+//     }
+// 
+//     return 0;
+//   }
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

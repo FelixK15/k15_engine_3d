@@ -254,7 +254,7 @@ namespace K15_Engine { namespace Rendering {
 		if(p_Width + p_OffsetX > m_Width)
 		{
 			_LogWarning("Trying to write %u pixels to texture %s (starting from pixel %i) - This would write out of bounds.\n Clamping width to %u.",
-				         p_Width + p_OffsetX,m_AssetName.c_str(),p_OffsetX,m_Width - p_OffsetX);
+				         p_Width + p_OffsetX,m_Name.c_str(),p_OffsetX,m_Width - p_OffsetX);
 
 			p_Width = m_Width - p_OffsetX;
 		}
@@ -276,14 +276,14 @@ namespace K15_Engine { namespace Rendering {
 	{
 		if(m_Type == TT_1D)
 		{
-			_LogError("Trying to write 2 dimensional pixel data to 1D texture %s.",m_AssetName.c_str());
+			_LogError("Trying to write 2 dimensional pixel data to 1D texture %s.",m_Name.c_str());
 			return 0;
 		}
 
 		if(p_Width + p_OffsetX > m_Width || p_Height + p_OffsetY > m_Height)
 		{
 			_LogWarning("Trying to write %ux%u pixels to texture %s (starting from pixel %ix%i) - This would write out of bounds.\n Clamping width to %ux%u.",
-				p_Width + p_OffsetX,p_Height + p_OffsetY,m_AssetName.c_str(),p_OffsetX,p_OffsetY,m_Width - p_OffsetX,m_Height - p_OffsetY);
+				p_Width + p_OffsetX,p_Height + p_OffsetY,m_Name.c_str(),p_OffsetX,p_OffsetY,m_Width - p_OffsetX,m_Height - p_OffsetY);
 
 			p_Width = m_Width - p_OffsetX;
 			p_Height = m_Height - p_OffsetY;
@@ -306,14 +306,14 @@ namespace K15_Engine { namespace Rendering {
 	{
 		if(m_Type == TT_1D || m_Type == TT_2D)
 		{
-			_LogError("Trying to write 3 dimensional pixel data to %iD texture %s.",m_Type == TT_1D ? 1 : 2,m_AssetName.c_str());
+			_LogError("Trying to write 3 dimensional pixel data to %iD texture %s.",m_Type == TT_1D ? 1 : 2,m_Name.c_str());
 			return 0;
 		}
 
 		if(p_Width + p_OffsetX > m_Width || p_Height + p_OffsetY > m_Height || p_Depth + p_OffsetZ > m_Depth)
 		{
 			_LogWarning("Trying to write %ux%ux%u pixels to texture %s (starting from pixel %ix%ix%i) - This would write out of bounds.\n Clamping width to %ux%ux%u.",
-				p_Width + p_OffsetX,p_Height + p_OffsetY,p_Depth + p_OffsetZ,m_AssetName.c_str(),
+				p_Width + p_OffsetX,p_Height + p_OffsetY,p_Depth + p_OffsetZ,m_Name.c_str(),
 				p_OffsetX,p_OffsetY,p_OffsetZ,m_Width - p_OffsetX,m_Height - p_OffsetY,m_Depth - p_OffsetZ);
 
 			p_Width = m_Width - p_OffsetX;
@@ -338,7 +338,7 @@ namespace K15_Engine { namespace Rendering {
 	{
 		if(p_MipmapLevel > m_MipmapLevels)
 		{
-			_LogWarning("Trying to write to mipmap %u of texture %s which only has %u mipmaps.Clamping value to %u",p_MipmapLevel,m_AssetName.c_str(),m_MipmapLevels,m_MipmapLevels);
+			_LogWarning("Trying to write to mipmap %u of texture %s which only has %u mipmaps.Clamping value to %u",p_MipmapLevel,m_Name.c_str(),m_MipmapLevels,m_MipmapLevels);
 			p_MipmapLevel = m_MipmapLevels;
 		}
 
@@ -348,7 +348,7 @@ namespace K15_Engine { namespace Rendering {
 		if(p_Width + p_OffsetX > width)
 		{
 			_LogWarning("Trying to write %u pixels to texture %s (starting from pixel %i) - This would write out of bounds.\n Clamping width to %u.",
-			p_Width + p_OffsetX,m_AssetName.c_str(),p_OffsetX,width - p_OffsetX);
+			p_Width + p_OffsetX,m_Name.c_str(),p_OffsetX,width - p_OffsetX);
 
 			p_Width = width - p_OffsetX;
 		}
@@ -370,7 +370,7 @@ namespace K15_Engine { namespace Rendering {
 	{
 		if(p_MipmapLevel > m_MipmapLevels)
 		{
-			_LogWarning("Trying to write to mipmap %u of texture %s which only has %u mipmaps.Clamping value to %u",p_MipmapLevel,m_AssetName.c_str(),m_MipmapLevels,m_MipmapLevels);
+			_LogWarning("Trying to write to mipmap %u of texture %s which only has %u mipmaps.Clamping value to %u",p_MipmapLevel,m_Name.c_str(),m_MipmapLevels,m_MipmapLevels);
 
 			p_MipmapLevel = m_MipmapLevels;
 		}
@@ -382,7 +382,7 @@ namespace K15_Engine { namespace Rendering {
 		if(p_Width + p_OffsetX > width || p_Height + p_OffsetY > height)
 		{
 			_LogWarning("Trying to write %ux%u pixels to texture %s (starting from pixel %ix%i) - This would write out of bounds.\n Clamping width to %ux%u.",
-			p_Width + p_OffsetX,p_Height + p_OffsetY,m_AssetName.c_str(),p_OffsetX,p_OffsetY,width - p_OffsetX,height - p_OffsetY);
+			p_Width + p_OffsetX,p_Height + p_OffsetY,m_Name.c_str(),p_OffsetX,p_OffsetY,width - p_OffsetX,height - p_OffsetY);
 
 			p_Width = width - p_OffsetX;
 			p_Height = height - p_OffsetY;
@@ -405,7 +405,7 @@ namespace K15_Engine { namespace Rendering {
 	{
 		if(p_MipmapLevel > m_MipmapLevels)
 		{
-			_LogWarning("Trying to write to mipmap %u of texture %s which only has %u mipmaps.Clamping value to %u",p_MipmapLevel,m_AssetName.c_str(),m_MipmapLevels,m_MipmapLevels);
+			_LogWarning("Trying to write to mipmap %u of texture %s which only has %u mipmaps.Clamping value to %u",p_MipmapLevel,m_Name.c_str(),m_MipmapLevels,m_MipmapLevels);
 
 			p_MipmapLevel = m_MipmapLevels;
 		}
@@ -418,7 +418,7 @@ namespace K15_Engine { namespace Rendering {
 		if(p_Width + p_OffsetX > width || p_Height + p_OffsetY > height || p_Depth + p_OffsetZ > depth)
 		{
 			_LogWarning("Trying to write %ux%ux%u pixels to texture %s (starting from pixel %ix%ix%i) - This would write out of bounds.\n Clamping width to %ux%ux%u.",
-			p_Width + p_OffsetX,p_Height + p_OffsetY,p_Depth + p_OffsetZ,m_AssetName.c_str(),
+			p_Width + p_OffsetX,p_Height + p_OffsetY,p_Depth + p_OffsetZ,m_Name.c_str(),
 			p_OffsetX,p_OffsetY,p_OffsetZ,width - p_OffsetX,height - p_OffsetY,depth - p_OffsetZ);
 
 			p_Width = width - p_OffsetX;
@@ -538,7 +538,7 @@ namespace K15_Engine { namespace Rendering {
   {
     if(p_MipmapLevel > m_MipmapLevels)
     {
-      _LogWarning("Trying to get the dimension of mipmap %u from texture %s that only has %u mipmaps. Clamping value to %u",p_MipmapLevel,m_AssetName.c_str(),m_MipmapLevels,m_MipmapLevels);
+      _LogWarning("Trying to get the dimension of mipmap %u from texture %s that only has %u mipmaps. Clamping value to %u",p_MipmapLevel,m_Name.c_str(),m_MipmapLevels,m_MipmapLevels);
       p_MipmapLevel = m_MipmapLevels;
     }
 

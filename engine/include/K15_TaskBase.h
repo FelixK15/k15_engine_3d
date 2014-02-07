@@ -24,12 +24,12 @@
 #ifndef _K15Engine_Core_TaskBase_h_
 #define _K15Engine_Core_TaskBase_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
 #	include "K15_AllocatedObject.h"
 #	include "K15_TaskManager.h"
 #	include "K15_Object.h"
-#endif// K15_USE_PRECOMPILED_HEADER
+#endif// K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_Functor.h"
 #include "K15_GameTime.h"

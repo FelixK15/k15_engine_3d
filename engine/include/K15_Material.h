@@ -24,11 +24,10 @@
 #ifndef _K15Engine_Renderer_Material_h_
 #define _K15Engine_Renderer_Material_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
-#	include "K15_MemoryPools.h"
 #	include "K15_AllocatedObject.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_Texture.h"
 #include "K15_TextureSampler.h"
@@ -104,7 +103,8 @@ namespace K15_Engine { namespace Rendering {
 	}; //end of MaterialPass class declaration
 	K15_PTR(MaterialPass);
 	/*********************************************************************************/
-	class K15_CORE_API Material : public AllocatedObject<MaterialAllocator>, public Object
+	class K15_CORE_API Material : public Object,
+								  public RenderingAllocatedObject
 	{
 	public:
 		/*********************************************************************************/

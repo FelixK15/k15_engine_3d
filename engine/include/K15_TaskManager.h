@@ -24,21 +24,19 @@
 #ifndef _K15Engine_Core_TaskManager_h_
 #define _K15Engine_Core_TaskManager_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
 #	include "K15_Application.h"
 #	include "K15_AllocatedObject.h"
 #	include "K15_Singleton.h"
-#endif// K15_USE_PRECOMPILED_HEADER
+#endif //K15_USE_PRECOMPILED_HEADERS
 
-#include "K15_BlockAllocator.h"
 #include "K15_TaskBase.h"
 
 namespace K15_Engine { namespace Core {
 
-	class TaskManager : public ApplicationAllocatedObject,
-						public Singleton<TaskManager>,
-						public BlockAllocator
+	class TaskManager : public CoreAllocatedObject,
+						public Singleton<TaskManager>
 	{
 	public:
 		/*********************************************************************************/

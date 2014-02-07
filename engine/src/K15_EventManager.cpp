@@ -28,24 +28,23 @@
 namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	EventManager::EventManager()
-		: AllocatedObject(),
-		  BlockAllocator(ApplicationAllocator,K15_EVENTMANAGER_ALLOCATOR_SIZE,_N(EventManagerAllocator))
+		: AllocatedObject()
 	{
 
 	}
 	/*********************************************************************************/
 	EventManager::~EventManager()
 	{
-    for(EventTypeListenerMap::iterator iter = m_Listener.begin();iter != m_Listener.end();++iter)
-    {
-      K15_DELETE_T(MemoryAllocator,iter->second,sizeof(EventListenerList));
-    }
+		for(EventTypeListenerMap::iterator iter = m_Listener.begin();iter != m_Listener.end();++iter)
+		{
+			K15_DELETE_SIZE(Allocators[AC_GAMEVENTS],iter->second,sizeof(EventListenerList));
+		}
 
-    while(m_Events.size() > 0)
-    {
-      K15_DELETE m_Events.top();
-      m_Events.pop();
-    }
+		while(m_Events.size() > 0)
+		{
+			K15_DELETE m_Events.top();
+			m_Events.pop();
+		}
 
 		m_Listener.clear();
 	}
@@ -61,8 +60,8 @@ namespace K15_Engine { namespace Core {
 		EventTypeListenerMap::iterator iter = m_Listener.find(p_EventName);
 		if(iter == m_Listener.end())
 		{
-      list = K15_NEW_T(MemoryAllocator,EventListenerList) EventListenerList();
-		  m_Listener.insert(Pair(EventName,EventListenerList*)(p_EventName,list));
+			list = K15_NEW_T(Allocators[AC_GAMEVENTS],EventListenerList) EventListenerList();
+			m_Listener.insert(Pair(EventName,EventListenerList*)(p_EventName,list));
 		}
 		else
 		{
@@ -117,13 +116,13 @@ namespace K15_Engine { namespace Core {
 	void EventManager::update()
 	{
 		K15_PROFILE_BLOCK("EventManager::update",
-      if(m_Events.size() > 0)
-      {
-        GameEvent* gameEvent = m_Events.top();
-        triggerEvent(gameEvent);
-        m_Events.pop();
-      }
-    );
+			if(m_Events.size() > 0)
+			{
+				GameEvent* gameEvent = m_Events.top();
+				triggerEvent(gameEvent);
+				m_Events.pop();
+			}
+		);
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

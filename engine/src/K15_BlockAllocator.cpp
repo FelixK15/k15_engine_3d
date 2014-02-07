@@ -24,142 +24,114 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	BlockAllocator::BlockAllocator(size_t p_Size,const ObjectName& p_Name)
-		: BaseAllocator(p_Size,p_Name),
+	BlockAllocator::BlockAllocator(size_t p_Size,const String& p_Name,BaseAllocator* p_BaseAllocator)
+		: BaseAllocator(p_Size,p_Name,p_BaseAllocator),
 		  m_First(0)
 	{
-		m_First = K15_NEW MemoryBlock;
-		m_First->Memory = m_Memory;
-		m_First->Size = m_MemorySize;
-		m_First->Used = false;
-		m_First->Next = 0;
-		clear();
-	}
-	/*********************************************************************************/
-	BlockAllocator::BlockAllocator(BaseAllocator* p_Allocator,size_t p_Size,const ObjectName& p_Name)
-		: BaseAllocator(p_Allocator,p_Size,p_Name),
-		  m_First(0)
-	{
-		m_First = K15_NEW MemoryBlock;
-		m_First->Memory = m_Memory;
-		m_First->Size = m_MemorySize;
-		m_First->Used = false;
-		m_First->Next = 0;
-		clear();
+
 	}
 	/*********************************************************************************/
 	BlockAllocator::~BlockAllocator()
 	{
 		clear();
-		K15_DELETE m_First;
 	}
 	/*********************************************************************************/
 	void BlockAllocator::clear()
 	{
 		BaseAllocator::clear();
-		MemoryBlock* currentBlock = m_First->Next;
-		MemoryBlock* nextBlock = 0;
-		while(currentBlock)
-		{
-			nextBlock = currentBlock->Next;
-			K15_DELETE currentBlock;
-			currentBlock = nextBlock;
-		}
 	}
 	/*********************************************************************************/
 	void* BlockAllocator::alloc(size_t p_Size)
 	{
-		MemoryBlock* currentBlock = m_First;
-		bool merged = false;
-    bool perfectMatch = false;
-		while(true)
+		if(!m_First) // first block allocation
 		{
-			if(!currentBlock->Used)
+			p_Size += sizeof(MemoryBlock);
+			m_First = (MemoryBlock*)m_Memory + m_UsedMemory;
+			m_First->Memory = ((byte*)m_First + sizeof(MemoryBlock));
+			m_First->Used = true;
+			m_First->Size = p_Size -= sizeof(MemoryBlock);
+			m_First->Next = 0;
+
+			return m_First->Memory;
+		}
+  
+		MemoryBlock* block = findBlock_R(m_First,p_Size);
+
+		if(!block)
+		{
+			//no block has been found, that either means we are out of memory or there are no blocks
+			//with enough size...Maybe if we defragment the block we'll have enough size...?
+			defragment_R(m_First);
+
+			if((block = findBlock_R(m_First,p_Size)) == 0)
 			{
-				if(currentBlock->Size >= p_Size)
-				{
-					break; //we got our block!
-				}
-			}
-			if(!currentBlock->Next && !merged)
-			{
-				_LogWarning("BlockAllocator \"%s\" has not enough free memory. Trying to merge blocks...",m_Name.c_str());
-				mergeBlocks();
-				merged = true;
-				currentBlock = m_First;
-			}
-			else if(currentBlock->Next)
-			{
-				currentBlock = currentBlock->Next;
+				//...nope still no luck...out of memory
+				return 0;
 			}
 		}
 
-    K15_ASSERT(currentBlock,StringUtil::format("BlockAllocator \"%s\" has not enough free memory to satisfy memory request.",m_Name.c_str()));
+		return block->Memory;
+	}
+  /*********************************************************************************/
+  MemoryBlock* BlockAllocator::findBlock_R(MemoryBlock* p_Block,size_t p_Size)
+  {
+	if(!p_Block->Next)
+	{
+		if(m_MemorySize - m_UsedMemory >= p_Size+sizeof(MemoryBlock))
+		{
+			p_Block->Next = (MemoryBlock*)(p_Block->Memory+p_Block->Size);
+			p_Block->Next->Memory = p_Block->Memory + (p_Block->Size + sizeof(MemoryBlock));
+			p_Block->Next->Size = p_Size;
+			p_Block->Next->Used = true;
 
-		byte* memory = currentBlock->Memory;
-    perfectMatch = currentBlock->Size == p_Size;
-		currentBlock->Size = p_Size;
-		currentBlock->Used = true;
-		
-    if(!perfectMatch)
+			return p_Block->Next;
+		}
+
+		return 0; //not enough free space left
+	}
+    else if(!p_Block->Used && p_Size <= p_Block->Size)
     {
-      createBlock(currentBlock);
+		p_Block->Used = true;
+		return p_Block; //current block is not used and has enough size
     }
 
-		return memory;
+		return findBlock_R(p_Block->Next,p_Size);
 	}
 	/*********************************************************************************/
 	void BlockAllocator::dealloc(void* p_Pointer,size_t p_Size)
 	{
-		MemoryBlock* currentBlock = m_First;
-
-		while(currentBlock->Memory != p_Pointer)
-		{
-			currentBlock = currentBlock->Next;
-			
-			K15_ASSERT(currentBlock,StringUtil::format("Address %p does not belong to BlockAllocator \"%s\".",p_Pointer,m_Name.c_str()));
-		}
-
-    K15_ASSERT(currentBlock->Used,StringUtil::format("Cannot free block %p from BlockAllocator \"%s\" (has been freed before).",currentBlock,m_Name.c_str()));
-
-		currentBlock->Used = false;
+		dealloc_R(m_First,p_Pointer,p_Size);
 	}
 	/*********************************************************************************/
-	void BlockAllocator::mergeBlocks()
+	void BlockAllocator::defragment_R(MemoryBlock* p_Block)
 	{
-		MemoryBlock* currentBlock = m_First;
-		while(currentBlock && currentBlock->Next)
+	if(p_Block && p_Block->Next)
+	{
+		if(!p_Block->Used && !p_Block->Next->Used)
 		{
-			if(!currentBlock->Used && !currentBlock->Next->Used)
+			_LogDebug("Merging block %p(size %u) and block %p(size %u) from BlockAllocator \"%s\"...",
+				p_Block,p_Block->Size,p_Block->Next,p_Block->Next->Size,m_Name.c_str());
+
+			p_Block->Size += p_Block->Next->Size + sizeof(MemoryBlock); //memblock is part of memory so we add the size of the block to get the 'real' size.
+			p_Block->Next = p_Block->Next->Next;
+		}
+
+		defragment_R(p_Block->Next);
+		}
+	}
+	/*********************************************************************************/
+	void BlockAllocator::dealloc_R(MemoryBlock* p_Block,void* p_Pointer,size_t p_Size)
+	{
+		if(p_Block)
+		{
+			if(p_Block->Memory != p_Pointer)
 			{
-				_LogDebug("Merging block %p(size %u) and block %p(size %u) from BlockAllocator \"%s\"...",
-					currentBlock,currentBlock->Size,currentBlock->Next,currentBlock->Next->Size,m_Name.c_str());
-				
-				currentBlock->Size += currentBlock->Next->Size;
-				currentBlock->Next = currentBlock->Next->Next;
-				
-				K15_DELETE currentBlock->Next;
+				dealloc_R(p_Block->Next,p_Pointer,p_Size);
 			}
-
-			currentBlock = currentBlock->Next;
-		}
-	}
-	/*********************************************************************************/
-	void BlockAllocator::createBlock(MemoryBlock* p_Successor)
-	{
-		if((ptrdiff_t)(p_Successor->Memory + p_Successor->Size) > (ptrdiff_t)m_MemoryEndAddress)
-		{
-			_LogWarning("BlockAllocator \"%s\" is full.",m_Name.c_str());
-		}
-		else
-		{
-			MemoryBlock* newblock = K15_NEW MemoryBlock;
-			newblock->Used = false;
-			newblock->Memory = p_Successor->Memory + p_Successor->Size;
-			newblock->Size = m_MemorySize - (m_UsedMemory + p_Successor->Size);
-			newblock->Next = 0;
-
-			p_Successor->Next = newblock;
+			else
+			{
+				p_Block->Used = false;
+			}
 		}
 	}
 	/*********************************************************************************/

@@ -24,18 +24,18 @@
 #ifndef _K15Engine_Core_ThreadWorker_h_
 #define _K15Engine_Core_ThreadWorker_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
 #	include "K15_Singleton.h"
 #	include "K15_AllocatedObject.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_Application.h"
-#include "K15_StackAllocator.h"
 #include "K15_TaskBase.h"
 
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API ThreadWorker : public Singleton<ThreadWorker>, public ApplicationAllocatedObject, public StackAllocator
+	class K15_CORE_API ThreadWorker : public Singleton<ThreadWorker>, 
+									  public CoreAllocatedObject
 	{
 	public:
 		/*********************************************************************************/
@@ -43,9 +43,9 @@ namespace K15_Engine { namespace Core {
 		typedef List(Thread*) ThreadList;
 		typedef HashMap(JobBase*,Thread::id) JobThreadMap;
 		static void execute(void*);
-    static bool Running;
-    static const uint8 HardwareThreads;
-    static const uint8 DefaultThreadCount;
+		static bool Running;
+		static const uint8 HardwareThreads;
+		static const uint8 DefaultThreadCount;
 		/*********************************************************************************/
 	public:
 		ThreadWorker();

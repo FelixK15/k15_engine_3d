@@ -24,14 +24,49 @@
 #ifndef _K15Engine_Core_AllocatedObject_h_
 #define _K15Engine_Core_AllocatedObject_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#endif //K15_USE_PRECOMPILED_HEADERS
+
+#include "K15_BaseAllocator.h"
 
 namespace K15_Engine { namespace Core {
+	class BaseAllocatedObject
+	{
+	public:
+		/*********************************************************************************/
+		enum eAllocationCategory
+		{
+			AC_CORE = 0,
+			AC_MEMORY,
+#			if defined K15_DEBUG
+			AC_DEBUG,
+#			endif
+			AC_RENDERING,
+			AC_PROFILING,
+			AC_INPUT,
+			AC_GAMEVENTS,
+			AC_DYNAMICLIBRARY,
+			AC_THREADING,
+			AC_TASKS,
+			AC_LOGGING,
+			//Pools
+			AC_RENDEROP_POOL,
+			AC_PROFILING_NODE_POOL,
+			AC_COUNT
+		}; //AllocationCategory
+		/*********************************************************************************/
+		typedef FixedArray(BaseAllocator*,AC_COUNT) AllocatorArray;
+		/*********************************************************************************/
 
-	template<class Allocator>
-	class AllocatedObject
+		static AllocatorArray Allocators;
+		static void removeAllocators();
+	private:
+		static AllocatorArray _createAllocators();
+	};
+	/*********************************************************************************/
+	template<Enum AllocatorCategory>
+	class AllocatedObject : public BaseAllocatedObject
 	{
 	public:
 		AllocatedObject();
@@ -45,8 +80,6 @@ namespace K15_Engine { namespace Core {
 		static void* operator new(size_t,const char*,uint32,const char*);
 		static void* operator new[](size_t,const char*,uint32,const char*);
 		/*********************************************************************************/
-// 		static void operator delete(void*,const char*,uint32,const char*);
-// 		static void operator delete[](void*,const char*,uint32,const char*);
 		static void operator delete(void*,size_t);
 		static void operator delete[](void*,size_t);
 		/*********************************************************************************/
@@ -62,9 +95,21 @@ namespace K15_Engine { namespace Core {
 		static void operator delete[](void*,size_t);
 		/*********************************************************************************/
 #	endif //K15_DEBUG
-
-		static Allocator* MemoryAllocator;
 	};
+
+	typedef AllocatedObject<BaseAllocatedObject::AC_CORE> CoreAllocatedObject;
+	typedef AllocatedObject<BaseAllocatedObject::AC_MEMORY> MemoryAllocatedObject;
+#	if defined K15_DEBUG
+	typedef AllocatedObject<BaseAllocatedObject::AC_DEBUG> DebugAllocatedObject;
+#	endif //K15_DEBUIG
+	typedef AllocatedObject<BaseAllocatedObject::AC_RENDERING> RenderingAllocatedObject;
+	typedef AllocatedObject<BaseAllocatedObject::AC_PROFILING> ProfilingAllocatedObject;
+	typedef AllocatedObject<BaseAllocatedObject::AC_GAMEVENTS> GameEventAllocatedObject;
+	typedef AllocatedObject<BaseAllocatedObject::AC_INPUT> InputManagerAllocatedObject;
+	typedef AllocatedObject<BaseAllocatedObject::AC_DYNAMICLIBRARY> DynamicLibraryAllocatedObject;
+	typedef AllocatedObject<BaseAllocatedObject::AC_THREADING> ThreadingAllocatedObject;
+	typedef AllocatedObject<BaseAllocatedObject::AC_TASKS> TaskManagerAllocatedObject;
+	typedef AllocatedObject<BaseAllocatedObject::AC_LOGGING> LoggingAllocatedObject;
 
 #include "K15_AllocatedObject.inl"
 }} //end of K15_Engine::Core namespace

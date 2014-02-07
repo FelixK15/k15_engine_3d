@@ -29,7 +29,7 @@ namespace K15_Engine { namespace Core {
 	{
 		if(m_ArgumentSize > 0)
 		{
-      m_Argument = K15_NEW_SIZE(MemoryAllocator,m_ArgumentSize) byte[m_ArgumentSize];
+			m_Argument = K15_NEW_SIZE(Allocators[AC_GAMEVENTS],m_ArgumentSize) byte[m_ArgumentSize];
 			memcpy(m_Argument,p_Argument,m_ArgumentSize);
 		}
 	}
@@ -46,7 +46,7 @@ namespace K15_Engine { namespace Core {
 	{
 		if(m_Argument != 0)
 		{
-      K15_DELETE_T(MemoryAllocator,m_Argument,m_ArgumentSize);
+			K15_DELETE_SIZE(Allocators[AC_GAMEVENTS],m_Argument,m_ArgumentSize);
 		}
 	}
 	/*********************************************************************************/
@@ -57,7 +57,7 @@ namespace K15_Engine { namespace Core {
 
 		if(p_Other.m_Argument)
 		{
-      m_Argument = K15_NEW_SIZE(MemoryAllocator,m_ArgumentSize) byte[m_ArgumentSize];
+			m_Argument = K15_NEW_SIZE(Allocators[AC_GAMEVENTS],m_ArgumentSize) byte[m_ArgumentSize];
 			memcpy(m_Argument,p_Other.m_Argument,m_ArgumentSize);
 		}
 	}

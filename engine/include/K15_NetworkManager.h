@@ -24,15 +24,14 @@
 #ifndef _K15Engine_Core_NetworkManager_h_
 #define _K15Engine_Core_NetworkManager_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
+#ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
 #	include "K15_Singleton.h"
-#endif //K15_USE_PRECOMPILED_HEADER
-
-#include "K15_BlockAllocator.h"
+#endif //K15_USE_PRECOMPILED_HEADERS
 
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API NetworkManager : public Singleton<NetworkManager>, public BlockAllocator
+	class K15_CORE_API NetworkManager : public CoreAllocatedObject,
+										public Singleton<NetworkManager>
 	{
 	public:
 		NetworkManager();
