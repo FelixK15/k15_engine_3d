@@ -167,7 +167,7 @@ FrameStatistic& Application::getCurrentFrameStatistic()
   return m_FrameStatistics[m_FrameCounter % (FrameStatisticCount - 1)];
 }
 /*********************************************************************************/
-float Application::getFramePerSecond() const
+uint32 Application::getFramesPerSecond() const
 {
   return m_AvgFramesPerSecond;
 }

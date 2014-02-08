@@ -119,7 +119,7 @@ namespace K15_Engine { namespace Core {
 	  INLINE const FrameStatistic& getFrameStatistic(uint32 p_FrameNumber) const;
 	  INLINE FrameStatistic& getCurrentFrameStatistic();
 
-	  INLINE float getFramePerSecond() const;
+	  INLINE uint32 getFramesPerSecond() const;
 
   private:
 	  void createCommandList(int p_CommandCount,char** p_Commands);
@@ -136,7 +136,7 @@ namespace K15_Engine { namespace Core {
 
 	expose		uint32 m_MaxFPS;
 	expose_read uint32 m_FrameCounter;
-	expose_read float m_AvgFramesPerSecond;
+	expose_read uint32 m_AvgFramesPerSecond;
 	expose_read double m_AvgFrameTime;
 				double m_RunningTime;
 				double m_TimeLastFrame;

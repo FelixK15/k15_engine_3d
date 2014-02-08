@@ -69,7 +69,7 @@ namespace K15_Engine { namespace Core {
 		m_ProfileManager(0),
 		m_TaskManager(0),
 		m_LogManager(0),
-		m_AvgFramesPerSecond(0.0f),
+		m_AvgFramesPerSecond(0),
 		m_Plugins(),
 		m_RunningTime(0.0),
 		m_ApplicationParameter(),
@@ -359,7 +359,7 @@ namespace K15_Engine { namespace Core {
 
 		if(FPSTime >= 1.0)
 		{
-			m_AvgFramesPerSecond = (float)(FPSFrameCounter / FPSTime);
+			m_AvgFramesPerSecond = (uint32)(FPSFrameCounter / FPSTime);
 			FPSTime = 0.0;
 			FPSFrameCounter = 0;
 		}
@@ -374,7 +374,7 @@ namespace K15_Engine { namespace Core {
 		m_FrameStatistics[FrameStatisticIndex].Time = diffTime;
 		m_FrameStatistics[FrameStatisticIndex].FrameNumber = m_FrameCounter;
 		m_FrameStatistics[FrameStatisticIndex].ProfilingNode = g_ProfileManager->getRootNode();
-		m_RenderWindow->setWindowTitle(StringUtil::format("msec: %.3f - FPS:%.3f Frame Index: %i",diffTime * 100,m_AvgFramesPerSecond,m_FrameCounter));
+		m_RenderWindow->setWindowTitle(StringUtil::format("msec: %.3f - FPS:%u - Frame Index: %i",diffTime * 1000,m_AvgFramesPerSecond,m_FrameCounter));
 
 		if(m_FrameCounter > FrameStatisticCount)
 		{
