@@ -44,7 +44,7 @@ namespace K15_Engine { namespace Core {
 
   protected:
     byte* m_Marker;
-  };// end of stack allocator class
+  };// end of StackAllocator class
 }} //end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_StackAllocator_h_
