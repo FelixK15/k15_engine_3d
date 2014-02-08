@@ -120,15 +120,6 @@
     <ClInclude Include="..\..\engine\include\K15_GameEvent.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Directory.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_File.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_FileWatcher.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_LogBase.h">
       <Filter>Core\include</Filter>
     </ClInclude>
@@ -156,9 +147,6 @@
     <ClInclude Include="..\..\engine\include\K15_Rtti.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Stream.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_ProfilingNode.h">
       <Filter>Core\include</Filter>
     </ClInclude>
@@ -171,9 +159,6 @@
     <ClInclude Include="..\..\engine\include\K15_ResourceBase.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ResourceData.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_ResourceFileBase.h">
       <Filter>Core\include</Filter>
     </ClInclude>
@@ -181,9 +166,6 @@
       <Filter>Core\include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_HashedString.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_String.h">
       <Filter>Core\include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_StringUtil.h">
@@ -422,15 +404,6 @@
     <ClCompile Include="..\..\engine\src\K15_GameEvent.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_Directory.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_File.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_FileWatcher.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_LogBase.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
@@ -462,9 +435,6 @@
       <Filter>Core\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_HashedString.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_String.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_StringUtil.cpp">
@@ -629,15 +599,6 @@
     <None Include="..\..\engine\include\K15_Application.inl">
       <Filter>Core\include</Filter>
     </None>
-    <None Include="..\..\engine\include\K15_ByteConversion.h">
-      <Filter>Core\include</Filter>
-    </None>
-    <None Include="..\..\engine\include\K15_ByteConversion.inl">
-      <Filter>Core\include</Filter>
-    </None>
-    <None Include="..\..\engine\include\K15_Conversion.h">
-      <Filter>Core\include</Filter>
-    </None>
     <None Include="..\..\engine\include\K15_GameTime.inl">
       <Filter>Core\include</Filter>
     </None>
@@ -656,16 +617,10 @@
     <None Include="..\..\engine\include\K15_GameEvent.inl">
       <Filter>Core\include</Filter>
     </None>
-    <None Include="..\..\engine\include\K15_File.inl">
-      <Filter>Core\include</Filter>
-    </None>
     <None Include="..\..\engine\include\K15_LogManager.inl">
       <Filter>Core\include</Filter>
     </None>
     <None Include="..\..\engine\include\K15_AllocatedObject.inl">
-      <Filter>Core\include</Filter>
-    </None>
-    <None Include="..\..\engine\include\K15_StackAllocator.inl">
       <Filter>Core\include</Filter>
     </None>
     <None Include="..\..\engine\include\K15_Object.inl">
