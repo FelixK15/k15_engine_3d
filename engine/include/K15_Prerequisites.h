@@ -56,8 +56,6 @@
 #define expose_read //read only
 #define K15_EXPOSE_TO_EDITOR
 
-#include "K15_ObjectSizes.h"
-
 namespace K15_Engine
 {
 	/*********************************************************************************/
@@ -312,6 +310,7 @@ namespace K15_Engine
 #	pragma warning(disable : 4251) //dll export for std::string, std::list etc.
 #	pragma warning(disable : 4530) //c++ exception used, but not enabled (xlocale.h)
 #	pragma warning(disable : 6255) //unprotected use of alloca
+#	pragma warning(disable : 4291) //no matching operator delete found
 #	pragma warning(disable : 6330) //'char' passes as _Param_(1) when 'unsigned char' is required in call to 'isdigit'
 #endif //_MSC_VER
 

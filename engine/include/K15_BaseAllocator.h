@@ -28,8 +28,6 @@
 #	include "K15_HashedString.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
-#include "K15_MemoryHeader.h"
-#include "K15_AllocatorSizes.h"
 #include "K15_ThreadSafe.h"
 
 namespace K15_Engine { namespace Core {

@@ -110,7 +110,6 @@
       </Outputs>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_AllocatedObject.h" />
-    <ClInclude Include="..\..\engine\include\K15_AllocatorSettings.h" />
     <ClInclude Include="..\..\engine\include\K15_AlphaState.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -186,9 +185,6 @@
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_LogBase.h" />
     <ClInclude Include="..\..\engine\include\K15_LogManager.h" />
-    <ClInclude Include="..\..\engine\include\K15_ManagerBase.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_Material.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -214,12 +210,10 @@
     <ClInclude Include="..\..\engine\include\K15_NTreeNode.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ObjectSizes.h" />
     <ClInclude Include="..\..\engine\include\K15_PhysicsProcessBase.h" />
     <ClInclude Include="..\..\engine\include\K15_PhysicsTask.h" />
     <ClInclude Include="..\..\engine\include\K15_Pointer.h" />
     <ClInclude Include="..\..\engine\include\K15_PoolAllocator.h" />
-    <ClInclude Include="..\..\engine\include\K15_AllocatorSizes.h" />
     <ClInclude Include="..\..\engine\include\K15_PrecompiledHeader.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
@@ -412,7 +406,6 @@
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_VertexBuffer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_VertexDeclaration.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_AllocatorSettings.cpp" />
     <ClCompile Include="..\..\engine\src\Win32\K15_DynamicLibrary_Win32.cpp" />
     <ClCompile Include="..\..\engine\src\win32\K15_RenderWindow_Win32.cpp" />
     <ClCompile Include="..\..\engine\src\Win32\K15_VisualStudioLog_Win32.cpp" />

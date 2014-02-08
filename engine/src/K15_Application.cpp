@@ -53,7 +53,6 @@
 
 #include "K15_RendererBase.h"
 #include "K15_RenderProcessBase.h"
-#include "K15_AllocatorSettings.h"
 
 namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/

@@ -21,7 +21,6 @@
 
 #include "K15_BaseAllocator.h"
 #include "K15_MemoryHeader.h"
-#include "K15_AllocatorSettings.h"
 
 #if defined K15_DEBUG
 #	include "K15_MemoryProfiler.h"
@@ -127,7 +126,8 @@ namespace K15_Engine { namespace Core {
 		memset(memory,0,p_Size);
 
 		//memory header will always get created on the heap
- 	 	MemoryHeader* header = (MemoryHeader*)malloc(sizeof(MemoryHeader));
+ 	 	MemoryHeader* header = 0;
+		K15_ASSERT((header = (MemoryHeader*)malloc(sizeof(MemoryHeader))) != 0,"Out of memory.");
 		header->Allocator = (void*)this;
  	 	header->File = p_File;
  	 	header->Function = p_Function;

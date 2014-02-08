@@ -72,9 +72,6 @@
     <ClInclude Include="..\..\engine\include\K15_GameTime.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ManagerBase.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_MemberFunctor.h">
       <Filter>Core\include</Filter>
     </ClInclude>
@@ -288,9 +285,6 @@
     <ClInclude Include="..\..\engine\include\win32\K15_VisualStudioLog_Win32.h">
       <Filter>Core\include\Win32</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ObjectSizes.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_MemoryBlock.h">
       <Filter>Core\include</Filter>
     </ClInclude>
@@ -304,9 +298,6 @@
       <Filter>Core\include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_Serializer.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_AllocatorSizes.h">
       <Filter>Core\include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_ThreadSafe.h">
@@ -385,9 +376,6 @@
       <Filter>Serialization\include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_SerialSizer.h">
-      <Filter>Serialization\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_AllocatorSettings.h">
       <Filter>Serialization\include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -629,13 +617,12 @@
     <ClCompile Include="..\..\engine\src\K15_MemoryBlock.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_AllocatorSettings.cpp">
-      <Filter>Serialization\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_SerialSizer.cpp">
       <Filter>Serialization\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_AllocatedObject.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_AllocatedObject.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
