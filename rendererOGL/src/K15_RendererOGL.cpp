@@ -146,7 +146,8 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	bool RendererOGL::initialize()
 	{
-		K15_ASSERT(m_RenderWindow,"Render window has not been set. Can not initialize renderer without having a render window.");
+		K15_ASSERT(m_RenderWindow,
+			"Render window has not been set. Can not initialize renderer without having a render window.");
 		
 		_LogNormal("Creating dummy OGL context to initialize GLEW library.");
 		HWND tempHwnd = 0;
@@ -241,17 +242,24 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 		}
 
-		//create program pipeline
-		glGenProgramPipelines(1,&m_ProgramPipeline);
-		glBindProgramPipeline(m_ProgramPipeline);
+		if(GL_ARB_separate_shader_objects)
+		{
+			//create program pipeline
+			glGenProgramPipelines(1,&m_ProgramPipeline);
+			glBindProgramPipeline(m_ProgramPipeline);
+		}
+		else
+		{
+			_LogError("Can't use gl extension GL_ARB_separate_shader_objects");
+		}
 
-		
 		const Resolution& resolution = renderwindow->getResolution();
 		//force viewport resizing
 		onResolutionChanged(resolution);
 		setClearColor(0.8f,0.2224f,0.005f);
 		glEnable(GL_STENCIL_TEST); //enable stencil testing
-
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
 		return m_LastError.empty();
 	}
 	/*********************************************************************************/
@@ -312,27 +320,27 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	GpuBufferImplBase* RendererOGL::createGpuBufferImpl()
 	{
-		return new GpuBufferImplOGL();
+		return K15_NEW GpuBufferImplOGL();
 	}
 	/*********************************************************************************/
 	TextureImplBase* RendererOGL::createTextureImpl()
 	{
-		return new TextureImplOGL();
+		return K15_NEW TextureImplOGL();
 	}
 	/*********************************************************************************/
 	GpuProgramImplBase* RendererOGL::createGpuProgramImpl()
 	{
-		return new GpuProgramImplOGL();
+		return K15_NEW GpuProgramImplOGL();
 	}
 	/*********************************************************************************/
 	TextureSamplerImplBase* RendererOGL::createTextureSamplerImpl()
 	{
-		return new TextureSamplerImplOGL();
+		return K15_NEW TextureSamplerImplOGL();
 	}
 	/*********************************************************************************/
 	VertexDeclarationImplBase* RendererOGL::createVertexDeclarationImpl()
 	{
-		return new VertexDeclarationImplOGL();
+		return K15_NEW VertexDeclarationImplOGL();
 	}
 	/*********************************************************************************/
 	void RendererOGL::_setAlphaState(const AlphaState& p_AlphaState)
@@ -392,17 +400,14 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	void RendererOGL::_setRenderWindow(RenderWindowBase* p_RenderWindow)
 	{
-	//throw std::exception("The method or operation is not implemented.");
 	}
 	/*********************************************************************************/
 	void RendererOGL::_setRenderTarget(RenderTarget* p_RenderTarget)
 	{
-	//throw std::exception("The method or operation is not implemented.");
 	}
 	/*********************************************************************************/
 	void RendererOGL::_setActiveCamera(CameraComponent* p_Camera)
 	{
-	//throw std::exception("The method or operation is not implemented.");
 	}
 	/*********************************************************************************/
 	void RendererOGL::_setCullingMode(Enum p_CullingMode)
@@ -436,17 +441,14 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	void RendererOGL::_setFrameBufferPixelFormat(Enum p_PixelFormat)
 	{
-	//throw std::exception("The method or operation is not implemented.");
 	}
 	/*********************************************************************************/
 	void RendererOGL::_setDepthBufferPixelFormat(Enum p_DepthFormat)
 	{
-	//throw std::exception("The method or operation is not implemented.");
 	}
 	/*********************************************************************************/
 	void RendererOGL::_setStencilBufferPixelFormat(Enum p_StencilFormat)
 	{
-	//throw std::exception("The method or operation is not implemented.");
 	}
 	/*********************************************************************************/
 	void RendererOGL::_setClearColor(const ColorRGBA& p_ClearColor)
@@ -526,13 +528,32 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	void RendererOGL::_bindProgramParameter(const GpuProgramParameter& p_Parameter,const RawData& p_Data)
 	{
-
+		
 	}
 	/*********************************************************************************/
 	void RendererOGL::_setVertexDeclaration(VertexDeclaration* p_Declaration)
 	{
 		VertexDeclarationImplOGL* impl = static_cast<VertexDeclarationImplOGL*>(p_Declaration->getImpl());
-		glBindVertexArray(impl->getOGLHandle());
+		
+		if(m_VertexDeclaration)
+		{
+			if(m_VertexDeclaration->getElementCount() < p_Declaration->getElementCount())
+			{
+				//disable old attribts
+				uint32 diff = m_VertexDeclaration->getElementCount() - p_Declaration->getElementCount();
+				for(uint32 i = diff;i != m_VertexDeclaration->getElementCount();++i)
+				{
+					glDisableVertexAttribArray(i);
+				}
+			}
+		}
+
+		for(uint32 i = 0;i < p_Declaration->getElementCount();++i)
+		{
+			const VertexElement& element = p_Declaration->getElement(i);
+			glEnableVertexAttribArray(i);
+			glVertexAttribPointer(i,element.size,VertexDeclarationImplOGL::GLVertexElementTypeConverter[element.type],GL_FALSE,p_Declaration->getVertexSize(),(void*)element.offset);
+		}
 	}
 	/*********************************************************************************/
 }}}// end of K15_Engine::Rendering::OGL

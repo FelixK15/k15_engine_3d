@@ -29,7 +29,7 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	GpuProgram::GpuProgram()
+	GpuProgram::GpuProgram(Enum p_ProgramStage)
 		: ResourceBase(),
 		  m_BinaryCode(),
 		  m_Compiled(false),
@@ -39,7 +39,8 @@ namespace K15_Engine { namespace Rendering {
 		  m_Attributes(),
 		  m_Uniforms(),
 		  m_UsedUniforms(0),
-		  m_UsedAttributes(0)
+		  m_UsedAttributes(0),
+		  m_Stage(p_ProgramStage)
 	{
 		m_Impl = g_Application->getRenderTask()->getRenderer()->createGpuProgramImpl();
 		m_Impl->setGpuProgram(this);
@@ -51,6 +52,16 @@ namespace K15_Engine { namespace Rendering {
 	GpuProgram::~GpuProgram()
 	{
 		K15_DELETE m_Impl;
+	}
+	/*********************************************************************************/
+	void GpuProgram::setProgramCode(const String& p_Code, bool p_Compile)
+	{
+		m_ShaderCode = p_Code;
+
+		if(p_Compile)
+		{
+			compile();
+		}
 	}
 	/*********************************************************************************/
 	bool GpuProgram::compile()

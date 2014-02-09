@@ -26,34 +26,38 @@
 
 #ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
+#	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_AABB.h"
 #include "K15_ResourceBase.h"
 
 namespace K15_Engine { namespace Rendering {
-	class K15_CORE_API Mesh : public ResourceBase
+	class K15_CORE_API Mesh : public ResourceBase, public RenderingAllocatedObject
 	{
 	public:
 		/*********************************************************************************/
-		static const uint32 MaxSubMeshes = 12;
-		typedef FixedArray(SubMesh*,MaxSubMeshes) SubMeshArray;
+		typedef DynamicArray(SubMesh*) SubMeshArray;
 		/*********************************************************************************/
 	public:
 		Mesh();
 		Mesh(const ObjectName& p_Name);
 		virtual ~Mesh();
 
-		INLINE AABB* getAABB() const;
+		INLINE const AABB& getAABB(bool p_Calculate = false);
+		INLINE const SubMeshArray& getSubMeshes() const;
+
 		void calculateAABB();
 
 		virtual void loadDebug(RawData& p_Data);
 		virtual bool internalLoad(const RawData& p_Data);
 
+		INLINE void addSubMesh(SubMesh* p_SubMesh);
   private:
-		SubMeshArray m_SubMeshses;
+		SubMeshArray m_SubMeshes;
 		AABB m_AxisAlignedBoundingBox;
 	};// end of Mesh class declaration
+#	include "K15_Mesh.inl"
 }}// end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Rendering_Mesh_h_

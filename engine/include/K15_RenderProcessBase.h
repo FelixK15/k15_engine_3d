@@ -26,11 +26,12 @@
 
 #ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
+#	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_RendererBase.h"
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API RenderProcessBase
+	class K15_CORE_API RenderProcessBase : public RenderingAllocatedObject
 	{
 	public:
 		RenderProcessBase();

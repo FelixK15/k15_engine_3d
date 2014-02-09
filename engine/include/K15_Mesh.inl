@@ -1,8 +1,8 @@
 /**
- * @file K15_VertexBuffer.inl
+ * @file K15_Mesh.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/12/09
+ * @date 2014/02/08
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,23 +18,23 @@
  */
 
 /*********************************************************************************/
-uint32 VertexBuffer::getVertexSize() const
+const AABB& Mesh::getAABB(bool p_Calculate)
 {
-	return m_VertexSize;
+	if(p_Calculate)
+	{
+		calculateAABB();
+	}
+
+	return m_AxisAlignedBoundingBox;
 }
 /*********************************************************************************/
-uint32 VertexBuffer::getVertexCount() const
+const Mesh::SubMeshArray& Mesh::getSubMeshes() const
 {
-	return m_VertexCount;
+	return m_SubMeshes;
 }
 /*********************************************************************************/
-void VertexBuffer::setVertexCount(uint32 p_VertexCount)
+void Mesh::addSubMesh(SubMesh* p_SubMesh)
 {
-	m_VertexCount = p_VertexCount;
-}
-/*********************************************************************************/
-void VertexBuffer::setVertexSize(uint32 p_VertexSize) 
-{
-	m_VertexSize = p_VertexSize;
+	m_SubMeshes.push_back(p_SubMesh);
 }
 /*********************************************************************************/

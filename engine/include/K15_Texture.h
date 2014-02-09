@@ -34,7 +34,7 @@
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
-	class K15_CORE_API TextureImplBase
+	class K15_CORE_API TextureImplBase : public RenderingAllocatedObject
 	{
 	public:
 		TextureImplBase();
@@ -55,7 +55,7 @@ namespace K15_Engine { namespace Rendering {
 		Texture *m_Texture;
 	};// end of TexutreImpl class declaration
 	/*********************************************************************************/
-	class K15_CORE_API Texture : public ResourceBase
+	class K15_CORE_API Texture : public ResourceBase, public RenderingAllocatedObject
 	{
 	public:
 		/*********************************************************************************/

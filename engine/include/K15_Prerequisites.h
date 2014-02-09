@@ -348,7 +348,7 @@ namespace K15_Engine
 #	define HashMap(K,V)		std::map<K,V>
 #	define List(T)			std::list<T>
 #	define Stack(T)			std::stack<T>
-#	define Deque(T)     std::deque<T>
+#	define Deque(T)			std::deque<T>
 //#	define Set(T)			std::set<T>
 #	define Pair(K,V)		std::pair<K,V>
 #	define FixedArray(T,C)	std::array<T,C>
@@ -394,6 +394,8 @@ namespace K15_Engine
 #	include <fstream>
 #	include <sstream>
 	typedef std::fstream FileStream;
+	typedef std::ofstream WriteFileStream;
+	typedef std::ifstream ReadFileStream;
 	typedef std::stringstream StringStream;
 #endif //K15_DONT_USE_STL
 
@@ -489,9 +491,7 @@ namespace K15_Engine
 
 typedef std::set<String> StringSet;
 
-#define g_MemoryPools K15_Engine::Core::MemoryPools::getInstance()
 #define g_FontManager K15_Engine::Core::FontManager::getInstance()
-#define g_MemoryProfiler K15_Engine::Core::MemoryProfiler::getInstance()
 #define g_InputManager K15_Engine::Core::InputManager::getInstance()
 #define g_Application K15_Engine::Core::Application::getInstance()
 #define g_EventManager K15_Engine::Core::EventManager::getInstance()

@@ -26,12 +26,13 @@
 
 #ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
+#	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_ResourceBase.h"
 
 namespace K15_Engine { namespace Rendering {
-	class K15_CORE_API MaterialData : public Object
+	class K15_CORE_API MaterialData : public Object, public RenderingAllocatedObject
 	{
 	public:
 		/*********************************************************************************/

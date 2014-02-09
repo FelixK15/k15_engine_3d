@@ -28,8 +28,6 @@
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
-#include "K15_SerializerBase.h"
-
 namespace K15_Engine { namespace Serialization {
 	class K15_CORE_API JsonSerializer
 	{
@@ -40,32 +38,32 @@ namespace K15_Engine { namespace Serialization {
 		JsonSerializer(const String& p_FilePath = "");
 		~JsonSerializer();
 
-    INLINE bool isValid() const;
-    INLINE const String& getError() const;
+		INLINE bool isValid() const;
+		INLINE const String& getError() const;
 
-    void writeInt8(const String& p_Key, int8 p_Value);
-    void writeUInt8(const String& p_Key, uint8 p_Value);
-    void writeInt16(const String& p_Key, int16 p_Value);
-    void writeUInt16(const String& p_Key, uint16 p_Value);
-    void writeInt32(const String& p_Key, int32 p_Value);
-    void writeUInt32(const String& p_Key, uint32 p_Value);
-    void writeInt64(const String& p_Key, int64 p_Value);
-    void writeUInt64(const String& p_Key, uint64 p_Value);
-    void writeFloat(const String& p_Key, float p_Value);
-    /*void writeDouble(const String& p_Key, double p_Value);*/
-    void writeString(const String& p_Key, const String& p_Value);
+		void writeInt8(const String& p_Key, int8 p_Value);
+		void writeUInt8(const String& p_Key, uint8 p_Value);
+		void writeInt16(const String& p_Key, int16 p_Value);
+		void writeUInt16(const String& p_Key, uint16 p_Value);
+		void writeInt32(const String& p_Key, int32 p_Value);
+		void writeUInt32(const String& p_Key, uint32 p_Value);
+		void writeInt64(const String& p_Key, int64 p_Value);
+		void writeUInt64(const String& p_Key, uint64 p_Value);
+		void writeFloat(const String& p_Key, float p_Value);
+		/*void writeDouble(const String& p_Key, double p_Value);*/
+		void writeString(const String& p_Key, const String& p_Value);
 
-    INLINE int8 readInt8(const String& p_Key) const;
-    INLINE uint8 readUInt8(const String& p_Key) const;
-    INLINE int16 readInt16(const String& p_Key) const;
-    INLINE uint16 readUInt16(const String& p_Key) const;
-    INLINE int32 readInt32(const String& p_Key) const;
-    INLINE uint32 readUInt32(const String& p_Key) const;
-    INLINE int64 getInt64(const String& p_Key) const;
-    INLINE uint64 readUInt64(const String& p_Key) const;
-    INLINE float readFloat(const String& p_Key) const;
-    /*INLINE double readDouble(const String& p_Key) const;*/
-    INLINE const String& readString(const String& p_Key) const;
+		INLINE int8 readInt8(const String& p_Key) const;
+		INLINE uint8 readUInt8(const String& p_Key) const;
+		INLINE int16 readInt16(const String& p_Key) const;
+		INLINE uint16 readUInt16(const String& p_Key) const;
+		INLINE int32 readInt32(const String& p_Key) const;
+		INLINE uint32 readUInt32(const String& p_Key) const;
+		INLINE int64 getInt64(const String& p_Key) const;
+		INLINE uint64 readUInt64(const String& p_Key) const;
+		INLINE float readFloat(const String& p_Key) const;
+		/*INLINE double readDouble(const String& p_Key) const;*/
+		INLINE const String& readString(const String& p_Key) const;
 
   private:
     void _parse();

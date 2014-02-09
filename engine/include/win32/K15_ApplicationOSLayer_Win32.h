@@ -28,31 +28,35 @@
 #	include "K15_Prerequisites.h"
 #endif// K15_USE_PRECOMPILED_HEADERS
 
-#include "K15_ApplicationOSLayerBase.h"
-
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	class K15_CORE_API ApplicationOSLayer_Win32 : public ApplicationOSLayerBase
+	class K15_CORE_API ApplicationOSLayer_Win32
 	{
 	public:
+		/*********************************************************************************/
+		static const String OSName;
+		static const String PluginExtension;
+		typedef DynamicArray(Resolution) SupportedResolutionSet;
+		/*********************************************************************************/
+	public:
 		ApplicationOSLayer_Win32();
-		virtual ~ApplicationOSLayer_Win32();
+		~ApplicationOSLayer_Win32();
 		// initialize the OS layer
-		virtual bool initialize();
+		bool initialize();
 		// shutdown OS layer
-		virtual void shutdown();
+		void shutdown();
 		// get the last error set by the OS
-		virtual String getError() const;
+		const String& getError() const;
 		// get supported resolutions
-		virtual void getSupportedResolutions(SupportedResolutionSet* p_ResolutionSet) const;
+		void getSupportedResolutions(SupportedResolutionSet* p_ResolutionSet) const;
 		// get current time (1.0 = 1 sec)
-		virtual double getTime() const;
+		double getTime() const;
 		// idle for x seconds
-		virtual void sleep(double p_TimeInSeconds) const;
+		void sleep(double p_TimeInSeconds) const;
 		// callback before the game gets ticked (pumps messages)
-		virtual void onPreTick();
+		void onPreTick();
 		// callback after the game gets ticked
-		virtual void onPostTick();
+		void onPostTick();
 	private:
 		LARGE_INTEGER m_PerformanceCounterFrequency;
 		double m_Frequency;

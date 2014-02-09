@@ -27,6 +27,7 @@
 #	include "K15_Prerequisites.h"
 #	include "K15_Singleton.h"
 #	include "K15_StringUtil.h"
+#	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_StackAllocator.h"
@@ -85,6 +86,8 @@ namespace K15_Engine { namespace Core {
 	  void onAfterRender();
 
 	  RendererBase* getRenderer() const;
+
+	  INLINE void addApplicationModule(ApplicationModule* p_Module);
 
 	  INLINE uint32 getFrameCount() const;
 
@@ -167,6 +170,9 @@ namespace K15_Engine { namespace Core {
 				RenderTask* m_RenderTask;
 				PhysicsTask* m_PhysicsTask;
 				EventTask* m_EventTask;
+#				if defined K15_DEBUG
+				MemoryProfilingTask* m_MemoryProfilingTask;
+#				endif
   }; //end of Application class definition
 #include "K15_Application.inl"
 }} //end of K15_Engine::Core namespace

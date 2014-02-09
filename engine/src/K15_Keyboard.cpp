@@ -61,6 +61,16 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		map.insert(Pair(ObjectName,Enum)(_N(8),KEY_8));
 		map.insert(Pair(ObjectName,Enum)(_N(9),KEY_9));
 		map.insert(Pair(ObjectName,Enum)(_N(0),KEY_0));
+		map.insert(Pair(ObjectName,Enum)(_N(Numpad_1),KEY_NUMPAD_1));
+		map.insert(Pair(ObjectName,Enum)(_N(Numpad_2),KEY_NUMPAD_2));
+		map.insert(Pair(ObjectName,Enum)(_N(Numpad_3),KEY_NUMPAD_3));
+		map.insert(Pair(ObjectName,Enum)(_N(Numpad_4),KEY_NUMPAD_4));
+		map.insert(Pair(ObjectName,Enum)(_N(Numpad_5),KEY_NUMPAD_5));
+		map.insert(Pair(ObjectName,Enum)(_N(Numpad_6),KEY_NUMPAD_6));
+		map.insert(Pair(ObjectName,Enum)(_N(Numpad_7),KEY_NUMPAD_7));
+		map.insert(Pair(ObjectName,Enum)(_N(Numpad_8),KEY_NUMPAD_8));
+		map.insert(Pair(ObjectName,Enum)(_N(Numpad_9),KEY_NUMPAD_9));
+		map.insert(Pair(ObjectName,Enum)(_N(Numpad_0),KEY_NUMPAD_0));
 		map.insert(Pair(ObjectName,Enum)(_N(Backspace),KEY_BACKSPACE));
 		map.insert(Pair(ObjectName,Enum)(_N(LeftShift),KEY_L_SHIFT));
 		map.insert(Pair(ObjectName,Enum)(_N(RightShift),KEY_R_SHIFT));

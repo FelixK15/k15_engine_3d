@@ -26,27 +26,26 @@
 
 #ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
+#	include "K15_AllocatedObject.h"
 #endif// K15_USE_PRECOMPILED_HEADERS
 
 namespace K15_Engine { namespace Core { 
 
-	class ApplicationModule
+	class ApplicationModule : public ModuleAllocatedObject
 	{
-  public:
-    virtual void evaluateSettings(const StringSet& p_ApplicationSettings){}
+	public:
+		virtual void evaluateSettings(const StringSet& p_ApplicationSettings){}
 
-    virtual TaskBase* createTask(){return 0;}
-    //virtual RenderTask* createRenderTask(){return 0;} 
-    virtual bool onInitialize(){return false;}
-    virtual void onShutdown(){}
+		virtual void onInitialize(){}
+		virtual void onShutdown(){}
 
-    virtual void onPreTick(){}
-    virtual void onPreRun(){}
-    virtual void onPreRender(/*const RenderContext* p_RenderContext*/){}
+		virtual void onPreTick(){}
+		virtual void onPreRun(){}
+		virtual void onPreRender(/*const RenderContext* p_RenderContext*/){}
 
-    virtual void onPostTick(){}
-    virtual void onPostRun(){}
-    virtual void onPostRender(/*const RenderContext* p_RenderContext*/){}
+		virtual void onPostTick(){}
+		virtual void onPostRun(){}
+		virtual void onPostRender(/*const RenderContext* p_RenderContext*/){}
 	}; //end of ApplicationModule class
 }} //end of K15_Engine::Core namespace
 

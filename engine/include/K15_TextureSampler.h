@@ -26,13 +26,14 @@
 
 #ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
+#	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_ColorRGBA.h"
 
 namespace K15_Engine { namespace Rendering { 
   /*********************************************************************************/
-  class K15_CORE_API TextureSamplerImplBase
+  class K15_CORE_API TextureSamplerImplBase : public RenderingAllocatedObject
   {
   public:
     virtual void setMinFilterMode(Enum p_MinFilterMode) = 0;
@@ -51,7 +52,7 @@ namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
 
   /*********************************************************************************/
-  class K15_CORE_API TextureSampler
+  class K15_CORE_API TextureSampler : public RenderingAllocatedObject
   {
   public:
     /*********************************************************************************/

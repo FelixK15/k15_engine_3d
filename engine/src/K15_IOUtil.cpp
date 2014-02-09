@@ -1,8 +1,8 @@
 /**
- * @file K15_MemoryProfiler.cpp
+ * @file K15_IOUtil.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/11/08
+ * @date 2014/02/08
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,34 +18,33 @@
  */
 
 #include "K15_PrecompiledHeader.h"
-#include "K15_MemoryProfiler.h"
+
+#include "K15_IOUtil.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	MemoryProfiler::MemoryProfiler()
-		: m_Allocator()
+	String IOUtil::readWholeFile(const String& p_FileName)
 	{
+		FileStream stream(p_FileName);
 
-	}
-	/*********************************************************************************/
-	MemoryProfiler::~MemoryProfiler()
-	{
+		K15_ASSERT(stream.is_open(),StringUtil::format("Could not open file \"%s\".",p_FileName.c_str()));
 
+		return (String((std::istreambuf_iterator<char>(stream)), (std::istreambuf_iterator<char>())));
 	}
 	/*********************************************************************************/
-	void MemoryProfiler::addAllocator(BaseAllocator* p_Allocator)
+	uint32 IOUtil::getFileSize(const String& p_FileName)
 	{
-		m_Allocator.push_back(p_Allocator);
-	}
-	/*********************************************************************************/
-	void MemoryProfiler::removeAllocator(BaseAllocator* p_Allocator)
-	{
-		m_Allocator.remove(p_Allocator);	
-	}
-	/*********************************************************************************/
-	const MemoryProfiler::AllocatorList& MemoryProfiler::getAllocators() const
-	{
-		return m_Allocator;
+		ReadFileStream stream(p_FileName);
+		uint32 size = 0;
+
+		K15_ASSERT(stream.is_open(),StringUtil::format("Could not open file \"%s\".",p_FileName.c_str()));
+
+		stream.seekg(0, ReadFileStream::end);
+		size = (uint32)stream.tellg();
+
+		stream.close();
+
+		return size;
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

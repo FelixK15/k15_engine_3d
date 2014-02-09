@@ -1,8 +1,8 @@
 /**
- * @file K15_VertexBuffer.h
+ * @file K15_IOUtil.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/11/29
+ * @date 2014/02/08
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,32 +21,21 @@
  * 
  */
 
-#ifndef _K15Engine_Rendering_VertexBuffer_h_
-#define _K15Engine_Rendering_VertexBuffer_h_
+#ifndef _K15Engine_Core_IOUtil_h_
+#define _K15Engine_Core_IOUtil_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
+#ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
+#endif //K15_USE_PRECOMPILED_HEADER
 
-#include "K15_GpuBuffer.h"
-
-namespace K15_Engine { namespace Rendering {
-	class K15_CORE_API VertexBuffer : public GpuBuffer
+namespace K15_Engine { namespace Core {
+	class K15_CORE_API IOUtil
 	{
 	public:
-		VertexBuffer();
-		virtual ~VertexBuffer();
+		static String readWholeFile(const String& p_FileName);
 
-		INLINE uint32 getVertexCount() const;
-		INLINE uint32 getVertexSize() const;
-
-		INLINE void setVertexCount(uint32 p_VertexCount);
-		INLINE void setVertexSize(uint32 p_VertexSize);
-	private:
-		uint32 m_VertexCount;
-		uint32 m_VertexSize;
-	};// end of VertexBuffer class declaration
-#include "K15_VertexBuffer.inl"
+		static uint32 getFileSize(const String& p_FileName);
+	};// end of IOUtil class declaration
 }}// end of K15_Engine::Core namespace
 
-#endif //_K15Engine_Rendering_VertexBuffer_h_
+#endif //_K15Engine_Core_IOUtil_h_

@@ -1,8 +1,8 @@
 /**
- * @file K15_VertexBuffer.inl
+ * @file K15_SubMesh.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/12/09
+ * @date 2014/02/08
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,23 +18,33 @@
  */
 
 /*********************************************************************************/
-uint32 VertexBuffer::getVertexSize() const
+void SubMesh::setVertexBuffer(VertexBuffer* p_VertexBuffer)
 {
-	return m_VertexSize;
+	m_VertexBuffer = p_VertexBuffer;
 }
 /*********************************************************************************/
-uint32 VertexBuffer::getVertexCount() const
+VertexBuffer* SubMesh::getVertexBuffer() const
 {
-	return m_VertexCount;
+	return m_VertexBuffer;
 }
 /*********************************************************************************/
-void VertexBuffer::setVertexCount(uint32 p_VertexCount)
+void SubMesh::setIndexBUffer(IndexBuffer* p_IndexBuffer)
 {
-	m_VertexCount = p_VertexCount;
+	m_IndexBuffer = p_IndexBuffer;
 }
 /*********************************************************************************/
-void VertexBuffer::setVertexSize(uint32 p_VertexSize) 
+IndexBuffer* SubMesh::getIndexBuffer() const
 {
-	m_VertexSize = p_VertexSize;
+	return m_IndexBuffer;
+}
+/*********************************************************************************/
+void SubMesh::setMaterial(Material* p_Material)
+{
+	m_Material = p_Material;
+}
+/*********************************************************************************/
+Material* SubMesh::getMaterial() const
+{
+	return m_Material;
 }
 /*********************************************************************************/

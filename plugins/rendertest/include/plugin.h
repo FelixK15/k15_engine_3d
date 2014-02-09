@@ -1,8 +1,8 @@
 /**
- * @file K15_VertexBuffer.inl
+ * @file plugin.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/12/09
+ * @date 2014/02/08
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -15,26 +15,18 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @section DESCRIPTION
+ *
+ * 
  */
 
+#include "K15_ApplicationModuleDescription.h"
+
 /*********************************************************************************/
-uint32 VertexBuffer::getVertexSize() const
-{
-	return m_VertexSize;
-}
+__declspec(dllexport) void pluginLoad();
 /*********************************************************************************/
-uint32 VertexBuffer::getVertexCount() const
-{
-	return m_VertexCount;
-}
+__declspec(dllexport) void pluginUnload();
 /*********************************************************************************/
-void VertexBuffer::setVertexCount(uint32 p_VertexCount)
-{
-	m_VertexCount = p_VertexCount;
-}
-/*********************************************************************************/
-void VertexBuffer::setVertexSize(uint32 p_VertexSize) 
-{
-	m_VertexSize = p_VertexSize;
-}
+__declspec(dllexport) K15_Engine::Core::ApplicationModuleDescription getDescription();
 /*********************************************************************************/

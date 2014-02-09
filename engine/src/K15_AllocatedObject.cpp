@@ -40,6 +40,7 @@ namespace K15_Engine { namespace Core {
 
 		_Allocators[AC_CORE] = CoreAllocator;
 		_Allocators[AC_MEMORY] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(5*MEGABYTE,"MemoryAllocator",CoreAllocator);
+		_Allocators[AC_MODULE] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(5*MEGABYTE,"ModuleAllocator",CoreAllocator);
 #		if defined K15_DEBUG
 		_Allocators[AC_DEBUG] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(2*MEGABYTE,"DebugAllocator",CoreAllocator);
 #		endif //K15_DEBUG
@@ -74,8 +75,8 @@ namespace K15_Engine { namespace Core {
 		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_DEBUG],BlockAllocator);
 #		endif //K15_DEBUG
 
+		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_MODULE],BlockAllocator);
 		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_MEMORY],BlockAllocator);
-
 		K15_DELETE Allocators[AC_CORE];
 	}
 	/*********************************************************************************/

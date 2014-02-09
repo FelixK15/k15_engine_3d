@@ -20,7 +20,6 @@
 #include "K15_PrecompiledHeader.h"
 #include "K15_TextureSampler.h"
 #include "K15_RendererBase.h"
-#include "K15_RenderTask.h"
 #include "K15_StringUtil.h"
 
 namespace K15_Engine { namespace Rendering {
@@ -33,7 +32,7 @@ namespace K15_Engine { namespace Rendering {
       m_WWrappingMode(TWM_CLAMP),
 	  m_Impl(0)
   {
-	  m_Impl = g_Application->getRenderTask()->getRenderer()->createTextureSamplerImpl();
+	  m_Impl = g_Application->getRenderer()->createTextureSamplerImpl();
 	  m_Impl->setTextureSampler(this);
   }
   /*********************************************************************************/

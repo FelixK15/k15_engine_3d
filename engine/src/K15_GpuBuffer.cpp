@@ -164,7 +164,7 @@ namespace K15_Engine { namespace Rendering {
 		if(m_Size < p_Size + p_Offset)
 		{
 			K15_ASSERT(allocate(p_Size + p_Offset),"Could not allocate memory for GpuBuffer.");
-			m_Impl->writeData(m_ShadowCopySize,m_ShadowCopy,0); //write back shadow copy
+			//m_Impl->writeData(p_Size,p_Source,0); //write back shadow copy
 		}
 
 		if(!isLocked())
@@ -175,7 +175,7 @@ namespace K15_Engine { namespace Rendering {
 
 		uint32 dataCount = m_Impl->writeData(p_Size,p_Source,p_Offset);
 
-    m_UsedSize += dataCount;
+		m_UsedSize += dataCount;
 
 		if(wasLocked)
 		{

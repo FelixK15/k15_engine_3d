@@ -27,6 +27,7 @@
 #ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
 #	include "K15_HashedString.h"
+#	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 namespace K15_Engine { namespace Rendering {
@@ -67,7 +68,7 @@ namespace K15_Engine { namespace Rendering {
     uint32 size;
   }; //end of VertexElement struct
   /*********************************************************************************/
-  class K15_CORE_API VertexDeclaration
+  class K15_CORE_API VertexDeclaration : public RenderingAllocatedObject
   {
   public:
     /*********************************************************************************/
@@ -120,7 +121,7 @@ namespace K15_Engine { namespace Rendering {
     bool m_Dirty;
   }; //end of VertexDeclaration class declaration
   /*********************************************************************************/
-  class K15_CORE_API VertexDeclarationImplBase
+  class K15_CORE_API VertexDeclarationImplBase : public RenderingAllocatedObject
   {
   public:
 	VertexDeclarationImplBase();

@@ -148,6 +148,16 @@ void MaterialPass::setAlphaState(const AlphaState& p_AlphaState)
 	m_AlphaState = p_AlphaState;
 }
 /*********************************************************************************/
+bool MaterialPass::isEnabled() const
+{
+	return m_PassEnabled;
+}
+/*********************************************************************************/
+void MaterialPass::setEnabled(bool p_Enabled)
+{
+	m_PassEnabled = p_Enabled;
+}
+/*********************************************************************************/
 
 /*********************************************************************************/
 uint32 Material::getAmountPasses() const
@@ -155,10 +165,29 @@ uint32 Material::getAmountPasses() const
 	return m_Passes.size();
 }
 /*********************************************************************************/
-MaterialPass* Material::getPass(uint32 p_Index) const
+MaterialPass* Material::getPass(uint32 p_Index, bool p_EnablePass)
 {
 	K15_ASSERT(p_Index < m_Passes.size(),"Trying to access MaterialPass out of bounds.");
 
-	return m_Passes.at(p_Index);
+	if(p_EnablePass)
+	{
+		m_Passes[p_Index].setEnabled(true);
+	}
+	
+	return &m_Passes[p_Index];
+}
+/*********************************************************************************/
+void Material::enablePass(uint32 p_Index)
+{
+	K15_ASSERT(p_Index < m_Passes.size(),"Trying to access MaterialPass out of bounds.");
+	
+	m_Passes[p_Index].setEnabled(true);
+}
+/*********************************************************************************/
+void Material::disablePass(uint32 p_Index)
+{
+	K15_ASSERT(p_Index < m_Passes.size(),"Trying to access MaterialPass out of bounds.");
+
+	m_Passes[p_Index].setEnabled(false);
 }
 /*********************************************************************************/

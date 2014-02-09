@@ -1,8 +1,8 @@
 /**
- * @file K15_VertexBuffer.inl
+ * @file plugin.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/12/09
+ * @date 2014/02/08
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -17,24 +17,31 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+#include "plugin.h"
+#include "K15_Application.h"
+#include "K15_SampleApplicationModule.h"
+
+K15_Engine::Plugins::RenderTest::RenderTestApplicationModule* module = 0;
+
 /*********************************************************************************/
-uint32 VertexBuffer::getVertexSize() const
+void pluginLoad()
 {
-	return m_VertexSize;
+	module = K15_NEW K15_Engine::Plugins::RenderTest::RenderTestApplicationModule();
+	g_Application->addApplicationModule(module);
 }
 /*********************************************************************************/
-uint32 VertexBuffer::getVertexCount() const
+void pluginUnload()
 {
-	return m_VertexCount;
+	K15_DELETE module;
 }
 /*********************************************************************************/
-void VertexBuffer::setVertexCount(uint32 p_VertexCount)
+K15_Engine::Core::ApplicationModuleDescription getDescription()
 {
-	m_VertexCount = p_VertexCount;
-}
-/*********************************************************************************/
-void VertexBuffer::setVertexSize(uint32 p_VertexSize) 
-{
-	m_VertexSize = p_VertexSize;
+	K15_Engine::Core::ApplicationModuleDescription description;
+
+	description.CompiledWithEngineVersion = K15_ENGINE_VERSION;
+	description.Author = "K15 Games";
+
+	return description;
 }
 /*********************************************************************************/

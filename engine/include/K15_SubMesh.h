@@ -26,14 +26,26 @@
 
 #ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
+#	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
+#include "K15_AABB.h"
+
 namespace K15_Engine { namespace Rendering {
-	class K15_CORE_API SubMesh
+	class K15_CORE_API SubMesh : public RenderingAllocatedObject
 	{
 	public:
 		SubMesh();
 		virtual ~SubMesh();
+
+		INLINE void setVertexBuffer(VertexBuffer* p_VertexBuffer);
+		INLINE VertexBuffer* getVertexBuffer() const;
+
+		INLINE void setIndexBUffer(IndexBuffer* p_IndexBuffer);
+		INLINE IndexBuffer* getIndexBuffer() const;
+
+		INLINE void setMaterial(Material* p_Material);
+		INLINE Material* getMaterial() const;
 
 		RenderOperation* createRenderOperation() const;
 	protected:
@@ -41,6 +53,7 @@ namespace K15_Engine { namespace Rendering {
 		IndexBuffer* m_IndexBuffer;
 		Material* m_Material;
 	};// end of SubMesh class declaration
+#	include "K15_SubMesh.inl"
 }}// end of K15_Engine::Rendering namespace
 
 #endif //_K15Engine_Rendering_SubMesh_h_

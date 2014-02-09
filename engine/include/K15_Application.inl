@@ -172,3 +172,8 @@ uint32 Application::getFramesPerSecond() const
   return m_AvgFramesPerSecond;
 }
 /*********************************************************************************/
+void Application::addApplicationModule(ApplicationModule* p_Module)
+{
+	m_LoadedModules.push_back(p_Module);
+}
+/*********************************************************************************/

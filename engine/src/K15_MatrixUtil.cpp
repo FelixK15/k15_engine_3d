@@ -20,6 +20,7 @@
 #include "K15_PrecompiledHeader.h"
 
 #include "K15_MatrixUtil.h"
+#include "K15_RenderWindowBase.h"
 
 namespace K15_Engine { namespace Core {
   /*********************************************************************************/

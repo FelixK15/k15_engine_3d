@@ -26,12 +26,12 @@
 /*********************************************************************************/
 void pluginLoad()
 {
-	g_Application->getRenderTask()->setRenderer(new K15_Engine::Rendering::OGL::RendererOGL());
+	g_Application->getRenderTask()->setRenderer(K15_NEW K15_Engine::Rendering::OGL::RendererOGL());
 }
 /*********************************************************************************/
 void pluginUnload()
 {
-	
+	K15_DELETE g_Application->getRenderer();
 }
 /*********************************************************************************/
 K15_Engine::Core::ApplicationModuleDescription getDescription()

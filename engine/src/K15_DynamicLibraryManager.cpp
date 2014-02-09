@@ -36,15 +36,23 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	DynamicLibraryManager::~DynamicLibraryManager()
 	{
-		for(DynamicLibraryMap::iterator iter = m_LoadedLibs.begin();iter != m_LoadedLibs.end();++iter)
+		DynamicLibraryBase* lib = 0;
+		while(m_LoadedLibs.size() > 0)
 		{
-			if(iter->second->isLoaded())
+			if((lib = m_LoadedLibs.begin()->second) != 0)
 			{
-				unload(iter->second);
+				if(lib->isLoaded())
+				{
+					unload(lib); //will get erase from the map in here
+				}
+				else
+				{
+					m_LoadedLibs.erase(lib->getFileName());
+				}
+				K15_DELETE lib;
 			}
-			K15_DELETE iter->second;
 		}
-
+		
 		m_LoadedLibs.clear();
 	}
 	/*********************************************************************************/
@@ -75,9 +83,19 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	bool DynamicLibraryManager::unload(DynamicLibraryBase *p_Lib)
 	{
+		//check if the lib has a pluginUnload function...this is true for plugins
+		Functor0<void> unloadFunc = p_Lib->getSymbol<void>("pluginUnload");
+		if(unloadFunc.isValid())
+		{
+			unloadFunc();
+		}
+
+		_LogNormal("Unloading dynamic library \"%s\".",p_Lib->getFileName());
 		if(p_Lib->unload())
 		{
-			//m_LoadedLibs.
+			_LogSuccess("Successfully unloaded dynamic library \"%s\".",p_Lib->getFileName());
+			m_LoadedLibs.erase(p_Lib->getFileName());
+			return true;
 		}
 
 		return false;

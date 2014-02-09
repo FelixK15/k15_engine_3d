@@ -60,9 +60,6 @@
     <ClInclude Include="..\..\engine\include\K15_ApplicationModuleDescription.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ApplicationOSLayerBase.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_ApplicationParameter.h">
       <Filter>Core\include</Filter>
     </ClInclude>
@@ -234,9 +231,6 @@
     <ClInclude Include="..\..\engine\include\K15_BlockAllocator.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_MemoryProfiler.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_PoolAllocator.h">
       <Filter>Core\include</Filter>
     </ClInclude>
@@ -360,6 +354,12 @@
     <ClInclude Include="..\..\engine\include\K15_SerialSizer.h">
       <Filter>Serialization\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Serialization.h">
+      <Filter>Serialization\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_IOUtil.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -479,9 +479,6 @@
     <ClCompile Include="..\..\engine\src\K15_FontManager.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_MemoryProfiler.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_MemoryProfilingTask.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
@@ -592,6 +589,9 @@
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_AllocatedObject.cpp">
       <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_IOUtil.cpp">
+      <Filter>Core\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -751,6 +751,12 @@
     </None>
     <None Include="..\..\engine\include\K15_SerialReader.inl">
       <Filter>Serialization\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_Mesh.inl">
+      <Filter>Rendering\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_SubMesh.inl">
+      <Filter>Rendering\include</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -101,7 +101,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	bool TextureImplOGL::write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ)
 	{
-		GLenum target = GLTextureTypeConverter[m_Texture->getType()];
+		GLenum target = GLTextureTypeConverter[m_Texture->getTextureType()];
 		GLenum type = GLPixelDataTypeConverter[m_Texture->getPixelFormat()];
 		GLenum format = GLInternalFormatConverter[m_Texture->getPixelFormat()];
 
@@ -136,7 +136,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	bool TextureImplOGL::writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ)
 	{
-		GLenum target = GLTextureTypeConverter[m_Texture->getType()];
+		GLenum target = GLTextureTypeConverter[m_Texture->getTextureType()];
 		GLenum type = GLPixelDataTypeConverter[m_Texture->getPixelFormat()];
 		GLenum format = GLInternalFormatConverter[m_Texture->getPixelFormat()];
 
@@ -199,7 +199,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	bool TextureImplOGL::resize(uint32 p_Width, uint32 p_Height, uint32 p_Depth)
 	{
-		GLenum target = GLTextureTypeConverter[m_Texture->getType()];
+		GLenum target = GLTextureTypeConverter[m_Texture->getTextureType()];
 		GLenum format = GLInternalFormatConverter[m_Texture->getPixelFormat()];
 		
 		if(target == GL_TEXTURE_1D)

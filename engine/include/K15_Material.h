@@ -84,6 +84,9 @@ namespace K15_Engine { namespace Rendering {
 		INLINE const DepthState& getDepthState() const;
 		INLINE void setDepthState(const DepthState& p_DepthState);
 
+		INLINE bool isEnabled() const;
+		INLINE void setEnabled(bool p_Enabled);
+
 	private:
 		expose GpuProgramArray m_Programs; 
 		expose Texture* m_DiffuseMap;
@@ -100,6 +103,7 @@ namespace K15_Engine { namespace Rendering {
 		expose bool m_Transparent;
 		expose bool m_BackFaceCullingEnabled;
 		expose bool m_LightningEnabled;
+		expose bool m_PassEnabled;
 	}; //end of MaterialPass class declaration
 	K15_PTR(MaterialPass);
 	/*********************************************************************************/
@@ -108,16 +112,18 @@ namespace K15_Engine { namespace Rendering {
 	{
 	public:
 		/*********************************************************************************/
-		static const uint32 MaximumMaterialPasses;
-		typedef DynamicArray(MaterialPass*) MaterialPassArray;
+		static const uint32 MaximumMaterialPasses = 8;
+		typedef FixedArray(MaterialPass,MaximumMaterialPasses) MaterialPassArray;
 		/*********************************************************************************/
 	public:
 		Material();
 		~Material();
 
 		INLINE uint32 getAmountPasses() const;
-		INLINE MaterialPass* getPass(uint32 p_Index) const;
+		INLINE MaterialPass* getPass(uint32 p_Index, bool p_EnablePass = false);
 
+		INLINE void enablePass(uint32 p_Index);
+		INLINE void disablePass(uint32 p_Index);
 	private:
 		MaterialData* m_Data;
 		MaterialPassArray m_Passes;

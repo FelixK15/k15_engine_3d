@@ -66,16 +66,29 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		/*********************************************************************************/
 		enum eKeyboardKeys
 		{
-			KEY_1 = 0x61,
-			KEY_2 = 0x62,
-			KEY_3 = 0x63,
-			KEY_4 = 0x64,
-			KEY_5 = 0x65,
-			KEY_6 = 0x66,
-			KEY_7 = 0x67,
-			KEY_8 = 0x68,
-			KEY_9 = 0x69,
-			KEY_0 = 0x60,
+			//numpad
+			KEY_NUMPAD_1 = 0x61,
+			KEY_NUMPAD_2 = 0x62,
+			KEY_NUMPAD_3 = 0x63,
+			KEY_NUMPAD_4 = 0x64,
+			KEY_NUMPAD_5 = 0x65,
+			KEY_NUMPAD_6 = 0x66,
+			KEY_NUMPAD_7 = 0x67,
+			KEY_NUMPAD_8 = 0x68,
+			KEY_NUMPAD_9 = 0x69,
+			KEY_NUMPAD_0 = 0x60,
+			//numbers
+			KEY_1 = '1',
+			KEY_2 = '2',
+			KEY_3 = '3',
+			KEY_4 = '4',
+			KEY_5 = '5',
+			KEY_6 = '6',
+			KEY_7 = '7',
+			KEY_8 = '8',
+			KEY_9 = '9',
+			KEY_0 = '0',
+
 			KEY_BACKSPACE = 0x08,
 			KEY_L_SHIFT = 0xA0,
 			KEY_R_SHIFT = 0xA1,
@@ -87,7 +100,7 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 			KEY_CTRL = 0x11,
 			KEY_RETURN = 0x0D,
 			KEY_ESCAPE = 0x1B,
-
+			//letters
 			KEY_A = 'a',
 			KEY_B = 'b',
 			KEY_C = 'c',

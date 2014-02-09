@@ -76,7 +76,7 @@ namespace K15_Engine { namespace Rendering {
 		m_CullingMode(CM_CCW),
 		m_DefaultRenderTarget(0),
 		m_DepthBufferFormat(DBF_COMPONENT_24_I),
-		m_FrameBufferFormat(PF_RGB_8_I),
+		m_FrameBufferFormat(PF_RGBA_8_I),
 		m_LightningEnabled(true),
 		m_RenderTarget(0),
 		m_VertexDeclaration(0),
@@ -444,33 +444,35 @@ namespace K15_Engine { namespace Rendering {
 		for(uint32 i = 0;i < m_Material->getAmountPasses();++i)
 		{
 			pass = 	m_Material->getPass(i);
-      
-			if(!bindGpuProgram(pass->getProgram(GpuProgram::PS_VERTEX),GpuProgram::PS_VERTEX) ||
-			   !bindGpuProgram(pass->getProgram(GpuProgram::PS_FRAGMENT),GpuProgram::PS_FRAGMENT) ||
-			   !setCullingMode(pass->getCullingMode()) ||
-			   !setFillMode(pass->getFillMode()) ||
-			   !setAlphaState(pass->getAlphaState()) ||
-			   !setDepthState(pass->getDepthState()))
+			if(pass->isEnabled())
 			{
-				continue;
-			}
-			
-			setLightningEnabled(pass->isLightningEnabled());
-			
-			if(p_Rop->indexBuffer != 0)
-			{
-				_drawIndexed();
-			}
-			else
-			{
-				_drawDirect();
-			}
+				if(!bindGpuProgram(pass->getProgram(GpuProgram::PS_VERTEX),GpuProgram::PS_VERTEX) ||
+					!bindGpuProgram(pass->getProgram(GpuProgram::PS_FRAGMENT),GpuProgram::PS_FRAGMENT) ||
+					!setCullingMode(pass->getCullingMode()) ||
+					!setFillMode(pass->getFillMode()) ||
+					!setAlphaState(pass->getAlphaState()) ||
+					!setDepthState(pass->getDepthState()))
+				{
+					continue;
+				}
 
-			if(errorOccured())
-			{
-				_LogError("Error during draw. Material: %s (pass %u) %s",
-					m_Material->getName().c_str(),i+1,getLastError().c_str());
-				continue;
+				setLightningEnabled(pass->isLightningEnabled());
+
+				if(p_Rop->indexBuffer != 0)
+				{
+					_drawIndexed();
+				}
+				else
+				{
+					_drawDirect();
+				}
+
+				if(errorOccured())
+				{
+					_LogError("Error during draw. Material: %s (pass %u) %s",
+						m_Material->getName().c_str(),i+1,getLastError().c_str());
+					continue;
+				}
 			}
 		}
 
@@ -486,12 +488,15 @@ namespace K15_Engine { namespace Rendering {
 		for(uint32 i = 0;i < p_Material->getAmountPasses();++i)
 		{
 			pass = p_Material->getPass(i);
-			K15_ASSERT(pass,StringUtil::format("%u. pass of material %s is NULL.",i,p_Material->getName().c_str()));
-			K15_ASSERT(pass->getProgram(GpuProgram::PS_VERTEX),StringUtil::format("Pass %u (%s) from material %s has no vertex program.",
-				i,pass->getName().c_str(),p_Material->getName().c_str()));
+			if(pass->isEnabled())
+			{
+				K15_ASSERT(pass,StringUtil::format("%u. pass of material %s is NULL.",i,p_Material->getName().c_str()));
+				K15_ASSERT(pass->getProgram(GpuProgram::PS_VERTEX),StringUtil::format("Pass %u (%s) from material %s has no vertex program.",
+					i,pass->getName().c_str(),p_Material->getName().c_str()));
 
-			K15_ASSERT(pass->getProgram(GpuProgram::PS_FRAGMENT),StringUtil::format("Pass %u (%s) from material %s has no fragment program.",
-				i,pass->getName().c_str(),p_Material->getName().c_str()));
+				K15_ASSERT(pass->getProgram(GpuProgram::PS_FRAGMENT),StringUtil::format("Pass %u (%s) from material %s has no fragment program.",
+					i,pass->getName().c_str(),p_Material->getName().c_str()));
+			}
 		}
 #endif //K15_DEBUG
 		

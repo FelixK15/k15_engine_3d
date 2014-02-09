@@ -26,11 +26,12 @@
 
 #ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
+#	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 namespace K15_Engine { namespace Rendering { 
 	/*********************************************************************************/
-	class K15_CORE_API GpuBufferImplBase
+	class K15_CORE_API GpuBufferImplBase : public RenderingAllocatedObject
 	{
 	protected:
 		GpuBufferImplBase();
@@ -53,7 +54,7 @@ namespace K15_Engine { namespace Rendering {
 		GpuBuffer *m_Buffer;
 	};// end of GpuBufferImplBase class declaration
 	/*********************************************************************************/
-	class K15_CORE_API GpuBuffer
+	class K15_CORE_API GpuBuffer : public RenderingAllocatedObject
 	{
 	public:
 		/*********************************************************************************/

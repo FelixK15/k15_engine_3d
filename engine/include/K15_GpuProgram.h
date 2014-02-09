@@ -26,13 +26,14 @@
 
 #ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
+#	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_ResourceBase.h"
 #include "K15_GpuProgramParameter.h"
 
 namespace K15_Engine { namespace Rendering { 
-	class K15_CORE_API GpuProgramImplBase
+	class K15_CORE_API GpuProgramImplBase : public RenderingAllocatedObject
 	{
 	public:
 		virtual bool compileShaderCode() = 0;
@@ -47,7 +48,7 @@ namespace K15_Engine { namespace Rendering {
 		GpuProgram* m_GpuProgram;
 	};// end of GpuProgramImplBase class declaration
 	/*********************************************************************************/
-	class K15_CORE_API GpuProgram : public ResourceBase
+	class K15_CORE_API GpuProgram : public ResourceBase, public RenderingAllocatedObject
 	{
 	public:
 		/*********************************************************************************/
@@ -65,7 +66,7 @@ namespace K15_Engine { namespace Rendering {
 		}; //ProgramStage
 		/*********************************************************************************/
 	public:
-		GpuProgram();
+		GpuProgram(Enum p_ProgramStage);
 		virtual ~GpuProgram();
 
 		INLINE bool isCompiled() const;
@@ -77,7 +78,7 @@ namespace K15_Engine { namespace Rendering {
 		INLINE Enum getStage() const;
 
 		bool compile();
-		void setProgramCode(const String& p_Code);
+		void setProgramCode(const String& p_Code, bool p_Compile = false);
 
 		INLINE void setError(const String& p_Error);
 

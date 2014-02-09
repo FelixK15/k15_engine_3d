@@ -38,29 +38,16 @@ namespace K15_Engine { namespace Core {
 	{
 		setName(_N(MemoryProfilingTask));
 
-		g_Address.host = ENET_HOST_ANY;
-		g_Address.port = 1212;
-
-		g_Server = enet_host_create(&g_Address,10,2,0,0);
-
-		if(!g_Server)
-		{
-			_LogError("Could not initialize enet server.");
-		}
 	}
 	/*********************************************************************************/
 	MemoryProfilingTask::~MemoryProfilingTask()
 	{
-		if(g_Server)
-		{
-			enet_host_destroy(g_Server);
-			g_Server = 0;
-		}
+
 	}
 	/*********************************************************************************/
 	void MemoryProfilingTask::update(const GameTime& p_GameTime)
 	{
-		//todo
+	
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

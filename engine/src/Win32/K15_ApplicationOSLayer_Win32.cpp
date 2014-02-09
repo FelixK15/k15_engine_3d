@@ -32,7 +32,6 @@ namespace K15_Engine { namespace Core {
 	const String ApplicationOSLayer_Win32::PluginExtension = "dll";
 	/*********************************************************************************/
 	ApplicationOSLayer_Win32::ApplicationOSLayer_Win32()
-		: ApplicationOSLayerBase()
 	{
 
 	}
@@ -60,12 +59,15 @@ namespace K15_Engine { namespace Core {
 
 	}
 	/*********************************************************************************/
-	String ApplicationOSLayer_Win32::getError() const
+	const String& ApplicationOSLayer_Win32::getError() const
 	{
-		String errorMsg;
+		static String errorMsg;
+
 		char* errorBuffer = 0;
 		DWORD lastError = GetLastError();
-		DWORD writtenChars = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,0,lastError,MAKELANGID(LANG_ENGLISH,SUBLANG_ENGLISH_UK),(LPSTR)&errorBuffer,0,0);
+		DWORD writtenChars = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,0,
+			lastError,MAKELANGID(LANG_ENGLISH,SUBLANG_ENGLISH_UK),(LPSTR)&errorBuffer,0,0);
+
 		if(writtenChars == 0 && !errorBuffer)
 		{
 			errorBuffer = (char*)alloca(K15_ERROR_BUFFER_SIZE);
@@ -121,10 +123,10 @@ namespace K15_Engine { namespace Core {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 
-      if(msg.message == WM_QUIT)
-      {
-        Application::getInstance()->setRunning(false);
-      }
+			if(msg.message == WM_QUIT)
+			{
+				g_Application->setRunning(false);
+			}
 		}
 	}
 	/*********************************************************************************/

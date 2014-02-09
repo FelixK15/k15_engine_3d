@@ -32,10 +32,9 @@
 #include "K15_PhysicsTask.h"
 #include "K15_ThreadWorker.h"
 #include "K15_EventTask.h"
+#include "K15_MemoryProfilingTask.h"
 #include "K15_ApplicationModule.h"
 #include "K15_ApplicationModuleDescription.h"
-
-#include "K15_MemoryProfiler.h"
 
 #include "K15_Mouse.h"
 #include "K15_Keyboard.h"
@@ -70,6 +69,7 @@ namespace K15_Engine { namespace Core {
 		m_TaskManager(0),
 		m_LogManager(0),
 		m_AvgFramesPerSecond(0),
+		m_MemoryProfilingTask(0),
 		m_Plugins(),
 		m_RunningTime(0.0),
 		m_ApplicationParameter(),
@@ -208,13 +208,13 @@ namespace K15_Engine { namespace Core {
 		m_ProfileManager = K15_NEW ProfilingManager();;
 
 		_LogNormal("Initializing TaskManager...");
-		m_TaskManager = K15_NEW TaskManager;
+		m_TaskManager = K15_NEW TaskManager();
 
 		_LogNormal("Initializing InputManager...");
-		m_InputManager = K15_NEW InputManager;
+		m_InputManager = K15_NEW InputManager();
 
 		_LogNormal("Initializing ThreadWorker...");
-		m_ThreadWorker = K15_NEW ThreadWorker;
+		m_ThreadWorker = K15_NEW ThreadWorker();
 
 		_LogNormal("Tasks will get created and added to the task manager.");
 		_LogNormal("Creating and adding event task...");
@@ -229,14 +229,11 @@ namespace K15_Engine { namespace Core {
 		m_PhysicsTask = K15_NEW PhysicsTask();
 		m_TaskManager->addTask(m_PhysicsTask);
 
-		//Load plugins
-		loadPluginsFile();
-
-		//call callbacks on plugin modules
-		for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
-		{
-			(*iter)->onInitialize();
-		}
+#		if defined K15_DEBUG
+		_LogNormal("Creating and adding memoryprofiler task...");
+		m_MemoryProfilingTask = K15_NEW MemoryProfilingTask();
+		m_TaskManager->addTask(m_MemoryProfilingTask);
+#		endif
 
 		m_RenderWindow = K15_NEW RenderWindowType();
     
@@ -259,6 +256,15 @@ namespace K15_Engine { namespace Core {
 			{
 				_LogError("Could not initialize renderer.");
 			}
+		}
+
+		//Load plugins
+		loadPluginsFile();
+
+		//call callbacks on plugin modules
+		for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
+		{
+			(*iter)->onInitialize();
 		}
 	}
 	/*********************************************************************************/
@@ -363,7 +369,6 @@ namespace K15_Engine { namespace Core {
 			FPSTime = 0.0;
 			FPSFrameCounter = 0;
 		}
-    
 
 		//increase frame counter
 		if(++m_FrameCounter == UINT_MAX) m_FrameCounter = 0;
@@ -507,9 +512,13 @@ namespace K15_Engine { namespace Core {
 			IniFileGroup group;
 			if(pluginFile.getGroupEntries("",&group))
 			{
+				String pluginPath;
+
 				for(IniFileGroup::IniEntryList::iterator iter = group.entries.begin();iter != group.entries.end();++iter)
 				{
-					pluginsToLoad.insert(iter->value);
+					pluginPath.clear();
+					pluginPath = iter->value + "." + m_OSLayer.PluginExtension;
+					pluginsToLoad.insert(pluginPath);
 				}
 
 				initializePlugins(pluginsToLoad);

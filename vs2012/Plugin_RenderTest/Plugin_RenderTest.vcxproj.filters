@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Plugin">
+      <UniqueIdentifier>{4ecce349-3b36-4430-8841-fe2aa0ba29e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Plugin\include">
+      <UniqueIdentifier>{affda0bb-c4fa-4435-8451-f919f5c31162}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Plugin\src">
+      <UniqueIdentifier>{e993bba1-4f9d-4d24-bd09-eeea57ef4d21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{16d4e098-23d9-4cd9-ad5a-85b2f12bcad0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\include">
+      <UniqueIdentifier>{765fecc8-1258-4e88-b9e4-f94fd6526702}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\src">
+      <UniqueIdentifier>{de0d99fd-b352-42b3-b4e9-52e50d0b5767}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\plugins\rendertest\include\plugin.h">
+      <Filter>Plugin\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\rendertest\include\K15_RenderSampleProcess.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\rendertest\include\K15_SampleApplicationModule.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\plugins\rendertest\src\plugin.cpp">
+      <Filter>Plugin\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\rendertest\src\K15_RenderSampleProcess.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\rendertest\src\K15_SampleApplicationModule.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="module.def" />
+  </ItemGroup>
+</Project>

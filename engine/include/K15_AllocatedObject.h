@@ -31,7 +31,7 @@
 #include "K15_BaseAllocator.h"
 
 namespace K15_Engine { namespace Core {
-	class BaseAllocatedObject
+	class K15_CORE_API BaseAllocatedObject
 	{
 	public:
 		/*********************************************************************************/
@@ -39,6 +39,7 @@ namespace K15_Engine { namespace Core {
 		{
 			AC_CORE = 0,
 			AC_MEMORY,
+			AC_MODULE,
 #			if defined K15_DEBUG
 			AC_DEBUG,
 #			endif
@@ -99,6 +100,7 @@ namespace K15_Engine { namespace Core {
 
 	typedef AllocatedObject<BaseAllocatedObject::AC_CORE> CoreAllocatedObject;
 	typedef AllocatedObject<BaseAllocatedObject::AC_MEMORY> MemoryAllocatedObject;
+	typedef AllocatedObject<BaseAllocatedObject::AC_MODULE> ModuleAllocatedObject;
 #	if defined K15_DEBUG
 	typedef AllocatedObject<BaseAllocatedObject::AC_DEBUG> DebugAllocatedObject;
 #	endif //K15_DEBUIG

@@ -22,10 +22,6 @@
 #include "K15_BaseAllocator.h"
 #include "K15_MemoryHeader.h"
 
-#if defined K15_DEBUG
-#	include "K15_MemoryProfiler.h"
-#endif //K15_DEBUG
-
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	BaseAllocator::BaseAllocator(size_t p_Size,const ObjectName& p_Name,BaseAllocator* p_BaseAllocator)
@@ -38,11 +34,7 @@ namespace K15_Engine { namespace Core {
 #endif
 		m_Name(p_Name),
 		m_BaseAllocator(p_BaseAllocator)
-	{
-#		if defined K15_DEBUG
-			//g_MemoryProfiler->addAllocator(this);
-#		endif //K15_DEBUG
-		
+	{		
 		if(p_BaseAllocator)
 		{
 			m_Memory = K15_NEW_SIZE(p_BaseAllocator,p_Size) byte;
@@ -57,10 +49,6 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	BaseAllocator::~BaseAllocator()
 	{
-#		if defined K15_DEBUG
-		//g_MemoryProfiler->removeAllocator(this);
-#		endif // K15_DEBUG
-
 		if(m_BaseAllocator)
 		{
 			K15_DELETE_SIZE(m_BaseAllocator,m_Memory,m_MemorySize);
@@ -89,20 +77,20 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void* BaseAllocator::allocate(size_t p_Size)
 	{
-		lockMutex();
+		//lockMutex();
 
 		K15_ASSERT(p_Size + m_UsedMemory <= m_MemorySize,StringUtil::format("Cannot satisfy memory request. Allocator:%s",m_Name.c_str()));
 		void* memory = alloc(p_Size);
 		memset(memory,0,p_Size);
 		m_UsedMemory += p_Size;
 
-		unlockMutex();
+		//unlockMutex();
 		return memory;
 	}
 	/*********************************************************************************/
 	void BaseAllocator::deallocate(void* p_Pointer, size_t p_Size)
 	{
-		lockMutex();
+		//lockMutex();
 
 		K15_ASSERT((ptrdiff_t)p_Pointer >= (ptrdiff_t)m_Memory && (ptrdiff_t)p_Pointer < (ptrdiff_t)m_MemoryEndAddress,
 			StringUtil::format("Pointer %p is not part of Allocator:%s",m_Name.c_str()));
@@ -113,13 +101,13 @@ namespace K15_Engine { namespace Core {
 
 		m_UsedMemory -= p_Size;
 
-		unlockMutex();
+		//unlockMutex();
 	}
 #if defined K15_DEBUG
 	/*********************************************************************************/
 	void* BaseAllocator::allocateDebug(size_t p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function)
 	{
-		lockMutex();
+		//lockMutex();
 
 		K15_ASSERT(p_Size + m_UsedMemory <= m_MemorySize,StringUtil::format("Cannot satisfy memory request. Allocator:%s",m_Name.c_str()));
 		byte* memory = (byte*)alloc(p_Size);
@@ -140,14 +128,14 @@ namespace K15_Engine { namespace Core {
 		m_UsedMemory += p_Size;
 
 
-		unlockMutex();
+		//unlockMutex();
 
 		return (void*)memory;
 	}
 	/*********************************************************************************/
 	void BaseAllocator::deallocateDebug(void* p_Pointer,size_t p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function)
 	{
-		lockMutex();
+		//lockMutex();
 
 		K15_ASSERT((ptrdiff_t)p_Pointer >= (ptrdiff_t)m_Memory && (ptrdiff_t)p_Pointer < (ptrdiff_t)m_MemoryEndAddress,
 		  StringUtil::format("Pointer %p is not part of Allocator:%s",m_Name.c_str()));
@@ -174,7 +162,7 @@ namespace K15_Engine { namespace Core {
 
 		m_UsedMemory -= p_Size;
 
-		unlockMutex();
+		//unlockMutex();
 	}
 #endif //K15_DEBUG
 	/*********************************************************************************/

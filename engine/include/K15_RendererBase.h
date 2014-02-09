@@ -39,7 +39,7 @@
 
 namespace K15_Engine { namespace Rendering { 
 	
-	class K15_CORE_API RendererBase : public RenderWindowBase::Listener
+	class K15_CORE_API RendererBase : public RenderWindowBase::Listener, public RenderingAllocatedObject
 	{
 	public:
 		/*********************************************************************************/

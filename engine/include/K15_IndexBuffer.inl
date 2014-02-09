@@ -25,7 +25,7 @@ Enum IndexBuffer::getIndexType() const
 /*********************************************************************************/
 void IndexBuffer::setIndexType(Enum p_IndexType) 
 {
-	K15_ASSERT(p_IndexType > 0 && p_IndexType < IT_COUNT,"Invalid index type.");
+	K15_ASSERT(p_IndexType >= 0 && p_IndexType < IT_COUNT,"Invalid index type.");
 
 	m_IndexType = p_IndexType;
 }

@@ -35,7 +35,8 @@ namespace K15_Engine { namespace Rendering {
 		m_FillMode(RendererBase::FM_SOLID),
 		m_Transparent(false),
 		m_LightningEnabled(true),
-		m_BackFaceCullingEnabled(true)
+		m_BackFaceCullingEnabled(true),
+		m_PassEnabled(false)
 	{
 	
 	}
