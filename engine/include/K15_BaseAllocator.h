@@ -28,11 +28,9 @@
 #	include "K15_HashedString.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
-#include "K15_ThreadSafe.h"
-
 namespace K15_Engine { namespace Core {
   
-  class K15_CORE_API BaseAllocator : public ThreadSafe
+  class K15_CORE_API BaseAllocator
   {
   public:
 #if defined K15_DEBUG
@@ -56,6 +54,7 @@ namespace K15_Engine { namespace Core {
 	const ObjectName& getName() const;
 	uint32 getSize() const;
 	uint32 getFreeSize() const;
+	BaseAllocator* getParentAllocator() const;
     virtual void clear();
 
   protected:

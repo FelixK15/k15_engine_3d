@@ -20,6 +20,7 @@
 #include "K15_SampleApplicationModule.h"
 
 #include "K15_InputManager.h"
+#include "K15_Keyboard.h"
 #include "K15_RendererBase.h"
 #include "K15_RenderTask.h"
 #include "K15_RenderSampleProcess.h"
@@ -63,6 +64,12 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 		{
 			g_Application->getRenderer()->setClearColor(0.0f,1.0f,1.0f);
 		}
+
+
+		if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_F1))
+		{
+			_dumpMemoryStatistics();
+		}
 	}
 	/*********************************************************************************/
 	void RenderTestApplicationModule::onPostTick()
@@ -74,6 +81,26 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 	{
 		K15_DELETE g_Application->getRenderTask()->getRenderProcess();
 		g_Application->getRenderTask()->setRenderProcess(0);
+	}
+	/*********************************************************************************/
+	void RenderTestApplicationModule::_dumpMemoryStatistics()
+	{
+		BaseAllocator* currentAllocator = 0;
+		float totalSizeMB = 0.0f;
+		float usedSizeMB = 0.0f;
+		float percentage = 0.0f;
+
+		for(uint32 i = 0;i < BaseAllocatedObject::Allocators.size();++i)
+		{
+			currentAllocator = BaseAllocatedObject::Allocators.at(i);	
+			totalSizeMB = (float)currentAllocator->getSize() / (float)MEGABYTE;
+			usedSizeMB = (float)(currentAllocator->getSize() - currentAllocator->getFreeSize()) / (float)MEGABYTE;
+			percentage = (usedSizeMB / totalSizeMB) * 100;
+			printf("Dumping Allocator \"%s\":\nTotal size:\t%.2fMB\nMemory used:\t%.2fMB\nPercentage:\t%.4f%%\nParent:\t\t\"%s\"\n",
+				currentAllocator->getName().c_str(),totalSizeMB,usedSizeMB,percentage,
+				currentAllocator->getParentAllocator() ? currentAllocator->getParentAllocator()->getName().c_str() : "----");
+			printf("===========================================================\n");
+		}
 	}
 	/*********************************************************************************/
 }}}// end of K15_Engine::Plugins::RenderTest namespace

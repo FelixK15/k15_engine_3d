@@ -176,6 +176,12 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		ReleaseDC(tempHwnd,tempDC);
 		DestroyWindow(tempHwnd);
 
+		if(!GLEW_VERSION_3_3)
+		{
+			_LogError("OpenGL 3.3 is not supported.");
+			return false;
+		}
+
 		RenderWindow_Win32* renderwindow = (RenderWindow_Win32*)m_RenderWindow;
 		m_DeviceContext = renderwindow->getDeviceContext();
 
@@ -251,6 +257,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		else
 		{
 			_LogError("Can't use gl extension GL_ARB_separate_shader_objects");
+			return false;
 		}
 
 		const Resolution& resolution = renderwindow->getResolution();

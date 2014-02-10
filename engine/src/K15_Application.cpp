@@ -254,6 +254,8 @@ namespace K15_Engine { namespace Core {
 			m_RenderTask->getRenderer()->setRenderWindow(m_RenderWindow);
 			if(!m_RenderTask->getRenderer()->initialize())
 			{
+				K15_DELETE m_RenderTask->getRenderer();
+				m_RenderTask->setRenderer(0);
 				_LogError("Could not initialize renderer.");
 			}
 		}

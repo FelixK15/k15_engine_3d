@@ -38,7 +38,8 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 		void onPreTick() OVERRIDE;
 		void onPostTick() OVERRIDE;
 		
-
+	private:
+		void _dumpMemoryStatistics();
 	};// end of RenderTestApplicationModule class declaration
 }}}// end of K15_Engine::Plugins::RenderTest namespace
 

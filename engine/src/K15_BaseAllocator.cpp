@@ -25,8 +25,7 @@
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	BaseAllocator::BaseAllocator(size_t p_Size,const ObjectName& p_Name,BaseAllocator* p_BaseAllocator)
-		: ThreadSafe(),
-		m_Memory(0),
+		: m_Memory(0),
 		m_MemorySize(p_Size),
 		m_UsedMemory(0),
 #if defined K15_DEBUG
@@ -77,21 +76,16 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void* BaseAllocator::allocate(size_t p_Size)
 	{
-		//lockMutex();
-
 		K15_ASSERT(p_Size + m_UsedMemory <= m_MemorySize,StringUtil::format("Cannot satisfy memory request. Allocator:%s",m_Name.c_str()));
 		void* memory = alloc(p_Size);
 		memset(memory,0,p_Size);
 		m_UsedMemory += p_Size;
 
-		//unlockMutex();
 		return memory;
 	}
 	/*********************************************************************************/
 	void BaseAllocator::deallocate(void* p_Pointer, size_t p_Size)
 	{
-		//lockMutex();
-
 		K15_ASSERT((ptrdiff_t)p_Pointer >= (ptrdiff_t)m_Memory && (ptrdiff_t)p_Pointer < (ptrdiff_t)m_MemoryEndAddress,
 			StringUtil::format("Pointer %p is not part of Allocator:%s",m_Name.c_str()));
 
@@ -100,15 +94,11 @@ namespace K15_Engine { namespace Core {
 		dealloc(p_Pointer, p_Size);
 
 		m_UsedMemory -= p_Size;
-
-		//unlockMutex();
 	}
 #if defined K15_DEBUG
 	/*********************************************************************************/
 	void* BaseAllocator::allocateDebug(size_t p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function)
 	{
-		//lockMutex();
-
 		K15_ASSERT(p_Size + m_UsedMemory <= m_MemorySize,StringUtil::format("Cannot satisfy memory request. Allocator:%s",m_Name.c_str()));
 		byte* memory = (byte*)alloc(p_Size);
 		memset(memory,0,p_Size);
@@ -127,16 +117,11 @@ namespace K15_Engine { namespace Core {
 
 		m_UsedMemory += p_Size;
 
-
-		//unlockMutex();
-
 		return (void*)memory;
 	}
 	/*********************************************************************************/
 	void BaseAllocator::deallocateDebug(void* p_Pointer,size_t p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function)
 	{
-		//lockMutex();
-
 		K15_ASSERT((ptrdiff_t)p_Pointer >= (ptrdiff_t)m_Memory && (ptrdiff_t)p_Pointer < (ptrdiff_t)m_MemoryEndAddress,
 		  StringUtil::format("Pointer %p is not part of Allocator:%s",m_Name.c_str()));
 
@@ -161,8 +146,6 @@ namespace K15_Engine { namespace Core {
 		dealloc(p_Pointer, p_Size);
 
 		m_UsedMemory -= p_Size;
-
-		//unlockMutex();
 	}
 #endif //K15_DEBUG
 	/*********************************************************************************/
@@ -184,6 +167,11 @@ namespace K15_Engine { namespace Core {
 	uint32 BaseAllocator::getFreeSize() const
 	{
 		return m_MemorySize - m_UsedMemory;
+	}
+	/*********************************************************************************/
+	BaseAllocator* BaseAllocator::getParentAllocator() const
+	{
+		return m_BaseAllocator;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Core
