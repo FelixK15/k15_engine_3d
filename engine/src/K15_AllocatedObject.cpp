@@ -52,6 +52,7 @@ namespace K15_Engine { namespace Core {
 		_Allocators[AC_THREADING] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(10*MEGABYTE,"ThreadingAllocator",CoreAllocator);
 		_Allocators[AC_TASKS] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(10*MEGABYTE,"TaskAllocator",CoreAllocator);
 		_Allocators[AC_LOGGING] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(5*MEGABYTE,"LoggingAllocator",CoreAllocator);
+		_Allocators[AC_VERTEX_POOL] = K15_NEW_T(_Allocators[AC_RENDERING],PoolAllocator<Vertex>) PoolAllocator<Vertex>(10000,"VertexPool",_Allocators[AC_RENDERING]);
 		_Allocators[AC_RENDEROP_POOL] = K15_NEW_T(_Allocators[AC_RENDERING],PoolAllocator<RenderOperation>) PoolAllocator<RenderOperation>(256,"RenderOperationPool",_Allocators[AC_RENDERING]);
 		_Allocators[AC_PROFILING_NODE_POOL] = K15_NEW_T(_Allocators[AC_PROFILING],PoolAllocator<ProfilingNode>) PoolAllocator<ProfilingNode>(10240,"ProfilingNodePool",_Allocators[AC_PROFILING]);
 
@@ -62,6 +63,7 @@ namespace K15_Engine { namespace Core {
 	{
 		K15_DELETE_T(Allocators[AC_PROFILING],Allocators[AC_PROFILING_NODE_POOL],PoolAllocator<ProfilingNode>);
 		K15_DELETE_T(Allocators[AC_RENDERING],Allocators[AC_RENDEROP_POOL],PoolAllocator<RenderOperation>);
+		K15_DELETE_T(Allocators[AC_RENDERING],Allocators[AC_VERTEX_POOL],PoolAllocator<Vertex>);
 		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_LOGGING],BlockAllocator);
 		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_TASKS],BlockAllocator);
 		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_THREADING],BlockAllocator);

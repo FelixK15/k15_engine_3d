@@ -458,6 +458,19 @@ namespace K15_Engine { namespace Rendering {
 
 				setLightningEnabled(pass->isLightningEnabled());
 
+				GpuBuffer* gpuBuffer = 0;
+				for(uint32 j = 0;j < m_GpuBuffers.size();++j)
+				{
+					gpuBuffer = m_GpuBuffers.at(i);
+					if(gpuBuffer != 0)
+					{
+						if(gpuBuffer->isDirty())
+						{
+							K15_ASSERT(gpuBuffer->uploadShadowBufferToGpu(),"Could not upload shadow buffer to gpu memory.");
+						}
+					}
+				}
+
 				if(p_Rop->indexBuffer != 0)
 				{
 					_drawIndexed();

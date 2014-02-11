@@ -153,8 +153,8 @@ namespace K15_Engine
 		class RenderQueue;
 		class AlphaState;
 		class DepthState;
-		class VertexManager;
-		class VertexBufferBinding;
+		class VertexBuffer;
+		class Vertex;
 		struct RenderOperation;
 		struct VertexElement;
 		struct TextureCreationOptions;

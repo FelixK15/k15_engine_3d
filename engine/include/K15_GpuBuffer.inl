@@ -93,3 +93,8 @@ const GpuBufferImplBase* GpuBuffer::getImpl() const
 	return m_Impl;
 }
 /*********************************************************************************/
+bool GpuBuffer::isDirty() const
+{
+	return m_Dirty;
+}
+/*********************************************************************************/

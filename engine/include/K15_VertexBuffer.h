@@ -34,15 +34,28 @@ namespace K15_Engine { namespace Rendering {
 	class K15_CORE_API VertexBuffer : public GpuBuffer
 	{
 	public:
+		/*********************************************************************************/
+		typedef HashMap(uint32,Vertex*) IndexVertexMap;
+		/*********************************************************************************/
+	public:
 		VertexBuffer();
 		virtual ~VertexBuffer();
+
+		Vertex* getVertex(uint32 p_Index);
+
+		INLINE void setVertexDeclaration(VertexDeclaration* p_Declaration);
+		INLINE VertexDeclaration* getVertexDeclaration() const;
 
 		INLINE uint32 getVertexCount() const;
 		INLINE uint32 getVertexSize() const;
 
 		INLINE void setVertexCount(uint32 p_VertexCount);
 		INLINE void setVertexSize(uint32 p_VertexSize);
+
+		void setDirty(bool p_Dirty);
 	private:
+		IndexVertexMap m_VertexCache;
+		VertexDeclaration* m_Declaration;
 		uint32 m_VertexCount;
 		uint32 m_VertexSize;
 	};// end of VertexBuffer class declaration

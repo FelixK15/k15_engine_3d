@@ -91,12 +91,10 @@ namespace K15_Engine { namespace Rendering {
 			BA_COUNT
 		};// BufferAccess
 		/*********************************************************************************/
-		static const int32 LOCK_WHOLE_BUFFER = -1;
-		/*********************************************************************************/
-
+		
 	public:
-		GpuBuffer(Enum p_BufferType, Enum p_LockOption = UO_DYNAMIC, Enum p_UsageOption = LO_NORMAL, Enum p_AccessOption = BA_READ_WRITE, bool p_ShadowCopyEnabled = false);
-		GpuBuffer(Enum p_BufferType, uint32 p_InitialDataSize, byte* p_InitialData, uint32 p_InitialDataOffset = 0,Enum p_LockOption = UO_DYNAMIC, Enum p_UsageOption = UO_DYNAMIC, Enum p_AccessOption = BA_READ_WRITE, bool p_ShadowCopyEnabled = false);
+		GpuBuffer(Enum p_BufferType, Enum p_LockOption = UO_DYNAMIC, Enum p_UsageOption = LO_NORMAL, Enum p_AccessOption = BA_READ_WRITE);
+		GpuBuffer(Enum p_BufferType, uint32 p_InitialDataSize, byte* p_InitialData, uint32 p_InitialDataOffset = 0,Enum p_LockOption = UO_DYNAMIC, Enum p_UsageOption = UO_DYNAMIC, Enum p_AccessOption = BA_READ_WRITE);
 		~GpuBuffer();
 
 		INLINE void setShadowCopyEnabled(bool p_Enabled);
@@ -115,22 +113,27 @@ namespace K15_Engine { namespace Rendering {
 		INLINE uint32 getShadowCopySize() const;
 
 		INLINE uint32 getSize() const;
-    INLINE uint32 getUsedSize() const;
+		INLINE uint32 getUsedSize() const;
 
 		INLINE bool isLocked() const;
 
-		void lock(uint32 p_StartPos = 0, int32 p_Count = LOCK_WHOLE_BUFFER);
+		INLINE bool isDirty() const;
+		virtual void setDirty(bool p_Dirty);
+
+		void lock(uint32 p_StartPos = 0, int32 p_Count = 0);
 		void unlock();
 
-		bool allocate(uint32 p_Size);
-		
-		uint32 readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset = 0, bool p_FromShadowCopy = false);
-		uint32 writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset = 0);
+		bool allocate(uint32 p_Size, bool p_AllocateFromGpuBuffer);
+
+		uint32 readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset = 0, bool p_ReadFromGpuBuffer);
+		uint32 writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset = 0, bool p_WriteToGpuBuffer);
+
+		bool uploadShadowBufferToGpu();
 
 		INLINE const GpuBufferImplBase* getImpl() const;
 
 	private:
-		void writeToShadowCopy(uint32 p_Size, byte* p_Destination, uint32 p_Offset);
+		uint32 writeToShadowCopy(uint32 p_Size, byte* p_Destination, uint32 p_Offset);
 		uint32 readFromShadowCopy(uint32 p_Size, byte* p_Destination, uint32 p_Offset);
 
 	protected:
@@ -138,13 +141,13 @@ namespace K15_Engine { namespace Rendering {
 		byte* m_ShadowCopy;
 		uint32 m_ShadowCopySize;
 		uint32 m_Size;
-    uint32 m_UsedSize;
+		uint32 m_UsedSize;
 		Enum m_LockOption;
 		Enum m_UsageOption;
 		Enum m_BufferType;
 		Enum m_AccessOption;
 		bool m_Locked;
-		bool m_ShadowCopyEnabled;
+		bool m_Dirty;
 	};// end of GpuBuffer class declaration
 	#include "K15_GpuBuffer.inl"
 }}// end of K15_Engine::Renderer namespace

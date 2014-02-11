@@ -360,6 +360,9 @@
     <ClInclude Include="..\..\engine\include\K15_IOUtil.h">
       <Filter>Core\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Vertex.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -758,6 +761,7 @@
     <None Include="..\..\engine\include\K15_SubMesh.inl">
       <Filter>Rendering\include</Filter>
     </None>
+    <None Include="..\..\engine\include\K15_Vertex.inl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />

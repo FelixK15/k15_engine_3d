@@ -47,11 +47,11 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	GpuBuffer::GpuBuffer(Enum p_BufferType, Enum p_LockOption, Enum p_UsageOption, Enum p_AccessOption, bool p_ShadowCopyEnabled)
+	GpuBuffer::GpuBuffer(Enum p_BufferType, Enum p_LockOption, Enum p_UsageOption, Enum p_AccessOption)
 		: m_Locked(false),
 		m_LockOption(p_LockOption),
 		m_UsageOption(p_UsageOption),
-		m_ShadowCopyEnabled(true),
+		m_Dirty(false),
 		m_ShadowCopySize(0),
 		m_ShadowCopy(0),
 		m_Size(0),
@@ -63,11 +63,11 @@ namespace K15_Engine { namespace Rendering {
 		m_Impl->setBuffer(this);
  	}
 	/*********************************************************************************/
-	GpuBuffer::GpuBuffer(Enum p_BufferType, uint32 p_InitialDataSize, byte* p_InitialData, uint32 p_InitialDataOffset, Enum p_LockOption, Enum p_UsageOption, Enum p_AccessOption, bool p_ShadowCopyEnabled)
+	GpuBuffer::GpuBuffer(Enum p_BufferType, uint32 p_InitialDataSize, byte* p_InitialData, uint32 p_InitialDataOffset, Enum p_LockOption, Enum p_UsageOption, Enum p_AccessOption)
 		: m_Locked(false),
 		m_LockOption(p_LockOption),
 		m_ShadowCopy(p_InitialData),
-		m_ShadowCopyEnabled(true),
+		m_Dirty(false),
 		m_ShadowCopySize(p_InitialDataSize),
 		m_UsageOption(p_UsageOption),
 		m_BufferType(p_BufferType),
@@ -109,63 +109,63 @@ namespace K15_Engine { namespace Rendering {
 		}
 	}
 	/*********************************************************************************/
-	uint32 GpuBuffer::readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset, bool p_FromShadowCopy)
+	uint32 GpuBuffer::readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset, bool p_ReadFromGpuBuffer)
 	{
-		bool wasLocked = false;
-		if(!m_AccessOption == BA_WRITE_ONLY)
+		K15_ASSERT(p_Size + p_Offset <= m_ShadowCopySize,"Trying to read out of bounds.");
+
+		if(!p_ReadFromGpuBuffer)
 		{
-			_LogWarning("Not allowed to read directly from GPU buffer due to limited access option (Buffer is write only)...Trying to read from shadow copy.");
-			p_FromShadowCopy = true;
+			return readFromShadowCopy(p_Size,p_Destination,p_Offset);
 		}
 
-		if(p_FromShadowCopy)
-		{
-			if(getShadowCopyEnabled())
-			{
-				return readFromShadowCopy(p_Size,p_Destination,p_Offset);
-			}
-			else
-			{
-				_LogError("Shadow copy not enabled. Can't read any data.");
-				return 0;
-			}
-		}
+		bool wasLocked = true;
 
 		if(!isLocked())
 		{
-			wasLocked = true;
-			lock(p_FromShadowCopy,p_Size);
+			lock(p_Offset,p_Size);
+			wasLocked = false;
 		}
 
-		uint32 dataCount = m_Impl->readData(p_Size,p_Destination,p_Offset);
+		uint32 bytesRead = m_Impl->readData(p_Size,p_Destination,p_Offset);
+
+		K15_ASSERT(bytesRead == p_Size,
+			StringUtil::format("Could not read %ubytes from GpuBuffer. Only read %ubytes.",p_Size,bytesRead));
 
 		if(wasLocked)
 		{
 			unlock();
 		}
 
-		return dataCount;
+		return bytesRead;
 	}
 	/*********************************************************************************/
-	uint32 GpuBuffer::writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset)
+	uint32 GpuBuffer::writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset, bool p_WriteToGpuBuffer)
 	{
-		bool wasLocked = false;
-		if(m_AccessOption == BA_READ_ONLY)
+		if(m_AccessOption == BA_READ_ONLY && p_WriteToGpuBuffer)
 		{
 			_LogWarning("Not allowed to write directly to GPU buffer due to limited access option. (Buffer is read only)");
 			return 0;
 		}
 
-		if(getShadowCopyEnabled())
-		{
-			writeToShadowCopy(p_Size,p_Source,p_Offset);
-		}
-
 		if(m_Size < p_Size + p_Offset)
 		{
-			K15_ASSERT(allocate(p_Size + p_Offset),"Could not allocate memory for GpuBuffer.");
-			//m_Impl->writeData(p_Size,p_Source,0); //write back shadow copy
+			K15_ASSERT(allocate(p_Size + p_Offset,p_WriteToGpuBuffer),"Could not allocate memory for GpuBuffer.");
 		}
+
+		m_Dirty = true;
+		if(p_WriteToGpuBuffer)
+		{
+			if(p_Source != m_ShadowCopy)
+			{
+				writeToShadowCopy(p_Size,p_Source,p_Offset);
+			}
+		}
+		else
+		{
+			return writeToShadowCopy(p_Size,p_Source,p_Offset);
+		}
+		
+		bool wasLocked = false;
 
 		if(!isLocked())
 		{
@@ -173,38 +173,23 @@ namespace K15_Engine { namespace Rendering {
 			wasLocked = true;
 		}
 
-		uint32 dataCount = m_Impl->writeData(p_Size,p_Source,p_Offset);
-
-		m_UsedSize += dataCount;
+		uint32 bytesWritten = m_Impl->writeData(p_Size,p_Source,p_Offset);
+		m_Dirty = false;
+		m_UsedSize += bytesWritten;
 
 		if(wasLocked)
 		{
 			unlock();
 		}
 
-		return dataCount;
+		return bytesWritten;
 	}
 	/*********************************************************************************/
-	void GpuBuffer::writeToShadowCopy(uint32 p_Size, byte* p_Source, uint32 p_Offset)
+	uint32 GpuBuffer::writeToShadowCopy(uint32 p_Size, byte* p_Source, uint32 p_Offset)
 	{
-		if(p_Size > m_ShadowCopySize || !m_ShadowCopy)
-		{
-			//create a new shadow buffer
-			byte* buffer = new byte[p_Size];
-			memcpy(buffer,p_Source + p_Offset,p_Size);
-			memset(buffer,0,p_Size);
+		memcpy(m_ShadowCopy,p_Source + p_Offset,p_Size);
 
-			if(m_ShadowCopy)
-			{
-				delete[] m_ShadowCopy;
-			}
-
-			m_ShadowCopy = buffer;
-		}
-		else
-		{
-			memcpy(m_ShadowCopy,p_Source + p_Offset,p_Size);
-		}
+		return p_Size;
 	}
 	/*********************************************************************************/
 	uint32 GpuBuffer::readFromShadowCopy(uint32 p_Size, byte* p_Destination, uint32 p_Offset)
@@ -214,16 +199,47 @@ namespace K15_Engine { namespace Rendering {
 		return p_Size;
 	}
 	/*********************************************************************************/
-	bool GpuBuffer::allocate(uint32 p_Size)
+	bool GpuBuffer::allocate(uint32 p_Size, bool p_AllocateFromGpuBuffer)
 	{
+		if(!p_AllocateFromGpuBuffer)
+		{
+			byte* newShadowCopy = K15_NEW_SIZE(Allocators[AC_RENDERING],p_Size) byte;
+
+			if(m_ShadowCopy)
+			{
+				memcpy(newShadowCopy,m_ShadowCopy,m_ShadowCopySize);
+				K15_DELETE_SIZE(Allocators[AC_RENDERING],m_ShadowCopy,m_ShadowCopySize);
+			}
+
+			m_ShadowCopy = newShadowCopy;
+
+			m_ShadowCopySize = p_Size;
+
+			return true;
+		}
+		
 		if(m_Impl->allocate(p_Size))
 		{
 			m_Size = p_Size;
-			m_UsedSize = 0;
 			return true;
 		}
 
 		return false;
+	}
+	/*********************************************************************************/
+	bool GpuBuffer::uploadShadowBufferToGpu()
+	{
+		if(m_Dirty)
+		{
+			return writeData(m_ShadowCopySize,m_ShadowCopy,0,true) == m_ShadowCopySize;
+		}
+
+		return true;
+	}
+	/*********************************************************************************/
+	void GpuBuffer::setDirty(bool p_Dirty)
+	{
+		m_Dirty = p_Dirty;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace

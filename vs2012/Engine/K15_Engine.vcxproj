@@ -262,6 +262,7 @@
     <ClInclude Include="..\..\engine\include\K15_TrueTypeFont.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Vertex.h" />
     <ClInclude Include="..\..\engine\include\K15_VertexBuffer.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -484,6 +485,7 @@
     <None Include="..\..\engine\include\K15_Texture.inl" />
     <None Include="..\..\engine\include\K15_TextureSampler.inl" />
     <None Include="..\..\engine\include\K15_ThreadSafe.inl" />
+    <None Include="..\..\engine\include\K15_Vertex.inl" />
     <None Include="..\..\engine\include\K15_VertexBuffer.inl" />
     <None Include="..\..\engine\include\K15_VertexDeclaration.inl" />
     <None Include="..\..\engine\src\K15_CameraComponent.cpp" />

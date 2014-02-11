@@ -54,6 +54,7 @@ namespace K15_Engine { namespace Core {
 			//Pools
 			AC_RENDEROP_POOL,
 			AC_PROFILING_NODE_POOL,
+			AC_VERTEX_POOL,
 			AC_COUNT
 		}; //AllocationCategory
 		/*********************************************************************************/

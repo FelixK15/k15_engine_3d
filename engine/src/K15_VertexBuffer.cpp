@@ -19,6 +19,7 @@
 
 #include "K15_PrecompiledHeader.h"
 
+#include "K15_Vertex.h"
 #include "K15_VertexBuffer.h"
 #include "K15_VertexDeclaration.h"
 
@@ -34,6 +35,33 @@ namespace K15_Engine { namespace Rendering {
 	VertexBuffer::~VertexBuffer()
 	{
 
+	}
+	/*********************************************************************************/
+	Vertex* VertexBuffer::getVertex(uint32 p_Index)
+	{
+		K15_ASSERT(p_Index <= m_Declaration->getElementCount(),"Tried to access out of bounds.");
+
+		IndexVertexMap::iterator iter = m_VertexCache.find(p_Index);
+
+		if(iter == m_VertexCache.end())
+		{
+			VertexElement element = m_Declaration->getElement(p_Index);
+			Vertex* vertex = K15_NEW Vertex(this,m_Declaration);
+
+			return vertex;
+		}
+
+		return iter->second;
+	}
+	/*********************************************************************************/
+	void VertexBuffer::setDirty(bool p_Dirty)
+	{
+		GpuBuffer::setDirty(p_Dirty);
+
+		if(p_Dirty == false)
+		{
+
+		}
 	}
 	/*********************************************************************************/
 // 	uint32 VertexBuffer::getVertexSize() const
