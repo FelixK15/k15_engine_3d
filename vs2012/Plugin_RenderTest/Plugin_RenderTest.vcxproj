@@ -42,7 +42,7 @@
     <OutDir>..\..\plugins\rendertest\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>..\..\plugins\rendertest\obj\</IntDir>
     <IncludePath>..\..\engine\include\;..\..\plugins\rendertest\include\;..\..\math\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\engine\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\engine\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;..\..\math\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>..\..\plugins\rendertest\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
@@ -58,7 +58,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>K15_Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>K15_Engine.lib;K15_Math.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>module.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>

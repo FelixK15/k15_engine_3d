@@ -25,16 +25,21 @@
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
-	VertexBuffer::VertexBuffer()
-		: GpuBuffer(GpuBuffer::BT_VERTEX_BUFFER,GpuBuffer::LO_DISCARD,GpuBuffer::UO_STATIC,GpuBuffer::BA_WRITE_ONLY,false),
-		m_VertexCount(0)
+	VertexBuffer::VertexBuffer(const CreationOptions& p_Options)
+		: GpuBuffer(p_Options),
+		m_Declaration(p_Options.VertexLayout)
 	{
-
+		
 	}
 	/*********************************************************************************/
 	VertexBuffer::~VertexBuffer()
 	{
+		for(IndexVertexMap::iterator iter = m_VertexCache.begin();iter != m_VertexCache.end();++iter)
+		{
+			K15_DELETE iter->second;
+		}
 
+		m_VertexCache.clear();
 	}
 	/*********************************************************************************/
 	Vertex* VertexBuffer::getVertex(uint32 p_Index)
@@ -46,7 +51,9 @@ namespace K15_Engine { namespace Rendering {
 		if(iter == m_VertexCache.end())
 		{
 			VertexElement element = m_Declaration->getElement(p_Index);
-			Vertex* vertex = K15_NEW Vertex(this,m_Declaration);
+			Vertex* vertex = K15_NEW Vertex(this,p_Index);
+
+			m_VertexCache.insert(Pair(uint32,Vertex*)(p_Index,vertex));
 
 			return vertex;
 		}
@@ -54,24 +61,24 @@ namespace K15_Engine { namespace Rendering {
 		return iter->second;
 	}
 	/*********************************************************************************/
-	void VertexBuffer::setDirty(bool p_Dirty)
+	uint32 VertexBuffer::getVertexSize() const
 	{
-		GpuBuffer::setDirty(p_Dirty);
-
-		if(p_Dirty == false)
+		if(m_Declaration)
 		{
-
+			  return m_Declaration->getVertexSize();
 		}
+		
+		return 0;
 	}
 	/*********************************************************************************/
-// 	uint32 VertexBuffer::getVertexSize() const
-// 	{
-//     if(m_Declaration)
-//     {
-// 		  return m_Declaration->getVertexSize();
-//     }
-// 
-//     return 0;
-//   }
+	uint32 VertexBuffer::getVertexCount() const
+	{
+		if(m_Declaration)
+		{
+			return getSize() / m_Declaration->getVertexSize();
+		}
+
+		return 0;
+	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

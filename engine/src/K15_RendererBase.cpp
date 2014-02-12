@@ -400,31 +400,48 @@ namespace K15_Engine { namespace Rendering {
 	{
 		K15_ASSERT(p_BufferType < GpuBuffer::BT_COUNT,StringUtil::format("Invalid GpuBuffer type. %u",p_BufferType));
 
-		if(m_GpuBuffers[p_BufferType] != p_Buffer && p_Buffer)
+		if(p_Buffer)
 		{
-			m_GpuBuffers[p_BufferType] = p_Buffer;
-			_bindBuffer(p_Buffer,p_BufferType);
-
-			if(errorOccured())
+			if(p_Buffer->isDirty())
 			{
-				char* type = 0;
+				p_Buffer->uploadShadowBufferToGpu();
+			}
 
-				switch(p_BufferType)
+			if(m_GpuBuffers[p_BufferType] != p_Buffer)
+			{
+				m_GpuBuffers[p_BufferType] = p_Buffer;
+				_bindBuffer(p_Buffer,p_BufferType);
+
+				if(errorOccured())
 				{
+					char* type = 0;
+
+					switch(p_BufferType)
+					{
 					case GpuBuffer::BT_INDEX_BUFFER:
 						type = "Index Buffer";
-					break;
+						break;
 					case GpuBuffer::BT_VERTEX_BUFFER:
 						type = "Vertex Buffer";
-					break;
-				}
+						break;
+					}
 
-				_LogError("Error during buffer binding. Buffer type \"%s\". %s",type,getLastError().c_str());
-				return false;
+					_LogError("Error during buffer binding. Buffer type \"%s\". %s",type,getLastError().c_str());
+					return false;
+				}
 			}
 		}
 
 		return true;
+	}
+	/*********************************************************************************/
+	GpuBuffer* RendererBase::getBoundBuffer(Enum p_BufferType) const
+	{
+		K15_ASSERT(p_BufferType >= 0 && p_BufferType <= GpuBuffer::BT_COUNT,
+			StringUtil::format("Invalid GpuBuffer type. %u",p_BufferType));
+
+		return m_GpuBuffers[p_BufferType];
+		
 	}
 	/*********************************************************************************/
 	bool RendererBase::draw(RenderOperation* p_Rop)
@@ -434,7 +451,7 @@ namespace K15_Engine { namespace Rendering {
 		
 		if(!bindBuffer(p_Rop->vertexBuffer,GpuBuffer::BT_VERTEX_BUFFER) ||
 		   !bindBuffer(p_Rop->indexBuffer,GpuBuffer::BT_INDEX_BUFFER) ||
-		   !bindMaterial(p_Rop->material) || !setVertexDeclaration(p_Rop->vertexDeclaration) ||
+		   !bindMaterial(p_Rop->material) || !setVertexDeclaration(p_Rop->vertexBuffer->getVertexDeclaration()) ||
 		   !setTopology(p_Rop->topology))
 		{
 			return false;

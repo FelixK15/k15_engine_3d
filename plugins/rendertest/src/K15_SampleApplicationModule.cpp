@@ -22,6 +22,9 @@
 #include "K15_InputManager.h"
 #include "K15_Keyboard.h"
 #include "K15_RendererBase.h"
+#include "K15_Vertex.h"
+#include "K15_Vector4.h"
+#include "K15_VertexDeclaration.h"
 #include "K15_RenderTask.h"
 #include "K15_RenderSampleProcess.h"
 
@@ -69,6 +72,25 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 		if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_F1))
 		{
 			_dumpMemoryStatistics();
+		}
+
+		if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_UP))
+		{
+			VertexBuffer* buff = (VertexBuffer*)g_Application->getRenderer()->getBoundBuffer(GpuBuffer::BT_VERTEX_BUFFER);
+			Vertex* vertex = buff->getVertex(1);
+
+			Math::Vector4 pos = vertex->get<Vector4>(VertexElement::ES_POSITION);
+			pos.y += 0.02f;
+			vertex->set<Vector4>(pos,VertexElement::ES_POSITION);
+		}
+		else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_DOWN))
+		{
+			VertexBuffer* buff = (VertexBuffer*)g_Application->getRenderer()->getBoundBuffer(GpuBuffer::BT_VERTEX_BUFFER);
+			Vertex* vertex = buff->getVertex(1);
+
+			Math::Vector4 pos = vertex->get<Vector4>(VertexElement::ES_POSITION);
+			pos.y -= 0.02f;
+			vertex->set<Vector4>(pos,VertexElement::ES_POSITION);
 		}
 	}
 	/*********************************************************************************/

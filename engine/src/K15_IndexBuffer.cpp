@@ -31,11 +31,11 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	IndexBuffer::IndexBuffer()
-		: GpuBuffer(GpuBuffer::BT_INDEX_BUFFER,GpuBuffer::LO_DISCARD,GpuBuffer::UO_STATIC,GpuBuffer::BA_WRITE_ONLY,false),
-		m_IndexType(IT_UINT8)
+	IndexBuffer::IndexBuffer(const CreationOptions& p_Options)
+		: GpuBuffer(p_Options),
+		m_IndexType(p_Options.IndexType)
 	{
-
+		setIndexType(p_Options.IndexType);
 	}
 	/*********************************************************************************/
 	IndexBuffer::~IndexBuffer()

@@ -29,6 +29,8 @@
 #	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
+#include "K15_RawData.h"
+
 namespace K15_Engine { namespace Rendering { 
 	/*********************************************************************************/
 	class K15_CORE_API GpuBufferImplBase : public RenderingAllocatedObject
@@ -56,6 +58,21 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	class K15_CORE_API GpuBuffer : public RenderingAllocatedObject
 	{
+	public:
+		/*********************************************************************************/
+		struct K15_CORE_API CreationOptions
+		{
+			Enum BufferType;
+			Enum LockOption;
+			Enum UsageOption;
+			Enum AccessOption;
+			Enum IndexType;
+			VertexDeclaration* VertexLayout;
+			RawData InitialData;
+
+			CreationOptions();
+		}; // end of GpuBuffer::CreationOptions class declaration
+		/*********************************************************************************/
 	public:
 		/*********************************************************************************/
 		enum eUsageOptions
@@ -91,10 +108,13 @@ namespace K15_Engine { namespace Rendering {
 			BA_COUNT
 		};// BufferAccess
 		/*********************************************************************************/
-		
 	public:
-		GpuBuffer(Enum p_BufferType, Enum p_LockOption = UO_DYNAMIC, Enum p_UsageOption = LO_NORMAL, Enum p_AccessOption = BA_READ_WRITE);
-		GpuBuffer(Enum p_BufferType, uint32 p_InitialDataSize, byte* p_InitialData, uint32 p_InitialDataOffset = 0,Enum p_LockOption = UO_DYNAMIC, Enum p_UsageOption = UO_DYNAMIC, Enum p_AccessOption = BA_READ_WRITE);
+		/*********************************************************************************/
+		static const CreationOptions DefaultOptions;
+		/*********************************************************************************/
+
+	public:
+		GpuBuffer(const CreationOptions& p_Options = DefaultOptions);
 		~GpuBuffer();
 
 		INLINE void setShadowCopyEnabled(bool p_Enabled);
@@ -118,15 +138,15 @@ namespace K15_Engine { namespace Rendering {
 		INLINE bool isLocked() const;
 
 		INLINE bool isDirty() const;
-		virtual void setDirty(bool p_Dirty);
+		INLINE void setDirty(bool p_Dirty);
 
 		void lock(uint32 p_StartPos = 0, int32 p_Count = 0);
 		void unlock();
 
 		bool allocate(uint32 p_Size, bool p_AllocateFromGpuBuffer);
 
-		uint32 readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset = 0, bool p_ReadFromGpuBuffer);
-		uint32 writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset = 0, bool p_WriteToGpuBuffer);
+		uint32 readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset = 0, bool p_ReadFromGpuBuffer = false);
+		uint32 writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset = 0, bool p_WriteToGpuBuffer = false);
 
 		bool uploadShadowBufferToGpu();
 

@@ -49,14 +49,24 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 		MaterialPass* pass = m_Material->getPass(0,true);
 		m_VertexShader = K15_NEW GpuProgram(GpuProgram::PS_VERTEX);
 		m_FragmetShader = K15_NEW GpuProgram(GpuProgram::PS_FRAGMENT);
-		m_VertexBuffer = K15_NEW VertexBuffer();
-		m_IndexBuffer = K15_NEW IndexBuffer();
+		
+
 		m_VertexDeclaration = K15_NEW VertexDeclaration("PF4CF4");
 
-		m_IndexBuffer->setIndexType(IndexBuffer::IT_UINT16);
+		VertexBuffer::CreationOptions optionsVB;
+		IndexBuffer::CreationOptions optionsIB;
+		optionsVB.BufferType = GpuBuffer::BT_VERTEX_BUFFER;
+		optionsVB.VertexLayout = m_VertexDeclaration;
+		optionsVB.InitialData.data = (byte*)vertexData;
+		optionsVB.InitialData.size = sizeof(vertexData);
 
-		m_VertexBuffer->setVertexCount(3);
-		m_VertexBuffer->setVertexSize(sizeof(vertexData) / 3);
+		optionsIB.BufferType = GpuBuffer::BT_INDEX_BUFFER;
+		optionsIB.IndexType = IndexBuffer::IT_UINT16;
+		optionsIB.InitialData.data = (byte*)indexData;
+		optionsIB.InitialData.size = sizeof(indexData);
+
+		m_VertexBuffer = K15_NEW VertexBuffer(optionsVB);
+		m_IndexBuffer = K15_NEW IndexBuffer(optionsIB);
 
 		m_VertexBuffer->writeData(sizeof(vertexData),(byte*)vertexData);
 		m_IndexBuffer->writeData(sizeof(indexData),(byte*)indexData);
@@ -79,7 +89,6 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 		m_Rop->indexBuffer = m_IndexBuffer;
 		m_Rop->material = m_Material;
 		m_Rop->topology = RenderOperation::T_TRIANGLE;
-		m_Rop->vertexDeclaration = m_VertexDeclaration;
 	}
 	/*********************************************************************************/
 	RenderSampleProcess::~RenderSampleProcess()

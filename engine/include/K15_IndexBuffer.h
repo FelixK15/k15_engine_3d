@@ -48,13 +48,13 @@ namespace K15_Engine { namespace Rendering {
 		/*********************************************************************************/
 
 	public:
-		IndexBuffer();
+		IndexBuffer(const CreationOptions& p_Options = DefaultOptions);
 		virtual ~IndexBuffer();
 
 		INLINE Enum getIndexType() const;
 		INLINE void setIndexType(Enum p_IndexType);
 
-    INLINE uint32 getIndexCount() const;
+		INLINE uint32 getIndexCount() const;
 
 	protected:
 		Enum m_IndexType;

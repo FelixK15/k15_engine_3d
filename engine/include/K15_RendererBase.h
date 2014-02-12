@@ -189,6 +189,8 @@ namespace K15_Engine { namespace Rendering {
 		bool bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType);
 		bool bindMaterial(Material* p_Material);
 
+		INLINE GpuBuffer* getBoundBuffer(Enum p_BufferType) const;
+
 		bool setVertexDeclaration(VertexDeclaration* p_Declaration);
 		INLINE VertexDeclaration* getVertexDeclaration() const; 
 

@@ -361,7 +361,7 @@
       <Filter>Core\include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_Vertex.h">
-      <Filter>Rendering</Filter>
+      <Filter>Rendering\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -596,6 +596,9 @@
     <ClCompile Include="..\..\engine\src\K15_IOUtil.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_Vertex.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -761,7 +764,9 @@
     <None Include="..\..\engine\include\K15_SubMesh.inl">
       <Filter>Rendering\include</Filter>
     </None>
-    <None Include="..\..\engine\include\K15_Vertex.inl" />
+    <None Include="..\..\engine\include\K15_Vertex.inl">
+      <Filter>Rendering\include</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />

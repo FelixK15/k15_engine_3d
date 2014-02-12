@@ -18,11 +18,6 @@
  */
 
 /*********************************************************************************/
-void GpuBuffer::setShadowCopyEnabled(bool p_Enabled)
-{
-	m_ShadowCopyEnabled = p_Enabled;
-}
-/*********************************************************************************/
 void GpuBuffer::setLockOption(Enum p_LockOption)
 {
 	m_LockOption = p_LockOption;
@@ -58,11 +53,6 @@ Enum GpuBuffer::getAccessOption() const
 	return m_AccessOption;
 }
 /*********************************************************************************/
-bool GpuBuffer::getShadowCopyEnabled() const
-{
-	return m_ShadowCopyEnabled;
-}
-/*********************************************************************************/
 byte* GpuBuffer::getShadowCopy() const
 {
 	return m_ShadowCopy;
@@ -96,5 +86,10 @@ const GpuBufferImplBase* GpuBuffer::getImpl() const
 bool GpuBuffer::isDirty() const
 {
 	return m_Dirty;
+}
+/*********************************************************************************/
+void GpuBuffer::setDirty(bool p_Dirty)
+{
+	m_Dirty = p_Dirty;
 }
 /*********************************************************************************/

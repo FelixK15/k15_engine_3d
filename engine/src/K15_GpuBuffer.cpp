@@ -21,8 +21,26 @@
 #include "K15_GpuBuffer.h"
 #include "K15_RendererBase.h"
 #include "K15_LogManager.h"
+#include "K15_IndexBuffer.h"
 
 namespace K15_Engine { namespace Rendering {
+	/*********************************************************************************/
+	const GpuBuffer::CreationOptions GpuBuffer::DefaultOptions = GpuBuffer::CreationOptions();
+	/*********************************************************************************/
+
+	/*********************************************************************************/
+	GpuBuffer::CreationOptions::CreationOptions()
+		: BufferType(GpuBuffer::BT_VERTEX_BUFFER),
+		LockOption(GpuBuffer::LO_NORMAL),
+		UsageOption(GpuBuffer::UO_DYNAMIC),
+		AccessOption(GpuBuffer::BA_READ_WRITE),
+		IndexType(IndexBuffer::IT_UINT16),
+		VertexLayout(0)
+	{
+
+	}
+	/*********************************************************************************/
+
 	/*********************************************************************************/
 	GpuBufferImplBase::GpuBufferImplBase()
 		: m_Buffer(0)
@@ -47,36 +65,29 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	GpuBuffer::GpuBuffer(Enum p_BufferType, Enum p_LockOption, Enum p_UsageOption, Enum p_AccessOption)
+	GpuBuffer::GpuBuffer(const CreationOptions& p_Options)
 		: m_Locked(false),
-		m_LockOption(p_LockOption),
-		m_UsageOption(p_UsageOption),
+		m_LockOption(p_Options.LockOption),
+		m_ShadowCopy(0),
 		m_Dirty(false),
 		m_ShadowCopySize(0),
-		m_ShadowCopy(0),
-		m_Size(0),
-		m_UsedSize(0),
-		m_BufferType(p_BufferType),
-		m_AccessOption(p_AccessOption)
-	{
- 		m_Impl = g_Application->getRenderer()->createGpuBufferImpl();
-		m_Impl->setBuffer(this);
- 	}
-	/*********************************************************************************/
-	GpuBuffer::GpuBuffer(Enum p_BufferType, uint32 p_InitialDataSize, byte* p_InitialData, uint32 p_InitialDataOffset, Enum p_LockOption, Enum p_UsageOption, Enum p_AccessOption)
-		: m_Locked(false),
-		m_LockOption(p_LockOption),
-		m_ShadowCopy(p_InitialData),
-		m_Dirty(false),
-		m_ShadowCopySize(p_InitialDataSize),
-		m_UsageOption(p_UsageOption),
-		m_BufferType(p_BufferType),
-		m_AccessOption(p_AccessOption),
+		m_UsageOption(p_Options.UsageOption),
+		m_BufferType(p_Options.BufferType),
+		m_AccessOption(p_Options.AccessOption),
 		m_Size(0),
 		m_UsedSize(0)
 	{
+		K15_ASSERT(m_UsageOption >= 0 && m_UsageOption < UO_COUNT,"Invalid usage option.");
+		K15_ASSERT(m_AccessOption >= 0 && m_AccessOption < BA_COUNT,"Invalid access option.");
+		K15_ASSERT(m_BufferType >= 0 && m_BufferType < BT_COUNT,"Invalid buffer type.");
+		K15_ASSERT(m_LockOption >= 0 && m_LockOption < LO_COUNT,"Invalid lock option.");
+
  		m_Impl = g_Application->getRenderer()->createGpuBufferImpl();
-		writeData(p_InitialDataSize,p_InitialData,p_InitialDataOffset);
+		m_Impl->setBuffer(this);
+		if(p_Options.InitialData.size > 0)
+		{
+			writeData(p_Options.InitialData.size,p_Options.InitialData.data,0);
+		}
 	}
 	/*********************************************************************************/
 	GpuBuffer::~GpuBuffer()
@@ -85,7 +96,7 @@ namespace K15_Engine { namespace Rendering {
 
 		if(m_ShadowCopy)
 		{
-			K15_DELETE[] m_ShadowCopy;
+			K15_DELETE_SIZE(Allocators[AC_RENDERING],m_ShadowCopy,m_ShadowCopySize);
 		}
 	}
 	/*********************************************************************************/
@@ -187,7 +198,7 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	uint32 GpuBuffer::writeToShadowCopy(uint32 p_Size, byte* p_Source, uint32 p_Offset)
 	{
-		memcpy(m_ShadowCopy,p_Source + p_Offset,p_Size);
+		memcpy(m_ShadowCopy + p_Offset,p_Source,p_Size);
 
 		return p_Size;
 	}
@@ -235,11 +246,6 @@ namespace K15_Engine { namespace Rendering {
 		}
 
 		return true;
-	}
-	/*********************************************************************************/
-	void GpuBuffer::setDirty(bool p_Dirty)
-	{
-		m_Dirty = p_Dirty;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace

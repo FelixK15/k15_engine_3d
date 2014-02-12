@@ -1,8 +1,8 @@
 /**
- * @file K15_VertexBuffer.inl
+ * @file K15_Vertex.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/12/09
+ * @date 2014/02/12
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -17,14 +17,23 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-/*********************************************************************************/
-void VertexBuffer::setVertexDeclaration(VertexDeclaration* p_Declaration)
-{
-	m_Declaration = p_Declaration;
-}
-/*********************************************************************************/
-VertexDeclaration* VertexBuffer::getVertexDeclaration() const
-{
-	return m_Declaration;
-}
-/*********************************************************************************/
+#include "K15_PrecompiledHeader.h"
+
+#include "K15_Vertex.h"
+
+namespace K15_Engine { namespace Rendering {
+	/*********************************************************************************/
+	Vertex::Vertex(VertexBuffer* p_Buffer, uint32 p_Index)
+		: m_Buffer(p_Buffer),
+		m_Index(p_Index)
+	{
+
+	}
+	/*********************************************************************************/
+	Vertex::~Vertex()
+	{
+
+	}
+	/*********************************************************************************/
+
+}}// end of K15_Engine::Rendering namespace

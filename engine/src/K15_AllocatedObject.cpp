@@ -26,6 +26,7 @@
 #include "K15_MemoryBlock.h"
 #include "K15_ProfilingNode.h"
 #include "K15_RenderOperation.h"
+#include "K15_Vertex.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/

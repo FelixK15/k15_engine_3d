@@ -38,7 +38,7 @@ namespace K15_Engine { namespace Rendering {
 		typedef HashMap(uint32,Vertex*) IndexVertexMap;
 		/*********************************************************************************/
 	public:
-		VertexBuffer();
+		VertexBuffer(const CreationOptions& p_Options = DefaultOptions);
 		virtual ~VertexBuffer();
 
 		Vertex* getVertex(uint32 p_Index);
@@ -46,18 +46,11 @@ namespace K15_Engine { namespace Rendering {
 		INLINE void setVertexDeclaration(VertexDeclaration* p_Declaration);
 		INLINE VertexDeclaration* getVertexDeclaration() const;
 
-		INLINE uint32 getVertexCount() const;
-		INLINE uint32 getVertexSize() const;
-
-		INLINE void setVertexCount(uint32 p_VertexCount);
-		INLINE void setVertexSize(uint32 p_VertexSize);
-
-		void setDirty(bool p_Dirty);
+		uint32 getVertexCount() const;
+		uint32 getVertexSize() const;
 	private:
 		IndexVertexMap m_VertexCache;
 		VertexDeclaration* m_Declaration;
-		uint32 m_VertexCount;
-		uint32 m_VertexSize;
 	};// end of VertexBuffer class declaration
 #include "K15_VertexBuffer.inl"
 }}// end of K15_Engine::Core namespace
