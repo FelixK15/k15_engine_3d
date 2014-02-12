@@ -170,31 +170,7 @@ namespace K15_Engine { namespace Core {
 		* @return T - extracted numeric value
 		*/
 		template<typename T>
-		static T stringToNumeric(const String& p_String,const unsigned char p_Delimiter = '.')
-		{
-			static String tempString;
-			static T returnValue;
-			StringStream stream;
-
-			tempString.clear();
-
-			for(String::size_type i = 0;i < p_String.size();++i)
-			{
-				if(isdigit(p_String.at(i)) || p_String.at(i) == p_Delimiter)
-				{
-					tempString += p_String.at(i);
-				}
-			}
-
-			//insert string
-			stream << tempString;
-			//extract value
-			stream >> returnValue;
-
-			K15_ASSERT(!stream.fail(),format("Could not convert \"%s\" to numerical value.",p_String.c_str()));
-
-			return returnValue;
-		}
+		static T stringToNumeric(const String& p_String,const unsigned char p_Delimiter = '.');
 
 		/**
 		* Creates a string out of a given object
@@ -204,17 +180,10 @@ namespace K15_Engine { namespace Core {
 		* @return String - value as string
 		*/
 		template<typename T>
-		static String toString(const T& p_Value)
-		{
-			StringStream stream;
+		static String toString(const T& p_Value);
 
-			stream << p_Value;
-
-			K15_ASSERT(!stream.fail(),"Could not convert to string.");
-
-			return stream.str();
-		}
 	};//end of StringUtil class
+#	include "K15_StringUtil.inl"
 }}//end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_StringUtil_h_

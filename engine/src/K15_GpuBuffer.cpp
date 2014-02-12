@@ -42,6 +42,15 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 
 	/*********************************************************************************/
+	GpuBuffer::PendingChange::PendingChange(uint32 p_Size, uint32 p_Offset)
+		: size(p_Size),
+		offset(p_Offset)
+	{
+
+	}
+	/*********************************************************************************/
+
+	/*********************************************************************************/
 	GpuBufferImplBase::GpuBufferImplBase()
 		: m_Buffer(0)
 	{
@@ -126,7 +135,7 @@ namespace K15_Engine { namespace Rendering {
 
 		if(!p_ReadFromGpuBuffer)
 		{
-			return readFromShadowCopy(p_Size,p_Destination,p_Offset);
+			return _readFromShadowCopy(p_Size,p_Destination,p_Offset);
 		}
 
 		bool wasLocked = true;
@@ -168,12 +177,13 @@ namespace K15_Engine { namespace Rendering {
 		{
 			if(p_Source != m_ShadowCopy)
 			{
-				writeToShadowCopy(p_Size,p_Source,p_Offset);
+				_writeToShadowCopy(p_Size,p_Source,p_Offset);
 			}
 		}
 		else
 		{
-			return writeToShadowCopy(p_Size,p_Source,p_Offset);
+			_addPendingChange(p_Size,p_Offset);
+			return _writeToShadowCopy(p_Size,p_Source,p_Offset);
 		}
 		
 		bool wasLocked = false;
@@ -196,14 +206,14 @@ namespace K15_Engine { namespace Rendering {
 		return bytesWritten;
 	}
 	/*********************************************************************************/
-	uint32 GpuBuffer::writeToShadowCopy(uint32 p_Size, byte* p_Source, uint32 p_Offset)
+	uint32 GpuBuffer::_writeToShadowCopy(uint32 p_Size, byte* p_Source, uint32 p_Offset)
 	{
 		memcpy(m_ShadowCopy + p_Offset,p_Source,p_Size);
 
 		return p_Size;
 	}
 	/*********************************************************************************/
-	uint32 GpuBuffer::readFromShadowCopy(uint32 p_Size, byte* p_Destination, uint32 p_Offset)
+	uint32 GpuBuffer::_readFromShadowCopy(uint32 p_Size, byte* p_Destination, uint32 p_Offset)
 	{
 		memcpy(p_Destination,m_ShadowCopy + p_Offset,p_Size);
 
@@ -240,12 +250,65 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	bool GpuBuffer::uploadShadowBufferToGpu()
 	{
+		bool successful = true;
 		if(m_Dirty)
 		{
-			return writeData(m_ShadowCopySize,m_ShadowCopy,0,true) == m_ShadowCopySize;
+			for(uint32 i = 0;i < m_PendingChanges.size();++i)
+			{
+				PendingChange& change = m_PendingChanges.at(i);
+
+				if(writeData(change.size,m_ShadowCopy + change.offset,change.offset,true) != change.size)
+				{
+					successful = false;
+				}
+			}
+
+			m_PendingChanges.clear();
 		}
 
-		return true;
+		return successful;
 	}
+	/*********************************************************************************/
+	void GpuBuffer::_addPendingChange(uint32 p_Size, uint32 p_Offset)
+	{
+		for(uint32 i = 0; i < m_PendingChanges.size();++i)
+		{
+			PendingChange& change = m_PendingChanges.at(i);
+			
+			if(p_Offset >= change.offset && p_Offset < change.offset + change.size)
+			{
+				//we update previously updated memory
+				return;
+			}
+			else if(p_Offset + p_Size == change.offset)
+			{
+				//we can concatenate two changes as they're consecutive
+				change.offset = p_Offset;
+				change.size = p_Size + change.size;
+				return;
+			}
+			else if(change.offset + change.size == p_Offset)
+			{
+				//we can concatenate two changes as they're consecutive
+				change.size = p_Size + change.size;
+				return;
+			}
+			else if(p_Offset + p_Size > change.offset && p_Offset + p_Size < change.offset + change.size)
+			{
+				//we can concatenate two changes as they're consecutive
+				change.offset = p_Offset;
+				change.size += change.size - p_Size;
+				return;
+			}
+			else if(change.offset + change.size > p_Offset && change.offset + change.size < p_Offset + p_Size)
+			{
+				//we can concatenate two changes as they're consecutive
+				change.size += p_Size - change.size;
+				return;
+			}
+		}
+		
+		m_PendingChanges.push_back(PendingChange(p_Size,p_Offset));
+	}	
 	/*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace

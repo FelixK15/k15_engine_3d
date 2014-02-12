@@ -21,6 +21,10 @@
 
 #include "K15_Vertex.h"
 
+#include "K15_ColorRGBA.h"
+#include "K15_Vector4.h"
+#include "K15_Vector2.h"
+
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	Vertex::Vertex(VertexBuffer* p_Buffer, uint32 p_Index)
@@ -35,5 +39,44 @@ namespace K15_Engine { namespace Rendering {
 
 	}
 	/*********************************************************************************/
-
+	Vector4 Vertex::getPosition() const
+	{
+		return get<Vector4>(VertexElement::ES_POSITION);
+	}
+	/*********************************************************************************/
+	Vector4 Vertex::getNormal() const
+	{
+		return get<Vector4>(VertexElement::ES_NORMAL);
+	}
+	/*********************************************************************************/
+	Vector2 Vertex::getUV() const
+	{
+		return get<Vector2>(VertexElement::ES_TEXCOORD);
+	}
+	/*********************************************************************************/
+	ColorRGBA Vertex::getColor() const
+	{
+		return get<ColorRGBA>(VertexElement::ES_COLOR);
+	}
+	/*********************************************************************************/
+	void Vertex::setPosition(const Vector4& p_Position)
+	{
+		set<Vector4>(p_Position,VertexElement::ES_POSITION);
+	}
+	/*********************************************************************************/
+	void Vertex::setNormal(const Vector4& p_Normal)
+	{
+		set<Vector4>(p_Normal,VertexElement::ES_NORMAL);
+	}
+	/*********************************************************************************/
+	void Vertex::setUV(const Vector2& p_UV)
+	{
+		set<Vector2>(p_UV,VertexElement::ES_TEXCOORD);
+	}
+	/*********************************************************************************/
+	void Vertex::setColor(const ColorRGBA& p_Color)
+	{
+		set<ColorRGBA>(p_Color,VertexElement::ES_COLOR);
+	}
+	/*********************************************************************************/
 }}// end of K15_Engine::Rendering namespace

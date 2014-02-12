@@ -40,10 +40,20 @@ namespace K15_Engine { namespace Rendering {
 		~Vertex();
 
 		template<class Type>
-		Type get(Enum p_Semantic);
+		Type get(Enum p_Semantic) const;
 
 		template<class Type>
 		void set(const Type& p_Value,Enum p_Semantic);
+
+		Vector4 getPosition() const;
+		Vector4 getNormal() const;
+		Vector2 getUV() const;
+		ColorRGBA getColor() const;
+
+		void setPosition(const Vector4& p_Position);
+		void setNormal(const Vector4& p_Normal);
+		void setUV(const Vector2& p_UV);
+		void setColor(const ColorRGBA& p_Color);
 
 		INLINE VertexDeclaration* getDeclaration() const;
 		INLINE VertexBuffer* getBuffer() const;

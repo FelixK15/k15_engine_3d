@@ -80,7 +80,9 @@
       </IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)\..\..\engine\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\K15_Engine.dll" "$(ProjectDir)\..\..\test\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\" /y</Command>
+      <Command>xcopy "$(ProjectDir)\..\..\engine\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\K15_Engine.dll" "$(ProjectDir)\..\..\test\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\" /y
+xcopy "$(ProjectDir)\..\..\rendererOGL\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\Renderer_OGL.dll"  "$(ProjectDir)\..\..\test\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\" /y
+xcopy "$(ProjectDir)\..\..\plugins\rendertest\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\Plugin_RenderTest.dll" "$(ProjectDir)\..\..\test\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\" /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

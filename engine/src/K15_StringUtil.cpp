@@ -29,16 +29,16 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	String StringUtil::format(char* p_Message,...)
 	{
-		va_list list;
-		uint32 length = strlen(p_Message);
-		length += K15_FORMAT_MESSAGE_ADDITIONAL_LENGTH;
+		static const uint32 BufferSize = 2048;
+		static char MessageBuffer[BufferSize] = {0};
 
-		char* buffer = (char*)alloca(length);
+		va_list list;
+
 		va_start(list,p_Message);
-		vsprintf(buffer,p_Message,list);
+		vsprintf(MessageBuffer,p_Message,list);
 		va_end(list);
 
-		return buffer;
+		return MessageBuffer;
 	}
 	/*********************************************************************************/
 	String StringUtil::timeAsString(const String& p_Format /*= "hh:mm:ss"*/)
@@ -179,21 +179,21 @@ namespace K15_Engine { namespace Core {
 		string.erase(std::remove_if(string.begin(),string.end(),isspace),string.end());
 		return string;
 	}
-  /*********************************************************************************/
-  String StringUtil::toUpperString(const String& p_String)
-  {
-    String string;
-    string = p_String;
-    std::transform(string.begin(),string.end(),string.begin(),::toupper);
-    return string;
-  }
-  /*********************************************************************************/
-  String StringUtil::toLowerString(const String& p_String)
-  {
-    String string;
-    string = p_String;
-    std::transform(string.begin(),string.end(),string.begin(),::tolower);
-    return string;
-  }
-  /*********************************************************************************/
+	/*********************************************************************************/
+	String StringUtil::toUpperString(const String& p_String)
+	{
+		String string;
+		string = p_String;
+		std::transform(string.begin(),string.end(),string.begin(),::toupper);
+		return string;
+	}
+	/*********************************************************************************/
+	String StringUtil::toLowerString(const String& p_String)
+	{
+		String string;
+		string = p_String;
+		std::transform(string.begin(),string.end(),string.begin(),::tolower);
+		return string;
+	}
+	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace

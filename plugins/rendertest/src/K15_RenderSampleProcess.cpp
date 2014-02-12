@@ -34,15 +34,18 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 			-1.0f,-1.0f,0.0f,1.0f,
 			1.0f,0.0f,0.0f,1.0f,
 
-			0.0f,1.0f,0.0f,1.0f,
+			-1.0f,1.0f,0.0f,1.0f,
 			0.0f,1.0f,0.0f,1.0f,
 
 			1.0f,-1.0f,0.0f,1.0f,
+			1.0f,0.0f,1.0f,1.0f,
+
+			1.0f,1.0f,0.0f,1.0f,
 			0.0f,0.0f,1.0f,1.0f,
 		};
 
 		uint16 indexData[] = {
-			0,1,2
+			0,1,2,3
 		};
 
 		m_Material = K15_NEW Material();
@@ -68,9 +71,6 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 		m_VertexBuffer = K15_NEW VertexBuffer(optionsVB);
 		m_IndexBuffer = K15_NEW IndexBuffer(optionsIB);
 
-		m_VertexBuffer->writeData(sizeof(vertexData),(byte*)vertexData);
-		m_IndexBuffer->writeData(sizeof(indexData),(byte*)indexData);
-
 		String vertexShaderCode = IOUtil::readWholeFile("default.vert");
 		String fragmentShaderCode = IOUtil::readWholeFile("default.frag");
 
@@ -82,13 +82,13 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 
 		pass->setFillMode(RendererBase::FM_SOLID);
 		pass->setCullingMode(RendererBase::CM_CW);
-
+		
 		m_Rop = K15_NEW RenderOperation();
 
 		m_Rop->vertexBuffer = m_VertexBuffer;
 		m_Rop->indexBuffer = m_IndexBuffer;
 		m_Rop->material = m_Material;
-		m_Rop->topology = RenderOperation::T_TRIANGLE;
+		m_Rop->topology = RenderOperation::T_TRIANGLE_STRIP;
 	}
 	/*********************************************************************************/
 	RenderSampleProcess::~RenderSampleProcess()

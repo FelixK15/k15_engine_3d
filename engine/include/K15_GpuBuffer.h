@@ -73,6 +73,14 @@ namespace K15_Engine { namespace Rendering {
 			CreationOptions();
 		}; // end of GpuBuffer::CreationOptions class declaration
 		/*********************************************************************************/
+		struct PendingChange
+		{
+			uint32 size;
+			uint32 offset;
+
+			PendingChange(uint32 p_Size, uint32 p_Offset);
+		}; // end of GpuBuffer::PendingChange class declaration
+		/*********************************************************************************/
 	public:
 		/*********************************************************************************/
 		enum eUsageOptions
@@ -111,6 +119,7 @@ namespace K15_Engine { namespace Rendering {
 	public:
 		/*********************************************************************************/
 		static const CreationOptions DefaultOptions;
+		typedef DynamicArray(PendingChange) PendingChangesArray;
 		/*********************************************************************************/
 
 	public:
@@ -153,10 +162,12 @@ namespace K15_Engine { namespace Rendering {
 		INLINE const GpuBufferImplBase* getImpl() const;
 
 	private:
-		uint32 writeToShadowCopy(uint32 p_Size, byte* p_Destination, uint32 p_Offset);
-		uint32 readFromShadowCopy(uint32 p_Size, byte* p_Destination, uint32 p_Offset);
+		uint32 _writeToShadowCopy(uint32 p_Size, byte* p_Destination, uint32 p_Offset);
+		uint32 _readFromShadowCopy(uint32 p_Size, byte* p_Destination, uint32 p_Offset);
+		void _addPendingChange(uint32 p_Size, uint32 p_Offset);
 
 	protected:
+		PendingChangesArray m_PendingChanges;
 		GpuBufferImplBase* m_Impl;
 		byte* m_ShadowCopy;
 		uint32 m_ShadowCopySize;

@@ -26,7 +26,7 @@ namespace K15_Engine { namespace Core {
 	String IOUtil::readWholeFile(const String& p_FileName)
 	{
 		FileStream stream(p_FileName);
-
+		
 		K15_ASSERT(stream.is_open(),StringUtil::format("Could not open file \"%s\".",p_FileName.c_str()));
 
 		return (String((std::istreambuf_iterator<char>(stream)), (std::istreambuf_iterator<char>())));
@@ -34,17 +34,11 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	uint32 IOUtil::getFileSize(const String& p_FileName)
 	{
-		ReadFileStream stream(p_FileName);
-		uint32 size = 0;
-
-		K15_ASSERT(stream.is_open(),StringUtil::format("Could not open file \"%s\".",p_FileName.c_str()));
-
-		stream.seekg(0, ReadFileStream::end);
-		size = (uint32)stream.tellg();
-
-		stream.close();
-
-		return size;
+		struct stat filestatus;
+		::stat(p_FileName.c_str(),&filestatus);
+		//http://linux.die.net/man/2/stat
+		
+		return filestatus.st_size;
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

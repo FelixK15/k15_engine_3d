@@ -767,6 +767,9 @@
     <None Include="..\..\engine\include\K15_Vertex.inl">
       <Filter>Rendering\include</Filter>
     </None>
+    <None Include="..\..\engine\include\K15_StringUtil.inl">
+      <Filter>Core\include</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />

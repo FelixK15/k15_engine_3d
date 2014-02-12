@@ -120,12 +120,7 @@ namespace K15_Engine { namespace Rendering {
 	{
 		if(p_Data.data)
 		{
-			static char* shaderCode;
-			shaderCode = (char*)alloca(p_Data.size);
-
-			memcpy(shaderCode,p_Data.data,p_Data.size);
-
-			m_ShaderCode = _resolveIncludes(shaderCode);
+			m_ShaderCode = _resolveIncludes((const char*)p_Data.data);
 
 			m_Compiled = false;
 // 			K15_DELETE m_BinaryCode.data;

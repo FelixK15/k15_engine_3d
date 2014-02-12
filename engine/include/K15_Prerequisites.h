@@ -158,6 +158,7 @@ namespace K15_Engine
 		struct RenderOperation;
 		struct VertexElement;
 		struct TextureCreationOptions;
+		struct ColorRGBA;
 
 		// surface description flags
 		const unsigned int DDSF_CAPS           = 0x00000001l;
@@ -343,6 +344,7 @@ namespace K15_Engine
 #	include <vector>
 #	include <set>
 #	include <array>
+#	include <sys\stat.h>
 
 #	define DynamicArray(T)	std::vector<T>
 #	define HashMap(K,V)		std::map<K,V>
@@ -564,10 +566,6 @@ typedef K15_Engine::Core::HashedString ResourceName;
 // #if defined _MSC_VER || K15_GCC_VERSION
 // #	define K15_USE_PRECOMPILED_HEADERS
 // #endif //_MSC_VER || K15_GCC_VERSION
-#define K15_GAMEDIR_BUFFER_SIZE 512
-#define K15_ERROR_BUFFER_SIZE 1024
-#define K15_PLUGIN_INFO_BUFFER_SIZE 1024
-#define K15_FORMAT_MESSAGE_ADDITIONAL_LENGTH 1024
 
 #define GIGABYTE	1073741824
 #define MEGABYTE	1048576

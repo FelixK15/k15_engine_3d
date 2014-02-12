@@ -381,7 +381,7 @@ namespace K15_Engine { namespace Core {
 		m_FrameStatistics[FrameStatisticIndex].Time = diffTime;
 		m_FrameStatistics[FrameStatisticIndex].FrameNumber = m_FrameCounter;
 		m_FrameStatistics[FrameStatisticIndex].ProfilingNode = g_ProfileManager->getRootNode();
-		//m_RenderWindow->setWindowTitle(StringUtil::format("msec: %.3f - FPS:%u - Frame Index: %i",diffTime * 1000,m_AvgFramesPerSecond,m_FrameCounter));
+		m_RenderWindow->setWindowTitle(StringUtil::format("msec: %.3f - FPS:%u - Frame Index: %i",diffTime * 1000,m_AvgFramesPerSecond,m_FrameCounter));
 
 		if(m_FrameCounter > FrameStatisticCount)
 		{
@@ -534,8 +534,9 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void Application::initializePlugins(const StringSet& p_PluginNames)
 	{
+		static uint32 PluginInfoBufferSize = 512;
 		DynamicLibraryBase* lib = 0;
-		char* messageBuffer = (char*)alloca(K15_PLUGIN_INFO_BUFFER_SIZE);
+		char* messageBuffer = (char*)alloca(PluginInfoBufferSize);
 		for(StringSet::const_iterator iter = p_PluginNames.begin();iter != p_PluginNames.end();++iter)
 		{
 			_LogNormal("Trying to initialize plugin \"%s\"",iter->c_str());
@@ -640,13 +641,14 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void Application::loadGameDirFile()
 	{
+		static uint32 GameDirBufferSize = 256;
 		FileStream gameDirFile(GameDirFileName);
 
 		if(gameDirFile.is_open())
 		{
-			char* buffer = (char*)alloca(K15_GAMEDIR_BUFFER_SIZE);
+			char* buffer = (char*)alloca(GameDirBufferSize);
 			buffer = '\0';
-			gameDirFile.getline(buffer,K15_GAMEDIR_BUFFER_SIZE);
+			gameDirFile.getline(buffer,GameDirBufferSize);
 			m_GameRootDir = buffer;
 			gameDirFile.close();
 		}

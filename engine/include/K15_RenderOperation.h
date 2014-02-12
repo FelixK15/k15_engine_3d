@@ -38,6 +38,7 @@ namespace K15_Engine { namespace Rendering {
 			T_DOT = 0,
 			T_LINE,
 			T_TRIANGLE,
+			T_TRIANGLE_STRIP,
 			T_QUAD,
 
 			T_COUNT

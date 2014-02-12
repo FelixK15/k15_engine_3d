@@ -16,5 +16,44 @@
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
  */
+
+/*********************************************************************************/
 template<typename T>
-T StringUtil::in
+T StringUtil::stringToNumeric(const String& p_String,const unsigned char p_Delimiter /*= '.'*/)
+{
+	static String tempString;
+	static T returnValue;
+	StringStream stream;
+
+	tempString.clear();
+
+	for(String::size_type i = 0;i < p_String.size();++i)
+	{
+		if(isdigit(p_String.at(i)) || p_String.at(i) == p_Delimiter)
+		{
+			tempString += p_String.at(i);
+		}
+	}
+
+	//insert string
+	stream << tempString;
+	//extract value
+	stream >> returnValue;
+
+	K15_ASSERT(!stream.fail(),format("Could not convert \"%s\" to numerical value.",p_String.c_str()));
+
+	return returnValue;
+}
+/*********************************************************************************/
+template<typename T>
+String StringUtil::toString(const T& p_Value)
+{
+	StringStream stream;
+
+	stream << p_Value;
+
+	K15_ASSERT(!stream.fail(),"Could not convert to string.");
+
+	return stream.str();
+}
+/*********************************************************************************/

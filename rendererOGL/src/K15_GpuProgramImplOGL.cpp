@@ -173,7 +173,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 					compiledSuccessful = true;
 					glAttachShader(m_Program, shader);
 					glLinkProgram(m_Program);
-					glDetachShader(m_Program, shader);
+					//glDetachShader(m_Program, shader);
 
 					GLint linkStatus = GL_FALSE;
 					glGetProgramiv(m_Program,GL_LINK_STATUS,&linkStatus);
@@ -200,7 +200,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 				}
 			}
 		}
-		glDeleteShader(shader);
+		//glDeleteShader(shader);
 
 		return compiledSuccessful;
 	}

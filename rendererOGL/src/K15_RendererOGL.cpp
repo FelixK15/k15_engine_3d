@@ -47,6 +47,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		GL_POINTS,    //T_DOT
 		GL_LINES,     //T_LINE
 		GL_TRIANGLES, //T_TRIANGLE
+		GL_TRIANGLE_STRIP, //T_TRIANGLESTRIP
 		GL_QUADS      //T_QUAD
 	}; //TopologyConverter
 	/*********************************************************************************/

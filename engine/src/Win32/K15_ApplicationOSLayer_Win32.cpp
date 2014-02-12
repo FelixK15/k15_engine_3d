@@ -61,6 +61,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	const String& ApplicationOSLayer_Win32::getError() const
 	{
+		static const uint32 ErrorBufferSize = 768;
 		static String errorMsg;
 
 		char* errorBuffer = 0;
@@ -70,7 +71,7 @@ namespace K15_Engine { namespace Core {
 
 		if(writtenChars == 0 && !errorBuffer)
 		{
-			errorBuffer = (char*)alloca(K15_ERROR_BUFFER_SIZE);
+			errorBuffer = (char*)alloca(ErrorBufferSize);
 			sprintf(errorBuffer,"Could not retrieve last error from OS.");
 		}
 

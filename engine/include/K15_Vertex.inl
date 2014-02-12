@@ -19,7 +19,7 @@
 
 /*********************************************************************************/
 template<class Type>
-Type K15_Engine::Rendering::Vertex::get(Enum p_Semantic)
+Type K15_Engine::Rendering::Vertex::get(Enum p_Semantic) const
 {
 	static uint32 typeSize = sizeof(Type);
 	Type returnVal;

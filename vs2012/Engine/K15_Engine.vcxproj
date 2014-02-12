@@ -480,6 +480,7 @@
     <ClCompile Include="..\..\engine\src\Win32\K15_ApplicationOSLayer_Win32.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\engine\include\K15_StringUtil.inl" />
     <None Include="..\..\engine\include\K15_SubMesh.inl" />
     <None Include="..\..\engine\include\K15_TaskBase.inl" />
     <None Include="..\..\engine\include\K15_TaskManager.inl" />

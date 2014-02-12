@@ -24,6 +24,7 @@
 #include "K15_RendererBase.h"
 #include "K15_Vertex.h"
 #include "K15_Vector4.h"
+
 #include "K15_VertexDeclaration.h"
 #include "K15_RenderTask.h"
 #include "K15_RenderSampleProcess.h"
@@ -79,18 +80,24 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 			VertexBuffer* buff = (VertexBuffer*)g_Application->getRenderer()->getBoundBuffer(GpuBuffer::BT_VERTEX_BUFFER);
 			Vertex* vertex = buff->getVertex(1);
 
-			Math::Vector4 pos = vertex->get<Vector4>(VertexElement::ES_POSITION);
+			Math::Vector4 pos = vertex->getPosition();
+			ColorRGBA color = vertex->getColor();
 			pos.y += 0.02f;
-			vertex->set<Vector4>(pos,VertexElement::ES_POSITION);
+			color.GreenComponent += 0.02f;
+			vertex->setPosition(pos);
+			vertex->setColor(color);
 		}
 		else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_DOWN))
 		{
 			VertexBuffer* buff = (VertexBuffer*)g_Application->getRenderer()->getBoundBuffer(GpuBuffer::BT_VERTEX_BUFFER);
 			Vertex* vertex = buff->getVertex(1);
 
-			Math::Vector4 pos = vertex->get<Vector4>(VertexElement::ES_POSITION);
+			Math::Vector4 pos = vertex->getPosition();
+			ColorRGBA color = vertex->getColor();
 			pos.y -= 0.02f;
-			vertex->set<Vector4>(pos,VertexElement::ES_POSITION);
+			color.GreenComponent -= 0.02f;
+			vertex->setPosition(pos);
+			vertex->setColor(color);
 		}
 	}
 	/*********************************************************************************/
