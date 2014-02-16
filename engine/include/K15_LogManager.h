@@ -43,6 +43,12 @@
 #define _LogCustom2(msg, ...) K15_Engine::Core::LogManager::getInstance()->logMessage(K15_Engine::Core::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::Core::LogManager::LP_CUSTOM2)
 #define _LogCustom3(msg, ...) K15_Engine::Core::LogManager::getInstance()->logMessage(K15_Engine::Core::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::Core::LogManager::LP_CUSTOM3)
 
+#define _LogNormal_NoSpam(msg, ...)		{static bool wrote = false; if(!wrote){K15_Engine::Core::LogManager::getInstance()->logMessage(K15_Engine::Core::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::Core::LogManager::LP_NORMAL);wrote = true;}}
+#define _LogError_NoSpam(msg, ...)		{static bool wrote = false; if(!wrote){K15_Engine::Core::LogManager::getInstance()->logMessage(K15_Engine::Core::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::Core::LogManager::LP_ERROR);wrote = true;}}
+#define _LogDebug_NoSpam(msg, ...)		{static bool wrote = false; if(!wrote){K15_Engine::Core::LogManager::getInstance()->logMessage(K15_Engine::Core::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::Core::LogManager::LP_DEBUG);wrote = true;}}
+#define _LogWarning_NoSpam(msg, ...)	{static bool wrote = false; if(!wrote){K15_Engine::Core::LogManager::getInstance()->logMessage(K15_Engine::Core::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::Core::LogManager::LP_WARNING);wrote = true;}}
+#define _LogSuccess_NoSpam(msg, ...)	{static bool wrote = false; if(!wrote){K15_Engine::Core::LogManager::getInstance()->logMessage(K15_Engine::Core::StringUtil::format(msg, ##__VA_ARGS__),false,K15_Engine::Core::LogManager::LP_SUCCESS);wrote = true;}}
+
 namespace K15_Engine { namespace Core {
 
 	class K15_CORE_API LogManager : public CoreAllocatedObject,

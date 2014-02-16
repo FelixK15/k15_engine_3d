@@ -34,13 +34,21 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	GpuProgramImplOGL::GpuProgramImplOGL()
 		: GpuProgramImplBase(),
-		m_Program(0)
+		m_Program(0),
+		m_Shader(0)
+
 	{
 	
 	}
 	/*********************************************************************************/
 	GpuProgramImplOGL::~GpuProgramImplOGL()
 	{
+		if(m_Shader > 0)
+		{
+			glDetachShader(m_Program,m_Shader);
+			glDeleteShader(m_Shader);
+		}
+
 		if(m_Program > 0)
 		{
 			glDeleteProgram(m_Program);
@@ -103,43 +111,6 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 				currentUniform.setSize(uniformSize);
 				currentUniform.setType(_getParameterType(attribType));
 			}
-			
-// 			for(int i = 0;i < countActiveUniforms;++i)
-// 			{
-// 				GLchar* uniformName = (GLchar*)alloca(uniformNameLength[i]);
-// 				GLuint uniformLocation = 0;
-// 
-// 				glGetActiveUniformName(m_Program,activeUniforms[i],uniformNameLength[i],0,uniformName);
-// 				uniformLocation = glGetUniformLocation(m_Program,uniformName);
-//         
-// 				GpuProgramParameter& parameter = m_GpuProgram->getUniform(i);
-// 				uniformString = String(uniformName);
-// 
-// 				GpuProgramParameter::DefaultVariableNameMap::const_iterator defaultIter = GpuProgramParameter::DefaultVariableNames.end();
-// 
-// 				//check if this parameter is an auto parameter
-// 				for(GpuProgramParameter::DefaultVariableNameMap::const_iterator iter = GpuProgramParameter::DefaultVariableNames.begin();iter != 
-// 				  GpuProgramParameter::DefaultVariableNames.end();++iter)
-// 				{
-// 				  if(iter->second == uniformString)
-// 				  {
-// 					defaultIter = iter;
-// 					break;
-// 				  }
-// 				}
-// 
-// 				parameter.setAutoParameter(defaultIter != GpuProgramParameter::DefaultVariableNames.end());
-// 				if(parameter.isAutoParameter())
-// 				{
-// 				  parameter.setAutoName(defaultIter->first);
-// 				} 
-// 				parameter.setName(uniformName);
-// 				parameter.setSize(uniformSizes[i]);
-// 				parameter.setType(_getParameterType(uniformTypes[i]));
-// 				parameter.setBufferIndex(uniformBlocks[i]);
-// 				parameter.setOffset(uniformOffset[i]);
-// 				parameter.setRegisterIndex(uniformLocation);
-// 			}
 		}
 	}
 	/*********************************************************************************/
@@ -155,26 +126,26 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		
 		const char* shaderCode = m_GpuProgram->getShaderCode().c_str();
 		
-		const GLuint shader = glCreateShader(shaderStage);
-		if (shader) 
+		m_Shader = glCreateShader(shaderStage);
+
+		if(m_Shader) 
 		{
-			glShaderSource(shader, 1, &shaderCode, NULL);
-			glCompileShader(shader);
+			glShaderSource(m_Shader, 1, &shaderCode, NULL);
+			glCompileShader(m_Shader);
 			m_Program = glCreateProgram();
 			if (m_Program) 
 			{
 				GLint compiled = GL_FALSE;
-				glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+				glGetShaderiv(m_Shader, GL_COMPILE_STATUS, &compiled);
 				glProgramParameteri(m_Program, GL_PROGRAM_SEPARABLE, GL_TRUE);
 				glProgramParameteri(m_Program, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
 			
-				if (compiled) 
+				if(compiled) 
 				{
 					compiledSuccessful = true;
-					glAttachShader(m_Program, shader);
+					glAttachShader(m_Program, m_Shader);
 					glLinkProgram(m_Program);
-					//glDetachShader(m_Program, shader);
-
+					
 					GLint linkStatus = GL_FALSE;
 					glGetProgramiv(m_Program,GL_LINK_STATUS,&linkStatus);
 
@@ -200,11 +171,10 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 				}
 			}
 		}
-		//glDeleteShader(shader);
 
 		return compiledSuccessful;
 	}
-/*********************************************************************************/
+	/*********************************************************************************/
 	void GpuProgramImplOGL::loadBinaryCode()
 	{
 		const RawData* binaryShader = m_GpuProgram->getBinaryCode();
@@ -215,7 +185,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 		glProgramBinary(m_Program,binaryFormat,binaryShader->data + sizeof(GLenum),binaryShader->size - sizeof(GLenum));
 	}
-/*********************************************************************************/
+	/*********************************************************************************/
 	void GpuProgramImplOGL::getBinaryCode(RawData* p_Buffer)
 	{
 		GLint sizeShader = 0;
@@ -239,55 +209,77 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	{
 		return m_Program;
 	}
-  /*********************************************************************************/
-  Enum GpuProgramImplOGL::_getParameterType(GLenum p_GLType)
-  {
-    if(p_GLType == GL_FLOAT)
-    {
-      return GpuProgramParameter::VT_FLOAT;
-    }
-    else if(p_GLType == GL_FLOAT_VEC2)
-    {
-      return GpuProgramParameter::VT_VECTOR2;
-    }
-    else if(p_GLType == GL_FLOAT_VEC3)
-    {
-      return GpuProgramParameter::VT_VECTOR3;
-    }
-    else if(p_GLType == GL_FLOAT_VEC4)
-    {
-      return GpuProgramParameter::VT_VECTOR4;
-    }
-    else if(p_GLType == GL_BOOL)
-    {
-      return GpuProgramParameter::VT_BOOL;
-    }
-    else if(p_GLType == GL_FLOAT_MAT2)
-    {
-      return GpuProgramParameter::VT_MATRIX2;
-    }
-    else if(p_GLType == GL_FLOAT_MAT3)
-    {
-      return GpuProgramParameter::VT_MATRIX3;
-    }
-    else if(p_GLType == GL_FLOAT_MAT4)
-    {
-      return GpuProgramParameter::VT_MATRIX4;
-    }
-    else if(p_GLType == GL_SAMPLER_1D)
-    {
-      return GpuProgramParameter::VT_SAMPLER_1D;
-    }
-    else if(p_GLType == GL_SAMPLER_2D)
-    {
-      return GpuProgramParameter::VT_SAMPLER_2D;
-    }
-    else if(p_GLType == GL_SAMPLER_3D)
-    {
-      return GpuProgramParameter::VT_SAMPLER_3D;
-    }
+	/*********************************************************************************/
+	Enum GpuProgramImplOGL::_getParameterType(GLenum p_GLType)
+	{
+		if(p_GLType == GL_FLOAT)
+		{
+			return GpuProgramParameter::VT_FLOAT;
+		}
+		else if(p_GLType == GL_FLOAT_VEC2)
+		{
+			return GpuProgramParameter::VT_VECTOR2;
+		}
+		else if(p_GLType == GL_FLOAT_VEC3)
+		{
+			return GpuProgramParameter::VT_VECTOR3;
+		}
+		else if(p_GLType == GL_FLOAT_VEC4)
+		{
+			return GpuProgramParameter::VT_VECTOR4;
+		}
+		else if(p_GLType == GL_BOOL)
+		{
+			return GpuProgramParameter::VT_BOOL;
+		}
+		else if(p_GLType == GL_FLOAT_MAT2)
+		{
+			return GpuProgramParameter::VT_MATRIX2;
+		}
+		else if(p_GLType == GL_FLOAT_MAT3)
+		{
+			return GpuProgramParameter::VT_MATRIX3;
+		}
+		else if(p_GLType == GL_FLOAT_MAT4)
+		{
+			return GpuProgramParameter::VT_MATRIX4;
+		}
+		else if(p_GLType == GL_SAMPLER_1D)
+		{
+			return GpuProgramParameter::VT_SAMPLER_1D;
+		}
+		else if(p_GLType == GL_SAMPLER_2D)
+		{
+			return GpuProgramParameter::VT_SAMPLER_2D;
+		}
+		else if(p_GLType == GL_SAMPLER_3D)
+		{
+			return GpuProgramParameter::VT_SAMPLER_3D;
+		}
 
-    return GpuProgramParameter::VT_UNKNOW;
-  }
-  /*********************************************************************************/
+		return GpuProgramParameter::VT_UNKNOW;
+	}
+	/*********************************************************************************/
+	String GpuProgramImplOGL::getShaderExtension(Enum p_ProgramStage)
+	{
+		if(p_ProgramStage == GpuProgram::PS_VERTEX)
+		{
+			return ".vert";
+		}
+		else if(p_ProgramStage == GpuProgram::PS_FRAGMENT)
+		{
+			return ".frag";
+		}
+		else if(p_ProgramStage == GpuProgram::PS_COMPUTE)
+		{
+			return ".comp";
+		}
+		else if(p_ProgramStage == GpuProgram::PS_GEOMETRY)
+		{
+			return ".geom";
+		}
+
+		return "";
+	}	
+	/*********************************************************************************/
 }}}// end of K15_Engine::Rendering::OGL namespace

@@ -275,56 +275,60 @@ namespace K15_Engine { namespace Core {
 		SetWindowText(m_HandleWindow,p_WindowTitle.c_str());
 	}
 	/*********************************************************************************/
-	void RenderWindow_Win32::setResolution(const Resolution& p_Resolution)
+	void RenderWindow_Win32::setResolution(const Resolution& p_Resolution, bool p_ForceChange)
 	{
 		RenderWindowBase::setResolution(p_Resolution);
 
-		if(m_IsFullscreen)
+		if(p_ForceChange || (p_Resolution.width != m_CurrentResolution.width ||
+			p_Resolution.height != m_CurrentResolution.height))
 		{
-			DEVMODE dm = {0};
-			dm.dmSize = sizeof(dm);
-			dm.dmBitsPerPel = g_Application->getRenderTask()->getRenderer() ? RendererBase::PixelFormatSize[g_Application->getRenderTask()->getRenderer()->getFrameBufferPixelFormat()] : 32;
-			dm.dmPelsHeight = p_Resolution.height;
-			dm.dmPelsWidth = p_Resolution.width;
-			dm.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
-			DWORD flags = CDS_RESET;
-			if(isFullscreen())
+			if(m_IsFullscreen)
 			{
-				flags |= CDS_FULLSCREEN;
-			}
-
-			DWORD result = 0;
-			if((result = ChangeDisplaySettings(&dm,flags)) != DISP_CHANGE_SUCCESSFUL)
-			{
-				char* error = 0;
-				if(result == DISP_CHANGE_BADMODE)
+				DEVMODE dm = {0};
+				dm.dmSize = sizeof(dm);
+				//dm.dmBitsPerPel = g_Application->getRenderTask()->getRenderer() ? RendererBase::PixelFormatSize[g_Application->getRenderTask()->getRenderer()->getFrameBufferPixelFormat()] : 32;
+				dm.dmPelsHeight = p_Resolution.height;
+				dm.dmPelsWidth = p_Resolution.width;
+				dm.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
+				DWORD flags = CDS_RESET;
+				if(isFullscreen())
 				{
-					error = "Graphics mode not supported";
-				}
-				else if(result == DISP_CHANGE_FAILED)
-				{
-					error = "The display driver failed the specified graphics mode.";
-				}
-				else if(result == DISP_CHANGE_NOTUPDATED)
-				{
-					error = "Unable to write settings to registry";
-				}
-				else if(result == DISP_CHANGE_BADFLAGS)
-				{
-					error = "An invalid set of flags was passed in";
+					flags |= CDS_FULLSCREEN;
 				}
 
-				_LogError("Could not change fullscreen resolution to \"%ix%i\" Error:%s",p_Resolution.width,p_Resolution.height,error);
-				return;
+				DWORD result = 0;
+				if((result = ChangeDisplaySettings(&dm,flags)) != DISP_CHANGE_SUCCESSFUL)
+				{
+					char* error = 0;
+					if(result == DISP_CHANGE_BADMODE)
+					{
+						error = "Graphics mode not supported";
+					}
+					else if(result == DISP_CHANGE_FAILED)
+					{
+						error = "The display driver failed the specified graphics mode.";
+					}
+					else if(result == DISP_CHANGE_NOTUPDATED)
+					{
+						error = "Unable to write settings to registry";
+					}
+					else if(result == DISP_CHANGE_BADFLAGS)
+					{
+						error = "An invalid set of flags was passed in";
+					}
+
+					_LogError("Could not change fullscreen resolution to \"%ix%i\" Error:%s",p_Resolution.width,p_Resolution.height,error);
+					return;
+				}
 			}
-		}
-		else
-		{
-			if(SetWindowPos(m_HandleWindow,HWND_TOP,0,0,p_Resolution.width,p_Resolution.height,
-				SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOZORDER | SWP_NOSENDCHANGING) == FALSE)
+			else
 			{
-				_LogError("Could not change resolution to \"%ix%i\" Error:%s",p_Resolution.width,p_Resolution.height,g_Application->getLastError().c_str());
-				return;
+				if(SetWindowPos(m_HandleWindow,HWND_TOP,0,0,p_Resolution.width,p_Resolution.height,
+					SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOZORDER | SWP_NOSENDCHANGING) == FALSE)
+				{
+					_LogError("Could not change resolution to \"%ix%i\" Error:%s",p_Resolution.width,p_Resolution.height,g_Application->getLastError().c_str());
+					return;
+				}
 			}
 		}
 	}
@@ -332,7 +336,7 @@ namespace K15_Engine { namespace Core {
 	void RenderWindow_Win32::setIsFullscreen(bool p_Fullscreen)
 	{
 		m_IsFullscreen = p_Fullscreen;
-		setResolution(m_CurrentResolution);
+		setResolution(m_CurrentResolution,true);
 	}
 	/*********************************************************************************/
 	HDC RenderWindow_Win32::getDeviceContext()

@@ -95,7 +95,7 @@ void TextureSampler::setBorderColor(const ColorRGBA& p_BorderColor)
   m_BorderColor = p_BorderColor;
 }
 /*********************************************************************************/
-const TextureSamplerImplBase* TextureSampler::getImpl() const
+TextureSamplerImplBase* TextureSampler::getImpl() const
 {
 	return m_Impl;
 }

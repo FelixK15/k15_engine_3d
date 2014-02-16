@@ -264,9 +264,6 @@
     <ClInclude Include="..\..\engine\include\K15_MemoryBlock.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_GpuProgramParameter.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_MatrixUtil.h">
       <Filter>Core\include</Filter>
     </ClInclude>
@@ -361,6 +358,9 @@
       <Filter>Core\include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_Vertex.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_GpuProgramParameter.h">
       <Filter>Rendering\include</Filter>
     </ClInclude>
   </ItemGroup>

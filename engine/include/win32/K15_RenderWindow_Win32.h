@@ -42,7 +42,7 @@ namespace K15_Engine { namespace Core {
 		virtual void shutdown();
 
 		virtual void setWindowTitle(const String& p_WindowTitle);
-		virtual void setResolution(const Resolution& p_Resolution); 
+		virtual void setResolution(const Resolution& p_Resolution, bool p_ForceChange = false); 
 		virtual void setIsFullscreen(bool p_Fullscreen);
 
 		HDC getDeviceContext();

@@ -33,6 +33,7 @@
 
 #include "K15_GpuProgram.h"
 #include "K15_GpuBuffer.h"
+#include "K15_Texture.h"
 
 #include "K15_AlphaState.h"
 #include "K15_DepthState.h"
@@ -45,6 +46,8 @@ namespace K15_Engine { namespace Rendering {
 		/*********************************************************************************/
 		typedef FixedArray(GpuProgram*,GpuProgram::PS_COUNT) GpuProgramArray;
 		typedef FixedArray(GpuBuffer*,GpuBuffer::BT_COUNT) GpuBufferArray;
+		typedef FixedArray(Texture*,Texture::TS_COUNT) TextureArray;
+		typedef FixedArray(TextureSampler*,Texture::TS_COUNT) TextureSamplerArray;
 		/*********************************************************************************/
 
 		/*********************************************************************************/
@@ -165,6 +168,12 @@ namespace K15_Engine { namespace Rendering {
 		bool setFillMode(Enum p_FillMode);
 		INLINE Enum getFillMode() const;
 
+		bool bindTexture(Texture* p_Texture, Enum p_Type, Enum p_Slot);
+		INLINE Texture* getBoundTexture(Enum p_Slot) const;
+
+		bool bindTextureSampler(TextureSampler* p_Sampler, Enum p_Slot);
+		INLINE TextureSampler* getBoundSampler(Enum p_Slot) const;
+
 		bool setClearColor(const ColorRGBA& p_ClearColor);
 		bool setClearColor(float p_Red = 1.0f, float p_Green = 1.0f, float p_Blue = 1.0f);
 		INLINE const ColorRGBA& getClearColor() const;
@@ -184,7 +193,7 @@ namespace K15_Engine { namespace Rendering {
 
 		INLINE bool errorOccured() const;
 
-		void bindGpuProgramParameter(const GpuProgramParameter& p_Parameter);
+		void updateGpuProgramParameter(GpuProgram* p_Program, const GpuProgramParameter& p_Parameter);
 
 		bool bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType);
 		bool bindMaterial(Material* p_Material);
@@ -228,8 +237,9 @@ namespace K15_Engine { namespace Rendering {
 		virtual void _setClearColor(const ColorRGBA& p_ClearColor){}
 		virtual void _bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType){}
 		virtual void _bindProgram(GpuProgram* p_Program, Enum p_ProgramType){}
-		virtual void _bindProgramParameter(const GpuProgramParameter& p_Parameter,const RawData& p_Data){}
-
+		virtual void _bindProgramParameter(const GpuProgramParameter& p_Parameter){}
+		virtual void _bindTexture(Texture* p_Texture, Enum p_Type){}
+		virtual void _bindTextureSampler(TextureSampler* p_Sampler, Enum p_Slot){}
 		virtual void _drawIndexed(uint32 p_Offset = 0){}
 		virtual void _drawDirect(uint32 p_Offset = 0){}
 
@@ -244,6 +254,8 @@ namespace K15_Engine { namespace Rendering {
 		VertexDeclaration* m_VertexDeclaration;
 		GpuProgramArray m_GpuPrograms;
 		GpuBufferArray m_GpuBuffers;
+		TextureArray m_BoundTextures;
+		TextureSamplerArray m_BoundSamplers;
 		ColorRGBA m_ClearColor;
 		String m_LastError;
 		Enum m_FillMode;

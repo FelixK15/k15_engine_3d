@@ -41,6 +41,8 @@ namespace K15_Engine { namespace Rendering {
 		virtual void getBinaryCode(RawData* p_Buffer) = 0;
 		virtual void reflect() = 0;
 
+		virtual String getShaderExtension(Enum p_ProgramStage) = 0;
+
 		INLINE void setGpuProgram(GpuProgram* p_GpuProgram);
 		INLINE GpuProgram* getGpuProgram() const;
 
@@ -66,7 +68,7 @@ namespace K15_Engine { namespace Rendering {
 		}; //ProgramStage
 		/*********************************************************************************/
 	public:
-		GpuProgram(Enum p_ProgramStage);
+		GpuProgram(const String& p_ProgramName, Enum p_ProgramStage);
 		virtual ~GpuProgram();
 
 		INLINE bool isCompiled() const;

@@ -101,11 +101,12 @@ namespace K15_Engine { namespace Rendering {
 
     void setWrappingMode(uint8 p_Axis,Enum p_WrappingMode);
 
-	INLINE const TextureSamplerImplBase* getImpl() const;
+	INLINE TextureSamplerImplBase* getImpl() const;
 
   private:
     TextureSamplerImplBase* m_Impl;
     ColorRGBA m_BorderColor;
+
     Enum m_UWrappingMode;
     Enum m_VWrappingMode;
     Enum m_WWrappingMode;

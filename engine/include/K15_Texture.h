@@ -28,7 +28,6 @@
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
-#include "K15_RendererBase.h"
 #include "K15_ResourceBase.h"
 #include "K15_RenderWindowBase.h"
 
@@ -69,8 +68,37 @@ namespace K15_Engine { namespace Rendering {
 			TT_COUNT
 		};//TextureType
 		/*********************************************************************************/
+		enum eTextureSlot
+		{
+			TS_SLOT1 = 0,
+			TS_SLOT2,
+			TS_SLOT3,
+
+			TS_NO_SLOT,
+			TS_COUNT
+		}; //TextureSlot
+		/*********************************************************************************/
+	public:
+		/*********************************************************************************/
+		struct CreationOptions
+		{
+			uint32 width;
+			uint32 height;
+			uint32 depth;
+
+			RawData pixels;
+
+			//RendererBase::ePixelFormat pixelFormat;
+
+			bool createMipMaps;
+			bool useShadowCopy;
+
+			uint32 mipmapLevels;
+		}; // end of Texture::CreationOptions struct
+		/*********************************************************************************/
 	public:
 		Texture();
+		Texture(const CreationOptions& p_CreationOptions);
 		~Texture();
 
 		INLINE Enum getTextureType() const;
@@ -93,6 +121,9 @@ namespace K15_Engine { namespace Rendering {
 		void setPixelFormat(Enum p_PixelFormat);
 		INLINE Enum getPixelFormat() const;
 
+		INLINE void setSlot(Enum p_Slot);
+		INLINE Enum getSlot() const;
+
 		void getDimension(uint32* p_Width, uint32* p_Height, uint32* p_Depth = 0);
 		void getMipmapDimension(uint32 p_MipmapLevel, uint32* p_Width, uint32* p_Height, uint32* p_Depth = 0);
 
@@ -112,7 +143,7 @@ namespace K15_Engine { namespace Rendering {
 // 		uint32 read(byte** p_Destination, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX = 0, int32 p_OffsetY = 0, int32 p_OffsetZ = 0);
 
 		bool resize(uint32 p_Width,uint32 p_Height,uint32 p_Depth = 0);
-		bool create(const TextureCreationOptions& p_Options);
+		bool create(const CreationOptions& p_Options);
 
 		INLINE bool hasAlpha() const;
 		INLINE bool hasShadowCopy() const;
@@ -120,7 +151,7 @@ namespace K15_Engine { namespace Rendering {
 		virtual void loadDebug(RawData& p_Data);
 		virtual bool internalLoad(const RawData& p_Data);
 
-		INLINE const TextureImplBase* getImpl() const;
+		INLINE TextureImplBase* getImpl() const;
 
 	private:
 		uint32 calculateMipmapLevels() const;
@@ -131,6 +162,7 @@ namespace K15_Engine { namespace Rendering {
 		Enum m_Type;
 		Enum m_Usage;
 		Enum m_PixelFormat;
+		Enum m_Slot;
 		uint32 m_Height;
 		uint32 m_Width;
 		uint32 m_Depth;
@@ -140,21 +172,7 @@ namespace K15_Engine { namespace Rendering {
 		bool m_HasShadowCopy;
 	};//end of Texture class declaration
 	/*********************************************************************************/
-	struct TextureCreationOptions
-	{
-		uint32 width;
-		uint32 height;
-		uint32 depth;
-
-		RawData pixels;
-
-		RendererBase::ePixelFormat pixelFormat;
-
-		bool createMipMaps;
-		bool useShadowCopy;
-
-		uint32 mipmapLevels;
-	}; // end of TextureCreationOptions struct
+	
 	/*********************************************************************************/
 #	include "K15_Texture.inl"
 }}// end of K15_Engine::Rendering

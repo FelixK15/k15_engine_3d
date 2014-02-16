@@ -28,6 +28,16 @@ Enum Texture::getUsage() const
 	return m_Usage;
 }
 /*********************************************************************************/
+Enum Texture::getSlot() const
+{
+	return m_Slot;
+}
+/*********************************************************************************/
+void Texture::setSlot(Enum p_Slot)
+{
+	m_Slot = p_Slot;
+}
+/*********************************************************************************/
 uint32 Texture::getMipmapLevels() const
 {
 	return m_MipmapLevels;
@@ -53,7 +63,7 @@ Enum Texture::getPixelFormat() const
 	return m_PixelFormat;
 }
 /*********************************************************************************/
-const TextureImplBase* Texture::getImpl() const
+TextureImplBase* Texture::getImpl() const
 {
 	return m_Impl;
 }

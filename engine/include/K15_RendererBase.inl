@@ -18,6 +18,16 @@
  */
 
 /*********************************************************************************/
+TextureSampler* RendererBase::getBoundSampler(Enum p_Slot) const
+{
+	return m_BoundSamplers[p_Slot];
+}
+/*********************************************************************************/
+Texture* RendererBase::getBoundTexture(Enum p_Slot) const
+{
+	return m_BoundTextures[p_Slot];
+}
+/*********************************************************************************/
 RenderWindowBase* RendererBase::getRenderWindow() const
 {
 	return m_RenderWindow;

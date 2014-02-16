@@ -35,11 +35,11 @@
 namespace K15_Engine { namespace Rendering { 
 	/*********************************************************************************/
 	uint8 RendererBase::PixelFormatSize[PF_COUNT]= {
-		24,	//PF_RGB_8_I
-		24, //PF_RGB_8_UI,
-		48, //PF_RGB_16_I
-		48, //PF_RGB_16_U
-		48, //PF_RGB_16_F
+		8,	//PF_R_8_I
+		8,  //PF_R_8_UI,
+		16, //PF_RG_16_I
+		16, //PF_RG_16_U
+		16, //PF_RG_16_F
 		96, //PF_RGB_32_I
 		96, //PF_RGB_32_U
 		96, //PF_RGB_32_F
@@ -339,7 +339,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				_LogError("Error setting clear color to %.3f %.3f %.3f %.3f (RGBA). %s",
+				_LogError("Error setting clear color to %.1f %.1f %.1f %.1f (RGBA). %s",
 					p_ClearColor.RedComponent,p_ClearColor.GreenComponent,p_ClearColor.BlueComponent,p_ClearColor.AlphaComponent,
 					getLastError().c_str());
 
@@ -363,11 +363,6 @@ namespace K15_Engine { namespace Rendering {
 		{
 			m_GpuPrograms[p_Stage] = p_GpuProgram;
 			_bindProgram(p_GpuProgram,p_Stage);
-
-			for(uint32 i = 0;i < p_GpuProgram->getAmountUniforms();++i)
-			{
-
-			}
 
 			if(errorOccured())
 			{
@@ -475,19 +470,6 @@ namespace K15_Engine { namespace Rendering {
 
 				setLightningEnabled(pass->isLightningEnabled());
 
-				GpuBuffer* gpuBuffer = 0;
-				for(uint32 j = 0;j < m_GpuBuffers.size();++j)
-				{
-					gpuBuffer = m_GpuBuffers.at(i);
-					if(gpuBuffer != 0)
-					{
-						if(gpuBuffer->isDirty())
-						{
-							K15_ASSERT(gpuBuffer->uploadShadowBufferToGpu(),"Could not upload shadow buffer to gpu memory.");
-						}
-					}
-				}
-
 				if(p_Rop->indexBuffer != 0)
 				{
 					_drawIndexed();
@@ -499,7 +481,7 @@ namespace K15_Engine { namespace Rendering {
 
 				if(errorOccured())
 				{
-					_LogError("Error during draw. Material: %s (pass %u) %s",
+					_LogError_NoSpam("Error during draw. Material: %s (pass %u) %s",
 						m_Material->getName().c_str(),i+1,getLastError().c_str());
 					continue;
 				}
@@ -545,11 +527,11 @@ namespace K15_Engine { namespace Rendering {
 			m_AlphaState = p_AlphaState;
 			_setAlphaState(p_AlphaState);
 
-      if(errorOccured())
-      {
-        _LogError("Error setting alpha state. %s",getLastError().c_str());
-        return false;
-      }
+			if(errorOccured())
+			{
+				_LogError("Error setting alpha state. %s",getLastError().c_str());
+				return false;
+			}
 		}
 
     return true;
@@ -562,11 +544,11 @@ namespace K15_Engine { namespace Rendering {
 			m_DepthState = p_DepthState;
 			_setDepthState(p_DepthState);
 
-      if(errorOccured())
-      {
-        _LogError("Error setting depth state. %s",getLastError().c_str());
-        return false;
-      }
+			if(errorOccured())
+			{
+				_LogError("Error setting depth state. %s",getLastError().c_str());
+				return false;
+			}
     }
 
     return true;
@@ -593,20 +575,68 @@ namespace K15_Engine { namespace Rendering {
 		return true;
 	}
 	/*********************************************************************************/
-	void RendererBase::bindGpuProgramParameter(const GpuProgramParameter& p_Parameter)
+// 	void RendererBase::bindGpuProgramParameter(const GpuProgramParameter& p_Parameter)
+// 	{
+// 		RawData data;
+// 		if(p_Parameter.isAutoParameter())
+// 		{
+// 			if(p_Parameter.getAutoName() == GpuProgramParameter::Default::WorldViewProjectionMatrix)
+// 			{
+//         
+// 			}
+// 			else if(p_Parameter.getAutoName() == GpuProgramParameter::Default::InverseWorldViewProjectionMatrix)
+// 			{
+// 
+// 			}
+// 		}
+// 	}
+	/*********************************************************************************/
+	bool RendererBase::bindTexture(Texture* p_Texture, Enum p_Type, Enum p_Slot)
 	{
-		RawData data;
-		if(p_Parameter.isAutoParameter())
-		{
-			if(p_Parameter.getAutoName() == GpuProgramParameter::Default::WorldViewProjectionMatrix)
-			{
-        
-			}
-			else if(p_Parameter.getAutoName() == GpuProgramParameter::Default::InverseWorldViewProjectionMatrix)
-			{
+		K15_ASSERT(p_Type >= 0 && p_Type < Texture::TT_COUNT,"Invalid texture type.");
+		K15_ASSERT(p_Slot >= 0 && p_Slot < Texture::TS_NO_SLOT,"Invalid texture slot.");
 
+		if(p_Texture != m_BoundTextures[p_Slot])
+		{
+			m_BoundTextures[p_Slot]->setSlot(Texture::TS_NO_SLOT);
+			m_BoundTextures[p_Slot] = p_Texture;
+			p_Texture->setSlot(p_Slot);
+			_bindTexture(p_Texture,p_Type);
+
+			if(errorOccured())
+			{
+				_LogError("Error binding texture \"%s\".%s",
+					p_Texture->getName().c_str(),getLastError().c_str());
+
+				return false;
 			}
+
+			return true;
 		}
+
+		return false;
 	}
-/*********************************************************************************/
+	/*********************************************************************************/
+	bool RendererBase::bindTextureSampler(TextureSampler* p_Sampler, Enum p_Slot)
+	{
+		K15_ASSERT(p_Slot >= 0 && p_Slot < Texture::TS_NO_SLOT,"Invalid texture slot.");
+
+		if(p_Sampler != m_BoundSamplers[p_Slot])
+		{
+			m_BoundSamplers[p_Slot] = p_Sampler;
+			_bindTextureSampler(p_Sampler,p_Slot);
+
+			if(errorOccured())
+			{
+				_LogError("Error binding texture sampler.%s",getLastError().c_str());
+
+				return false;
+			}
+
+			return true;
+		}
+
+		return false;
+	}	
+	/*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace

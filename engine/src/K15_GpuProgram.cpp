@@ -27,13 +27,6 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	const uint32 GpuProgram::MaxParameter = 32;
 	/*********************************************************************************/
-	const char* GpuProgram::ProgramStageShaderExtension[PS_COUNT] = {
-		".vert",
-		".geom",
-		".frag",
-		".comp"
-	};
-	/*********************************************************************************/
 	GpuProgram::GpuProgram(const String& p_ProgramName, Enum p_ProgramStage)
 		: ResourceBase(p_ProgramName),
 		  m_BinaryCode(),
@@ -57,7 +50,7 @@ namespace K15_Engine { namespace Rendering {
 		m_Uniforms.reserve(MaxParameter);
 
 		//check if the shader has been compiled/preprocessed earlier
-		String shaderFile = p_ProgramName + ProgramStageShaderExtension[p_ProgramStage];
+		String shaderFile = p_ProgramName + m_Impl->getShaderExtension(p_ProgramStage);
 		setProgramCode(IOUtil::readWholeFile(shaderFile),true);
 	}
 	/*********************************************************************************/
@@ -117,7 +110,6 @@ namespace K15_Engine { namespace Rendering {
 		//Check and mark auto parameter
 		for(uint32 i = 0;i < m_UsedUniforms;++i)
 		{
-			m_Uniforms[i].setGpuProgram(this);
 			for(GpuProgramParameter::DefaultVariableNameMap::const_iterator iter = GpuProgramParameter::DefaultVariableNames.begin();
 				iter != GpuProgramParameter::DefaultVariableNames.end();++iter)
 			{

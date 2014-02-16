@@ -19,7 +19,6 @@
 
 #include "K15_PrecompiledHeader.h"
 #include "K15_Texture.h"
-#include "K15_RenderTask.h"
 #include "K15_RendererBase.h"
 #include "K15_LogManager.h"
 
@@ -58,11 +57,32 @@ namespace K15_Engine { namespace Rendering {
 		m_Height(0),
 		m_Depth(0),
 		m_HasAlpha(true),
-		m_HasShadowCopy(true),
-		m_ShadowCopy(0)
+		m_HasShadowCopy(false),
+		m_ShadowCopy(0),
+		m_Slot(TS_NO_SLOT)
 	{
- 		m_Impl = g_Application->getRenderTask()->getRenderer()->createTextureImpl();
+ 		m_Impl = g_Application->getRenderer()->createTextureImpl();
 		m_Impl->setTexture(this);
+	}
+	/*********************************************************************************/
+	Texture::Texture(const CreationOptions& p_CreationOptions)
+		: m_Impl(0),
+		m_MipmapLevels(0),
+		m_PixelFormat(0),
+		m_Type(0),
+		m_Usage(0),
+		m_Width(0),
+		m_Height(0),
+		m_Depth(0),
+		m_HasAlpha(true),
+		m_HasShadowCopy(false),
+		m_ShadowCopy(0),
+		m_Slot(TS_NO_SLOT)
+	{
+		m_Impl = g_Application->getRenderer()->createTextureImpl();
+		m_Impl->setTexture(this);
+
+		create(p_CreationOptions);
 	}
 	/*********************************************************************************/
 	Texture::~Texture()
@@ -439,7 +459,7 @@ namespace K15_Engine { namespace Rendering {
 		return 0;
 	}
 	/*********************************************************************************/
-	bool Texture::create(const TextureCreationOptions& p_Options)
+	bool Texture::create(const CreationOptions& p_Options)
 	{
 		if(p_Options.width > 0 && p_Options.height > 0 && p_Options.depth > 0)
 		{
@@ -460,12 +480,12 @@ namespace K15_Engine { namespace Rendering {
 			m_Depth = p_Options.depth;
 		}
 
-		m_PixelFormat = p_Options.pixelFormat;
-
-		if(m_PixelFormat > RendererBase::PF_RGB_32_F)
-		{
-			m_HasAlpha = true;
-		}
+// 		m_PixelFormat = p_Options.pixelFormat;
+// 
+// 		if(m_PixelFormat > RendererBase::PF_RGB_32_F)
+// 		{
+// 			m_HasAlpha = true;
+// 		}
 
 		m_HasShadowCopy = p_Options.useShadowCopy;
 

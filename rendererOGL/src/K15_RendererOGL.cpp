@@ -534,10 +534,10 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		glDrawArrays(GLTopologyConverter[m_Topology],p_Offset,vertexBuffer->getVertexCount());
 	}
 	/*********************************************************************************/
-	void RendererOGL::_bindProgramParameter(const GpuProgramParameter& p_Parameter,const RawData& p_Data)
-	{
-		
-	}
+// 	void RendererOGL::_bindProgramParameter(const GpuProgramParameter& p_Parameter,const RawData& p_Data)
+// 	{
+// 		
+// 	}
 	/*********************************************************************************/
 	void RendererOGL::_setVertexDeclaration(VertexDeclaration* p_Declaration)
 	{
@@ -563,5 +563,34 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 			glVertexAttribPointer(i,element.size,VertexDeclarationImplOGL::GLVertexElementTypeConverter[element.type],GL_FALSE,p_Declaration->getVertexSize(),(void*)element.offset);
 		}
 	}
+	/*********************************************************************************/
+	void RendererOGL::_bindTexture(Texture* p_Texture, Enum p_Type)
+	{
+		GLenum textureType = TextureImplOGL::GLTextureTypeConverter[p_Type];
+
+		if(p_Texture)
+		{
+			TextureImplOGL* texImpl = static_cast<TextureImplOGL*>(p_Texture->getImpl());
+			glActiveTexture(GL_TEXTURE0 + p_Texture->getSlot());
+			glBindTexture(textureType,texImpl->getTextureHandle());
+		}
+		else
+		{
+			glBindTexture(textureType,0);
+		}
+	}	
+	/*********************************************************************************/
+	void RendererOGL::_bindTextureSampler(TextureSampler* p_Sampler, Enum p_Slot)
+	{
+		if(p_Sampler)
+		{
+			TextureSamplerImplOGL* samplerImpl = static_cast<TextureSamplerImplOGL*>(p_Sampler->getImpl());
+			glBindSampler(GL_TEXTURE0 + p_Slot,samplerImpl->getHandle());
+		}
+		else
+		{
+			glBindSampler(GL_TEXTURE0 + p_Slot,0);
+		}
+	}	
 	/*********************************************************************************/
 }}}// end of K15_Engine::Rendering::OGL

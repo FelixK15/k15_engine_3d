@@ -39,23 +39,86 @@ namespace K15_Engine { namespace Core {
 		typedef DynamicArray(Resolution) SupportedResolutionSet;
 		/*********************************************************************************/
 	public:
+		
+		/**
+		* Allocate memory with OS specific functions.
+		*
+		* @param p_Size - size (in bytes) to allocate.
+		*
+		* @return void* - ptr to allocated memory (0 on error)
+		*/
+		static void* os_malloc(uint32 p_Size);
+
+		/**
+		* Free memory with OS specific functions.
+		*
+		* @param p_Pointer - Pointer to previously allocated memory.
+		*/
+		static void os_free(void* p_Pointer);
+
+	public:
+		/**
+		* Default Constructor
+		*/
 		ApplicationOSLayer_Win32();
+
+		/**
+		* Destructor
+		*/
 		~ApplicationOSLayer_Win32();
-		// initialize the OS layer
+
+		/**
+		* initialize the OS layer
+		*
+		*
+		* @return bool - true initialization succeeded, false initialization failed (refer to program log for further information)
+		*/
 		bool initialize();
-		// shutdown OS layer
+
+		/**
+		* shutdown OS layer
+		*/
+
 		void shutdown();
-		// get the last error set by the OS
+		// 
+		/**
+		* get the last error set by the OS
+		*
+		*
+		* @return const String& - Error string
+		*/
 		const String& getError() const;
-		// get supported resolutions
+
+		/** 
+		* get supported resolutions
+		*
+		* @param p_ResolutionSet - Pointer to a SupportedResolutionSet variable. The function will fill the container.
+		*/
 		void getSupportedResolutions(SupportedResolutionSet* p_ResolutionSet) const;
-		// get current time (1.0 = 1 sec)
+
+		/**
+		* get current time (1.0 = 1 sec)
+		*
+		*
+		* @return double - current time in second format.
+		*/
 		double getTime() const;
-		// idle for x seconds
+	
+		/**
+		* Put the calling thread to sleep for a specific amount of time.
+		*
+		* @param p_TimeInSeconds - seconds the calling thread should idle
+		*/
 		void sleep(double p_TimeInSeconds) const;
-		// callback before the game gets ticked (pumps messages)
+
+		/**
+		* callback before the game gets ticked (pumps messages)
+		*/
 		void onPreTick();
-		// callback after the game gets ticked
+
+		/**
+		* callback after the game gets ticked
+		*/
 		void onPostTick();
 	private:
 		LARGE_INTEGER m_PerformanceCounterFrequency;

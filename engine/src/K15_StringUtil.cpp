@@ -29,8 +29,8 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	String StringUtil::format(char* p_Message,...)
 	{
-		static const uint32 BufferSize = 2048;
-		static char MessageBuffer[BufferSize] = {0};
+		const uint32 BufferSize = 512;
+		char MessageBuffer[BufferSize] = {0};
 
 		va_list list;
 
@@ -56,7 +56,7 @@ namespace K15_Engine { namespace Core {
 		pos = p_Format.find_first_of("hh");
 		if(pos != String::npos)
 		{
-			static String hour = "";
+			String hour = "";
 			hour = toString(tm.tm_hour);
 			if(tm.tm_hour < 10)
 			{
@@ -69,7 +69,7 @@ namespace K15_Engine { namespace Core {
 		pos = p_Format.find_first_of("mm");
 		if(pos != String::npos)
 		{
-			static String minute = "";
+			String minute = "";
 			minute = toString(tm.tm_min);
 			if(tm.tm_min < 10)
 			{
@@ -82,7 +82,7 @@ namespace K15_Engine { namespace Core {
 		pos = p_Format.find_first_of("ss");
 		if(pos != String::npos)
 		{
-			static String second = "";
+			String second = "";
 			second = toString(tm.tm_sec);
 			if(tm.tm_sec < 10)
 			{

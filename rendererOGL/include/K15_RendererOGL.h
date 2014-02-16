@@ -46,7 +46,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		virtual TextureImplBase* createTextureImpl() OVERRIDE;
 		virtual TextureSamplerImplBase* createTextureSamplerImpl() OVERRIDE;
 		virtual GpuProgramImplBase* createGpuProgramImpl() OVERRIDE;
-    virtual VertexDeclarationImplBase* createVertexDeclarationImpl() OVERRIDE;
+		virtual VertexDeclarationImplBase* createVertexDeclarationImpl() OVERRIDE;
 
 		virtual void beginFrame() OVERRIDE;
 		virtual void endFrame() OVERRIDE;
@@ -76,7 +76,9 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		virtual void _setClearColor(const ColorRGBA& p_ClearColor) OVERRIDE;
 		virtual void _bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType) OVERRIDE;
 		virtual void _bindProgram(GpuProgram* p_Program, Enum p_ProgramType) OVERRIDE;
-		virtual void _bindProgramParameter(const GpuProgramParameter& p_Parameter,const RawData& p_Data) OVERRIDE;
+		//virtual void _bindProgramParameter(const GpuProgramParameter& p_Parameter) OVERRIDE;
+		virtual void _bindTextureSampler(TextureSampler* p_Sampler, Enum p_Slot) OVERRIDE;
+		virtual void _bindTexture(Texture* p_Texture, Enum p_Type) OVERRIDE;
 		virtual void _drawIndexed(uint32 p_Offset) OVERRIDE;
 		virtual void _drawDirect(uint32 p_Offset) OVERRIDE;
 

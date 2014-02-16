@@ -40,7 +40,7 @@ namespace K15_Engine { namespace Core {
 		}
 		else
 		{
-			m_Memory = (byte*)malloc(p_Size);
+			m_Memory = (byte*)K15_MALLOC(p_Size);
 		}
 
 		m_MemoryEndAddress = m_Memory + m_MemorySize;
@@ -105,7 +105,7 @@ namespace K15_Engine { namespace Core {
 
 		//memory header will always get created on the heap
  	 	MemoryHeader* header = 0;
-		K15_ASSERT((header = (MemoryHeader*)malloc(sizeof(MemoryHeader))) != 0,"Out of memory.");
+		K15_ASSERT((header = (MemoryHeader*)K15_MALLOC(sizeof(MemoryHeader))) != 0,"Out of memory.");
 		header->Allocator = (void*)this;
  	 	header->File = p_File;
  	 	header->Function = p_Function;

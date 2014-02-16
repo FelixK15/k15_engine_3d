@@ -67,7 +67,7 @@ namespace K15_Engine { namespace Core {
 		virtual void setWindowTitle(const String& p_WindowTitle);
 		const String& getWindowTitle() const;
 
-		virtual void setResolution(const Resolution& p_Resolution);
+		virtual void setResolution(const Resolution& p_Resolution, bool p_ForceChange = false);
 		const Resolution& getResolution() const;
 
 		virtual void setIsFullscreen(bool p_Fullscreen);

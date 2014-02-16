@@ -33,6 +33,9 @@
 #include "K15_TextureSampler.h"
 #include "K15_GpuProgram.h"
 
+#include "K15_DepthState.h"
+#include "K15_AlphaState.h"
+
 namespace K15_Engine { namespace Rendering { 
 	/*********************************************************************************/
 	class K15_CORE_API MaterialPass : public Object

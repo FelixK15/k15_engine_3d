@@ -460,6 +460,11 @@ namespace K15_Engine
 #	define K15_DELETE_SIZE(allocator,ptr,size) if(ptr){allocator->deallocate((void*)ptr,size);}
 #endif //K15_DEBUG
 
+
+#define K15_MALLOC(size) ApplicationOSLayerType::os_malloc(size)
+#define K15_FREE(ptr) ApplicationOSLayerType::os_free(ptr)
+
+
 # define K15_PLACEMENT_NEW new(ptr)
 
 #if defined K15_DEBUG

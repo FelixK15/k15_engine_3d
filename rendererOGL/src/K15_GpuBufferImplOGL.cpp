@@ -32,8 +32,9 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 	/*********************************************************************************/
 	const GLenum GpuBufferImplOGL::GLBufferUsageConverter[GpuBuffer::UO_COUNT] = {
-		GL_STATIC_DRAW, //UO_STATIC
-		GL_DYNAMIC_DRAW //UO_DYNAMIC
+		GL_STATIC_DRAW,		//UO_STATIC
+		GL_DYNAMIC_DRAW,	//UO_DYNAMIC
+		GL_STREAM_DRAW,		//UI_STREAM
 	};//GLBufferTypeConverter
 	/*********************************************************************************/
 
@@ -45,11 +46,13 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	};//GLBufferAccessConverter
 	/*********************************************************************************/
 
-  const GLenum GpuBufferImplOGL::GLIndexBufferTypeConverter[IndexBuffer::IT_COUNT] = {
-    GL_UNSIGNED_BYTE,   //IT_UINT8
-    GL_UNSIGNED_SHORT,  //IT_UINT16
-    GL_UNSIGNED_INT     //IT_UINT32
-  };//GLIndexBufferTypeConverter
+	/*********************************************************************************/
+	const GLenum GpuBufferImplOGL::GLIndexBufferTypeConverter[IndexBuffer::IT_COUNT] = {
+		GL_UNSIGNED_BYTE,   //IT_UINT8
+		GL_UNSIGNED_SHORT,  //IT_UINT16
+		GL_UNSIGNED_INT     //IT_UINT32
+	};//GLIndexBufferTypeConverter
+	/*********************************************************************************/
 
 	/*********************************************************************************/
 	GpuBufferImplOGL::GpuBufferImplOGL()

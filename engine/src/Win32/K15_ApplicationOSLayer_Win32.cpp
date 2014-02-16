@@ -31,6 +31,38 @@ namespace K15_Engine { namespace Core {
 	const String ApplicationOSLayer_Win32::OSName = "Microsoft Windows";
 	const String ApplicationOSLayer_Win32::PluginExtension = "dll";
 	/*********************************************************************************/
+
+	/*********************************************************************************/
+	void* ApplicationOSLayer_Win32::os_malloc(uint32 p_Size)
+	{
+		static HANDLE processHeap = GetProcessHeap();
+#		if defined K15_DEBUG
+			static DWORD flags = HEAP_ZERO_MEMORY | HEAP_GENERATE_EXCEPTIONS;
+#		else
+			static DWORD flags = HEAP_ZERO_MEMORY;
+#		endif //K15_DEBUG
+
+		void* memory = HeapAlloc(processHeap,flags,p_Size);
+
+		K15_ASSERT(memory,"Out of memory.");
+		
+		return memory;
+	}
+	/*********************************************************************************/
+	void ApplicationOSLayer_Win32::os_free(void* p_Pointer)
+	{
+		static HANDLE processHeap = GetProcessHeap();
+
+		if(!p_Pointer)
+		{
+			return;
+		}
+
+		HeapFree(processHeap,0,p_Pointer);
+	}
+	/*********************************************************************************/
+
+	/*********************************************************************************/
 	ApplicationOSLayer_Win32::ApplicationOSLayer_Win32()
 	{
 

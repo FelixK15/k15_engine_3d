@@ -86,5 +86,11 @@
     <None Include="..\..\rendererOGL\shader\default.vert">
       <Filter>Shader\Vertex</Filter>
     </None>
+    <None Include="..\..\rendererOGL\include\K15_TextureSamplerImplOGL.inl">
+      <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\rendererOGL\include\K15_TextureImplOGL.inl">
+      <Filter>Core\include</Filter>
+    </None>
   </ItemGroup>
 </Project>

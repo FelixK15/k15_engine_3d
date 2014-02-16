@@ -75,6 +75,15 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 			_dumpMemoryStatistics();
 		}
 
+		if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_F2))
+		{
+			g_Application->getRenderWindow()->setIsFullscreen(true);
+		}
+		else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_F3))
+		{
+			g_Application->getRenderWindow()->setIsFullscreen(false);
+		}
+
 		if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_UP))
 		{
 			VertexBuffer* buff = (VertexBuffer*)g_Application->getRenderer()->getBoundBuffer(GpuBuffer::BT_VERTEX_BUFFER);

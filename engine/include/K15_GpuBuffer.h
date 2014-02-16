@@ -85,8 +85,9 @@ namespace K15_Engine { namespace Rendering {
 		/*********************************************************************************/
 		enum eUsageOptions
 		{
-			UO_STATIC = 0,		//<! Content gets set ONLY on creation time
-			UO_DYNAMIC,			//<! Content gets set dynamically throughout the lifetime of the buffer
+			UO_STATIC = 0,		//<! Content gets set ONLY on creation time.
+			UO_DYNAMIC,			//<! Content gets set dynamically throughout the lifetime of the buffer.
+			UO_STREAM,			//<! Content gets set dynamically on a per frame basis.
 			
 			UO_COUNT
 		};// UsageOptions

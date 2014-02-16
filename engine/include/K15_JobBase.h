@@ -46,7 +46,10 @@ namespace K15_Engine { namespace Core {
 		JobBase(const ObjectName& p_Name,bool p_AutoDelete = true);
 		~JobBase();
 
-		void execute();
+		virtual void start() = 0;
+		virtual void end() = 0;
+
+		INLINE void execute();
 
 		INLINE Enum getStatus() const;
 		INLINE void setStatus(Enum p_Status);
@@ -56,7 +59,7 @@ namespace K15_Engine { namespace Core {
 		INLINE bool getAutoDelete() const;
 
 	protected:
-		virtual void internalExecute() = 0;
+		virtual Enum internalExecute() = 0;
 
 	private:
 		ObjectName m_Name;

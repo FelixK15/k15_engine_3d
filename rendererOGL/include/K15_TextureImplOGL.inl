@@ -1,8 +1,8 @@
 /**
- * @file K15_JobBase.inl
+ * @file K15_TextureImplOGL.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/11/26
+ * @date 2014/02/16
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,28 +18,8 @@
  */
 
 /*********************************************************************************/
-Enum JobBase::getStatus() const
+GLuint TextureImplOGL::getTextureHandle() const
 {
-	return m_Status;
-}
-/*********************************************************************************/
-void JobBase::setStatus(Enum p_Status)
-{
-	m_Status = p_Status;
-}
-/*********************************************************************************/
-const ObjectName& JobBase::getName() const
-{
-	return m_Name;
-}
-/*********************************************************************************/
-bool JobBase::getAutoDelete() const
-{
-  return m_AutoDelete;
-}
-/*********************************************************************************/
-void JobBase::execute()
-{
-	m_Status = internalExecute();
+	return m_TextureHandle;
 }
 /*********************************************************************************/

@@ -31,7 +31,7 @@ namespace K15_Engine { namespace Core {
 	void ThreadWorker::execute(void*)
 	{
 		static Mutex mutex;
-
+		static const ApplicationOSLayerType& os_layer = g_Application->getOSLayer();
 		while(Running)
 		{
 			JobBase* job = 0;
@@ -45,16 +45,18 @@ namespace K15_Engine { namespace Core {
 				K15_ASSERT(job,"NULL job in job list.");
 
 				jobs.pop_front();
-				_LogDebug("Thread %u will process job %s.",g_CurrentThread::get_id().hash(),job->getName().c_str());
+				_LogDebug("Thread %u will process job \"%s\".",g_CurrentThread::get_id().hash(),job->getName().c_str());
 			}
 
 			mutex.unlock();
 
 			if(job)
 			{
+				job->start();
 				job->setStatus(JobBase::JS_RUNNING);
 				job->execute();
 				job->setStatus(JobBase::JS_FINISHED);
+				job->end();
 
 				if(job->getAutoDelete())
 				{
@@ -62,7 +64,8 @@ namespace K15_Engine { namespace Core {
 				}
 			}
 
-			K15_SleepCurrentThread(10); //sleep for 10 ms
+			//put the current thread to sleep for 10 milliseconds.
+			os_layer.sleep(10);
 		}
 	}
 	/*********************************************************************************/

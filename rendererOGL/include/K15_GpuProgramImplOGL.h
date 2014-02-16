@@ -47,6 +47,8 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 		virtual void getBinaryCode(RawData* p_Buffer) OVERRIDE;
 
+		virtual String getShaderExtension(Enum p_ProgramStage) OVERRIDE;
+
 		GLuint getProgramGL() const;
 
 	private:
@@ -54,6 +56,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 	private:
 		GLuint m_Program;
+		GLuint m_Shader;
 	};// end of GpuProgramImplOGL class declaration
 }}}// end of K15_Engine::Rendering::OGL namespace
 

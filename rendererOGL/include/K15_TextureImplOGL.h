@@ -49,10 +49,12 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 		virtual bool resize(uint32 p_Width, uint32 p_Height, uint32 p_Depth) OVERRIDE;
 
+		INLINE GLuint getTextureHandle() const;
 	private:
 		GLuint m_TextureHandle;
 		uint32 m_TextureStorageSize;
 	};// end of TextureImplOGL class declaration
+#	include "K15_TextureImplOGL.inl"
 }}}//end of K15_Engine::Rendering::OGL namespace
 
 #endif //_K15Engine_RendererOGL_TextureImpl_h_

@@ -39,15 +39,16 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
     TextureSamplerImplOGL();
     ~TextureSamplerImplOGL();
 
-    virtual void setMinFilterMode(Enum p_MinFilterMode);
-    virtual void setMagFilterMode(Enum p_MagFilterMode);
+    virtual void setMinFilterMode(Enum p_MinFilterMode) OVERRIDE;
+    virtual void setMagFilterMode(Enum p_MagFilterMode) OVERRIDE;
 
-    virtual void setUWrappingMode(Enum p_WrappingMode);
-    virtual void setVWrappingMode(Enum p_WrappingMode);
-    virtual void setWWrappingMode(Enum p_WrappingMode);
+    virtual void setUWrappingMode(Enum p_WrappingMode) OVERRIDE;
+    virtual void setVWrappingMode(Enum p_WrappingMode) OVERRIDE;
+    virtual void setWWrappingMode(Enum p_WrappingMode) OVERRIDE;
 
-    GLuint getHandle();
+    INLINE GLuint getHandle() const;
   private:
     GLuint m_SamplerHandle;
   };// end of TextureSamplerImplOGL class declaration
+#	include "K15_TextureSamplerImplOGL.inl"
 }}}//end of K15_Engine::Rendering::OGL namespace

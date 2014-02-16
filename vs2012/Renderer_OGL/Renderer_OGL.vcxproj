@@ -99,6 +99,8 @@
     <ClCompile Include="..\..\rendererOGL\src\plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\rendererOGL\include\K15_TextureImplOGL.inl" />
+    <None Include="..\..\rendererOGL\include\K15_TextureSamplerImplOGL.inl" />
     <None Include="..\..\rendererOGL\shader\default.frag" />
     <None Include="..\..\rendererOGL\shader\default.vert" />
     <None Include="module.def" />

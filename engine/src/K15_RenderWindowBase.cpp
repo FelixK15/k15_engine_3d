@@ -71,11 +71,15 @@ namespace K15_Engine { namespace Core {
 		return m_WindowTitle;
 	}
 	/*********************************************************************************/
-	void RenderWindowBase::setResolution(const Resolution& p_Resolution)
+	void RenderWindowBase::setResolution(const Resolution& p_Resolution, bool p_ForceChange)
 	{
 		m_CurrentResolution = p_Resolution;
 
-		g_EventManager->triggerEvent(K15_NEW GameEvent(_EN(ResolutionChanged),(void*)&p_Resolution,K15_PTR_SIZE));
+		if(p_ForceChange || (m_CurrentResolution.width == p_Resolution.width || m_CurrentResolution.height == p_Resolution.height))
+		{
+			g_EventManager->triggerEvent(K15_NEW GameEvent(_EN(ResolutionChanged),(void*)&p_Resolution,K15_PTR_SIZE));
+		}
+		
 	}
 	/*********************************************************************************/
 	const Resolution& RenderWindowBase::getResolution() const

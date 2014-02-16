@@ -25,7 +25,7 @@ namespace K15_Engine { namespace Serialization {
 	/*********************************************************************************/
 	SerialWriter::SerialWriter(uint32 p_Size)
 	: SerializerBase(ST_WRITER),
-	m_Buffer(static_cast<byte*>(malloc(p_Size))),
+	m_Buffer(static_cast<byte*>(K15_MALLOC(p_Size))),
 	m_Length(p_Size)
 	{
 
