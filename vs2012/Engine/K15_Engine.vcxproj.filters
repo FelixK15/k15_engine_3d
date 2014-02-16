@@ -599,6 +599,9 @@
     <ClCompile Include="..\..\engine\src\K15_Vertex.cpp">
       <Filter>Rendering\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_CameraComponent.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -733,9 +736,6 @@
     </None>
     <None Include="..\..\engine\include\K15_DepthState.inl">
       <Filter>Rendering\include</Filter>
-    </None>
-    <None Include="..\..\engine\src\K15_CameraComponent.cpp">
-      <Filter>Components\src</Filter>
     </None>
     <None Include="..\..\engine\include\K15_CameraComponent.inl">
       <Filter>Components\include</Filter>

@@ -33,24 +33,25 @@
 #include "K15_Matrix4.h"
 
 namespace K15_Engine { namespace Rendering {
-  /*********************************************************************************/
-  enum eProjectionType
-  {
-    PT_PERSPECTIVE = 0,
-    PT_ORTHOGRAPHIC,
-
-    PT_COUNT
-  }; //ProjectionType
-  /*********************************************************************************/
   class K15_CORE_API CameraComponent : public GameObjectComponentBase
   {
 	/*********************************************************************************/
 	K15_DECLARE_RTTI;
 	/*********************************************************************************/
- 
+  public:
+	/*********************************************************************************/
+	enum eProjectionType
+	{
+		PT_PERSPECTIVE = 0,
+		PT_ORTHOGRAPHIC,
+
+		PT_COUNT
+	}; //ProjectionType
+	/*********************************************************************************/
+
   public:
     CameraComponent(GameObject* p_Parent);
-    ~CameraComponent();
+    virtual ~CameraComponent();
   
     INLINE bool getActive() const;
     INLINE float getFov() const;
@@ -65,6 +66,8 @@ namespace K15_Engine { namespace Rendering {
     INLINE void setProjectionType(Enum p_ProjectionType);
     INLINE void setFarClipDistance(float p_Far);
     INLINE void setNearClipDistance(float p_Near);
+
+	virtual void update(const GameTime& p_GameTime) OVERRIDE {};
 
   private:
     Math::Matrix4 m_ProjectionMatrix;

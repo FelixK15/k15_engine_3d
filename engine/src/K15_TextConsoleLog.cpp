@@ -65,6 +65,7 @@ namespace K15_Engine { namespace Core {
 		msg += p_Message;
 		SetConsoleTextAttribute(consoleHandle,colorCode);
 		printf("%s\n",msg.c_str());
+		SetConsoleTextAttribute(consoleHandle,FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN); //set color back to white
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace

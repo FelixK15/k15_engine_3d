@@ -490,7 +490,7 @@
     <None Include="..\..\engine\include\K15_Vertex.inl" />
     <None Include="..\..\engine\include\K15_VertexBuffer.inl" />
     <None Include="..\..\engine\include\K15_VertexDeclaration.inl" />
-    <None Include="..\..\engine\src\K15_CameraComponent.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_CameraComponent.cpp" />
     <None Include="module.def" />
   </ItemGroup>
   <ItemGroup>

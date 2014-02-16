@@ -50,10 +50,10 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 
 		m_Material = K15_NEW Material();
 		MaterialPass* pass = m_Material->getPass(0,true);
-		m_VertexShader = K15_NEW GpuProgram(GpuProgram::PS_VERTEX);
-		m_FragmetShader = K15_NEW GpuProgram(GpuProgram::PS_FRAGMENT);
-		
 
+		m_VertexShader = K15_NEW GpuProgram("default",GpuProgram::PS_VERTEX);
+		m_FragmetShader = K15_NEW GpuProgram("default",GpuProgram::PS_FRAGMENT);
+		
 		m_VertexDeclaration = K15_NEW VertexDeclaration("PF4CF4");
 
 		VertexBuffer::CreationOptions optionsVB;
@@ -70,12 +70,6 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 
 		m_VertexBuffer = K15_NEW VertexBuffer(optionsVB);
 		m_IndexBuffer = K15_NEW IndexBuffer(optionsIB);
-
-		String vertexShaderCode = IOUtil::readWholeFile("default.vert");
-		String fragmentShaderCode = IOUtil::readWholeFile("default.frag");
-
-		m_VertexShader->setProgramCode(vertexShaderCode,true);
-		m_FragmetShader->setProgramCode(fragmentShaderCode,true);
 
 		pass->setProgram(m_VertexShader,GpuProgram::PS_VERTEX);
 		pass->setProgram(m_FragmetShader,GpuProgram::PS_FRAGMENT);

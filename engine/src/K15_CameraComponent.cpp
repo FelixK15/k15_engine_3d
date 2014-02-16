@@ -19,7 +19,6 @@
 
 #include "K15_PrecompiledHeader.h"
 
-#include "K15_RenderTask.h"
 #include "K15_RendererBase.h"
 #include "K15_Node.h"
 #include "K15_GameObject.h"
@@ -90,9 +89,9 @@ namespace K15_Engine { namespace Rendering {
 	{
 		m_Active = true;
 	
-		if(g_Application->getRenderTask()->getRenderer())
+		if(g_Application->getRenderer())
 		{
-			g_Application->getRenderTask()->getRenderer()->setActiveCamera(this);
+			g_Application->getRenderer()->setActiveCamera(this);
 		}
 	}
 	/*********************************************************************************/
