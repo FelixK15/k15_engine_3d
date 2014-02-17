@@ -54,7 +54,7 @@ namespace K15_Engine { namespace Core {
 		}
 		else
 		{
-			free(m_Memory);
+			K15_FREE(m_Memory);
 		}
 		
 		m_Memory = 0;
@@ -139,7 +139,7 @@ namespace K15_Engine { namespace Core {
 		K15_ASSERT(header->Allocator == this,StringUtil::format("Pointer %p has been allocated by allocator %s but tried to free via allocator %s.",
 		  p_Pointer,((BaseAllocator*)header->Allocator)->getName().c_str(),m_Name.c_str()));
 
-		free(header);
+		K15_FREE(header);
 
 		m_MemoryHeaderMap.erase(iter);
 

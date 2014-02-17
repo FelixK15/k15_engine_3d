@@ -273,10 +273,13 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	void RendererOGL::shutdown()
 	{
-		glBindProgramPipeline(0);
-		glDeleteProgramPipelines(1,&m_ProgramPipeline);
-		m_ProgramPipeline = 0;
-
+		if(m_ProgramPipeline != 0)
+		{
+			glBindProgramPipeline(0);
+			glDeleteProgramPipelines(1,&m_ProgramPipeline);
+			m_ProgramPipeline = 0;
+		}
+		
 		if(m_RenderContext)
 		{
 			wglMakeCurrent(0,0);

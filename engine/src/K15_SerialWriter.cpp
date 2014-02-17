@@ -33,7 +33,7 @@ namespace K15_Engine { namespace Serialization {
 	/*********************************************************************************/
 	SerialWriter::~SerialWriter()
 	{
-		free(m_Buffer);
+		K15_FREE(m_Buffer);
 	}
 	/*********************************************************************************/
 	byte* SerialWriter::getBufferPointer() const
