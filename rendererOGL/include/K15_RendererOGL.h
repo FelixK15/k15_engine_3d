@@ -84,6 +84,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 	protected:
 		GLuint m_ProgramPipeline;
+		GLuint m_VertexArray;
 		HDC m_DeviceContext;
 		HGLRC m_RenderContext;
 

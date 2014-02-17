@@ -125,7 +125,9 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	RendererOGL::RendererOGL()
 		: RendererBase(),
 		  m_RenderContext(0),
-		  m_DeviceContext(0)
+		  m_DeviceContext(0),
+		  m_ProgramPipeline(0),
+		  m_VertexArray(0)
 	{
 		
 	}
@@ -254,6 +256,9 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 			//create program pipeline
 			glGenProgramPipelines(1,&m_ProgramPipeline);
 			glBindProgramPipeline(m_ProgramPipeline);
+
+			glGenVertexArrays(1,&m_VertexArray);
+			glBindVertexArray(m_VertexArray);
 		}
 		else
 		{
@@ -278,6 +283,13 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 			glBindProgramPipeline(0);
 			glDeleteProgramPipelines(1,&m_ProgramPipeline);
 			m_ProgramPipeline = 0;
+		}
+
+		if(m_VertexArray != 0)
+		{
+			glBindVertexArray(0);
+			glDeleteVertexArrays(1,&m_VertexArray);
+			m_VertexArray = 0;
 		}
 		
 		if(m_RenderContext)
