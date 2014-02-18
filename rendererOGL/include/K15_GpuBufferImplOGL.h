@@ -57,6 +57,9 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 	private:
 		GLuint m_BufferHandle;
+# ifndef K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
+    byte* m_MappedBufferRange;
+# endif //K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 	};// end of GpuBufferImplOG class declaration
 }}}//end of K15_Engine::Rendering::OGL namespace
 

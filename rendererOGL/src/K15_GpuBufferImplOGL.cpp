@@ -69,22 +69,48 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	bool GpuBufferImplOGL::lock(uint32 p_StartPos,int32 p_Count)
 	{
-		if(m_Buffer->isLocked())
-		{
-			return false;
-		}
+    if(m_Buffer->isLocked())
+    {
+      return false;
+    }
 
+# if defined K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 		return true;
+# else
+
+    GLenum target = GLBufferTypeConverter[m_Buffer->getType()];
+    GLbitfield flags = 0;
+
+# if defined K15_OGL_EXPERIMENT_MAP_BUFFER_WITH_UNSYNCHRONIZED
+    flags |= GL_MAP_UNSYNCHRONIZED_BIT;
+# endif
+
+    m_MappedBufferRange = (byte*)glMapBufferRange(target,p_StartPos,p_Count,flags);
+
+    return m_MappedBufferRange != 0;
+# endif // K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 	}
 	/*********************************************************************************/
 	bool GpuBufferImplOGL::unlock()
 	{
-		if(m_Buffer->isLocked())
-		{
-			return true;
-		}
+    if(m_Buffer->isLocked())
+    {
+      return true;
+    }
 
-		return false;
+# if defined K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
+    return false;
+# else
+
+    GLenum target = GLBufferTypeConverter[m_Buffer->getType()];
+    if(glUnmapBuffer(target) == GL_TRUE)
+    {
+      m_MappedBufferRange = 0;
+      return true;
+    }
+
+    return false;
+# endif // K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 	}
 	/*********************************************************************************/
 	bool GpuBufferImplOGL::allocate(uint32 p_Size)
@@ -92,15 +118,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		GLenum usage = GLBufferUsageConverter[m_Buffer->getUsageOption()];
 
 		glNamedBufferDataEXT(m_BufferHandle,p_Size,0,usage);
-
-		if(glGetError() != GL_NO_ERROR)
-		{
-			_LogError("Could not allocate %ukB from GPU. %s",p_Size / 1024,
-				g_Application->getRenderer()->getLastError().c_str());
-
-			return false;
-		}
-		
+	
 		return true;
 	}
 	/*********************************************************************************/
@@ -123,15 +141,11 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 				p_Offset = newOffset;
 			}
 
+#if defined K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 			glGetNamedBufferSubDataEXT(m_BufferHandle,p_Offset,p_Size,p_Destination);
-			
-			if(glGetError() != GL_NO_ERROR)
-			{
-				_LogError("Could not read buffer data. %s",
-					g_Application->getRenderer()->getLastError().c_str());
-			
-				p_Size = 0;
-			}
+#else
+      memcpy(p_Destination,m_MappedBufferRange,p_Size);
+#endif //K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 
 			return p_Size;
 		}
@@ -156,16 +170,12 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 			p_Offset = newOffset;
 		}
 		GLenum target = GLBufferTypeConverter[m_Buffer->getType()];
-		
+
+#if defined K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 		glNamedBufferSubDataEXT(m_BufferHandle,p_Offset,p_Size,p_Source);
-
-		if(glGetError() != GL_NO_ERROR)
-		{
-			_LogError("Could not read buffer data. %s",
-				g_Application->getRenderer()->getLastError().c_str());
-
-			p_Size = 0;
-		}
+#else
+    memcpy(m_MappedBufferRange,p_Source,p_Size);
+#endif //K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 
 		return p_Size;
 	}
