@@ -18,6 +18,3 @@
  */
 
 #include "K15_PrecompiledHeader.h"
-
-#pragma message("Compiling precompiled headers...Should only be done once per build.")
-

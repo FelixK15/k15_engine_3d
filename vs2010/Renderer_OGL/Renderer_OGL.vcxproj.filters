@@ -19,6 +19,15 @@
     <Filter Include="Plugin\src">
       <UniqueIdentifier>{55080cfa-d414-4c7a-911e-780b9524a6b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{0c615bea-aa3d-486b-9f5e-d726d28250d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Vertex">
+      <UniqueIdentifier>{26646e46-f536-4407-af7b-ca4bfb594361}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Fragment">
+      <UniqueIdentifier>{9d828414-7072-48a9-bb71-d1bae82cfc04}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\rendererOGL\include\K15_GpuBufferImplOGL.h">
@@ -39,6 +48,12 @@
     <ClInclude Include="..\..\rendererOGL\include\K15_TextureSamplerImplOGL.h">
       <Filter>Core\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\rendererOGL\include\K15_GpuProgramImplOGL.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rendererOGL\include\K15_VertexDeclarationImplOGL.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\rendererOGL\src\K15_TextureImplOGL.cpp">
@@ -56,8 +71,26 @@
     <ClCompile Include="..\..\rendererOGL\src\K15_TextureSamplerImplOGL.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\K15_GpuProgramImplOGL.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\K15_VertexDeclarationImplOGL.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
+    <None Include="..\..\rendererOGL\shader\default.frag">
+      <Filter>Shader\Fragment</Filter>
+    </None>
+    <None Include="..\..\rendererOGL\shader\default.vert">
+      <Filter>Shader\Vertex</Filter>
+    </None>
+    <None Include="..\..\rendererOGL\include\K15_TextureSamplerImplOGL.inl">
+      <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\rendererOGL\include\K15_TextureImplOGL.inl">
+      <Filter>Core\include</Filter>
+    </None>
   </ItemGroup>
 </Project>

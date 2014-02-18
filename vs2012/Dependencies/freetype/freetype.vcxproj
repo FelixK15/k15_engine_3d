@@ -39,14 +39,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\obj\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\obj\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
     <IncludePath>..\..\..\dependencies\freetype\include\;$(IncludePath)</IncludePath>
     <SourcePath>..\..\..\dependencies\freetype\src\;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)..\..\..\dependencies\$(ProjectName)\obj\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\obj\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
     <IncludePath>..\..\..\dependencies\freetype\include\;$(IncludePath)</IncludePath>
     <SourcePath>..\..\..\dependencies\freetype\src\;$(SourcePath)</SourcePath>
   </PropertyGroup>

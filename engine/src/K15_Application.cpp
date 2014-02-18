@@ -195,8 +195,8 @@ namespace K15_Engine { namespace Core {
 
 		_LogSuccess("OS layer initialized!");
 
-		loadSettingsFile();
 		loadGameDirFile();
+		loadSettingsFile();
 		
 		_LogNormal("Initializing DynamicLibraryManager...");
 		m_DynamicLibraryManager = K15_NEW DynamicLibraryManager();
@@ -641,15 +641,15 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void Application::loadGameDirFile()
 	{
-		static uint32 GameDirBufferSize = 256;
+		static const uint32 GameDirBufferSize = 256;
+		static char GameDirBuffer[GameDirBufferSize];
 		FileStream gameDirFile(GameDirFileName);
 
 		if(gameDirFile.is_open())
 		{
-			char* buffer = (char*)alloca(GameDirBufferSize);
-			buffer = '\0';
-			gameDirFile.getline(buffer,GameDirBufferSize);
-			m_GameRootDir = buffer;
+			GameDirBuffer[0] = '\0';
+			gameDirFile.getline(GameDirBuffer,GameDirBufferSize);
+			m_GameRootDir = m_GameRootDir + GameDirBuffer; //concatenate with previous gamerootdir.
 			gameDirFile.close();
 		}
 		else

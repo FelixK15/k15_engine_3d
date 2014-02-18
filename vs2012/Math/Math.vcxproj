@@ -39,14 +39,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\..\math\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
-    <IntDir>..\..\math\obj\</IntDir>
+    <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>K15_$(ProjectName)_$(Configuration)</TargetName>
-    <IncludePath>..\..\math\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\math\include\;..\..\engine\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\math\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
-    <IntDir>..\..\math\obj\</IntDir>
+    <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>K15_Math</TargetName>
     <IncludePath>..\..\math\include\;..\..\engine\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
