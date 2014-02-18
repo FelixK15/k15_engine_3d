@@ -69,47 +69,50 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 	bool GpuBufferImplOGL::lock(uint32 p_StartPos,int32 p_Count)
 	{
-    if(m_Buffer->isLocked())
-    {
-      return false;
-    }
+		if(m_Buffer->isLocked())
+		{
+			return false;
+		}
 
 # if defined K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 		return true;
 # else
 
-    GLenum target = GLBufferTypeConverter[m_Buffer->getType()];
-    GLbitfield flags = 0;
+		GLenum target = GLBufferTypeConverter[m_Buffer->getType()];
+		GLbitfield flags = GL_MAP_WRITE_BIT;
 
 # if defined K15_OGL_EXPERIMENT_MAP_BUFFER_WITH_UNSYNCHRONIZED
-    flags |= GL_MAP_UNSYNCHRONIZED_BIT;
+		flags |= GL_MAP_UNSYNCHRONIZED_BIT;
 # endif
-
-    m_MappedBufferRange = (byte*)glMapBufferRange(target,p_StartPos,p_Count,flags);
-
-    return m_MappedBufferRange != 0;
+		glBindBuffer(target,m_BufferHandle);
+		m_MappedBufferRange = (byte*)glMapBufferRange(target,p_StartPos,p_Count,flags);
+		glBindBuffer(target,0);
+		return m_MappedBufferRange != 0;
 # endif // K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 	}
 	/*********************************************************************************/
 	bool GpuBufferImplOGL::unlock()
 	{
-    if(m_Buffer->isLocked())
-    {
-      return true;
-    }
+		if(!m_Buffer->isLocked())
+		{
+			return true;
+		}
 
 # if defined K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
-    return false;
+		return false;
 # else
 
-    GLenum target = GLBufferTypeConverter[m_Buffer->getType()];
-    if(glUnmapBuffer(target) == GL_TRUE)
-    {
-      m_MappedBufferRange = 0;
-      return true;
-    }
-
-    return false;
+		GLenum target = GLBufferTypeConverter[m_Buffer->getType()];
+		glBindBuffer(target,m_BufferHandle);
+		if(glUnmapBuffer(target) == GL_TRUE)
+		{
+			m_MappedBufferRange = 0;
+			glBindBuffer(target,0);
+			return true;
+		}
+	
+		glBindBuffer(target,0);
+		return false;
 # endif // K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 	}
 	/*********************************************************************************/
@@ -144,7 +147,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 #if defined K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 			glGetNamedBufferSubDataEXT(m_BufferHandle,p_Offset,p_Size,p_Destination);
 #else
-      memcpy(p_Destination,m_MappedBufferRange,p_Size);
+			memcpy(p_Destination,m_MappedBufferRange,p_Size);
 #endif //K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 
 			return p_Size;

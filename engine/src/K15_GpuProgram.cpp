@@ -50,7 +50,7 @@ namespace K15_Engine { namespace Rendering {
 		m_Uniforms.reserve(MaxParameter);
 
 		//check if the shader has been compiled/preprocessed earlier
-		String shaderFile = p_ProgramName + m_Impl->getShaderExtension(p_ProgramStage);
+		String shaderFile = g_Application->getGameRootDir() + p_ProgramName + m_Impl->getShaderExtension(p_ProgramStage);
 		setProgramCode(IOUtil::readWholeFile(shaderFile),true);
 	}
 	/*********************************************************************************/
