@@ -26,12 +26,13 @@ T StringUtil::stringToNumeric(const String& p_String,const unsigned char p_Delim
 	StringStream stream;
 
 	tempString.clear();
-
+	unsigned char currentCharacter = 0;
 	for(String::size_type i = 0;i < p_String.size();++i)
 	{
-		if(isdigit(p_String.at(i)) || p_String.at(i) == p_Delimiter)
+		currentCharacter = p_String.at(i);
+		if(isdigit(currentCharacter) || currentCharacter == p_Delimiter)
 		{
-			tempString += p_String.at(i);
+			tempString += currentCharacter;
 		}
 	}
 

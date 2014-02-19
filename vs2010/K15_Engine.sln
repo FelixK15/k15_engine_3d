@@ -18,6 +18,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Renderer_OGL", "Renderer_OG
 		{23445B9F-1C0E-45A8-B5FA-0BDB152AC569} = {23445B9F-1C0E-45A8-B5FA-0BDB152AC569}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_RenderTest", "..\vs2012\Plugin_RenderTest\Plugin_RenderTest.vcxproj", "{42AC5C94-8E9A-4830-B5AE-412560D7FD16}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -40,6 +42,10 @@ Global
 		{3E1520C8-9F5B-403B-854B-F0ACE407C47B}.Debug|Win32.Build.0 = Debug|Win32
 		{3E1520C8-9F5B-403B-854B-F0ACE407C47B}.Release|Win32.ActiveCfg = Release|Win32
 		{3E1520C8-9F5B-403B-854B-F0ACE407C47B}.Release|Win32.Build.0 = Release|Win32
+		{42AC5C94-8E9A-4830-B5AE-412560D7FD16}.Debug|Win32.ActiveCfg = Debug|Win32
+		{42AC5C94-8E9A-4830-B5AE-412560D7FD16}.Debug|Win32.Build.0 = Debug|Win32
+		{42AC5C94-8E9A-4830-B5AE-412560D7FD16}.Release|Win32.ActiveCfg = Release|Win32
+		{42AC5C94-8E9A-4830-B5AE-412560D7FD16}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -110,8 +110,8 @@ freely, subject to the following restrictions:
       name& operator=(const name&) = delete;
 #else
   #define _TTHREAD_DISABLE_ASSIGNMENT(name) \
-      name(const name&); \
-      name& operator=(const name&);
+	  name(const name&){}; \
+	  name& operator=(const name&){return *this;};
 #endif
 
 /// @def thread_local
