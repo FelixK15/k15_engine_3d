@@ -83,7 +83,12 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 
 # if defined K15_OGL_EXPERIMENT_MAP_BUFFER_WITH_UNSYNCHRONIZED
 		flags |= GL_MAP_UNSYNCHRONIZED_BIT;
-# endif
+# endif //K15_OGL_EXPERIMENT_MAP_BUFFER_WITH_UNSYNCHRONIZED
+
+#if defined K15_OGL_EXPERIMENT_MAP_BUFFER_WITH_INVALIDATE_RANGE
+    flags |= GL_MAP_INVALIDATE_RANGE_BIT;
+# endif //K15_OGL_EXPERIMENT_MAP_BUFFER_WITH_INVALIDATE_RANGE
+
 		glBindBuffer(target,m_BufferHandle);
 		m_MappedBufferRange = (byte*)glMapBufferRange(target,p_StartPos,p_Count,flags);
 		glBindBuffer(target,0);
