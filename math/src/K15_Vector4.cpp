@@ -22,6 +22,7 @@
  */
 
 #include "K15_Vector4.h"
+#include "K15_MathUtil.h"
 
 namespace K15_Engine { namespace Math { 
 	/*********************************************************************************/
@@ -84,9 +85,9 @@ namespace K15_Engine { namespace Math {
 		#if defined K15_SIMD_SUPPORT
 			__m128 temp = _mm_mul_ps(m_VectorSIMD,m_VectorSIMD);
 
-			return ::sqrt(temp.m128_f32[0] + temp.m128_f32[1] + temp.m128_f32[2] + temp.m128_f32[3]);
+			return MathUtil::sqrt(temp.m128_f32[0] + temp.m128_f32[1] + temp.m128_f32[2] + temp.m128_f32[3]);
 		#else 
-			return ::sqrt(x*x + y*y + z*z + w*w);
+			return MathUtil::sqrt(x*x + y*y + z*z + w*w);
 		#endif //K15_SIMD_SUPPRT
 	}
 	/*********************************************************************************/

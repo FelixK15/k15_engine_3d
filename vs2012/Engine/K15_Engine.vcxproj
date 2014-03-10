@@ -279,6 +279,7 @@
     <ClInclude Include="..\..\engine\include\K15_SerialSizer.h" />
     <ClInclude Include="..\..\engine\include\K15_SerialWriter.h" />
     <ClInclude Include="..\..\engine\include\K15_StackAllocator.h" />
+    <ClInclude Include="..\..\engine\include\K15_Language.h" />
     <ClInclude Include="..\..\engine\include\K15_StringUtil.h" />
     <ClInclude Include="..\..\engine\include\K15_SubMesh.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
@@ -365,7 +366,9 @@
     <ClCompile Include="..\..\engine\src\Android\K15_ApplicationLayerOS_Android.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\Android\K15_RenderWindow_Android.cpp" />
+    <ClCompile Include="..\..\engine\src\Android\K15_RenderWindow_Android.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_AABB.cpp" />
     <ClCompile Include="..\..\engine\src\K15_AllocatedObject.cpp" />
     <ClCompile Include="..\..\engine\src\K15_AlphaState.cpp" />
@@ -397,6 +400,7 @@
     <ClCompile Include="..\..\engine\src\K15_Keyboard_Win32.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_Language.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Material.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MaterialData.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MatrixUtil.cpp" />
@@ -438,7 +442,9 @@
     <ClCompile Include="..\..\engine\src\K15_Vertex.cpp" />
     <ClCompile Include="..\..\engine\src\K15_VertexBuffer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_VertexDeclaration.cpp" />
-    <ClCompile Include="..\..\engine\src\Linux\K15_DynamicLibrary_Linux.cpp" />
+    <ClCompile Include="..\..\engine\src\Linux\K15_DynamicLibrary_Linux.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\engine\src\Win32\K15_DynamicLibrary_Win32.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
     </ClCompile>
@@ -468,6 +474,7 @@
     <None Include="..\..\engine\include\K15_IndexBuffer.inl" />
     <None Include="..\..\engine\include\K15_IniFileParser.inl" />
     <None Include="..\..\engine\include\K15_JobBase.inl" />
+    <None Include="..\..\engine\include\K15_Language.inl" />
     <None Include="..\..\engine\include\K15_Material.inl" />
     <None Include="..\..\engine\include\K15_Mesh.inl" />
     <None Include="..\..\engine\include\K15_Node.inl">

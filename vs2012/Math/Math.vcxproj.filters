@@ -22,6 +22,9 @@
     <ClInclude Include="..\..\math\include\K15_Vector4.h">
       <Filter>Core\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\math\include\K15_MathUtil.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\math\src\K15_Matrix3.cpp">
@@ -48,6 +51,9 @@
     <ClCompile Include="..\..\math\src\K15_Vector4.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\math\src\K15_MathUtil.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -59,5 +65,10 @@
     <Filter Include="Core\src">
       <UniqueIdentifier>{0539a286-dad0-4287-a387-a6e4d6256d62}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\math\include\K15_MathUtil.inl">
+      <Filter>Core\include</Filter>
+    </None>
   </ItemGroup>
 </Project>

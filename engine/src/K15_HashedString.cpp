@@ -61,12 +61,19 @@ namespace K15_Engine { namespace Core {
 	{
 		return m_Hash;
 	}
+#ifndef K15_NO_STRINGS
 	/*********************************************************************************/
 	const char* HashedString::c_str() const
 	{
 		return m_String.c_str();
 	}
 	/*********************************************************************************/
+	const String& HashedString::toString() const
+	{
+		return m_String;
+	}
+	/*********************************************************************************/
+#endif //K15_NO_STRINGS
 	bool HashedString::operator< (HashedString const & otherString) const
 	{
 		return this->getIdentifier() < otherString.getIdentifier();

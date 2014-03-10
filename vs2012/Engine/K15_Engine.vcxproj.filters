@@ -384,6 +384,9 @@
     <ClInclude Include="..\..\engine\include\Linux\K15_DynamicLibrary_Linux.h">
       <Filter>Core\include\Linux</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Language.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -632,6 +635,9 @@
     <ClCompile Include="..\..\engine\src\Linux\K15_DynamicLibrary_Linux.cpp">
       <Filter>Core\src\Linux</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_Language.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -802,6 +808,9 @@
     </None>
     <None Include="..\..\engine\include\Android\K15_ApplicationLayerOS_Android.inl">
       <Filter>Core\include\Android</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_Language.inl">
+      <Filter>Core\include</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

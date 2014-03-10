@@ -47,9 +47,23 @@ const String& Language::getStringForLanguage(const ObjectName& p_StringID, Enum 
 
 	if(iter == languageMap.end())
 	{
-		return p_StringID.c_str();
+		return p_StringID.toString();
 	}
 
-	return iter.second;
+	return iter->second;
+}
+/*********************************************************************************/
+void Language::setCurrentLanguageString(const String& p_String)
+{
+	for(int i = 0;i < Language::LID_COUNT;++i)
+	{
+		const String& lang = LanguageString[i];
+
+		if(lang == p_String)
+		{
+			setCurrentLanguageID(i);
+			return;
+		}
+	}
 }
 /*********************************************************************************/

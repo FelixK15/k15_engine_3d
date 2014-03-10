@@ -1,18 +1,19 @@
 #version 330
 
-struct Vertex
-{
-	vec4 position;
-	vec4 color;
+
+out gl_PerVertex {
+        vec4 gl_Position;
+        float gl_PointSize;
+        float gl_ClipDistance[];
 };
 
-in vec4 pos;
-int vec4 color;
-out Vertex out_vertex;
+layout(location=0) in vec4 pos;
+layout(location=1) in vec4 color;
+
+out vec4 out_color;
 
 void main(void)
 {
-	out_vertex.position = pos;
-	out_vertex.color = color;
-	gl_Position = out_vertex.position;
+	out_color = color;
+	gl_Position = pos;
 }

@@ -22,6 +22,7 @@
  */
 
 #include "K15_Vector2.h"
+#include "K15_MathUtil.h"
 
 namespace K15_Engine { namespace Math { 
 	/*********************************************************************************/
@@ -70,7 +71,7 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	float Vector2::length() const
 	{
-		return ::sqrt(x*x + y*y);
+		return MathUtil::sqrt(x*x + y*y);
 	}
 	/*********************************************************************************/
 	void Vector2::invert()

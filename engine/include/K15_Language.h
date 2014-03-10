@@ -28,9 +28,9 @@
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
-#include "K15_ResourceBase.h"
+#include "K15_HashedString.h"
 
-#define LANG_STRING(ID) K15_Engine::Core::Language::getStringForCurrentLanguage(ID);
+#define LANG_STRING(ID) K15_Engine::Core::Language::getStringForCurrentLanguage(_ON(ID))
 
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API Language
@@ -64,6 +64,15 @@ namespace K15_Engine { namespace Core {
 
 		INLINE static const String& getStringForCurrentLanguage(const ObjectName& p_StringID);
 		INLINE static const String& getStringForLanguage(const ObjectName& p_StringID, Enum p_LanguageID);
+
+		INLINE static void setCurrentLanguageString(const String& p_String);
+		static void setCurrentLanguageID(Enum p_LanguageID);
+		
+		static void serialize();
+		static void deserialize();
+
+		static LanguageMap createTestLangMap();
+
 	private:
 		static Enum m_CurrentLanguage;
 		static LanguageMap m_LanguageMap;
