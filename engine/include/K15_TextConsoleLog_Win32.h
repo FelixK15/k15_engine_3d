@@ -1,8 +1,8 @@
 /**
- * @file K15_VisualStudioLog_Win32.h
- * @author Felix Klinge <f.klinge@k15games.de>
+ * @file K15_TextConsoleLog.h
+ * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/09/09
+ * @date 2012/07/11
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,22 +18,35 @@
  *
  * @section DESCRIPTION
  *
+ * 
  */
-#ifndef _K15Engine_Plugin_VisualStudioLog_h_
-#define _K15Engine_Plugin_VisualStudioLog_h_
+
+#ifndef _K15Engine_Core_TextConsoleLog_h_
+#define _K15Engine_Core_TextConsoleLog_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADERS
-# include "K15_Prerequisites.h"
+#	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_LogBase.h"
 
 namespace K15_Engine { namespace Core {
-	class VisualStudioLog : public LogBase
+	class K15_CORE_API TextConsoleLog_Win32 : public LogBase
 	{
 	public:
-		virtual void logMessage(const String &p_Message,Enum p_PriorityFlag); 
-	};// end of VisualStudioLog class definition
-}}//end of K15_Engine::Core namespace
+		/**
+		 * Default constructor
+		 */
+		TextConsoleLog_Win32();
 
-#endif //_K15Engine_Plugin_VisualStudioLog_h_
+		/**
+		 * Add a new log message to the console via the stdout stream
+		 *
+		 * @param const String& p_Message - message to log
+		 * @param Enum p_PriorityFlag - flag to determine the kind of log message
+		 */
+		virtual void logMessage(const String &p_Message,Enum p_PriorityFlag);
+	};// end of TextConsoleLog class definition
+}} // end of K15_Engine::Core namespace
+
+#endif //_K15Engine_Core_TextConsoleLog_h_

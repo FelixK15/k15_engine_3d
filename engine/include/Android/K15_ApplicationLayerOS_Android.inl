@@ -23,3 +23,8 @@ void ApplicationOSLayer_Android::setAndroidApp(android_app* p_App)
 	m_App = p_App;
 }
 /*********************************************************************************/
+void ApplicationOSLayer_Android::setError(const String& p_Error)
+{
+	m_Error = p_Error;
+}
+/*********************************************************************************/

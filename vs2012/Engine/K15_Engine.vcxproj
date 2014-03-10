@@ -138,10 +138,11 @@
     </Link>
     <ClCompile>
       <AdditionalOptions>-std=c++11 %(AdditionalOptions)</AdditionalOptions>
-      <PreprocessorDefinitions>_DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\engine\include\Android\K15_AndroidLog.h" />
     <ClInclude Include="..\..\engine\include\Android\K15_ApplicationLayerOS_Android.h" />
     <ClInclude Include="..\..\engine\include\Android\K15_RenderWindow_Android.h" />
     <ClInclude Include="..\..\engine\include\K15_AABB.h">
@@ -286,7 +287,7 @@
       </Outputs>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_TaskBase.h" />
-    <ClInclude Include="..\..\engine\include\K15_TextConsoleLog.h" />
+    <ClInclude Include="..\..\engine\include\K15_TextConsoleLog_Win32.h" />
     <ClInclude Include="..\..\engine\include\K15_Texture.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -362,10 +363,15 @@
     <ClInclude Include="..\..\engine\include\K15_TaskManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\engine\src\Android\K15_AndroidLog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\engine\src\Android\K15_ApplicationLayerOS_Android.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\Android\K15_RenderWindow_Android.cpp" />
+    <ClCompile Include="..\..\engine\src\Android\K15_RenderWindow_Android.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_AABB.cpp" />
     <ClCompile Include="..\..\engine\src\K15_AllocatedObject.cpp" />
     <ClCompile Include="..\..\engine\src\K15_AlphaState.cpp" />
@@ -427,13 +433,16 @@
     <ClCompile Include="..\..\engine\src\K15_SerialSizer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_SerialWriter.cpp" />
     <ClCompile Include="..\..\engine\src\K15_SubMesh.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_TextConsoleLog.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_TextConsoleLog_Win32.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_Texture.cpp" />
     <ClCompile Include="..\..\engine\src\K15_TextureSampler.cpp" />
     <ClCompile Include="..\..\engine\src\K15_ThreadSafe.cpp" />
     <ClCompile Include="..\..\engine\src\K15_ThreadWorker.cpp" />
     <ClCompile Include="..\..\engine\src\K15_TrueTypeFont.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_Vertex.cpp" />
     <ClCompile Include="..\..\engine\src\K15_VertexBuffer.cpp" />

@@ -17,9 +17,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 #include "K15_PrecompiledHeader.h"
-
-#if defined(_MSC_VER)
-
 #include "Win32\K15_VisualStudioLog_Win32.h"
 
 namespace K15_Engine { namespace Core { 
@@ -56,5 +53,3 @@ namespace K15_Engine { namespace Core {
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace
-
-#endif //_MSC_VER

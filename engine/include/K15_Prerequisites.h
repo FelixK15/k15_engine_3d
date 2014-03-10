@@ -26,7 +26,7 @@
 
 #ifdef __ANDROID__
 #	define K15_OS_ANDROID
-#elif _WIN32
+#elif defined _WIN32
 #	define K15_OS_WINDOWS
 #elif defined __linux__
 #	define K15_OS_LINUX
@@ -372,6 +372,7 @@ namespace K15_Engine
 	typedef K15_Engine::Core::String String;
 #else
 #	include <string>
+#	include <algorithm>
 	typedef std::string String;
 #endif //K15_DONT_USE_STL
 
@@ -443,10 +444,13 @@ namespace K15_Engine
 #elif defined K15_OS_ANDROID
 #	include <android\native_app_glue\android_native_app_glue.h>
 #	include <android\sensor.h>
+#	include <android\input.h>
+#	include <android\log.h>
 #	include <EGL\egl.h>
 #	include <GLES2\gl2.h>
 #	include <dlfcn.h>
 #	include <jni.h>
+#	include <unistd.h>
 #endif //K15_OS_WINDOWS
 
 #if defined K15_OS_WINDOWS
@@ -515,8 +519,7 @@ namespace K15_Engine
 				debugMessage__ += "The expression \""; \
 				debugMessage__ += #condition; \
 				debugMessage__ += "\" failed.\n"; \
-				printf(debugMessage__.c_str()); \
-				assert(condition); \
+				__android_log_assert(#condition,"K15_Engine",debugMessage__.c_str()); \
 			}
 	#endif //K15_OS_WINDOWS
 #else

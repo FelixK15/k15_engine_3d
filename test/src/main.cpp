@@ -6,7 +6,7 @@ int main(int argc,char** argv)
 	g_Application->run();
 	g_Application->shutdown();
 
-#if defined K15_DEBUG
+#if defined K15_DEBUG && K15_OS_WINDOWS
     _CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF);
 #endif //K15_DEBUG
 

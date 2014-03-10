@@ -40,17 +40,15 @@
 #include "K15_Keyboard.h"
 
 #ifdef K15_DEBUG
-#	include "K15_TextConsoleLog.h"
-# ifdef _MSC_VER
-#   include "Win32\K15_VisualStudioLog_Win32.h"
-#endif
+#	ifdef K15_OS_WINDOWS
+#		include "Win32\K15_RenderWindow_Win32.h"
+#		include "Win32\K15_VisualStudioLog_Win32.h"
+#		include "K15_TextConsoleLog.h"
+#	elif defined K15_OS_ANDROID
+#		include "Android/K15_RenderWindow_Android.h"
+#		include "Android/K15_AndroidLog.h"
+#	endif //K15_OS_WINDOWS
 #endif //K15_DEBUG
-
-#ifdef K15_OS_WINDOWS
-#	include "Win32\K15_RenderWindow_Win32.h"
-#elif defined K15_OS_ANDROID
-#	include "Android/K15_RenderWindow_Android.h"
-#endif //K15_OS_WINDOWS
 
 #include "K15_RendererBase.h"
 #include "K15_RenderProcessBase.h"
@@ -91,10 +89,12 @@ namespace K15_Engine { namespace Core {
 		m_LogManager = K15_NEW LogManager();
 
 #if defined (K15_DEBUG)
-		m_LogManager->addLog(K15_NEW TextConsoleLog(),true,LogManager::LP_ALL);
-#	if defined(_MSC_VER)
+#	if defined K15_OS_WINDOWS
+		m_LogManager->addLog(K15_NEW TextConsoleLog_Win32(),true,LogManager::LP_ALL);
 		m_LogManager->addLog(K15_NEW VisualStudioLog(),false,LogManager::LP_ALL);
-#	endif //_MSC_VER
+#	elif defined(K15_OS_ANDROID)
+		m_LogManager->addLog(K15_NEW AndroidLog(),false,LogManager::LP_ALL);
+#	endif //K15_OS_WINDOWS
 #endif //K15_DEBUG
 	}
 	/*********************************************************************************/

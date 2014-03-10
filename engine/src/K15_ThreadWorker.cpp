@@ -45,7 +45,7 @@ namespace K15_Engine { namespace Core {
 				K15_ASSERT(job,"NULL job in job list.");
 
 				jobs.pop_front();
-				_LogDebug("Thread %u will process job \"%s\".",g_CurrentThread::get_id().hash(),job->getName().c_str());
+				_LogDebug("Thread %u will process job \"%s\".",0,job->getName().c_str());
 			}
 
 			mutex.unlock();

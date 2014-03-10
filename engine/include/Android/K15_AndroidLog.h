@@ -1,8 +1,8 @@
 /**
- * @file K15_TextConsoleLog.h
+ * @file K15_AndroidLog.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/07/11
+ * @date 2013/12/16
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,8 +21,8 @@
  * 
  */
 
-#ifndef _K15Engine_Core_TextConsoleLog_h_
-#define _K15Engine_Core_TextConsoleLog_h_
+#ifndef _K15Engine_Core_AndroidLog_h_
+#define _K15Engine_Core_AndroidLog_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
@@ -31,22 +31,14 @@
 #include "K15_LogBase.h"
 
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API TextConsoleLog : public LogBase
+	class K15_CORE_API AndroidLog : public LogBase
 	{
 	public:
-		/**
-		 * Default constructor
-		 */
-		TextConsoleLog();
+		AndroidLog();
+		~AndroidLog();
 
-		/**
-		 * Add a new log message to the console via the stdout stream
-		 *
-		 * @param const String& p_Message - message to log
-		 * @param Enum p_PriorityFlag - flag to determine the kind of log message
-		 */
-		virtual void logMessage(const String &p_Message,Enum p_PriorityFlag);
-	};// end of TextConsoleLog class definition
-}} // end of K15_Engine::Core namespace
+		virtual void logMessage(const String &p_Message,Enum p_PriorityFlag) OVERRIDE;
+	};// end of AndroidLogger class declaration
+}}// end of K15_Engine::Core namespace
 
-#endif //_K15Engine_Core_TextConsoleLog_h_
+#endif //_K15Engine_Core_AndroidLogger_h_

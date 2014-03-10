@@ -18,17 +18,17 @@
  */
 
 #include "K15_PrecompiledHeader.h"
-#include "K15_TextConsoleLog.h"
+#include "K15_TextConsoleLog_Win32.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	TextConsoleLog::TextConsoleLog()
+	TextConsoleLog_Win32::TextConsoleLog_Win32()
 		: LogBase()
 	{
 		setLogBitMask(LogManager::LP_ALL);
 	}
 	/*********************************************************************************/
-	void TextConsoleLog::logMessage(const String &p_Message,Enum p_PriorityFlag)
+	void TextConsoleLog_Win32::logMessage(const String &p_Message,Enum p_PriorityFlag)
 	{
 		static String msg;
 		static HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);

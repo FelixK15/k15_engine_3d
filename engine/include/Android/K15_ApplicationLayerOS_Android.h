@@ -80,14 +80,22 @@ namespace K15_Engine { namespace Core {
 		*/
 
 		void shutdown();
-		// 
+		
 		/**
 		* get the last error set by the OS
 		*
 		*
 		* @return const String& - Error string
 		*/
-		const String& getError() const;
+		const String& getError();
+
+		/**
+		* set the current error that will get returned
+		* by calling getError()
+		*
+		* @param p_Error - String containing the error.
+		*/
+		INLINE void setError(const String& p_Error);
 
 		/** 
 		* get supported resolutions
@@ -123,6 +131,7 @@ namespace K15_Engine { namespace Core {
 
 		INLINE void setAndroidApp(android_app* p_App);
 	private:
+		String m_Error;
 		android_app* m_App;
 		ASensor* m_AccelerometerSensor;
 		ASensorEventQueue* m_SensorEventQueue;

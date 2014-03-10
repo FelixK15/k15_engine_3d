@@ -86,6 +86,7 @@ ResourceHandle<ResourceType>::operator ResourceType*() const
 template<class ResourceType>
 ResourceType* ResourceHandle<ResourceType>::getResource() const
 {
-	return (ResourceType*)ResourceManager::getInstance()->getResourceByID(m_ResourceID);
+	//return (ResourceType*)ResourceManager::getInstance()->getResourceByID(m_ResourceID);
+	return 0;
 }
 /*********************************************************************************/
