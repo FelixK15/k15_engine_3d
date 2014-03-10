@@ -24,7 +24,9 @@
 #ifndef _K15Engine_Prerequisites_h_
 #define _K15Engine_Prerequisites_h_
 
-#ifdef _WIN32
+#ifdef __ANDROID__
+#	define K15_OS_ANDROID
+#elif _WIN32
 #	define K15_OS_WINDOWS
 #elif defined __linux__
 #	define K15_OS_LINUX
@@ -37,10 +39,10 @@
 	#	define K15_64_BIT
 	#endif //_WIN64
 #else
-#	include <limit.h>
-#	if (__WORDSIZE == 64)
+#	include <limits.h>
+#	ifdef __LP64__
 #		define K15_64_BIT
-#	endif //(__WORDSIZE == 64)
+#	endif //__LP64__
 #endif //K15_OS_WINDOWS
 
 #if defined (K15_64_BIT)
@@ -69,7 +71,11 @@ namespace K15_Engine
 		class TaskManager;
 		class TaskBase;
 		class GameTime;
-#		if defined K15_OS_WINDOWS
+#		if defined K15_OS_ANDROID
+			class DynamicLibrary_Linux;
+			class ApplicationOSLayer_Android;
+			class RenderWindow_Android;
+#		elif defined K15_OS_WINDOWS
 			class DynamicLibrary_Win32;
 			class ApplicationOSLayer_Win32;
 			class RenderWindow_Win32;
@@ -291,11 +297,9 @@ namespace K15_Engine
                           + __GNUC_PATCHLEVEL__)
 #endif //__GNUC__
 
-#ifdef K15_OS_WINDOWS
-# ifdef _DEBUG
-#   define K15_DEBUG
-# endif //_DEBUG
-#endif //K15_OS_WINDOWS
+#if defined _DEBUG || defined DEBUG
+#	define K15_DEBUG
+#endif //_DEBUG
 
 #if __cplusplus > 199711L || _MSC_VER >= 1700 || K15_GCC_VERSION > 40800
 #	define K15_CPP11_SUPPORT
@@ -315,11 +319,16 @@ namespace K15_Engine
 #	pragma warning(disable : 6330) //'char' passes as _Param_(1) when 'unsigned char' is required in call to 'isdigit'
 #endif //_MSC_VER
 
+#if defined __GNUC__
+#	pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
+
 //c std libs
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <cassert>
 #include <malloc.h>
 
 //Container
@@ -405,6 +414,8 @@ namespace K15_Engine
 #	else
 #		define K15_CORE_API __declspec(dllimport)
 #	endif //K15_BUILD
+#else
+#	define K15_CORE_API
 #endif //K15_OS_WINDOWS
   
 #if defined K15_OS_WINDOWS
@@ -429,12 +440,23 @@ namespace K15_Engine
 
 #if defined K15_OS_WINDOWS
 #	include "windows.h"
+#elif defined K15_OS_ANDROID
+#	include <android\native_app_glue\android_native_app_glue.h>
+#	include <android\sensor.h>
+#	include <EGL\egl.h>
+#	include <GLES2\gl2.h>
+#	include <dlfcn.h>
+#	include <jni.h>
 #endif //K15_OS_WINDOWS
 
 #if defined K15_OS_WINDOWS
 	typedef K15_Engine::Core::DynamicLibrary_Win32 DynamicLibraryType;
 	typedef K15_Engine::Core::ApplicationOSLayer_Win32 ApplicationOSLayerType;
 	typedef K15_Engine::Core::RenderWindow_Win32 RenderWindowType;
+#elif defined K15_OS_ANDROID
+	typedef K15_Engine::Core::DynamicLibrary_Linux DynamicLibraryType;
+	typedef K15_Engine::Core::ApplicationOSLayer_Android ApplicationOSLayerType;
+	typedef K15_Engine::Core::RenderWindow_Android RenderWindowType;
 #endif //K15_OS_WINDOWS
  
 #if defined K15_DEBUG
@@ -466,26 +488,39 @@ namespace K15_Engine
 # define K15_PLACEMENT_NEW new(ptr)
 
 #if defined K15_DEBUG
-#define K15_ASSERT(condition,message)	\
-	  if(!(condition)){ \
-      __analysis_assume(condition); \
-		  String debugMessage__ = message; \
-		  debugMessage__ += "\n\n"; \
-		  debugMessage__ += "The expression \""; \
-		  debugMessage__ += #condition; \
-		  debugMessage__ += "\" failed.\n"; \
-		  debugMessage__ += "\"abort\" will terminate the application, \"retry\" will break the application for debugging and"; \
-		  debugMessage__ += "\"ignore\" will ignore the failed condition and continue processing the application (application may be in an unstable state)."; \
-		  int returnValue__ = K15_DEBUG_MESSAGEBOX(debugMessage__.c_str(),"Assertion"); \
-		  if(returnValue__ == K15_ID_ABORT){ \
-			  K15_TERMINATE_APPLICATION(); \
-		  }else if(returnValue__ == K15_ID_RETRY){ \
-			  K15_BREAK_APPLICATION(); \
-		  } \
-	  } 
+	#if defined K15_OS_WINDOWS
+		#define K15_ASSERT(condition,message)	\
+			  if(!(condition)){ \
+			  __analysis_assume(condition); \
+				  String debugMessage__ = message; \
+				  debugMessage__ += "\n\n"; \
+				  debugMessage__ += "The expression \""; \
+				  debugMessage__ += #condition; \
+				  debugMessage__ += "\" failed.\n"; \
+				  debugMessage__ += "\"abort\" will terminate the application, \"retry\" will break the application for debugging and"; \
+				  debugMessage__ += "\"ignore\" will ignore the failed condition and continue processing the application (application may be in an unstable state)."; \
+				  int returnValue__ = K15_DEBUG_MESSAGEBOX(debugMessage__.c_str(),"Assertion"); \
+				  if(returnValue__ == K15_ID_ABORT){ \
+					  K15_TERMINATE_APPLICATION(); \
+				  }else if(returnValue__ == K15_ID_RETRY){ \
+					  K15_BREAK_APPLICATION(); \
+				  } \
+			  } 
 
+	#elif defined K15_OS_ANDROID
+		#define K15_ASSERT(condition,message) \
+			if(!(condition)){ \
+				String debugMessage__ = message; \
+				debugMessage__ += "\n\n"; \
+				debugMessage__ += "The expression \""; \
+				debugMessage__ += #condition; \
+				debugMessage__ += "\" failed.\n"; \
+				printf(debugMessage__.c_str()); \
+				assert(condition); \
+			}
+	#endif //K15_OS_WINDOWS
 #else
-#define K15_ASSERT(condition,message0)
+	#define K15_ASSERT(condition,message0)
 #endif //K15_DEBUG
 
 #ifdef K15_DEBUG
@@ -549,12 +584,12 @@ typedef K15_Engine::Core::HashedString ProfilingName;
 typedef K15_Engine::Core::HashedString ResourceName;
 
 #if defined K15_NO_STRINGS
-#	define _N(x)  K15_Engine::Core::ObjectNames::ObjectNames::x
+#	define _ON(x)  K15_Engine::Core::ObjectNames::ObjectNames::x
 #	define _TN(x) K15_Engine::Core::ObjectNames::TypeNames::x
 #	define _EN(x) K15_Engine::Core::ObjectNames::EventNames::x
 #	define _RN(x) K15_Engine::Core::ObjectNames::ResourceNames::x
 #else
-#	define _N(x)  ObjectName(#x)
+#	define _ON(x)  ObjectName(#x)
 #	define _TN(x) TypeName(#x)
 #	define _EN(x) EventName(#x)
 #	define _RN(x) ResourceName(#x)

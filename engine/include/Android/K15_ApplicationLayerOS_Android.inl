@@ -1,8 +1,8 @@
 /**
- * @file K15_DynamicLibrary.inl
+ * @file K15_ApplicationLayerOS_Android.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/10/16
+ * @date 2013/12/16
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,30 +18,8 @@
  */
 
 /*********************************************************************************/
-template<class ReturnType>
-Functor0<ReturnType> DynamicLibraryBase::getSymbol(const String& p_SymbolName)
+void ApplicationOSLayer_Android::setAndroidApp(android_app* p_App)
 {
-	if (isLoaded())
-	{
-		void* symbol = getSymbolInternal(p_SymbolName);
-
-		if(!symbol)
-		{
-			_LogError("Could not find symbol \"%s\" (library:\"%s\") Error:%s",p_SymbolName.c_str(),getFileName().c_str(),Application::getInstance()->getLastError().c_str());
-		}
-		else
-		{
-			Functor0<ReturnType> func((typename Functor0<ReturnType>::FunctionType)symbol);
-
-			return func;
-		}
-
-	}
-	else
-	{
-	    _LogNormal("Trying to load symbol from already unloaded library - Symbol:\"%s\" (Library:\"%s\")",p_SymbolName.c_str(),getFileName().c_str());
-	}
-
-	return Functor0<ReturnType>();
+	m_App = p_App;
 }
 /*********************************************************************************/

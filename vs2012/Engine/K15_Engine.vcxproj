@@ -1,9 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Android">
+      <Configuration>Debug</Configuration>
+      <Platform>Android</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Android">
+      <Configuration>Release</Configuration>
+      <Platform>Android</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
@@ -12,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{23445B9F-1C0E-45A8-B5FA-0BDB152AC569}</ProjectGuid>
-    <RootNamespace>K15_EngineV2</RootNamespace>
+    <RootNamespace>K15_Engine</RootNamespace>
     <ProjectName>Engine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -27,6 +35,15 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+    <PlatformToolset>arm-linux-androideabi-4.8</PlatformToolset>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <AndroidArch>armv7-a</AndroidArch>
+    <AndroidStlType>gnustl_static</AndroidStlType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
+    <PlatformToolset>arm-linux-androideabi-4.6</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -62,6 +79,18 @@
     <TargetName>K15_Engine</TargetName>
     <IncludePath>..\..\dependencies\Enet\include\;..\..\dependencies\LuaPlus\include\;..\..\dependencies\freetype\include\;..\..\engine\include\;..\..\math\include\;..\..\renderer\include\;..\..\dependencies\TinyThread\include\;..\..\dependencies\JsonCPP\include\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+    <IncludePath>..\..\dependencies\Enet\include\;..\..\dependencies\LuaPlus\include\;..\..\dependencies\freetype\include\;..\..\engine\include\;..\..\math\include\;..\..\renderer\include\;..\..\dependencies\TinyThread\include\;..\..\dependencies\JsonCPP\include\;$(ANDROID_NDK_ROOT)\sources\;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
+    <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
+    <IncludePath>..\..\dependencies\Enet\include\;..\..\dependencies\LuaPlus\include\;..\..\dependencies\freetype\include\;..\..\engine\include\;..\..\math\include\;..\..\renderer\include\;..\..\dependencies\TinyThread\include\;..\..\dependencies\JsonCPP\include\;$(AndroidIncludeDir);$(AndroidStlIncludeDir);</IncludePath>
+    <LibraryPath>..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(AndroidLibDir);$(AndroidStlLibPath);</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -103,7 +132,18 @@
       <Command>"$(ProjectDir)..\..\test\bin\$(Configuration)\EngineTest_$(Configuration).exe"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+    <Link>
+      <AdditionalDependencies>K15_Math.a;Enet.a;TinyThread.a;JsonCPP.a;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ClCompile>
+      <AdditionalOptions>-std=c++11 %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>_DEBUG</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\engine\include\Android\K15_ApplicationLayerOS_Android.h" />
+    <ClInclude Include="..\..\engine\include\Android\K15_RenderWindow_Android.h" />
     <ClInclude Include="..\..\engine\include\K15_AABB.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -273,10 +313,12 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </Outputs>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\Linux\K15_DynamicLibrary_Linux.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_ApplicationOSLayer_Win32.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_DynamicLibrary_Win32.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_RenderWindow_Win32.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_VisualStudioLog_Win32.h" />
+    <None Include="..\..\engine\include\Android\K15_ApplicationLayerOS_Android.inl" />
     <None Include="..\..\engine\include\K15_AABB.inl" />
     <None Include="..\..\engine\include\K15_AlphaState.inl" />
     <None Include="..\..\engine\include\K15_CameraComponent.inl" />
@@ -320,6 +362,10 @@
     <ClInclude Include="..\..\engine\include\K15_TaskManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\engine\src\Android\K15_ApplicationLayerOS_Android.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\Android\K15_RenderWindow_Android.cpp" />
     <ClCompile Include="..\..\engine\src\K15_AABB.cpp" />
     <ClCompile Include="..\..\engine\src\K15_AllocatedObject.cpp" />
     <ClCompile Include="..\..\engine\src\K15_AlphaState.cpp" />
@@ -330,9 +376,11 @@
     <ClCompile Include="..\..\engine\src\K15_EventTask.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Font.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_FontManager.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_GameObject.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GameObjectComponentBase.cpp" />
@@ -346,7 +394,9 @@
     <ClCompile Include="..\..\engine\src\K15_JobBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_JsonSerializer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Keyboard.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Keyboard_Win32.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_Keyboard_Win32.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_Material.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MaterialData.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MatrixUtil.cpp" />
@@ -354,7 +404,9 @@
     <ClCompile Include="..\..\engine\src\K15_MemoryProfilingTask.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Mesh.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Mouse.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Mouse_Win32.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_Mouse_Win32.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_NetworkManager.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Node.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -386,9 +438,16 @@
     <ClCompile Include="..\..\engine\src\K15_Vertex.cpp" />
     <ClCompile Include="..\..\engine\src\K15_VertexBuffer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_VertexDeclaration.cpp" />
-    <ClCompile Include="..\..\engine\src\Win32\K15_DynamicLibrary_Win32.cpp" />
-    <ClCompile Include="..\..\engine\src\win32\K15_RenderWindow_Win32.cpp" />
-    <ClCompile Include="..\..\engine\src\Win32\K15_VisualStudioLog_Win32.cpp" />
+    <ClCompile Include="..\..\engine\src\Linux\K15_DynamicLibrary_Linux.cpp" />
+    <ClCompile Include="..\..\engine\src\Win32\K15_DynamicLibrary_Win32.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\win32\K15_RenderWindow_Win32.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\Win32\K15_VisualStudioLog_Win32.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
+    </ClCompile>
     <None Include="..\..\engine\include\K15_AllocatedObject.inl" />
     <None Include="..\..\engine\include\K15_Application.inl" />
     <None Include="..\..\engine\include\K15_DepthState.inl" />
@@ -477,7 +536,9 @@
     <ClCompile Include="..\..\engine\src\K15_StringUtil.cpp" />
     <ClCompile Include="..\..\engine\src\K15_TaskBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_TaskManager.cpp" />
-    <ClCompile Include="..\..\engine\src\Win32\K15_ApplicationOSLayer_Win32.cpp" />
+    <ClCompile Include="..\..\engine\src\Win32\K15_ApplicationOSLayer_Win32.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\engine\include\K15_StringUtil.inl" />

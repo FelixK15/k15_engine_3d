@@ -85,25 +85,25 @@ void AllocatedObject<Category>::dealloc(void* p_Pointer,size_t p_Size)
 }
 /*********************************************************************************/
 template<Enum Category>
-void* AllocatedObject<Category>::new(size_t p_Size)
+void* AllocatedObject<Category>::operator new(size_t p_Size)
 {
 	return alloc(p_Size);
 }
 /*********************************************************************************/
 template<Enum Category>
-void AllocatedObject<Category>::delete(void* p_Pointer,size_t p_Size)
+void AllocatedObject<Category>::operator delete(void* p_Pointer,size_t p_Size)
 {
 	Allocators[Category]->deallocate(p_Pointer);
 }
 /*********************************************************************************/
 template<Enum Category>
-void* AllocatedObject<Category>::new[](size_t p_Size)
+void* AllocatedObject<Category>::operator new[](size_t p_Size)
 {
 	return Allocators[Category]->allocate(p_Size);
 }
 /*********************************************************************************/
 template<Enum Category>
-void AllocatedObject<Category>::delete[](void* p_Pointer,size_t p_Size)
+void AllocatedObject<Category>::operator delete[](void* p_Pointer,size_t p_Size)
 {
 	Allocators[Category]->deallocate(p_Pointer);
 }

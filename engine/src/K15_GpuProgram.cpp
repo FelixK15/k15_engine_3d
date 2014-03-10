@@ -210,7 +210,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(!stream.is_open())
 			{
-				_LogError("Could not open GpuProgram include \"%s\".",includeFile);
+				_LogError("Could not open GpuProgram include \"%s\".",includeFile.c_str());
 				continue;
 			}
       

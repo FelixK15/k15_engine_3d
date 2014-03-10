@@ -20,7 +20,7 @@
 /*********************************************************************************/
 template<class Type>
 PoolAllocator<Type>::PoolAllocator(uint32 p_ObjectCount, const String& p_Name, BaseAllocator* p_BaseAllocator)
-	: BasePoolAllocator(p_ObjectCount,p_Name,p_BaseAllocator)
+	: BasePoolAllocator<sizeof(Type)>(p_ObjectCount,p_Name,p_BaseAllocator)
 {
 
 }

@@ -32,7 +32,7 @@ namespace K15_Engine { namespace Rendering {
 
 	/*********************************************************************************/
 	CameraComponent::CameraComponent(GameObject* p_Parent)
-		: GameObjectComponentBase(p_Parent,_N(CameraComponent)),
+		: GameObjectComponentBase(p_Parent,_ON(CameraComponent)),
 		m_Fov(65),
 		m_ProjectionType(PT_PERSPECTIVE)
 	{

@@ -48,6 +48,8 @@
 
 #ifdef K15_OS_WINDOWS
 #	include "Win32\K15_RenderWindow_Win32.h"
+#elif defined K15_OS_ANDROID
+#	include "Android/K15_RenderWindow_Android.h"
 #endif //K15_OS_WINDOWS
 
 #include "K15_RendererBase.h"
@@ -380,7 +382,7 @@ namespace K15_Engine { namespace Core {
 		FrameStatisticIndex = m_FrameCounter % (FrameStatisticCount - 1);
 		m_FrameStatistics[FrameStatisticIndex].Time = diffTime;
 		m_FrameStatistics[FrameStatisticIndex].FrameNumber = m_FrameCounter;
-		m_FrameStatistics[FrameStatisticIndex].ProfilingNode = g_ProfileManager->getRootNode();
+		m_FrameStatistics[FrameStatisticIndex].ProfileNode = g_ProfileManager->getRootNode();
 		m_RenderWindow->setWindowTitle(StringUtil::format("msec: %.3f - FPS:%u - Frame Index: %i",diffTime * 1000,m_AvgFramesPerSecond,m_FrameCounter));
 
 		if(m_FrameCounter > FrameStatisticCount)

@@ -26,22 +26,36 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	Quaternion::Quaternion()
 	{
-		m_QuaternionSIMD = _mm_set_ps(0.0f,0.0f,0.0f,1.0f);
+		memset(m_QuaternionArray,0,sizeof(m_QuaternionArray));
 	}
 	/*********************************************************************************/
 	Quaternion::Quaternion(float w, float x, float y, float z)
 	{
-		m_QuaternionSIMD = _mm_set_ps(z,y,x,w);
+		#if defined K15_SIMD_SUPPORT
+			m_QuaternionSIMD = _mm_set_ps(z,y,x,w);
+		#else
+			this->w = w;
+			this->x = x;
+			this->y = y;
+			this->z = z;
+		#endif //K15_SIMD_SUPPORT
 	}
 	/*********************************************************************************/
 	Quaternion::Quaternion(float p_Angle, const Vector3& p_Vector)
 	{
-		m_QuaternionSIMD = _mm_set_ps(p_Vector.z,p_Vector.y,p_Vector.x,p_Angle);
+		#if defined K15_SIMD_SUPPORT
+			m_QuaternionSIMD = _mm_set_ps(p_Vector.z,p_Vector.y,p_Vector.x,p_Angle);
+		#else
+			x = p_Vector.x;
+			y = p_Vector.y;
+			z = p_Vector.z;
+			w = p_Angle;
+		#endif //K15_SIMD_SUPPORT
 	}
 	/*********************************************************************************/
 	Quaternion::Quaternion(const Quaternion& p_Quaternion)
 	{
-		m_QuaternionSIMD = _mm_set_ps(p_Quaternion.z,p_Quaternion.y,p_Quaternion.x,p_Quaternion.w);
+		memcpy(m_QuaternionArray,p_Quaternion.m_QuaternionArray,sizeof(m_QuaternionArray));
 	}
 	/*********************************************************************************/
 	Quaternion::~Quaternion()
@@ -51,23 +65,34 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	float Quaternion::length() const
 	{
-		__m128 t = _mm_mul_ps(m_QuaternionSIMD,m_QuaternionSIMD);
-		return ::sqrt(t.m128_f32[0] + t.m128_f32[1] + t.m128_f32[2] + t.m128_f32[3]);
+		#if defined K15_SIMD_SUPPORT
+			__m128 t = _mm_mul_ps(m_QuaternionSIMD,m_QuaternionSIMD);
+			return ::sqrt(t.m128_f32[0] + t.m128_f32[1] + t.m128_f32[2] + t.m128_f32[3]);
+		#else
+			return ::sqrt(x*x + y*y + z*z + w*w);
+		#endif //K15_SIMD_SUPPORT
 	}
 	/*********************************************************************************/
 	void Quaternion::normalize()
 	{
 		float magnitude = length();
 
-		__m128 t = _mm_set_ps(magnitude,magnitude,magnitude,magnitude);
-		m_QuaternionSIMD = _mm_div_ps(m_QuaternionSIMD,t);
+		#if defined K15_SIMD_SUPPORT
+			__m128 t = _mm_set_ps(magnitude,magnitude,magnitude,magnitude);
+			m_QuaternionSIMD = _mm_div_ps(m_QuaternionSIMD,t);
+		#else
+			x /= magnitude;
+			y /= magnitude;
+			z /= magnitude;
+			w /= magnitude;
+		#endif //K15_SIMD_SUPPORT
 	}
 	/*********************************************************************************/
 	void Quaternion::conjugate()
 	{
-		v.x = -v.x;
-		v.y = -v.y;
-		v.z = -v.z;
+		x = -x;
+		y = -y;
+		z = -z;
 	}
 	/*********************************************************************************/
 	void Quaternion::invert()
@@ -133,49 +158,63 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Quaternion& Quaternion::operator=(const Quaternion& p_Quaternion)
 	{
-		m_Angle = p_Quaternion.m_Angle;
-		v = p_Quaternion.v;
+		memcpy((void*)p_Quaternion.m_QuaternionArray,m_QuaternionArray,sizeof(m_QuaternionArray));
 		return *this;
 	}
 	/*********************************************************************************/
 	const Quaternion& Quaternion::operator+=(const Quaternion& p_Quaternion)
 	{
-		m_QuaternionSIMD = _mm_add_ps(m_QuaternionSIMD,p_Quaternion.m_QuaternionSIMD);
+		#if defined K15_SIMD_SUPPORT
+			m_QuaternionSIMD = _mm_add_ps(m_QuaternionSIMD,p_Quaternion.m_QuaternionSIMD);
+		#else
+			x += p_Quaternion.x;
+			y += p_Quaternion.y;
+			z += p_Quaternion.z;
+			w += p_Quaternion.w;
+		#endif //K15_SIMD_SUPPORT
 		return *this;
 	}
 	/*********************************************************************************/
 	const Quaternion& Quaternion::operator-=(const Quaternion& p_Quaternion)
 	{
-		m_QuaternionSIMD = _mm_sub_ps(m_QuaternionSIMD,p_Quaternion.m_QuaternionSIMD);
+		#if defined K15_SIMD_SUPPORT
+			m_QuaternionSIMD = _mm_sub_ps(m_QuaternionSIMD,p_Quaternion.m_QuaternionSIMD);
+		#else
+			x *= p_Quaternion.x;
+			y *= p_Quaternion.y;
+			z *= p_Quaternion.z;
+			w *= p_Quaternion.w;
+		#endif //K15_SIMD_SUPPORT
 		return *this;
 	}
 	/*********************************************************************************/
 	const Quaternion& Quaternion::operator*=(const Quaternion& p_Quaternion)
 	{
 		//https://bitbucket.org/sinbad/ogre/src/569ec69ce2c31a66b32d741a455a1d91428079cc/OgreMain/src/OgreQuaternion.cpp?at=default
+		#if defined K15_SIMD_SUPPORT
+			__m128 t_1_me = _mm_set_ps(w,y,z,x);
+			__m128 t_2_me = _mm_set_ps(w,z,x,y);
 
-		__m128 t_1_me = _mm_set_ps(w,y,z,x);
-		__m128 t_2_me = _mm_set_ps(w,z,x,y);
+			__m128 t_1_other = _mm_set_ps(p_Quaternion.x,p_Quaternion.w,p_Quaternion.z,p_Quaternion.y);
+			__m128 t_2_other = _mm_set_ps(p_Quaternion.y,p_Quaternion.w,p_Quaternion.x,p_Quaternion.z);
+			__m128 t_3_other = _mm_set_ps(p_Quaternion.y,p_Quaternion.w,p_Quaternion.y,p_Quaternion.x);
 
-		__m128 t_1_other = _mm_set_ps(p_Quaternion.x,p_Quaternion.w,p_Quaternion.z,p_Quaternion.y);
-		__m128 t_2_other = _mm_set_ps(p_Quaternion.y,p_Quaternion.w,p_Quaternion.x,p_Quaternion.z);
-		__m128 t_3_other = _mm_set_ps(p_Quaternion.y,p_Quaternion.w,p_Quaternion.y,p_Quaternion.x);
+			__m128 t_w = _mm_mul_ps(m_QuaternionSIMD,p_Quaternion.m_QuaternionSIMD);
+			__m128 t_x = _mm_mul_ps(m_QuaternionSIMD,t_1_other);
+			__m128 t_y = _mm_mul_ps(t_1_me,t_2_other);
+			__m128 t_z = _mm_mul_ps(t_2_me,t_3_other);
 
-		__m128 t_w = _mm_mul_ps(m_QuaternionSIMD,p_Quaternion.m_QuaternionSIMD);
-		__m128 t_x = _mm_mul_ps(m_QuaternionSIMD,t_1_other);
-		__m128 t_y = _mm_mul_ps(t_1_me,t_2_other);
-		__m128 t_z = _mm_mul_ps(t_2_me,t_3_other);
-
-		// 		float t_w = w * p_Quaternion.w - x * p_Quaternion.x - y * p_Quaternion.y - z * p_Quaternion.z,
-		// 		float t_x = w * p_Quaternion.x + x * p_Quaternion.w + y * p_Quaternion.z - z * p_Quaternion.y,
-		// 		float t_y = w * p_Quaternion.y + y * p_Quaternion.w + z * p_Quaternion.x - x * p_Quaternion.z,
-		// 		float t_z = w * p_Quaternion.z + z * p_Quaternion.w + x * p_Quaternion.y - y * p_Quaternion.x;
-
-		w =	t_w.m128_f32[0] - t_w.m128_f32[1] - t_w.m128_f32[2] - t_w.m128_f32[3];
-		x =	t_x.m128_f32[0] - t_x.m128_f32[1] - t_x.m128_f32[2] - t_x.m128_f32[3];
-		y =	t_y.m128_f32[0] - t_y.m128_f32[1] - t_y.m128_f32[2] - t_y.m128_f32[3];
-		z =	t_z.m128_f32[0] - t_z.m128_f32[1] - t_z.m128_f32[2] - t_z.m128_f32[3];
-
+			w =	t_w.m128_f32[0] - t_w.m128_f32[1] - t_w.m128_f32[2] - t_w.m128_f32[3];
+			x =	t_x.m128_f32[0] - t_x.m128_f32[1] - t_x.m128_f32[2] - t_x.m128_f32[3];
+			y =	t_y.m128_f32[0] - t_y.m128_f32[1] - t_y.m128_f32[2] - t_y.m128_f32[3];
+			z =	t_z.m128_f32[0] - t_z.m128_f32[1] - t_z.m128_f32[2] - t_z.m128_f32[3];
+		#else
+			float t_w = w * p_Quaternion.w - x * p_Quaternion.x - y * p_Quaternion.y - z * p_Quaternion.z;
+			float t_x = w * p_Quaternion.x + x * p_Quaternion.w + y * p_Quaternion.z - z * p_Quaternion.y;
+			float t_y = w * p_Quaternion.y + y * p_Quaternion.w + z * p_Quaternion.x - x * p_Quaternion.z;
+			float t_z = w * p_Quaternion.z + z * p_Quaternion.w + x * p_Quaternion.y - y * p_Quaternion.x;
+		#endif //K15_SIMD_SUPPORT
+		
 		return *this;
 	}
 	/*********************************************************************************/
@@ -189,21 +228,37 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Quaternion& Quaternion::operator*=(float p_Scalar)
 	{
-		__m128 t = _mm_set_ps(p_Scalar,p_Scalar,p_Scalar,p_Scalar);
-		m_QuaternionSIMD = _mm_mul_ps(m_QuaternionSIMD,t);
+		#if defined K15_SIMD_SUPPORT
+			__m128 t = _mm_set_ps(p_Scalar,p_Scalar,p_Scalar,p_Scalar);
+			m_QuaternionSIMD = _mm_mul_ps(m_QuaternionSIMD,t);
+		#else
+			x *= p_Scalar;
+			y *= p_Scalar;
+			z *= p_Scalar;
+			w *= p_Scalar;
+		#endif //K15_SIMD_SUPPORT
+		
 		return *this;
 	}
 	/*********************************************************************************/
 	const Quaternion& Quaternion::operator/=(float p_Scalar)
 	{
-		__m128 t = _mm_set_ps(p_Scalar,p_Scalar,p_Scalar,p_Scalar);
-		m_QuaternionSIMD = _mm_div_ps(m_QuaternionSIMD,t);
+		#if defined K15_SIMD_SUPPORT
+			__m128 t = _mm_set_ps(p_Scalar,p_Scalar,p_Scalar,p_Scalar);
+			m_QuaternionSIMD = _mm_div_ps(m_QuaternionSIMD,t);
+		#else
+			x /= p_Scalar;
+			y /= p_Scalar;
+			z /= p_Scalar;
+			w /= p_Scalar;
+		#endif //K15_SIMD_SUPPORT
+		
 		return *this;
 	}
 	/*********************************************************************************/
 	bool Quaternion::operator==(const Quaternion& p_Quaternion) const
 	{
-		return (w == p_Quaternion.w) && (v == p_Quaternion.v);
+		return (x == p_Quaternion.x) && (y == p_Quaternion.y) && (z == p_Quaternion.z) && (w == p_Quaternion.w);
 	}
 	/*********************************************************************************/
 	bool Quaternion::operator!=(const Quaternion& p_Quaternion) const
@@ -213,10 +268,15 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	Vector3 Quaternion::operator*(const Vector3& p_Vector) const
 	{
-		Vector3 vTmp1, vTmp2;
-		vTmp1 = v.cross(p_Vector);
-		vTmp2 = v.cross(vTmp1);
-		vTmp1 *= (2 * m_Angle);
+		Vector3 vTmp1, vTmp2, vTmp3;
+
+		vTmp3.x = x;
+		vTmp3.y = y;
+		vTmp3.z = z;
+
+		vTmp1 = vTmp3.cross(p_Vector);
+		vTmp2 = vTmp3.cross(vTmp1);
+		vTmp1 *= (2 * w);
 		vTmp2 *= 2;
 		return p_Vector + vTmp1 + vTmp2;
 	}
@@ -243,8 +303,12 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	float Quaternion::dot(const Quaternion& p_Quaternion) const
 	{
-		__m128 dot = _mm_mul_ps(m_QuaternionSIMD,p_Quaternion.m_QuaternionSIMD);
-		return dot.m128_f32[0] + dot.m128_f32[1] + dot.m128_f32[2] + dot.m128_f32[3];
+		#if defined K15_SIMD_SUPPORT
+			__m128 dot = _mm_mul_ps(m_QuaternionSIMD,p_Quaternion.m_QuaternionSIMD);
+			return dot.m128_f32[0] + dot.m128_f32[1] + dot.m128_f32[2] + dot.m128_f32[3];
+		#else
+			return x*p_Quaternion.x + y*p_Quaternion.y + z*p_Quaternion.z * w*p_Quaternion.w;
+		#endif //K15_SIMD_SUPPORT
 	}
 	/*********************************************************************************/
 	Matrix3 Quaternion::toRotationMatrix() const
@@ -311,7 +375,7 @@ namespace K15_Engine { namespace Math {
 			size_t k = s_iNext[j];
 
 			//To test if this even works
-			__debugbreak();
+			//__debugbreak();
 
 			fRoot = ::sqrt(p_Matrix.m_MatrixArray[i * 3 + i] - p_Matrix.m_MatrixArray[j * 3 + j] - p_Matrix.m_MatrixArray[k * 3 + k] + 1.0f);
 			float* apkQuat[3] = { &x, &y, &z };

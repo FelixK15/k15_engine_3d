@@ -23,6 +23,7 @@
 
 #include "K15_Matrix4.h"
 
+
 namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Matrix4 Matrix4::Identity;
@@ -35,18 +36,13 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	Matrix4::Matrix4()
 	{
-		m_MatrixSIMD[0] = _mm_set_ps(0.0f,0.0f,0.0f,1.0f);
-		m_MatrixSIMD[1] = _mm_set_ps(0.0f,0.0f,1.0f,0.0f);
-		m_MatrixSIMD[2] = _mm_set_ps(0.0f,1.0f,0.0f,0.0f);
-		m_MatrixSIMD[3] = _mm_set_ps(1.0f,0.0f,0.0f,0.0f);
+		memset(&m_MatrixArray,0,sizeof(m_MatrixArray));
+		m_MatrixArray[3] = m_MatrixArray[6] = m_MatrixArray[9] = m_MatrixArray[12] = 1.0f;
 	}
 	/*********************************************************************************/
 	Matrix4::Matrix4(float p_Values[16])
 	{
-		m_MatrixSIMD[0] = _mm_set_ps(p_Values[3],p_Values[2],p_Values[1],p_Values[0]);
-		m_MatrixSIMD[1] = _mm_set_ps(p_Values[7],p_Values[6],p_Values[5],p_Values[4]);
-		m_MatrixSIMD[2] = _mm_set_ps(p_Values[11],p_Values[10],p_Values[9],p_Values[8]);
-		m_MatrixSIMD[3] = _mm_set_ps(p_Values[15],p_Values[14],p_Values[13],p_Values[12]);
+		memcpy(m_MatrixArray,p_Values,sizeof(p_Values));
 	}
 	/*********************************************************************************/
 	Matrix4::Matrix4(float _1_1,float _1_2,float _1_3,float _1_4,
@@ -54,18 +50,22 @@ namespace K15_Engine { namespace Math {
 		float _3_1,float _3_2,float _3_3,float _3_4,
 		float _4_1,float _4_2,float _4_3,float _4_4)
 	{
-		m_MatrixSIMD[0] = _mm_set_ps(_1_4,_1_3,_1_2,_1_1);
-		m_MatrixSIMD[1] = _mm_set_ps(_2_4,_2_3,_3_2,_2_1);
-		m_MatrixSIMD[2] = _mm_set_ps(_3_4,_3_3,_3_2,_3_1);
-		m_MatrixSIMD[3] = _mm_set_ps(_4_4,_4_3,_4_2,_4_1);
+		#if defined K15_SIMD_SUPPORT	
+			m_MatrixSIMD[0] = _mm_set_ps(_1_4,_1_3,_1_2,_1_1);
+			m_MatrixSIMD[1] = _mm_set_ps(_2_4,_2_3,_3_2,_2_1);
+			m_MatrixSIMD[2] = _mm_set_ps(_3_4,_3_3,_3_2,_3_1);
+			m_MatrixSIMD[3] = _mm_set_ps(_4_4,_4_3,_4_2,_4_1);
+		#else
+			this->_1_1 = _1_1; this->_1_2 = _1_2; this->_1_3 = _1_3; this->_1_4 = _1_4;
+			this->_2_1 = _2_1; this->_2_2 = _2_2; this->_2_3 = _2_3; this->_2_4 = _2_4;
+			this->_3_1 = _3_1; this->_3_2 = _3_2; this->_3_3 = _3_3; this->_3_4 = _3_4;
+			this->_4_1 = _4_1; this->_4_2 = _4_2; this->_4_3 = _4_3; this->_4_4 = _4_4;
+		#endif //K15_SIMD_SUPPORT
 	}
 	/*********************************************************************************/
 	Matrix4::Matrix4(const Matrix4& p_Matrix)
 	{
-		m_MatrixSIMD[0] = _mm_set_ps(p_Matrix._1_4,p_Matrix._1_3,p_Matrix._1_2,p_Matrix._1_1);
-		m_MatrixSIMD[1] = _mm_set_ps(p_Matrix._2_4,p_Matrix._2_3,p_Matrix._2_2,p_Matrix._2_1);
-		m_MatrixSIMD[2] = _mm_set_ps(p_Matrix._3_4,p_Matrix._3_3,p_Matrix._3_2,p_Matrix._3_1);
-		m_MatrixSIMD[3] = _mm_set_ps(p_Matrix._4_4,p_Matrix._4_3,p_Matrix._4_2,p_Matrix._4_1);
+		memcpy(m_MatrixArray,p_Matrix.m_MatrixArray,sizeof(m_MatrixArray));
 	}
 	/*********************************************************************************/
 	Matrix4::~Matrix4()
@@ -290,69 +290,73 @@ namespace K15_Engine { namespace Math {
 /*********************************************************************************/
 	const Matrix4& Matrix4::operator*=(const Matrix4& p_Matrix)
 	{
-		//http://drrobsjournal.blogspot.de/2012/10/fast-simd-4x4-matrix-multiplication.html
+		#if defined K15_SIMD_SUPPORT
+			//http://drrobsjournal.blogspot.de/2012/10/fast-simd-4x4-matrix-multiplication.html
 
-		const __m128 a = p_Matrix.m_MatrixSIMD[0];
-		const __m128 b = p_Matrix.m_MatrixSIMD[1];
-		const __m128 c = p_Matrix.m_MatrixSIMD[2];
-		const __m128 d = p_Matrix.m_MatrixSIMD[3];
+			const __m128 a = p_Matrix.m_MatrixSIMD[0];
+			const __m128 b = p_Matrix.m_MatrixSIMD[1];
+			const __m128 c = p_Matrix.m_MatrixSIMD[2];
+			const __m128 d = p_Matrix.m_MatrixSIMD[3];
 
-		__m128 t1, t2;
+			__m128 t1, t2;
 
-		t1 = _mm_set1_ps(_1_1);
-		t2 = _mm_mul_ps(a, t1);
-		t1 =_mm_set1_ps(_1_2);
-		t2 = _mm_add_ps(_mm_mul_ps(b, t1), t2);
-		t1 =_mm_set1_ps(_1_3);
-		t2 = _mm_add_ps(_mm_mul_ps(c, t1), t2);
-		t1 =_mm_set1_ps(_1_4);
-		t2 = _mm_add_ps(_mm_mul_ps(d, t1), t2);
+			t1 = _mm_set1_ps(_1_1);
+			t2 = _mm_mul_ps(a, t1);
+			t1 =_mm_set1_ps(_1_2);
+			t2 = _mm_add_ps(_mm_mul_ps(b, t1), t2);
+			t1 =_mm_set1_ps(_1_3);
+			t2 = _mm_add_ps(_mm_mul_ps(c, t1), t2);
+			t1 =_mm_set1_ps(_1_4);
+			t2 = _mm_add_ps(_mm_mul_ps(d, t1), t2);
 
-		_mm_store_ps(&m_MatrixArray[0], t2);
+			_mm_store_ps(&m_MatrixArray[0], t2);
 
-		t1 = _mm_set1_ps(_2_1);
-		t2 = _mm_mul_ps(a, t1);
-		t1 =_mm_set1_ps(_2_2);
-		t2 = _mm_add_ps(_mm_mul_ps(b, t1), t2);
-		t1 =_mm_set1_ps(_2_3);
-		t2 = _mm_add_ps(_mm_mul_ps(c, t1), t2);
-		t1 =_mm_set1_ps(_2_4);
-		t2 = _mm_add_ps(_mm_mul_ps(d, t1), t2);
+			t1 = _mm_set1_ps(_2_1);
+			t2 = _mm_mul_ps(a, t1);
+			t1 =_mm_set1_ps(_2_2);
+			t2 = _mm_add_ps(_mm_mul_ps(b, t1), t2);
+			t1 =_mm_set1_ps(_2_3);
+			t2 = _mm_add_ps(_mm_mul_ps(c, t1), t2);
+			t1 =_mm_set1_ps(_2_4);
+			t2 = _mm_add_ps(_mm_mul_ps(d, t1), t2);
 
-		_mm_store_ps(&m_MatrixArray[4], t2);
+			_mm_store_ps(&m_MatrixArray[4], t2);
 
-		t1 = _mm_set1_ps(_3_1);
-		t2 = _mm_mul_ps(a, t1);
-		t1 =_mm_set1_ps(_3_2);
-		t2 = _mm_add_ps(_mm_mul_ps(b, t1), t2);
-		t1 =_mm_set1_ps(_3_3);
-		t2 = _mm_add_ps(_mm_mul_ps(c, t1), t2);
-		t1 =_mm_set1_ps(_3_4);
-		t2 = _mm_add_ps(_mm_mul_ps(d, t1), t2);
+			t1 = _mm_set1_ps(_3_1);
+			t2 = _mm_mul_ps(a, t1);
+			t1 =_mm_set1_ps(_3_2);
+			t2 = _mm_add_ps(_mm_mul_ps(b, t1), t2);
+			t1 =_mm_set1_ps(_3_3);
+			t2 = _mm_add_ps(_mm_mul_ps(c, t1), t2);
+			t1 =_mm_set1_ps(_3_4);
+			t2 = _mm_add_ps(_mm_mul_ps(d, t1), t2);
 
-		_mm_store_ps(&m_MatrixArray[8], t2);
+			_mm_store_ps(&m_MatrixArray[8], t2);
 
-		t1 = _mm_set1_ps(_4_1);
-		t2 = _mm_mul_ps(a, t1);
-		t1 =_mm_set1_ps(_4_2);
-		t2 = _mm_add_ps(_mm_mul_ps(b, t1), t2);
-		t1 =_mm_set1_ps(_4_3);
-		t2 = _mm_add_ps(_mm_mul_ps(c, t1), t2);
-		t1 =_mm_set1_ps(_4_4);
-		t2 = _mm_add_ps(_mm_mul_ps(d, t1), t2);
+			t1 = _mm_set1_ps(_4_1);
+			t2 = _mm_mul_ps(a, t1);
+			t1 =_mm_set1_ps(_4_2);
+			t2 = _mm_add_ps(_mm_mul_ps(b, t1), t2);
+			t1 =_mm_set1_ps(_4_3);
+			t2 = _mm_add_ps(_mm_mul_ps(c, t1), t2);
+			t1 =_mm_set1_ps(_4_4);
+			t2 = _mm_add_ps(_mm_mul_ps(d, t1), t2);
 
-		_mm_store_ps(&m_MatrixArray[12], t2);
+			_mm_store_ps(&m_MatrixArray[12], t2);
+		#endif //K15_SIMD_SUPPORT
 		return *this;
 	}
 	/*********************************************************************************/
 	const Matrix4& Matrix4::operator*=(float p_Scalar)
 	{
+		#if defined K15_SIMD_SUPPORT
 		__m128 temp = _mm_set_ps(p_Scalar,p_Scalar,p_Scalar,p_Scalar);
 
 		for(int i = 0;i < 4;++i)
 		{
 			m_MatrixSIMD[i] = _mm_mul_ps(m_MatrixSIMD[i],temp);
 		}
+		#endif //K15_SIMD_SUPPORT
 
 		return *this;
 	}
@@ -377,26 +381,30 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Matrix4& Matrix4::operator=(const Matrix4& p_Matrix)
 	{
-		memcpy(m_MatrixSIMD,p_Matrix.m_MatrixSIMD,512);
+		memcpy(m_MatrixArray,p_Matrix.m_MatrixArray,sizeof(m_MatrixArray));
 
 		return *this;
 	}
 	/*********************************************************************************/
 	const Matrix4& Matrix4::operator+=(const Matrix4& p_Matrix)
 	{
-		for(int i = 0; i < 4; i++)
-		{
-			m_MatrixSIMD[i] = _mm_add_ps(m_MatrixSIMD[i],p_Matrix.m_MatrixSIMD[i]);
-		}
+		#if defined K15_SIMD_SUPPORT
+			for(int i = 0; i < 4; i++)
+			{
+				m_MatrixSIMD[i] = _mm_add_ps(m_MatrixSIMD[i],p_Matrix.m_MatrixSIMD[i]);
+			}
+		#endif //K15_SIMD_SUPPORT
 		return *this;
 	}
 	/*********************************************************************************/
 	const Matrix4& Matrix4::operator-=(const Matrix4& p_Matrix)
 	{
-		for(int i = 0; i < 4; i++)
-		{
-			m_MatrixSIMD[i] = _mm_sub_ps(m_MatrixSIMD[i],p_Matrix.m_MatrixSIMD[i]);
-		}
+		#if defined K15_SIMD_SUPPORT
+			for(int i = 0; i < 4; i++)
+			{
+				m_MatrixSIMD[i] = _mm_sub_ps(m_MatrixSIMD[i],p_Matrix.m_MatrixSIMD[i]);
+			}
+		#endif //K15_SIMD_SUPPORT
 		return *this;
 	}
 	/*********************************************************************************/

@@ -1,9 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Android">
+      <Configuration>Debug</Configuration>
+      <Platform>Android</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Android">
+      <Configuration>Release</Configuration>
+      <Platform>Android</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
@@ -28,6 +36,13 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+    <PlatformToolset>arm-linux-androideabi-4.6</PlatformToolset>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
+    <PlatformToolset>arm-linux-androideabi-4.6</PlatformToolset>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -49,6 +64,15 @@
     <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>K15_Math</TargetName>
     <IncludePath>..\..\math\include\;..\..\engine\include\;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+    <IncludePath>..\..\math\include\;..\..\engine\include\;$(AndroidIncludeDir);$(AndroidStlIncludeDir);</IncludePath>
+    <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
+    <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -86,12 +110,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\math\src\K15_Matrix3.cpp" />
-    <ClCompile Include="..\..\math\src\K15_Matrix4.cpp" />
+    <ClCompile Include="..\..\math\src\K15_Matrix4.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\math\src\K15_Quaternion.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\math\src\K15_Vector4.cpp" />
+    <ClCompile Include="..\..\math\src\K15_Vector4.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\math\src\K15_Vector2.cpp" />
     <ClCompile Include="..\..\math\src\K15_Vector3.cpp" />
   </ItemGroup>

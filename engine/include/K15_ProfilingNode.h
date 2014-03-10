@@ -56,7 +56,7 @@ namespace K15_Engine { namespace Core {
 		ProfilingNode* Children[MaxChildren];
 		String Name;
 		int CountChildren;
-		const int ThreadID;
+		const Thread::id ThreadID;
 		const int FrameIndex;
 		const double StartTime;
 		double Time;

@@ -48,23 +48,23 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 	/*********************************************************************************/
 	void RenderTestApplicationModule::onPreTick()
 	{
-		if(g_InputManager->isActive(_N(Color_1)))
+		if(g_InputManager->isActive(_ON(Color_1)))
 		{
 			g_Application->getRenderer()->setClearColor(1.0f,0.0f,0.0f);
 		}
-		else if(g_InputManager->isActive(_N(Color_2)))
+		else if(g_InputManager->isActive(_ON(Color_2)))
 		{
 			g_Application->getRenderer()->setClearColor(0.0f,1.0f,0.0f);
 		}
-		else if(g_InputManager->isActive(_N(Color_3)))
+		else if(g_InputManager->isActive(_ON(Color_3)))
 		{
 			g_Application->getRenderer()->setClearColor(0.0f,0.0f,1.0f);
 		}
-		else if(g_InputManager->isActive(_N(Color_4)))
+		else if(g_InputManager->isActive(_ON(Color_4)))
 		{
 			g_Application->getRenderer()->setClearColor(1.0f,1.0f,0.0f);
 		}
-		else if(g_InputManager->isActive(_N(Color_5)))
+		else if(g_InputManager->isActive(_ON(Color_5)))
 		{
 			g_Application->getRenderer()->setClearColor(0.0f,1.0f,1.0f);
 		}

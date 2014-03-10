@@ -57,10 +57,14 @@ freely, subject to the following restrictions:
 
 // Which platform are we on?
 #if !defined(_TTHREAD_PLATFORM_DEFINED_)
-  #if defined(_WIN32) || defined(__WIN32__) || defined(__WINDOWS__)
-    #define _TTHREAD_WIN32_
-  #else
+  #if defined (__ANDROID__)
     #define _TTHREAD_POSIX_
+  #else
+    #if defined(_WIN32) || defined(__WIN32__) || defined(__WINDOWS__)
+      #define _TTHREAD_WIN32_
+    #else
+      #define _TTHREAD_POSIX_
+    #endif
   #endif
   #define _TTHREAD_PLATFORM_DEFINED_
 #endif

@@ -32,6 +32,7 @@
 #include "K15_ResourceFileBase.h"
 #include "K15_ResourceHandle.h"
 #include "K15_ResourceBase.h"
+#include "K15_ProfilingManager.h"
 
 namespace K15_Engine { namespace Core { 
 
@@ -72,7 +73,7 @@ namespace K15_Engine { namespace Core {
 
 		template<class ResourceType> bool cacheResource(const ResourceName& p_ResourceName,Enum p_Priority)
 		{
-			K15_PROFILE("ResourceManager::cacheResource (%s)",p_ResourceName.c_str());
+			K15_PROFILE(StringUtil::format("ResourceManager::cacheResource (%s)",p_ResourceName.c_str()));
 
 			bool cachedResource = false;
 			RawData resourceData = {0};

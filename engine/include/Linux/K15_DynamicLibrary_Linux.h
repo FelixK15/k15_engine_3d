@@ -1,8 +1,8 @@
 /**
- * @file K15_FrameStatistic.h
+ * @file K15_DynamicLibrary_Android.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/10/16
+ * @date 2013/12/16
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,24 +21,32 @@
  * 
  */
 
-#ifndef _K15Engine_Core_FrameStatistic_h_
-#define _K15Engine_Core_FrameStatistic_h_
+#ifndef _K15Engine_Core_DynamicLibrary_Android_h_
+#define _K15Engine_Core_DynamicLibrary_Android_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
-#endif// K15_USE_PRECOMPILED_HEADERS
+#endif //K15_USE_PRECOMPILED_HEADERS
+
+#include "K15_DynamicLibraryBase.h"
 
 namespace K15_Engine { namespace Core {
-	struct FrameStatistic
+	class K15_CORE_API DynamicLibrary_Linux : public DynamicLibraryBase
 	{
-		double Time;
-		ProfilingNode* ProfileNode;
-		uint32 ObjectsRendered;
-		uint32 FrameNumber;
-		uint32 MemoryAllocated;
-		uint32 MemoryFreed;
-		uint32 Allocations;
-		uint32 Deallocations;
-	};
-}}//end of K15_Engine::Core namespace
-#endif //_K15Engine_Core_FrameStatistic_h_
+	public:
+		DynamicLibrary_Linux();
+		DynamicLibrary_Linux(const String& p_FileName);
+		virtual ~DynamicLibrary_Linux();
+
+	protected:
+		virtual bool load();
+		virtual bool unload();
+
+		virtual void* getSymbolInternal( const String& p_SymbolName );
+
+	protected:
+		void* m_Module;
+	};// end of DynamicLibrary_Android class declaration
+}}// end of K15_Engine::Core namespace
+
+#endif //_K15Engine_Core_DynamicLibrary_Android_h_

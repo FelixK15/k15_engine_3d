@@ -24,6 +24,8 @@
 
 #if defined K15_OS_WINDOWS
 #	include "Win32\K15_DynamicLibrary_win32.h"
+#elif defined K15_OS_ANDROID || defined K15_OS_LINUX || defined K15_OS_APPLE
+#	include "Linux/K15_DynamicLibrary_Linux.h"
 #endif //K15_OS_WINDOWS
 
 namespace K15_Engine { namespace Core {
@@ -90,10 +92,10 @@ namespace K15_Engine { namespace Core {
 			unloadFunc();
 		}
 
-		_LogNormal("Unloading dynamic library \"%s\".",p_Lib->getFileName());
+		_LogNormal("Unloading dynamic library \"%s\".",p_Lib->getFileName().c_str());
 		if(p_Lib->unload())
 		{
-			_LogSuccess("Successfully unloaded dynamic library \"%s\".",p_Lib->getFileName());
+			_LogSuccess("Successfully unloaded dynamic library \"%s\".",p_Lib->getFileName().c_str());
 			m_LoadedLibs.erase(p_Lib->getFileName());
 			return true;
 		}

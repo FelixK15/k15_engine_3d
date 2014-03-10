@@ -29,12 +29,17 @@
 #include <cassert>
 #include <cstdlib>
 
-//we'll use SIMD math
-#define K15_SIMD_SUPPORT
+//we won't use SIMD for android.
+#ifndef __ANDROID__
+	#define K15_SIMD_SUPPORT
+#else
+	#define K15_NEON_SUPPORT
+#endif //__ANDROID__))
 
 #if defined K15_SIMD_SUPPORT
-
-# include <nmmintrin.h> //SSE4.2
+	#include <tmmintrin.h>
+#elif defined K15_NEON_SUPPORT
+//	#include <arm_neon.h>
 #endif //K15_SIMD_SUPPORT
 
 namespace K15_Engine { namespace Math {

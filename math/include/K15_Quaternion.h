@@ -25,7 +25,6 @@
 #define _K15Engine_Math_Quaternion_h_
 
 #include "K15_MathPrerequisites.h"
-#include "K15_Vector3.h"
 #include "K15_Matrix3.h"
 
 namespace K15_Engine { namespace Math {
@@ -87,18 +86,20 @@ namespace K15_Engine { namespace Math {
 	public:
 		union
 		{
-			struct 
-			{
-				float m_Angle;
-				Vector3 v;
-			};//struct
+// 			struct 
+// 			{
+// 				float m_Angle;
+// 				Vector3 v;
+// 			};//struct
 
 			struct  
 			{
 				float w, x, y, z;
 			};//struct
 			float m_QuaternionArray[4];
-			__m128 m_QuaternionSIMD;
+			#if defined K15_SIMD_SUPPORT
+				__m128 m_QuaternionSIMD;
+			#endif //K15_SIMD_SUPPORT
 		};//union
 	};// end of Quaternion class declaration
 }} //end of K15_Engine::Math namespace

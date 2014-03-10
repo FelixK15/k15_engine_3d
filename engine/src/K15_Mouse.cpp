@@ -130,11 +130,11 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 	{
 		static InputStringToEnumMap map;
 
-		map.insert(Pair(ObjectName,Enum)(_N(LeftButton),BTN_LEFT));
-		map.insert(Pair(ObjectName,Enum)(_N(RightButton),BTN_RIGHT));
-		map.insert(Pair(ObjectName,Enum)(_N(MiddleButton),BTN_MIDDLE));
-		map.insert(Pair(ObjectName,Enum)(_N(SpecialButton1),BTN_SPECIAL1));
-		map.insert(Pair(ObjectName,Enum)(_N(SpecialButton2),BTN_SPECIAL2));
+		map.insert(Pair(ObjectName,Enum)(_ON(LeftButton),BTN_LEFT));
+		map.insert(Pair(ObjectName,Enum)(_ON(RightButton),BTN_RIGHT));
+		map.insert(Pair(ObjectName,Enum)(_ON(MiddleButton),BTN_MIDDLE));
+		map.insert(Pair(ObjectName,Enum)(_ON(SpecialButton1),BTN_SPECIAL1));
+		map.insert(Pair(ObjectName,Enum)(_ON(SpecialButton2),BTN_SPECIAL2));
 
 		return map;
 	}

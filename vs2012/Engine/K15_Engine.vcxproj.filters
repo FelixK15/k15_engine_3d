@@ -49,6 +49,18 @@
     <Filter Include="Serialization\src">
       <UniqueIdentifier>{6c1747fa-fead-48bf-9834-da844fb9a7b2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\src\Android">
+      <UniqueIdentifier>{aadf9167-416f-4d1f-9e15-4396e1e7803c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\include\Android">
+      <UniqueIdentifier>{4855b077-1a12-4d0c-b781-9b0f33de4686}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\include\Linux">
+      <UniqueIdentifier>{5f2ba257-14be-4934-af5f-f6451e5d4631}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\src\Linux">
+      <UniqueIdentifier>{84b059c8-3133-4883-bfdb-a8b725dd3ef7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\engine\include\K15_Application.h">
@@ -363,6 +375,15 @@
     <ClInclude Include="..\..\engine\include\K15_GpuProgramParameter.h">
       <Filter>Rendering\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\Android\K15_ApplicationLayerOS_Android.h">
+      <Filter>Core\include\Android</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\Android\K15_RenderWindow_Android.h">
+      <Filter>Core\include\Android</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\Linux\K15_DynamicLibrary_Linux.h">
+      <Filter>Core\include\Linux</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -602,6 +623,15 @@
     <ClCompile Include="..\..\engine\src\K15_CameraComponent.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\Android\K15_ApplicationLayerOS_Android.cpp">
+      <Filter>Core\src\Android</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\Android\K15_RenderWindow_Android.cpp">
+      <Filter>Core\src\Android</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\Linux\K15_DynamicLibrary_Linux.cpp">
+      <Filter>Core\src\Linux</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -769,6 +799,9 @@
     </None>
     <None Include="..\..\engine\include\K15_StringUtil.inl">
       <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\Android\K15_ApplicationLayerOS_Android.inl">
+      <Filter>Core\include\Android</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

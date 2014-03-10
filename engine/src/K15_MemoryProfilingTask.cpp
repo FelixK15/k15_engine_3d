@@ -36,7 +36,7 @@ namespace K15_Engine { namespace Core {
 	MemoryProfilingTask::MemoryProfilingTask()
 		: TaskBase()
 	{
-		setName(_N(MemoryProfilingTask));
+		setName(_ON(MemoryProfilingTask));
 
 	}
 	/*********************************************************************************/

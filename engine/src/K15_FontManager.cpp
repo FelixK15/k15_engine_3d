@@ -27,7 +27,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	FontManager::FontManager()
 		: Singleton(),
-		  PoolAllocator(ApplicationAllocator,50,_N(FontManagerAllocator)),
+		  PoolAllocator(ApplicationAllocator,50,_ON(FontManagerAllocator)),
 		  m_FreeType(0)
 	{
 

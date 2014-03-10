@@ -24,8 +24,8 @@
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	const GpuProgramParameter::DefaultVariableNameMap GpuProgramParameter::DefaultVariableNames = _createDefaultVariableNameMap();
-	const ObjectName GpuProgramParameter::Default::WorldViewProjectionMatrix = _N(WorldViewProjectionMatrix);
-	const ObjectName GpuProgramParameter::Default::InverseWorldViewProjectionMatrix = _N(InverseWorldViewProjectionMatrix);
+	const ObjectName GpuProgramParameter::Default::WorldViewProjectionMatrix = _ON(WorldViewProjectionMatrix);
+	const ObjectName GpuProgramParameter::Default::InverseWorldViewProjectionMatrix = _ON(InverseWorldViewProjectionMatrix);
 	/*********************************************************************************/
 
 	/*********************************************************************************/

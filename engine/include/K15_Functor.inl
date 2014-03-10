@@ -59,7 +59,7 @@ const Functor0<ReturnType>& Functor0<ReturnType>::operator =(const Functor0<Retu
 {
 	m_Function = p_Other.m_Functor;
 
-	return *this:
+	return *this;
 }
 /*********************************************************************************/
 

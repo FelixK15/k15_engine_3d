@@ -1,9 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Android">
+      <Configuration>Debug</Configuration>
+      <Platform>Android</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Android">
+      <Configuration>Release</Configuration>
+      <Platform>Android</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
@@ -28,6 +36,12 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+    <PlatformToolset>arm-linux-androideabi-4.6</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
+    <PlatformToolset>arm-linux-androideabi-4.6</PlatformToolset>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -48,6 +62,18 @@
     <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
     <IncludePath>..\..\engine\include\;..\..\plugins\rendertest\include\;..\..\math\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+    <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
+    <IncludePath>..\..\engine\include\;..\..\plugins\rendertest\include\;..\..\math\include\;$(AndroidIncludeDir);$(AndroidStlIncludeDir);</IncludePath>
+    <LibraryPath>..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
+    <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
+    <IncludePath>..\..\engine\include\;..\..\plugins\rendertest\include\;..\..\math\include\;$(AndroidIncludeDir);$(AndroidStlIncludeDir);</IncludePath>
     <LibraryPath>..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

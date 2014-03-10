@@ -46,10 +46,10 @@ namespace K15_Engine { namespace Core {
 		  EndTime(0.0),
 		  Time(0.0),
 		  Parent(0),
-      CountChildren(0),
-      ThreadID(g_CurrentThread::get_id().hash()),
-      FrameIndex(g_Application->getFrameCount()),
-      StartTime(g_Application->getTime())
+		  CountChildren(0),
+		  ThreadID(g_CurrentThread::get_id()),
+		  FrameIndex(g_Application->getFrameCount()),
+		  StartTime(g_Application->getTime())
 	{
     memset(Children,0,sizeof(Children));
 	}

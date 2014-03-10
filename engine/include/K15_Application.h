@@ -38,6 +38,8 @@
 
 #if defined (K15_OS_WINDOWS)
 #	include "Win32\K15_ApplicationOSLayer_Win32.h"
+#elif defined (K15_OS_ANDROID)
+#	include "Android/K15_ApplicationLayerOS_Android.h"
 #endif //K15_OS_WINDOWS
 
 namespace K15_Engine { namespace Core {

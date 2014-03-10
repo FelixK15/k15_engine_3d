@@ -24,28 +24,28 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\math\src\K15_Quaternion.cpp">
+    <ClCompile Include="..\..\math\src\K15_Matrix3.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\math\src\K15_Matrix3.cpp">
+    <ClCompile Include="..\..\math\src\K15_Vector2.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\math\src\K15_Vector3.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\math\src\K15_Vector3.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\math\src\K15_Vector2.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\math\src\K15_Matrix4.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\math\src\K15_Vector2.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\math\src\K15_Vector3.cpp">
+    <ClCompile Include="..\..\math\src\K15_Quaternion.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\math\src\K15_Vector4.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\math\src\K15_Vector3.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\math\src\K15_Vector2.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
   </ItemGroup>

@@ -82,7 +82,9 @@ namespace K15_Engine { namespace Math {
 				float x,y,z,w;
 			};//struct
 			float m_VectorArray[4];
-			__m128 m_VectorSIMD;
+			#if defined K15_SIMD_SUPPORT
+				__m128 m_VectorSIMD;
+			#endif //K15_SIMD_SUPPORT
 		};//union
 	};// end of Vector4 class declaration
 }}// end of K15_Engine::Math namespace
