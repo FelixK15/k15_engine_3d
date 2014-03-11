@@ -103,6 +103,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\math\include\K15_MathPrerequisites.h" />
+    <ClInclude Include="..\..\math\include\K15_MathUtil.h" />
     <ClInclude Include="..\..\math\include\K15_Matrix3.h" />
     <ClInclude Include="..\..\math\include\K15_Matrix4.h" />
     <ClInclude Include="..\..\math\include\K15_Quaternion.h">
@@ -114,6 +115,7 @@
     <ClInclude Include="..\..\math\include\K15_Vector4.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\math\src\K15_MathUtil.cpp" />
     <ClCompile Include="..\..\math\src\K15_Matrix3.cpp" />
     <ClCompile Include="..\..\math\src\K15_Matrix4.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">false</ExcludedFromBuild>
@@ -128,6 +130,9 @@
     </ClCompile>
     <ClCompile Include="..\..\math\src\K15_Vector2.cpp" />
     <ClCompile Include="..\..\math\src\K15_Vector3.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\math\include\K15_MathUtil.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

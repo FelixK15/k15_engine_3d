@@ -387,7 +387,6 @@
     <ClInclude Include="..\..\engine\include\K15_Language.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_GameEventArguments.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">

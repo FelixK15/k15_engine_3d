@@ -44,6 +44,7 @@ namespace K15_Engine { namespace Core {
 
 #		ifndef K15_NO_STRINGS
 			const char* c_str() const;
+			const String& toString() const;
 #		endif
 
 		bool operator< (const HashedString& p_Other) const;

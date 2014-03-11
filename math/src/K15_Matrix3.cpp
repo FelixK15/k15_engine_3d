@@ -22,6 +22,7 @@
  */
 
 #include "K15_Matrix3.h"
+#include "K15_MathUtil.h"
 
 namespace K15_Engine { namespace Math {
 	/*********************************************************************************/

@@ -43,10 +43,13 @@
 #endif //K15_SIMD_SUPPORT
 
 namespace K15_Engine { namespace Math {
-  const float Pi = 4.0f*atan(1.0f);
-  const float HalfPi = Pi * 0.5f;
-  const float TwoPi = Pi + Pi;
-  const float DegreeToRadian = Pi / 180.f;
-  const float RadianToDegree = 180.f / Pi;
-}} // end of K15_Engine::Math namespace
+#if defined K15_MATH_DOUBLE_PRECISION
+	typedef double Real;
+#elif defined K15_MATH_HALF_PRECISION
+	typedef half Real;
+#else
+	typedef float Real;
+#endif //K15_MATH_DOUBLE_PRECISION
+}}
+
 #endif //_K15Engine_Math_Prerequisites_h_

@@ -19,6 +19,7 @@
 
 #include "K15_PrecompiledHeader.h"
 
+#include "K15_MathUtil.h"
 #include "K15_MatrixUtil.h"
 #include "K15_RenderWindowBase.h"
 
@@ -31,7 +32,7 @@ namespace K15_Engine { namespace Core {
     RenderWindowBase* window = g_Application->getRenderWindow();
     float aspect = (float)window->getResolution().width / (float)window->getResolution().height;
     float halfFov = p_Fov * 0.5f;
-    float h = p_NearClip * ::tan(p_Fov * Math::DegreeToRadian);
+    float h = p_NearClip * MathUtil::tan(p_Fov * MathUtil::DegreeToRadian);
     float w = h * aspect;
 
     mat._1_1 = w;

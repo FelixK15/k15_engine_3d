@@ -18,6 +18,7 @@
  */
 
 #include "K15_Quaternion.h"
+#include "K15_MathUtil.h"
 
 namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
@@ -67,9 +68,9 @@ namespace K15_Engine { namespace Math {
 	{
 		#if defined K15_SIMD_SUPPORT
 			__m128 t = _mm_mul_ps(m_QuaternionSIMD,m_QuaternionSIMD);
-			return ::sqrt(t.m128_f32[0] + t.m128_f32[1] + t.m128_f32[2] + t.m128_f32[3]);
+			return MathUtil::sqrt(t.m128_f32[0] + t.m128_f32[1] + t.m128_f32[2] + t.m128_f32[3]);
 		#else
-			return ::sqrt(x*x + y*y + z*z + w*w);
+			return MathUtil::sqrt(x*x + y*y + z*z + w*w);
 		#endif //K15_SIMD_SUPPORT
 	}
 	/*********************************************************************************/
@@ -283,17 +284,17 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	float Quaternion::getRoll() const
 	{
-		 return ::atan2(2*(x*y + w*z), w*w + x*x - y*y - z*z);
+		 return MathUtil::atan2(2*(x*y + w*z), w*w + x*x - y*y - z*z);
 	}
 	/*********************************************************************************/
 	float Quaternion::getPitch() const
 	{
-		return ::atan2(2*(y*z + w*x), w*w - x*x - y*y + z*z);
+		return MathUtil::atan2(2*(y*z + w*x), w*w - x*x - y*y + z*z);
 	}
 	/*********************************************************************************/
 	float Quaternion::getYaw() const
 	{
-		return ::asin(-2*(x*z - w*y));
+		return MathUtil::asin(-2*(x*z - w*y));
 	}
 	/*********************************************************************************/
 	bool Quaternion::isIdentity() const
@@ -355,7 +356,7 @@ namespace K15_Engine { namespace Math {
 		if(fTrace > 0.0f)
 		{
 			// |w| > 1/2, may as well choose w > 1/2
-			fRoot = ::sqrt(fTrace + 1.0f);  // 2w
+			fRoot = MathUtil::sqrt(fTrace + 1.0f);  // 2w
 			w = 0.5f*fRoot;
 			fRoot = 0.5f/fRoot;  // 1/(4w)
 			x = (p_Matrix._3_2 - p_Matrix._2_3) * fRoot;
@@ -377,7 +378,7 @@ namespace K15_Engine { namespace Math {
 			//To test if this even works
 			//__debugbreak();
 
-			fRoot = ::sqrt(p_Matrix.m_MatrixArray[i * 3 + i] - p_Matrix.m_MatrixArray[j * 3 + j] - p_Matrix.m_MatrixArray[k * 3 + k] + 1.0f);
+			fRoot = MathUtil::sqrt(p_Matrix.m_MatrixArray[i * 3 + i] - p_Matrix.m_MatrixArray[j * 3 + j] - p_Matrix.m_MatrixArray[k * 3 + k] + 1.0f);
 			float* apkQuat[3] = { &x, &y, &z };
 			*apkQuat[i] = 0.5f*fRoot;
 			fRoot = 0.5f/fRoot;
@@ -392,8 +393,8 @@ namespace K15_Engine { namespace Math {
 		//https://bitbucket.org/sinbad/ogre/src/569ec69ce2c31a66b32d741a455a1d91428079cc/OgreMain/src/OgreQuaternion.cpp?at=default
 
 		float fHalfAngle ( 0.5f*p_Angle );
-		float fSin = ::sin(fHalfAngle);
-		w = ::cos(fHalfAngle);
+		float fSin = MathUtil::sin(fHalfAngle);
+		w = MathUtil::cos(fHalfAngle);
 		x = fSin*p_Vector.x;
 		y = fSin*p_Vector.y;
 		z = fSin*p_Vector.z;

@@ -54,9 +54,13 @@
 #endif //K15_64_BIT
 
 //edit export defines
-#define expose //read + write
-#define expose_read //read only
-#define K15_EXPOSE_TO_EDITOR
+#if defined K15_CODE_GENERATOR
+#	define expose		__attribute__((annotate("expose")))
+#	define expose_read  __attribute__((annotate("expose_readonly")));
+#else
+#	define expose 
+#	define expose_read 
+#endif //K15_CODE_GENERATOR
 
 namespace K15_Engine
 {
