@@ -38,7 +38,7 @@ namespace K15_Engine { namespace Core {
 
 		GameEvent* motionEvent = 0;
 		
-		if(eventAction == AMOTION_EVENT_ACTION_DOWN)
+		if(eventAction == AMOTION_EVENT_ACTION_DOWN || eventAction == AMOTION_EVENT_ACTION_UP)
 		{
 
 			motionEvent = K15_NEW GameEvent(_EN(onMousePressed))
