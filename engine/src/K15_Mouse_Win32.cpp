@@ -24,8 +24,6 @@
 #include "K15_PrecompiledHeader.h"
 
 #include "K15_Mouse.h"
-#include "K15_Texture.h"
-#include "K15_RendererBase.h"
 #include "K15_LogManager.h"
 
 #include "win32\K15_RenderWindow_Win32.h"

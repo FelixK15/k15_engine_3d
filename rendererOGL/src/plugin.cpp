@@ -18,7 +18,13 @@
  */
 
 #include "plugin.h"
-#include "K15_RendererOGL.h"
+
+#if defined K15_OS_ANDROID
+#	include "K15_GLES2_Renderer.h"
+#elif defined K15_OS_WINDOWS
+#	include "K15_WGL_Renderer.h"
+#endif //K15_OS_ANDROID
+
 #include "K15_Application.h"
 #include "K15_RenderTask.h"
 #include "K15_RenderProcessBase.h"
@@ -26,7 +32,11 @@
 /*********************************************************************************/
 void pluginLoad()
 {
-	g_Application->getRenderTask()->setRenderer(K15_NEW K15_Engine::Rendering::OGL::RendererOGL());
+#ifdef K15_OS_WINDOWS
+	g_Application->setRenderer(K15_NEW K15_Engine::Rendering::WGL::Renderer());
+#elif defined K15_OS_ANDROID
+	g_Application->setRenderer(K15_NEW K15_Engine::Rendering::GLES2::Renderer());
+#endif //K15_OS_WINDOWS
 }
 /*********************************************************************************/
 void pluginUnload()

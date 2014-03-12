@@ -18,7 +18,7 @@
  */
 
 #include "K15_PrecompiledHeader.h"
-#include "K15_TextConsoleLog_Win32.h"
+#include "Win32\K15_TextConsoleLog_Win32.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/

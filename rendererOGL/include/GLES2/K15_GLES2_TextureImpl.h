@@ -1,5 +1,5 @@
 /**
- * @file K15_TextureImplOGL.h
+ * @file K15_TextureImpl.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2012/07/11
@@ -21,15 +21,18 @@
  * 
  */
 
-#ifndef _K15Engine_RendererOGL_TextureImpl_h_
-#define _K15Engine_RendererOGL_TextureImpl_h_
+#ifndef _K15Engine_RendererGLES2_TextureImpl_h_
+#define _K15Engine_RendererGLES2_TextureImpl_h_
 
-#include "K15_RendererOGLPrerequisites.h"
+#ifndef K15_RENDERER_USE_PREDEFINED_HEADERS
+#	include "K15_RendererOGLPrerequisites.h"
+#endif //K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
+
 #include "K15_RendererBase.h"
 #include "K15_Texture.h"
 
-namespace K15_Engine { namespace Rendering { namespace OGL {
-	class TextureImplOGL : public TextureImplBase
+namespace K15_Engine { namespace Rendering { namespace GLES2 {
+	class TextureImpl : public TextureImplBase
 	{
 	public:
 		/*********************************************************************************/
@@ -38,23 +41,17 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		static const GLenum GLPixelDataTypeConverter[RendererBase::PF_COUNT];
 		/*********************************************************************************/
 	public:
-		TextureImplOGL();
-		~TextureImplOGL();
+		TextureImpl();
+		~TextureImpl();
 
-		virtual bool write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) OVERRIDE;
-		virtual bool writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) OVERRIDE;
-
-// 		virtual bool read(byte** p_Destination, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) OVERRIDE;
-// 		virtual bool readMipmap(byte** p_Destination, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) OVERRIDE;
-
-		virtual bool resize(uint32 p_Width, uint32 p_Height, uint32 p_Depth) OVERRIDE;
+		virtual bool loadRawData(byte* p_Data, Enum p_Format, uint32 p_Width, uint32 p_Height, uint32 p_Depth, bool p_CreateMipMaps) OVERRIDE;
 
 		INLINE GLuint getTextureHandle() const;
 	private:
 		GLuint m_TextureHandle;
 		uint32 m_TextureStorageSize;
 	};// end of TextureImplOGL class declaration
-#	include "K15_TextureImplOGL.inl"
-}}}//end of K15_Engine::Rendering::OGL namespace
+#	include "K15_GLES2_TextureImpl.inl"
+}}}//end of K15_Engine::Rendering::GLES2 namespace
 
-#endif //_K15Engine_RendererOGL_TextureImpl_h_
+#endif //_K15Engine_RendererGLES2_TextureImpl_h_

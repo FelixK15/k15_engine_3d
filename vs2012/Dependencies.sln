@@ -35,13 +35,15 @@ Global
 		{07360CCD-840A-4C93-A6A2-E43347CC313E}.Release|Android.ActiveCfg = Release|Win32
 		{07360CCD-840A-4C93-A6A2-E43347CC313E}.Release|Win32.ActiveCfg = Release|Win32
 		{07360CCD-840A-4C93-A6A2-E43347CC313E}.Release|Win32.Build.0 = Release|Win32
-		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Debug|Android.ActiveCfg = Debug|Win32
+		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Debug|Android.ActiveCfg = Debug|Android
+		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Debug|Android.Build.0 = Debug|Android
 		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Debug|Win32.ActiveCfg = Debug|Win32
 		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Debug|Win32.Build.0 = Debug|Win32
 		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Release|Android.ActiveCfg = Release|Win32
 		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Release|Win32.ActiveCfg = Release|Win32
 		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Release|Win32.Build.0 = Release|Win32
-		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Debug|Android.ActiveCfg = Debug|Win32
+		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Debug|Android.ActiveCfg = Debug|Android
+		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Debug|Android.Build.0 = Debug|Android
 		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Debug|Win32.ActiveCfg = Debug|Win32
 		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Debug|Win32.Build.0 = Debug|Win32
 		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Release|Android.ActiveCfg = Release|Win32
@@ -59,7 +61,8 @@ Global
 		{6BA03C58-C796-4B3E-B4B4-F5E48A3265C7}.Release|Android.ActiveCfg = Release|Win32
 		{6BA03C58-C796-4B3E-B4B4-F5E48A3265C7}.Release|Win32.ActiveCfg = Release|Win32
 		{6BA03C58-C796-4B3E-B4B4-F5E48A3265C7}.Release|Win32.Build.0 = Release|Win32
-		{F9B0EC03-C8A7-4EF9-B5FA-CCD143A520B1}.Debug|Android.ActiveCfg = Debug|Win32
+		{F9B0EC03-C8A7-4EF9-B5FA-CCD143A520B1}.Debug|Android.ActiveCfg = Debug|Android
+		{F9B0EC03-C8A7-4EF9-B5FA-CCD143A520B1}.Debug|Android.Build.0 = Debug|Android
 		{F9B0EC03-C8A7-4EF9-B5FA-CCD143A520B1}.Debug|Win32.ActiveCfg = Debug|Win32
 		{F9B0EC03-C8A7-4EF9-B5FA-CCD143A520B1}.Debug|Win32.Build.0 = Debug|Win32
 		{F9B0EC03-C8A7-4EF9-B5FA-CCD143A520B1}.Release|Android.ActiveCfg = Release|Win32

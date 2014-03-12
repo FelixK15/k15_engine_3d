@@ -1,5 +1,5 @@
 /**
- * @file K15_AndroidLog.cpp
+ * @file K15_Logcat_Android.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2013/12/16
@@ -19,21 +19,21 @@
 
 #include "K15_PrecompiledHeader.h"
 
-#include "Android\K15_AndroidLog.h"
+#include "Android\K15_Logcat_Android.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	AndroidLog::AndroidLog()
+	Logcat_Android::Logcat_Android()
 	{
 
 	}
 	/*********************************************************************************/
-	AndroidLog::~AndroidLog()
+	Logcat_Android::~Logcat_Android()
 	{
 
 	}
 	/*********************************************************************************/
-	void AndroidLog::logMessage(const String &p_Message,Enum p_PriorityFlag)
+	void Logcat_Android::logMessage(const String &p_Message,Enum p_PriorityFlag)
 	{
 		android_LogPriority prio;
 

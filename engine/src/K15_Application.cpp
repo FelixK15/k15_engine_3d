@@ -43,10 +43,10 @@
 #	ifdef K15_OS_WINDOWS
 #		include "Win32\K15_RenderWindow_Win32.h"
 #		include "Win32\K15_VisualStudioLog_Win32.h"
-#		include "K15_TextConsoleLog.h"
+#		include "Win32\K15_TextConsoleLog_Win32.h"
 #	elif defined K15_OS_ANDROID
 #		include "Android/K15_RenderWindow_Android.h"
-#		include "Android/K15_AndroidLog.h"
+#		include "Android/K15_Logcat_Android.h"
 #	endif //K15_OS_WINDOWS
 #endif //K15_DEBUG
 
@@ -93,7 +93,7 @@ namespace K15_Engine { namespace Core {
 		m_LogManager->addLog(K15_NEW TextConsoleLog_Win32(),true,LogManager::LP_ALL);
 		m_LogManager->addLog(K15_NEW VisualStudioLog(),false,LogManager::LP_ALL);
 #	elif defined(K15_OS_ANDROID)
-		m_LogManager->addLog(K15_NEW AndroidLog(),false,LogManager::LP_ALL);
+		m_LogManager->addLog(K15_NEW Logcat_Android(),false,LogManager::LP_ALL);
 #	endif //K15_OS_WINDOWS
 #endif //K15_DEBUG
 	}
@@ -113,6 +113,14 @@ namespace K15_Engine { namespace Core {
 		}
 
 		return renderer;
+	}
+	/*********************************************************************************/
+	void Application::setRenderer(RendererBase* p_Renderer)
+	{
+		K15_ASSERT(p_Renderer,"Passed NULL renderer.");
+		K15_ASSERT(m_RenderTask,"Renderer passed before Application::initialize.");
+
+		m_RenderTask->setRenderer(p_Renderer);
 	}
 	/*********************************************************************************/
 	void Application::createCommandList(int p_CommandCount,char** p_Commands)
@@ -176,6 +184,14 @@ namespace K15_Engine { namespace Core {
 		}
 	}
 	/*********************************************************************************/
+#if defined K15_OS_ANDROID
+	void Application::initialize(android_app* p_App)
+	{
+		m_OSLayer.setAndroidApp(p_App);
+		initialize();
+	}
+#endif //K15_OS_ANDROID
+	/*********************************************************************************/
 	void Application::initialize(int p_CommandCount,char** p_Commands)
 	{
 		createCommandList(p_CommandCount,p_Commands);
@@ -183,7 +199,6 @@ namespace K15_Engine { namespace Core {
 
 		initialize();
 	}
-	
 	/*********************************************************************************/
 	void Application::initialize()
 	{

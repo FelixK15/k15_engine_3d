@@ -89,11 +89,8 @@ namespace K15_Engine { namespace Core {
 			{
 				if(LanguageString[i] == lang)
 				{
-					if(LanguageString[i] == lang)
-					{
-						langID = i;
-						break;
-					}
+					langID = i;
+					break;
 				}
 			}
 

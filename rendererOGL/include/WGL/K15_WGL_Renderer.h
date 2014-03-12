@@ -21,15 +21,18 @@
  * 
  */
 
-#ifndef K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
+#ifndef _K15Engine_RendererWGL_Renderer_h_
+#define _K15Engine_RendererWGL_Renderer_h_
+
+#ifndef K15_RENDERER_USE_PREDEFINED_HEADERS
 #	include "K15_RendererOGLPrerequisites.h"
 #endif //K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
 
 #include "K15_RendererBase.h"
 #include "K15_RenderOperation.h"
 
-namespace K15_Engine { namespace Rendering { namespace OGL {
-	class RendererOGL : public RendererBase
+namespace K15_Engine { namespace Rendering { namespace WGL {
+	class Renderer : public RendererBase
 	{
 	public:
 		/*********************************************************************************/
@@ -39,8 +42,8 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		static const GLenum GLBlendFunctionConverter[AlphaState::BF_COUNT];
 		/*********************************************************************************/
 	public:
-		RendererOGL();
-		virtual ~RendererOGL();
+		Renderer();
+		virtual ~Renderer();
 
 		virtual GpuBufferImplBase* createGpuBufferImpl() OVERRIDE;
 		virtual TextureImplBase* createTextureImpl() OVERRIDE;
@@ -88,5 +91,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		HDC m_DeviceContext;
 		HGLRC m_RenderContext;
 
-	};// end of RendererOGL class
-}}}//end of K15_Engine::Rendering::OGL
+	};// end of Renderer class
+}}}//end of K15_Engine::Rendering::WGL
+
+#endif //_K15Engine_RendererWGL_Renderer_h_

@@ -1,5 +1,5 @@
 /**
- * @file K15_VertexDeclarationImplOGL.cpp
+ * @file K15_VertexDeclarationImpl.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2012/07/11
@@ -17,13 +17,13 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_VertexDeclarationImplOGL.h"
+#include "K15_WGL_VertexDeclarationImpl.h"
 #include "K15_RendererBase.h"
 #include "K15_LogManager.h"
 
-namespace K15_Engine { namespace Rendering { namespace OGL {
+namespace K15_Engine { namespace Rendering { namespace WGL {
   /*********************************************************************************/
-  const GLenum VertexDeclarationImplOGL::GLVertexElementTypeConverter[VertexElement::ET_COUNT] = {
+  const GLenum VertexDeclarationImpl::GLVertexElementTypeConverter[VertexElement::ET_COUNT] = {
     GL_FLOAT,         //ET_FLOAT1
     GL_FLOAT,         //ET_FLOAT2
     GL_FLOAT,         //ET_FLOAT3
@@ -37,17 +37,17 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
   /*********************************************************************************/
 
   /*********************************************************************************/
-  VertexDeclarationImplOGL::VertexDeclarationImplOGL()
+  VertexDeclarationImpl::VertexDeclarationImpl()
   {
     //glGenVertexArrays(1,&m_VertexArrayHandle);
   }
   /*********************************************************************************/
-  VertexDeclarationImplOGL::~VertexDeclarationImplOGL()
+  VertexDeclarationImpl::~VertexDeclarationImpl()
   {
     //glDeleteVertexArrays(1,&m_VertexArrayHandle);
   }
   /*********************************************************************************/
-  void VertexDeclarationImplOGL::updateElements(const VertexDeclaration::VertexElementArray& p_Elements)
+  void VertexDeclarationImpl::updateElements(const VertexDeclaration::VertexElementArray& p_Elements)
   {
 //     glBindVertexArray(m_VertexArrayHandle);
 //     for(VertexDeclaration::VertexElementArray::const_iterator iter = p_Elements.begin();iter != p_Elements.end();++iter)
@@ -62,4 +62,4 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 //     }
   }
   /*********************************************************************************/
-}}}//end of K15_Engine::Rendering::OGL namespace
+}}}//end of K15_Engine::Rendering::WGL namespace

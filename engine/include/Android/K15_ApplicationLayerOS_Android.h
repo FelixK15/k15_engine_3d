@@ -110,7 +110,7 @@ namespace K15_Engine { namespace Core {
 		*
 		* @return double - current time in second format.
 		*/
-		double getTime() const;
+		double getTime();
 	
 		/**
 		* Put the calling thread to sleep for a specific amount of time.
@@ -129,8 +129,12 @@ namespace K15_Engine { namespace Core {
 		*/
 		void onPostTick();
 
+		/**
+		* setter for the android_app instance from the application running the engine.
+		*/
 		INLINE void setAndroidApp(android_app* p_App);
 	private:
+		timespec m_LastTime;
 		String m_Error;
 		android_app* m_App;
 		ASensor* m_AccelerometerSensor;

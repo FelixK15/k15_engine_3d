@@ -29,6 +29,18 @@
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 namespace K15_Engine { namespace Core { 
+	/*********************************************************************************/
+	struct K15_CORE_API MouseActionArguments
+	{
+		Enum button;
+
+		uint32 xPx;	//Pixel coordinates
+		uint32 yPx; //Pixel coordinates
+
+		float xNDC; //Normal Device Coordinates ([-1|+1])
+		float yNDC; //Normal Device Coordinates ([-1|+1])
+	};
+	/*********************************************************************************/
 	class K15_CORE_API GameEvent : public GameEventAllocatedObject
 	{
 	public:

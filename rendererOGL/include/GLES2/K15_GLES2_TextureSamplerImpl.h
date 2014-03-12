@@ -1,5 +1,5 @@
 /**
- * @file K15_TextureSamplerImplOGL.h
+ * @file K15_TextureSamplerImpl.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2013/09/10
@@ -21,14 +21,17 @@
  * 
  */
 
+#ifndef _K15Engine_RendererGLES2_TextureSamplerImpl_h_
+#define _K15Engine_RendererGLES2_TextureSamplerImpl_h_
+
 #ifndef K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
 #	include "K15_RendererOGLPrerequisites.h"
 #endif //K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
 
 #include "K15_TextureSampler.h"
 
-namespace K15_Engine { namespace Rendering { namespace OGL {
-  class TextureSamplerImplOGL : public TextureSamplerImplBase
+namespace K15_Engine { namespace Rendering { namespace GLES2 {
+  class TextureSamplerImpl : public TextureSamplerImplBase
   {
   public:
     /*********************************************************************************/
@@ -36,8 +39,8 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
     static const GLenum GLWrappingModeConverter[TextureSampler::TWM_COUNT];
     /*********************************************************************************/
   public:
-    TextureSamplerImplOGL();
-    ~TextureSamplerImplOGL();
+    TextureSamplerImpl();
+    ~TextureSamplerImpl();
 
     virtual void setMinFilterMode(Enum p_MinFilterMode) OVERRIDE;
     virtual void setMagFilterMode(Enum p_MagFilterMode) OVERRIDE;
@@ -49,6 +52,8 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
     INLINE GLuint getHandle() const;
   private:
     GLuint m_SamplerHandle;
-  };// end of TextureSamplerImplOGL class declaration
-#	include "K15_TextureSamplerImplOGL.inl"
-}}}//end of K15_Engine::Rendering::OGL namespace
+  };// end of TextureSamplerImpl class declaration
+#	include "K15_GLES2_TextureSamplerImpl.inl"
+}}}//end of K15_Engine::Rendering::GLES2 namespace
+
+#endif //_K15Engine_RendererGLES2_TextureSamplerImpl_h_

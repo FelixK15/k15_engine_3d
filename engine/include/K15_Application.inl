@@ -118,12 +118,12 @@ const double Application::getRawDeltaTime() const
   return m_GameTime.getRawDeltaTime();
 }
 /*********************************************************************************/
-String Application::getLastError() const
+String Application::getLastError()
 {
 	return m_OSLayer.getError();
 }
 /*********************************************************************************/
-double Application::getTime() const
+double Application::getTime()
 {
 	return m_OSLayer.getTime();
 }

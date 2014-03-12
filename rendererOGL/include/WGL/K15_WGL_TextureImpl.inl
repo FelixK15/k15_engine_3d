@@ -1,8 +1,8 @@
 /**
- * @file K15_ApplicationLayerOS_Android.inl
+ * @file K15_TextureImplOGL.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/12/16
+ * @date 2014/02/16
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,13 +18,8 @@
  */
 
 /*********************************************************************************/
-void ApplicationOSLayer_Android::setAndroidApp(android_app* p_App)
+GLuint TextureImpl::getTextureHandle() const
 {
-	m_App = p_App;
-}
-/*********************************************************************************/
-void ApplicationOSLayer_Android::setError(const String& p_Error)
-{
-	m_Error += p_Error + "\n";
+	return m_TextureHandle;
 }
 /*********************************************************************************/

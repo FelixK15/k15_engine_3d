@@ -11,20 +11,29 @@ void testMultiLanguage();
 /*********************************************************************************/
 using namespace K15_Engine::Core;
 /*********************************************************************************/
+#if defined K15_OS_ANDROID
+void android_main(struct android_app* app)
+#else
 int main(int argc,char** argv)
+#endif //K15_OS_ANDROID
 {
- 	g_Application->initialize(argc,argv);
-
+#if defined K15_OS_ANDROID
+	g_Application->initialize(app);
+#else
+	g_Application->initialize(argc,argv);
+#endif //K15_OS_ANDROID
 	testMultiLanguage();
 
 	g_Application->run();
 	g_Application->shutdown();
 
-#if defined K15_DEBUG && K15_OS_WINDOWS
+#if defined K15_DEBUG && defined K15_OS_WINDOWS
     _CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF);
 #endif //K15_DEBUG
 
+#if defined K15_OS_WINDOWS
 	return 0;
+#endif
 }
 /*********************************************************************************/
 void testMultiLanguage()

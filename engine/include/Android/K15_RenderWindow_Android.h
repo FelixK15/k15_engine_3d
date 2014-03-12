@@ -37,22 +37,19 @@ namespace K15_Engine { namespace Core {
 		RenderWindow_Android();
 		~RenderWindow_Android();
 
-		virtual bool initialize();
-		virtual void shutdown();
+		virtual bool initialize() OVERRIDE;
+		virtual void shutdown() OVERRIDE;
 
-		virtual void setWindowTitle(const String& p_WindowTitle);
-		virtual void setResolution(const Resolution& p_Resolution, bool p_ForceChange);
-		virtual void setFullscreen(bool p_Fullscreen);
+		virtual void setWindowTitle(const String& p_WindowTitle) OVERRIDE;
+		virtual void setResolution(const Resolution& p_Resolution, bool p_ForceChange) OVERRIDE;
+		virtual void setIsFullscreen(bool p_Fullscreen) OVERRIDE;
 
-		INLINE EGLDisplay getDisplay() const;
-		INLINE EGLSurface getSurface() const;
-		INLINE EGLContext getContext() const;
+		INLINE void setNativeWindow(ANativeWindow* p_Window);
+		INLINE ANativeWindow* getNativeWindow() const;
 	private:
 		ANativeWindow* m_Window;
-		EGLSurface m_Surface;
-		EGLDisplay m_Display;
-		EGLContext m_Context;
 	};// end of RenderWindow_Android class declaration
+#	include "K15_RenderWindow_Android.inl"
 }}// end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_RenderWindow_Android_h_

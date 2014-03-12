@@ -24,30 +24,51 @@
 #include "K15_RenderProcessBase.h"
 
 #include "Android\K15_ApplicationLayerOS_Android.h"
+#include "ANdroid\K15_RenderWindow_Android.h"
+#include "K15_Mouse.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	const String ApplicationOSLayer_Android::OSName = "Android";
 	const String ApplicationOSLayer_Android::PluginExtension = "so";
+	const int32 ANDROID_EVENT_HANDLED = 1;
+	const int32 ANDROID_EVENT_NOT_HANDLED = 0;
 	/*********************************************************************************/
 	
 	/*********************************************************************************/
 	int32 Android_HandleMotion(android_app* p_App, AInputEvent* p_Event)
 	{
+		Application* app = static_cast<Application*>(p_App->userData);
+		RenderWindowBase* window = app->getRenderWindow();
+
 		int32 eventAction = AMotionEvent_getAction(p_Event);
 
 		GameEvent* motionEvent = 0;
 		
 		if(eventAction == AMOTION_EVENT_ACTION_DOWN || eventAction == AMOTION_EVENT_ACTION_UP)
 		{
-
-			motionEvent = K15_NEW GameEvent(_EN(onMousePressed))
+			MouseActionArguments args;
+			args.button = InputDevices::Mouse::BTN_LEFT;
+			args.xPx = AMotionEvent_getX(p_Event,0);
+			args.yPx = AMotionEvent_getY(p_Event,0);
+			args.xNDC = args.xPx / window->getResolution().width;
+			args.yNDC = args.yPx / window->getResolution().height;
+			
+			motionEvent = K15_NEW GameEvent(eventAction == AMOTION_EVENT_ACTION_DOWN ? _EN(onMousePressed) : _EN(onMouseReleased),(void*)&args,sizeof(MouseActionArguments));
 		}
+
+		if(motionEvent)
+		{
+			g_EventManager->triggerEvent(motionEvent);
+			return ANDROID_EVENT_HANDLED;
+		}
+
+		return ANDROID_EVENT_NOT_HANDLED;
 	}
 	/*********************************************************************************/
 	int32 Android_HandleKey(android_app* p_App, AInputEvent* p_Event)
 	{
-
+		return ANDROID_EVENT_NOT_HANDLED;
 	}
 	/*********************************************************************************/
 
@@ -67,7 +88,7 @@ namespace K15_Engine { namespace Core {
 			return Android_HandleMotion(p_App,p_Event);
 		}
 
-		return 0;
+		return ANDROID_EVENT_NOT_HANDLED;
 	}
 	/*********************************************************************************/
 	void AndroidCallback_OnCmd(android_app* p_App, int32 p_Cmd)
@@ -115,10 +136,15 @@ namespace K15_Engine { namespace Core {
 
 			_LogError("Could not get render task.");
 		}
+		else if(p_Cmd == APP_CMD_INIT_WINDOW)
+		{
+			_LogDebug("APP_CMD_INIT_WINDOW received.");
+			RenderWindowType* window = static_cast<RenderWindowType*>(app->getRenderWindow());
+			window->setNativeWindow(p_App->window);
+		}
 		else
 		{
 			if(p_Cmd == APP_CMD_INPUT_CHANGED) _LogDebug("APP_CMD_INPUT_CHANGED received.");
-			if(p_Cmd == APP_CMD_INIT_WINDOW) _LogDebug("APP_CMD_INIT_WINDOW received.");
 			if(p_Cmd == APP_CMD_TERM_WINDOW) _LogDebug("APP_CMD_TERM_WINDOW received.");
 			if(p_Cmd == APP_CMD_WINDOW_RESIZED) _LogDebug("APP_CMD_WINDOW_RESIZED received.");
 			if(p_Cmd == APP_CMD_CONTENT_RECT_CHANGED) _LogDebug("APP_CMD_CONTENT_RECT_CHANGED received.");
@@ -180,10 +206,15 @@ namespace K15_Engine { namespace Core {
 			return false;
 		}
 
-		m_App->userData = g_Application;
-		m_App->onInputEvent = 
-		//here
+		//get time of engine initialization
+		clock_gettime(CLOCK_MONOTONIC,&m_LastTime);
 
+		m_App->userData = g_Application;
+		
+		//set callbacks
+		m_App->onInputEvent = AndroidCallback_OnInput;
+		m_App->onAppCmd = AndroidCallback_OnCmd;
+		
 		return true;
 	}
 	/*********************************************************************************/
@@ -194,7 +225,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	const String& ApplicationOSLayer_Android::getError()
 	{
-		String err = "Could not retrieve last error from OS.";
+		static String err = "Could not retrieve last error from OS.";
 
 		if(!m_Error.empty())
 		{
@@ -210,9 +241,16 @@ namespace K15_Engine { namespace Core {
 
 	}
 	/*********************************************************************************/
-	double ApplicationOSLayer_Android::getTime() const
+	double ApplicationOSLayer_Android::getTime()
 	{
+		static timespec now;
+		
+		m_LastTime = now;
 
+		long deltaNanoseconds = now.tv_nsec - m_LastTime.tv_nsec;
+		double milliseconds = deltaNanoseconds / 1000000UL;
+
+		return milliseconds / 1000.0;  
 	}
 	/*********************************************************************************/
 	void ApplicationOSLayer_Android::sleep(double p_TimeInSeconds) const
@@ -226,17 +264,12 @@ namespace K15_Engine { namespace Core {
 		static int ident;
 		static int events;
 		android_poll_source* source;
-		
+		Application* app = 0;
 		while(ALooper_pollAll(0,NULL,&events,(void**)&source))
 		{
 			if(source)
 			{
 				source->process(m_App,source);
-			}
-
-			if(ident == LOOPER_ID_USER)
-			{
-				
 			}
 		}
 	}

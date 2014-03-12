@@ -39,13 +39,7 @@ namespace K15_Engine { namespace Rendering {
 		TextureImplBase();
 		virtual ~TextureImplBase();
 
-		virtual bool write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) = 0;
-// 		virtual bool read(byte** p_Destination, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) = 0;
-// 
-// 		virtual bool readMipmap(byte** p_Destination, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) = 0;
-		virtual bool writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ) = 0;
-
-		virtual bool resize(uint32 p_Width, uint32 p_Height, uint32 p_Depth) = 0;
+		virtual bool loadRawData(byte* p_Data, Enum p_Format, uint32 p_Width, uint32 p_Height, uint32 p_Depth, bool p_CreateMipMaps) = 0;
 
 		void setTexture(Texture* p_Texture);
 		Texture* getTexture() const;
@@ -88,7 +82,7 @@ namespace K15_Engine { namespace Rendering {
 
 			RawData pixels;
 
-			//RendererBase::ePixelFormat pixelFormat;
+			Enum pixelFormat;
 
 			bool createMipMaps;
 			bool useShadowCopy;
@@ -106,16 +100,9 @@ namespace K15_Engine { namespace Rendering {
 		void setUsage(Enum p_TextureUsage);
 		INLINE Enum getUsage() const;
 
-		void setMipmapLevels(uint32 p_MipMapCount);
 		INLINE uint32 getMipmapLevels() const;
-
-		void setHeight(uint32 p_Height);
 		INLINE uint32 getHeight() const;
-
-		void setWidth(uint32 p_Width);
 		INLINE uint32 getWidth() const;
-
-		void setDepth(uint32 p_Depth);
 		INLINE uint32 getDepth() const;
 
 		void setPixelFormat(Enum p_PixelFormat);
@@ -130,23 +117,13 @@ namespace K15_Engine { namespace Rendering {
 		uint32 getSize() const;
 		uint32 getMipmapSize(uint32 p_Index) const;
 
-		uint32 write(byte* p_Pixels, uint32 p_Width, int32 p_OffsetX = 0);
-		uint32 write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, int32 p_OffsetX = 0, int32 p_OffsetY = 0);
-		uint32 write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX = 0, int32 p_OffsetY = 0, int32 p_OffsetZ = 0);
+		bool loadRawData(byte* p_Data, Enum p_Format, uint32 p_Width, bool p_CreateMipMap = true);
+		bool loadRawData(byte* p_Data, Enum p_Format, uint32 p_Width, uint32 p_Height, bool p_CreateMipMap = true);
+		bool loadRawData(byte* p_Data, Enum p_Format, uint32 p_Width, uint32 p_Height, uint32 p_Depth, bool p_CreateMipMap = true);
 
-		uint32 writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, int32 p_OffsetX = 0);
-		uint32 writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, int32 p_OffsetX = 0, int32 p_OffsetY = 0);
-		uint32 writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX = 0, int32 p_OffsetY = 0, int32 p_OffsetZ = 0);
-
-// 		uint32 read(byte** p_Destination, uint32 p_Width, int32 p_OffsetX = 0);
-// 		uint32 read(byte** p_Destination, uint32 p_Width, uint32 p_Height, int32 p_OffsetX = 0, int32 p_OffsetY = 0);
-// 		uint32 read(byte** p_Destination, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX = 0, int32 p_OffsetY = 0, int32 p_OffsetZ = 0);
-
-		bool resize(uint32 p_Width,uint32 p_Height,uint32 p_Depth = 0);
 		bool create(const CreationOptions& p_Options);
 
 		INLINE bool hasAlpha() const;
-		INLINE bool hasShadowCopy() const;
 
 		virtual void loadDebug(RawData& p_Data);
 		virtual bool internalLoad(const RawData& p_Data);

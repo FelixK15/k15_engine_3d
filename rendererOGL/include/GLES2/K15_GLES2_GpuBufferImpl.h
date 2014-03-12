@@ -1,5 +1,5 @@
 /**
- * @file K15_GpuBufferImplOGL.h
+ * @file K15_GpuBufferImpl.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2012/07/11
@@ -21,29 +21,28 @@
  * 
  */
 
-#ifndef _K15Engine_RendererOGL_GpuBufferImpl_h_
-#define _K15Engine_RendererOGL_GpuBufferImpl_h_
+#ifndef _K15Engine_RendererGLES2_GpuBufferImpl_h_
+#define _K15Engine_RendererGLES2_GpuBufferImpl_h_
 
-#ifndef K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
+#ifndef K15_RENDERER_USE_PREDEFINED_HEADERS
 #	include "K15_RendererOGLPrerequisites.h"
-#endif //K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
+#endif //K15_RENDERER_USE_PREDEFINED_HEADERS
 
 #include "K15_GpuBuffer.h"
 #include "K15_IndexBuffer.h"
 
-namespace K15_Engine { namespace Rendering { namespace OGL {
-	class GpuBufferImplOGL : public GpuBufferImplBase
+namespace K15_Engine { namespace Rendering { namespace GLES2 {
+	class GpuBufferImpl : public GpuBufferImplBase
 	{
 	public:
 		/*********************************************************************************/
 		static const GLenum GLBufferTypeConverter[GpuBuffer::BT_COUNT];
 		static const GLenum GLBufferUsageConverter[GpuBuffer::UO_COUNT];
-		static const GLenum GLBufferAccessConverter[GpuBuffer::BA_COUNT];
-    static const GLenum GLIndexBufferTypeConverter[IndexBuffer::IT_COUNT];
+		static const GLenum GLIndexBufferTypeConverter[IndexBuffer::IT_COUNT];
 		/*********************************************************************************/
 	public:
-		GpuBufferImplOGL();
-		virtual ~GpuBufferImplOGL();
+		GpuBufferImpl();
+		virtual ~GpuBufferImpl();
 
 		virtual bool lock(uint32 p_StartPos,int32 p_Count) OVERRIDE;
 		virtual bool unlock() OVERRIDE;
@@ -53,14 +52,11 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		virtual uint32 readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset) OVERRIDE;
 		virtual uint32 writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset) OVERRIDE;
 
-    GLuint getBufferGL() const;
+		GLuint getBufferGL() const;
 
 	private:
 		GLuint m_BufferHandle;
-# ifndef K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
-    byte* m_MappedBufferRange;
-# endif //K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
-	};// end of GpuBufferImplOG class declaration
-}}}//end of K15_Engine::Rendering::OGL namespace
+	};// end of GpuBufferImpl class declaration
+}}}//end of K15_Engine::Rendering::GLES2 namespace
 
-#endif //_K15Engine_RendererOGL_GpuBufferImpl_h_
+#endif //_K15Engine_RendererGLES2_GpuBufferImpl_h_

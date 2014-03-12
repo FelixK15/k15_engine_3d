@@ -1,5 +1,5 @@
 /**
- * @file K15_GpuBufferImplOGL.cpp
+ * @file K15_GpuBufferImpl.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2012/07/11
@@ -17,21 +17,21 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_GpuBufferImplOGL.h"
+#include "K15_WGL_GpuBufferImpl.h"
 #include "K15_LogManager.h"
 
 #include "K15_RendererBase.h"
 
-namespace K15_Engine { namespace Rendering { namespace OGL {
+namespace K15_Engine { namespace Rendering { namespace WGL {
 	/*********************************************************************************/
-	const GLenum GpuBufferImplOGL::GLBufferTypeConverter[GpuBuffer::BT_COUNT] = {
+	const GLenum GpuBufferImpl::GLBufferTypeConverter[GpuBuffer::BT_COUNT] = {
 		GL_ARRAY_BUFFER,		 //BT_VERTEX_BUFFER
 		GL_ELEMENT_ARRAY_BUFFER, //BT_INDEX_BUFFER
 	};//GLBufferTypeConverter
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	const GLenum GpuBufferImplOGL::GLBufferUsageConverter[GpuBuffer::UO_COUNT] = {
+	const GLenum GpuBufferImpl::GLBufferUsageConverter[GpuBuffer::UO_COUNT] = {
 		GL_STATIC_DRAW,		//UO_STATIC
 		GL_DYNAMIC_DRAW,	//UO_DYNAMIC
 		GL_STREAM_DRAW,		//UI_STREAM
@@ -39,7 +39,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	const GLenum GpuBufferImplOGL::GLBufferAccessConverter[GpuBuffer::BA_COUNT] = {
+	const GLenum GpuBufferImpl::GLBufferAccessConverter[GpuBuffer::BA_COUNT] = {
 		GL_READ_ONLY,	//BA_READ_ONLY
 		GL_WRITE_ONLY,	//BA_WRITE_ONLY
 		GL_READ_WRITE	//BA_READ_WRITE
@@ -47,7 +47,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	const GLenum GpuBufferImplOGL::GLIndexBufferTypeConverter[IndexBuffer::IT_COUNT] = {
+	const GLenum GpuBufferImpl::GLIndexBufferTypeConverter[IndexBuffer::IT_COUNT] = {
 		GL_UNSIGNED_BYTE,   //IT_UINT8
 		GL_UNSIGNED_SHORT,  //IT_UINT16
 		GL_UNSIGNED_INT     //IT_UINT32
@@ -55,37 +55,37 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	GpuBufferImplOGL::GpuBufferImplOGL()
+	GpuBufferImpl::GpuBufferImpl()
 		: GpuBufferImplBase(),
 		  m_BufferHandle(0)
 	{
 		glGenBuffers(1,&m_BufferHandle);
 	}
 	/*********************************************************************************/
-	GpuBufferImplOGL::~GpuBufferImplOGL()
+	GpuBufferImpl::~GpuBufferImpl()
 	{
 		glDeleteBuffers(1,&m_BufferHandle);
 	}
 	/*********************************************************************************/
-	bool GpuBufferImplOGL::lock(uint32 p_StartPos,int32 p_Count)
+	bool GpuBufferImpl::lock(uint32 p_StartPos,int32 p_Count)
 	{
 		if(m_Buffer->isLocked())
 		{
 			return false;
 		}
 
-# if defined K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
+# if defined K15_WGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 		return true;
 # else
 
 		GLenum target = GLBufferTypeConverter[m_Buffer->getType()];
 		GLbitfield flags = GL_MAP_WRITE_BIT;
 
-# if defined K15_OGL_EXPERIMENT_MAP_BUFFER_WITH_UNSYNCHRONIZED
+# if defined K15_WGL_EXPERIMENT_MAP_BUFFER_WITH_UNSYNCHRONIZED
 		flags |= GL_MAP_UNSYNCHRONIZED_BIT;
 # endif //K15_OGL_EXPERIMENT_MAP_BUFFER_WITH_UNSYNCHRONIZED
 
-#if defined K15_OGL_EXPERIMENT_MAP_BUFFER_WITH_INVALIDATE_RANGE
+#if defined K15_WGL_EXPERIMENT_MAP_BUFFER_WITH_INVALIDATE_RANGE
     flags |= GL_MAP_INVALIDATE_RANGE_BIT;
 # endif //K15_OGL_EXPERIMENT_MAP_BUFFER_WITH_INVALIDATE_RANGE
 
@@ -96,14 +96,14 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 # endif // K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 	}
 	/*********************************************************************************/
-	bool GpuBufferImplOGL::unlock()
+	bool GpuBufferImpl::unlock()
 	{
 		if(!m_Buffer->isLocked())
 		{
 			return true;
 		}
 
-# if defined K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
+# if defined K15_WGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 		return false;
 # else
 
@@ -121,7 +121,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 # endif // K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 	}
 	/*********************************************************************************/
-	bool GpuBufferImplOGL::allocate(uint32 p_Size)
+	bool GpuBufferImpl::allocate(uint32 p_Size)
 	{
 		GLenum usage = GLBufferUsageConverter[m_Buffer->getUsageOption()];
 
@@ -130,7 +130,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		return true;
 	}
 	/*********************************************************************************/
-	uint32 GpuBufferImplOGL::readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset)
+	uint32 GpuBufferImpl::readData(uint32 p_Size, byte* p_Destination, uint32 p_Offset)
 	{
 		K15_ASSERT(p_Destination,"Destination memory is NULL!");
 
@@ -149,7 +149,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 				p_Offset = newOffset;
 			}
 
-#if defined K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
+#if defined K15_WGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 			glGetNamedBufferSubDataEXT(m_BufferHandle,p_Offset,p_Size,p_Destination);
 #else
 			memcpy(p_Destination,m_MappedBufferRange,p_Size);
@@ -161,7 +161,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		return 0;
 	}
 	/*********************************************************************************/
-	uint32 GpuBufferImplOGL::writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset)
+	uint32 GpuBufferImpl::writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset)
 	{
 		K15_ASSERT(p_Source,"Source memory is NULL!");
 
@@ -179,7 +179,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		}
 		GLenum target = GLBufferTypeConverter[m_Buffer->getType()];
 
-#if defined K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
+#if defined K15_WGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 		glNamedBufferSubDataEXT(m_BufferHandle,p_Offset,p_Size,p_Source);
 #else
     memcpy(m_MappedBufferRange,p_Source,p_Size);
@@ -188,7 +188,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		return p_Size;
 	}
   /*********************************************************************************/
-  GLuint GpuBufferImplOGL::getBufferGL() const
+  GLuint GpuBufferImpl::getBufferGL() const
   {
     return m_BufferHandle;
   }

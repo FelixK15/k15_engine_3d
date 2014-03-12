@@ -43,100 +43,104 @@
 #endif //K15_OS_WINDOWS
 
 namespace K15_Engine { namespace Core {
-  /*********************************************************************************/
-  typedef List(ApplicationModule*) ApplicationModuleList;
-  typedef List(ApplicationParameter) ApplicationParameterList;
-  /*********************************************************************************/
-  class K15_CORE_API Application : public Singleton<Application>,
-								   public SerializableObject<Application>,
-								   public CoreAllocatedObject
-  {
-  public:
-	  /*********************************************************************************/
-	  static const String SettingsFileName;
-	  static const String PluginFileName;
-	  static const String GameDirFileName;
-	  static const String InputFileName;
-	  static const uint32 FrameStatisticCount = 1024;
-	  /*********************************************************************************/
-  public:
-	  Application();
-	  ~Application();
+	/*********************************************************************************/
+	typedef List(ApplicationModule*) ApplicationModuleList;
+	typedef List(ApplicationParameter) ApplicationParameterList;
+	/*********************************************************************************/
+	class K15_CORE_API Application : public Singleton<Application>,
+									   public SerializableObject<Application>,
+									   public CoreAllocatedObject
+	{
+	public:
+		/*********************************************************************************/
+		static const String SettingsFileName;
+		static const String PluginFileName;
+		static const String GameDirFileName;
+		static const String InputFileName;
+		static const uint32 FrameStatisticCount = 1024;
+		/*********************************************************************************/
+	public:
+		Application();
+		~Application();
     
-	  INLINE void setGameRootDir(const String& p_GameRootDir);
+		INLINE void setGameRootDir(const String& p_GameRootDir);
 
-	  INLINE const String& getGameRootDir() const;
-	  INLINE const StringSet& getPluginList() const;
-	  INLINE const StringSet& getCommandList() const;
-	  INLINE const ApplicationParameterList& getApplicationParameter() const;
+		INLINE const String& getGameRootDir() const;
+		INLINE const StringSet& getPluginList() const;
+		INLINE const StringSet& getCommandList() const;
+		INLINE const ApplicationParameterList& getApplicationParameter() const;
 
-	  void setWindowTitle(const String& p_WindowTitle);
+		void setWindowTitle(const String& p_WindowTitle);
 
-	  void initialize(int p_CommandCount,char** p_Commands);
-	  void initialize();
+#	if defined K15_OS_ANDROID
+		void initialize(android_app* p_App);
+#	endif //K15_OS_ANDROID
+		void initialize(int p_CommandCount,char** p_Commands);
+		void initialize();
+		
+		void run();
 
-	  void run();
+		void tick();
 
-	  void tick();
+		void shutdown();
 
-	  void shutdown();
+		void onPreTick();
+		void onPostTick();
 
-	  void onPreTick();
-	  void onPostTick();
+		void onBeforeRender();
+		void onAfterRender();
 
-	  void onBeforeRender();
-	  void onAfterRender();
+		RendererBase* getRenderer() const;
+		void setRenderer(RendererBase* p_Renderer);
 
-	  RendererBase* getRenderer() const;
+		INLINE void addApplicationModule(ApplicationModule* p_Module);
 
-	  INLINE void addApplicationModule(ApplicationModule* p_Module);
+		INLINE uint32 getFrameCount() const;
 
-	  INLINE uint32 getFrameCount() const;
+		INLINE RenderTask* getRenderTask() const;
+		INLINE PhysicsTask* getPhysicsTask() const;
 
-	  INLINE RenderTask* getRenderTask() const;
-	  INLINE PhysicsTask* getPhysicsTask() const;
+		INLINE TaskManager* getTaskManager() const;
+		INLINE ProfilingManager* getProfileManager() const;
+		INLINE EventManager* getEventManager() const;
+		INLINE DynamicLibraryManager* getDynamicLibraryManager() const;
+		INLINE RenderWindowBase* getRenderWindow() const;
+		INLINE LogManager* getLogManager() const;
+		INLINE InputManager* getInputManager() const;
+		INLINE const StackAllocator* getFrameAllocator() const;
+		INLINE const ApplicationOSLayerType& getOSLayer() const;
 
-	  INLINE TaskManager* getTaskManager() const;
-	  INLINE ProfilingManager* getProfileManager() const;
-	  INLINE EventManager* getEventManager() const;
-	  INLINE DynamicLibraryManager* getDynamicLibraryManager() const;
-	  INLINE RenderWindowBase* getRenderWindow() const;
-	  INLINE LogManager* getLogManager() const;
-	  INLINE InputManager* getInputManager() const;
-	  INLINE const StackAllocator* getFrameAllocator() const;
-	  INLINE const ApplicationOSLayerType& getOSLayer() const;
+		INLINE double getRunningTime() const;
 
-	  INLINE double getRunningTime() const;
+		INLINE void setRunning(bool p_Running);
+		INLINE bool getRunning() const;
 
-	  INLINE void setRunning(bool p_Running);
-	  INLINE bool getRunning() const;
+		INLINE String getLastError();
+		INLINE double getTime();
 
-	  INLINE String getLastError() const;
-	  INLINE double getTime() const;
+		INLINE const GameTime& getGameTime() const;
+		INLINE const double getDeltaTime() const;
+		INLINE const double getRawDeltaTime() const;
 
-	  INLINE const GameTime& getGameTime() const;
-	  INLINE const double getDeltaTime() const;
-	  INLINE const double getRawDeltaTime() const;
+		INLINE void setMaxFPS(uint32 p_MaxFPS);
+		INLINE uint32 getMaxFPS() const;
 
-	  INLINE void setMaxFPS(uint32 p_MaxFPS);
-	  INLINE uint32 getMaxFPS() const;
+		INLINE const FrameStatistic& getFrameStatistic(uint32 p_FrameNumber) const;
+		INLINE FrameStatistic& getCurrentFrameStatistic();
 
-	  INLINE const FrameStatistic& getFrameStatistic(uint32 p_FrameNumber) const;
-	  INLINE FrameStatistic& getCurrentFrameStatistic();
+		INLINE uint32 getFramesPerSecond() const;
 
-	  INLINE uint32 getFramesPerSecond() const;
-
-  private:
-	  void createCommandList(int p_CommandCount,char** p_Commands);
-	  void createApplicationParameterList();
-	  void loadSettingsFile();
-	  void loadPluginsFile();
-	  void loadInputFile();
-	  void initializePlugins(const StringSet& p_PluginNames);
-	  void loadGameDirFile();
-	  void processSettings();
+	private:
+		void createCommandList(int p_CommandCount,char** p_Commands);
+		void createApplicationParameterList();
+		void loadSettingsFile();
+		void loadPluginsFile();
+		void loadInputFile();
+		void initializePlugins(const StringSet& p_PluginNames);
+		void loadGameDirFile();
+		void processSettings();
 	  
-  private:
+	private:
 				bool m_Running;
 
 	expose		uint32 m_MaxFPS;
@@ -172,11 +176,11 @@ namespace K15_Engine { namespace Core {
 				RenderTask* m_RenderTask;
 				PhysicsTask* m_PhysicsTask;
 				EventTask* m_EventTask;
-#				if defined K15_DEBUG
+#			if defined K15_DEBUG
 				MemoryProfilingTask* m_MemoryProfilingTask;
-#				endif
-  }; //end of Application class definition
-#include "K15_Application.inl"
+#			endif
+	}; //end of Application class definition
+#	include "K15_Application.inl"
 }} //end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_Application_h_

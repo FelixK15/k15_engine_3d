@@ -17,22 +17,22 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_GpuProgramImplOGL.h"
+#include "K15_WGL_GpuProgramImpl.h"
 
 #include "K15_GpuProgramParameter.h"
 #include "K15_LogManager.h"
 #include "K15_RendererBase.h"
 
-namespace K15_Engine { namespace Rendering { namespace OGL {
+namespace K15_Engine { namespace Rendering { namespace WGL {
 	/*********************************************************************************/
-	const GLenum GpuProgramImplOGL::GLShaderStageConverter[GpuProgram::PS_COUNT] = {
+	const GLenum GpuProgramImpl::GLShaderStageConverter[GpuProgram::PS_COUNT] = {
 		GL_VERTEX_SHADER,	//PS_VERTEX
 		GL_GEOMETRY_SHADER, //PS_GEOMETRY
 		GL_FRAGMENT_SHADER, //PS_FRAGMENT
 		GL_COMPUTE_SHADER,  //PS_COMPUTE
 	}; //GLShaderStageConverter
 	/*********************************************************************************/
-	GpuProgramImplOGL::GpuProgramImplOGL()
+	GpuProgramImpl::GpuProgramImpl()
 		: GpuProgramImplBase(),
 		m_Program(0),
 		m_Shader(0)
@@ -41,7 +41,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	
 	}
 	/*********************************************************************************/
-	GpuProgramImplOGL::~GpuProgramImplOGL()
+	GpuProgramImpl::~GpuProgramImpl()
 	{
 		if(m_Shader > 0)
 		{
@@ -55,7 +55,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		}
 	}
 	/*********************************************************************************/
-	void GpuProgramImplOGL::reflect()
+	void GpuProgramImpl::reflect()
 	{
 		if(m_GpuProgram->isCompiled())
 		{
@@ -114,7 +114,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		}
 	}
 	/*********************************************************************************/
-	bool GpuProgramImplOGL::compileShaderCode()
+	bool GpuProgramImpl::compileShaderCode()
 	{
 		GLenum shaderStage = GLShaderStageConverter[m_GpuProgram->getStage()];
 		bool compiledSuccessful = false;
@@ -175,7 +175,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		return compiledSuccessful;
 	}
 	/*********************************************************************************/
-	void GpuProgramImplOGL::loadBinaryCode()
+	void GpuProgramImpl::loadBinaryCode()
 	{
 		const RawData* binaryShader = m_GpuProgram->getBinaryCode();
 		GLenum binaryFormat = GL_NONE;
@@ -186,7 +186,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		glProgramBinary(m_Program,binaryFormat,binaryShader->data + sizeof(GLenum),binaryShader->size - sizeof(GLenum));
 	}
 	/*********************************************************************************/
-	void GpuProgramImplOGL::getBinaryCode(RawData* p_Buffer)
+	void GpuProgramImpl::getBinaryCode(RawData* p_Buffer)
 	{
 		GLint sizeShader = 0;
 		GLenum binaryFormat = GL_NONE;
@@ -205,12 +205,12 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		memcpy(p_Buffer->data,&binaryFormat,sizeof(GLenum));
 	}
 	/*********************************************************************************/
-	GLuint GpuProgramImplOGL::getProgramGL() const
+	GLuint GpuProgramImpl::getProgramGL() const
 	{
 		return m_Program;
 	}
 	/*********************************************************************************/
-	Enum GpuProgramImplOGL::_getParameterType(GLenum p_GLType)
+	Enum GpuProgramImpl::_getParameterType(GLenum p_GLType)
 	{
 		if(p_GLType == GL_FLOAT)
 		{
@@ -260,7 +260,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		return GpuProgramParameter::VT_UNKNOW;
 	}
 	/*********************************************************************************/
-	String GpuProgramImplOGL::getShaderExtension(Enum p_ProgramStage)
+	String GpuProgramImpl::getShaderExtension(Enum p_ProgramStage)
 	{
 		if(p_ProgramStage == GpuProgram::PS_VERTEX)
 		{

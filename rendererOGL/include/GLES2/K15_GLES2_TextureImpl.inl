@@ -1,5 +1,5 @@
 /**
- * @file K15_TextureSamplerImpl.inl
+ * @file K15_TextureImplOGL.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2014/02/16
@@ -18,8 +18,8 @@
  */
 
 /*********************************************************************************/
-GLuint TextureSamplerImplOGL::getHandle() const
+GLuint TextureImpl::getTextureHandle() const
 {
-	return m_SamplerHandle;
+	return m_TextureHandle;
 }
 /*********************************************************************************/

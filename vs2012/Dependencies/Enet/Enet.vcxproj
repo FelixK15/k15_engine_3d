@@ -74,6 +74,7 @@
     <OutDir>$(ProjectDir)..\..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\obj\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
     <IncludePath>..\..\..\dependencies\Enet\include\;$(IncludePath)</IncludePath>
+    <TargetName>lib$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(ProjectDir)..\..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>

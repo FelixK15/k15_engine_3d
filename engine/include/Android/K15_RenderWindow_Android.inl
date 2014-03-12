@@ -1,8 +1,8 @@
 /**
- * @file K15_TextureImplOGL.inl
+ * @file K15_RenderWindow_Android.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2014/02/16
+ * @date 2013/12/16
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,8 +18,13 @@
  */
 
 /*********************************************************************************/
-GLuint TextureImplOGL::getTextureHandle() const
+void RenderWindow_Android::setNativeWindow(ANativeWindow* p_Window)
 {
-	return m_TextureHandle;
+	m_Window = p_Window;
+}
+/*********************************************************************************/
+ANativeWindow* RenderWindow_Android::getNativeWindow() const
+{
+	return m_Window;
 }
 /*********************************************************************************/

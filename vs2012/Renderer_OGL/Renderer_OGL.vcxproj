@@ -38,6 +38,7 @@
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
     <PlatformToolset>arm-linux-androideabi-4.6</PlatformToolset>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
     <PlatformToolset>arm-linux-androideabi-4.6</PlatformToolset>
@@ -55,25 +56,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>..\..\rendererOGL\include\;..\..\engine\include\;..\..\renderer\include\;..\..\dependencies\GLEW\include\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\rendererOGL\include\;..\..\rendererOGL\include\WGL\;..\..\engine\include\;..\..\renderer\include\;..\..\dependencies\GLEW\include\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>..\..\rendererOGL\include\;..\..\engine\include\;..\..\renderer\include\;..\..\dependencies\GLEW\include\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\rendererOGL\include\;..\..\rendererOGL\include\WGL\;..\..\engine\include\;..\..\renderer\include\;..\..\dependencies\GLEW\include\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
     <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>..\..\rendererOGL\include\;..\..\engine\include\;..\..\renderer\include\;$(AndroidIncludeDir);$(AndroidStlIncludeDir)</IncludePath>
-    <LibraryPath>..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(AndroidLibDir);$(AndroidStlLibPath);</LibraryPath>
+    <IncludePath>..\..\rendererOGL\include\GLES2\;..\..\rendererOGL\include\;..\..\engine\include\;..\..\renderer\include\;$(ANDROID_NDK_ROOT)\sources\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <TargetName>lib$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
     <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>..\..\rendererOGL\include\;..\..\engine\include\;..\..\renderer\include\;$(AndroidIncludeDir);$(AndroidStlIncludeDir)</IncludePath>
+    <IncludePath>..\..\rendererOGL\include\GLES2\;..\..\rendererOGL\include\;..\..\engine\include\;..\..\renderer\include\;$(AndroidIncludeDir);$(AndroidStlIncludeDir)</IncludePath>
     <LibraryPath>..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(AndroidLibDir);$(AndroidStlLibPath);</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -108,30 +110,73 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
     <ClCompile>
       <PreprocessorDefinitions>DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>-std=c++11 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>-lGLESv2;-lEngine;-landroid;-lEGL</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(ProjectDir)..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\rendererOGL\include\K15_GpuBufferImplOGL.h" />
-    <ClInclude Include="..\..\rendererOGL\include\K15_GpuProgramImplOGL.h" />
-    <ClInclude Include="..\..\rendererOGL\include\K15_RendererOGL.h" />
+    <ClInclude Include="..\..\rendererOGL\include\GLES2\K15_GLES2_GpuBufferImpl.h" />
+    <ClInclude Include="..\..\rendererOGL\include\GLES2\K15_GLES2_GpuProgramImpl.h" />
+    <ClInclude Include="..\..\rendererOGL\include\GLES2\K15_GLES2_Renderer.h" />
+    <ClInclude Include="..\..\rendererOGL\include\GLES2\K15_GLES2_TextureImpl.h" />
+    <ClInclude Include="..\..\rendererOGL\include\GLES2\K15_GLES2_TextureSamplerImpl.h" />
+    <ClInclude Include="..\..\rendererOGL\include\GLES2\K15_GLES2_VertexDeclarationImpl.h" />
     <ClInclude Include="..\..\rendererOGL\include\K15_RendererOGLPrerequisites.h" />
-    <ClInclude Include="..\..\rendererOGL\include\K15_TextureImplOGL.h" />
-    <ClInclude Include="..\..\rendererOGL\include\K15_TextureSamplerImplOGL.h" />
-    <ClInclude Include="..\..\rendererOGL\include\K15_VertexDeclarationImplOGL.h" />
     <ClInclude Include="..\..\rendererOGL\include\plugin.h" />
+    <ClInclude Include="..\..\rendererOGL\include\WGL\K15_WGL_GpuBufferImpl.h" />
+    <ClInclude Include="..\..\rendererOGL\include\WGL\K15_WGL_GpuProgramImpl.h" />
+    <ClInclude Include="..\..\rendererOGL\include\WGL\K15_WGL_Renderer.h" />
+    <ClInclude Include="..\..\rendererOGL\include\WGL\K15_WGL_TextureImpl.h" />
+    <ClInclude Include="..\..\rendererOGL\include\WGL\K15_WGL_TextureSamplerImpl.h" />
+    <ClInclude Include="..\..\rendererOGL\include\WGL\K15_WGL_VertexDeclarationImpl.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\rendererOGL\src\K15_GpuBufferImplOGL.cpp" />
-    <ClCompile Include="..\..\rendererOGL\src\K15_GpuProgramImplOGL.cpp" />
-    <ClCompile Include="..\..\rendererOGL\src\K15_RendererOGL.cpp" />
-    <ClCompile Include="..\..\rendererOGL\src\K15_TextureImplOGL.cpp" />
-    <ClCompile Include="..\..\rendererOGL\src\K15_TextureSamplerImplOGL.cpp" />
-    <ClCompile Include="..\..\rendererOGL\src\K15_VertexDeclarationImplOGL.cpp" />
+    <ClCompile Include="..\..\rendererOGL\src\GLES2\K15_GLES2_GpuBufferImpl.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\GLES2\K15_GLES2_GpuProgramImpl.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\GLES2\K15_GLES2_Renderer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\GLES2\K15_GLES2_TextureImpl.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\GLES2\K15_GLES2_TextureSamplerImpl.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\GLES2\K15_GLES2_VertexDeclarationImpl.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\rendererOGL\src\plugin.cpp" />
+    <ClCompile Include="..\..\rendererOGL\src\WGL\K15_WGL_GpuBufferImpl.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\WGL\K15_WGL_GpuProgramImpl.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\WGL\K15_WGL_Renderer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\WGL\K15_WGL_TextureImpl.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\WGL\K15_WGL_TextureSamplerImpl.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\WGL\K15_WGL_VertexDeclarationImpl.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\rendererOGL\include\K15_TextureImplOGL.inl" />
-    <None Include="..\..\rendererOGL\include\K15_TextureSamplerImplOGL.inl" />
+    <None Include="..\..\rendererOGL\include\GLES2\K15_GLES2_TextureImpl.inl" />
+    <None Include="..\..\rendererOGL\include\GLES2\K15_GLES2_TextureSamplerImpl.inl" />
+    <None Include="..\..\rendererOGL\include\WGL\K15_WGL_TextureImpl.inl" />
+    <None Include="..\..\rendererOGL\include\WGL\K15_WGL_TextureSamplerImpl.inl" />
     <None Include="..\..\rendererOGL\shader\default.frag" />
     <None Include="..\..\rendererOGL\shader\default.vert" />
     <None Include="module.def" />

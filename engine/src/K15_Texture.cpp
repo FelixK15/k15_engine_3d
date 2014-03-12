@@ -95,34 +95,6 @@ namespace K15_Engine { namespace Rendering {
 		m_Usage = p_TextureUsage;
 	}
 	/*********************************************************************************/
-	void Texture::setMipmapLevels(uint32 p_MipMapCount)
-	{
-		m_MipmapLevels = p_MipMapCount;
-
-		resize(m_Width,m_Height,m_Depth);
-	}
-	/*********************************************************************************/
-	void Texture::setHeight(uint32 p_Height)
-	{
-		m_Height = p_Height;
-
-		resize(m_Width,m_Height,m_Depth);
-	}
-	/*********************************************************************************/
-	void Texture::setWidth(uint32 p_Width)
-	{
-		m_Width = p_Width;
-
-		resize(m_Width,m_Height,m_Depth);
-	}
-	/*********************************************************************************/
-	void Texture::setDepth(uint32 p_Depth)
-	{
-		m_Depth = p_Depth;
-
-		resize(m_Width,m_Height,m_Depth);
-	}
-	/*********************************************************************************/
 	void Texture::setPixelFormat(Enum p_PixelFormat)
 	{
 		m_PixelFormat = p_PixelFormat;
@@ -131,9 +103,6 @@ namespace K15_Engine { namespace Rendering {
 		{
 			m_HasAlpha = true;
 		}
-
-		//we need to "resize" the texture in order to let the graphics API recreate the texture storage
-		resize(m_Width,m_Height,m_Depth);
 	}
 	/*********************************************************************************/
 	bool Texture::hasAlpha() const
@@ -269,202 +238,14 @@ namespace K15_Engine { namespace Rendering {
 		return i;
 	}
 	/*********************************************************************************/
-	uint32 Texture::write(byte* p_Pixels, uint32 p_Width, int32 p_OffsetX)
-	{
-		if(p_Width + p_OffsetX > m_Width)
-		{
-			_LogWarning("Trying to write %u pixels to texture %s (starting from pixel %i) - This would write out of bounds.\n Clamping width to %u.",
-				         p_Width + p_OffsetX,m_Name.c_str(),p_OffsetX,m_Width - p_OffsetX);
-
-			p_Width = m_Width - p_OffsetX;
-		}
-	
-		if(m_Impl->write(p_Pixels,p_Width,0,0,p_OffsetX,0,0))
-		{
-		  if(m_ShadowCopy)
-		  {
-			//todo
-		  }
-
-		  return p_Width;
-		}
-
-		return 0;
-	}
-	/*********************************************************************************/
-	uint32 Texture::write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, int32 p_OffsetX, int32 p_OffsetY)
-	{
-		if(m_Type == TT_1D)
-		{
-			_LogError("Trying to write 2 dimensional pixel data to 1D texture %s.",m_Name.c_str());
-			return 0;
-		}
-
-		if(p_Width + p_OffsetX > m_Width || p_Height + p_OffsetY > m_Height)
-		{
-			_LogWarning("Trying to write %ux%u pixels to texture %s (starting from pixel %ix%i) - This would write out of bounds.\n Clamping width to %ux%u.",
-				p_Width + p_OffsetX,p_Height + p_OffsetY,m_Name.c_str(),p_OffsetX,p_OffsetY,m_Width - p_OffsetX,m_Height - p_OffsetY);
-
-			p_Width = m_Width - p_OffsetX;
-			p_Height = m_Height - p_OffsetY;
-		}
-
-		if(m_Impl->write(p_Pixels,p_Width,p_Height,0,p_OffsetX,p_OffsetY,0))
-		{
-		  if(m_ShadowCopy)
-		  {
-			//todo
-		  }
-
-		  return p_Width * p_Height;
-		}
-
-		return 0;
-	}
-	/*********************************************************************************/
-	uint32 Texture::write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ)
-	{
-		if(m_Type == TT_1D || m_Type == TT_2D)
-		{
-			_LogError("Trying to write 3 dimensional pixel data to %iD texture %s.",m_Type == TT_1D ? 1 : 2,m_Name.c_str());
-			return 0;
-		}
-
-		if(p_Width + p_OffsetX > m_Width || p_Height + p_OffsetY > m_Height || p_Depth + p_OffsetZ > m_Depth)
-		{
-			_LogWarning("Trying to write %ux%ux%u pixels to texture %s (starting from pixel %ix%ix%i) - This would write out of bounds.\n Clamping width to %ux%ux%u.",
-				p_Width + p_OffsetX,p_Height + p_OffsetY,p_Depth + p_OffsetZ,m_Name.c_str(),
-				p_OffsetX,p_OffsetY,p_OffsetZ,m_Width - p_OffsetX,m_Height - p_OffsetY,m_Depth - p_OffsetZ);
-
-			p_Width = m_Width - p_OffsetX;
-			p_Height = m_Height - p_OffsetY;
-			p_Depth = m_Depth - p_Depth;
-		}
-
-		if(m_Impl->write(p_Pixels,p_Width,p_Height,p_Depth,p_OffsetX,p_OffsetY,p_OffsetZ))
-		{
-		  if(m_ShadowCopy)
-		  {
-			//todo
-		  }
-
-		  return p_Width * p_Height * p_Depth;
-		}
-
-		return 0;
-	}
-	/*********************************************************************************/
-	uint32 Texture::writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, int32 p_OffsetX)
-	{
-		if(p_MipmapLevel > m_MipmapLevels)
-		{
-			_LogWarning("Trying to write to mipmap %u of texture %s which only has %u mipmaps.Clamping value to %u",p_MipmapLevel,m_Name.c_str(),m_MipmapLevels,m_MipmapLevels);
-			p_MipmapLevel = m_MipmapLevels;
-		}
-
-		uint32 width = 0;
-		getMipmapDimension(p_MipmapLevel,&width,0);
-
-		if(p_Width + p_OffsetX > width)
-		{
-			_LogWarning("Trying to write %u pixels to texture %s (starting from pixel %i) - This would write out of bounds.\n Clamping width to %u.",
-			p_Width + p_OffsetX,m_Name.c_str(),p_OffsetX,width - p_OffsetX);
-
-			p_Width = width - p_OffsetX;
-		}
-
-		if(m_Impl->write(p_Pixels,p_Width,0,0,p_OffsetX,0,0))
-		{
-			if(m_ShadowCopy)
-			{
-			//todo
-			}
-
-			return p_Width;
-		}
-
-		return 0;
-	}
-	/*********************************************************************************/
-	uint32 Texture::writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, int32 p_OffsetX, int32 p_OffsetY)
-	{
-		if(p_MipmapLevel > m_MipmapLevels)
-		{
-			_LogWarning("Trying to write to mipmap %u of texture %s which only has %u mipmaps.Clamping value to %u",p_MipmapLevel,m_Name.c_str(),m_MipmapLevels,m_MipmapLevels);
-
-			p_MipmapLevel = m_MipmapLevels;
-		}
-
-		uint32 width = 0;
-		uint32 height = 0;
-		getMipmapDimension(p_MipmapLevel,&width,&height);
-
-		if(p_Width + p_OffsetX > width || p_Height + p_OffsetY > height)
-		{
-			_LogWarning("Trying to write %ux%u pixels to texture %s (starting from pixel %ix%i) - This would write out of bounds.\n Clamping width to %ux%u.",
-			p_Width + p_OffsetX,p_Height + p_OffsetY,m_Name.c_str(),p_OffsetX,p_OffsetY,width - p_OffsetX,height - p_OffsetY);
-
-			p_Width = width - p_OffsetX;
-			p_Height = height - p_OffsetY;
-		}
-
-		if(m_Impl->write(p_Pixels,p_Width,p_Height,0,p_OffsetX,p_OffsetY,0))
-		{
-			if(m_ShadowCopy)
-			{
-			//todo
-			}
-
-			return p_Width*p_Height;
-		}
-
-		return 0;
-	}
-	/*********************************************************************************/
-	uint32 Texture::writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ)
-	{
-		if(p_MipmapLevel > m_MipmapLevels)
-		{
-			_LogWarning("Trying to write to mipmap %u of texture %s which only has %u mipmaps.Clamping value to %u",p_MipmapLevel,m_Name.c_str(),m_MipmapLevels,m_MipmapLevels);
-
-			p_MipmapLevel = m_MipmapLevels;
-		}
-
-		uint32 width = 0;
-		uint32 height = 0;
-		uint32 depth = 0;
-		getMipmapDimension(p_MipmapLevel,&width,&height,&depth);
-
-		if(p_Width + p_OffsetX > width || p_Height + p_OffsetY > height || p_Depth + p_OffsetZ > depth)
-		{
-			_LogWarning("Trying to write %ux%ux%u pixels to texture %s (starting from pixel %ix%ix%i) - This would write out of bounds.\n Clamping width to %ux%ux%u.",
-			p_Width + p_OffsetX,p_Height + p_OffsetY,p_Depth + p_OffsetZ,m_Name.c_str(),
-			p_OffsetX,p_OffsetY,p_OffsetZ,width - p_OffsetX,height - p_OffsetY,depth - p_OffsetZ);
-
-			p_Width = width - p_OffsetX;
-			p_Height = height - p_OffsetY;
-			p_Depth = depth - p_Depth;
-		}
-
-		if(m_Impl->write(p_Pixels,p_Width,p_Height,p_Depth,p_OffsetX,p_OffsetY,p_OffsetZ))
-		{
-			if(m_ShadowCopy)
-			{
-			//todo
-			}
-
-			return p_Width*p_Height*p_Depth;
-		}
-
-		return 0;
-	}
-	/*********************************************************************************/
 	bool Texture::create(const CreationOptions& p_Options)
 	{
 		if(p_Options.width > 0 && p_Options.height > 0 && p_Options.depth > 0)
 		{
 			m_Type = Texture::TT_3D;
 			m_Width = p_Options.width;
+			m_Height = p_Options.height;
+			m_Depth = p_Options.depth;
 		}
 		else if(p_Options.width > 0 && p_Options.height > 0)
 		{
@@ -476,16 +257,14 @@ namespace K15_Engine { namespace Rendering {
 		{
 			m_Type = Texture::TT_1D;
 			m_Width = p_Options.width;
-			m_Height = p_Options.height;
-			m_Depth = p_Options.depth;
 		}
 
-// 		m_PixelFormat = p_Options.pixelFormat;
-// 
-// 		if(m_PixelFormat > RendererBase::PF_RGB_32_F)
-// 		{
-// 			m_HasAlpha = true;
-// 		}
+		m_PixelFormat = p_Options.pixelFormat;
+
+		if(m_PixelFormat > RendererBase::PF_RGB_32_F)
+		{
+			m_HasAlpha = true;
+		}
 
 		m_HasShadowCopy = p_Options.useShadowCopy;
 
@@ -501,107 +280,77 @@ namespace K15_Engine { namespace Rendering {
 
 		m_MipmapLevels = i-1;
 
-		if(resize(p_Options.width,p_Options.height,p_Options.depth))
-		{
-			if(p_Options.pixels.size > 0)
-			{
-				return write(p_Options.pixels.data,m_Width,m_Height) > 0;
-			}
-
-			return true;
-		}
-		
-		return false;
+		return loadRawData(p_Options.pixels.data,m_PixelFormat,m_Width,m_Height,m_Depth,p_Options.createMipMaps);
 	}
 	/*********************************************************************************/
-	bool Texture::resize(uint32 p_Width,uint32 p_Height,uint32 p_Depth)
+	void Texture::getMipmapDimension(uint32 p_MipmapLevel, uint32* p_Width, uint32* p_Height, uint32* p_Depth)
 	{
-		Enum type = TT_1D;
-
-		if(p_Height > 0)
+		if(p_MipmapLevel > m_MipmapLevels)
 		{
-			type = TT_2D;
-		}
-		
-		if(p_Depth > 0)
-		{
-			type = TT_3D;
+			_LogWarning("Trying to get the dimension of mipmap %u from texture %s that only has %u mipmaps. Clamping value to %u",p_MipmapLevel,m_Name.c_str(),m_MipmapLevels,m_MipmapLevels);
+			p_MipmapLevel = m_MipmapLevels;
 		}
 
-		m_Type = type;
-
-		if(m_Impl->resize(p_Width,p_Height,p_Depth))
+		if(p_Width)
 		{
-		  m_Width = p_Width;
-		  m_Height = p_Height;
-		  m_Depth = p_Depth;
-
-		  //create shadow copy buffer
-		  if(m_HasShadowCopy)
-		  {
-			if(m_ShadowCopy)
+			if(p_MipmapLevel == 0)
 			{
-			  delete[] m_ShadowCopy;
+				*p_Width = m_Width;
 			}
-			uint32 size = getSize();
-
-			m_ShadowCopy = new byte[size];
-			memset(m_ShadowCopy,0,size);
-		  }
-		  return true;
+			else
+			{
+				*p_Width = m_Width * (uint32)(0.5 / p_MipmapLevel);	
+			}
 		}
 
-		return false;
+		if(p_Height)
+		{
+			if(p_MipmapLevel == 0)
+			{
+				*p_Height = m_Height;
+			}
+			else
+			{
+				*p_Height = m_Height * (uint32)(0.5 / p_MipmapLevel);	
+			}
+		}
+
+		if(p_Depth)
+		{
+			if(p_MipmapLevel == 0)
+			{
+				*p_Depth = m_Depth;
+			}
+			else
+			{
+				*p_Depth = m_Depth * (uint32)(0.5 / p_MipmapLevel);
+			}
+		}
 	}
-  /*********************************************************************************/
-  void Texture::getMipmapDimension(uint32 p_MipmapLevel, uint32* p_Width, uint32* p_Height, uint32* p_Depth)
-  {
-    if(p_MipmapLevel > m_MipmapLevels)
-    {
-      _LogWarning("Trying to get the dimension of mipmap %u from texture %s that only has %u mipmaps. Clamping value to %u",p_MipmapLevel,m_Name.c_str(),m_MipmapLevels,m_MipmapLevels);
-      p_MipmapLevel = m_MipmapLevels;
-    }
+	/*********************************************************************************/
+	void Texture::getDimension(uint32* p_Width, uint32* p_Height, uint32* p_Depth)
+	{
+		getMipmapDimension(0,p_Width,p_Height,p_Depth);
+	}
+	/*********************************************************************************/
+	bool Texture::loadRawData( byte* p_Data, Enum p_Format, uint32 p_Width, uint32 p_Height, uint32 p_Depth, bool p_CreateMipMap /*= true*/ )
+	{
+		if(m_Impl)
+		{
+			m_Impl->loadRawData(p_Data,p_Format,p_Width,p_Height,p_Depth,p_CreateMipMap);
+		}
 
-    if(p_Width)
-    {
-      if(p_MipmapLevel == 0)
-      {
-        *p_Width = m_Width;
-      }
-      else
-      {
-        *p_Width = m_Width * (uint32)(0.5 / p_MipmapLevel);	
-      }
-    }
-
-    if(p_Height)
-    {
-      if(p_MipmapLevel == 0)
-      {
-        *p_Height = m_Height;
-      }
-      else
-      {
-        *p_Height = m_Height * (uint32)(0.5 / p_MipmapLevel);	
-      }
-    }
-
-    if(p_Depth)
-    {
-      if(p_MipmapLevel == 0)
-      {
-        *p_Depth = m_Depth;
-      }
-      else
-      {
-        *p_Depth = m_Depth * (uint32)(0.5 / p_MipmapLevel);
-      }
-    }
-  }
-  /*********************************************************************************/
-  void Texture::getDimension(uint32* p_Width, uint32* p_Height, uint32* p_Depth)
-  {
-    getMipmapDimension(0,p_Width,p_Height,p_Depth);
-  }
-  /*********************************************************************************/
+		return true;
+	}
+	/*********************************************************************************/
+	bool Texture::loadRawData(byte* p_Data, Enum p_Format, uint32 p_Width, uint32 p_Height, bool p_CreateMipMap)
+	{
+		return loadRawData(p_Data,p_Format,p_Width,p_Height,0,p_CreateMipMap);
+	}
+	/*********************************************************************************/
+	bool Texture::loadRawData(byte* p_Data, Enum p_Format, uint32 p_Width, bool p_CreateMipMap)
+	{
+		return loadRawData(p_Data,p_Format,p_Width,0,0,p_CreateMipMap);
+	}
+	/*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace

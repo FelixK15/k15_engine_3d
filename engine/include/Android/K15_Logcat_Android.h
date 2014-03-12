@@ -1,5 +1,5 @@
 /**
- * @file K15_AndroidLog.h
+ * @file K15_Logcat_Android.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2013/12/16
@@ -21,8 +21,8 @@
  * 
  */
 
-#ifndef _K15Engine_Core_AndroidLog_h_
-#define _K15Engine_Core_AndroidLog_h_
+#ifndef _K15Engine_Core_Logcat_Android_h_
+#define _K15Engine_Core_Logcat_Android_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
@@ -31,14 +31,14 @@
 #include "K15_LogBase.h"
 
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API AndroidLog : public LogBase
+	class K15_CORE_API Logcat_Android : public LogBase
 	{
 	public:
-		AndroidLog();
-		~AndroidLog();
+		Logcat_Android();
+		~Logcat_Android();
 
 		virtual void logMessage(const String &p_Message,Enum p_PriorityFlag) OVERRIDE;
 	};// end of AndroidLogger class declaration
 }}// end of K15_Engine::Core namespace
 
-#endif //_K15Engine_Core_AndroidLogger_h_
+#endif //_K15Engine_Core_Logcat_Android_h_

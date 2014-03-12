@@ -20,12 +20,21 @@
  *
  */
 
+#ifndef _K15Engine_RendererOGL_Plugin_h_
+#define _K15Engine_RendererOGL_Plugin_h_
+
+#ifndef K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
+#	include "K15_RendererOGLPrerequisites.h"
+#endif //K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
+
 #include "K15_ApplicationModuleDescription.h"
 
 /*********************************************************************************/
-__declspec(dllexport) void pluginLoad();
+K15_RENDERER_API void pluginLoad();
 /*********************************************************************************/
-__declspec(dllexport) void pluginUnload();
+K15_RENDERER_API void pluginUnload();
 /*********************************************************************************/
-__declspec(dllexport) K15_Engine::Core::ApplicationModuleDescription getDescription();
+K15_RENDERER_API K15_Engine::Core::ApplicationModuleDescription getDescription();
 /*********************************************************************************/
+
+#endif //_K15Engine_RendererOGL_Plugin_h_

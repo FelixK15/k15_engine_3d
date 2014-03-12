@@ -25,15 +25,29 @@
 #define _K15Engine_RendererOGL_Prerequisites_h_
 
 #include "K15_Prerequisites.h"
-#include "GL\glew.h"
+
+#ifdef K15_OS_ANDROID
+#	include <GLES2\gl2.h>
+#	include <GLES2\gl2ext.h>
+#	include <GLES2\gl2platform.h>
+#	include <EGL\egl.h>
+#	define K15_RENDERER_API
+#else
+#	include "GL\glew.h"
+#	include "GL\wglew.h"
+#	define K15_RENDERER_API __declspec(dllexport)
+
+#endif //K15_OS_ANDROID
 
 using namespace K15_Engine::Rendering;
 
 //experimentals to test perf with different approaches.
-//#define K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
+#ifdef K15_OS_WINDOWS
+#	define K15_WGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 
-#ifndef K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
-# define K15_OGL_EXPERIMENT_MAP_BUFFER_WITH_UNSYNCHRONIZED
-# define K15_OGL_EXPERIMENT_MAP_BUFFER_WITH_INVALIDATE_RANGE
-#endif //K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
+#	ifndef K15_WGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
+#		define K15_WGL_EXPERIMENT_MAP_BUFFER_WITH_UNSYNCHRONIZED
+#		define K15_WGL_EXPERIMENT_MAP_BUFFER_WITH_INVALIDATE_RANGE
+#	endif //K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
+#endif //K15_OS_WINDOWS
 #endif //_K15Engine_RendererOGL_Prerequisites_h_

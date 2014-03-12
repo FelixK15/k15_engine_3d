@@ -28,54 +28,102 @@
     <Filter Include="Shader\Fragment">
       <UniqueIdentifier>{9d828414-7072-48a9-bb71-d1bae82cfc04}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\include\WGL">
+      <UniqueIdentifier>{ca4727aa-60d3-4879-915f-b7b0ac99b61f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\include\GLES2">
+      <UniqueIdentifier>{c314146c-f437-4faa-a4dd-f095e9f3334c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\src\WGL">
+      <UniqueIdentifier>{fd649ee7-9652-46d2-8f8a-63967b89ab19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\src\GLES2">
+      <UniqueIdentifier>{59f387fb-c50d-4d82-80df-9d2104106270}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\rendererOGL\include\K15_GpuBufferImplOGL.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rendererOGL\include\K15_RendererOGL.h">
-      <Filter>Core\include</Filter>
+    <ClInclude Include="..\..\rendererOGL\include\plugin.h">
+      <Filter>Plugin\include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\rendererOGL\include\K15_RendererOGLPrerequisites.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\rendererOGL\include\K15_TextureImplOGL.h">
-      <Filter>Core\include</Filter>
+    <ClInclude Include="..\..\rendererOGL\include\GLES2\K15_GLES2_GpuBufferImpl.h">
+      <Filter>Core\include\GLES2</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\rendererOGL\include\plugin.h">
-      <Filter>Plugin\include</Filter>
+    <ClInclude Include="..\..\rendererOGL\include\WGL\K15_WGL_Renderer.h">
+      <Filter>Core\include\WGL</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\rendererOGL\include\K15_TextureSamplerImplOGL.h">
-      <Filter>Core\include</Filter>
+    <ClInclude Include="..\..\rendererOGL\include\GLES2\K15_GLES2_GpuProgramImpl.h">
+      <Filter>Core\include\GLES2</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\rendererOGL\include\K15_GpuProgramImplOGL.h">
-      <Filter>Core\include</Filter>
+    <ClInclude Include="..\..\rendererOGL\include\GLES2\K15_GLES2_Renderer.h">
+      <Filter>Core\include\GLES2</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\rendererOGL\include\K15_VertexDeclarationImplOGL.h">
-      <Filter>Core\include</Filter>
+    <ClInclude Include="..\..\rendererOGL\include\GLES2\K15_GLES2_TextureImpl.h">
+      <Filter>Core\include\GLES2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rendererOGL\include\GLES2\K15_GLES2_TextureSamplerImpl.h">
+      <Filter>Core\include\GLES2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rendererOGL\include\GLES2\K15_GLES2_VertexDeclarationImpl.h">
+      <Filter>Core\include\GLES2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rendererOGL\include\WGL\K15_WGL_GpuProgramImpl.h">
+      <Filter>Core\include\WGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rendererOGL\include\WGL\K15_WGL_GpuBufferImpl.h">
+      <Filter>Core\include\WGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rendererOGL\include\WGL\K15_WGL_TextureImpl.h">
+      <Filter>Core\include\WGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rendererOGL\include\WGL\K15_WGL_TextureSamplerImpl.h">
+      <Filter>Core\include\WGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rendererOGL\include\WGL\K15_WGL_VertexDeclarationImpl.h">
+      <Filter>Core\include\WGL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\rendererOGL\src\K15_TextureImplOGL.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rendererOGL\src\K15_GpuBufferImplOGL.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rendererOGL\src\K15_RendererOGL.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\rendererOGL\src\plugin.cpp">
       <Filter>Plugin\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\rendererOGL\src\K15_TextureSamplerImplOGL.cpp">
-      <Filter>Core\src</Filter>
+    <ClCompile Include="..\..\rendererOGL\src\GLES2\K15_GLES2_GpuBufferImpl.cpp">
+      <Filter>Core\src\GLES2</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\rendererOGL\src\K15_GpuProgramImplOGL.cpp">
-      <Filter>Core\src</Filter>
+    <ClCompile Include="..\..\rendererOGL\src\GLES2\K15_GLES2_GpuProgramImpl.cpp">
+      <Filter>Core\src\GLES2</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\rendererOGL\src\K15_VertexDeclarationImplOGL.cpp">
-      <Filter>Core\src</Filter>
+    <ClCompile Include="..\..\rendererOGL\src\GLES2\K15_GLES2_Renderer.cpp">
+      <Filter>Core\src\GLES2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\GLES2\K15_GLES2_TextureImpl.cpp">
+      <Filter>Core\src\GLES2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\GLES2\K15_GLES2_TextureSamplerImpl.cpp">
+      <Filter>Core\src\GLES2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\GLES2\K15_GLES2_VertexDeclarationImpl.cpp">
+      <Filter>Core\src\GLES2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\WGL\K15_WGL_GpuBufferImpl.cpp">
+      <Filter>Core\src\WGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\WGL\K15_WGL_GpuProgramImpl.cpp">
+      <Filter>Core\src\WGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\WGL\K15_WGL_Renderer.cpp">
+      <Filter>Core\src\WGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\WGL\K15_WGL_TextureImpl.cpp">
+      <Filter>Core\src\WGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\WGL\K15_WGL_TextureSamplerImpl.cpp">
+      <Filter>Core\src\WGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rendererOGL\src\WGL\K15_WGL_VertexDeclarationImpl.cpp">
+      <Filter>Core\src\WGL</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -86,11 +134,17 @@
     <None Include="..\..\rendererOGL\shader\default.vert">
       <Filter>Shader\Vertex</Filter>
     </None>
-    <None Include="..\..\rendererOGL\include\K15_TextureSamplerImplOGL.inl">
-      <Filter>Core\include</Filter>
+    <None Include="..\..\rendererOGL\include\GLES2\K15_GLES2_TextureImpl.inl">
+      <Filter>Core\include\GLES2</Filter>
     </None>
-    <None Include="..\..\rendererOGL\include\K15_TextureImplOGL.inl">
-      <Filter>Core\include</Filter>
+    <None Include="..\..\rendererOGL\include\GLES2\K15_GLES2_TextureSamplerImpl.inl">
+      <Filter>Core\include\GLES2</Filter>
+    </None>
+    <None Include="..\..\rendererOGL\include\WGL\K15_WGL_TextureImpl.inl">
+      <Filter>Core\include\WGL</Filter>
+    </None>
+    <None Include="..\..\rendererOGL\include\WGL\K15_WGL_TextureSamplerImpl.inl">
+      <Filter>Core\include\WGL</Filter>
     </None>
   </ItemGroup>
 </Project>

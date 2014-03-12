@@ -1,8 +1,8 @@
 /**
- * @file K15_GameEventArguments.h
+ * @file K15_Keyboard_Android.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/12/16
+ * @date 2012/07/11
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,26 +21,15 @@
  * 
  */
 
-#ifndef _K15Engine_Core_Class_h_
-#define _K15Engine_Core_Class_h_
+#include "K15_PrecompiledHeader.h"
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
+#include "K15_Keyboard.h"
 
-namespace K15_Engine { namespace Core { namespace GameEventArguments {
+namespace K15_Engine { namespace Core { namespace InputDevices { 
 	/*********************************************************************************/
-	struct K15_CORE_API MouseActionArguments
+	bool Keyboard::isPressed(Enum p_Key)
 	{
-		Enum button;
-
-		uint32 xPx;	//Pixel coordinates
-		uint32 yPx; //Pixel coordinates
-
-		float xNDC; //Normal Device Coordinates ([-1|+1])
-		float yNDC; //Normal Device Coordinates ([-1|+1])
-	};
+		return false;
+	}
 	/*********************************************************************************/
-}}}// end of K15_Engine::Core::GameEventArguments namespace
-
-#endif //_K15Engine_Core_Class_h_
+}}}// end of K15_Engine::Core::InputDevices

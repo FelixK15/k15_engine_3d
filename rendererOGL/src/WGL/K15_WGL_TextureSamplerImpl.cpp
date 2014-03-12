@@ -1,5 +1,5 @@
 /**
- * @file K15_TextureImplOGL.cpp
+ * @file K15_TextureImpl.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2012/07/11
@@ -17,16 +17,16 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_TextureSamplerImplOGL.h"
+#include "K15_WGL_TextureSamplerImpl.h"
 
-namespace K15_Engine { namespace Rendering { namespace OGL {
+namespace K15_Engine { namespace Rendering { namespace WGL {
   /*********************************************************************************/
-  const GLenum TextureSamplerImplOGL::GLFilterModeConverter[TextureSampler::TFM_COUNT] = {
+  const GLenum TextureSamplerImpl::GLFilterModeConverter[TextureSampler::TFM_COUNT] = {
     GL_LINEAR,    //TFM_LINEAR
     GL_NEAREST    //TFM_NEAREST
   }; //GLFilterModeConverter
   /*********************************************************************************/
-  const GLenum TextureSamplerImplOGL::GLWrappingModeConverter[TextureSampler::TWM_COUNT] = {
+  const GLenum TextureSamplerImpl::GLWrappingModeConverter[TextureSampler::TWM_COUNT] = {
     GL_REPEAT,            //TWM_REPEAT,
     GL_CLAMP,             //TWM_CLAMP
     GL_CLAMP_TO_BORDER,   //TWM_BORDERCOLOR
@@ -35,40 +35,40 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
   /*********************************************************************************/
 
   /*********************************************************************************/
-  TextureSamplerImplOGL::TextureSamplerImplOGL()
+  TextureSamplerImpl::TextureSamplerImpl()
     : m_SamplerHandle(0)
   {
     glGenSamplers(1,&m_SamplerHandle);
   }
   /*********************************************************************************/
-  TextureSamplerImplOGL::~TextureSamplerImplOGL()
+  TextureSamplerImpl::~TextureSamplerImpl()
   {
     glDeleteSamplers(1,&m_SamplerHandle);
   }
   /*********************************************************************************/
-  void TextureSamplerImplOGL::setMinFilterMode(Enum p_MinFilterMode)
+  void TextureSamplerImpl::setMinFilterMode(Enum p_MinFilterMode)
   {
     glSamplerParameteri(m_SamplerHandle, GL_TEXTURE_MIN_FILTER, GLFilterModeConverter[p_MinFilterMode]);
   }
   /*********************************************************************************/
-  void TextureSamplerImplOGL::setMagFilterMode(Enum p_MagFilterMode)
+  void TextureSamplerImpl::setMagFilterMode(Enum p_MagFilterMode)
   {
     glSamplerParameteri(m_SamplerHandle, GL_TEXTURE_MAG_FILTER, GLFilterModeConverter[p_MagFilterMode]);
   }
   /*********************************************************************************/
-  void TextureSamplerImplOGL::setUWrappingMode(Enum p_WrappingMode)
+  void TextureSamplerImpl::setUWrappingMode(Enum p_WrappingMode)
   {
     glSamplerParameteri(m_SamplerHandle, GL_TEXTURE_WRAP_S, GLWrappingModeConverter[p_WrappingMode]);
   }
   /*********************************************************************************/
-  void TextureSamplerImplOGL::setVWrappingMode(Enum p_WrappingMode)
+  void TextureSamplerImpl::setVWrappingMode(Enum p_WrappingMode)
   {
     glSamplerParameteri(m_SamplerHandle, GL_TEXTURE_WRAP_T, GLWrappingModeConverter[p_WrappingMode]);
   }
   /*********************************************************************************/
-  void TextureSamplerImplOGL::setWWrappingMode(Enum p_WrappingMode)
+  void TextureSamplerImpl::setWWrappingMode(Enum p_WrappingMode)
   {
     glSamplerParameteri(m_SamplerHandle, GL_TEXTURE_WRAP_R, GLWrappingModeConverter[p_WrappingMode]);
   }
   /*********************************************************************************/
-}}}//end of K15_Engine::Rendering::OGL namespace
+}}}//end of K15_Engine::Rendering::WGL namespace

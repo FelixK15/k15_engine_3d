@@ -1,5 +1,5 @@
 /**
- * @file K15_RendererOGL.h
+ * @file K15_WGL_Renderer.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2013/09/10
@@ -17,24 +17,23 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-//#include "K15_RendererOGLPrecompiledHeaders.h"
-#include "K15_RendererOGL.h"
-
-#include "GL\glew.h"
-#include "GL\wglew.h"
 #include "K15_LogManager.h"
-#include "K15_GpuBufferImplOGL.h"
-#include "K15_GpuProgramImplOGL.h"
-#include "K15_TextureImplOGL.h"
-#include "K15_TextureSamplerImplOGL.h"
-#include "K15_VertexDeclarationImplOGL.h"
+
+#include "K15_WGL_Renderer.h"
+#include "K15_WGL_GpuBufferImpl.h"
+#include "K15_WGL_GpuProgramImpl.h"
+#include "K15_WGL_TextureImpl.h"
+#include "K15_WGL_TextureSamplerImpl.h"
+#include "K15_WGL_VertexDeclarationImpl.h"
+
 #include "K15_IndexBuffer.h"
 #include "K15_VertexBuffer.h"
+
 #include "Win32\K15_RenderWindow_Win32.h"
 
-namespace K15_Engine { namespace Rendering { namespace OGL {
+namespace K15_Engine { namespace Rendering { namespace WGL {
 	/*********************************************************************************/
-	const GLenum RendererOGL::GLFunctionTestConverter[RendererBase::FT_COUNT] = {
+	const GLenum Renderer::GLFunctionTestConverter[RendererBase::FT_COUNT] = {
 		GL_NONE, 	  //FT_NONE
 		GL_LESS,    //FT_LESS
 		GL_LEQUAL,  //FT_LESS_EQUAL
@@ -43,7 +42,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		GL_GREATER  //FT_GREATER
 	};//DepthTestConverter
 	/*********************************************************************************/
-	const GLenum RendererOGL::GLTopologyConverter[RenderOperation::T_COUNT] = {
+	const GLenum Renderer::GLTopologyConverter[RenderOperation::T_COUNT] = {
 		GL_POINTS,    //T_DOT
 		GL_LINES,     //T_LINE
 		GL_TRIANGLES, //T_TRIANGLE
@@ -51,7 +50,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		GL_QUADS      //T_QUAD
 	}; //TopologyConverter
 	/*********************************************************************************/
-	const GLenum RendererOGL::GLBlendOperationConverter[AlphaState::BO_COUNT] = {
+	const GLenum Renderer::GLBlendOperationConverter[AlphaState::BO_COUNT] = {
 		GL_FUNC_ADD,              //BO_ADD
 		GL_FUNC_SUBTRACT,         //BO_SUBTRACT
 		GL_FUNC_REVERSE_SUBTRACT, //BO_REVERSE_SUBTRACT
@@ -59,7 +58,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		GL_MAX                    //BO_MAX
 	}; //BlendOperationConverter
 	/*********************************************************************************/
-	const GLenum RendererOGL::GLBlendFunctionConverter[AlphaState::BF_COUNT] = {
+	const GLenum Renderer::GLBlendFunctionConverter[AlphaState::BF_COUNT] = {
 		GL_ZERO,                      //BF_ZERO
 		GL_ONE,                       //BF_ONE
      
@@ -122,7 +121,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	RendererOGL::RendererOGL()
+	Renderer::Renderer()
 		: RendererBase(),
 		  m_RenderContext(0),
 		  m_DeviceContext(0),
@@ -132,22 +131,22 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		
 	}
 	/*********************************************************************************/
-	RendererOGL::~RendererOGL()
+	Renderer::~Renderer()
 	{
 
 	}
 	/*********************************************************************************/
-	void RendererOGL::beginFrame()
+	void Renderer::beginFrame()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); //clear color, depth and stencil buffer
 	}
 	/*********************************************************************************/
-	void RendererOGL::endFrame()
+	void Renderer::endFrame()
 	{
 		SwapBuffers(m_DeviceContext);
 	}
 	/*********************************************************************************/
-	bool RendererOGL::initialize()
+	bool Renderer::initialize()
 	{
 		K15_ASSERT(m_RenderWindow,
 			"Render window has not been set. Can not initialize renderer without having a render window.");
@@ -163,6 +162,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		_LogSuccess("Successfully created dummy OGL context!");
 
 		_LogNormal("Trying to initialize GLEW library...");
+
 		GLenum error = glewInit();
 		if(error != GLEW_OK)
 		{
@@ -276,7 +276,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		return m_LastError.empty();
 	}
 	/*********************************************************************************/
-	void RendererOGL::shutdown()
+	void Renderer::shutdown()
 	{
 		if(m_ProgramPipeline != 0)
 		{
@@ -299,12 +299,12 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		}
 	}
 	/*********************************************************************************/
-	void RendererOGL::onResolutionChanged(const Resolution& p_Resolution)
+	void Renderer::onResolutionChanged(const Resolution& p_Resolution)
 	{
 		glViewport(0,0,p_Resolution.width,p_Resolution.height);
 	}
 	/*********************************************************************************/
-	bool RendererOGL::createDummyContext(HWND* p_Hwnd,HDC* p_DC)
+	bool Renderer::createDummyContext(HWND* p_Hwnd,HDC* p_DC)
 	{
 		//Create dummy window
 		HWND tempHandle = 0;
@@ -341,32 +341,32 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		return false;
 	}
 	/*********************************************************************************/
-	GpuBufferImplBase* RendererOGL::createGpuBufferImpl()
+	GpuBufferImplBase* Renderer::createGpuBufferImpl()
 	{
-		return K15_NEW GpuBufferImplOGL();
+		return K15_NEW GpuBufferImpl();
 	}
 	/*********************************************************************************/
-	TextureImplBase* RendererOGL::createTextureImpl()
+	TextureImplBase* Renderer::createTextureImpl()
 	{
-		return K15_NEW TextureImplOGL();
+		return K15_NEW TextureImpl();
 	}
 	/*********************************************************************************/
-	GpuProgramImplBase* RendererOGL::createGpuProgramImpl()
+	GpuProgramImplBase* Renderer::createGpuProgramImpl()
 	{
-		return K15_NEW GpuProgramImplOGL();
+		return K15_NEW GpuProgramImpl();
 	}
 	/*********************************************************************************/
-	TextureSamplerImplBase* RendererOGL::createTextureSamplerImpl()
+	TextureSamplerImplBase* Renderer::createTextureSamplerImpl()
 	{
-		return K15_NEW TextureSamplerImplOGL();
+		return K15_NEW TextureSamplerImpl();
 	}
 	/*********************************************************************************/
-	VertexDeclarationImplBase* RendererOGL::createVertexDeclarationImpl()
+	VertexDeclarationImplBase* Renderer::createVertexDeclarationImpl()
 	{
-		return K15_NEW VertexDeclarationImplOGL();
+		return K15_NEW VertexDeclarationImpl();
 	}
 	/*********************************************************************************/
-	void RendererOGL::_setAlphaState(const AlphaState& p_AlphaState)
+	void Renderer::_setAlphaState(const AlphaState& p_AlphaState)
 	{
 		bool changeState = false;
 		if(p_AlphaState.getEnabled() != m_AlphaState.getEnabled())
@@ -398,7 +398,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		}
 	}
 	/*********************************************************************************/
-	void RendererOGL::_setDepthState(const DepthState& p_DepthState)
+	void Renderer::_setDepthState(const DepthState& p_DepthState)
 	{
 		if(p_DepthState.getEnabled() != m_DepthState.getEnabled())
 		{
@@ -421,19 +421,19 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		}
 	}
 	/*********************************************************************************/
-	void RendererOGL::_setRenderWindow(RenderWindowBase* p_RenderWindow)
+	void Renderer::_setRenderWindow(RenderWindowBase* p_RenderWindow)
 	{
 	}
 	/*********************************************************************************/
-	void RendererOGL::_setRenderTarget(RenderTarget* p_RenderTarget)
+	void Renderer::_setRenderTarget(RenderTarget* p_RenderTarget)
 	{
 	}
 	/*********************************************************************************/
-	void RendererOGL::_setActiveCamera(CameraComponent* p_Camera)
+	void Renderer::_setActiveCamera(CameraComponent* p_Camera)
 	{
 	}
 	/*********************************************************************************/
-	void RendererOGL::_setCullingMode(Enum p_CullingMode)
+	void Renderer::_setCullingMode(Enum p_CullingMode)
 	{
 		if(p_CullingMode == CM_CCW)
 		{
@@ -445,7 +445,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		}
 	}
 	/*********************************************************************************/
-	void RendererOGL::_setBackFaceCullingEnabled(bool p_Enabled)
+	void Renderer::_setBackFaceCullingEnabled(bool p_Enabled)
 	{
 		if(p_Enabled)
 		{
@@ -457,32 +457,32 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		}
 	}
 	/*********************************************************************************/
-	void RendererOGL::_setFillMode(Enum p_FillMode)
+	void Renderer::_setFillMode(Enum p_FillMode)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK,p_FillMode == FM_SOLID ? GL_FILL : GL_LINE);
 	}
 	/*********************************************************************************/
-	void RendererOGL::_setFrameBufferPixelFormat(Enum p_PixelFormat)
+	void Renderer::_setFrameBufferPixelFormat(Enum p_PixelFormat)
 	{
 	}
 	/*********************************************************************************/
-	void RendererOGL::_setDepthBufferPixelFormat(Enum p_DepthFormat)
+	void Renderer::_setDepthBufferPixelFormat(Enum p_DepthFormat)
 	{
 	}
 	/*********************************************************************************/
-	void RendererOGL::_setStencilBufferPixelFormat(Enum p_StencilFormat)
+	void Renderer::_setStencilBufferPixelFormat(Enum p_StencilFormat)
 	{
 	}
 	/*********************************************************************************/
-	void RendererOGL::_setClearColor(const ColorRGBA& p_ClearColor)
+	void Renderer::_setClearColor(const ColorRGBA& p_ClearColor)
 	{
 		glClearColor(p_ClearColor.RedComponent,p_ClearColor.GreenComponent,p_ClearColor.BlueComponent,1.0f);
 	}
 	/*********************************************************************************/
-	void RendererOGL::_bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType)
+	void Renderer::_bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType)
 	{
-		const GpuBufferImplOGL* bufferOGL = static_cast<const GpuBufferImplOGL*>(p_Buffer->getImpl());
-		GLenum target = GpuBufferImplOGL::GLBufferTypeConverter[p_BufferType];
+		const GpuBufferImpl* bufferOGL = static_cast<const GpuBufferImpl*>(p_Buffer->getImpl());
+		GLenum target = GpuBufferImpl::GLBufferTypeConverter[p_BufferType];
 
 		if(p_Buffer)
 		{
@@ -494,7 +494,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		}
 	}
 	/*********************************************************************************/
-	void RendererOGL::_bindProgram(GpuProgram* p_Program, Enum p_ProgramStage)
+	void Renderer::_bindProgram(GpuProgram* p_Program, Enum p_ProgramStage)
 	{
 		GLbitfield stages = GL_NONE;
 
@@ -515,7 +515,7 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 			stages |= GL_COMPUTE_SHADER_BIT;
 		}
 
-		const GpuProgramImplOGL* programOGL = static_cast<const GpuProgramImplOGL*>(p_Program->getImpl());
+		const GpuProgramImpl* programOGL = static_cast<const GpuProgramImpl*>(p_Program->getImpl());
 
 		if(p_Program)
 		{
@@ -527,23 +527,23 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		}
 	}
 	/*********************************************************************************/
-	void RendererOGL::_drawIndexed(uint32 p_Offset)
+	void Renderer::_drawIndexed(uint32 p_Offset)
 	{
 		IndexBuffer* indexBuffer = (IndexBuffer*)m_GpuBuffers[GpuBuffer::BT_INDEX_BUFFER];
 
 		if(p_Offset != 0)
 		{
 			glDrawElementsBaseVertex(GLTopologyConverter[m_Topology],indexBuffer->getIndexCount(),
-			GpuBufferImplOGL::GLIndexBufferTypeConverter[indexBuffer->getIndexType()],0,p_Offset);
+			GpuBufferImpl::GLIndexBufferTypeConverter[indexBuffer->getIndexType()],0,p_Offset);
 		}
 		else
 		{
 			glDrawElements(GLTopologyConverter[m_Topology],
-			indexBuffer->getIndexCount(),GpuBufferImplOGL::GLIndexBufferTypeConverter[indexBuffer->getIndexType()],0);
+			indexBuffer->getIndexCount(),GpuBufferImpl::GLIndexBufferTypeConverter[indexBuffer->getIndexType()],0);
 		}
 	}
 	/*********************************************************************************/
-	void RendererOGL::_drawDirect(uint32 p_Offset)
+	void Renderer::_drawDirect(uint32 p_Offset)
 	{
 		VertexBuffer* vertexBuffer = (VertexBuffer*)m_GpuBuffers[GpuBuffer::BT_VERTEX_BUFFER];
 		glDrawArrays(GLTopologyConverter[m_Topology],p_Offset,vertexBuffer->getVertexCount());
@@ -554,9 +554,9 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 // 		
 // 	}
 	/*********************************************************************************/
-	void RendererOGL::_setVertexDeclaration(VertexDeclaration* p_Declaration)
+	void Renderer::_setVertexDeclaration(VertexDeclaration* p_Declaration)
 	{
-		VertexDeclarationImplOGL* impl = static_cast<VertexDeclarationImplOGL*>(p_Declaration->getImpl());
+		VertexDeclarationImpl* impl = static_cast<VertexDeclarationImpl*>(p_Declaration->getImpl());
 		
 		if(m_VertexDeclaration)
 		{
@@ -575,17 +575,17 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		{
 			const VertexElement& element = p_Declaration->getElement(i);
 			glEnableVertexAttribArray(i);
-			glVertexAttribPointer(i,element.size,VertexDeclarationImplOGL::GLVertexElementTypeConverter[element.type],GL_FALSE,p_Declaration->getVertexSize(),(void*)element.offset);
+			glVertexAttribPointer(i,element.size,VertexDeclarationImpl::GLVertexElementTypeConverter[element.type],GL_FALSE,p_Declaration->getVertexSize(),(void*)element.offset);
 		}
 	}
 	/*********************************************************************************/
-	void RendererOGL::_bindTexture(Texture* p_Texture, Enum p_Type)
+	void Renderer::_bindTexture(Texture* p_Texture, Enum p_Type)
 	{
-		GLenum textureType = TextureImplOGL::GLTextureTypeConverter[p_Type];
+		GLenum textureType = TextureImpl::GLTextureTypeConverter[p_Type];
 
 		if(p_Texture)
 		{
-			TextureImplOGL* texImpl = static_cast<TextureImplOGL*>(p_Texture->getImpl());
+			TextureImpl* texImpl = static_cast<TextureImpl*>(p_Texture->getImpl());
 			glActiveTexture(GL_TEXTURE0 + p_Texture->getSlot());
 			glBindTexture(textureType,texImpl->getTextureHandle());
 		}
@@ -595,11 +595,11 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		}
 	}	
 	/*********************************************************************************/
-	void RendererOGL::_bindTextureSampler(TextureSampler* p_Sampler, Enum p_Slot)
+	void Renderer::_bindTextureSampler(TextureSampler* p_Sampler, Enum p_Slot)
 	{
 		if(p_Sampler)
 		{
-			TextureSamplerImplOGL* samplerImpl = static_cast<TextureSamplerImplOGL*>(p_Sampler->getImpl());
+			TextureSamplerImpl* samplerImpl = static_cast<TextureSamplerImpl*>(p_Sampler->getImpl());
 			glBindSampler(GL_TEXTURE0 + p_Slot,samplerImpl->getHandle());
 		}
 		else
@@ -608,4 +608,4 @@ namespace K15_Engine { namespace Rendering { namespace OGL {
 		}
 	}	
 	/*********************************************************************************/
-}}}// end of K15_Engine::Rendering::OGL
+}}}// end of K15_Engine::Rendering::WGL
