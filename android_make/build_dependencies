@@ -1,0 +1,11 @@
+cd /Dependencies/JsonCPP
+ndk-build NDK_PROJECT_PATH=./ NDK_APPLICAITON_MK=Application.mk
+mv ./Dependencies/JsonCPP/obj/local/armeabi/*.a ../bin/Android_armeabi/
+
+cd ./Dependencies/Enet
+ndk-build NDK_PROJECT_PATH=./ NDK_APPLICAITON_MK=Application.mk
+mv ./Dependencies/Enet/obj/local/armeabi/*.a ../bin/Android_armeabi/
+
+cd ./Dependencies/TinyThread
+ndk-build NDK_PROJECT_PATH=./ NDK_APPLICAITON_MK=Application.mk
+mv ./Dependencies/TinyThread/obj/local/armeabi/*.a ../bin/Android_armeabi/

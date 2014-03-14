@@ -325,6 +325,7 @@ namespace K15_Engine
 
 #if defined __GNUC__
 #	pragma GCC diagnostic ignored "-Wwrite-strings"
+#	pragma GCC diagnostic ignored "-Wformat-security"
 #endif
 
 //c std libs
@@ -446,7 +447,7 @@ namespace K15_Engine
 #if defined K15_OS_WINDOWS
 #	include "windows.h"
 #elif defined K15_OS_ANDROID
-#	include <android\native_app_glue\android_native_app_glue.h>
+#	include <android_native_app_glue.h>
 #	include <android\sensor.h>
 #	include <android\input.h>
 #	include <android\log.h>

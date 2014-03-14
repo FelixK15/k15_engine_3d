@@ -482,12 +482,6 @@
     <ClCompile Include="..\..\engine\src\K15_Node.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_Mouse_Win32.cpp">
-      <Filter>Core\src\Win32</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_Keyboard_Win32.cpp">
-      <Filter>Core\src\Win32</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_Keyboard.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
@@ -649,6 +643,12 @@
     </ClCompile>
     <ClCompile Include="..\..\engine\src\Android\K15_Logcat_Android.cpp">
       <Filter>Core\src\Android</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\Win32\K15_Keyboard_Win32.cpp">
+      <Filter>Core\src\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\Win32\K15_Mouse_Win32.cpp">
+      <Filter>Core\src\Win32</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

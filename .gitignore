@@ -15,7 +15,6 @@ bin
 *.suo
 *.ipch
 Jamfile
-*.mk
 *.py
 *.user
 /math/bin

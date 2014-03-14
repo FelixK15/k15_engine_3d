@@ -1,0 +1,4 @@
+./build_dependencies
+
+ndk-build NDK_PROJECT_PATH=./ APP_BUILD_SCRIPT=Math.mk
+ndk-build NDK_PROJECT_PATH-./ APP_BUILD_SCRIPT=Engine.mk

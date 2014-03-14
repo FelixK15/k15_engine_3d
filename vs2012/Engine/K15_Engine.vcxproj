@@ -406,9 +406,6 @@
     <ClCompile Include="..\..\engine\src\K15_JobBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_JsonSerializer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Keyboard.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Keyboard_Win32.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_Language.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Material.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MaterialData.cpp" />
@@ -417,9 +414,6 @@
     <ClCompile Include="..\..\engine\src\K15_MemoryProfilingTask.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Mesh.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Mouse.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Mouse_Win32.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_NetworkManager.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Node.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -455,6 +449,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\Win32\K15_DynamicLibrary_Win32.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\Win32\K15_Keyboard_Win32.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\Win32\K15_Mouse_Win32.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\win32\K15_RenderWindow_Win32.cpp">
