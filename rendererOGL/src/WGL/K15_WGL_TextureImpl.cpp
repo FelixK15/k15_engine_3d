@@ -140,118 +140,118 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 		return true;
 	}
 	/*********************************************************************************/
-	bool TextureImpl::write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ)
-	{
-		GLenum target = GLTextureTypeConverter[m_Texture->getTextureType()];
-		GLenum type = GLPixelDataTypeConverter[m_Texture->getPixelFormat()];
-		GLenum format = GLInternalFormatConverter[m_Texture->getPixelFormat()];
-
-		if(target == GL_TEXTURE_1D)
-		{
-			glTextureSubImage1DEXT(m_TextureHandle,target,0,p_OffsetX,p_Width,format,type,p_Pixels);
-		}
-		else if(target == GL_TEXTURE_2D)
-		{
-			glTextureSubImage2DEXT(m_TextureHandle,target,0,p_OffsetX,p_OffsetY,p_Width,p_Height,format,type,p_Pixels);
-		}
-		else if(target == GL_TEXTURE_3D)
-		{
-			glTextureSubImage3DEXT(m_TextureHandle,target,0,p_OffsetX,p_OffsetY,p_OffsetZ,p_Width,p_Height,p_Depth,format,type,p_Pixels);
-		}
-
-		return g_Application->getRenderer()->getLastError().empty();
-	}
-	/*********************************************************************************/
-	bool TextureImpl::writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ)
-	{
-		GLenum target = GLTextureTypeConverter[m_Texture->getTextureType()];
-		GLenum type = GLPixelDataTypeConverter[m_Texture->getPixelFormat()];
-		GLenum format = GLInternalFormatConverter[m_Texture->getPixelFormat()];
-
-		if(target == GL_TEXTURE_1D)
-		{
-			if(type == GL_COMPRESSED_RGB_S3TC_DXT1_EXT || type == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT || 
-				type == GL_COMPRESSED_RGBA_S3TC_DXT3_EXT || type == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
-			{
-				uint32 blocksize = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ? 8 : 16;
-				GLsizei size = ((p_Width + 3) / 4) * blocksize;
-
-				glCompressedTextureSubImage1DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_Width,format,size,p_Pixels);
-			}
-			else
-			{
-				glTextureSubImage1DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_Width,format,type,p_Pixels);
-			}
-		}
-		else if(target == GL_TEXTURE_2D)
-		{
-			if(type == GL_COMPRESSED_RGB_S3TC_DXT1_EXT || type == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT || 
-				type == GL_COMPRESSED_RGBA_S3TC_DXT3_EXT || type == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
-			{
-				uint32 blocksize = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ? 8 : 16;
-				GLsizei size = ((p_Width + 3) / 4) * ((p_Height + 3) / 4) * blocksize;
-
-				glCompressedTextureSubImage2DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_OffsetY,p_Width,p_Height,format,size,p_Pixels);
-			}
-			else
-			{
-				glTextureSubImage2DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_OffsetY,p_Width,p_Height,format,type,p_Pixels);
-			}
-		}
-		else if(target == GL_TEXTURE_3D)
-		{
-			if(type == GL_COMPRESSED_RGB_S3TC_DXT1_EXT || type == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT || 
-				type == GL_COMPRESSED_RGBA_S3TC_DXT3_EXT || type == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
-			{
-				uint32 blocksize = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ? 8 : 16;
-				GLsizei size = ((p_Width + 3) / 4) * ((p_Height + 3) / 4) * ((p_Depth + 3) / 4) * blocksize;
-
-				glCompressedTextureSubImage3DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_OffsetY,p_OffsetZ,p_Width,p_Height,p_Depth,format,size,p_Pixels);
-			}
-			else
-			{
-				glTextureSubImage3DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_OffsetY,p_OffsetZ,p_Width,p_Height,p_Depth,format,type,p_Pixels);
-			}
-		}
-
-		if(glGetError() != GL_NO_ERROR)
-		{
-			_LogError("Could not upload texture data to texture %s. %s",m_Texture->getName().c_str(),
-				g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
-
-			return false;
-		}
-
-		return true;
-	}
-	/*********************************************************************************/
-	bool TextureImpl::resize(uint32 p_Width, uint32 p_Height, uint32 p_Depth)
-	{
-		GLenum target = GLTextureTypeConverter[m_Texture->getTextureType()];
-		GLenum format = GLInternalFormatConverter[m_Texture->getPixelFormat()];
-		
-		if(target == GL_TEXTURE_1D)
-		{
-			glTextureStorage1DEXT(m_TextureHandle,target,m_Texture->getMipmapLevels(),format,p_Width);
-		}
-		else if(target == GL_TEXTURE_2D)
-		{
-			glTextureStorage2DEXT(m_TextureHandle,target,m_Texture->getMipmapLevels(),format,p_Width,p_Height);
-		}
-		else if(target == GL_TEXTURE_3D)
-		{
-			glTextureStorage3DEXT(m_TextureHandle,target,m_Texture->getMipmapLevels(),format,p_Width,p_Height,p_Depth);
-		}
-
-		if(glGetError() != GL_NO_ERROR)
-		{
-			_LogError("Could not resize texture %s. %s",m_Texture->getName().c_str(),
-				g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
-
-			return false;
-		}
-
-		return true;
-	}
+// 	bool TextureImpl::write(byte* p_Pixels, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ)
+// 	{
+// 		GLenum target = GLTextureTypeConverter[m_Texture->getTextureType()];
+// 		GLenum type = GLPixelDataTypeConverter[m_Texture->getPixelFormat()];
+// 		GLenum format = GLInternalFormatConverter[m_Texture->getPixelFormat()];
+// 
+// 		if(target == GL_TEXTURE_1D)
+// 		{
+// 			glTextureSubImage1DEXT(m_TextureHandle,target,0,p_OffsetX,p_Width,format,type,p_Pixels);
+// 		}
+// 		else if(target == GL_TEXTURE_2D)
+// 		{
+// 			glTextureSubImage2DEXT(m_TextureHandle,target,0,p_OffsetX,p_OffsetY,p_Width,p_Height,format,type,p_Pixels);
+// 		}
+// 		else if(target == GL_TEXTURE_3D)
+// 		{
+// 			glTextureSubImage3DEXT(m_TextureHandle,target,0,p_OffsetX,p_OffsetY,p_OffsetZ,p_Width,p_Height,p_Depth,format,type,p_Pixels);
+// 		}
+// 
+// 		return g_Application->getRenderer()->getLastError().empty();
+// 	}
+// 	/*********************************************************************************/
+// 	bool TextureImpl::writeMipmap(byte* p_Pixels, uint32 p_MipmapLevel, uint32 p_Width, uint32 p_Height, uint32 p_Depth, int32 p_OffsetX, int32 p_OffsetY, int32 p_OffsetZ)
+// 	{
+// 		GLenum target = GLTextureTypeConverter[m_Texture->getTextureType()];
+// 		GLenum type = GLPixelDataTypeConverter[m_Texture->getPixelFormat()];
+// 		GLenum format = GLInternalFormatConverter[m_Texture->getPixelFormat()];
+// 
+// 		if(target == GL_TEXTURE_1D)
+// 		{
+// 			if(type == GL_COMPRESSED_RGB_S3TC_DXT1_EXT || type == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT || 
+// 				type == GL_COMPRESSED_RGBA_S3TC_DXT3_EXT || type == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
+// 			{
+// 				uint32 blocksize = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ? 8 : 16;
+// 				GLsizei size = ((p_Width + 3) / 4) * blocksize;
+// 
+// 				glCompressedTextureSubImage1DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_Width,format,size,p_Pixels);
+// 			}
+// 			else
+// 			{
+// 				glTextureSubImage1DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_Width,format,type,p_Pixels);
+// 			}
+// 		}
+// 		else if(target == GL_TEXTURE_2D)
+// 		{
+// 			if(type == GL_COMPRESSED_RGB_S3TC_DXT1_EXT || type == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT || 
+// 				type == GL_COMPRESSED_RGBA_S3TC_DXT3_EXT || type == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
+// 			{
+// 				uint32 blocksize = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ? 8 : 16;
+// 				GLsizei size = ((p_Width + 3) / 4) * ((p_Height + 3) / 4) * blocksize;
+// 
+// 				glCompressedTextureSubImage2DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_OffsetY,p_Width,p_Height,format,size,p_Pixels);
+// 			}
+// 			else
+// 			{
+// 				glTextureSubImage2DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_OffsetY,p_Width,p_Height,format,type,p_Pixels);
+// 			}
+// 		}
+// 		else if(target == GL_TEXTURE_3D)
+// 		{
+// 			if(type == GL_COMPRESSED_RGB_S3TC_DXT1_EXT || type == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT || 
+// 				type == GL_COMPRESSED_RGBA_S3TC_DXT3_EXT || type == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
+// 			{
+// 				uint32 blocksize = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ? 8 : 16;
+// 				GLsizei size = ((p_Width + 3) / 4) * ((p_Height + 3) / 4) * ((p_Depth + 3) / 4) * blocksize;
+// 
+// 				glCompressedTextureSubImage3DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_OffsetY,p_OffsetZ,p_Width,p_Height,p_Depth,format,size,p_Pixels);
+// 			}
+// 			else
+// 			{
+// 				glTextureSubImage3DEXT(m_TextureHandle,target,p_MipmapLevel,p_OffsetX,p_OffsetY,p_OffsetZ,p_Width,p_Height,p_Depth,format,type,p_Pixels);
+// 			}
+// 		}
+// 
+// 		if(glGetError() != GL_NO_ERROR)
+// 		{
+// 			_LogError("Could not upload texture data to texture %s. %s",m_Texture->getName().c_str(),
+// 				g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
+// 
+// 			return false;
+// 		}
+// 
+// 		return true;
+// 	}
+// 	/*********************************************************************************/
+// 	bool TextureImpl::resize(uint32 p_Width, uint32 p_Height, uint32 p_Depth)
+// 	{
+// 		GLenum target = GLTextureTypeConverter[m_Texture->getTextureType()];
+// 		GLenum format = GLInternalFormatConverter[m_Texture->getPixelFormat()];
+// 		
+// 		if(target == GL_TEXTURE_1D)
+// 		{
+// 			glTextureStorage1DEXT(m_TextureHandle,target,m_Texture->getMipmapLevels(),format,p_Width);
+// 		}
+// 		else if(target == GL_TEXTURE_2D)
+// 		{
+// 			glTextureStorage2DEXT(m_TextureHandle,target,m_Texture->getMipmapLevels(),format,p_Width,p_Height);
+// 		}
+// 		else if(target == GL_TEXTURE_3D)
+// 		{
+// 			glTextureStorage3DEXT(m_TextureHandle,target,m_Texture->getMipmapLevels(),format,p_Width,p_Height,p_Depth);
+// 		}
+// 
+// 		if(glGetError() != GL_NO_ERROR)
+// 		{
+// 			_LogError("Could not resize texture %s. %s",m_Texture->getName().c_str(),
+// 				g_Application->getRenderTask()->getRenderer()->getLastError().c_str());
+// 
+// 			return false;
+// 		}
+// 
+// 		return true;
+// 	}
 	/*********************************************************************************/
 }}}//end of K15_Engine::Rendering::WGL namespace

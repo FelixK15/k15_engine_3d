@@ -20,9 +20,9 @@
 #include "plugin.h"
 
 #if defined K15_OS_ANDROID
-#	include "K15_GLES2_Renderer.h"
+#	include "GLES2\K15_GLES2_Renderer.h"
 #elif defined K15_OS_WINDOWS
-#	include "K15_WGL_Renderer.h"
+#	include "WGL\K15_WGL_Renderer.h"
 #endif //K15_OS_ANDROID
 
 #include "K15_Application.h"

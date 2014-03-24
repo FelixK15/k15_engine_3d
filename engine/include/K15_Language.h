@@ -31,6 +31,7 @@
 #include "K15_HashedString.h"
 
 #define LANG_STRING(ID) K15_Engine::Core::Language::getStringForCurrentLanguage(_ON(ID))
+#define C_LANG_STRING(ID) K15_Engine::Core::Language::getStringForCurrentLanguage(_ON(ID)).c_str()
 
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API Language

@@ -32,9 +32,10 @@ LOCAL_STATIC_LIBRARIES  += TinyThread
 
 LOCAL_LDLIBS 			:= -llog -ldl -lGLESv2 -lEGL -lOpenSLES -landroid
 
-LOCAL_LDFLAGS			:=	-L$(LOCAL_PATH)/../../bin/dependencies/Android_armeabi
-
 include $(BUILD_SHARED_LIBRARY)
 
 $(call import-module,android/native_app_glue)
+$(call import-module,TinyThread)
+$(call import-module,JsonCPP)
+$(call import-module,Enet)
 $(call import-module,Math)

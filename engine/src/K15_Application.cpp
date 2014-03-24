@@ -713,4 +713,9 @@ namespace K15_Engine { namespace Core {
 		}
 	}
 	/*********************************************************************************/
+	K15_Engine::Core::Application* K15Engine_getApplication()
+	{ 
+		return g_Application; 
+	}
+	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace

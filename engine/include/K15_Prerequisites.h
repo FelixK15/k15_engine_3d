@@ -447,12 +447,20 @@ namespace K15_Engine
 #if defined K15_OS_WINDOWS
 #	include "windows.h"
 #elif defined K15_OS_ANDROID
-#	include <android_native_app_glue.h>
+
+	/*#	include <android_native_app_glue.h>
 #	include <android\sensor.h>
 #	include <android\input.h>
-#	include <android\log.h>
 #	include <EGL\egl.h>
-#	include <GLES2\gl2.h>
+#	include <GLES2\gl2.h>*/
+
+	struct android_app;
+	struct ANativeWindow;
+	struct ASensorEventQueue;
+	struct ASensor;
+	struct ASensorManager;
+
+#	include <android\log.h>
 #	include <dlfcn.h>
 #	include <jni.h>
 #	include <unistd.h>

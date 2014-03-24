@@ -19,13 +19,17 @@
 
 #include "K15_PrecompiledHeader.h"
 
+#include <android_native_app_glue.h>
+#include <android\sensor.h>
+#include <android\input.h>
+
 #include "K15_RenderWindowBase.h"
 #include "K15_RenderTask.h"
 #include "K15_RenderProcessBase.h"
+#include "K15_Mouse.h"
 
 #include "Android\K15_ApplicationLayerOS_Android.h"
 #include "ANdroid\K15_RenderWindow_Android.h"
-#include "K15_Mouse.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/

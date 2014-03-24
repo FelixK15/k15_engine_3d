@@ -1,4 +1,6 @@
-./build_dependencies
-
-ndk-build NDK_PROJECT_PATH=./ APP_BUILD_SCRIPT=Math.mk
-ndk-build NDK_PROJECT_PATH-./ APP_BUILD_SCRIPT=Engine.mk
+MATH_PATH="$(pwd)/Math"
+cd $(pwd)
+#cd $MATH_PATH
+#ndk-build NDK_PROJECT_PATH=./ NDK_APPLICAITON_MK=Application.mk
+#cd $LOCAL_PATH$/Engine
+#ndk-build NDK_PROJECT_PATH=./ NDK_APPLICAITON_MK=Application.mk

@@ -369,12 +369,18 @@
     <ClInclude Include="..\..\engine\include\K15_TaskManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\engine\src\Android\K15_Logcat_Android.cpp" />
+    <ClCompile Include="..\..\engine\src\Android\K15_Logcat_Android.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\engine\src\Android\K15_ApplicationLayerOS_Android.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\Android\K15_Keyboard_Android.cpp" />
-    <ClCompile Include="..\..\engine\src\Android\K15_Mouse_Android.cpp" />
+    <ClCompile Include="..\..\engine\src\Android\K15_Keyboard_Android.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\Android\K15_Mouse_Android.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\engine\src\Android\K15_RenderWindow_Android.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>

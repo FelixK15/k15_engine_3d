@@ -1,10 +1,5 @@
 LOCAL_PATH 				:= $(call my-dir)
-
-ifneq ($(LOCAL_PATH),.)
-	PATH_DEPENDENCIES	:= ./../../../dependencies
-else
-	PATH_DEPENDENCIES 	:= $(LOCAL_PATH)/../../../dependencies
-endif
+PATH_DEPENDENCIES 	:= $(LOCAL_PATH)/../../../dependencies
 
 include $(CLEAR_VARS) 
 
