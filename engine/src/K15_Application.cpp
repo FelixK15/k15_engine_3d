@@ -208,6 +208,7 @@ namespace K15_Engine { namespace Core {
 		if(!m_OSLayer.initialize())
 		{
 			_LogError("Failed to initialize OS layer");
+			return;
 		}
 
 		_LogSuccess("OS layer initialized!");

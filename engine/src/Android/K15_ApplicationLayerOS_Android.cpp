@@ -43,30 +43,43 @@ namespace K15_Engine { namespace Core {
 	int32 Android_HandleMotion(android_app* p_App, AInputEvent* p_Event)
 	{
 		Application* app = static_cast<Application*>(p_App->userData);
-		RenderWindowBase* window = app->getRenderWindow();
+		if(app)
+		{
+			_LogDebug("App received.");
+			RenderWindowBase* window = app->getRenderWindow();
 
-		int32 eventAction = AMotionEvent_getAction(p_Event);
+			if(window)
+			{
+				_LogDebug("RenderWindow received.");
+				int32 eventAction = 0;//AMotionEvent_getAction(p_Event);
 
-		GameEvent* motionEvent = 0;
+				GameEvent* motionEvent = 0;
+
+				if(eventAction == AMOTION_EVENT_ACTION_DOWN || eventAction == AMOTION_EVENT_ACTION_UP)
+				{
+					MouseActionArguments args;
+					args.button = InputDevices::Mouse::BTN_LEFT;
+					args.xPx = 0;//AMotionEvent_getX(p_Event,0);
+					args.yPx = 0;//AMotionEvent_getY(p_Event,0);
+					_LogDebug("window->getResolution() x:%u y%u",window->getResolution().width,window->getResolution().height);
+					args.xNDC = args.xPx / window->getResolution().width;
+					args.yNDC = args.yPx / window->getResolution().height;
+					_LogDebug("Before motion event creation");
+					motionEvent = K15_NEW GameEvent(eventAction == AMOTION_EVENT_ACTION_DOWN ? _EN(onMousePressed) : _EN(onMouseReleased),(void*)&args,sizeof(MouseActionArguments));
+					_LogDebug("After motion event creation");
+				}
+
+				if(motionEvent)
+				{
+					_LogDebug("returned ANDROID_EVENT_HANDLED");
+					g_EventManager->triggerEvent(motionEvent);
+					return ANDROID_EVENT_HANDLED;
+				}
+			}
+		}
 		
-		if(eventAction == AMOTION_EVENT_ACTION_DOWN || eventAction == AMOTION_EVENT_ACTION_UP)
-		{
-			MouseActionArguments args;
-			args.button = InputDevices::Mouse::BTN_LEFT;
-			args.xPx = AMotionEvent_getX(p_Event,0);
-			args.yPx = AMotionEvent_getY(p_Event,0);
-			args.xNDC = args.xPx / window->getResolution().width;
-			args.yNDC = args.yPx / window->getResolution().height;
-			
-			motionEvent = K15_NEW GameEvent(eventAction == AMOTION_EVENT_ACTION_DOWN ? _EN(onMousePressed) : _EN(onMouseReleased),(void*)&args,sizeof(MouseActionArguments));
-		}
 
-		if(motionEvent)
-		{
-			g_EventManager->triggerEvent(motionEvent);
-			return ANDROID_EVENT_HANDLED;
-		}
-
+		_LogDebug("returned ANDROID_EVENT_NOT_HANDLED");
 		return ANDROID_EVENT_NOT_HANDLED;
 	}
 	/*********************************************************************************/
@@ -166,6 +179,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void* ApplicationOSLayer_Android::os_malloc(uint32 p_Size)
 	{
+		_LogDebug("os_malloc");
 		return malloc(p_Size);
 	}
 	/*********************************************************************************/
@@ -190,25 +204,25 @@ namespace K15_Engine { namespace Core {
 	{
 		K15_ASSERT(m_App,"Need to set app instance before initializing android application.");
 
-		if((m_SensorManager = ASensorManager_getInstance()) == 0);
-		{
-			_LogError("Could not obtain Android Sensor Manager.");
-			return false;
-		}
+// 		if((m_SensorManager = ASensorManager_getInstance()) == 0);
+// 		{
+// 			_LogError("Could not obtain Android Sensor Manager.");
+// 			//return false;
+// 		}
 
-		if((m_AccelerometerSensor = 
-			(ASensor*)ASensorManager_getDefaultSensor(m_SensorManager,ASENSOR_TYPE_ACCELEROMETER)) == 0)
-		{
-			_LogError("Could not obtain android accelerometer sensor.");
-			return false;
-		}
+// 		if((m_AccelerometerSensor = 
+// 			(ASensor*)ASensorManager_getDefaultSensor(m_SensorManager,ASENSOR_TYPE_ACCELEROMETER)) == 0)
+// 		{
+// 			_LogError("Could not obtain android accelerometer sensor.");
+// 			//return false;
+// 		}
 		
-		if((m_SensorEventQueue = 
-			ASensorManager_createEventQueue(m_SensorManager,m_App->looper,LOOPER_ID_USER,0,0)) == 0)
-		{
-			_LogError("Could not create accelerometer event queue.");
-			return false;
-		}
+// 		if((m_SensorEventQueue = 
+// 			ASensorManager_createEventQueue(m_SensorManager,m_App->looper,LOOPER_ID_USER,0,0)) == 0)
+// 		{
+// 			_LogError("Could not create accelerometer event queue.");
+// 			return false;
+// 		}
 
 		//get time of engine initialization
 		clock_gettime(CLOCK_MONOTONIC,&m_LastTime);

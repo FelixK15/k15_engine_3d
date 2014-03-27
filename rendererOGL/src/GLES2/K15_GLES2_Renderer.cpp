@@ -87,7 +87,7 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 		m_Context(EGL_NO_CONTEXT),
 		m_Surface(EGL_NO_SURFACE)
 	{
-
+		K15_DEBUG("GLES2::Renderer()");
 	}
 	/*********************************************************************************/
 	Renderer::~Renderer()

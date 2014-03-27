@@ -460,6 +460,7 @@ namespace K15_Engine
 	struct ASensor;
 	struct ASensorManager;
 
+#	include <android_native_app_glue.h>
 #	include <android\log.h>
 #	include <dlfcn.h>
 #	include <jni.h>

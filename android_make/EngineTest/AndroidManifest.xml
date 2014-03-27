@@ -7,11 +7,11 @@
     <uses-sdk android:minSdkVersion="9" />
 
     <!-- This .apk has no Java code itself, so set hasCode to false. -->
-    <application android:label="EngineTest"> <!-- android:hasCode="false" -->
+    <application android:label="EngineTest" android:hasCode="false" android:debuggable="true">
 
         <!-- Our activity is the built-in NativeActivity framework class.
              This will take care of integrating with our NDK code. -->
-        <activity android:name="com.k15games.EngineTest.EngineActivity"
+        <activity android:name="android.app.NativeActivity"
                 android:label="EngineTest"
                 android:configChanges="orientation|keyboardHidden">
             <!-- Tell NativeActivity the name of or .so -->

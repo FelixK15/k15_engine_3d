@@ -18,3 +18,4 @@ Jamfile
 *.py
 *.user
 /math/bin
+android_make/EngineTest/libs/

@@ -1,19 +1,10 @@
 #include "K15_Application.h"
 
-#include "K15_LogManager.h"
-
-#include "K15_Language.h"
-
 #if defined K15_OS_ANDROID
-#	include <android_native_app_glue.h>
+#	include "K15_LogManager.h"
+#	include "GLES2\K15_GLES2_Renderer.h"
 #endif //K15_OS_ANDROID
 
-/*********************************************************************************/
-//void testMultiLanguage();
-/*********************************************************************************/
-
-/*********************************************************************************/
-using namespace K15_Engine::Core;
 /*********************************************************************************/
 #if defined K15_OS_ANDROID
 void android_main(struct android_app* app)
@@ -21,32 +12,22 @@ void android_main(struct android_app* app)
 int main(int argc,char** argv)
 #endif //K15_OS_ANDROID
 {
-	K15_Engine::Core::Application* application = 0;
-
 #if defined K15_OS_ANDROID
-	typedef K15_Engine::Core::Application* (*ApplicationFunction)();
-	void* module = dlopen("Engine.so",RTLD_NOW | RTLD_LOCAL);
 	app_dummy();
-	K15_ASSERT(module,"Error loading Engine.so");
-	ApplicationFunction func = (ApplicationFunction)dlsym(module,"K15Engine_getApplication");
-	if(func)
+	g_Application->initialize(app);
+	GLES2::Renderer* renderer = K15_NEW GLES2::Renderer();
+	if(!renderer)
 	{
-		application = func();
+		_LogError("Could not instatiate GLES2 renderer.");
 	}
-	else
-	{
-		return;
-	}
-	
-	application->initialize(app);
+	//g_Application->setRenderer(K15_NEW GLES2::Renderer());
+	//g_Application->getRenderer()->initialize();
 #else
-	application = g_Application;
-	application->initialize(argc,argv);
+	g_Application->initialize(argc,argv);
 #endif //K15_OS_ANDROID
-	//testMultiLanguage();
-// 
-// 	application->run();
-// 	application->shutdown();
+
+ 	g_Application->run();
+ 	g_Application->shutdown();
 
 #if defined K15_DEBUG && defined K15_OS_WINDOWS
     _CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF);
@@ -56,22 +37,4 @@ int main(int argc,char** argv)
 	return 0;
 #endif
 }
-/*********************************************************************************/
-// void testMultiLanguage()
-// {
-// 	Language::deserialize();
-// 	Language::serialize();
-// 
-// 	_LogDebug("Language:\"English\":");
-// 	_LogDebug("\t%s",C_LANG_STRING(ID_HELLO));
-// 	_LogDebug("\t%s",C_LANG_STRING(ID_BYE));
-// 	_LogDebug("\t%s",C_LANG_STRING(ID_THANKS));
-// 
-// 	Language::setCurrentLanguageID(Language::LID_GERMAN);
-// 
-// 	_LogDebug("Language:\"German\":");
-// 	_LogDebug("\t%s",C_LANG_STRING(ID_HELLO));
-// 	_LogDebug("\t%s",C_LANG_STRING(ID_BYE));
-// 	_LogDebug("\t%s",C_LANG_STRING(ID_THANKS));
-// }
 /*********************************************************************************/

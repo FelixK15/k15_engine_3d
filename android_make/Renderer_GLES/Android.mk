@@ -9,15 +9,16 @@ LOCAL_CFLAGS			:= -std=gnu++11 -D DEBUG
 LOCAL_MODULE 			:= Renderer_GLES
 
 LOCAL_SRC_FILES 		:= $(wildcard $(RENDERER_SOURCE)/src/*.cpp)
-LOCAL_SRC_FILES			+= $(wildcard $(RENDERER_SOURCE)/GLES2/*.cpp)
+LOCAL_SRC_FILES			+= $(wildcard $(RENDERER_SOURCE)/src/GLES2/*.cpp)
 
 LOCAL_C_INCLUDES 		:= $(ENGINE_SOURCE)/include
 LOCAL_C_INCLUDES		+= $(RENDERER_SOURCE)/include
+LOCAL_C_INCLUDES		+= $(RENDERER_SOURCE)/include/GLES2
 
-LOCAL_SHARED_LIBRARIES	:= Engine
+LOCAL_STATIC_LIBRARIES	:= android_native_app_glue
+LOCAL_STATIC_LIBRARIES	+= Engine
 
-LOCAL_LDLIBS 			:= -lGLESv2
+include $(BUILD_STATIC_LIBRARY)
 
-include $(BUILD_SHARED_LIBRARY)
-
+$(call import-module,android/native_app_glue)
 $(call import-module,Engine)

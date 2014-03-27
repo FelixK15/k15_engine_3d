@@ -1,6 +1,19 @@
-MATH_PATH="$(pwd)/Math"
-cd $(pwd)
-#cd $MATH_PATH
-#ndk-build NDK_PROJECT_PATH=./ NDK_APPLICAITON_MK=Application.mk
-#cd $LOCAL_PATH$/Engine
-#ndk-build NDK_PROJECT_PATH=./ NDK_APPLICAITON_MK=Application.mk
+#!/bin/sh
+
+LOCAL_PATH=$(pwd)
+
+cd $LOCAL_PATH/EngineTest
+
+rm -f ./libs/armeabi/*.so 
+
+#build c++ code
+ndk-build -B NDK_DEBUG=1 NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk NDK_MODULE_PATH=$LOCAL_PATH:$LOCAL_PATH/dependencies
+
+#build apk
+ant debug
+
+#uninstall old apk
+adb uninstall com.k15games.EngineTest
+
+#install new apk
+adb install ./bin/EngineTest-debug.apk
