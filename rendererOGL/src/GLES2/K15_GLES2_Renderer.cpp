@@ -97,8 +97,6 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 	/*********************************************************************************/
 	bool Renderer::initialize()
 	{
-    K15_ASSERT(GL_EXT_separate_shader_objects,"GL_EXT_separate_shader_objects is not supported by this device.");
-
 		K15_ASSERT(m_RenderWindow,
 			"Render window has not been set. Can not initialize renderer without having a render window.");
 
@@ -285,7 +283,7 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 	/*********************************************************************************/
 	void Renderer::_setFillMode(Enum p_FillMode)
 	{
-		_LogWarning("setFillMode is not supported for GLES2.");
+		//glPolygonMode(GL_FRONT_AND_BACK,p_FillMode == FM_SOLID ? GL_FILL : GL_LINE);
 	}
 	/*********************************************************************************/
 	void Renderer::_setClearColor(const ColorRGBA& p_ClearColor)
