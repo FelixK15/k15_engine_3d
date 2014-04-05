@@ -42,10 +42,6 @@
 #	include "Android/K15_ApplicationLayerOS_Android.h"
 #endif //K15_OS_WINDOWS
 
-/*********************************************************************************/
-K15_Engine::Core::Application* K15Engine_getApplication();
-/*********************************************************************************/
-
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	typedef List(ApplicationModule*) ApplicationModuleList;

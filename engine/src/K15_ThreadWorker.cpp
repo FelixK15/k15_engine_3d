@@ -65,7 +65,7 @@ namespace K15_Engine { namespace Core {
 			}
 
 			//put the current thread to sleep for 10 milliseconds.
-			os_layer.sleep(10);
+			os_layer.sleep(0.01);
 		}
 	}
 	/*********************************************************************************/

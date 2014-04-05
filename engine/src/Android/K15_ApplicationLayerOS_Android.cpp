@@ -58,14 +58,23 @@ namespace K15_Engine { namespace Core {
 				if(eventAction == AMOTION_EVENT_ACTION_DOWN || eventAction == AMOTION_EVENT_ACTION_UP)
 				{
 					MouseActionArguments args;
+					uint32 window_width = window->getResolution().width;
+					uint32 window_height = window->getResolution().height;
 					args.button = InputDevices::Mouse::BTN_LEFT;
 					args.xPx = AMotionEvent_getX(p_Event,0);
 					args.yPx = AMotionEvent_getY(p_Event,0);
 
-					args.xNDC = window->getResolution().width != 0 ? args.xPx / window->getResolution().width : 0.0;
-					args.yNDC = window->getResolution().height != 0 ? args.yPx / window->getResolution().height : 0.0;
+					args.xNDC = window_width != 0 ? (float)(args.xPx - window_width*0.5f) / (float)window_width : 0.0;
+					args.yNDC = window_height != 0 ? (float)(args.yPx - window_height*0.5f) / (float)window_height : 0.0;
 
+					//NDC are now -0.5|+0.5
+					args.xNDC *= 2;
+					args.yNDC *= 2;
+
+					//NDC are now -1.0|+1.0
 					motionEvent = K15_NEW GameEvent(eventAction == AMOTION_EVENT_ACTION_DOWN ? _EN(onMousePressed) : _EN(onMouseReleased),(void*)&args,sizeof(MouseActionArguments));
+
+					_LogDebug("x:%d y:%d  |  nx:%.3f ny:%.3f",args.xPx,args.yPx,args.xNDC,args.yNDC);
 				}
 
 				if(motionEvent)
@@ -279,7 +288,6 @@ namespace K15_Engine { namespace Core {
 	void ApplicationOSLayer_Android::sleep(double p_TimeInSeconds) const
 	{
 		unsigned long microseconds = p_TimeInSeconds * 1000000;
-		_LogDebug("Sleeping for %d (%f.3 seconds) microseconds",microseconds,p_TimeInSeconds);
 		::usleep(microseconds);
 	}
 	/*********************************************************************************/
@@ -289,7 +297,7 @@ namespace K15_Engine { namespace Core {
 		static int events;
 		android_poll_source* source;
 		Application* app = 0;
-		while(ALooper_pollAll(0,NULL,&events,(void**)&source))
+		while(ALooper_pollAll(0,NULL,&events,(void**)&source) >= 0)
 		{
 			if(source)
 			{
