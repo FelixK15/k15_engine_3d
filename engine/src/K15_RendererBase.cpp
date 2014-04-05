@@ -78,6 +78,7 @@ namespace K15_Engine { namespace Rendering {
 		m_DepthBufferFormat(DBF_COMPONENT_24_I),
 		m_FrameBufferFormat(PF_RGBA_8_I),
 		m_LightningEnabled(true),
+		m_Initialized(false),
 		m_RenderTarget(0),
 		m_VertexDeclaration(0),
 		m_Material(0),
@@ -101,6 +102,19 @@ namespace K15_Engine { namespace Rendering {
 	RendererBase::~RendererBase()
 	{
 
+	}
+	/*********************************************************************************/
+	bool RendererBase::initialize()
+	{
+		m_Initialized = _initialize();
+
+		return m_Initialized;
+	}
+	/*********************************************************************************/
+	void RendererBase::shutdown()
+	{
+		_shutdown();
+		m_Initialized = false;
 	}
 	/*********************************************************************************/
 	bool RendererBase::setRenderWindow(RenderWindowBase* p_RenderWindow)

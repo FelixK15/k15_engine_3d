@@ -359,6 +359,7 @@ namespace K15_Engine
 #	include <set>
 #	include <array>
 #	include <sys\stat.h>
+#	include <cerrno>
 
 #	define DynamicArray(T)	std::vector<T>
 #	define HashMap(K,V)		std::map<K,V>
@@ -532,7 +533,11 @@ namespace K15_Engine
 				debugMessage__ += "\n\n"; \
 				debugMessage__ += "The expression \""; \
 				debugMessage__ += #condition; \
-				debugMessage__ += "\" failed.\n"; \
+				debugMessage__ += "\" failed. File:\""; \
+				debugMessage__ += __FILE__; \
+				debugMessage__ += "\" (%d) Function:\""; \
+				debugMessage__ += __FUNCTION__; \
+				debugMessage__ += "\"."; \
 				__android_log_assert(#condition,"K15_Engine",debugMessage__.c_str()); \
 			}
 	#endif //K15_OS_WINDOWS

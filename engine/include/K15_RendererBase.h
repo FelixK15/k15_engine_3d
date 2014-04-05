@@ -136,6 +136,9 @@ namespace K15_Engine { namespace Rendering {
 		RendererBase();
 		virtual ~RendererBase();
 
+		bool initialize();
+		void shutdown();
+
 		bool draw(RenderOperation* p_Rop);
 
 		bool setRenderWindow(RenderWindowBase* p_RenderWindow);
@@ -212,15 +215,16 @@ namespace K15_Engine { namespace Rendering {
 		INLINE const String& getLastError();
 		INLINE void setLastError(const String& p_String);
 
+		INLINE bool isInitialized() const;
+
 		virtual void beginFrame() = 0;
 		virtual void endFrame() = 0;
-
-		virtual bool initialize() = 0;
-		virtual void shutdown() = 0;
 
 		virtual void onResolutionChanged(const Resolution& p_Resolution){};
 
 	protected:
+		virtual bool _initialize() = 0;
+		virtual void _shutdown() = 0;
 		virtual void _setFillMode(Enum p_FillMode){}
 		virtual void _setAlphaState(const AlphaState& p_AlphaState){}
 		virtual void _setDepthState(const DepthState& p_DepthState){}
@@ -266,6 +270,7 @@ namespace K15_Engine { namespace Rendering {
 		Enum m_StencilBufferFormat;
 		bool m_LightningEnabled;
 		bool m_BackFaceCullingEnabled;
+		bool m_Initialized;
 	};// end of RendererBase class definition
 #include "K15_RendererBase.inl"
 }}//end of K15_Engine::Rendering class

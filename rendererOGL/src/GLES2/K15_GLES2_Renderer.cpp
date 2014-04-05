@@ -95,7 +95,7 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 
 	}
 	/*********************************************************************************/
-	bool Renderer::initialize()
+	bool Renderer::_initialize()
 	{
 		K15_ASSERT(m_RenderWindow,
 			"Render window has not been set. Can not initialize renderer without having a render window.");
@@ -107,12 +107,12 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 
 		if(eglInitialize(m_Display,&ver_Major,&ver_Minor) == EGL_FALSE)
 		{
-			_LogError("Could not initialize GLES Display.");
+			_LogError("Could not initialize EGL Display.");
 			return false;
 		}
 
-		_LogSuccess("Successfully initialize GLES Display.");
-		_LogSuccess("GLES Version: %i.%i",ver_Major,ver_Minor);
+		_LogSuccess("Successfully initialize EGL Display.");
+		_LogSuccess("EGL Version: %i.%i",ver_Major,ver_Minor);
 
 		EGLConfig config = 0;
 		EGLint configCount = 0;
@@ -128,9 +128,11 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 
 		if(eglChooseConfig(m_Display,attribs,&config,1,&configCount) == EGL_FALSE)
 		{
-			_LogError("Could not get GLES config.");
+			_LogError("Could not get EGL config.");
 			return false;
 		}
+		
+		_LogSuccess("EGL config retrieved.");
 
 		if(eglGetConfigAttrib(m_Display,config,EGL_NATIVE_VISUAL_ID,&format) == EGL_FALSE)
 		{
@@ -138,27 +140,44 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 			return false;
 		}
 
+		_LogSuccess("Retrieved 'EGL_NATIVE_VISUAL_ID'. (%i)",format);
+
 #if defined K15_OS_ANDROID
 		RenderWindow_Android* window = static_cast<RenderWindow_Android*>(m_RenderWindow);
 		ANativeWindow_setBuffersGeometry(window->getNativeWindow(),0,0,format);
 		if((m_Surface = eglCreateWindowSurface(m_Display,config,window->getNativeWindow(),0)) == 0)
 #endif //K15_OS_ANDROID
 		{
-			_LogError("Could not create GLES window surface.");
+			_LogError("Could not create EGL window surface.");
 			return false;
 		}
 
-		if((m_Context = eglCreateContext(m_Display,config,0,0)) == 0)
+		_LogSuccess("Created EGL window surface.");
+
+		const EGLint contextAttribList[] = {
+			EGL_CONTEXT_CLIENT_VERSION, 2,
+			EGL_NONE
+		};
+
+		if((m_Context = eglCreateContext(m_Display,config,0,contextAttribList)) == 0)
 		{
 			_LogError("Could not create GLES context.");
 			return false;
 		}
+
+		_LogSuccess("Created GLES context.");
 
 		if(eglMakeCurrent(m_Display,m_Surface,m_Surface,m_Context) == EGL_FALSE)
 		{
 			_LogError("Could not set GLES context as current context.");
 			return false;
 		}
+
+		_LogSuccess("Set GLES context as current context.");
+
+		const unsigned char* glesVersion = glGetString(GL_VERSION);
+
+		_LogSuccess("GLES Version: %s",glesVersion);
 
 		GLint width,height;
 		eglQuerySurface(m_Display,m_Surface,EGL_WIDTH,&width);
@@ -168,12 +187,14 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 		resolution.width = width;
 		resolution.height = height;
 
+		_LogNormal("Setting resolution to %ix%i...",width,height);
 		window->setResolution(resolution,false);
+		_LogSuccess("Successfully set resolution to %ix%i...",width,height);
 
 		return true;
 	}
 	/*********************************************************************************/
-	void Renderer::shutdown()
+	void Renderer::_shutdown()
 	{
 		if(m_Display)
 		{

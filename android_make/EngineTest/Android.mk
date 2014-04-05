@@ -5,8 +5,6 @@ GLES2_RENDERER_SOURCE	:= $(LOCAL_PATH)/../../rendererOGL
 
 include $(CLEAR_VARS) 
 
-#APP_OPTIM 				:= debug 
-
 LOCAL_CFLAGS			:= -std=gnu++11 -D DEBUG
 
 LOCAL_MODULE 			:= EngineTest

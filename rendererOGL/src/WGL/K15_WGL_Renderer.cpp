@@ -146,7 +146,7 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 		SwapBuffers(m_DeviceContext);
 	}
 	/*********************************************************************************/
-	bool Renderer::initialize()
+	bool Renderer::_initialize()
 	{
 		K15_ASSERT(m_RenderWindow,
 			"Render window has not been set. Can not initialize renderer without having a render window.");
@@ -276,7 +276,7 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 		return m_LastError.empty();
 	}
 	/*********************************************************************************/
-	void Renderer::shutdown()
+	void Renderer::_shutdown()
 	{
 		if(m_ProgramPipeline != 0)
 		{

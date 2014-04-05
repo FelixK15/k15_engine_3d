@@ -102,7 +102,7 @@ namespace K15_Engine { namespace Core {
 		m_Hash = p_Other.m_Hash;
 
 #ifndef K15_NO_STRINGS
-		m_String = p_Other.m_String;
+		//m_String = p_Other.m_String;
 #endif
 
 		return *this;

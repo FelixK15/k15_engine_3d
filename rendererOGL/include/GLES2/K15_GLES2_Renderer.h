@@ -53,8 +53,8 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 		virtual void beginFrame() OVERRIDE;
 		virtual void endFrame() OVERRIDE;
 
-		virtual bool initialize() OVERRIDE;
-		virtual void shutdown() OVERRIDE;
+		virtual bool _initialize() OVERRIDE;
+		virtual void _shutdown() OVERRIDE;
 
 		virtual void onResolutionChanged(const Resolution& p_Resolution) OVERRIDE;
 

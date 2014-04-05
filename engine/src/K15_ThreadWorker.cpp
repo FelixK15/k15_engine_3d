@@ -75,9 +75,12 @@ namespace K15_Engine { namespace Core {
 	{
 		Running = true;
 		uint8 counter = 0;
+
 		while(counter++ < HardwareThreads)
 		{
+			_LogNormal("Creating %i/%i thread...",counter,HardwareThreads);
 			Thread* thread = K15_NEW_T(Allocators[AC_THREADING],Thread) Thread(execute,(void*)0);
+			_LogNormal("Successfully created %i/%i thread",counter,HardwareThreads);
 
 			m_Threads.push_front(thread);
 		}

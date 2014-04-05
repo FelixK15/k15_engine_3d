@@ -133,3 +133,8 @@ void RendererBase::setLastError(const String& p_String)
 	m_LastError = p_String;
 }
 /*********************************************************************************/
+bool RendererBase::isInitialized() const
+{
+	return m_Initialized;
+}
+/*********************************************************************************/

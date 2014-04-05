@@ -59,14 +59,13 @@ namespace K15_Engine { namespace Core {
 				{
 					MouseActionArguments args;
 					args.button = InputDevices::Mouse::BTN_LEFT;
-					args.xPx = 0;//AMotionEvent_getX(p_Event,0);
-					args.yPx = 0;//AMotionEvent_getY(p_Event,0);
+					args.xPx = AMotionEvent_getX(p_Event,0);
+					args.yPx = AMotionEvent_getY(p_Event,0);
 					_LogDebug("window->getResolution() x:%u y%u",window->getResolution().width,window->getResolution().height);
-					args.xNDC = args.xPx / window->getResolution().width;
-					args.yNDC = args.yPx / window->getResolution().height;
-					_LogDebug("Before motion event creation");
+					args.xNDC = window->getResolution().width != 0 ? args.xPx / window->getResolution().width : 0.0;
+					args.yNDC = window->getResolution().height != 0 ? args.yPx / window->getResolution().height : 0.0;
+
 					motionEvent = K15_NEW GameEvent(eventAction == AMOTION_EVENT_ACTION_DOWN ? _EN(onMousePressed) : _EN(onMouseReleased),(void*)&args,sizeof(MouseActionArguments));
-					_LogDebug("After motion event creation");
 				}
 
 				if(motionEvent)
@@ -158,6 +157,8 @@ namespace K15_Engine { namespace Core {
 			_LogDebug("APP_CMD_INIT_WINDOW received.");
 			RenderWindowType* window = static_cast<RenderWindowType*>(app->getRenderWindow());
 			window->setNativeWindow(p_App->window);
+
+			K15_ASSERT(app->getRenderer()->initialize(),"Could not initialize renderer");
 		}
 		else
 		{
@@ -179,7 +180,6 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void* ApplicationOSLayer_Android::os_malloc(uint32 p_Size)
 	{
-		_LogDebug("os_malloc");
 		return malloc(p_Size);
 	}
 	/*********************************************************************************/
@@ -233,6 +233,11 @@ namespace K15_Engine { namespace Core {
 		m_App->onInputEvent = AndroidCallback_OnInput;
 		m_App->onAppCmd = AndroidCallback_OnCmd;
 		
+		String gameRoot = m_App->activity->externalDataPath;
+		gameRoot += "/";
+
+		g_Application->setGameRootDir(gameRoot);
+
 		return true;
 	}
 	/*********************************************************************************/
@@ -273,8 +278,9 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void ApplicationOSLayer_Android::sleep(double p_TimeInSeconds) const
 	{
-		unsigned long milliseconds = p_TimeInSeconds * 1000;
-		::usleep(milliseconds);
+		unsigned long microseconds = p_TimeInSeconds * 1000000;
+		_LogDebug("Sleeping for %d (%f.3 seconds) microseconds",microseconds,p_TimeInSeconds);
+		::usleep(microseconds);
 	}
 	/*********************************************************************************/
 	void ApplicationOSLayer_Android::onPreTick()
