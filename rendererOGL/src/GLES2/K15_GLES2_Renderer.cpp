@@ -189,7 +189,6 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 
 		_LogNormal("Setting resolution to %ix%i...",width,height);
 		window->setResolution(resolution,false);
-		_LogSuccess("Successfully set resolution to %ix%i...",width,height);
 
 		return true;
 	}

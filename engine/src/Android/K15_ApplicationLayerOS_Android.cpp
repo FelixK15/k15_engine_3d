@@ -61,7 +61,7 @@ namespace K15_Engine { namespace Core {
 					args.button = InputDevices::Mouse::BTN_LEFT;
 					args.xPx = AMotionEvent_getX(p_Event,0);
 					args.yPx = AMotionEvent_getY(p_Event,0);
-					_LogDebug("window->getResolution() x:%u y%u",window->getResolution().width,window->getResolution().height);
+
 					args.xNDC = window->getResolution().width != 0 ? args.xPx / window->getResolution().width : 0.0;
 					args.yNDC = window->getResolution().height != 0 ? args.yPx / window->getResolution().height : 0.0;
 

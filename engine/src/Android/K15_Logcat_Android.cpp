@@ -39,7 +39,7 @@ namespace K15_Engine { namespace Core {
 
 		if(p_PriorityFlag == LogManager::LP_NORMAL)
 		{
-			prio = ANDROID_LOG_VERBOSE;
+			prio = ANDROID_LOG_DEBUG;
 		}
 		else if(p_PriorityFlag == LogManager::LP_SUCCESS)
 		{
@@ -55,7 +55,7 @@ namespace K15_Engine { namespace Core {
 		}
 		else if(p_PriorityFlag == LogManager::LP_DEBUG)
 		{
-			prio = ANDROID_LOG_DEBUG;
+			prio = ANDROID_LOG_VERBOSE;
 		}
 
 		__android_log_write(prio,"K15_Engine",p_Message.c_str());
