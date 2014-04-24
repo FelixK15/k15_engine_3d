@@ -61,6 +61,15 @@
     <Filter Include="Core\src\Linux">
       <UniqueIdentifier>{84b059c8-3133-4883-bfdb-a8b725dd3ef7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ResourceSystem">
+      <UniqueIdentifier>{6e1fc142-dd20-4f45-b045-6058c3df5972}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ResourceSystem\include">
+      <UniqueIdentifier>{b3384ad2-155b-4042-9770-6e2162864943}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ResourceSystem\src">
+      <UniqueIdentifier>{2447d01e-854e-4b12-84e7-4b35904908bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\engine\include\K15_Application.h">
@@ -159,18 +168,6 @@
     <ClInclude Include="..\..\engine\include\K15_ProfilingManager.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ResourceManager.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ResourceBase.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ResourceFileBase.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ResourceHandle.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_HashedString.h">
       <Filter>Core\include</Filter>
     </ClInclude>
@@ -243,19 +240,10 @@
     <ClInclude Include="..\..\engine\include\K15_PoolAllocator.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Font.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_FontManager.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_MemoryProfilingTask.h">
       <Filter>Core\include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_NetworkManager.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_TrueTypeFont.h">
       <Filter>Core\include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_IniFileParser.h">
@@ -390,6 +378,39 @@
     <ClInclude Include="..\..\engine\include\Android\K15_Logcat_Android.h">
       <Filter>Core\include\Android</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_GpuProgramBatch.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Image.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ResourceBase.h">
+      <Filter>ResourceSystem\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ResourceHandle.h">
+      <Filter>ResourceSystem\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ResourceImporterBase.h">
+      <Filter>ResourceSystem\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ResourceImporterBitmap.h">
+      <Filter>ResourceSystem\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ResourceManager.h">
+      <Filter>ResourceSystem\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_TiffResourceImporter.h">
+      <Filter>ResourceSystem\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ResourceArchiveBase.h">
+      <Filter>ResourceSystem\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ZipResourceArchive.h">
+      <Filter>ResourceSystem\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_GpuProgramAutoParameter.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -455,12 +476,6 @@
     <ClCompile Include="..\..\engine\src\K15_ProfilingNode.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_ResourceManager.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_ResourceBase.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_HashedString.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
@@ -492,12 +507,6 @@
       <Filter>Core\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_BlockAllocator.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_Font.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_FontManager.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_MemoryProfilingTask.cpp">
@@ -629,9 +638,6 @@
     <ClCompile Include="..\..\engine\src\K15_Language.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_TrueTypeFont.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\engine\src\Win32\K15_TextConsoleLog_Win32.cpp">
       <Filter>Core\src\Win32</Filter>
     </ClCompile>
@@ -649,6 +655,36 @@
     </ClCompile>
     <ClCompile Include="..\..\engine\src\Win32\K15_Mouse_Win32.cpp">
       <Filter>Core\src\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_GpuProgramBatch.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_Image.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ResourceBase.cpp">
+      <Filter>ResourceSystem\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ResourceImporterBase.cpp">
+      <Filter>ResourceSystem\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ResourceImporterBitmap.cpp">
+      <Filter>ResourceSystem\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ResourceManager.cpp">
+      <Filter>ResourceSystem\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ResourceArchiveBase.cpp">
+      <Filter>ResourceSystem\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ZipResourceArchive.cpp">
+      <Filter>ResourceSystem\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_TiffResourceImporter.cpp">
+      <Filter>ResourceSystem\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_GpuProgramAutoParameter.cpp">
+      <Filter>Rendering\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -692,12 +728,6 @@
     <None Include="..\..\engine\include\K15_ProfilingManager.inl">
       <Filter>Core\include</Filter>
     </None>
-    <None Include="..\..\engine\include\K15_ResourceBase.inl">
-      <Filter>Core\include</Filter>
-    </None>
-    <None Include="..\..\engine\include\K15_ResourceManager.inl">
-      <Filter>Core\include</Filter>
-    </None>
     <None Include="..\..\engine\include\K15_HashedString.inl">
       <Filter>Core\include</Filter>
     </None>
@@ -731,13 +761,7 @@
     <None Include="..\..\engine\include\K15_Node.inl">
       <Filter>Core\include</Filter>
     </None>
-    <None Include="..\..\engine\include\K15_ResourceHandle.inl">
-      <Filter>Core\include</Filter>
-    </None>
     <None Include="..\..\engine\include\K15_Functor.inl">
-      <Filter>Core\include</Filter>
-    </None>
-    <None Include="..\..\engine\include\K15_FontManager.inl">
       <Filter>Core\include</Filter>
     </None>
     <None Include="..\..\engine\include\K15_PoolAllocator.inl">
@@ -826,6 +850,27 @@
     </None>
     <None Include="..\..\engine\include\Android\K15_RenderWindow_Android.inl">
       <Filter>Core\include\Android</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_GpuProgramBatch.inl">
+      <Filter>Rendering\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_Image.inl">
+      <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_ResourceBase.inl">
+      <Filter>ResourceSystem\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_ResourceHandle.inl">
+      <Filter>ResourceSystem\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_ResourceImporterBase.inl">
+      <Filter>ResourceSystem\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_ResourceManager.inl">
+      <Filter>ResourceSystem\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_ResourceArchiveBase.inl">
+      <Filter>ResourceSystem\include</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -36,7 +36,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	Object::Object(const String& p_Name)
 		: m_References(0),
-		  m_Name(p_Name.c_str())
+		  m_Name(p_Name)
 	{
 
 	}

@@ -22,33 +22,41 @@
 #include "K15_Rtti.h"
 
 namespace K15_Engine { namespace Core { 
-  /*********************************************************************************/
-  Rtti::Rtti(const TypeName& p_Name,const Rtti *p_BaseType)
-  {
-    m_Name = p_Name;
-    m_BaseType = p_BaseType;
-  }
-  /*********************************************************************************/
-  Rtti::~Rtti()
-  {
+	/*********************************************************************************/
+	Rtti::Rtti()
+		: m_Name(),
+		m_BaseType(0)
+	{
 
-  }
-  /*********************************************************************************/
-  bool Rtti::isDerivedFrom(const Rtti &p_OtherType) const
-  {
-    bool isDerived = false;
+	}
+	/*********************************************************************************/
+	Rtti::Rtti(const TypeName& p_Name,const Rtti *p_BaseType)
+		: m_Name(p_Name),
+		m_BaseType(p_BaseType)
+	{
 
-    const Rtti *search = this;
-    while(search){
-      if(search == &p_OtherType){
-        isDerived = true;
-        break;
-      }
+	}
+	/*********************************************************************************/
+	Rtti::~Rtti()
+	{
 
-      search = search->m_BaseType;
-    }
+	}
+	/*********************************************************************************/
+	bool Rtti::isDerivedFrom(const Rtti &p_OtherType) const
+	{
+		bool isDerived = false;
 
-    return isDerived;
-  }
-  /*********************************************************************************/
+		const Rtti *search = this;
+		while(search){
+			if(search == &p_OtherType){
+				isDerived = true;
+				break;
+			}
+
+			search = search->m_BaseType;
+		}
+
+		return isDerived;
+	}
+	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace

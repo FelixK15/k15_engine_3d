@@ -71,7 +71,6 @@ namespace K15_Engine
 		class Application;
 		class ApplicationOSLayer;
 		class ApplicationModule;
-		struct ApplicationModuleDescription;
 		class TaskManager;
 		class TaskBase;
 		class GameTime;
@@ -106,34 +105,43 @@ namespace K15_Engine
 		class InputTriggerBase;
 		class PhysicsTask;
 		class ResourceBase;
-		class ResourceFileBase;
+		class ResourceArchiveBase;
+		class ResourceImporterBase;
+		class ResourceImporterBitmap;
 		class EventTask;
 		class Node;
-		struct RawData;
+		class Image;
 		class ProfilingNode;
 		class ProfilingManager;
 		class GameObject;
 		class GameObjectComponentBase;
 		class EventManager;
 		class RenderWindowBase;
-		struct Resolution;
-		template<class ReturnType>
-		class Functor0;
 		class MemoryProfiler;
 		class MemoryProfilingTask;
 		class MemoryPools;
-		struct MemoryHeader;
-		struct MemoryBlock;
 		class FontManager;
 		class Font;
 		class TrueTypeFont;
 		class StackAllocator;
+
+		template<class T>
+		class Singleton;
+
+		template<class ReturnType>
+		class Functor0;
 
 		template<unsigned __int16,unsigned __int32>
 		class PageAllocator;
 
 		template<unsigned int Category>
 		class AllocatedObject;
+
+		struct RawData;
+		struct MemoryHeader;
+		struct MemoryBlock;
+		struct ApplicationModuleDescription;
+		struct Resolution;
 	} // end of K15_Engine::Core namespace
 	/*********************************************************************************/
 	namespace Rendering
@@ -145,6 +153,8 @@ namespace K15_Engine
 		class RendererBase;
 		class GpuProgram;
 		class GpuProgramImplBase;
+		class GpuProgramBatch;
+		class GpuProgramBatchImplBase;
 		class GpuProgramParameter;
 		class GpuBuffer;
 		class GpuBufferImplBase;
@@ -358,6 +368,7 @@ namespace K15_Engine
 #	include <vector>
 #	include <set>
 #	include <array>
+#	include <algorithm>
 #	include <sys\stat.h>
 #	include <cerrno>
 
@@ -366,7 +377,7 @@ namespace K15_Engine
 #	define List(T)			std::list<T>
 #	define Stack(T)			std::stack<T>
 #	define Deque(T)			std::deque<T>
-//#	define Set(T)			std::set<T>
+#	define UniqueSet(T)		std::set<T>
 #	define Pair(K,V)		std::pair<K,V>
 #	define FixedArray(T,C)	std::array<T,C>
 	
@@ -460,8 +471,9 @@ namespace K15_Engine
 	struct ASensorEventQueue;
 	struct ASensor;
 	struct ASensorManager;
-
-#	include <android_native_app_glue.h>
+#	include "android_native_app_glue.h"
+#	include <android\sensor.h>
+#	include <android\input.h>
 #	include <android\log.h>
 #	include <dlfcn.h>
 #	include <jni.h>
@@ -502,7 +514,7 @@ namespace K15_Engine
 
 #define K15_MALLOC(size) ApplicationOSLayerType::os_malloc(size)
 #define K15_FREE(ptr) ApplicationOSLayerType::os_free(ptr)
-
+#define K15_MEMCPY(destination,source,size) memcpy(destination,source,size)
 
 # define K15_PLACEMENT_NEW new(ptr)
 
@@ -534,8 +546,10 @@ namespace K15_Engine
 				debugMessage__ += "The expression \""; \
 				debugMessage__ += #condition; \
 				debugMessage__ += "\" failed. File:\""; \
-				debugMessage__ += __FILE__; \
-				debugMessage__ += "\" (%d) Function:\""; \
+				debugMessage__ += __BASE_FILE__; \
+				debugMessage__ += "\" ("; \
+				debugMessage__ += __LINE__; \
+				debugMessage__ += ") Function:\""; \
 				debugMessage__ += __FUNCTION__; \
 				debugMessage__ += "\"."; \
 				__android_log_assert(#condition,"K15_Engine",debugMessage__.c_str()); \
@@ -563,7 +577,7 @@ typedef std::set<String> StringSet;
 #define g_ProfileManager K15_Engine::Core::ProfilingManager::getInstance()
 #define g_ThreadWorker K15_Engine::Core::ThreadWorker::getInstance()
 #define g_MaterialManager K15_Engine::Rendering::MaterialManager::getInstance()
-#define g_VertexManager K15_Engine::Rendering::VertexManager::getInstance()
+#define g_ResourceManager K15_Engine::Core::ResourceManager::getInstance()
 
 typedef unsigned char byte;
 
@@ -630,6 +644,10 @@ typedef K15_Engine::Core::HashedString ResourceName;
 #define GIGABYTE	1073741824
 #define MEGABYTE	1048576
 #define KILOBYTE	1024
+
+#define size_gigabyte(s) (uint32)(s*GIGABYTE)
+#define size_megabyte(s) (uint32)(s*MEGABYTE)
+#define size_kilobyte(s) (uint32)(s*KILOBYTE)
 
 #define K15_PTR(T) typedef Pointer<T> T##Ptr;
 

@@ -19,28 +19,28 @@
 
 #include "K15_PrecompiledHeader.h"
 
-#include "K15_ZipResourceFile.h"
+#include "K15_ZipResourceArchive.h"
 #include "K15_RawData.h"
 
 #include "unzip.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	ZipResourceFile::ZipResourceFile(const String& p_ZipFile)
+	ZipResourceArchive::ZipResourceArchive(const String& p_ZipFile)
 		: ResourceArchiveBase(p_ZipFile),
 		m_ZipFile(0)
 	{
 
 	}
 	/*********************************************************************************/
-	ZipResourceFile::~ZipResourceFile()
+	ZipResourceArchive::~ZipResourceArchive()
 	{
 
 	}
 	/*********************************************************************************/
-	bool ZipResourceFile::getResource(const String& p_ResourceName, RawData* p_Data)
+	bool ZipResourceArchive::getResource(const String& p_ResourceName, RawData* p_Data)
 	{
-		unzLocateFile(m_ZipFile, p_ResourceName.c_str(),TRUE);
+		unzLocateFile(m_ZipFile, p_ResourceName.c_str(),1);
 
 		//try to open file in archive
 		if(unzOpenCurrentFile(m_ZipFile) != UNZ_OK)
@@ -66,12 +66,12 @@ namespace K15_Engine { namespace Core {
 		return true;
 	}
 	/*********************************************************************************/
-	bool ZipResourceFile::hasResource(const String& p_ResourceName)
+	bool ZipResourceArchive::hasResource(const String& p_ResourceName)
 	{
-		return unzLocateFile(m_ZipFile,p_ResourceName.c_str(),TRUE) == UNZ_OK;
+		return unzLocateFile(m_ZipFile,p_ResourceName.c_str(),1) == UNZ_OK;
 	}
 	/*********************************************************************************/
-	bool ZipResourceFile::_open()
+	bool ZipResourceArchive::_open()
 	{
 		m_ZipFile = unzOpen(getFileName().c_str());
 		if(!m_ZipFile)
@@ -83,7 +83,7 @@ namespace K15_Engine { namespace Core {
 		return true;
 	}
 	/*********************************************************************************/
-	bool ZipResourceFile::_close()
+	bool ZipResourceArchive::_close()
 	{
 		if(unzClose(m_ZipFile) != UNZ_OK)
 		{

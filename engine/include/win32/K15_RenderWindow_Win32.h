@@ -45,9 +45,9 @@ namespace K15_Engine { namespace Core {
 		virtual void setResolution(const Resolution& p_Resolution, bool p_ForceChange = false); 
 		virtual void setIsFullscreen(bool p_Fullscreen);
 
-		HDC getDeviceContext();
-		HWND getHandleWindow();
-		HINSTANCE getHandleInstance();
+		HDC getDeviceContext() const;
+		HWND getHandleWindow() const;
+		HINSTANCE getHandleInstance() const;
 	private:
 		HDC m_DeviceContext;
 		HWND m_HandleWindow;

@@ -58,7 +58,7 @@ ResourceManager* ResourceBase::getResourceManager() const
 	return m_ResourceManager;
 }
 /*********************************************************************************/
-ResourceFileBase* ResourceBase::getResourceFile() const
+ResourceArchiveBase* ResourceBase::getResourceFile() const
 {
 	return m_ResourceFile;
 }
@@ -68,7 +68,7 @@ void ResourceBase::setResourceManager(ResourceManager* p_ResourceManager)
 	m_ResourceManager = p_ResourceManager;
 }
 /*********************************************************************************/
-void ResourceBase::setResourceFile(ResourceFileBase* p_ResourceFile)
+void ResourceBase::setResourceFile(ResourceArchiveBase* p_ResourceFile)
 {
 	m_ResourceFile = p_ResourceFile;
 }

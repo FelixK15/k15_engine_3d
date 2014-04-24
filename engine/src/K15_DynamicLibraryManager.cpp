@@ -61,13 +61,14 @@ namespace K15_Engine { namespace Core {
 	DynamicLibraryBase *DynamicLibraryManager::load(const String& p_FileName)
 	{
 		DynamicLibraryMap::iterator iter = m_LoadedLibs.find(p_FileName);
-
+	
 		if (iter != m_LoadedLibs.end())
 		{
 			_LogNormal("Library \"%s\" already loaded. Returning cached libray.",p_FileName.c_str());
 			return iter->second;
 		}
 
+		
 		DynamicLibraryBase *library = K15_NEW DynamicLibraryType(p_FileName);
 
 		if(!library->load())
@@ -77,6 +78,8 @@ namespace K15_Engine { namespace Core {
 			K15_DELETE library;
 			return 0;
 		}
+
+		_LogSuccess("Successfully load library \"%s\".",p_FileName.c_str());
 
 		m_LoadedLibs.insert(Pair(String,DynamicLibraryBase*)(p_FileName,library));
 

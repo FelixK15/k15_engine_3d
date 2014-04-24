@@ -340,17 +340,17 @@ namespace K15_Engine { namespace Core {
 		setResolution(m_CurrentResolution,true);
 	}
 	/*********************************************************************************/
-	HDC RenderWindow_Win32::getDeviceContext()
+	HDC RenderWindow_Win32::getDeviceContext() const
 	{
 		return m_DeviceContext;
 	}
 	/*********************************************************************************/
-	HWND RenderWindow_Win32::getHandleWindow()
+	HWND RenderWindow_Win32::getHandleWindow() const
 	{
 		return m_HandleWindow;
 	}
 	/*********************************************************************************/
-	HINSTANCE RenderWindow_Win32::getHandleInstance()
+	HINSTANCE RenderWindow_Win32::getHandleInstance() const
 	{
 		return m_Instance;
 	}

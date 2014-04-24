@@ -108,6 +108,11 @@ GpuProgram* RendererBase::getBoundGpuProgram(Enum p_GpuProgramType) const
 	return m_GpuPrograms[p_GpuProgramType];
 }
 /*********************************************************************************/
+GpuProgramBatch* RendererBase::getBoundGpuProgramBatch() const
+{
+	return m_GpuProgramBatch;
+}
+/*********************************************************************************/
 VertexDeclaration* RendererBase::getVertexDeclaration() const
 {
   return m_VertexDeclaration;

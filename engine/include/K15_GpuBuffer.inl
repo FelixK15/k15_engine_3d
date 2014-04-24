@@ -78,7 +78,7 @@ uint32 GpuBuffer::getUsedSize() const
   return m_UsedSize;
 }
 /*********************************************************************************/
-const GpuBufferImplBase* GpuBuffer::getImpl() const
+GpuBufferImplBase* GpuBuffer::getImpl()
 {
 	return m_Impl;
 }

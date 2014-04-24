@@ -18,6 +18,7 @@
  */
 
 #include "K15_SampleApplicationModule.h"
+#include "K15_LogManager.h"
 
 #include "K15_InputManager.h"
 #include "K15_Keyboard.h"
@@ -28,6 +29,10 @@
 #include "K15_VertexDeclaration.h"
 #include "K15_RenderTask.h"
 #include "K15_RenderSampleProcess.h"
+
+#include "K15_ResourceManager.h"
+#include "K15_ZipResourceArchive.h"
+#include "K15_TiffResourceImporter.h"
 
 namespace K15_Engine { namespace Plugins { namespace RenderTest {
 	/*********************************************************************************/
@@ -41,9 +46,12 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 
 	}
 	/*********************************************************************************/
-	void RenderTestApplicationModule::onInitialize()
+	void RenderTestApplicationModule::onRendererInitialized()
 	{
+		g_ResourceManager->addResourceFile(K15_NEW ZipResourceArchive(g_Application->getGameRootDir() + "resources.zip"));
+		g_ResourceManager->addResourceImporter(K15_NEW TiffResourceImporter());
 		g_Application->getRenderTask()->setRenderProcess(K15_NEW K15_Engine::Plugins::RenderTest::RenderSampleProcess());
+		//_dumpMemoryStatistics();
 	}
 	/*********************************************************************************/
 	void RenderTestApplicationModule::onPreTick()
@@ -134,10 +142,10 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 			totalSizeMB = (float)currentAllocator->getSize() / (float)MEGABYTE;
 			usedSizeMB = (float)(currentAllocator->getSize() - currentAllocator->getFreeSize()) / (float)MEGABYTE;
 			percentage = (usedSizeMB / totalSizeMB) * 100;
-			printf("Dumping Allocator \"%s\":\nTotal size:\t%.2fMB\nMemory used:\t%.2fMB\nPercentage:\t%.4f%%\nParent:\t\t\"%s\"\n",
+			_LogDebug("Dumping Allocator \"%s\":\nTotal size:\t%.2fMB\nMemory used:\t%.2fMB\nPercentage:\t%.4f%%\nParent:\t\t\"%s\"\n",
 				currentAllocator->getName().c_str(),totalSizeMB,usedSizeMB,percentage,
 				currentAllocator->getParentAllocator() ? currentAllocator->getParentAllocator()->getName().c_str() : "----");
-			printf("===========================================================\n");
+			_LogDebug("===========================================================\n");
 		}
 	}
 	/*********************************************************************************/

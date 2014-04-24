@@ -21,6 +21,6 @@
 void TaskManager::addTask(TaskBase* p_Task)
 {
 	m_Tasks.push_back(p_Task);
-	m_Tasks.sort();
+	std::sort(m_Tasks.begin(),m_Tasks.end());
 }
 /*********************************************************************************/

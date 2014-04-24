@@ -22,6 +22,7 @@
 
 #include "K15_GpuProgramParameter.h"
 #include "K15_GpuProgram.h"
+#include "K15_GpuProgramBatch.h"
 #include "K15_GpuBuffer.h"
 
 #include "K15_VertexBuffer.h"
@@ -472,9 +473,24 @@ namespace K15_Engine { namespace Rendering {
 			pass = 	m_Material->getPass(i);
 			if(pass->isEnabled())
 			{
-				if(!bindGpuProgram(pass->getProgram(GpuProgram::PS_VERTEX),GpuProgram::PS_VERTEX) ||
-					!bindGpuProgram(pass->getProgram(GpuProgram::PS_FRAGMENT),GpuProgram::PS_FRAGMENT) ||
-					!setCullingMode(pass->getCullingMode()) ||
+				//if the pass has a program batch, bind it first - otherwise use separate programs
+				if(pass->getProgramBatch())
+				{
+					if(!bindGpuProgramBatch(pass->getProgramBatch())) 
+					{
+						continue;
+					}
+				}
+				else
+				{
+					if(!bindGpuProgram(pass->getProgram(GpuProgram::PS_VERTEX),GpuProgram::PS_VERTEX) ||
+						!bindGpuProgram(pass->getProgram(GpuProgram::PS_FRAGMENT),GpuProgram::PS_FRAGMENT)) 
+					{
+						continue;
+					}
+				}
+
+				if(	!setCullingMode(pass->getCullingMode()) ||
 					!setFillMode(pass->getFillMode()) ||
 					!setAlphaState(pass->getAlphaState()) ||
 					!setDepthState(pass->getDepthState()))
@@ -483,6 +499,15 @@ namespace K15_Engine { namespace Rendering {
 				}
 
 				setLightningEnabled(pass->isLightningEnabled());
+
+				//bind textures
+				if( !bindTexture(pass->getDiffuseMap(),Texture::TT_2D,Texture::TS_SLOT1) ||
+					!bindTextureSampler(pass->getDiffuseSampler(),Texture::TS_SLOT1))
+				{
+					continue;
+				}
+
+				updateGpuProgramParameter();
 
 				if(p_Rop->indexBuffer != 0)
 				{
@@ -517,10 +542,9 @@ namespace K15_Engine { namespace Rendering {
 			if(pass->isEnabled())
 			{
 				K15_ASSERT(pass,StringUtil::format("%u. pass of material %s is NULL.",i,p_Material->getName().c_str()));
-				K15_ASSERT(pass->getProgram(GpuProgram::PS_VERTEX),StringUtil::format("Pass %u (%s) from material %s has no vertex program.",
-					i,pass->getName().c_str(),p_Material->getName().c_str()));
 
-				K15_ASSERT(pass->getProgram(GpuProgram::PS_FRAGMENT),StringUtil::format("Pass %u (%s) from material %s has no fragment program.",
+				K15_ASSERT(pass->getProgramBatch() || (pass->getProgram(GpuProgram::PS_VERTEX) && pass->getProgram(GpuProgram::PS_FRAGMENT)),
+					StringUtil::format("Pass %u (%s) from material %s has neither a gpu program batch nor separate gpu programs attached.",
 					i,pass->getName().c_str(),p_Material->getName().c_str()));
 			}
 		}
@@ -612,7 +636,11 @@ namespace K15_Engine { namespace Rendering {
 
 		if(p_Texture != m_BoundTextures[p_Slot])
 		{
-			m_BoundTextures[p_Slot]->setSlot(Texture::TS_NO_SLOT);
+			if(m_BoundTextures[p_Slot])
+			{
+				m_BoundTextures[p_Slot]->setSlot(Texture::TS_NO_SLOT);
+			}
+			
 			m_BoundTextures[p_Slot] = p_Texture;
 			p_Texture->setSlot(p_Slot);
 			_bindTexture(p_Texture,p_Type);
@@ -628,7 +656,7 @@ namespace K15_Engine { namespace Rendering {
 			return true;
 		}
 
-		return false;
+		return true;
 	}
 	/*********************************************************************************/
 	bool RendererBase::bindTextureSampler(TextureSampler* p_Sampler, Enum p_Slot)
@@ -650,7 +678,48 @@ namespace K15_Engine { namespace Rendering {
 			return true;
 		}
 
-		return false;
+		return true;
 	}	
+	/*********************************************************************************/
+	bool RendererBase::bindGpuProgramBatch(GpuProgramBatch* p_GpuProgramBatch)
+	{
+		K15_ASSERT(p_GpuProgramBatch,"GpuProgramBatch is NULL.");
+
+		if(m_GpuProgramBatch != p_GpuProgramBatch)
+		{
+			m_GpuProgramBatch = p_GpuProgramBatch;
+			_bindProgramBatch(m_GpuProgramBatch);
+
+			if(errorOccured())
+			{
+				_LogError("Error binding GpuProgramBatch. Error:\"%s\".",getLastError().c_str());
+
+				return false;
+			}
+		}
+
+		return true;
+	}
+	/*********************************************************************************/
+	void RendererBase::updateGpuProgramParameter()
+	{
+		GpuProgram* program = 0;
+		for(GpuProgramArray::iterator iter = m_GpuPrograms.begin();iter != m_GpuPrograms.end();++iter)
+		{
+			program = (*iter);
+
+			if(program)
+			{
+				for(uint32 i = 0;i < program->getAmountUniforms();++i)
+				{
+					GpuProgramParameter& param = program->getUniform(i);
+					RawData paramData;
+
+					param.update(paramData);
+					_updateGpuProgramParameter(paramData,param);
+				}
+			}
+		}
+	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace

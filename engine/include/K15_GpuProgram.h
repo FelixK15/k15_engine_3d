@@ -80,9 +80,11 @@ namespace K15_Engine { namespace Rendering {
 		INLINE Enum getStage() const;
 
 		bool compile();
+		bool reflect();
 		void setProgramCode(const String& p_Code, bool p_Compile = false);
 
 		INLINE void setError(const String& p_Error);
+		INLINE void setCompiled(bool p_Compiled);
 
 		void setAmountUniforms(uint32 p_Amount);
 		void setAmountAttributes(uint32 p_Amount);

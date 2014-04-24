@@ -30,7 +30,7 @@
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 namespace K15_Engine { namespace Core { 
-	class ResourceArchiveBase : public Object
+	class K15_CORE_API ResourceArchiveBase : public Object
 	{
 	public:
 		bool open();
@@ -55,7 +55,7 @@ namespace K15_Engine { namespace Core {
 		String m_FileName;
 		bool m_isOpen;
 	}; //end of ResourceArchiveBase class declaration
-#	include "K15_ResourceFileBase.inl"
+#	include "K15_ResourceArchiveBase.inl"
 }} //end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_ResourceArchiveBase_h_

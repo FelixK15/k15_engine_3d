@@ -35,6 +35,8 @@ namespace K15_Engine { namespace Core {
 		static String readWholeFile(const String& p_FileName);
 
 		static uint32 getFileSize(const String& p_FileName);
+
+		static bool fileExists(const String& p_FileName);
 	};// end of IOUtil class declaration
 }}// end of K15_Engine::Core namespace
 

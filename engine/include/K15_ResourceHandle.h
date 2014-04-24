@@ -27,9 +27,11 @@
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
+#include "K15_ResourceManager.h"
+
 namespace K15_Engine { namespace Core { 
   /*********************************************************************************/
-  typedef unsigned int ResourceID;
+  typedef int ResourceID;
   /*********************************************************************************/
 	template<class ResourceType>
 	class ResourceHandle
@@ -40,6 +42,9 @@ namespace K15_Engine { namespace Core {
 		ResourceHandle(const ResourceHandle<ResourceType> &rsHandle);
 		~ResourceHandle();
 
+		const String& getResourceName() const;
+		void setResourceName(const String& p_ResourceName);
+
 		bool isValid() const;
 
 		void setResourceID(ResourceID p_ResourceID);
@@ -47,13 +52,14 @@ namespace K15_Engine { namespace Core {
 
 		const ResourceHandle<ResourceType> &operator=(const ResourceHandle<ResourceType> &rsHandle);
 
-		operator ResourceType*() const;
+		ResourceType* operator->();
 
-	private:
-		ResourceType* getResource() const;
+	//private:
+		ResourceType* getResource();
 
 	private:
 		ResourceID m_ResourceID;
+		String m_ResourceName;
 	};// end of ResourceHandle class
   /*********************************************************************************/
   #include "K15_ResourceHandle.inl"

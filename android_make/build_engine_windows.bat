@@ -7,7 +7,9 @@ cd %LPATH%EngineTest
 if exist %LPATH%\EngineTest\libs\ del %CD%\libs\armeabi\*.so  /f 
 
 ::#build c++ code
-call ndk-build NDK_DEBUG=1 NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk NDK_MODULE_PATH=%LPATH%;%LPATH%\Dependencies
+call ndk-build NDK_DEBUG=1 NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=Android.mk NDK_MODULE_PATH=%LPATH%;%LPATH%\Dependencies
+
+echo %ERRORLEVEL%
 
 if %ERRORLEVEL% NEQ 0 (
 	cd ..

@@ -20,12 +20,12 @@
 #include "K15_PrecompiledHeader.h"
 
 #include "K15_ResourceManager.h"
-#include "K15_ResourceFileBase.h"
+#include "K15_ResourceArchiveBase.h"
 
 #include "K15_LogManager.h"
 
 namespace K15_Engine { namespace Core { 
-  /*********************************************************************************/
+	/*********************************************************************************/
 	ResourceManager::ResourceManager()
 		: m_Resources(),
 		  m_ResourceDataCache(),
@@ -33,14 +33,14 @@ namespace K15_Engine { namespace Core {
 	{
 
 	}
-  /*********************************************************************************/
+	/*********************************************************************************/
 	ResourceManager::~ResourceManager()
 	{
 		closeOpenResourceFiles();
 		clearResourceCache();
 		clearResources();
 	}
-  /*********************************************************************************/
+	/*********************************************************************************/
 	void ResourceManager::update(const GameTime &gtTime)
 	{
 		double difference = 0;
@@ -71,20 +71,8 @@ namespace K15_Engine { namespace Core {
 			}
 		}
 	}
-  /*********************************************************************************/
-	void ResourceManager::addResourceFile( ResourceFileBase* p_ResourceFile )
-	{
-		for(uint32 i = 0;i < m_ResoureFiles.size();++i)
-		{
-			if(m_ResoureFiles[i] == 0)
-			{
-				m_ResoureFiles[i] = p_ResourceFile;
-				return;
-			}
-		}
-	}
-  /*********************************************************************************/
-	void ResourceManager::deleteResource( ResourceBase *pResource )
+	/*********************************************************************************/
+	void ResourceManager::deleteResource(ResourceBase *pResource)
 	{
 		for(ResourceList::iterator iter = m_Resources.begin();iter != m_Resources.end();++iter)
 		{
@@ -96,19 +84,19 @@ namespace K15_Engine { namespace Core {
 
 		K15_DELETE pResource;	
 	}
-  /*********************************************************************************/
+	/*********************************************************************************/
 	void ResourceManager::closeOpenResourceFiles()
 	{
-		for(ResourceFileList::iterator iter = m_ResoureFiles.begin();iter != m_ResoureFiles.end();++iter)
+		for(ResourceArchiveList::iterator iter = m_ResoureFiles.begin();iter != m_ResoureFiles.end();++iter)
 		{
 			if((*iter)->isOpen())
 			{
-				_LogNormal("Closing resource file \"%s\"",(*iter)->getResourceFileName().c_str());
+				_LogNormal("Closing resource file \"%s\"",(*iter)->getFileName().c_str());
 				(*iter)->close();
 			}
 		}
 	}
-  /*********************************************************************************/
+	/*********************************************************************************/
 	void ResourceManager::clearResourceCache()
 	{
 		for(ResourceCache::iterator iter = m_ResourceDataCache.begin();iter != m_ResourceDataCache.end();++iter)
@@ -118,7 +106,7 @@ namespace K15_Engine { namespace Core {
 
 		m_ResourceDataCache.clear();
 	}
-  /*********************************************************************************/
+	/*********************************************************************************/
 	void ResourceManager::clearResources()
 	{
 		ResourceList toDelete;
@@ -137,5 +125,102 @@ namespace K15_Engine { namespace Core {
 
 		m_Resources.clear();
 	}
-  /*********************************************************************************/
+	/*********************************************************************************/
+	bool ResourceManager::isResourceInCache(const String& p_ResourceName)
+	{
+		for(ResourceList::iterator iter = m_Resources.begin();iter != m_Resources.end();++iter)
+		{
+			if((*iter)->getName() == p_ResourceName)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+	/*********************************************************************************/
+	bool ResourceManager::cacheResource(const String& p_ResourceName,Enum p_Priority)
+	{
+		K15_PROFILE(StringUtil::format("ResourceManager::cacheResource (%s)",p_ResourceName.c_str()));
+
+		bool cachedResource = false;
+		RawData resourceData(0,0);
+		ResourceArchiveBase* resourceArchive = 0;
+		ResourceBase* resource = 0;
+		ResourceImporterBase* importer = 0;
+		//we need to load the resource from one of the resource files.
+		for(ResourceArchiveList::iterator iter = m_ResoureFiles.begin();iter != m_ResoureFiles.end();++iter)
+		{
+			resourceArchive = (*iter);
+			//try to open the resource file
+
+			if(!resourceArchive->open())
+			{
+				//log error and load debug resoure
+				_LogError("Could not open resource archive %s. (%s)",
+					resourceArchive->getFileName().c_str(),resourceArchive->getError().c_str());
+			}
+			else
+			{
+				if(resourceArchive->hasResource(p_ResourceName.c_str()))
+				{
+					if(!resourceArchive->getResource(p_ResourceName.c_str(),&resourceData))
+					{
+						_LogError("Could not load resource from resource archive \"%s\", "
+							"eventhough resource confirms to hold the resource. (%s)",
+							resourceArchive->getFileName().c_str(),resourceArchive->getError().c_str());
+
+						//try next resource archive
+						continue;
+					}
+				}
+			}
+
+			//check if actual data has been written
+			if(resourceData.data)
+			{
+				//check what importer we can use for the resource
+				for(ResourceImporterList::iterator r_iter = m_ResourceImporters.begin();r_iter != m_ResourceImporters.end();++r_iter)
+				{
+					importer = (*r_iter);
+
+					//check if file can be loaded by checking the file extension
+					if(!importer->canLoad(p_ResourceName))
+					{
+						//check deeper...Check file signature.
+						if(!importer->canLoadBaseOnSignature(resourceData))
+						{
+							//nope, file can not be loaded. try next importer
+							continue;
+						}
+					}
+
+					//load resource using importer
+					if((resource = importer->load(resourceData)) == 0)
+					{
+						_LogError("Could not load Resource \"%s\" using Resource Importer \"%s\". Error\"%s\".",
+							p_ResourceName.c_str(),importer->getName().c_str(),importer->getError().c_str());
+					}
+					else
+					{
+						m_ResourceDataCache.insert(Pair(ResourceName,ResourceBase*)(p_ResourceName,resource));
+						cachedResource = true;
+						break;
+					}
+				}
+			}
+
+			//close the file after we're finished
+			resourceArchive->close();
+
+			//if the resource has been cached, exit loop.
+			if(cachedResource)
+			{
+				break;
+			}
+		}
+
+		return cachedResource;
+	}
+	/*********************************************************************************/
  }}//end of K15_Engine::Core namespace

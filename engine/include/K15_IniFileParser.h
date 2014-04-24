@@ -39,7 +39,7 @@ namespace K15_Engine { namespace Core {
 	struct K15_CORE_API IniFileGroup
 	{
 		/*********************************************************************************/
-		typedef List(IniFileEntry) IniEntryList;
+		typedef DynamicArray(IniFileEntry) IniEntryList;
 		/*********************************************************************************/
 
 		String name;
@@ -50,7 +50,7 @@ namespace K15_Engine { namespace Core {
 	{
 	public:
 		/*********************************************************************************/
-		typedef List(IniFileGroup) IniGroupList;
+		typedef DynamicArray(IniFileGroup) IniGroupList;
 		/*********************************************************************************/
 	public:
 		IniFileParser(const String& p_File);

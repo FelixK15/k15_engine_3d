@@ -1,5 +1,6 @@
 #include "K15_PrecompiledHeader.h"
 
+#include "Android\K15_ApplicationLayerOS_Android.h"
 #include "Linux\K15_DynamicLibrary_Linux.h"
 
 
@@ -24,12 +25,21 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	bool DynamicLibrary_Linux::load()
 	{
-		m_Module = dlopen(m_FileName.c_str(),RTLD_NOW | RTLD_LOCAL);
+	#if defined K15_OS_ANDROID
+		String path = "lib" + m_FileName;
+	#else
+		String path = g_Application->getGameRootDir() + m_FileName;
+	#endif //K15_OS_ANDROID
+		_LogNormal("Trying to load \"%s\".",path.c_str());
+		m_Module = dlopen(path.c_str(),RTLD_NOW);
 
 		if(!m_Module)
 		{
+			g_Application->getOSLayer().setError(dlerror());
 			return false;
 		}
+
+		m_Loaded = true;
 
 		return true;
 	}

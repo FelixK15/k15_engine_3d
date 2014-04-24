@@ -18,10 +18,15 @@
 #define HAVE_SYS_TYPES_H 1
 
 /* Define to 1 if you have the <io.h> header file. */
-#define HAVE_IO_H 1
+#ifndef __ANDROID__
+	#define HAVE_IO_H 1
+#endif
 
 /* Define to 1 if you have the <search.h> header file. */
-#define HAVE_SEARCH_H 1
+#ifndef __ANDROID__
+	#define HAVE_SEARCH_H 1
+#endif
+
 
 /* Define to 1 if you have the `setmode' function. */
 #define HAVE_SETMODE 1
@@ -35,14 +40,23 @@
 /* Signed 64-bit type formatter */
 #define TIFF_INT64_FORMAT "%I64d"
 
-/* Signed 64-bit type */
-#define TIFF_INT64_T signed __int64
+#if defined _WIN32
+	/* Signed 64-bit type */
+	#define TIFF_INT64_T signed __int64
+#else
+	#define TIFF_INT64_T signed long long
+#endif
+
 
 /* Unsigned 64-bit type formatter */
 #define TIFF_UINT64_FORMAT "%I64u"
 
-/* Unsigned 64-bit type */
-#define TIFF_UINT64_T unsigned __int64
+#if defined _WIN32
+	/* Unsigned 64-bit type */
+	#define TIFF_UINT64_T unsigned __int64
+#else
+	#define TIFF_UINT64_T unsigned long long
+#endif
 
 /* Set the native cpu bit order */
 #define HOST_FILLORDER FILLORDER_LSB2MSB

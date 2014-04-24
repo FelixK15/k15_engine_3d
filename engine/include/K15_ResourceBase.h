@@ -34,6 +34,7 @@
 namespace K15_Engine { namespace Core { 
 
 	class K15_CORE_API ResourceBase : public Object
+									  /*public ResourceAllocatedObject*/
 	{
 	public:
 		/*********************************************************************************/
@@ -50,10 +51,6 @@ namespace K15_Engine { namespace Core {
 
 		virtual ~ResourceBase();
 
-		bool load(const RawData& p_Data);
-
-		virtual void loadDebug(RawData& p_Data) = 0;
-
 		INLINE Enum getPriority() const;
 		INLINE void setPriority(Enum p_Priority);
 
@@ -69,10 +66,10 @@ namespace K15_Engine { namespace Core {
 		INLINE void setMarkedAsUnreferenced(bool p_MarkAsUnreferenced);
 
 		INLINE ResourceManager* getResourceManager() const;
-		INLINE ResourceFileBase* getResourceFile() const;
+		INLINE ResourceArchiveBase* getResourceFile() const;
 
 		INLINE void setResourceManager(ResourceManager* p_ResourceManager);
-		INLINE void setResourceFile(ResourceFileBase* p_ResourceFile);
+		INLINE void setResourceFile(ResourceArchiveBase* p_ResourceFile);
 
 	protected:
 		ResourceBase();
@@ -81,14 +78,12 @@ namespace K15_Engine { namespace Core {
 		INLINE byte* getRawData();
 		INLINE uint32 getRawDataSize();
 
-		virtual bool internalLoad(const RawData&) = 0;
-
 	protected:
 		byte* m_RawData;
 		uint32 m_RawDataSize;
 		bool m_MarkAsUnreferenced;
 		ResourceManager* m_ResourceManager;
-		ResourceFileBase* m_ResourceFile;
+		ResourceArchiveBase* m_ResourceFile;
 		eResourcePriority m_Priority;
 		double m_Created;
 		double m_LastUsed;

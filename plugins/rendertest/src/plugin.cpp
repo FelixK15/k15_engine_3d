@@ -26,13 +26,17 @@ K15_Engine::Plugins::RenderTest::RenderTestApplicationModule* module = 0;
 /*********************************************************************************/
 void pluginLoad()
 {
-	module = K15_NEW K15_Engine::Plugins::RenderTest::RenderTestApplicationModule();
-	g_Application->addApplicationModule(module);
+	if(!module)
+	{
+		module = K15_NEW K15_Engine::Plugins::RenderTest::RenderTestApplicationModule();
+		g_Application->addApplicationModule(module);
+	}
 }
 /*********************************************************************************/
 void pluginUnload()
 {
 	K15_DELETE module;
+	module = 0;
 }
 /*********************************************************************************/
 K15_Engine::Core::ApplicationModuleDescription getDescription()
@@ -45,3 +49,4 @@ K15_Engine::Core::ApplicationModuleDescription getDescription()
 	return description;
 }
 /*********************************************************************************/
+

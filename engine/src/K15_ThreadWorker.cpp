@@ -82,7 +82,7 @@ namespace K15_Engine { namespace Core {
 			Thread* thread = K15_NEW_T(Allocators[AC_THREADING],Thread) Thread(execute,(void*)0);
 			_LogNormal("Successfully created %i/%i thread",counter,HardwareThreads);
 
-			m_Threads.push_front(thread);
+			m_Threads.push_back(thread);
 		}
 	}
 	/*********************************************************************************/
@@ -93,14 +93,14 @@ namespace K15_Engine { namespace Core {
 		JobBase* job = 0;
 		while(m_Threads.size() > 0)
 		{
-			thread = (*m_Threads.begin());
+			thread = m_Threads.back();
 
 			K15_ASSERT(thread,"NULL thread in ThreadWorker list.");
 
 			thread->join();
 			thread->~thread();
 			K15_DELETE_SIZE(Allocators[AC_THREADING],thread,sizeof(Thread));
-			m_Threads.pop_front();
+			m_Threads.pop_back();
 		}
 
 		while(m_Jobs.size() > 0)
@@ -129,18 +129,16 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void ThreadWorker::removeJob(JobBase* p_Job)
 	{
-		m_Jobs.remove(p_Job);
+		std::remove(m_Jobs.begin(),m_Jobs.end(),p_Job);
 	}
 	/*********************************************************************************/
 	void ThreadWorker::removeJobByName(const ObjectName& p_Name)
 	{
-		for(JobList::iterator iter = m_Jobs.begin();iter != m_Jobs.end();++iter)
-		{
-			if((*iter)->getName() == p_Name)
+		std::remove_if(m_Jobs.begin(),m_Jobs.end(),
+			[&](const JobBase* p_Job)->bool
 			{
-				m_Jobs.remove((*iter));
-			}
-		}
+				return p_Job->getName() == p_Name;
+			});
 	}
 	/*********************************************************************************/
 	ThreadWorker::JobList& ThreadWorker::getJobs()

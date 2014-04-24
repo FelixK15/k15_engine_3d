@@ -74,7 +74,7 @@ namespace K15_Engine { namespace Rendering {
 		/*********************************************************************************/
 	public:
 		/*********************************************************************************/
-		struct CreationOptions
+		struct K15_CORE_API CreationOptions
 		{
 			uint32 width;
 			uint32 height;
@@ -88,6 +88,8 @@ namespace K15_Engine { namespace Rendering {
 			bool useShadowCopy;
 
 			uint32 mipmapLevels;
+
+			CreationOptions();
 		}; // end of Texture::CreationOptions struct
 		/*********************************************************************************/
 	public:

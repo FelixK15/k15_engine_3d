@@ -69,7 +69,7 @@ namespace K15_Engine { namespace Core {
 			m_Tasks.erase(toDelete);
 		}
 
-		m_Tasks.sort();
+		std::sort(m_Tasks.begin(),m_Tasks.end());
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace

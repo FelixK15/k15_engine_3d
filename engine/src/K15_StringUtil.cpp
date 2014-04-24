@@ -41,7 +41,7 @@ namespace K15_Engine { namespace Core {
 		return MessageBuffer;
 	}
 	/*********************************************************************************/
-	String StringUtil::timeAsString(const String& p_Format /*= "hh:mm:ss"*/)
+	String StringUtil::timeAsString(const String& p_Format)
 	{
 		String timeString;
 		String::size_type pos;

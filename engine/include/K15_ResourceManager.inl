@@ -16,19 +16,55 @@
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
  */
+
 /*********************************************************************************/
-const ResourceManager::ResourceFileList& ResourceManager::getResourceFileList()
+template<class ResourceType>
+ResourceType* ResourceManager::getResource(const String& p_ResourceName,Enum p_Priority)
+{
+	K15_PROFILE(StringUtil::format("ResourceManager::getResource (%s)",p_ResourceName.c_str()));
+
+	ResourceCache::iterator iter = m_ResourceDataCache.find(p_ResourceName);
+	ResourceType* resource = 0;
+	if(iter == m_ResourceDataCache.end())
+	{
+		if(cacheResource(p_ResourceName,p_Priority))
+		{
+			iter = m_ResourceDataCache.find(p_ResourceName);
+
+			m_Resources.push_back(iter->second);
+			resource = (ResourceType*)iter->second;
+		}
+		else
+		{
+			_LogError("Could not load resource \"%s\".",p_ResourceName.c_str());
+		}
+	}
+
+	return resource;
+}
+/*********************************************************************************/
+const ResourceManager::ResourceArchiveList& ResourceManager::getResourceFileList() const
 {
 	return m_ResoureFiles;
 }
 /*********************************************************************************/
-ResourceBase* ResourceManager::getResourceByID(ResourceID p_ResourceID)
+// ResourceBase* ResourceManager::getResourceByID(ResourceID p_ResourceID)
+// {
+// 	if(p_ResourceID == K15_INVALID_RESOURCE_ID || (unsigned int)p_ResourceID > m_Resources.size())
+// 	{
+// 		return 0;
+// 	}
+// 
+// 	return m_Resources[p_ResourceID];
+// }
+/*********************************************************************************/
+void ResourceManager::addResourceFile(ResourceArchiveBase *p_ResourceFile)
 {
-	if(p_ResourceID > m_Resources.size())
-	{
-		return 0;
-	}
-
-	return m_Resources[p_ResourceID];
+	m_ResoureFiles.push_back(p_ResourceFile);
+}
+/*********************************************************************************/
+void ResourceManager::addResourceImporter(ResourceImporterBase* p_ResourceImporter)
+{
+	m_ResourceImporters.push_back(p_ResourceImporter);
 }
 /*********************************************************************************/

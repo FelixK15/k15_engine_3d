@@ -26,6 +26,7 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	MaterialPass::MaterialPass()
 		: m_Programs(),
+		m_ProgramBatch(0),
 		m_Shininess(0.0f),
 		m_Specular(ColorRGBA::White),
 		m_Diffuse(ColorRGBA::White),

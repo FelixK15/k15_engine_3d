@@ -55,7 +55,11 @@ namespace K15_Engine { namespace Core {
 									public Singleton<LogManager>
 	{
 	public:
-		typedef List(LogBase*) LogList;
+		typedef DynamicArray(LogBase*) LogList;
+
+// 	private:
+// 		static LogManager* Instance;
+
 	public:
 		enum eLogPriorityFlags
 		{
@@ -87,6 +91,8 @@ namespace K15_Engine { namespace Core {
 		 * Default destructor
 		 */
 		virtual ~LogManager();
+
+		//INLINE LogManager* getInstance();
 
 		void addLog(LogBase* p_Log, bool p_DefaultLog = false, Enum p_LogMask = LP_ALL_NORMAL);
 		

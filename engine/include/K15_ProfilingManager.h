@@ -42,7 +42,7 @@ namespace K15_Engine { namespace Core {
 	{
 	public:
 		/*********************************************************************************/
-		typedef List(ProfilingNode*) ProfilingNodeList;
+		typedef DynamicArray(ProfilingNode*) ProfilingNodeList;
 		/*********************************************************************************/
 	public:
 		ProfilingManager();

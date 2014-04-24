@@ -51,7 +51,7 @@ namespace K15_Engine { namespace Core {
 
 	protected:
 		FunctionType m_Function;
-	};
+	}; //end of Functor0 class declaration
 	/*********************************************************************************/
 	template<class ReturnType,class ArgumentType>
 	class Functor1
@@ -74,8 +74,31 @@ namespace K15_Engine { namespace Core {
 
 	protected:
 		FunctionType m_Function;
-	};
+	}; //end of Functor1 class declaration
 	/*********************************************************************************/
+	template<class ReturnType,class ArgumentType,class ArgumentType2>
+	class Functor2
+	{
+	public:
+		/*********************************************************************************/
+		typedef ReturnType(*FunctionType)(ArgumentType,ArgumentType2);
+		/*********************************************************************************/
+	public:
+		Functor2();
+		Functor2(FunctionType p_Function);
+		Functor2(const Functor2<ReturnType,ArgumentType,ArgumentType2>& p_Other);
+
+		virtual ~Functor2();
+
+		void setFunction(FunctionType p_Function);
+		bool isValid();
+
+		ReturnType operator()(ArgumentType p_Argument,ArgumentType2 p_Argument2);
+		const Functor2<ReturnType,ArgumentType,ArgumentType2>& operator=(const Functor2<ReturnType,ArgumentType,ArgumentType2>& p_Other);
+
+	protected:
+		FunctionType m_Function;
+	}; //end of Functor2 class declaration
 #include "K15_Functor.inl"
 }}//end of namespace K15_Engine::Core
 

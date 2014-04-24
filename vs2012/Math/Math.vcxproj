@@ -39,6 +39,8 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
     <PlatformToolset>arm-linux-androideabi-4.6</PlatformToolset>
     <ConfigurationType>StaticLibrary</ConfigurationType>
+    <AndroidStlType>gnustl_dynamic</AndroidStlType>
+    <AndroidAPILevel>android-9</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
     <PlatformToolset>arm-linux-androideabi-4.6</PlatformToolset>

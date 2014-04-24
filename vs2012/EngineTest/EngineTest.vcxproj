@@ -40,6 +40,8 @@
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
     <PlatformToolset>arm-linux-androideabi-4.6</PlatformToolset>
+    <AndroidStlType>gnustl_dynamic</AndroidStlType>
+    <AndroidAPILevel>android-9</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
     <PlatformToolset>arm-linux-androideabi-4.6</PlatformToolset>
@@ -83,9 +85,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
     <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>..\..\engine\include\;..\..\math\include\;$(ANDROID_NDK_ROOT)\sources\;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\engine\include;..\..\dependencies\Android\native_app_glue\include;..\..\renderer_opengl_es\include;..\..\plugins\rendertest\include;..\..\math\include;$(ANDROID_NDK_ROOT)\sources\;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)</TargetName>
+    <PreBuildEventUseInBuild>true</PreBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
     <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
@@ -136,8 +139,19 @@
       <AdditionalOptions>-std=c++11 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>-lEngine;-lMath;%(AdditionalDependencies)</AdditionalDependencies>
+      <AndroidSystemLibs>android;dl;GLESv2;EGL;%(AndroidSystemLibs)</AndroidSystemLibs>
+      <AdditionalDependencies>-lPlugin_RenderTest;-lRenderer_OpenGLES;-lEngine;-lMath;-lnative_app_glue;-lTinyThread;-lEnet;-lJsonCPP;-lminizip;-lzlib;-ltiff</AdditionalDependencies>
+      <SoName>lib$(TargetName)</SoName>
+      <AdditionalOptions>-rdynamic %(AdditionalOptions)</AdditionalOptions>
+      <ReportUndefinedSymbols>true</ReportUndefinedSymbols>
     </Link>
+    <AntBuild>
+      <AntBuildPath>$(ProjectDir)..\..\android_make\$(ProjectName)</AntBuildPath>
+      <AntLibraryName>lib$(TargetName)</AntLibraryName>
+    </AntBuild>
+    <PreBuildEvent>
+      <Command>xcopy "$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\libEngine.so" "$(ProjectDir)..\..\android_make\EngineTest\libs\armeabi" /y</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -31,8 +31,8 @@ namespace K15_Engine { namespace Core {
 	}
 	/*********************************************************************************/
 	RawData::RawData(byte* p_Data,uint32 p_Size)
-		: data(0),
-		size(0)
+		: data(p_Data),
+		size(p_Size)
 	{
 
 	}

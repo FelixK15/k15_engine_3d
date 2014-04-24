@@ -9,4 +9,6 @@ LOCAL_SRC_FILES 	:= $(wildcard $(MATH_SOURCE)/src/*.cpp)
 LOCAL_C_INCLUDES 	:= $(MATH_SOURCE)/include
 LOCAL_C_INCLUDES	+= $(ENGINE_SOURCE)/include
 
+LOCAL_LDLIBS		:= lgnustl_shared
+
 include $(BUILD_STATIC_LIBRARY)

@@ -38,7 +38,7 @@ namespace K15_Engine { namespace Core {
 	public:
 		/*********************************************************************************/
 		K15_DECLARE_RTTI;
-		typedef List(Node*) ChildNodes;
+		typedef DynamicArray(Node*) ChildNodes;
 		/*********************************************************************************/
 	public:
 		Node(const ObjectName& p_Name = ObjectName::BLANK,Node* p_Parent = 0);

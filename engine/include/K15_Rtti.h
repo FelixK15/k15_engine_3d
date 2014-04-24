@@ -52,6 +52,7 @@ namespace K15_Engine { namespace Core {
 	class K15_CORE_API Rtti
 	{
 	public:
+		Rtti();
 		Rtti(const TypeName &p_Name,const Rtti *p_BaseType);
 		~Rtti();
 

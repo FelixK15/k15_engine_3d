@@ -18,11 +18,6 @@
  */
 
 #include "K15_PrecompiledHeader.h"
-
-#include <android_native_app_glue.h>
-#include <android\sensor.h>
-#include <android\input.h>
-
 #include "K15_RenderWindowBase.h"
 #include "K15_RenderTask.h"
 #include "K15_RenderProcessBase.h"
@@ -167,7 +162,8 @@ namespace K15_Engine { namespace Core {
 			RenderWindowType* window = static_cast<RenderWindowType*>(app->getRenderWindow());
 			window->setNativeWindow(p_App->window);
 
-			K15_ASSERT(app->getRenderer()->initialize(),"Could not initialize renderer");
+			//we can initialize the renderer now as we have a valid window handle
+			app->tryInitializeRenderer();
 		}
 		else
 		{
@@ -261,7 +257,7 @@ namespace K15_Engine { namespace Core {
 
 		if(!m_Error.empty())
 		{
-			String err = m_Error;
+			err = m_Error;
 			m_Error.clear();
 		}
 

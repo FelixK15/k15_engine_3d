@@ -22,10 +22,13 @@
 #include "K15_IOUtil.h"
 #include "K15_RendererBase.h"
 #include "K15_GpuProgram.h"
+#include "K15_GpuProgramAutoParameter.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	const uint32 GpuProgram::MaxParameter = 32;
+	/*********************************************************************************/
+
 	/*********************************************************************************/
 	GpuProgram::GpuProgram(const String& p_ProgramName, Enum p_ProgramStage)
 		: ResourceBase(p_ProgramName),
@@ -48,10 +51,6 @@ namespace K15_Engine { namespace Rendering {
 		
 		m_Attributes.reserve(MaxParameter);
 		m_Uniforms.reserve(MaxParameter);
-
-		//check if the shader has been compiled/preprocessed earlier
-		String shaderFile = g_Application->getGameRootDir() + p_ProgramName + m_Impl->getShaderExtension(p_ProgramStage);
-		setProgramCode(IOUtil::readWholeFile(shaderFile),true);
 	}
 	/*********************************************************************************/
 	GpuProgram::~GpuProgram()
@@ -105,30 +104,7 @@ namespace K15_Engine { namespace Rendering {
 			}
 		}
 
-		m_Impl->reflect();
-
-		//Check and mark auto parameter
-		for(uint32 i = 0;i < m_UsedUniforms;++i)
-		{
-			for(GpuProgramParameter::DefaultVariableNameMap::const_iterator iter = GpuProgramParameter::DefaultVariableNames.begin();
-				iter != GpuProgramParameter::DefaultVariableNames.end();++iter)
-			{
-				if(m_Uniforms[i].getName() == iter->second)
-				{
-					m_Uniforms[i].setAutoName(iter->first);
-					m_Uniforms[i].setAutoParameter(true);
-					continue;
-				}
-			}
-		}
-
-		if(g_Application->getRenderer()->errorOccured())
-		{
-			_LogError("Could not reflect shader \"%s\". %s.",m_Name.c_str(),g_Application->getRenderer()->getLastError().c_str());
-			return false;
-		}
-
-		return m_Compiled;
+		return reflect();
 	}
 	/*********************************************************************************/
 	void GpuProgram::loadDebug(RawData& p_Data)
@@ -226,6 +202,40 @@ namespace K15_Engine { namespace Rendering {
 		}
 
 		return shaderCode;
+	}
+	/*********************************************************************************/
+	bool GpuProgram::reflect()
+	{
+		if(!m_Compiled)
+		{
+			_LogError("Can't reflect shader \"%s\". Has not been compiled.",getName().c_str());
+			return false;
+		}
+		else
+		{
+			m_Impl->reflect();
+
+			//Check and mark auto parameter
+			for(uint32 i = 0;i < m_UsedUniforms;++i)
+			{
+				m_Uniforms[i].setGpuProgram(this);
+				GpuProgramAutoParameter::checkForAutoParameter(m_Uniforms[i]);
+			}
+
+			for(uint32 i = 0;i < m_UsedAttributes;++i)
+			{
+				m_Attributes[i].setGpuProgram(this);
+			}
+
+			//did everything went smoothly?
+			if(g_Application->getRenderer()->errorOccured())
+			{
+				_LogError("Could not reflect shader \"%s\". %s.",m_Name.c_str(),g_Application->getRenderer()->getLastError().c_str());
+				return false;
+			}
+		}
+
+		return true;
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

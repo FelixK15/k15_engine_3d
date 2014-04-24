@@ -1,5 +1,5 @@
 /**
- * @file K15_ResourceFileBase.inl
+ * @file K15_ResourceArchiveBase.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2014/04/15
@@ -18,22 +18,22 @@
  */
 
 /*********************************************************************************/
-bool ResourceFileBase::isOpen() const
+bool ResourceArchiveBase::isOpen() const
 {
 	return m_isOpen;
 }
 /*********************************************************************************/
-const String& ResourceFileBase::getFileName() const
+const String& ResourceArchiveBase::getFileName() const
 {
 	return m_FileName;
 }
 /*********************************************************************************/
-const String& ResourceFileBase::getError() const
+const String& ResourceArchiveBase::getError() const
 {
 	return m_Error;
 }
 /*********************************************************************************/
-void ResourceFileBase::setError(const String& p_Error)
+void ResourceArchiveBase::setError(const String& p_Error)
 {
 	m_Error = p_Error;
 }

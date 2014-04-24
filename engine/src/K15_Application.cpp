@@ -47,6 +47,8 @@
 #	elif defined K15_OS_ANDROID
 #		include "Android/K15_RenderWindow_Android.h"
 #		include "Android/K15_Logcat_Android.h"
+//#		include "GLES2/K15_GLES2_Renderer.h"
+#		include "K15_SampleApplicationModule.h"
 #	endif //K15_OS_WINDOWS
 #endif //K15_DEBUG
 
@@ -271,6 +273,8 @@ namespace K15_Engine { namespace Core {
 		{
 			(*iter)->onInitialize();
 		}
+
+		tryInitializeRenderer();
 	}
 	/*********************************************************************************/
 	void Application::setWindowTitle(const String& p_WindowTitle) 
@@ -694,6 +698,21 @@ namespace K15_Engine { namespace Core {
 					{
 						pluginLoad();
 					}
+				}
+			}
+		}
+	}
+	/*********************************************************************************/
+	void Application::tryInitializeRenderer()
+	{
+		//try to initialize renderer
+		if(getRenderer())
+		{
+			if(getRenderer()->initialize())
+			{
+				for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
+				{
+					(*iter)->onRendererInitialized();
 				}
 			}
 		}

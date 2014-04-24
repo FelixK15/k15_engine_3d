@@ -24,6 +24,20 @@
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
+	Texture::CreationOptions::CreationOptions()
+		: width(0),
+		height(0),
+		depth(0),
+		useShadowCopy(false),
+		createMipMaps(false),
+		pixelFormat(0),
+		mipmapLevels(0)
+	{
+
+	}
+	/*********************************************************************************/
+
+	/*********************************************************************************/
 	TextureImplBase::TextureImplBase()
 		: m_Texture(0)
 	{

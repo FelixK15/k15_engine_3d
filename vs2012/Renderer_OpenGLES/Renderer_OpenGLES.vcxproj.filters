@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Core">
+      <UniqueIdentifier>{cdb9b3c5-b460-4e02-b1ff-5bebd87ca3cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Plugin">
+      <UniqueIdentifier>{afef01cf-92ba-428d-acce-a15166c2b0e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Plugin\include">
+      <UniqueIdentifier>{3f7ad84d-6770-4667-9520-dbb41b1990b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Plugin\src">
+      <UniqueIdentifier>{a9525943-f4ce-46e0-928e-27c46aa86c86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\include">
+      <UniqueIdentifier>{0c84935a-0a91-406a-a8ba-62130835c259}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\src">
+      <UniqueIdentifier>{6cafe444-dd99-4ffb-83ee-50d2721ecda7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\include\GLES2">
+      <UniqueIdentifier>{9d009165-cc65-4fde-8568-0808c6979204}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{44e90176-4b22-464c-a6fe-18ac7e9420fe}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\renderer_opengl_es\include\GLES2\K15_GLES2_GpuBufferImpl.h">
+      <Filter>Core\include\GLES2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer_opengl_es\include\GLES2\K15_GLES2_GpuProgramBatchImpl.h">
+      <Filter>Core\include\GLES2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer_opengl_es\include\GLES2\K15_GLES2_GpuProgramImpl.h">
+      <Filter>Core\include\GLES2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer_opengl_es\include\GLES2\K15_GLES2_Renderer.h">
+      <Filter>Core\include\GLES2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer_opengl_es\include\GLES2\K15_GLES2_TextureImpl.h">
+      <Filter>Core\include\GLES2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer_opengl_es\include\GLES2\K15_GLES2_TextureSamplerImpl.h">
+      <Filter>Core\include\GLES2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer_opengl_es\include\GLES2\K15_GLES2_VertexDeclarationImpl.h">
+      <Filter>Core\include\GLES2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer_opengl_es\include\plugin.h">
+      <Filter>Plugin\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer_opengl_es\include\K15_RendererGLESPrerequisites.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\renderer_opengl_es\include\GLES2\K15_GLES2_GpuProgramBatchImpl.inl">
+      <Filter>Core\include\GLES2</Filter>
+    </None>
+    <None Include="..\..\renderer_opengl_es\include\GLES2\K15_GLES2_TextureImpl.inl">
+      <Filter>Core\include\GLES2</Filter>
+    </None>
+    <None Include="..\..\renderer_opengl_es\include\GLES2\K15_GLES2_TextureSamplerImpl.inl">
+      <Filter>Core\include\GLES2</Filter>
+    </None>
+    <None Include="..\..\renderer_opengl_es\shader\default.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\renderer_opengl_es\shader\default.vert">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\renderer_opengl_es\src\GLES2\K15_GLES2_GpuBufferImpl.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer_opengl_es\src\GLES2\K15_GLES2_GpuProgramBatchImpl.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer_opengl_es\src\GLES2\K15_GLES2_GpuProgramImpl.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer_opengl_es\src\GLES2\K15_GLES2_Renderer.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer_opengl_es\src\GLES2\K15_GLES2_TextureImpl.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer_opengl_es\src\GLES2\K15_GLES2_TextureSamplerImpl.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer_opengl_es\src\GLES2\K15_GLES2_VertexDeclarationImpl.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer_opengl_es\src\plugin.cpp">
+      <Filter>Plugin\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

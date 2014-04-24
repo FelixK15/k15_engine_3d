@@ -1,5 +1,5 @@
 /**
- * @file K15_ZipResourceFile.h
+ * @file K15_ZipResourceArchive.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2014/04/15
@@ -21,21 +21,21 @@
  * 
  */
 
-#ifndef _K15Engine_Core_ZipResourceFile_h_
-#define _K15Engine_Core_ZipResourceFile_h_
+#ifndef _K15Engine_Core_ZipResourceArchive_h_
+#define _K15Engine_Core_ZipResourceArchive_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-#include "K15_ResourceFileBase.h"
+#include "K15_ResourceArchiveBase.h"
 
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API ZipResourceFile : public ResourceArchiveBase
+	class K15_CORE_API ZipResourceArchive : public ResourceArchiveBase, public ResourceAllocatedObject
 	{
 	public:
-		ZipResourceFile(const String& p_ZipFile);
-		~ZipResourceFile();
+		ZipResourceArchive(const String& p_ZipFile);
+		~ZipResourceArchive();
 
 		virtual bool getResource(const String& p_ResourceName, RawData* p_Data);
 		virtual bool hasResource(const String& p_ResourceName);
@@ -45,8 +45,8 @@ namespace K15_Engine { namespace Core {
 		virtual bool _close(); 
 
 	private:
-		unzFile m_ZipFile;
-	};// end of ZipResourceFile class declaration
+		void* m_ZipFile;
+	};// end of ZipResourceArchive class declaration
 }}// end of K15_Engine::Core namespace
 
-#endif //
+#endif //_K15Engine_Core_ZipResourceArchive_h_

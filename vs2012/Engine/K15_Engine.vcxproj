@@ -38,9 +38,10 @@
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
     <PlatformToolset>arm-linux-androideabi-4.6</PlatformToolset>
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <AndroidArch>armv7-a</AndroidArch>
-    <AndroidStlType>gnustl_static</AndroidStlType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <AndroidArch>armv5te</AndroidArch>
+    <AndroidStlType>gnustl_dynamic</AndroidStlType>
+    <AndroidAPILevel>android-9</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
     <PlatformToolset>arm-linux-androideabi-4.6</PlatformToolset>
@@ -63,7 +64,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>K15_Engine</TargetName>
-    <IncludePath>..\..\dependencies\Enet\include\;..\..\dependencies\LuaPlus\include\;..\..\dependencies\freetype\include\;..\..\engine\include\;..\..\math\include\;..\..\renderer\include\;..\..\dependencies\TinyThread\include\;..\..\dependencies\JsonCPP\include\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\dependencies\Enet\include\;..\..\dependencies\LuaPlus\include\;..\..\dependencies\freetype\include\;..\..\engine\include\;..\..\math\include\;..\..\renderer\include\;..\..\dependencies\TinyThread\include\;..\..\dependencies\JsonCPP\include\;..\..\dependencies\libbmp\include\;..\..\dependencies\zlib\include\;..\..\dependencies\minizip\include\;..\..\dependencies\libtiff\include\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -81,11 +82,11 @@
     <LibraryPath>..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
-    <IncludePath>..\..\dependencies\Enet\include\;..\..\dependencies\LuaPlus\include\;..\..\dependencies\freetype\include\;..\..\engine\include\;..\..\math\include\;..\..\renderer\include\;..\..\dependencies\TinyThread\include\;..\..\dependencies\JsonCPP\include\;$(ANDROID_NDK_ROOT)\sources\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\dependencies\Enet\include\;..\..\dependencies\LuaPlus\include\;..\..\dependencies\minizip\include\;..\..\dependencies\libtiff\include\;..\..\dependencies\freetype\include\;..\..\engine\include\;..\..\math\include\;..\..\plugins\rendertest\include;..\..\dependencies\TinyThread\include\;..\..\dependencies\Android\native_app_glue\include\;..\..\dependencies\JsonCPP\include\;$(ANDROID_NDK_ROOT)\sources\;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
-    <TargetName>lib$(ProjectName)</TargetName>
+    <TargetName>libEngine</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
     <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
@@ -107,7 +108,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>module.def</ModuleDefinitionFile>
-      <AdditionalDependencies>K15_Math.lib;LuaPlus.lib;Enet.lib;TinyThread.lib;Ws2_32.lib;JsonCPP.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>K15_Math.lib;LuaPlus.lib;Enet.lib;TinyThread.lib;Ws2_32.lib;zlib.lib;libtiff.lib;minizip.lib;JsonCPP.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -135,10 +136,12 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
     <Link>
-      <AdditionalDependencies>-lMath;-lEnet;-lTinyThread;-lJsonCPP;-landroid;-ldl;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>-lMath;-lEnet;-lTinyThread;-lJsonCPP;-landroid;-ldl;-lGLESv2;-lEGL;-lnative_app_glue;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration);$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EchoCommandLines>false</EchoCommandLines>
+      <SoName>libEngine.so</SoName>
+      <AdditionalOptions>-rdynamic %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ClCompile>
       <AdditionalOptions>-std=c++11 %(AdditionalOptions)</AdditionalOptions>
@@ -182,13 +185,10 @@
     <ClInclude Include="..\..\engine\include\K15_DynamicLibraryBase.h" />
     <ClInclude Include="..\..\engine\include\K15_DynamicLibraryManager.h" />
     <ClInclude Include="..\..\engine\include\K15_EventTask.h" />
+    <ClInclude Include="..\..\engine\include\K15_GpuProgramAutoParameter.h" />
+    <ClInclude Include="..\..\engine\include\K15_GpuProgramBatch.h" />
+    <ClInclude Include="..\..\engine\include\K15_Image.h" />
     <ClInclude Include="..\..\engine\include\K15_IOUtil.h" />
-    <ClInclude Include="..\..\engine\include\K15_Font.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_FontManager.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_FrameStatistic.h" />
     <ClInclude Include="..\..\engine\include\K15_GameObject.h" />
     <ClInclude Include="..\..\engine\include\K15_GameObjectComponentBase.h" />
@@ -277,6 +277,8 @@
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_RenderTask.h" />
     <ClInclude Include="..\..\engine\include\K15_RenderWindowBase.h" />
+    <ClInclude Include="..\..\engine\include\K15_ResourceImporterBase.h" />
+    <ClInclude Include="..\..\engine\include\K15_ResourceImporterBitmap.h" />
     <ClInclude Include="..\..\engine\include\K15_Serialization.h" />
     <ClInclude Include="..\..\engine\include\K15_Serializer.h" />
     <ClInclude Include="..\..\engine\include\K15_SerializerBase.h" />
@@ -304,9 +306,7 @@
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_ThreadSafe.h" />
     <ClInclude Include="..\..\engine\include\K15_ThreadWorker.h" />
-    <ClInclude Include="..\..\engine\include\K15_TrueTypeFont.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_TiffResourceImporter.h" />
     <ClInclude Include="..\..\engine\include\K15_Vertex.h" />
     <ClInclude Include="..\..\engine\include\K15_VertexBuffer.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
@@ -318,6 +318,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </Outputs>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ZipResourceArchive.h" />
     <ClInclude Include="..\..\engine\include\Linux\K15_DynamicLibrary_Linux.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_ApplicationOSLayer_Win32.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_DynamicLibrary_Win32.h" />
@@ -355,7 +356,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_ResourceBase.h" />
-    <ClInclude Include="..\..\engine\include\K15_ResourceFileBase.h" />
+    <ClInclude Include="..\..\engine\include\K15_ResourceArchiveBase.h" />
     <ClInclude Include="..\..\engine\include\K15_ResourceHandle.h" />
     <ClInclude Include="..\..\engine\include\K15_ResourceManager.h" />
     <ClInclude Include="..\..\engine\include\K15_Rtti.h" />
@@ -392,19 +393,16 @@
     <ClCompile Include="..\..\engine\src\K15_DepthState.cpp" />
     <ClCompile Include="..\..\engine\src\K15_DynamicLibraryBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_EventTask.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Font.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_FontManager.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_GameObject.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GameObjectComponentBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GpuBuffer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GpuProgram.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_GpuProgramAutoParameter.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_GpuProgramBatch.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GpuProgramParameter.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_Image.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_IndexBuffer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_IniFileParser.cpp" />
     <ClCompile Include="..\..\engine\src\K15_InputManager.cpp" />
@@ -434,6 +432,13 @@
     <ClCompile Include="..\..\engine\src\K15_RenderProcessBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_RenderTask.cpp" />
     <ClCompile Include="..\..\engine\src\K15_RenderWindowBase.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_ResourceArchiveBase.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_ResourceImporterBase.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ResourceImporterBitmap.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_Serializer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_SerializerBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_SerialReader.cpp" />
@@ -444,13 +449,13 @@
     <ClCompile Include="..\..\engine\src\K15_TextureSampler.cpp" />
     <ClCompile Include="..\..\engine\src\K15_ThreadSafe.cpp" />
     <ClCompile Include="..\..\engine\src\K15_ThreadWorker.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_TrueTypeFont.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_TiffResourceImporter.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Vertex.cpp" />
     <ClCompile Include="..\..\engine\src\K15_VertexBuffer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_VertexDeclaration.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_ZipResourceArchive.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\engine\src\Linux\K15_DynamicLibrary_Linux.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -479,16 +484,15 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
     <None Include="..\..\engine\include\K15_DynamicLibraryBase.inl" />
-    <None Include="..\..\engine\include\K15_FontManager.inl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </None>
     <None Include="..\..\engine\include\K15_Functor.inl" />
     <None Include="..\..\engine\include\K15_GameEvent.inl" />
     <None Include="..\..\engine\include\K15_GameObject.inl" />
     <None Include="..\..\engine\include\K15_GameObjectComponentBase.inl" />
     <None Include="..\..\engine\include\K15_GpuBuffer.inl" />
     <None Include="..\..\engine\include\K15_GpuProgram.inl" />
+    <None Include="..\..\engine\include\K15_GpuProgramBatch.inl" />
     <None Include="..\..\engine\include\K15_GpuProgramParameter.inl" />
+    <None Include="..\..\engine\include\K15_Image.inl" />
     <None Include="..\..\engine\include\K15_IndexBuffer.inl" />
     <None Include="..\..\engine\include\K15_IniFileParser.inl" />
     <None Include="..\..\engine\include\K15_JobBase.inl" />
@@ -527,7 +531,9 @@
     </None>
     <None Include="..\..\engine\include\K15_RendererBase.inl" />
     <None Include="..\..\engine\include\K15_ResourceBase.inl" />
+    <None Include="..\..\engine\include\K15_ResourceArchiveBase.inl" />
     <None Include="..\..\engine\include\K15_ResourceHandle.inl" />
+    <None Include="..\..\engine\include\K15_ResourceImporterBase.inl" />
     <None Include="..\..\engine\include\K15_ResourceManager.inl" />
     <None Include="..\..\engine\include\K15_Rtti.inl" />
     <None Include="..\..\engine\include\K15_SerializerBase.inl" />
