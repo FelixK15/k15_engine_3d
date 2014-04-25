@@ -40,7 +40,7 @@ namespace K15_Engine { namespace Core {
 		}
 		else
 		{
-			m_Memory = (byte*)K15_MALLOC(p_Size);
+			m_Memory = (byte*)K15_MALLOC(p_Size);//(byte*)K15_MALLOC(p_Size);
 		}
 
 		m_MemoryEndAddress = m_Memory + m_MemorySize;
@@ -113,7 +113,7 @@ namespace K15_Engine { namespace Core {
  	 	header->Size = p_Size;
  	 	header->Line = p_Line;
 
-		m_MemoryHeaderMap.insert(Pair(size_t,MemoryHeader*)((size_t)memory,header));
+ 		m_MemoryHeaderMap.insert(Pair(size_t,MemoryHeader*)((size_t)memory,header));
 
 		m_UsedMemory += p_Size;
 

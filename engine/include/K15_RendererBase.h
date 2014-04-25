@@ -136,6 +136,9 @@ namespace K15_Engine { namespace Rendering {
 		RendererBase();
 		virtual ~RendererBase();
 
+		bool initialize();
+		void shutdown();
+
 		bool draw(RenderOperation* p_Rop);
 
 		bool setRenderWindow(RenderWindowBase* p_RenderWindow);
@@ -187,18 +190,21 @@ namespace K15_Engine { namespace Rendering {
 		bool setDepthState(const DepthState& p_DepthState);
 		INLINE const DepthState& getDepthState() const;
 
+		bool bindGpuProgramBatch(GpuProgramBatch* p_GpuProgramBatch);
+		INLINE GpuProgramBatch* getBoundGpuProgramBatch() const;
+
 		bool bindGpuProgram(GpuProgram* p_GpuProgram,Enum p_Stage);
 		INLINE GpuProgram* getBoundGpuProgram(Enum p_GpuProgramType) const;
 		INLINE bool isBoundGpuProgram(Enum p_GpuProgramType) const;
 
 		INLINE bool errorOccured() const;
 
-		void updateGpuProgramParameter(GpuProgram* p_Program, const GpuProgramParameter& p_Parameter);
+		void updateGpuProgramParameter();
 
 		bool bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType);
 		bool bindMaterial(Material* p_Material);
 
-		INLINE GpuBuffer* getBoundBuffer(Enum p_BufferType) const;
+		GpuBuffer* getBoundBuffer(Enum p_BufferType) const;
 
 		bool setVertexDeclaration(VertexDeclaration* p_Declaration);
 		INLINE VertexDeclaration* getVertexDeclaration() const; 
@@ -208,19 +214,21 @@ namespace K15_Engine { namespace Rendering {
 		virtual GpuProgramImplBase* createGpuProgramImpl() = 0;
 		virtual TextureSamplerImplBase* createTextureSamplerImpl() = 0;
 		virtual VertexDeclarationImplBase* createVertexDeclarationImpl() = 0;
+		virtual GpuProgramBatchImplBase* createGpuProgramBatchImpl() = 0;
 
 		INLINE const String& getLastError();
 		INLINE void setLastError(const String& p_String);
 
+		INLINE bool isInitialized() const;
+
 		virtual void beginFrame() = 0;
 		virtual void endFrame() = 0;
-
-		virtual bool initialize() = 0;
-		virtual void shutdown() = 0;
 
 		virtual void onResolutionChanged(const Resolution& p_Resolution){};
 
 	protected:
+		virtual bool _initialize() = 0;
+		virtual void _shutdown() = 0;
 		virtual void _setFillMode(Enum p_FillMode){}
 		virtual void _setAlphaState(const AlphaState& p_AlphaState){}
 		virtual void _setDepthState(const DepthState& p_DepthState){}
@@ -235,9 +243,10 @@ namespace K15_Engine { namespace Rendering {
 		virtual void _setDepthBufferPixelFormat(Enum p_DepthFormat){}
 		virtual void _setStencilBufferPixelFormat(Enum p_StencilFormat){}
 		virtual void _setClearColor(const ColorRGBA& p_ClearColor){}
+		virtual void _updateGpuProgramParameter(const RawData& p_Data, const GpuProgramParameter& p_Parameter){}
 		virtual void _bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType){}
 		virtual void _bindProgram(GpuProgram* p_Program, Enum p_ProgramType){}
-		virtual void _bindProgramParameter(const GpuProgramParameter& p_Parameter){}
+		virtual void _bindProgramBatch(GpuProgramBatch* p_ProgramBatch){}
 		virtual void _bindTexture(Texture* p_Texture, Enum p_Type){}
 		virtual void _bindTextureSampler(TextureSampler* p_Sampler, Enum p_Slot){}
 		virtual void _drawIndexed(uint32 p_Offset = 0){}
@@ -252,6 +261,7 @@ namespace K15_Engine { namespace Rendering {
 		RenderTarget* m_DefaultRenderTarget;
 		Material* m_Material;
 		VertexDeclaration* m_VertexDeclaration;
+		GpuProgramBatch* m_GpuProgramBatch;
 		GpuProgramArray m_GpuPrograms;
 		GpuBufferArray m_GpuBuffers;
 		TextureArray m_BoundTextures;
@@ -266,6 +276,7 @@ namespace K15_Engine { namespace Rendering {
 		Enum m_StencilBufferFormat;
 		bool m_LightningEnabled;
 		bool m_BackFaceCullingEnabled;
+		bool m_Initialized;
 	};// end of RendererBase class definition
 #include "K15_RendererBase.inl"
 }}//end of K15_Engine::Rendering class

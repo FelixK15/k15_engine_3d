@@ -41,4 +41,16 @@ namespace K15_Engine { namespace Core {
 		return filestatus.st_size;
 	}
 	/*********************************************************************************/
+	bool IOUtil::fileExists(const String& p_FileName)
+	{
+		bool exists = false;
+
+		FILE* file = fopen(p_FileName.c_str(),"r");
+		exists = file != 0;
+
+		if(file) fclose(file);
+		 
+		return exists;
+	}
+/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

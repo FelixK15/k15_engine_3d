@@ -108,6 +108,11 @@ GpuProgram* RendererBase::getBoundGpuProgram(Enum p_GpuProgramType) const
 	return m_GpuPrograms[p_GpuProgramType];
 }
 /*********************************************************************************/
+GpuProgramBatch* RendererBase::getBoundGpuProgramBatch() const
+{
+	return m_GpuProgramBatch;
+}
+/*********************************************************************************/
 VertexDeclaration* RendererBase::getVertexDeclaration() const
 {
   return m_VertexDeclaration;
@@ -131,5 +136,10 @@ const String& RendererBase::getLastError()
 void RendererBase::setLastError(const String& p_String)
 {
 	m_LastError = p_String;
+}
+/*********************************************************************************/
+bool RendererBase::isInitialized() const
+{
+	return m_Initialized;
 }
 /*********************************************************************************/

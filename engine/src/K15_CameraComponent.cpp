@@ -27,7 +27,7 @@
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
-	K15_IMPLEMENT_RTTI_BASE(Rendering,CameraComponent,Core::GameObjectComponentBase);
+	//K15_IMPLEMENT_RTTI_BASE(Rendering,CameraComponent,Core::GameObjectComponentBase);
 	/*********************************************************************************/
 
 	/*********************************************************************************/

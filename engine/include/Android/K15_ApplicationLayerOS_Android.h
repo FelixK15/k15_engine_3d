@@ -133,6 +133,8 @@ namespace K15_Engine { namespace Core {
 		* setter for the android_app instance from the application running the engine.
 		*/
 		INLINE void setAndroidApp(android_app* p_App);
+
+		INLINE android_app* getAndroidApp() const;
 	private:
 		timespec m_LastTime;
 		String m_Error;

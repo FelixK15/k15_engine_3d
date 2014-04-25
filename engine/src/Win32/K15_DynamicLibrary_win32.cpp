@@ -51,7 +51,8 @@ namespace K15_Engine { namespace Core {
 	{
 		if(!isLoaded())
 		{
-			m_Module = LoadLibrary(getFileName().c_str());
+			String path = g_Application->getGameRootDir() + m_FileName;
+			m_Module = LoadLibrary(path.c_str());
 			if(!m_Module)
 			{
 				return false;

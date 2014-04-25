@@ -24,9 +24,9 @@
 #include "K15_ApplicationModuleDescription.h"
 
 /*********************************************************************************/
-__declspec(dllexport) void pluginLoad();
+K15_CORE_API void pluginLoad();
 /*********************************************************************************/
-__declspec(dllexport) void pluginUnload();
+K15_CORE_API void pluginUnload();
 /*********************************************************************************/
-__declspec(dllexport) K15_Engine::Core::ApplicationModuleDescription getDescription();
+K15_CORE_API K15_Engine::Core::ApplicationModuleDescription getDescription();
 /*********************************************************************************/

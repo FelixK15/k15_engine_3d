@@ -160,7 +160,7 @@ namespace K15_Engine { namespace Rendering {
 
 		bool uploadShadowBufferToGpu();
 
-		INLINE const GpuBufferImplBase* getImpl() const;
+		INLINE GpuBufferImplBase* getImpl();
 
 	private:
 		uint32 _writeToShadowCopy(uint32 p_Size, byte* p_Destination, uint32 p_Offset);

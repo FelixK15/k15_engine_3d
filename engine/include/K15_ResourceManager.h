@@ -27,11 +27,13 @@
 #	include "K15_Prerequisites.h"
 #	include "K15_Application.h"
 #	include "K15_AllocatedObject.h"
+#	include "K15_LogManager.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
-#include "K15_ResourceFileBase.h"
-#include "K15_ResourceHandle.h"
+#include "K15_ResourceArchiveBase.h"
+/*#include "K15_ResourceHandle.h"*/
 #include "K15_ResourceBase.h"
+#include "K15_ResourceImporterBase.h"
 #include "K15_ProfilingManager.h"
 
 namespace K15_Engine { namespace Core { 
@@ -40,8 +42,9 @@ namespace K15_Engine { namespace Core {
 										 public Singleton<ResourceManager>  //Singleton?
 	{
 	public:
+		typedef DynamicArray(ResourceImporterBase*) ResourceImporterList;
 		typedef DynamicArray(ResourceBase*)			ResourceList;
-		typedef FixedArray(ResourceFileBase*,20)	ResourceFileList;
+		typedef DynamicArray(ResourceArchiveBase*)	ResourceArchiveList;
 		typedef HashMap(ResourceName,ResourceBase*)	ResourceCache;
 
 	public:
@@ -50,92 +53,18 @@ namespace K15_Engine { namespace Core {
 
 		void update(const GameTime &gtTime);
 
-		template<class ResourceType> ResourceHandle<ResourceType> getResource(const ResourceName& p_ResourceName,Enum p_Priority)
-		{
-			K15_PROFILE(StringUtil::format("ResourceManager::getResource (%s)",p_ResourceName.c_str()));
+		template<class ResourceType> ResourceType* getResource(const String& p_ResourceName,Enum p_Priority = ResourceBase::RP_NORMAL);
 
-			ResourceCache::iterator iter = m_ResourceDataCache.find(p_ResourceName);
-			ResourceHandle<ResourceType> handle(K15_INVALID_RESOURCE_ID);
+		bool cacheResource(const String& p_ResourceName,Enum p_Priority);
+		bool isResourceInCache(const String& p_ResourceName);
+		
+		INLINE void addResourceFile(ResourceArchiveBase *p_ResourceFile);
+		INLINE void addResourceImporter(ResourceImporterBase* p_ResourceImporter);
 
-			if(iter == m_ResourceDataCache.end())
-			{
-				if(cacheResource<ResourceType>(p_ResourceName,p_Priority))
-				{
-					iter = m_ResourceDataCache.find(p_ResourceName);
+		//INLINE ResourceBase* getResourceByID(ResourceID p_ResourceID);
 
-					m_Resources.push_back(iter->second);
-					handle.setResourceID(m_Resources.size() - 1);
-				}
-			}
-
-			return handle;
-		}
-
-		template<class ResourceType> bool cacheResource(const ResourceName& p_ResourceName,Enum p_Priority)
-		{
-			K15_PROFILE(StringUtil::format("ResourceManager::cacheResource (%s)",p_ResourceName.c_str()));
-
-			bool cachedResource = false;
-			RawData resourceData = {0};
-			ResourceFileBase* resourceFile = 0;
-			ResourceType* resource = K15_NEW ResourceType();
-      resource->setAssetName(p_ResourceName);
-			//we need to load the resource from one of the resource files.
-			for(ResourceFileList::iterator iter = m_ResoureFiles.begin();iter != m_ResoureFiles.end();++iter)
-			{
-				resourceFile = (*iter);
-				//try to open the resource file
-				
-				if(!resourceFile->open())
-				{
-					//log error and load debug resoure
-					_LogError("Could not open asset file %s.",resourceFile->getResourceFileName().c_str());
-				}
-				else
-				{
-					if(resourceFile->hasResource(p_ResourceName.c_str()))
-					{
-						if(resourceFile->getResource(p_ResourceName.c_str(),&resourceData))
-						{
-							break;
-						}
-					}
-				}
-
-				if(!resourceData.data)
-				{
-					resource->loadDebug(resourceData);
-				}
-
-				//check if actual data has been written
-				if(resourceData.data)
-				{
-					//load Resource using resource data from the resource file
-					if((cachedResource = resource->load(resourceData)) == true)
-					{
-						m_ResourceDataCache.insert(Pair(ResourceName,ResourceBase*)(p_ResourceName,resource));
-					}
-				}
-
-				//close the file after we're finished
-				resourceFile->close();
-
-				if(cachedResource)
-				{
-					break;
-				}
-			}
-
-			return cachedResource;
-		}
-
-		bool isResourceInCache(const ResourceName& p_ResourceName);
-		void addResourceFile(ResourceFileBase *p_ResourceFile);
-
-		ResourceBase* getResourceByID(ResourceID p_ResourceID);
-
-		const ResourceList& getResources();
-		const ResourceFileList& getResourceFileList();
+		INLINE const ResourceList& getResources() const;
+		INLINE const ResourceArchiveList& getResourceFileList() const;
 	
 	private:
 		void deleteResource(ResourceBase *p_Resource);
@@ -144,10 +73,11 @@ namespace K15_Engine { namespace Core {
 		void clearResourceCache();
 		void clearResources();
 
-		ResourceFileList m_ResoureFiles;
+		ResourceImporterList m_ResourceImporters;
+		ResourceArchiveList m_ResoureFiles;
 		ResourceCache m_ResourceDataCache;
 		ResourceList m_Resources;
-	};
+	}; //end of ResourceManager class declaration
 	#include "K15_ResourceManager.inl"
 }} //end of K15_Engine::Core namespace
 

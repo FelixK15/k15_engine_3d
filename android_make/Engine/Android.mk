@@ -30,6 +30,8 @@ LOCAL_STATIC_LIBRARIES 	+= JsonCPP
 LOCAL_STATIC_LIBRARIES	+= Enet
 LOCAL_STATIC_LIBRARIES  += TinyThread
 
+LOCAL_LDLIBS			:= lgnustl_shared
+
 include $(BUILD_STATIC_LIBRARY)
 
 $(call import-module,android/native_app_glue)

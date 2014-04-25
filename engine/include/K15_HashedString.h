@@ -44,7 +44,7 @@ namespace K15_Engine { namespace Core {
 
 #		ifndef K15_NO_STRINGS
 			const char* c_str() const;
-			const String& toString() const;
+			const String toString() const;
 #		endif
 
 		bool operator< (const HashedString& p_Other) const;
@@ -57,6 +57,7 @@ namespace K15_Engine { namespace Core {
 	private:
 		unsigned long m_Hash;
 #		ifndef K15_NO_STRINGS
+			/*String m_String;*/
 			String m_String;
 #		endif
 	};//end of HashedString class

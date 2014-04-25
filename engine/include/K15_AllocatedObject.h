@@ -55,6 +55,7 @@ namespace K15_Engine { namespace Core {
 			AC_RENDEROP_POOL,
 			AC_PROFILING_NODE_POOL,
 			AC_VERTEX_POOL,
+			AC_RESOURCE,
 			AC_COUNT
 		}; //AllocationCategory
 		/*********************************************************************************/
@@ -113,6 +114,7 @@ namespace K15_Engine { namespace Core {
 	typedef AllocatedObject<BaseAllocatedObject::AC_THREADING> ThreadingAllocatedObject;
 	typedef AllocatedObject<BaseAllocatedObject::AC_TASKS> TaskManagerAllocatedObject;
 	typedef AllocatedObject<BaseAllocatedObject::AC_LOGGING> LoggingAllocatedObject;
+	typedef AllocatedObject<BaseAllocatedObject::AC_RESOURCE> ResourceAllocatedObject;
 
 #include "K15_AllocatedObject.inl"
 }} //end of K15_Engine::Core namespace

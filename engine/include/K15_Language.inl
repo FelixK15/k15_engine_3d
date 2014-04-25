@@ -47,7 +47,9 @@ const String& Language::getStringForLanguage(const ObjectName& p_StringID, Enum 
 
 	if(iter == languageMap.end())
 	{
-		return p_StringID.toString();
+		static String string;
+		string = p_StringID.toString();
+		return string;
 	}
 
 	return iter->second;

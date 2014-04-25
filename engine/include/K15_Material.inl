@@ -23,9 +23,19 @@ GpuProgram* MaterialPass::getProgram(Enum p_Stage) const
 	return m_Programs[p_Stage];
 }
 /*********************************************************************************/
+GpuProgramBatch* MaterialPass::getProgramBatch() const
+{
+	return m_ProgramBatch;
+}
+/*********************************************************************************/
 void MaterialPass::setProgram(GpuProgram* p_Program, Enum p_Stage)
 {
 	m_Programs[p_Stage] = p_Program;
+}
+/*********************************************************************************/
+void MaterialPass::setProgramBatch(GpuProgramBatch* p_ProgramBatch)
+{
+	m_ProgramBatch = p_ProgramBatch;
 }
 /*********************************************************************************/
 const ColorRGBA& MaterialPass::getSpecular() const

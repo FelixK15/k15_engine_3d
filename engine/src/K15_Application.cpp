@@ -47,6 +47,8 @@
 #	elif defined K15_OS_ANDROID
 #		include "Android/K15_RenderWindow_Android.h"
 #		include "Android/K15_Logcat_Android.h"
+//#		include "GLES2/K15_GLES2_Renderer.h"
+#		include "K15_SampleApplicationModule.h"
 #	endif //K15_OS_WINDOWS
 #endif //K15_DEBUG
 
@@ -263,21 +265,6 @@ namespace K15_Engine { namespace Core {
 		//load input file
 		loadInputFile();
 
-		if(!m_RenderTask->getRenderer())
-		{
-			_LogError("No renderer defined!");
-		}
-		else
-		{
-			m_RenderTask->getRenderer()->setRenderWindow(m_RenderWindow);
-			if(!m_RenderTask->getRenderer()->initialize())
-			{
-				K15_DELETE m_RenderTask->getRenderer();
-				m_RenderTask->setRenderer(0);
-				_LogError("Could not initialize renderer.");
-			}
-		}
-
 		//Load plugins
 		loadPluginsFile();
 
@@ -286,6 +273,8 @@ namespace K15_Engine { namespace Core {
 		{
 			(*iter)->onInitialize();
 		}
+
+		tryInitializeRenderer();
 	}
 	/*********************************************************************************/
 	void Application::setWindowTitle(const String& p_WindowTitle) 
@@ -714,9 +703,19 @@ namespace K15_Engine { namespace Core {
 		}
 	}
 	/*********************************************************************************/
-	K15_Engine::Core::Application* K15Engine_getApplication()
-	{ 
-		return g_Application; 
+	void Application::tryInitializeRenderer()
+	{
+		//try to initialize renderer
+		if(getRenderer())
+		{
+			if(getRenderer()->initialize())
+			{
+				for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
+				{
+					(*iter)->onRendererInitialized();
+				}
+			}
+		}
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace

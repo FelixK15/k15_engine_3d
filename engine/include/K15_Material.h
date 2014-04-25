@@ -48,7 +48,10 @@ namespace K15_Engine { namespace Rendering {
 		~MaterialPass();
 
 		INLINE GpuProgram* getProgram(Enum p_Stage) const;
+		INLINE GpuProgramBatch* getProgramBatch() const;
+
 		INLINE void setProgram(GpuProgram* p_Program, Enum p_Stage);
+		INLINE void setProgramBatch(GpuProgramBatch* p_ProgramBatch);
 
 		INLINE const ColorRGBA& getSpecular() const;
 		INLINE const ColorRGBA& getDiffuse() const;
@@ -92,6 +95,7 @@ namespace K15_Engine { namespace Rendering {
 
 	private:
 		expose GpuProgramArray m_Programs; 
+		expose GpuProgramBatch* m_ProgramBatch;
 		expose Texture* m_DiffuseMap;
 		expose TextureSampler* m_DiffuseSampler;
 		expose AlphaState m_AlphaState;

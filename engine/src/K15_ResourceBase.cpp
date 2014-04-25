@@ -62,12 +62,4 @@ namespace K15_Engine { namespace Core {
 
 	}
 	/*********************************************************************************/
-	bool ResourceBase::load(const RawData& p_Data)
-	{
-		m_RawData = p_Data.data;
-		m_RawDataSize = p_Data.size;
-
-		return internalLoad(p_Data);
-	}
-	/*********************************************************************************/
 }} //end of K15_Engine::Core namespace

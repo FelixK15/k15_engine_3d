@@ -37,6 +37,7 @@ namespace K15_Engine { namespace Core {
 		virtual void evaluateSettings(const StringSet& p_ApplicationSettings){}
 
 		virtual void onInitialize(){}
+		virtual void onRendererInitialized(){}
 		virtual void onShutdown(){}
 
 		virtual void onPreTick(){}

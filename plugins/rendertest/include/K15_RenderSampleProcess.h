@@ -42,11 +42,12 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 	private:
 		RenderOperation* m_Rop;
 		Material* m_Material;
-		GpuProgram* m_VertexShader;
-		GpuProgram* m_FragmetShader;
+		GpuProgramBatch* m_ProgramBatch;
 		VertexBuffer* m_VertexBuffer;
 		IndexBuffer* m_IndexBuffer;
 		VertexDeclaration* m_VertexDeclaration;
+		Texture* m_Texture;
+		TextureSampler* m_Sampler;
 
 	}; //K15_RenderSampleProcess class declaration
 }}} // end of K15_Engine::Plugins::RenderTest namespace

@@ -37,22 +37,23 @@ namespace K15_Engine { namespace Core {
 	BaseAllocatedObject::AllocatorArray BaseAllocatedObject::_createAllocators()
 	{
 		static AllocatorArray _Allocators;
-		BaseAllocator* CoreAllocator = new StackAllocator(20*MEGABYTE,"CoreAllocator");
+		BaseAllocator* CoreAllocator = new StackAllocator(size_megabyte(30),"CoreAllocator");
 
 		_Allocators[AC_CORE] = CoreAllocator;
-		_Allocators[AC_MEMORY] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(0.5*MEGABYTE,"MemoryAllocator",CoreAllocator);
-		_Allocators[AC_MODULE] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(0.5*MEGABYTE,"ModuleAllocator",CoreAllocator);
+		_Allocators[AC_MEMORY] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(size_megabyte(0.5),"MemoryAllocator",CoreAllocator);
+		_Allocators[AC_MODULE] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(size_megabyte(0.5),"ModuleAllocator",CoreAllocator);
 #		if defined K15_DEBUG
-		_Allocators[AC_DEBUG] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(2*MEGABYTE,"DebugAllocator",CoreAllocator);
+		_Allocators[AC_DEBUG] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(size_megabyte(2),"DebugAllocator",CoreAllocator);
 #		endif //K15_DEBUG
-		_Allocators[AC_RENDERING] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(1*MEGABYTE,"RenderAllocator",CoreAllocator);
-		_Allocators[AC_PROFILING] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(2*MEGABYTE,"ProfilingAllocator",CoreAllocator);
-		_Allocators[AC_INPUT] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(0.5*MEGABYTE,"InputAllocator",CoreAllocator);
-		_Allocators[AC_GAMEVENTS] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(0.5*MEGABYTE,"GameEventAllocator",CoreAllocator);
-		_Allocators[AC_DYNAMICLIBRARY] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(0.5*MEGABYTE,"DynamicLibrarayAllocator",CoreAllocator);
-		_Allocators[AC_THREADING] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(0.5*MEGABYTE,"ThreadingAllocator",CoreAllocator);
-		_Allocators[AC_TASKS] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(0.5*MEGABYTE,"TaskAllocator",CoreAllocator);
-		_Allocators[AC_LOGGING] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(0.5*MEGABYTE,"LoggingAllocator",CoreAllocator);
+		_Allocators[AC_RENDERING] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(size_megabyte(1),"RenderAllocator",CoreAllocator);
+		_Allocators[AC_PROFILING] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(size_megabyte(2),"ProfilingAllocator",CoreAllocator);
+		_Allocators[AC_INPUT] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(size_megabyte(0.5),"InputAllocator",CoreAllocator);
+		_Allocators[AC_GAMEVENTS] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(size_megabyte(0.5),"GameEventAllocator",CoreAllocator);
+		_Allocators[AC_DYNAMICLIBRARY] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(size_megabyte(0.5),"DynamicLibrarayAllocator",CoreAllocator);
+		_Allocators[AC_THREADING] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(size_megabyte(0.5),"ThreadingAllocator",CoreAllocator);
+		_Allocators[AC_TASKS] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(size_megabyte(0.5),"TaskAllocator",CoreAllocator);
+		_Allocators[AC_LOGGING] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(size_megabyte(0.5),"LoggingAllocator",CoreAllocator);
+		_Allocators[AC_RESOURCE] = K15_NEW_T(CoreAllocator,BlockAllocator) BlockAllocator(size_megabyte(10),"ResourceAllocator",CoreAllocator);
 		_Allocators[AC_VERTEX_POOL] = K15_NEW_T(_Allocators[AC_RENDERING],PoolAllocator<Vertex>) PoolAllocator<Vertex>(10000,"VertexPool",_Allocators[AC_RENDERING]);
 		_Allocators[AC_RENDEROP_POOL] = K15_NEW_T(_Allocators[AC_RENDERING],PoolAllocator<RenderOperation>) PoolAllocator<RenderOperation>(256,"RenderOperationPool",_Allocators[AC_RENDERING]);
 		_Allocators[AC_PROFILING_NODE_POOL] = K15_NEW_T(_Allocators[AC_PROFILING],PoolAllocator<ProfilingNode>) PoolAllocator<ProfilingNode>(10240,"ProfilingNodePool",_Allocators[AC_PROFILING]);
@@ -65,6 +66,7 @@ namespace K15_Engine { namespace Core {
 		K15_DELETE_T(Allocators[AC_PROFILING],Allocators[AC_PROFILING_NODE_POOL],PoolAllocator<ProfilingNode>);
 		K15_DELETE_T(Allocators[AC_RENDERING],Allocators[AC_RENDEROP_POOL],PoolAllocator<RenderOperation>);
 		K15_DELETE_T(Allocators[AC_RENDERING],Allocators[AC_VERTEX_POOL],PoolAllocator<Vertex>);
+		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_RESOURCE],BlockAllocator);
 		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_LOGGING],BlockAllocator);
 		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_TASKS],BlockAllocator);
 		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_THREADING],BlockAllocator);

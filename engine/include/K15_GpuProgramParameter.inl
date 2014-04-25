@@ -20,7 +20,7 @@
 /*********************************************************************************/
 bool GpuProgramParameter::isAutoParameter() const
 {
-  return m_AutoParameter;
+	return m_AutoParameter;
 }
 /*********************************************************************************/
 Enum GpuProgramParameter::getType() const
@@ -28,14 +28,14 @@ Enum GpuProgramParameter::getType() const
   return m_Type;
 }
 /*********************************************************************************/
+Enum GpuProgramParameter::getUpdateFrequency() const
+{
+	return m_UpdateFrequency;
+}
+/*********************************************************************************/
 uint32 GpuProgramParameter::getSize() const
 {
   return m_Size;
-}
-/*********************************************************************************/
-const ObjectName& GpuProgramParameter::getAutoName() const
-{
-  return m_AutoName;
 }
 /*********************************************************************************/
 const String& GpuProgramParameter::getName() const
@@ -58,14 +58,14 @@ uint32 GpuProgramParameter::getRegisterIndex() const
   return m_RegisterIndex;
 }
 /*********************************************************************************/
-void GpuProgramParameter::setAutoParameter(bool p_Value)
-{
-  m_AutoParameter = p_Value;
-}
-/*********************************************************************************/
 void GpuProgramParameter::setType(Enum p_VariableType)
 {
   m_Type = p_VariableType;
+}
+/*********************************************************************************/
+void GpuProgramParameter::setUpdateFrequency(Enum p_UpdateFrequency)
+{
+	m_UpdateFrequency = p_UpdateFrequency;
 }
 /*********************************************************************************/
 void GpuProgramParameter::setSize(uint32 p_Size)
@@ -73,14 +73,14 @@ void GpuProgramParameter::setSize(uint32 p_Size)
   m_Size = p_Size;
 }
 /*********************************************************************************/
+void GpuProgramParameter::setAutoParameter(bool p_Value)
+{
+	m_AutoParameter = p_Value;
+}
+/*********************************************************************************/
 void GpuProgramParameter::setName(const String& p_Name)
 {
   m_Name = p_Name;
-}
-/*********************************************************************************/
-void GpuProgramParameter::setAutoName(const ObjectName& p_Name)
-{
-  m_AutoName = p_Name;
 }
 /*********************************************************************************/
 void GpuProgramParameter::setBufferIndex(int32 p_Block)
@@ -96,5 +96,25 @@ void GpuProgramParameter::setOffset(uint32 p_Offset)
 void GpuProgramParameter::setRegisterIndex(uint32 p_Location)
 {
   m_RegisterIndex = p_Location;
+}
+/*********************************************************************************/
+void* GpuProgramParameter::getUserData() const
+{
+	return m_UserData;
+}
+/*********************************************************************************/
+void GpuProgramParameter::setUserData(void* p_UserData)
+{
+	m_UserData = p_UserData;
+}
+/*********************************************************************************/
+void GpuProgramParameter::setGpuProgram(GpuProgram* p_Program)
+{
+	m_Program = p_Program;
+}
+/*********************************************************************************/
+GpuProgram* GpuProgramParameter::getGpuProgram() const
+{
+	return m_Program;
 }
 /*********************************************************************************/

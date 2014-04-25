@@ -70,3 +70,8 @@ const GpuProgramImplBase* GpuProgram::getImpl() const
 	return m_Impl;
 }
 /*********************************************************************************/
+void GpuProgram::setCompiled(bool p_Compiled)
+{
+	m_Compiled = p_Compiled;
+}
+/*********************************************************************************/

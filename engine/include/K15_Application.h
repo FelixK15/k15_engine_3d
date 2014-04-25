@@ -42,18 +42,14 @@
 #	include "Android/K15_ApplicationLayerOS_Android.h"
 #endif //K15_OS_WINDOWS
 
-/*********************************************************************************/
-K15_Engine::Core::Application* K15Engine_getApplication();
-/*********************************************************************************/
-
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	typedef List(ApplicationModule*) ApplicationModuleList;
-	typedef List(ApplicationParameter) ApplicationParameterList;
+	typedef DynamicArray(ApplicationModule*) ApplicationModuleList;
+	typedef DynamicArray(ApplicationParameter) ApplicationParameterList;
 	/*********************************************************************************/
-	class K15_CORE_API Application : public Singleton<Application>,
-									   public SerializableObject<Application>,
-									   public CoreAllocatedObject
+	class K15_CORE_API Application : public SerializableObject<Application>,
+									 public CoreAllocatedObject,
+									 public Singleton<Application>
 	{
 	public:
 		/*********************************************************************************/
@@ -82,6 +78,8 @@ namespace K15_Engine { namespace Core {
 		void initialize(int p_CommandCount,char** p_Commands);
 		void initialize();
 		
+		void tryInitializeRenderer();
+
 		void run();
 
 		void tick();
@@ -111,8 +109,8 @@ namespace K15_Engine { namespace Core {
 		INLINE RenderWindowBase* getRenderWindow() const;
 		INLINE LogManager* getLogManager() const;
 		INLINE InputManager* getInputManager() const;
-		INLINE const StackAllocator* getFrameAllocator() const;
-		INLINE const ApplicationOSLayerType& getOSLayer() const;
+		INLINE StackAllocator* getFrameAllocator();
+		INLINE ApplicationOSLayerType& getOSLayer();
 
 		INLINE double getRunningTime() const;
 

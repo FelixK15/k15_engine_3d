@@ -33,7 +33,7 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 		RenderTestApplicationModule();
 		~RenderTestApplicationModule();
 
-		void onInitialize() OVERRIDE;
+		void onRendererInitialized() OVERRIDE;
 		void onShutdown() OVERRIDE;
 		void onPreTick() OVERRIDE;
 		void onPostTick() OVERRIDE;

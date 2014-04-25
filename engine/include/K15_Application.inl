@@ -17,6 +17,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+
 /*********************************************************************************/
 uint32 Application::getFrameCount() const
 {
@@ -93,7 +94,7 @@ InputManager* Application::getInputManager() const
 	return m_InputManager;
 }
 /*********************************************************************************/
-const StackAllocator* Application::getFrameAllocator() const
+StackAllocator* Application::getFrameAllocator()
 {
 	return m_FrameAllocator;
 }
@@ -157,7 +158,7 @@ const FrameStatistic& Application::getFrameStatistic(uint32 p_FrameNumber) const
 	return m_FrameStatistics[p_FrameNumber];
 }
 /*********************************************************************************/
-const ApplicationOSLayerType& Application::getOSLayer() const
+ApplicationOSLayerType& Application::getOSLayer()
 {
   return m_OSLayer;
 }

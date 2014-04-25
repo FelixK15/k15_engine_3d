@@ -4,4 +4,10 @@
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+    <Deploy>
+      <DeployUninstall>UninstallKeep</DeployUninstall>
+      <DeploymentType>DeployToDevice</DeploymentType>
+    </Deploy>
+  </ItemDefinitionGroup>
 </Project>

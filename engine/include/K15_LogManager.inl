@@ -16,6 +16,12 @@
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
  */
+
+/*********************************************************************************/
+LogManager* LogManager::getInstance()
+{
+	return Instance;
+}
 /*********************************************************************************/
 LogBase* LogManager::getDefaultLog()
 {

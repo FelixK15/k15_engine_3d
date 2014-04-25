@@ -88,7 +88,7 @@ namespace K15_Engine { namespace Core {
 
 			_eraseNode_r(node);
 
-			m_Nodes.pop_front();
+			m_Nodes.erase(m_Nodes.begin());
 		}
 	}
 	/*********************************************************************************/

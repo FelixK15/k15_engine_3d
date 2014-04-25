@@ -40,7 +40,7 @@ namespace K15_Engine { namespace Core {
 	{
 	public:
 		/*********************************************************************************/
-		typedef List(TaskBase*) TaskList;
+		typedef DynamicArray(TaskBase*) TaskList;
 		/*********************************************************************************/
 	public:
 		TaskManager();

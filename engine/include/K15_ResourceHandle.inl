@@ -19,14 +19,16 @@
 /*********************************************************************************/
 template<class ResourceType>
 ResourceHandle<ResourceType>::ResourceHandle()
-	: m_ResourceID(K15_INVALID_RESOURCE_ID)
+	: m_ResourceID(K15_INVALID_RESOURCE_ID),
+	m_ResourceName()
 {
 
 }
 /*********************************************************************************/
 template<class ResourceType>
 ResourceHandle<ResourceType>::ResourceHandle(ResourceID p_ResourceID)
-	: m_ResourceID(m_ResourceID)
+	: m_ResourceID(p_ResourceID),
+	m_ResourceName()
 {
 	if(m_ResourceID != K15_INVALID_RESOURCE_ID)
 	{
@@ -36,7 +38,8 @@ ResourceHandle<ResourceType>::ResourceHandle(ResourceID p_ResourceID)
 /*********************************************************************************/
 template<class ResourceType>
 ResourceHandle<ResourceType>::ResourceHandle( const ResourceHandle<ResourceType>& p_Other )
-	: m_ResourceID(p_Other.m_ResourceID)
+	: m_ResourceID(p_Other.m_ResourceID),
+	m_ResourceName(p_Other.m_ResourceName)
 {
 	if(m_ResourceID != K15_INVALID_RESOURCE_ID)
 	{
@@ -68,6 +71,7 @@ const ResourceHandle<ResourceType>& ResourceHandle<ResourceType>::operator=(cons
 	}
 
 	m_ResourceID = p_Other.getResourceID();
+	m_ResourceName = p_Other.getResourceName();
 
 	if(m_ResourceID != K15_INVALID_RESOURCE_ID)
 	{
@@ -78,15 +82,41 @@ const ResourceHandle<ResourceType>& ResourceHandle<ResourceType>::operator=(cons
 }
 /*********************************************************************************/
 template<class ResourceType>
-ResourceHandle<ResourceType>::operator ResourceType*() const
+ResourceType* ResourceHandle<ResourceType>::operator->()
 {
+	K15_ASSERT(m_ResourceID != K15_INVALID_RESOURCE_ID,
+		StringUtil::format("Trying to access invalid resource \"%s\".",m_ResourceName.c_str()));
+
 	return getResource();
 }
 /*********************************************************************************/
 template<class ResourceType>
-ResourceType* ResourceHandle<ResourceType>::getResource() const
+ResourceType* ResourceHandle<ResourceType>::getResource()
 {
-	//return (ResourceType*)ResourceManager::getInstance()->getResourceByID(m_ResourceID);
-	return 0;
+	return (ResourceType*)g_ResourceManager->getResourceByID(m_ResourceID);
+}
+/*********************************************************************************/
+template<class ResourceType>
+const ResourceID ResourceHandle<ResourceType>::getResourceID() const
+{
+	return m_ResourceID;
+}
+/*********************************************************************************/
+template<class ResourceType>
+void ResourceHandle<ResourceType>::setResourceID(ResourceID p_ResourceID)
+{
+	m_ResourceID = p_ResourceID;
+}
+/*********************************************************************************/
+template<class ResourceType>
+const String& ResourceHandle<ResourceType>::getResourceName() const
+{
+	return m_ResourceName;
+}
+/*********************************************************************************/
+template<class ResourceType>
+void ResourceHandle<ResourceType>::setResourceName(const String& p_ResourceName)
+{
+	m_ResourceName = p_ResourceName;
 }
 /*********************************************************************************/

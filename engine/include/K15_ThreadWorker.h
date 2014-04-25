@@ -39,8 +39,8 @@ namespace K15_Engine { namespace Core {
 	{
 	public:
 		/*********************************************************************************/
-		typedef List(JobBase*) JobList;
-		typedef List(Thread*) ThreadList;
+		typedef Deque(JobBase*) JobList;
+		typedef DynamicArray(Thread*) ThreadList;
 		typedef HashMap(JobBase*,Thread::id) JobThreadMap;
 		static void execute(void*);
 		static bool Running;
