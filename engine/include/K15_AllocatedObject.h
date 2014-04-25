@@ -34,40 +34,66 @@ namespace K15_Engine { namespace Core {
 	class K15_CORE_API BaseAllocatedObject
 	{
 	public:
+    /*********************************************************************************/
+    struct K15_CORE_API CoreAllocatorSizes
+    {
+      static uint32 GeneralAllocatorSize;
+      static uint32 ModuleAllocatorSize;
+#if defined K15_DEBUG
+      static uint32 DebugAllocatorSize;
+#endif //K15_DEBUG
+      static uint32 ResourceAllocatorSize;
+      static uint32 RenderAllocatorSize;
+      static uint32 ProfilingAllocatorSize;
+      static uint32 GameEventAllocatorSize;
+      static uint32 ThreadingAllocatorSize;
+      static uint32 TaskAllocatorSize;
+      static uint32 LoggingAllocatorSize;
+      static uint32 RenderOperationPoolCount;
+      static uint32 ProfilingNodePoolCount;
+      static uint32 VertexPoolCount;
+    }; //end of CoreAllocatorSizes class declaration
+    /*********************************************************************************/
+
+    /*********************************************************************************/
+    static const uint32 MaxAllocators = 32;
 		/*********************************************************************************/
 		enum eAllocationCategory
 		{
 			AC_CORE = 0,
-			AC_MEMORY,
+			AC_GENERAL,
 			AC_MODULE,
 #			if defined K15_DEBUG
-			AC_DEBUG,
-#			endif
+        AC_DEBUG,
+        AC_PROFILING,
+        AC_PROFILING_NODE_POOL,
+#			endif //K15_DEBUG
 			AC_RENDERING,
-			AC_PROFILING,
-			AC_INPUT,
-			AC_GAMEVENTS,
-			AC_DYNAMICLIBRARY,
+      AC_GAMEVENTS,
 			AC_THREADING,
 			AC_TASKS,
 			AC_LOGGING,
+      AC_RESOURCE,
+
 			//Pools
 			AC_RENDEROP_POOL,
-			AC_PROFILING_NODE_POOL,
 			AC_VERTEX_POOL,
-			AC_RESOURCE,
-			AC_COUNT
+			AC_COUNT = MaxAllocators - AC_VERTEX_POOL
 		}; //AllocationCategory
 		/*********************************************************************************/
 		typedef FixedArray(BaseAllocator*,AC_COUNT) AllocatorArray;
 		/*********************************************************************************/
 
 		static AllocatorArray Allocators;
+    static uint32 MemorySize;
+    static uint32 AllocatorCount;
+
 		static void removeAllocators();
-	private:
-		static AllocatorArray _createAllocators();
-	};
-	/*********************************************************************************/
+    static void createCoreAllocators();
+
+    template<class AllocatorType> static void addAllocator(const String& p_AllocatorName, uint32 p_Size, BaseAllocator* p_ParentAllocator = Allocators[AC_CORE]);
+	}; //end of BaseAllocatedObject class declaration
+  /*********************************************************************************/
 	template<Enum AllocatorCategory>
 	class AllocatedObject : public BaseAllocatedObject
 	{
@@ -98,19 +124,21 @@ namespace K15_Engine { namespace Core {
 		static void operator delete[](void*,size_t);
 		/*********************************************************************************/
 #	endif //K15_DEBUG
-	};
+	}; //end of AllocatedObject class declaration
 
 	typedef AllocatedObject<BaseAllocatedObject::AC_CORE> CoreAllocatedObject;
-	typedef AllocatedObject<BaseAllocatedObject::AC_MEMORY> MemoryAllocatedObject;
+	typedef AllocatedObject<BaseAllocatedObject::AC_GENERAL> MemoryAllocatedObject;
 	typedef AllocatedObject<BaseAllocatedObject::AC_MODULE> ModuleAllocatedObject;
 #	if defined K15_DEBUG
 	typedef AllocatedObject<BaseAllocatedObject::AC_DEBUG> DebugAllocatedObject;
 #	endif //K15_DEBUIG
 	typedef AllocatedObject<BaseAllocatedObject::AC_RENDERING> RenderingAllocatedObject;
+#if defined K15_DEBUG
 	typedef AllocatedObject<BaseAllocatedObject::AC_PROFILING> ProfilingAllocatedObject;
+#endif //K15_DEBUG
 	typedef AllocatedObject<BaseAllocatedObject::AC_GAMEVENTS> GameEventAllocatedObject;
-	typedef AllocatedObject<BaseAllocatedObject::AC_INPUT> InputManagerAllocatedObject;
-	typedef AllocatedObject<BaseAllocatedObject::AC_DYNAMICLIBRARY> DynamicLibraryAllocatedObject;
+	typedef AllocatedObject<BaseAllocatedObject::AC_GENERAL> InputManagerAllocatedObject;
+	typedef AllocatedObject<BaseAllocatedObject::AC_GENERAL> DynamicLibraryAllocatedObject;
 	typedef AllocatedObject<BaseAllocatedObject::AC_THREADING> ThreadingAllocatedObject;
 	typedef AllocatedObject<BaseAllocatedObject::AC_TASKS> TaskManagerAllocatedObject;
 	typedef AllocatedObject<BaseAllocatedObject::AC_LOGGING> LoggingAllocatedObject;

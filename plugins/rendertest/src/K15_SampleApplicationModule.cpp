@@ -136,7 +136,7 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 		float usedSizeMB = 0.0f;
 		float percentage = 0.0f;
 
-		for(uint32 i = 0;i < BaseAllocatedObject::Allocators.size();++i)
+		for(uint32 i = 0;i < BaseAllocatedObject::AllocatorCount;++i)
 		{
 			currentAllocator = BaseAllocatedObject::Allocators.at(i);	
 			totalSizeMB = (float)currentAllocator->getSize() / (float)MEGABYTE;

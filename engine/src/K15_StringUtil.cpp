@@ -29,7 +29,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	String StringUtil::format(char* p_Message,...)
 	{
-		const uint32 BufferSize = 512;
+		static const uint32 BufferSize = 512;
 		char MessageBuffer[BufferSize] = {0};
 
 		va_list list;

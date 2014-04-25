@@ -5,6 +5,8 @@
 	#include "GLES2\K15_GLES2_Renderer.h"
 #endif //K15_OS_ANDROID
 
+using namespace K15_Engine::Core;
+
 /*********************************************************************************/
 #if defined K15_OS_ANDROID
 void android_main(struct android_app* app)
@@ -12,7 +14,9 @@ void android_main(struct android_app* app)
 int main(int argc,char** argv)
 #endif //K15_OS_ANDROID
 {
-	K15_Engine::Core::Application* application = K15_NEW K15_Engine::Core::Application();
+  BaseAllocatedObject::createCoreAllocators();
+
+	Application* application = K15_NEW Application();
 #if defined K15_OS_ANDROID
 	app_dummy();
 	application->addApplicationModule(K15_NEW K15_Engine::Plugins::RenderTest::RenderTestApplicationModule());

@@ -45,7 +45,7 @@ namespace K15_Engine { namespace Core {
 	{
 	public:
     /*********************************************************************************/
-    static const uint32 MaxChildren = 20;
+    static const uint32 MaxChildren = 10;
     /*********************************************************************************/
 
 	public:
