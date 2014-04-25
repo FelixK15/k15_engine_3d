@@ -28,13 +28,27 @@
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
-namespace K15_Engine { namespace Core {
+namespace K15_Engine { namespace Rendering {
 	class K15_CORE_API RenderQueue
 	{
+    /*********************************************************************************/
+    typedef FixedArray(RenderOperation*,2048) RenderOperationList;
+    /*********************************************************************************/
+
 	public:
 		RenderQueue();
-		virtual ~RenderQueue();
+		~RenderQueue();
+
+    INLINE void addRenderOperation(RenderOperation* p_ROP);
+    INLINE uint32 getRenderOperationCount() const;
+
+    INLINE void clearRenderOperations();
+
+  private:
+    uint32 m_RenderOperationCount;
+    RenderOperationList m_RenderOperations;
 	};// end of RenderQueue class declaration
-}}// end of K15_Engine::Core namespace
+# include "K15_RenderQueue.inl"
+}}// end of K15_Engine::Rendering namespace
 
 #endif //_K15Engine_Rendering_RenderQueue_h_

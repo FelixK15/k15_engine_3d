@@ -1,8 +1,8 @@
 /**
- * @file K15_GameObjectComponentBase.h
- * @author Felix Klinge <f.klinge@k15games.de>
+ * @file K15_ModelComponent.h
+ * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/09/09
+ * @date 2013/12/16
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,31 +18,35 @@
  *
  * @section DESCRIPTION
  *
+ * 
  */
 
-#ifndef _K15Engine_Core_GameObjectComponent_h_
-#define _K15Engine_Core_GameObjectComponent_h_
+#ifndef _K15Engine_Core_ModelComponent_h_
+#define _K15Engine_Core_ModelComponent_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
-#	include "K15_Object.h"
+#	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
+#include "K15_GameObjectComponentBase.h"
+#include "K15_Mesh.h"
+
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API GameObjectComponentBase : public Object
-	{
-		K15_DECLARE_RTTI;
+  class K15_CORE_API ModelComponent : public GameObjectComponentBase
+  {
+    K15_DECLARE_RTTI;
 
-	public:
-		GameObjectComponentBase(GameObject* p_Parent = 0, const ObjectName& p_Name = ObjectName::BLANK);
-		virtual ~GameObjectComponentBase();
+  public:
+    ModelComponent(const String& p_ModelResourceName);
+    ~ModelComponent();
 
-		INLINE GameObject* getGameObject() const;
+    INLINE Mesh* getMesh() const;
 
-	protected:
-		GameObject* m_GameObject;
-	}; // end of GameObjectComponentBase class declaration
-	#include "K15_GameObjectComponentBase.inl"
-}}// end of K15_Engine::Core namespace
+  private:
+    Mesh* m_Mesh;
+  }; //end of ModelComponent class declaration
+# include "K15_ModelComponent.inl"
+}}//end of K15_Engine::Core namespace
 
-#endif //_K15Engine_Core_GameObjectComponent_h_
+#endif //_K15Engine_Core_ModelComponent_h_

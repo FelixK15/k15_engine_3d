@@ -62,3 +62,8 @@ void CameraComponent::setNearClipDistance(float p_Near)
   m_Dirty = true;
 }
 /*********************************************************************************/
+const CameraComponent::FrustumPoints& CameraComponent::getFrustumPoints() const
+{
+  return m_FrustumPoints;
+}
+/*********************************************************************************/

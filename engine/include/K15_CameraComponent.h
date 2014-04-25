@@ -36,18 +36,40 @@ namespace K15_Engine { namespace Rendering {
   class K15_CORE_API CameraComponent : public GameObjectComponentBase
   {
 	/*********************************************************************************/
-	//K15_DECLARE_RTTI;
+	K15_DECLARE_RTTI;
 	/*********************************************************************************/
   public:
-	/*********************************************************************************/
-	enum eProjectionType
-	{
-		PT_PERSPECTIVE = 0,
-		PT_ORTHOGRAPHIC,
+    /*********************************************************************************/
+    enum eFrustumPoints
+    {
+      FP_NEAR_LEFT_BOTTOM = 0,
+      FP_NEAR_RIGHT_BOTTOM,
+      FP_NEAR_LEFT_TOP,
+      FP_NEAR_RIGHT_TOP,
 
-		PT_COUNT
-	}; //ProjectionType
-	/*********************************************************************************/
+      FP_FAR_LEFT_BOTTOM,
+      FP_FAR_RIGHT_BOTTOM,
+      FP_FAR_LEFT_TOP,
+      FP_FAR_RIGHT_TOP,
+
+      FP_COUNT
+    }; //FrustumPoints
+    
+    /*********************************************************************************/
+    typedef FixedArray(Vector3,FP_COUNT) FrustumPoints;
+    /*********************************************************************************/
+
+
+
+	  /*********************************************************************************/
+	  enum eProjectionType
+	  {
+		  PT_PERSPECTIVE = 0,
+		  PT_ORTHOGRAPHIC,
+
+		  PT_COUNT
+	  }; //ProjectionType
+	  /*********************************************************************************/
 
   public:
     CameraComponent(GameObject* p_Parent);
@@ -67,9 +89,17 @@ namespace K15_Engine { namespace Rendering {
     INLINE void setFarClipDistance(float p_Far);
     INLINE void setNearClipDistance(float p_Near);
 
-	virtual void update(const GameTime& p_GameTime) OVERRIDE {};
+    bool isVisible(const AABB& p_AABB);
+
+    INLINE const FrustumPoints& getFrustumPoints() const;
+
+    const Vector3& getFrustumPoint(Enum p_FrustumPoint) const;
 
   private:
+    void _calculateFrustumPoints();
+
+  private:
+    FrustumPoints m_FrustumPoints;
     Math::Matrix4 m_ProjectionMatrix;
     Math::Matrix4 m_ViewMatrix;
 

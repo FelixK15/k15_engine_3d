@@ -24,10 +24,14 @@
 #include "K15_GameObject.h"
 #include "K15_CameraComponent.h"
 #include "K15_MatrixUtil.h"
+#include "K15_MathUtil.h"
+#include "K15_Vector3.h"
+#include "K15_Vector2.h"
+#include "K15_AABB.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
-	//K15_IMPLEMENT_RTTI_BASE(Rendering,CameraComponent,Core::GameObjectComponentBase);
+	K15_IMPLEMENT_RTTI_BASE(Rendering,CameraComponent,GameObjectComponentBase);
 	/*********************************************************************************/
 
 	/*********************************************************************************/
@@ -68,10 +72,7 @@ namespace K15_Engine { namespace Rendering {
 	{
 		if(!m_Dirty)
 		{
-			if(m_GameObject->getNode()->needUpdate())
-			{
-				m_Dirty = true;
-			}
+      m_Dirty = m_GameObject->getNode()->needUpdate();
 		}
 
 		if(m_Dirty)
@@ -79,6 +80,7 @@ namespace K15_Engine { namespace Rendering {
 			//update view matrix
 			m_ViewMatrix = m_GameObject->getNode()->getTransformation();
 			m_ViewMatrix = m_ViewMatrix.inverse();
+      _calculateFrustumPoints();
 			m_Dirty = false;
 		}
 
@@ -94,5 +96,23 @@ namespace K15_Engine { namespace Rendering {
 			g_Application->getRenderer()->setActiveCamera(this);
 		}
 	}
-	/*********************************************************************************/
+  /*********************************************************************************/
+  bool CameraComponent::isVisible(const AABB& p_AABB)
+  {
+    return p_AABB.getMin() >= m_FrustumPoints[FP_NEAR_RIGHT_BOTTOM] ||
+           p_AABB.getMax() <= m_FrustumPoints[FP_FAR_LEFT_TOP];
+  }
+  /*********************************************************************************/
+  void CameraComponent::_calculateFrustumPoints()
+  {
+    
+  }
+  /*********************************************************************************/
+  const Vector3& CameraComponent::getFrustumPoint(Enum p_FrustumPoint) const
+  {
+    K15_ASSERT(p_FrustumPoint >= 0 && p_FrustumPoint < FP_COUNT,"Invalid frustum point index.");
+
+    return m_FrustumPoints[p_FrustumPoint];
+  }
+  /*********************************************************************************/
 }}// end of K15_Engine::Rendering namespace

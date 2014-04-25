@@ -139,7 +139,7 @@ namespace K15_Engine { namespace Rendering {
 
 		return viewProjectionMatrixData;
 	}
-	/*********************************************************************************/
+  /*********************************************************************************/
 	void GpuProgramParameter::setUpdateFunction(UpdateFunc p_UpdateFunc)
 	{
 		K15_ASSERT(p_UpdateFunc.isValid(),

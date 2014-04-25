@@ -279,9 +279,6 @@
     <ClInclude Include="..\..\engine\include\K15_AlphaState.h">
       <Filter>Rendering\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_CameraComponent.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_ColorRGBA.h">
       <Filter>Rendering\include</Filter>
     </ClInclude>
@@ -410,6 +407,12 @@
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_GpuProgramAutoParameter.h">
       <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ModelComponent.h">
+      <Filter>Components\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_CameraComponent.h">
+      <Filter>Components\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -686,6 +689,10 @@
     <ClCompile Include="..\..\engine\src\K15_GpuProgramAutoParameter.cpp">
       <Filter>Rendering\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ModelComponent.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_RenderQueue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -872,6 +879,10 @@
     <None Include="..\..\engine\include\K15_ResourceArchiveBase.inl">
       <Filter>ResourceSystem\include</Filter>
     </None>
+    <None Include="..\..\engine\include\K15_ModelComponent.inl">
+      <Filter>Components\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_RenderQueue.inl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />

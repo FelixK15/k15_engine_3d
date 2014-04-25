@@ -24,13 +24,13 @@
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	AABB::AABB()
-		: m_Max(Math::Vector4::Zero),
-		m_Min(Math::Vector4::Zero)
+		: m_Max(Math::Vector3::Zero),
+		m_Min(Math::Vector3::Zero)
 	{
 
 	}
 	/*********************************************************************************/
-	AABB::AABB(const Math::Vector4& p_Min, const Math::Vector4& p_Max)
+	AABB::AABB(const Math::Vector3& p_Min, const Math::Vector3& p_Max)
 		: m_Min(p_Min),
 		m_Max(p_Max)
 	{
@@ -45,13 +45,13 @@ namespace K15_Engine { namespace Rendering {
 	void AABB::_calculateCorners()
 	{
 		m_Corners[CT_FAR_LEFT_TOP] = m_Max;
-		m_Corners[CT_FAR_RIGHT_TOP] = Math::Vector4(m_Min.x,m_Max.y,m_Max.z);
-		m_Corners[CT_FAR_LEFT_BOTTOM] = Math::Vector4(m_Max.x,m_Min.y,m_Max.z);
-		m_Corners[CT_FAR_RIGHT_BOTTOM] = Math::Vector4(m_Min.x,m_Min.y,m_Max.z);
+		m_Corners[CT_FAR_RIGHT_TOP] = Math::Vector3(m_Min.x,m_Max.y,m_Max.z);
+		m_Corners[CT_FAR_LEFT_BOTTOM] = Math::Vector3(m_Max.x,m_Min.y,m_Max.z);
+		m_Corners[CT_FAR_RIGHT_BOTTOM] = Math::Vector3(m_Min.x,m_Min.y,m_Max.z);
 
-		m_Corners[CT_NEAR_LEFT_TOP] = Math::Vector4(m_Max.x,m_Max.y,m_Min.z);
-		m_Corners[CT_NEAR_RIGHT_TOP] = Math::Vector4(m_Min.x,m_Max.y,m_Min.z);
-		m_Corners[CT_NEAR_LEFT_BOTTOM] = Math::Vector4(m_Max.x,m_Min.y,m_Min.z);
+		m_Corners[CT_NEAR_LEFT_TOP] = Math::Vector3(m_Max.x,m_Max.y,m_Min.z);
+		m_Corners[CT_NEAR_RIGHT_TOP] = Math::Vector3(m_Min.x,m_Max.y,m_Min.z);
+		m_Corners[CT_NEAR_LEFT_BOTTOM] = Math::Vector3(m_Max.x,m_Min.y,m_Min.z);
 		m_Corners[CT_NEAR_RIGHT_BOTTOM] = m_Min;
 	}
 	/*********************************************************************************/

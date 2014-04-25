@@ -82,6 +82,9 @@ namespace K15_Engine { namespace Rendering {
 		UpdateFunctions.insert(Pair(String,AutoParameterSettings)(
 			"g_ProjMatrix",AutoParameterSettings(&GpuProgramParameter::UpdateFunctions::UpdateProjectionMatrix,GpuProgramParameter::UF_PER_CAMERA)));
 
+//     UpdateFunctions.insert(Pair(String,AutoParameterSettings)(
+//       "g_ModelMatrix",AutoParameterSettings(&GpuProgramParameter::UpdateFunctions::UpdateModelMatrix,GpuProgramParameter::UF_PER_MESH)));
+
 		return UpdateFunctions;
 	}
 /*********************************************************************************/

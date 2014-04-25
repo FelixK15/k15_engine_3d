@@ -18,64 +18,64 @@
  */
 
 /*********************************************************************************/
-const Vector4& AABB::getMin() const
+const Vector3& AABB::getMin() const
 {
 	return m_Min;
 }
 /*********************************************************************************/
-const Vector4& AABB::getMax() const
+const Vector3& AABB::getMax() const
 {
 	return m_Max;
 }
 /*********************************************************************************/
-void AABB::setMin(const Vector4& p_Min)
+void AABB::setMin(const Vector3& p_Min)
 {
 	m_Min = p_Min;
 	_calculateCorners();
 }
 /*********************************************************************************/
-void AABB::setMax(const Vector4& p_Max)
+void AABB::setMax(const Vector3& p_Max)
 {
 	m_Max = p_Max;
 	_calculateCorners();
 }
 /*********************************************************************************/
-const Vector4& AABB::getFarLeftTop() const
+const Vector3& AABB::getFarLeftTop() const
 {
 	return m_Corners[CT_FAR_LEFT_TOP];
 }
 /*********************************************************************************/
-const Vector4& AABB::getFarRightTop() const
+const Vector3& AABB::getFarRightTop() const
 {
 	return m_Corners[CT_FAR_RIGHT_TOP];
 }
 /*********************************************************************************/
-const Vector4& AABB::getFarLeftBottom() const
+const Vector3& AABB::getFarLeftBottom() const
 {
 	return m_Corners[CT_FAR_LEFT_BOTTOM];
 }
 /*********************************************************************************/
-const Vector4& AABB::getFarRightBottom() const
+const Vector3& AABB::getFarRightBottom() const
 {
 	return m_Corners[CT_FAR_RIGHT_BOTTOM];
 }
 /*********************************************************************************/
-const Vector4& AABB::getNearLeftTop() const
+const Vector3& AABB::getNearLeftTop() const
 {
 	return m_Corners[CT_NEAR_LEFT_TOP];
 }
 /*********************************************************************************/
-const Vector4& AABB::getNearRightTop() const
+const Vector3& AABB::getNearRightTop() const
 {
 	return m_Corners[CT_NEAR_RIGHT_TOP];
 }
 /*********************************************************************************/
-const Vector4& AABB::getNearLeftBottom() const
+const Vector3& AABB::getNearLeftBottom() const
 {
 	return m_Corners[CT_NEAR_LEFT_BOTTOM];
 }
 /*********************************************************************************/
-const Vector4& AABB::getNearRightBottom() const
+const Vector3& AABB::getNearRightBottom() const
 {
 	return m_Corners[CT_NEAR_RIGHT_BOTTOM];
 }
