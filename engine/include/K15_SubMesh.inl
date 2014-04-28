@@ -48,3 +48,7 @@ Material* SubMesh::getMaterial() const
 	return m_Material;
 }
 /*********************************************************************************/
+Mesh* SubMesh::getMesh() const
+{
+  return m_Mesh;
+}

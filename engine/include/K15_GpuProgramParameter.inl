@@ -28,6 +28,11 @@ Enum GpuProgramParameter::getType() const
   return m_Type;
 }
 /*********************************************************************************/
+Enum GpuProgramParameter::getIdentifier() const
+{
+  return m_Identifier;
+}
+/*********************************************************************************/
 Enum GpuProgramParameter::getUpdateFrequency() const
 {
 	return m_UpdateFrequency;
@@ -73,6 +78,17 @@ void GpuProgramParameter::setSize(uint32 p_Size)
   m_Size = p_Size;
 }
 /*********************************************************************************/
+void GpuProgramParameter::setIdentifier(Enum p_Identifier)
+{
+  if(m_Identifier < PI_COUNT)
+  {
+      m_Name = ParameterIdentifierName[m_Identifier];
+      m_AutoParameter = true;
+  }
+
+  m_Identifier = p_Identifier;
+}
+/*********************************************************************************/
 void GpuProgramParameter::setAutoParameter(bool p_Value)
 {
 	m_AutoParameter = p_Value;
@@ -98,14 +114,14 @@ void GpuProgramParameter::setRegisterIndex(uint32 p_Location)
   m_RegisterIndex = p_Location;
 }
 /*********************************************************************************/
-void* GpuProgramParameter::getUserData() const
+void* GpuProgramParameter::getData() const
 {
-	return m_UserData;
+	return m_Data;
 }
 /*********************************************************************************/
-void GpuProgramParameter::setUserData(void* p_UserData)
+void GpuProgramParameter::setData(void* p_UserData)
 {
-	m_UserData = p_UserData;
+	m_Data = p_UserData;
 }
 /*********************************************************************************/
 void GpuProgramParameter::setGpuProgram(GpuProgram* p_Program)

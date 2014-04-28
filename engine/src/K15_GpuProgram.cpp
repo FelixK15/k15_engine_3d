@@ -219,7 +219,15 @@ namespace K15_Engine { namespace Rendering {
 			for(uint32 i = 0;i < m_UsedUniforms;++i)
 			{
 				m_Uniforms[i].setGpuProgram(this);
-				GpuProgramAutoParameter::checkForAutoParameter(m_Uniforms[i]);
+				
+        for(int i = 0;i < GpuProgramParameter::PI_COUNT;++i)
+        {
+          if(m_Uniforms[i].getName() == GpuProgramParameter::ParameterIdentifierName[i])
+          {
+            m_Uniforms[i].setIdentifier(i);
+            break;
+          }
+        }
 			}
 
 			for(uint32 i = 0;i < m_UsedAttributes;++i)

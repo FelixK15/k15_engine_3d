@@ -29,6 +29,11 @@
 #include "K15_IndexBuffer.h"
 #include "K15_VertexDeclaration.h"
 
+#include "K15_GameObject.h"
+#include "K15_Node.h"
+
+#include "K15_CameraComponent.h"
+
 #include "K15_Material.h"
 
 #include "K15_RenderOperation.h"
@@ -507,7 +512,7 @@ namespace K15_Engine { namespace Rendering {
 					continue;
 				}
 
-				updateGpuProgramParameter();
+				updateGpuProgramParameter(p_Rop);
 
 				if(p_Rop->indexBuffer != 0)
 				{
@@ -701,7 +706,7 @@ namespace K15_Engine { namespace Rendering {
 		return true;
 	}
 	/*********************************************************************************/
-	void RendererBase::updateGpuProgramParameter()
+	void RendererBase::updateGpuProgramParameter(RenderOperation* p_Rop)
 	{
 		GpuProgram* program = 0;
 		for(GpuProgramArray::iterator iter = m_GpuPrograms.begin();iter != m_GpuPrograms.end();++iter)
@@ -713,10 +718,54 @@ namespace K15_Engine { namespace Rendering {
 				for(uint32 i = 0;i < program->getAmountUniforms();++i)
 				{
 					GpuProgramParameter& param = program->getUniform(i);
-					RawData paramData;
+					
+          if(param.isAutoParameter())
+          {
+            if(param.getIdentifier() == GpuProgramParameter::PI_VIEW_MATRIX ||
+               param.getIdentifier() == GpuProgramParameter::PI_PROJECTION_MATRIX ||
+               param.getIdentifier() == GpuProgramParameter::PI_VIEW_PROJECTION_MATRIX)
+            {
+              CameraComponent* p_Camera = getActiveCamera();
 
-					param.update(paramData);
-					_updateGpuProgramParameter(paramData,param);
+              K15_ASSERT(p_Camera,
+                StringUtil::format("Trying to set view/projection matrix in shader \"%s\", but there's no active camera to get it from.",
+                program->getName().c_str()));
+
+              Matrix4 mat;
+
+              if(param.getIdentifier() == GpuProgramParameter::PI_VIEW_MATRIX)
+              {
+                mat = p_Camera->getViewMatrix();
+              }
+              else if(param.getIdentifier() == GpuProgramParameter::PI_PROJECTION_MATRIX)
+              {
+                mat = p_Camera->getProjectionMatrix();
+              }
+              else
+              {
+                mat = p_Camera->getProjectionMatrix();
+                mat *= p_Camera->getViewMatrix();
+              }
+
+              param.setData((void*)&mat); 
+            }
+            else if(param.getIdentifier() == GpuProgramParameter::PI_MODEL_MATRIX && p_Rop)
+            {
+              GameObject* gameObject = 0;
+              if((gameObject = p_Rop->gameobject) != 0)
+              {
+                Matrix4 modelMat = gameObject->getNode()->getTransformation();
+
+                param.setData((void*)&modelMat);
+              }
+            }
+          }
+
+          //if data has been set, upload them to the gpu
+          if(param.getData())
+          {
+            _updateGpuProgramParameter(param);
+          }
 				}
 			}
 		}

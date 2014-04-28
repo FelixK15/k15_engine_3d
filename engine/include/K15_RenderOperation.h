@@ -45,6 +45,7 @@ namespace K15_Engine { namespace Rendering {
 		}; //Topology
 		/*********************************************************************************/
 
+    GameObject* gameobject;
 		IndexBuffer* indexBuffer;
 		VertexBuffer* vertexBuffer;
 		Material* material;

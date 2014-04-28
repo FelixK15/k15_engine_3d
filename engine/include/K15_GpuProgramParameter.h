@@ -30,9 +30,6 @@
 #	include "K15_HashedString.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
-// #include "K15_RawData.h"
-#include "K15_Functor.h"
-
 namespace K15_Engine { namespace Rendering {
 	class K15_CORE_API GpuProgramParameter
 	{
@@ -70,25 +67,28 @@ namespace K15_Engine { namespace Rendering {
 			UF_COUNT
 		}; //UpdateFrequency
 		/*********************************************************************************/
+    enum eParameterIdentifier
+    {
+      PI_VIEW_MATRIX = 0,
+      PI_PROJECTION_MATRIX,
+      PI_MODEL_MATRIX,
+      PI_VIEW_PROJECTION_MATRIX,
+
+      PI_COUNT,
+      PI_USER = PI_COUNT + 128
+    }; //ParameterName
+    /*********************************************************************************/
 
 		/*********************************************************************************/
-		typedef Functor2<RawData,const GpuProgramParameter&, void*> UpdateFunc;
+    static const String ParameterIdentifierName[PI_COUNT];
 		/*********************************************************************************/
 
-		/*********************************************************************************/
-		struct K15_CORE_API UpdateFunctions
-		{
-			static RawData UpdateProjectionMatrix(const GpuProgramParameter& p_Param, void* p_UserData);
-			static RawData UpdateViewMatrix(const GpuProgramParameter& p_Param, void* p_UserData);
-			static RawData UpdateViewProjectionMatrix(const GpuProgramParameter& p_Param, void* p_UserData);
-		};
-		/*********************************************************************************/
 	public:
 		GpuProgramParameter();
-		GpuProgramParameter(const GpuProgramParameter& p_Other);
-		virtual ~GpuProgramParameter();
+		~GpuProgramParameter();
 
 		INLINE bool isAutoParameter() const;
+    INLINE Enum getIdentifier() const;
 		INLINE Enum getType() const;
 		INLINE Enum getUpdateFrequency() const;
 		INLINE uint32 getSize() const;
@@ -96,9 +96,10 @@ namespace K15_Engine { namespace Rendering {
 		INLINE int32 getBufferIndex() const;
 		INLINE uint32 getOffset() const;
 		INLINE uint32 getRegisterIndex() const;
-		INLINE void* getUserData() const;
+		INLINE void* getData() const;
 		INLINE GpuProgram* getGpuProgram() const;
 		
+    INLINE void setIdentifier(Enum p_Identifier);
 		INLINE void setAutoParameter(bool p_Value);
 		INLINE void setSize(uint32 p_Size);
 		INLINE void setName(const String& p_Name);
@@ -107,23 +108,20 @@ namespace K15_Engine { namespace Rendering {
 		INLINE void setBufferIndex(int32 p_Block);
 		INLINE void setOffset(uint32 p_Offset);
 		INLINE void setRegisterIndex(uint32 p_Location);
-		INLINE void setUserData(void* p_UserData);
+		INLINE void setData(void* p_UserData);
 		INLINE void setGpuProgram(GpuProgram* p_Program);
-
-		void setUpdateFunction(UpdateFunc p_UpdateFunc);
-		void update(RawData& p_Data);
-
+    
 	private:
 		GpuProgram* m_Program;
-		UpdateFunc m_UpdateFunc;
 		String m_Name;
 		Enum m_Type;
 		Enum m_UpdateFrequency;
+    Enum m_Identifier;
 		int32 m_BufferIndex;
 		uint32 m_RegisterIndex;
 		uint32 m_Size;
 		uint32 m_Offset;
-		void* m_UserData;
+		void* m_Data;
 		bool m_AutoParameter;
 	};// end of GpuProgramParameter class declaration
 #include "K15_GpuProgramParameter.inl"

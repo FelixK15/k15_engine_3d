@@ -78,7 +78,7 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 		virtual void _setDepthBufferPixelFormat(Enum p_DepthFormat) OVERRIDE;
 		virtual void _setStencilBufferPixelFormat(Enum p_StencilFormat) OVERRIDE;
 		virtual void _setClearColor(const ColorRGBA& p_ClearColor) OVERRIDE;
-		virtual void _updateGpuProgramParameter(const RawData& p_Data, const GpuProgramParameter& p_Parameter) OVERRIDE;
+		virtual void _updateGpuProgramParameter(const GpuProgramParameter& p_Parameter) OVERRIDE;
 		virtual void _bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType) OVERRIDE;
 		virtual void _bindProgram(GpuProgram* p_Program, Enum p_ProgramType) OVERRIDE;
 		virtual void _bindProgramBatch(GpuProgramBatch* p_ProgramBatch) OVERRIDE;

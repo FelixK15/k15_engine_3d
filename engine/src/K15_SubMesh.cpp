@@ -23,10 +23,11 @@
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
-	SubMesh::SubMesh()
+	SubMesh::SubMesh(Mesh* p_Mesh)
 		: m_Material(0),
 		m_IndexBuffer(0),
-		m_VertexBuffer(0)
+		m_VertexBuffer(0),
+    m_Mesh(p_Mesh)
 	{
 
 	}
