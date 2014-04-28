@@ -555,11 +555,6 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 		glDrawArrays(GLTopologyConverter[m_Topology],p_Offset,vertexBuffer->getVertexCount());
 	}
 	/*********************************************************************************/
-// 	void RendererOGL::_bindProgramParameter(const GpuProgramParameter& p_Parameter,const RawData& p_Data)
-// 	{
-// 		
-// 	}
-	/*********************************************************************************/
 	void Renderer::_setVertexDeclaration(VertexDeclaration* p_Declaration)
 	{
 		VertexDeclarationImpl* impl = static_cast<VertexDeclarationImpl*>(p_Declaration->getImpl());
@@ -614,22 +609,74 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 		}
 	}
 	/*********************************************************************************/
-	void Renderer::_updateGpuProgramParameter(const RawData& p_Data, const GpuProgramParameter& p_Parameter)
+	void Renderer::_updateGpuProgramParameter(const GpuProgramParameter& p_Parameter)
 	{
 		const GpuProgramImpl* glProgram =  static_cast<const GpuProgramImpl*>(p_Parameter.getGpuProgram()->getImpl());
-		if(p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_2D)
-		{
-			GLint value = (int)p_Data.data;
-			glProgramUniform1i(glProgram->getProgramGL(),p_Parameter.getRegisterIndex(),value);
-			
-			TextureSampler* sampler = m_BoundSamplers.at(value);
-			if(sampler)
-			{
-				TextureSamplerImpl* glSampler = static_cast<TextureSamplerImpl*>(sampler->getImpl());
+    GLuint program = glProgram->getProgramGL();
+    if(p_Parameter.getType() == GpuProgramParameter::VT_UNKNOW)
+    {
+      _LogError("GpuProgramParameter \"%s\" from GpuProgram \"%s\" is unknown.",
+        p_Parameter.getGpuProgram()->getName().c_str(),
+        p_Parameter.getName().c_str());
+    }
+    else if(p_Parameter.getType() == GpuProgramParameter::VT_INT  ||
+            p_Parameter.getType() == GpuProgramParameter::VT_BOOL ||
+            p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_1D ||
+            p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_2D ||
+            p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_3D)
+    {
+      GLint value = p_Parameter.getType() != GpuProgramParameter::VT_BOOL ? 
+        *(GLint*)p_Parameter.getData() :
+        (*(bool*)p_Parameter.getData()) ? GL_TRUE : GL_FALSE;
 
-				glBindSampler(value,glSampler->getHandle());
-			}
-		}
+      glProgramUniform1i(program, p_Parameter.getRegisterIndex(), value);
+
+      if(p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_1D ||
+        p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_2D ||
+        p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_3D)
+      {
+        TextureImpl* glTex = static_cast<TextureImpl*>(m_BoundTextures[value]->getImpl());
+        TextureSamplerImpl* glSampler = static_cast<TextureSamplerImpl*>(m_BoundSamplers[glTex->getTexture()->getTextureSamplerSlot()]->getImpl());
+
+        glBindSampler(glTex->getTextureHandle(),glSampler->getHandle());
+      }
+    }
+    else if(p_Parameter.getType() == GpuProgramParameter::VT_FLOAT)
+    {
+      GLfloat value = *(GLfloat*)p_Parameter.getData();
+
+      glProgramUniform1f(program, p_Parameter.getRegisterIndex(),value);
+    }
+    else if(p_Parameter.getType() == GpuProgramParameter::VT_VECTOR2)
+    {
+      Vector2 value = *(Vector2*)p_Parameter.getData();
+      
+      glProgramUniform2f(program, p_Parameter.getRegisterIndex(),value.x,value.y);
+    }
+    else if(p_Parameter.getType() == GpuProgramParameter::VT_VECTOR3)
+    {
+      Vector3 value = *(Vector3*)p_Parameter.getData();
+
+      glProgramUniform3f(program, p_Parameter.getRegisterIndex(),value.x,value.y,value.z);
+    }
+    else if(p_Parameter.getType() == GpuProgramParameter::VT_VECTOR4)
+    {
+      Vector4 value = *(Vector4*)p_Parameter.getData();
+
+      glProgramUniform4f(program, p_Parameter.getRegisterIndex(),value.x,value.y,value.z,value.w);
+    }
+    else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX2)
+    {
+      glProgramUniformMatrix2fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
+    }
+    else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX3)
+    {
+      glProgramUniformMatrix3fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
+    }
+    else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX4)
+    {
+      glProgramUniformMatrix4fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
+    }
 	}
 	/*********************************************************************************/
 }}}// end of K15_Engine::Rendering::WGL

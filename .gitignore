@@ -20,3 +20,4 @@ Jamfile
 /math/bin
 android_make/EngineTest/libs/
 archives/
+*.diff

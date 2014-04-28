@@ -95,6 +95,16 @@ void TextureSampler::setBorderColor(const ColorRGBA& p_BorderColor)
   m_BorderColor = p_BorderColor;
 }
 /*********************************************************************************/
+void TextureSampler::setSlot(Enum p_Slot)
+{
+  m_Slot = p_Slot;
+}
+/*********************************************************************************/
+Enum TextureSampler::getSlot() const
+{
+  return m_Slot;
+}
+/*********************************************************************************/
 TextureSamplerImplBase* TextureSampler::getImpl() const
 {
 	return m_Impl;

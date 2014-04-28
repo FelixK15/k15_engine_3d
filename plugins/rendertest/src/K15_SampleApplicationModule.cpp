@@ -97,7 +97,7 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 			VertexBuffer* buff = (VertexBuffer*)g_Application->getRenderer()->getBoundBuffer(GpuBuffer::BT_VERTEX_BUFFER);
 			Vertex* vertex = buff->getVertex(1);
 
-			Math::Vector4 pos = vertex->getPosition();
+			Vector4 pos = vertex->getPosition();
 			ColorRGBA color = vertex->getColor();
 			pos.y += 0.02f;
 			color.GreenComponent += 0.02f;
@@ -109,7 +109,7 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 			VertexBuffer* buff = (VertexBuffer*)g_Application->getRenderer()->getBoundBuffer(GpuBuffer::BT_VERTEX_BUFFER);
 			Vertex* vertex = buff->getVertex(1);
 
-			Math::Vector4 pos = vertex->getPosition();
+			Vector4 pos = vertex->getPosition();
 			ColorRGBA color = vertex->getColor();
 			pos.y -= 0.02f;
 			color.GreenComponent -= 0.02f;

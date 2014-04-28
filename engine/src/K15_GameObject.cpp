@@ -49,6 +49,7 @@ namespace K15_Engine { namespace Core {
       }
     }
 
+    p_Component->setGameObject(this);
     m_Components.push_back(p_Component);
 
     return;

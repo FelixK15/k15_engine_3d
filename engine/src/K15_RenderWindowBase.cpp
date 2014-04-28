@@ -51,7 +51,7 @@ namespace K15_Engine { namespace Core {
   {
     if(height == 0) return 0.0f;
 
-    return width / height;
+    return (float)((float)width / (float)height);
   }
   /*********************************************************************************/
 

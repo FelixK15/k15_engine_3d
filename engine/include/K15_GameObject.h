@@ -41,7 +41,8 @@ namespace K15_Engine { namespace Core {
     ~GameObject();
 
     void addComponent(GameObjectComponentBase* p_Component);
-    
+    void onAddedToRenderQueue(RenderQueue* p_RenderQueue);
+
     INLINE Node* getNode() const;
     GameObjectComponentBase* getComponentByName(const ObjectName& p_TypeName) const;
 

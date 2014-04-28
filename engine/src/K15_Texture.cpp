@@ -73,7 +73,8 @@ namespace K15_Engine { namespace Rendering {
 		m_HasAlpha(true),
 		m_HasShadowCopy(false),
 		m_ShadowCopy(0),
-		m_Slot(TS_NO_SLOT)
+		m_Slot(TS_NO_SLOT),
+    m_SamplerSlot(TS_NO_SLOT)
 	{
  		m_Impl = g_Application->getRenderer()->createTextureImpl();
 		m_Impl->setTexture(this);
@@ -91,7 +92,8 @@ namespace K15_Engine { namespace Rendering {
 		m_HasAlpha(true),
 		m_HasShadowCopy(false),
 		m_ShadowCopy(0),
-		m_Slot(TS_NO_SLOT)
+		m_Slot(TS_NO_SLOT),
+    m_SamplerSlot(TS_NO_SLOT)
 	{
 		m_Impl = g_Application->getRenderer()->createTextureImpl();
 		m_Impl->setTexture(this);

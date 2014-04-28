@@ -405,9 +405,6 @@
     <ClInclude Include="..\..\engine\include\K15_ZipResourceArchive.h">
       <Filter>ResourceSystem\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_GpuProgramAutoParameter.h">
-      <Filter>Rendering\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_ModelComponent.h">
       <Filter>Components\include</Filter>
     </ClInclude>
@@ -685,9 +682,6 @@
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_TiffResourceImporter.cpp">
       <Filter>ResourceSystem\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_GpuProgramAutoParameter.cpp">
-      <Filter>Rendering\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_ModelComponent.cpp">
       <Filter>Components\src</Filter>

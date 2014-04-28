@@ -58,7 +58,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>..\..\engine\include\;..\..\plugins\rendertest\include\;..\..\math\include\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\dependencies\glm\;..\..\engine\include\;..\..\plugins\rendertest\include\;..\..\math\include\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

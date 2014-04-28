@@ -38,6 +38,10 @@ namespace K15_Engine { namespace Core {
 		virtual ~GameObjectComponentBase();
 
 		INLINE GameObject* getGameObject() const;
+    INLINE void setGameObject(GameObject* p_GameObject);
+
+  protected:
+    virtual void _onGameObjectSet() {}
 
 	protected:
 		GameObject* m_GameObject;

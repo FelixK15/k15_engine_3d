@@ -199,7 +199,7 @@ namespace K15_Engine { namespace Rendering {
 
 		INLINE bool errorOccured() const;
 
-		void updateGpuProgramParameter();
+		void updateGpuProgramParameter(RenderOperation* p_Rop);
 
 		bool bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType);
 		bool bindMaterial(Material* p_Material);
@@ -243,7 +243,7 @@ namespace K15_Engine { namespace Rendering {
 		virtual void _setDepthBufferPixelFormat(Enum p_DepthFormat){}
 		virtual void _setStencilBufferPixelFormat(Enum p_StencilFormat){}
 		virtual void _setClearColor(const ColorRGBA& p_ClearColor){}
-		virtual void _updateGpuProgramParameter(const RawData& p_Data, const GpuProgramParameter& p_Parameter){}
+		virtual void _updateGpuProgramParameter(const GpuProgramParameter& p_Parameter){}
 		virtual void _bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType){}
 		virtual void _bindProgram(GpuProgram* p_Program, Enum p_ProgramType){}
 		virtual void _bindProgramBatch(GpuProgramBatch* p_ProgramBatch){}

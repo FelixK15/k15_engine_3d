@@ -26,7 +26,6 @@
 #include "K15_IOUtil.h"
 #include "K15_RenderOperation.h"
 #include "K15_GpuProgramBatch.h"
-#include "K15_GpuProgramAutoParameter.h"
 #include "K15_ResourceManager.h"
 #include "K15_Texture.h"
 #include "K15_Image.h"
@@ -63,9 +62,6 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 			0,1,2,3
 		};
  
-		GpuProgramAutoParameter::addAutoParameter("g_Diffuse",
-			GpuProgramAutoParameter::AutoParameterSettings(UpdateDiffuseSampler,GpuProgramParameter::UF_PER_MATERIAL,&m_Texture));
-
  		m_Material = K15_NEW Material();
  		MaterialPass* pass = m_Material->getPass(0,true);
  
@@ -107,8 +103,7 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 // 		pass->setProgram(fragmetShader,GpuProgram::PS_FRAGMENT);
 		pass->setFillMode(RendererBase::FM_SOLID);
 		pass->setCullingMode(RendererBase::CM_CW);
-		
-
+	
 		m_Texture = (Texture*)g_ResourceManager->getResource<Texture>("Test_Image.tif",0);
 		
 		m_Sampler = K15_NEW TextureSampler();
