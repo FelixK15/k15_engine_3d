@@ -35,7 +35,7 @@ namespace K15_Engine { namespace Rendering {
 	class K15_CORE_API SubMesh : public RenderingAllocatedObject
 	{
 	public:
-		SubMesh();
+		SubMesh(Mesh* p_Mesh);
 		virtual ~SubMesh();
 
 		INLINE void setVertexBuffer(VertexBuffer* p_VertexBuffer);
@@ -47,11 +47,14 @@ namespace K15_Engine { namespace Rendering {
 		INLINE void setMaterial(Material* p_Material);
 		INLINE Material* getMaterial() const;
 
+    INLINE Mesh* getMesh() const;
+
 		RenderOperation* createRenderOperation() const;
 	protected:
 		VertexBuffer* m_VertexBuffer;
 		IndexBuffer* m_IndexBuffer;
 		Material* m_Material;
+    Mesh* m_Mesh;
 	};// end of SubMesh class declaration
 #	include "K15_SubMesh.inl"
 }}// end of K15_Engine::Rendering namespace
