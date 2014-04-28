@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>..\..\renderer_opengl\include\;..\..\renderer_opengl\include\WGL\;..\..\engine\include\;..\..\renderer\include\;..\..\dependencies\GLEW\include\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\renderer_opengl\include\;..\..\renderer_opengl\include\WGL\;..\..\engine\include\;..\..\renderer\include\;..\..\dependencies\glm\;..\..\dependencies\GLEW\include\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

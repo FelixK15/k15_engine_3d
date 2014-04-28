@@ -29,14 +29,14 @@
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
-#include "K15_Matrix4.h"
+/*#include "K15_Matrix4.h"*/
 
 namespace K15_Engine { namespace Core {
   class K15_CORE_API MatrixUtil
   {
   public:
-    static const Math::Matrix4& createPerspectiveProjectionMatrix(float p_Fov, float p_NearClip, float p_FarClip);
-    static const Math::Matrix4& createOrthographicProjectionMatrix(float p_NearClip, float p_FarClip);
+    static const Matrix4& createPerspectiveProjectionMatrix(float p_Fov, float p_NearClip, float p_FarClip);
+    static const Matrix4& createOrthographicProjectionMatrix(float p_NearClip, float p_FarClip);
   };
 }} //end of K15_Engine::Core namespace
 

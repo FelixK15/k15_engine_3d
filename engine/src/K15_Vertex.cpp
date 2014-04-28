@@ -22,8 +22,8 @@
 #include "K15_Vertex.h"
 
 #include "K15_ColorRGBA.h"
-#include "K15_Vector4.h"
-#include "K15_Vector2.h"
+// #include "K15_Vector4.h"
+// #include "K15_Vector2.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/

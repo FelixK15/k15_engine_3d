@@ -26,10 +26,11 @@
 #include "K15_IOUtil.h"
 #include "K15_RenderOperation.h"
 #include "K15_GpuProgramBatch.h"
-#include "K15_GpuProgramAutoParameter.h"
 #include "K15_ResourceManager.h"
 #include "K15_Texture.h"
 #include "K15_Image.h"
+
+#include "K15_Mesh.h"
 
 namespace K15_Engine { namespace Plugins { namespace RenderTest {
 	/*********************************************************************************/
@@ -45,27 +46,6 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 	/*********************************************************************************/
 	RenderSampleProcess::RenderSampleProcess()
 	{
-		float vertexData[] = {
-			-1.0f,-1.0f,0.0f,1.0f,
-			0.0f,0.0f,
-
-			-1.0f,1.0f,0.0f,1.0f,
-			0.0f,1.0f,
-
-			1.0f,-1.0f,0.0f,1.0f,
-			1.0f,0.0f,
-
-			1.0f,1.0f,0.0f,1.0f,
-			1.0f,1.0f
-		};
-
-		uint16 indexData[] = {
-			0,1,2,3
-		};
- 
-		GpuProgramAutoParameter::addAutoParameter("g_Diffuse",
-			GpuProgramAutoParameter::AutoParameterSettings(UpdateDiffuseSampler,GpuProgramParameter::UF_PER_MATERIAL,&m_Texture));
-
  		m_Material = K15_NEW Material();
  		MaterialPass* pass = m_Material->getPass(0,true);
  
@@ -87,30 +67,14 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 
 		m_VertexDeclaration = K15_NEW VertexDeclaration("PF4TF2");
 
-		VertexBuffer::CreationOptions optionsVB;
-		IndexBuffer::CreationOptions optionsIB;
-		optionsVB.BufferType = GpuBuffer::BT_VERTEX_BUFFER;
-		optionsVB.VertexLayout = m_VertexDeclaration;
-		optionsVB.InitialData.data = (byte*)vertexData;
-		optionsVB.InitialData.size = sizeof(vertexData);
-
-		optionsIB.BufferType = GpuBuffer::BT_INDEX_BUFFER;
-		optionsIB.IndexType = IndexBuffer::IT_UINT16;
-		optionsIB.InitialData.data = (byte*)indexData;
-		optionsIB.InitialData.size = sizeof(indexData);
-
-		m_VertexBuffer = K15_NEW VertexBuffer(optionsVB);
-		m_IndexBuffer = K15_NEW IndexBuffer(optionsIB);
-
 		pass->setProgramBatch(m_ProgramBatch);
-// 		pass->setProgram(vertexShader,GpuProgram::PS_VERTEX);
-// 		pass->setProgram(fragmetShader,GpuProgram::PS_FRAGMENT);
+
 		pass->setFillMode(RendererBase::FM_SOLID);
 		pass->setCullingMode(RendererBase::CM_CW);
-		
+	
+		m_Texture = g_ResourceManager->getResource<Texture>("Test_Image.tif",0);
+		m_Mesh = g_ResourceManager->getResource<Mesh>("cube.obj",0);
 
-		m_Texture = (Texture*)g_ResourceManager->getResource<Texture>("Test_Image.tif",0);
-		
 		m_Sampler = K15_NEW TextureSampler();
 
 		m_Sampler->setMagFilterMode(TextureSampler::TFM_LINEAR);
@@ -121,8 +85,7 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 
 		m_Rop = K15_NEW RenderOperation();
 
-		m_Rop->vertexBuffer = m_VertexBuffer;
-		m_Rop->indexBuffer = m_IndexBuffer;
+		m_Rop->subMesh = m_Mesh->getSubMeshes()[0];
 		m_Rop->material = m_Material;
 		m_Rop->topology = RenderOperation::T_TRIANGLE_STRIP;
 	}
@@ -132,8 +95,6 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 		K15_DELETE m_Rop;
 		K15_DELETE m_Material;
 		K15_DELETE m_ProgramBatch;
-		K15_DELETE m_VertexBuffer;
-		K15_DELETE m_IndexBuffer;
 		K15_DELETE m_VertexDeclaration;
 		K15_DELETE m_Texture;
 	}

@@ -67,9 +67,15 @@ namespace K15_Engine { namespace Rendering {
 			TS_SLOT1 = 0,
 			TS_SLOT2,
 			TS_SLOT3,
+			TS_SLOT4,
+			TS_SLOT5,
+			TS_SLOT6,
+			TS_SLOT7,
+			TS_SLOT8,
 
-			TS_NO_SLOT,
-			TS_COUNT
+			TS_COUNT,
+
+			TS_NO_SLOT
 		}; //TextureSlot
 		/*********************************************************************************/
 	public:
@@ -110,8 +116,10 @@ namespace K15_Engine { namespace Rendering {
 		void setPixelFormat(Enum p_PixelFormat);
 		INLINE Enum getPixelFormat() const;
 
+		INLINE void setTextureSamplerSlot(Enum p_Slot);
 		INLINE void setSlot(Enum p_Slot);
 		INLINE Enum getSlot() const;
+		INLINE Enum getTextureSamplerSlot() const;
 
 		void getDimension(uint32* p_Width, uint32* p_Height, uint32* p_Depth = 0);
 		void getMipmapDimension(uint32 p_MipmapLevel, uint32* p_Width, uint32* p_Height, uint32* p_Depth = 0);
@@ -142,6 +150,7 @@ namespace K15_Engine { namespace Rendering {
 		Enum m_Usage;
 		Enum m_PixelFormat;
 		Enum m_Slot;
+		Enum m_SamplerSlot;
 		uint32 m_Height;
 		uint32 m_Width;
 		uint32 m_Depth;

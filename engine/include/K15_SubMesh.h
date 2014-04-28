@@ -47,9 +47,9 @@ namespace K15_Engine { namespace Rendering {
 		INLINE void setMaterial(Material* p_Material);
 		INLINE Material* getMaterial() const;
 
-    INLINE Mesh* getMesh() const;
+		INLINE Mesh* getMesh() const;
 
-		RenderOperation* createRenderOperation() const;
+		RenderOperation* createRenderOperation();
 	protected:
 		VertexBuffer* m_VertexBuffer;
 		IndexBuffer* m_IndexBuffer;

@@ -22,7 +22,6 @@
 #include "K15_IOUtil.h"
 #include "K15_RendererBase.h"
 #include "K15_GpuProgram.h"
-#include "K15_GpuProgramAutoParameter.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
@@ -105,28 +104,6 @@ namespace K15_Engine { namespace Rendering {
 		}
 
 		return reflect();
-	}
-	/*********************************************************************************/
-	void GpuProgram::loadDebug(RawData& p_Data)
-	{
-
-	}
-	/*********************************************************************************/
-	bool GpuProgram::internalLoad(const RawData& p_Data)
-	{
-		if(p_Data.data)
-		{
-			m_ShaderCode = _resolveIncludes((const char*)p_Data.data);
-
-			m_Compiled = false;
-// 			K15_DELETE m_BinaryCode.data;
-// 			m_BinaryCode.data = 0;
-// 			m_BinaryCode.size = 0;
-      
-			return compile();
-		}
-		
-		return false;
 	}
 	/*********************************************************************************/
 	void GpuProgram::setAmountAttributes(uint32 p_Amount)
@@ -220,11 +197,15 @@ namespace K15_Engine { namespace Rendering {
 			{
 				m_Uniforms[i].setGpuProgram(this);
 				
-        for(int i = 0;i < GpuProgramParameter::PI_COUNT;++i)
+        for(int j = 0;j < GpuProgramParameter::PI_COUNT;++j)
         {
-          if(m_Uniforms[i].getName() == GpuProgramParameter::ParameterIdentifierName[i])
+          if(m_Uniforms[i].getName() == GpuProgramParameter::ParameterIdentifierName[j])
           {
-            m_Uniforms[i].setIdentifier(i);
+            _LogDebug("Found auto parameter \"%s\" in GpuProgram \"%s\".",
+              m_Uniforms[i].getName().c_str(),
+              getName().c_str());
+
+            m_Uniforms[i].setIdentifier(j);
             break;
           }
         }

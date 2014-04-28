@@ -502,14 +502,53 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 		}
 	}
 	/*********************************************************************************/
-	void Renderer::_updateGpuProgramParameter(const RawData& p_Data, const GpuProgramParameter& p_Parameter)
+	void Renderer::_updateGpuProgramParameter(const GpuProgramParameter& p_Parameter)
 	{
-		if(p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_2D)
-		{
-			GLint value = (int)p_Data.data;
-			glUniform1i(p_Parameter.getRegisterIndex(),value);
-			_LogDebug("Param \"%s\" = %i",p_Parameter.getName().c_str(),value);
-		}
+		if(p_Parameter.getType() == GpuProgramParameter::VT_INT ||
+	            p_Parameter.getType() == GpuProgramParameter::VT_BOOL)
+	    {
+	      GLint value = p_Parameter.getType() == GpuProgramParameter::VT_INT ? 
+	        *(GLint*)p_Parameter.getData() :
+	        (*(bool*)p_Parameter.getData()) ? GL_TRUE : GL_FALSE;
+
+	      glUniform1i(p_Parameter.getRegisterIndex(),value);
+	    }
+	    else if(p_Parameter.getType() == GpuProgramParameter::VT_FLOAT)
+	    {
+	      GLfloat value = *(GLfloat*)p_Parameter.getData();
+
+	      glUniform1f(p_Parameter.getRegisterIndex(),value);
+	    }
+	    else if(p_Parameter.getType() == GpuProgramParameter::VT_VECTOR2)
+	    {
+	      Vector2 value = *(Vector2*)p_Parameter.getData();
+	      
+	      glUniform2f(p_Parameter.getRegisterIndex(),value.x,value.y);
+	    }
+	    else if(p_Parameter.getType() == GpuProgramParameter::VT_VECTOR3)
+	    {
+	      Vector3 value = *(Vector3*)p_Parameter.getData();
+
+	      glUniform3f(p_Parameter.getRegisterIndex(),value.x,value.y,value.z);
+	    }
+	    else if(p_Parameter.getType() == GpuProgramParameter::VT_VECTOR4)
+	    {
+	      Vector4 value = *(Vector4*)p_Parameter.getData();
+
+	      glUniform4f(p_Parameter.getRegisterIndex(),value.x,value.y,value.z,value.w);
+	    }
+	    else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX2)
+	    {
+	      glUniformMatrix2fv(p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
+	    }
+	    else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX3)
+	    {
+	      glUniformMatrix3fv(p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
+	    }
+	    else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX4)
+	    {
+	      glUniformMatrix4fv(p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
+	    }
 	}
 	/*********************************************************************************/
 }}}//end of K15_Engine::Rendering::GLES2 namespace

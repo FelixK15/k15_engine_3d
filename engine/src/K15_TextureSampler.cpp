@@ -30,7 +30,8 @@ namespace K15_Engine { namespace Rendering {
       m_UWrappingMode(TWM_CLAMP),
       m_VWrappingMode(TWM_CLAMP),
       m_WWrappingMode(TWM_CLAMP),
-	  m_Impl(0)
+      m_Slot(Texture::TS_NO_SLOT),
+	    m_Impl(0)
   {
 	  m_Impl = g_Application->getRenderer()->createTextureSamplerImpl();
 	  m_Impl->setTextureSampler(this);

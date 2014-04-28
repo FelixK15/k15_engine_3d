@@ -23,3 +23,10 @@ GameObject* GameObjectComponentBase::getGameObject() const
 	return m_GameObject;
 }
 /*********************************************************************************/
+void GameObjectComponentBase::setGameObject(GameObject* p_GameObject)
+{
+  m_GameObject = p_GameObject;
+
+  _onGameObjectSet();
+}
+/*********************************************************************************/

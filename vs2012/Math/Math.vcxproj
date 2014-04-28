@@ -65,7 +65,7 @@
     <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>K15_Math</TargetName>
-    <IncludePath>..\..\math\include\;..\..\engine\include\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\dependencies\glm\;..\..\math\include\;..\..\engine\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
     <IncludePath>..\..\math\include\;..\..\engine\include\;$(IncludePath)</IncludePath>

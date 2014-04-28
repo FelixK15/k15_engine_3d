@@ -612,56 +612,70 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 	void Renderer::_updateGpuProgramParameter(const GpuProgramParameter& p_Parameter)
 	{
 		const GpuProgramImpl* glProgram =  static_cast<const GpuProgramImpl*>(p_Parameter.getGpuProgram()->getImpl());
+    GLuint program = glProgram->getProgramGL();
     if(p_Parameter.getType() == GpuProgramParameter::VT_UNKNOW)
     {
       _LogError("GpuProgramParameter \"%s\" from GpuProgram \"%s\" is unknown.",
         p_Parameter.getGpuProgram()->getName().c_str(),
         p_Parameter.getName().c_str());
     }
-    else if(p_Parameter.getType() == GpuProgramParameter::VT_INT ||
-            p_Parameter.getType() == GpuProgramParameter::VT_BOOL)
+    else if(p_Parameter.getType() == GpuProgramParameter::VT_INT  ||
+            p_Parameter.getType() == GpuProgramParameter::VT_BOOL ||
+            p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_1D ||
+            p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_2D ||
+            p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_3D)
     {
-      GLint value = p_Parameter.getType() == GpuProgramParameter::VT_INT ? 
+      GLint value = p_Parameter.getType() != GpuProgramParameter::VT_BOOL ? 
         *(GLint*)p_Parameter.getData() :
         (*(bool*)p_Parameter.getData()) ? GL_TRUE : GL_FALSE;
 
-      glUniform1i(p_Parameter.getRegisterIndex(),value);
+      glProgramUniform1i(program, p_Parameter.getRegisterIndex(), value);
+
+      if(p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_1D ||
+        p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_2D ||
+        p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_3D)
+      {
+        TextureImpl* glTex = static_cast<TextureImpl*>(m_BoundTextures[value]->getImpl());
+        TextureSamplerImpl* glSampler = static_cast<TextureSamplerImpl*>(m_BoundSamplers[glTex->getTexture()->getTextureSamplerSlot()]->getImpl());
+
+        glBindSampler(glTex->getTextureHandle(),glSampler->getHandle());
+      }
     }
     else if(p_Parameter.getType() == GpuProgramParameter::VT_FLOAT)
     {
       GLfloat value = *(GLfloat*)p_Parameter.getData();
 
-      glUniform1f(p_Parameter.getRegisterIndex(),value);
+      glProgramUniform1f(program, p_Parameter.getRegisterIndex(),value);
     }
     else if(p_Parameter.getType() == GpuProgramParameter::VT_VECTOR2)
     {
       Vector2 value = *(Vector2*)p_Parameter.getData();
-
-      glUniform2f(p_Parameter.getRegisterIndex(),value.x,value.y);
+      
+      glProgramUniform2f(program, p_Parameter.getRegisterIndex(),value.x,value.y);
     }
     else if(p_Parameter.getType() == GpuProgramParameter::VT_VECTOR3)
     {
       Vector3 value = *(Vector3*)p_Parameter.getData();
 
-      glUniform3f(p_Parameter.getRegisterIndex(),value.x,value.y,value.z);
+      glProgramUniform3f(program, p_Parameter.getRegisterIndex(),value.x,value.y,value.z);
     }
     else if(p_Parameter.getType() == GpuProgramParameter::VT_VECTOR4)
     {
       Vector4 value = *(Vector4*)p_Parameter.getData();
 
-      glUniform4f(p_Parameter.getRegisterIndex(),value.x,value.y,value.z.value.w);
+      glProgramUniform4f(program, p_Parameter.getRegisterIndex(),value.x,value.y,value.z,value.w);
     }
     else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX2)
     {
-      glUniformMatrix2fv(p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
+      glProgramUniformMatrix2fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
     }
     else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX3)
     {
-      glUniformMatrix3fv(p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
+      glProgramUniformMatrix3fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
     }
     else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX4)
     {
-      glUniformMatrix4fv(p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
+      glProgramUniformMatrix4fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
     }
 	}
 	/*********************************************************************************/

@@ -88,9 +88,6 @@ namespace K15_Engine { namespace Rendering {
 
 		void setAmountUniforms(uint32 p_Amount);
 		void setAmountAttributes(uint32 p_Amount);
-		
-		virtual void loadDebug(RawData& p_Data);
-		virtual bool internalLoad(const RawData& p_Data);
 
 		GpuProgramParameter& getUniform(uint32 p_Index);
 		GpuProgramParameter& getAttribute(uint32 p_Index);

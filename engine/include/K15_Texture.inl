@@ -33,9 +33,19 @@ Enum Texture::getSlot() const
 	return m_Slot;
 }
 /*********************************************************************************/
+Enum Texture::getTextureSamplerSlot() const
+{
+  return m_SamplerSlot;
+}
+/*********************************************************************************/
 void Texture::setSlot(Enum p_Slot)
 {
 	m_Slot = p_Slot;
+}
+/*********************************************************************************/
+void Texture::setTextureSamplerSlot(Enum p_Slot)
+{
+  m_SamplerSlot = p_Slot;
 }
 /*********************************************************************************/
 uint32 Texture::getMipmapLevels() const

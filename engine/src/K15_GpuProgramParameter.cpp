@@ -22,7 +22,7 @@
 #include "K15_GpuProgramParameter.h"
 #include "K15_RendererBase.h"
 #include "K15_CameraComponent.h"
-#include "K15_Matrix4.h"
+/*#include "K15_Matrix4.h"*/
 #include "K15_RawData.h"
 
 namespace K15_Engine { namespace Rendering {
@@ -31,7 +31,16 @@ namespace K15_Engine { namespace Rendering {
     "g_ViewMatrix",     //PI_VIEW_MATRIX
     "g_ProjMatrix",     //PI_PROJECTION_MATRIX
     "g_ModelMatrix",    //PI_MODEL_MATRIX
-    "g_ViewProjMatrix" //PI_VIEW_PROJECTION_MATRIX
+    "g_ViewProjMatrix", //PI_VIEW_PROJECTION_MATRIX
+
+    "g_Texture_1",      //PI_TEXTURE_1
+    "g_Texture_2",      //PI_TEXTURE_2
+    "g_Texture_3",      //PI_TEXTURE_3
+    "g_Texture_4",      //PI_TEXTURE_4
+    "g_Texture_5",      //PI_TEXTURE_5
+    "g_Texture_6",      //PI_TEXTURE_6
+    "g_Texture_7",      //PI_TEXTURE_7
+    "g_Texture_8"       //PI_TEXTURE_8
   }; //ParameterIdentifierName
   /*********************************************************************************/
 

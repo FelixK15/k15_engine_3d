@@ -88,6 +88,8 @@ namespace K15_Engine { namespace Rendering {
     INLINE Enum getVWrappingMode() const;
     INLINE Enum getWWrappingMode() const;
 
+    INLINE Enum getSlot() const;
+
     Enum getWrappingMode(uint8 p_Axis) const;
 
     INLINE void setMinFilterMode(Enum p_MinFilterMode);
@@ -99,6 +101,8 @@ namespace K15_Engine { namespace Rendering {
 
     INLINE void setBorderColor(const ColorRGBA& p_BorderColor);
 
+    INLINE void setSlot(Enum p_Slot);
+
     void setWrappingMode(uint8 p_Axis,Enum p_WrappingMode);
 
 	INLINE TextureSamplerImplBase* getImpl() const;
@@ -106,6 +110,8 @@ namespace K15_Engine { namespace Rendering {
   private:
     TextureSamplerImplBase* m_Impl;
     ColorRGBA m_BorderColor;
+
+    Enum m_Slot;
 
     Enum m_UWrappingMode;
     Enum m_VWrappingMode;

@@ -266,17 +266,17 @@ namespace K15_Engine
 			unsigned int dwReserved2[3];
 		};
 	} //end of K15_Engine::Rendering namespace
-	/*********************************************************************************/
-	namespace Math
-	{
-		class Vector2;
-		class Vector3;
-		class Vector4;
-		class Matrix3;
-		class Matrix4;
-		class Quaternion;
-	} //end of K15_Engine::Math namespace
-	/*********************************************************************************/
+// 	/*********************************************************************************/
+// 	namespace Math
+// 	{
+// 		class Vector2;
+// 		class Vector3;
+// 		class Vector4;
+// 		class Matrix3;
+// 		class Matrix4;
+// 		class Quaternion;
+// 	} //end of K15_Engine::Math namespace
+// 	/*********************************************************************************/
  }
 
  /*********************************************************************************/
@@ -301,7 +301,7 @@ namespace K15_Engine
 {
 	using namespace Core;
 	using namespace Rendering;
-	using namespace Math;
+	/*using namespace Math;*/
 }// end of K15_Engine namespace
 
 #ifdef __GNUC__
@@ -402,7 +402,7 @@ namespace K15_Engine
     typedef tthread::lock_guard<Mutex> LockGuard;
 
 #else
-#	include <thread>		
+#	  include <thread>		
 #   include <mutex>
 #   include <chrono>
 #   define g_CurrentThread std::this_thread
@@ -479,6 +479,18 @@ namespace K15_Engine
 #	include <jni.h>
 #	include <unistd.h>
 #endif //K15_OS_WINDOWS
+
+//include glm math
+#include "glm.hpp"
+#include "gtc\matrix_transform.hpp"
+#include "gtc\quaternion.hpp"
+
+typedef glm::fmat3 Matrix3;
+typedef glm::fmat4 Matrix4;
+typedef glm::fvec2 Vector2;
+typedef glm::fvec3 Vector3;
+typedef glm::fvec4 Vector4;
+typedef glm::fquat Quaternion;
 
 #if defined K15_OS_WINDOWS
 	typedef K15_Engine::Core::DynamicLibrary_Win32 DynamicLibraryType;

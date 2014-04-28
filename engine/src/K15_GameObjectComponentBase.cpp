@@ -26,9 +26,9 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	GameObjectComponentBase::GameObjectComponentBase(GameObject* p_Parent, const ObjectName& p_Name)
+	GameObjectComponentBase::GameObjectComponentBase( const ObjectName& p_Name)
 		: Object(p_Name),
-		m_GameObject(p_Parent)
+		m_GameObject(0)
 	{
 
 	}

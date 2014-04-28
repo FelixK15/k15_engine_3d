@@ -32,7 +32,7 @@ namespace K15_Engine { namespace Rendering {
 	class K15_CORE_API RenderQueue
 	{
     /*********************************************************************************/
-    typedef FixedArray(RenderOperation*,2048) RenderOperationList;
+    typedef FixedArray(RenderOperation*,2048) RenderOperationArray;
     /*********************************************************************************/
 
 	public:
@@ -46,7 +46,7 @@ namespace K15_Engine { namespace Rendering {
 
   private:
     uint32 m_RenderOperationCount;
-    RenderOperationList m_RenderOperations;
+    RenderOperationArray m_RenderOperations;
 	};// end of RenderQueue class declaration
 # include "K15_RenderQueue.inl"
 }}// end of K15_Engine::Rendering namespace

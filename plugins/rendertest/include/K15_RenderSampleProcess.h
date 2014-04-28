@@ -43,8 +43,7 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 		RenderOperation* m_Rop;
 		Material* m_Material;
 		GpuProgramBatch* m_ProgramBatch;
-		VertexBuffer* m_VertexBuffer;
-		IndexBuffer* m_IndexBuffer;
+		Mesh* m_Mesh;
 		VertexDeclaration* m_VertexDeclaration;
 		Texture* m_Texture;
 		TextureSampler* m_Sampler;
