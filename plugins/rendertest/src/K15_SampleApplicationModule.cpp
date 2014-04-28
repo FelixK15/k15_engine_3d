@@ -30,6 +30,9 @@
 #include "K15_RenderTask.h"
 #include "K15_RenderSampleProcess.h"
 
+#include "K15_GameObject.h"
+#include "K15_CameraComponent.h"
+
 #include "K15_ResourceManager.h"
 #include "K15_ZipResourceArchive.h"
 #include "K15_TiffResourceImporter.h"
@@ -51,6 +54,11 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 		g_ResourceManager->addResourceFile(K15_NEW ZipResourceArchive(g_Application->getGameRootDir() + "resources.zip"));
 		g_ResourceManager->addResourceImporter(K15_NEW TiffResourceImporter());
 		g_Application->getRenderTask()->setRenderProcess(K15_NEW K15_Engine::Plugins::RenderTest::RenderSampleProcess());
+
+		m_Camera = K15_NEW GameObject();
+		m_Camera->addComponent(K15_NEW CameraComponent());
+
+		g_Application->getRenderer()->setActiveCameraGameObject(m_Camera);
 		//_dumpMemoryStatistics();
 	}
 	/*********************************************************************************/

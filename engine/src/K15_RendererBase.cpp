@@ -630,24 +630,27 @@ namespace K15_Engine { namespace Rendering {
 				m_BoundTextures[p_Slot]->setSlot(Texture::TS_NO_SLOT);
 			}
 			
-      if(p_Texture)
-      {
-        m_BoundTextures[p_Slot] = p_Texture;
-        p_Texture->setSlot(p_Slot);
-      }
+			if(p_Texture)
+			{
+				m_BoundTextures[p_Slot] = p_Texture;
+				p_Texture->setSlot(p_Slot);
+			}
 
 			_bindTexture(p_Texture,p_Type);
 
-      if(p_Texture && !m_BoundSamplers[p_Texture->getTextureSamplerSlot()])
-      {
-        _LogWarning("Texture uses sampler in slot %u, but theres currently no sampler bounds to this slot.",
-          p_Slot);
-      }
+			if(p_Texture && p_Texture->getTextureSamplerSlot() != Texture::TS_NO_SLOT)
+			{
+				if(p_Texture && !m_BoundSamplers[p_Texture->getTextureSamplerSlot()])
+				{
+					_LogWarning("Texture uses sampler in slot %u, but theres currently no sampler bounds to this slot.",
+						p_Slot);
+				}
+			}
 
 			if(errorOccured())
 			{
 				_LogError("Error binding texture \"%s\".%s",
-					p_Texture->getName().c_str(),getLastError().c_str());
+					p_Texture ? p_Texture->getName().c_str() : "",getLastError().c_str());
 
 				return false;
 			}
@@ -723,68 +726,88 @@ namespace K15_Engine { namespace Rendering {
 				{
 					GpuProgramParameter& param = program->getUniform(i);
 					
-          if(param.isAutoParameter())
-          {
-            if(param.getIdentifier() == GpuProgramParameter::PI_VIEW_MATRIX ||
-               param.getIdentifier() == GpuProgramParameter::PI_PROJECTION_MATRIX ||
-               param.getIdentifier() == GpuProgramParameter::PI_VIEW_PROJECTION_MATRIX)
-            {
-              CameraComponent* p_Camera = getActiveCamera();
+					if(param.isAutoParameter())
+					{
+						if(param.getIdentifier() == GpuProgramParameter::PI_VIEW_MATRIX ||
+							param.getIdentifier() == GpuProgramParameter::PI_PROJECTION_MATRIX ||
+							param.getIdentifier() == GpuProgramParameter::PI_VIEW_PROJECTION_MATRIX)
+						{
+							CameraComponent* p_Camera = getActiveCamera();
 
-              K15_ASSERT(p_Camera,
-                StringUtil::format("Trying to set view/projection matrix in shader \"%s\", but there's no active camera to get it from.",
-                program->getName().c_str()));
+							K15_ASSERT(p_Camera,
+							StringUtil::format("Trying to set view/projection matrix in shader \"%s\", but there's no active camera to get it from.",
+							program->getName().c_str()));
 
-              Matrix4 mat;
+							Matrix4 mat;
 
-              if(param.getIdentifier() == GpuProgramParameter::PI_VIEW_MATRIX)
-              {
-                mat = p_Camera->getViewMatrix();
-              }
-              else if(param.getIdentifier() == GpuProgramParameter::PI_PROJECTION_MATRIX)
-              {
-                mat = p_Camera->getProjectionMatrix();
-              }
-              else
-              {
-                mat = p_Camera->getProjectionMatrix();
-                mat *= p_Camera->getViewMatrix();
-              }
+							if(param.getIdentifier() == GpuProgramParameter::PI_VIEW_MATRIX)
+							{
+								mat = p_Camera->getViewMatrix();
+							}
+							else if(param.getIdentifier() == GpuProgramParameter::PI_PROJECTION_MATRIX)
+							{
+								mat = p_Camera->getProjectionMatrix();
+							}
+							else
+							{
+								mat = p_Camera->getProjectionMatrix();
+								mat *= p_Camera->getViewMatrix();
+							}
 
-              param.setData((void*)&mat); 
-            }
-            else if(param.getIdentifier() == GpuProgramParameter::PI_MODEL_MATRIX && p_Rop)
-            {
-              GameObject* gameObject = 0;
-              if((gameObject = p_Rop->gameobject) != 0)
-              {
-                Matrix4 modelMat = gameObject->getNode()->getTransformation();
+							param.setData((void*)&mat); 
+						}
+						else if(param.getIdentifier() == GpuProgramParameter::PI_MODEL_MATRIX && p_Rop)
+						{
+							GameObject* gameObject = 0;
+							if((gameObject = p_Rop->gameobject) != 0)
+							{
+								Matrix4 modelMat = gameObject->getNode()->getTransformation();
 
-                param.setData((void*)&modelMat);
-              }
-            }
-            else if(param.getIdentifier() >= GpuProgramParameter::PI_TEXTURE_1 || param.getIdentifier() <= GpuProgramParameter::PI_TEXTURE_8)
-            {
-              int actualTexSlot = param.getIdentifier() - GpuProgramParameter::PI_TEXTURE_1;
+								param.setData((void*)&modelMat);
+							}
+						}
+						else if(param.getIdentifier() >= GpuProgramParameter::PI_TEXTURE_1 || param.getIdentifier() <= GpuProgramParameter::PI_TEXTURE_8)
+						{
+							int actualTexSlot = param.getIdentifier() - GpuProgramParameter::PI_TEXTURE_1;
 
-              K15_ASSERT(m_BoundTextures[actualTexSlot],
-                StringUtil::format("Trying to use unbound texture on slot %d.",actualTexSlot));
+							K15_ASSERT(m_BoundTextures[actualTexSlot],
+							StringUtil::format("Trying to use unbound texture on slot %d.",actualTexSlot));
 
-              K15_ASSERT(m_BoundSamplers[m_BoundTextures[actualTexSlot]->getTextureSamplerSlot()],
-                StringUtil::format("Texture on slot %d is trying to access NULL texture sampler on slot %d.",m_BoundTextures[actualTexSlot]->getTextureSamplerSlot()));
+							K15_ASSERT(m_BoundSamplers[m_BoundTextures[actualTexSlot]->getTextureSamplerSlot()],
+							StringUtil::format("Texture on slot %d is trying to access NULL texture sampler on slot %d.",m_BoundTextures[actualTexSlot]->getTextureSamplerSlot()));
 
-              param.setData((void*)&actualTexSlot);
-            }
-          }
+							param.setData((void*)&actualTexSlot);
+						}
+					}
 
-          //if data has been set, upload them to the gpu
-          if(param.getData())
-          {
-            _updateGpuProgramParameter(param);
-          }
+					//if data has been set, upload them to the gpu
+					if(param.getData())
+					{
+						_updateGpuProgramParameter(param);
+					}
 				}
 			}
 		}
+	}
+	/*********************************************************************************/
+	bool RendererBase::setActiveCameraGameObject(GameObject* p_Camera)
+	{
+		if(p_Camera)
+		{
+			return setActiveCamera(static_cast<CameraComponent*>(p_Camera->getComponentByName(_ON(CameraComponent))));
+		}
+
+		return false;
+	}
+	/*********************************************************************************/
+	GameObject* RendererBase::getActiveCameraGameObject() const
+	{
+		if(m_ActiveCamera)
+		{
+			return m_ActiveCamera->getGameObject();
+		}
+
+		return 0;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace

@@ -20,6 +20,7 @@
 #include "K15_PrecompiledHeader.h"
 
 #include "K15_SubMesh.h"
+#include "K15_RenderOperation.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
@@ -27,7 +28,7 @@ namespace K15_Engine { namespace Rendering {
 		: m_Material(0),
 		m_IndexBuffer(0),
 		m_VertexBuffer(0),
-    m_Mesh(p_Mesh)
+		m_Mesh(p_Mesh)
 	{
 
 	}
@@ -37,10 +38,16 @@ namespace K15_Engine { namespace Rendering {
 
 	}
 	/*********************************************************************************/
-	RenderOperation* SubMesh::createRenderOperation() const
+	RenderOperation* SubMesh::createRenderOperation()
 	{
-		K15_ASSERT(true,"Not yet implemented.");
-		return 0;
+		static RenderOperation rop;
+
+		rop.indexBuffer = m_IndexBuffer;
+		rop.vertexBuffer = m_VertexBuffer;
+		rop.subMesh = this;
+		rop.topology = RenderOperation::T_TRIANGLE;
+		
+		return &rop;
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

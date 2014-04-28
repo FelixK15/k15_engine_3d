@@ -49,14 +49,4 @@ namespace K15_Engine { namespace Rendering {
 
 	}
 	/*********************************************************************************/
-	void Mesh::loadDebug(RawData& p_Data)
-	{
-
-	}
-	/*********************************************************************************/
-	bool Mesh::internalLoad(const RawData& p_Data)
-	{
-		return false;
-	}
-	/*********************************************************************************/
 }}// end of K15_Engine::Rendering namespace

@@ -29,7 +29,7 @@
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 namespace K15_Engine { namespace Core {
-  class K15_CORE_API GameObject : public Object
+  class K15_CORE_API GameObject : public Object, public GeneralAllocatedObject
   {
   public:
     /*********************************************************************************/
@@ -38,6 +38,7 @@ namespace K15_Engine { namespace Core {
     /*********************************************************************************/
   public:
     GameObject();
+	GameObject(const ObjectName& p_Name);
     ~GameObject();
 
     void addComponent(GameObjectComponentBase* p_Component);

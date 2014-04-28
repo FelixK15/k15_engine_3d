@@ -33,7 +33,7 @@
 // #include "K15_Matrix4.h"
 
 namespace K15_Engine { namespace Core { 
-	class K15_CORE_API Node : public Object
+	class K15_CORE_API Node : public Object, public GeneralAllocatedObject
 	{
 	public:
 		/*********************************************************************************/

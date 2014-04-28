@@ -34,46 +34,46 @@ namespace K15_Engine { namespace Core {
 	class K15_CORE_API BaseAllocatedObject
 	{
 	public:
-    /*********************************************************************************/
-    struct K15_CORE_API CoreAllocatorSizes
-    {
-      static uint32 GeneralAllocatorSize;
-      static uint32 ModuleAllocatorSize;
-#if defined K15_DEBUG
-      static uint32 DebugAllocatorSize;
-#endif //K15_DEBUG
-      static uint32 ResourceAllocatorSize;
-      static uint32 RenderAllocatorSize;
-      static uint32 ProfilingAllocatorSize;
-      static uint32 GameEventAllocatorSize;
-      static uint32 ThreadingAllocatorSize;
-      static uint32 TaskAllocatorSize;
-      static uint32 LoggingAllocatorSize;
-      static uint32 RenderOperationPoolCount;
-      static uint32 ProfilingNodePoolCount;
-      static uint32 VertexPoolCount;
-    }; //end of CoreAllocatorSizes class declaration
-    /*********************************************************************************/
+		/*********************************************************************************/
+		struct K15_CORE_API CoreAllocatorSizes
+		{
+		  static uint32 GeneralAllocatorSize;
+		  static uint32 ModuleAllocatorSize;
+	#if defined K15_DEBUG
+		  static uint32 DebugAllocatorSize;
+	#endif //K15_DEBUG
+		  static uint32 ResourceAllocatorSize;
+		  static uint32 RenderAllocatorSize;
+		  static uint32 ProfilingAllocatorSize;
+		  static uint32 GameEventAllocatorSize;
+		  static uint32 ThreadingAllocatorSize;
+		  static uint32 TaskAllocatorSize;
+		  static uint32 LoggingAllocatorSize;
+		  static uint32 RenderOperationPoolCount;
+		  static uint32 ProfilingNodePoolCount;
+		  static uint32 VertexPoolCount;
+		}; //end of CoreAllocatorSizes class declaration
+		/*********************************************************************************/
 
-    /*********************************************************************************/
-    static const uint32 MaxAllocators = 32;
+		/*********************************************************************************/
+		static const uint32 MaxAllocators = 32;
 		/*********************************************************************************/
 		enum eAllocationCategory
 		{
 			AC_CORE = 0,
 			AC_GENERAL,
 			AC_MODULE,
-#			if defined K15_DEBUG
-        AC_DEBUG,
-        AC_PROFILING,
-        AC_PROFILING_NODE_POOL,
-#			endif //K15_DEBUG
+			#if defined K15_DEBUG
+				AC_DEBUG,
+				AC_PROFILING,
+				AC_PROFILING_NODE_POOL,
+			#endif //K15_DEBUG
 			AC_RENDERING,
-      AC_GAMEVENTS,
+			AC_GAMEVENTS,
 			AC_THREADING,
 			AC_TASKS,
 			AC_LOGGING,
-      AC_RESOURCE,
+			AC_RESOURCE,
 
 			//Pools
 			AC_RENDEROP_POOL,
@@ -85,15 +85,16 @@ namespace K15_Engine { namespace Core {
 		/*********************************************************************************/
 
 		static AllocatorArray Allocators;
-    static uint32 MemorySize;
-    static uint32 AllocatorCount;
+		static uint32 MemorySize;
+		static uint32 AllocatorCount;
 
 		static void removeAllocators();
-    static void createCoreAllocators();
+		static void createCoreAllocators();
 
-    template<class AllocatorType> static void addAllocator(const String& p_AllocatorName, uint32 p_Size, BaseAllocator* p_ParentAllocator = Allocators[AC_CORE]);
+		template<class AllocatorType> 
+		static void addAllocator(const String& p_AllocatorName, uint32 p_Size, BaseAllocator* p_ParentAllocator = Allocators[AC_CORE]);
 	}; //end of BaseAllocatedObject class declaration
-  /*********************************************************************************/
+	/*********************************************************************************/
 	template<Enum AllocatorCategory>
 	class AllocatedObject : public BaseAllocatedObject
 	{
@@ -101,7 +102,7 @@ namespace K15_Engine { namespace Core {
 		AllocatedObject();
 		virtual ~AllocatedObject();
 
-#	if defined (K15_DEBUG)
+	#if defined (K15_DEBUG)
 		/*********************************************************************************/
 		static void* alloc(size_t,const char*,uint32,bool,const char*);
 		static void  dealloc(void*,size_t,const char*,uint32,bool,const char*);
@@ -112,7 +113,7 @@ namespace K15_Engine { namespace Core {
 		static void operator delete(void*,size_t);
 		static void operator delete[](void*,size_t);
 		/*********************************************************************************/
-#	else
+	#else
 		/*********************************************************************************/
 		static void* alloc(size_t);
 		static void  dealloc(void*,size_t);
@@ -123,19 +124,20 @@ namespace K15_Engine { namespace Core {
 		static void operator delete(void*,size_t);
 		static void operator delete[](void*,size_t);
 		/*********************************************************************************/
-#	endif //K15_DEBUG
+	#endif //K15_DEBUG
 	}; //end of AllocatedObject class declaration
 
 	typedef AllocatedObject<BaseAllocatedObject::AC_CORE> CoreAllocatedObject;
+	typedef AllocatedObject<BaseAllocatedObject::AC_GENERAL> GeneralAllocatedObject;
 	typedef AllocatedObject<BaseAllocatedObject::AC_GENERAL> MemoryAllocatedObject;
 	typedef AllocatedObject<BaseAllocatedObject::AC_MODULE> ModuleAllocatedObject;
-#	if defined K15_DEBUG
-	typedef AllocatedObject<BaseAllocatedObject::AC_DEBUG> DebugAllocatedObject;
-#	endif //K15_DEBUIG
+	#if defined K15_DEBUG
+		typedef AllocatedObject<BaseAllocatedObject::AC_DEBUG> DebugAllocatedObject;
+	#endif //K15_DEBUIG
 	typedef AllocatedObject<BaseAllocatedObject::AC_RENDERING> RenderingAllocatedObject;
-#if defined K15_DEBUG
-	typedef AllocatedObject<BaseAllocatedObject::AC_PROFILING> ProfilingAllocatedObject;
-#endif //K15_DEBUG
+	#if defined K15_DEBUG
+		typedef AllocatedObject<BaseAllocatedObject::AC_PROFILING> ProfilingAllocatedObject;
+	#endif //K15_DEBUG
 	typedef AllocatedObject<BaseAllocatedObject::AC_GAMEVENTS> GameEventAllocatedObject;
 	typedef AllocatedObject<BaseAllocatedObject::AC_GENERAL> InputManagerAllocatedObject;
 	typedef AllocatedObject<BaseAllocatedObject::AC_GENERAL> DynamicLibraryAllocatedObject;

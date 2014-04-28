@@ -33,82 +33,82 @@
 // #include "K15_Matrix4.h"
 
 namespace K15_Engine { namespace Rendering {
-  class K15_CORE_API CameraComponent : public GameObjectComponentBase
-  {
-	/*********************************************************************************/
-	K15_DECLARE_RTTI;
-	/*********************************************************************************/
-  public:
-    /*********************************************************************************/
-    enum eFrustumPoints
-    {
-      FP_NEAR_LEFT_BOTTOM = 0,
-      FP_NEAR_RIGHT_BOTTOM,
-      FP_NEAR_LEFT_TOP,
-      FP_NEAR_RIGHT_TOP,
+	class K15_CORE_API CameraComponent : public GameObjectComponentBase
+	{
+		/*********************************************************************************/
+		K15_DECLARE_RTTI;
+		/*********************************************************************************/
+	public:
+		/*********************************************************************************/
+		enum eFrustumPoints
+		{
+			FP_NEAR_LEFT_BOTTOM = 0,
+			FP_NEAR_RIGHT_BOTTOM,
+			FP_NEAR_LEFT_TOP,
+			FP_NEAR_RIGHT_TOP,
 
-      FP_FAR_LEFT_BOTTOM,
-      FP_FAR_RIGHT_BOTTOM,
-      FP_FAR_LEFT_TOP,
-      FP_FAR_RIGHT_TOP,
+			FP_FAR_LEFT_BOTTOM,
+			FP_FAR_RIGHT_BOTTOM,
+			FP_FAR_LEFT_TOP,
+			FP_FAR_RIGHT_TOP,
 
-      FP_COUNT
-    }; //FrustumPoints
-    
-    /*********************************************************************************/
-    typedef FixedArray(Vector3,FP_COUNT) FrustumPoints;
-    /*********************************************************************************/
+			FP_COUNT
 
+		}; //FrustumPoints
+		/*********************************************************************************/
 
+		/*********************************************************************************/
+		typedef FixedArray(Vector3,FP_COUNT) FrustumPoints;
+		/*********************************************************************************/
 
-	  /*********************************************************************************/
-	  enum eProjectionType
-	  {
-		  PT_PERSPECTIVE = 0,
-		  PT_ORTHOGRAPHIC,
+		/*********************************************************************************/
+		enum eProjectionType
+		{
+			PT_PERSPECTIVE = 0,
+			PT_ORTHOGRAPHIC,
 
-		  PT_COUNT
-	  }; //ProjectionType
-	  /*********************************************************************************/
+			PT_COUNT
+		}; //ProjectionType
+		/*********************************************************************************/
 
-  public:
-    CameraComponent(GameObject* p_Parent);
-    virtual ~CameraComponent();
+	public:
+		CameraComponent();
+		virtual ~CameraComponent();
   
-    INLINE bool getActive() const;
-    INLINE float getFov() const;
-    INLINE float getFarClipDistance() const;
-    INLINE float getNearClipDistance() const;
+		INLINE bool getActive() const;
+		INLINE float getFov() const;
+		INLINE float getFarClipDistance() const;
+		INLINE float getNearClipDistance() const;
 
-    const Matrix4& getProjectionMatrix();
-    const Matrix4& getViewMatrix();
+		const Matrix4& getProjectionMatrix();
+		const Matrix4& getViewMatrix();
     
-    void setActive(bool p_Active);
-    INLINE void setFieldOfView(float p_Fov);
-    INLINE void setProjectionType(Enum p_ProjectionType);
-    INLINE void setFarClipDistance(float p_Far);
-    INLINE void setNearClipDistance(float p_Near);
+		void setActive(bool p_Active);
+		INLINE void setFieldOfView(float p_Fov);
+		INLINE void setProjectionType(Enum p_ProjectionType);
+		INLINE void setFarClipDistance(float p_Far);
+		INLINE void setNearClipDistance(float p_Near);
 
-    bool isVisible(const AABB& p_AABB);
+		bool isVisible(const AABB& p_AABB);
 
-    INLINE const FrustumPoints& getFrustumPoints() const;
+		INLINE const FrustumPoints& getFrustumPoints() const;
 
-    const Vector3& getFrustumPoint(Enum p_FrustumPoint) const;
+		const Vector3& getFrustumPoint(Enum p_FrustumPoint) const;
 
-  private:
-    void _calculateFrustumPoints();
+	private:
+		void _calculateFrustumPoints();
 
-  private:
-    FrustumPoints m_FrustumPoints;
-    Matrix4 m_ProjectionMatrix;
-    Matrix4 m_ViewMatrix;
+	private:
+		FrustumPoints m_FrustumPoints;
+		Matrix4 m_ProjectionMatrix;
+		Matrix4 m_ViewMatrix;
 
-    expose float m_Fov;
-    expose float m_FarClipDistance;
-    expose float m_NearClipDistance;
-    expose Enum m_ProjectionType;
-    bool m_Dirty;
-    bool m_Active;
+		expose float m_Fov;
+		expose float m_FarClipDistance;
+		expose float m_NearClipDistance;
+		expose Enum m_ProjectionType;
+		bool m_Dirty;
+		bool m_Active;
   }; //end of Camera class declaration
 #include "K15_CameraComponent.inl"
 }} // end of K15_Engine::Rendering namespace

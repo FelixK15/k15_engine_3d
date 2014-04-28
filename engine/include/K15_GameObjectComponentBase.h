@@ -29,19 +29,19 @@
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API GameObjectComponentBase : public Object
+	class K15_CORE_API GameObjectComponentBase : public Object, public GeneralAllocatedObject
 	{
 		K15_DECLARE_RTTI;
 
 	public:
-		GameObjectComponentBase(GameObject* p_Parent = 0, const ObjectName& p_Name = ObjectName::BLANK);
+		GameObjectComponentBase(const ObjectName& p_Name = ObjectName::BLANK);
 		virtual ~GameObjectComponentBase();
 
 		INLINE GameObject* getGameObject() const;
-    INLINE void setGameObject(GameObject* p_GameObject);
+		INLINE void setGameObject(GameObject* p_GameObject);
 
-  protected:
-    virtual void _onGameObjectSet() {}
+	protected:
+		virtual void _onGameObjectSet() {}
 
 	protected:
 		GameObject* m_GameObject;

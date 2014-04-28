@@ -40,6 +40,7 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 		
 	private:
 		void _dumpMemoryStatistics();
+		GameObject* m_Camera;
 	};// end of RenderTestApplicationModule class declaration
 }}}// end of K15_Engine::Plugins::RenderTest namespace
 

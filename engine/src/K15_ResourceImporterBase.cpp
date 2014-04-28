@@ -44,9 +44,12 @@ namespace K15_Engine { namespace Core {
 		ExtensionSet extensions;
 		getExtensionList(extensions);
 
+		String::size_type posSeparator = p_FileName.find_last_of('.');
+		String extension = p_FileName.substr(posSeparator);
+
 		for(ExtensionSet::iterator iter = extensions.begin();iter != extensions.end();++iter)
 		{
-			if(p_FileName.find_last_of((*iter)))
+			if(extension == (*iter))
 			{
 				return true;
 			}
@@ -89,7 +92,7 @@ namespace K15_Engine { namespace Core {
 				if(signatureBuffer[i] != iter->data[i])
 				{
 					// no match - try next
-					continue;
+					break;
 				}
 
 				//match found - exit loop.

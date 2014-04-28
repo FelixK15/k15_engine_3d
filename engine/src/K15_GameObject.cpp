@@ -21,19 +21,31 @@
 
 #include "K15_GameObject.h"
 #include "K15_GameObjectComponentBase.h"
+#include "K15_Node.h"
 
 namespace K15_Engine { namespace Core {
   /*********************************************************************************/
   K15_IMPLEMENT_RTTI_BASE(Core,GameObject,Core::Object);
   /*********************************************************************************/
   GameObject::GameObject()
+	  : Object(),
+	  m_Node(K15_NEW Node()),
+	  m_Components()
   {
   
   }
   /*********************************************************************************/
-  GameObject::~GameObject()
+  GameObject::GameObject(const ObjectName& p_Name)
+	  : Object(p_Name),
+	  m_Node(K15_NEW Node()),
+	  m_Components()
   {
 
+  }
+  /*********************************************************************************/
+  GameObject::~GameObject()
+  {
+	  K15_DELETE m_Node;
   }
   /*********************************************************************************/
   void GameObject::addComponent(GameObjectComponentBase* p_Component)

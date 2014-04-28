@@ -147,8 +147,10 @@ namespace K15_Engine { namespace Rendering {
 		bool setRenderTarget(RenderTarget* p_RenderTarget);
 		INLINE RenderTarget* getRenderTarget() const;
 
+		bool setActiveCameraGameObject(GameObject* p_Camera);
 		bool setActiveCamera(CameraComponent* p_Camera);
 		INLINE CameraComponent* getActiveCamera() const;
+		GameObject* getActiveCameraGameObject() const;
 
 		bool setCullingMode(Enum p_CullingMode);
 		INLINE Enum getCullingMode() const;

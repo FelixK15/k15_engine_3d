@@ -42,15 +42,12 @@ namespace K15_Engine { namespace Rendering {
 	public:
 		Mesh();
 		Mesh(const ObjectName& p_Name);
-		virtual ~Mesh();
+		~Mesh();
 
 		INLINE const AABB& getAABB(bool p_Calculate = false);
 		INLINE const SubMeshArray& getSubMeshes() const;
 
 		void calculateAABB();
-
-		virtual void loadDebug(RawData& p_Data);
-		virtual bool internalLoad(const RawData& p_Data);
 
 		INLINE void addSubMesh(SubMesh* p_SubMesh);
   private:

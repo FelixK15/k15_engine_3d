@@ -35,8 +35,8 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	CameraComponent::CameraComponent(GameObject* p_Parent)
-		: GameObjectComponentBase(p_Parent,_ON(CameraComponent)),
+	CameraComponent::CameraComponent()
+		: GameObjectComponentBase(_ON(CameraComponent)),
 		m_Fov(65),
 		m_ProjectionType(PT_PERSPECTIVE)
 	{
@@ -52,9 +52,9 @@ namespace K15_Engine { namespace Rendering {
 	{
 		if(m_Dirty)
 		{
-      float aspect = g_Application->getRenderWindow()->getResolution().getAspectRatio();
-      float width = (float)g_Application->getRenderWindow()->getResolution().width;
-      float height = (float)g_Application->getRenderWindow()->getResolution().height;
+			float aspect = g_Application->getRenderWindow()->getResolution().getAspectRatio();
+			float width = (float)g_Application->getRenderWindow()->getResolution().width;
+			float height = (float)g_Application->getRenderWindow()->getResolution().height;
 			//update projection matrix 
 			if(m_ProjectionType == PT_PERSPECTIVE)
 			{
@@ -75,15 +75,15 @@ namespace K15_Engine { namespace Rendering {
 	{
 		if(!m_Dirty)
 		{
-      m_Dirty = m_GameObject->getNode()->needUpdate();
+			m_Dirty = m_GameObject->getNode()->needUpdate();
 		}
 
 		if(m_Dirty)
 		{
 			//update view matrix
 			m_ViewMatrix = m_GameObject->getNode()->getTransformation();
-      m_ViewMatrix = glm::inverse(m_ViewMatrix);
-      _calculateFrustumPoints();
+			m_ViewMatrix = glm::inverse(m_ViewMatrix);
+			_calculateFrustumPoints();
 			m_Dirty = false;
 		}
 
@@ -115,7 +115,7 @@ namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
   const Vector3& CameraComponent::getFrustumPoint(Enum p_FrustumPoint) const
   {
-    K15_ASSERT(p_FrustumPoint >= 0 && p_FrustumPoint < FP_COUNT,"Invalid frustum point index.");
+	K15_ASSERT(p_FrustumPoint >= 0 && p_FrustumPoint < FP_COUNT,"Invalid frustum point index.");
 
     return m_FrustumPoints[p_FrustumPoint];
   }
