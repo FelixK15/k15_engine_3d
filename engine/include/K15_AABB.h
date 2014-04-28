@@ -39,7 +39,7 @@
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
-#include "K15_Vector3.h"
+/*#include "K15_Vector3.h"*/
 
 namespace K15_Engine { namespace Rendering {
 	class K15_CORE_API AABB
@@ -67,31 +67,31 @@ namespace K15_Engine { namespace Rendering {
     /*********************************************************************************/
 	public:
 		AABB();
-		AABB(const Math::Vector3& p_Min, const Math::Vector3& p_Max);
+		AABB(const Vector3& p_Min, const Vector3& p_Max);
 		~AABB();
 
-		INLINE const Math::Vector3& getFarLeftTop() const;
-		INLINE const Math::Vector3& getFarLeftBottom() const;
-		INLINE const Math::Vector3& getFarRightTop() const;
-		INLINE const Math::Vector3& getFarRightBottom() const;
+		INLINE const Vector3& getFarLeftTop() const;
+		INLINE const Vector3& getFarLeftBottom() const;
+		INLINE const Vector3& getFarRightTop() const;
+		INLINE const Vector3& getFarRightBottom() const;
 
-		INLINE const Math::Vector3& getNearLeftTop() const;
-		INLINE const Math::Vector3& getNearLeftBottom() const;
-		INLINE const Math::Vector3& getNearRightTop() const;
-		INLINE const Math::Vector3& getNearRightBottom() const;
+		INLINE const Vector3& getNearLeftTop() const;
+		INLINE const Vector3& getNearLeftBottom() const;
+		INLINE const Vector3& getNearRightTop() const;
+		INLINE const Vector3& getNearRightBottom() const;
 
-		INLINE void setMin(const Math::Vector3& p_Min);
-		INLINE void setMax(const Math::Vector3& p_Max);
+		INLINE void setMin(const Vector3& p_Min);
+		INLINE void setMax(const Vector3& p_Max);
 
-		INLINE const Math::Vector3& getMin() const;
-		INLINE const Math::Vector3& getMax() const;
+		INLINE const Vector3& getMin() const;
+		INLINE const Vector3& getMax() const;
 
 	private:
 		void _calculateCorners();
 
 	private:
-		Math::Vector3 m_Min;
-		Math::Vector3 m_Max;
+		Vector3 m_Min;
+		Vector3 m_Max;
 		CornerArray m_Corners;
 	};// end of AABB class declaration
 #include "K15_AABB.inl"

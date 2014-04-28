@@ -22,7 +22,7 @@
 #include "K15_GpuProgramParameter.h"
 #include "K15_RendererBase.h"
 #include "K15_CameraComponent.h"
-#include "K15_Matrix4.h"
+/*#include "K15_Matrix4.h"*/
 #include "K15_RawData.h"
 
 namespace K15_Engine { namespace Rendering {
@@ -87,7 +87,7 @@ namespace K15_Engine { namespace Rendering {
 		}
 		else
 		{
-			projMatrixData.data = (byte*)&Matrix4::Identity;
+			/*projMatrixData.data = (byte*)&Matrix4::Identity;*/
 		}
 
 		projMatrixData.size = sizeof(Matrix4);
@@ -106,7 +106,7 @@ namespace K15_Engine { namespace Rendering {
 		}
 		else
 		{
-			viewMatrixData.data = (byte*)&Matrix4::Identity;
+			/*viewMatrixData.data = (byte*)&Matrix4::Identity;*/
 		}
 
 		viewMatrixData.size = sizeof(Matrix4);
@@ -129,8 +129,8 @@ namespace K15_Engine { namespace Rendering {
 		}
 		else
 		{
-			viewMatrix = Matrix4::Identity;
-			projectionMatrix = Matrix4::Identity;
+// 			viewMatrix = Matrix4::Identity;
+// 			projectionMatrix = Matrix4::Identity;
 		}
 
 		viewProjectionMatrix = viewMatrix * projectionMatrix;

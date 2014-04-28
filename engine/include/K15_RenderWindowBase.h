@@ -38,6 +38,8 @@ namespace K15_Engine { namespace Core {
 	{
 		uint32 width;
 		uint32 height;
+
+    float getAspectRatio() const;
 	};
 	/*********************************************************************************/
 	class K15_CORE_API RenderWindowBase : public RenderingAllocatedObject

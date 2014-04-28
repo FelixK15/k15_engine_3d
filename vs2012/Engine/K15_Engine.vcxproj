@@ -64,7 +64,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>K15_Engine</TargetName>
-    <IncludePath>..\..\dependencies\Enet\include\;..\..\dependencies\LuaPlus\include\;..\..\dependencies\freetype\include\;..\..\engine\include\;..\..\math\include\;..\..\renderer\include\;..\..\dependencies\TinyThread\include\;..\..\dependencies\JsonCPP\include\;..\..\dependencies\libbmp\include\;..\..\dependencies\zlib\include\;..\..\dependencies\minizip\include\;..\..\dependencies\libtiff\include\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\dependencies\glm\;..\..\dependencies\Enet\include\;..\..\dependencies\LuaPlus\include\;..\..\dependencies\freetype\include\;..\..\engine\include\;..\..\renderer\include\;..\..\dependencies\TinyThread\include\;..\..\dependencies\JsonCPP\include\;..\..\dependencies\libbmp\include\;..\..\dependencies\zlib\include\;..\..\dependencies\minizip\include\;..\..\dependencies\libtiff\include\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -108,7 +108,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>module.def</ModuleDefinitionFile>
-      <AdditionalDependencies>K15_Math.lib;LuaPlus.lib;Enet.lib;TinyThread.lib;Ws2_32.lib;zlib.lib;libtiff.lib;minizip.lib;JsonCPP.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>LuaPlus.lib;Enet.lib;TinyThread.lib;Ws2_32.lib;zlib.lib;libtiff.lib;minizip.lib;JsonCPP.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -414,7 +414,9 @@
     <ClCompile Include="..\..\engine\src\K15_Language.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Material.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MaterialData.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_MatrixUtil.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_MatrixUtil.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_MemoryBlock.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MemoryProfilingTask.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Mesh.cpp" />

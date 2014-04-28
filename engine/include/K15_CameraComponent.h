@@ -30,7 +30,7 @@
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_GameObjectComponentBase.h"
-#include "K15_Matrix4.h"
+// #include "K15_Matrix4.h"
 
 namespace K15_Engine { namespace Rendering {
   class K15_CORE_API CameraComponent : public GameObjectComponentBase
@@ -80,8 +80,8 @@ namespace K15_Engine { namespace Rendering {
     INLINE float getFarClipDistance() const;
     INLINE float getNearClipDistance() const;
 
-    const Math::Matrix4& getProjectionMatrix();
-    const Math::Matrix4& getViewMatrix();
+    const Matrix4& getProjectionMatrix();
+    const Matrix4& getViewMatrix();
     
     void setActive(bool p_Active);
     INLINE void setFieldOfView(float p_Fov);
@@ -100,8 +100,8 @@ namespace K15_Engine { namespace Rendering {
 
   private:
     FrustumPoints m_FrustumPoints;
-    Math::Matrix4 m_ProjectionMatrix;
-    Math::Matrix4 m_ViewMatrix;
+    Matrix4 m_ProjectionMatrix;
+    Matrix4 m_ViewMatrix;
 
     expose float m_Fov;
     expose float m_FarClipDistance;

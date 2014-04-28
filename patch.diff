@@ -1,0 +1,779 @@
+From 04a63a1c2209f8c866d8c6e08a70d30a6f489e1e Mon Sep 17 00:00:00 2001
+From: Felix Klinge <f.klinge@k15games.de>
+Date: Fri, 25 Apr 2014 16:13:44 +0200
+Subject: [PATCH] #ADDED ModelComponent #ADDED RenderQueue (WIP) #UPDATED
+ CameraComponent to calculate view frustum corners.
+
+---
+ engine/include/K15_AABB.h                    | 38 +++++++++++---------
+ engine/include/K15_AABB.inl                  | 24 ++++++-------
+ engine/include/K15_CameraComponent.h         | 50 ++++++++++++++++++++------
+ engine/include/K15_CameraComponent.inl       |  5 +++
+ engine/include/K15_GameObjectComponentBase.h |  2 --
+ engine/include/K15_ModelComponent.h          | 52 ++++++++++++++++++++++++++++
+ engine/include/K15_ModelComponent.inl        | 25 +++++++++++++
+ engine/include/K15_RenderQueue.h             | 20 +++++++++--
+ engine/include/K15_RenderQueue.inl           | 40 +++++++++++++++++++++
+ engine/src/K15_AABB.cpp                      | 18 +++++-----
+ engine/src/K15_CameraComponent.cpp           | 32 +++++++++++++----
+ engine/src/K15_GpuProgramAutoParameter.cpp   |  3 ++
+ engine/src/K15_GpuProgramParameter.cpp       |  2 +-
+ engine/src/K15_ModelComponent.cpp            | 42 ++++++++++++++++++++++
+ engine/src/K15_RenderQueue.cpp               | 38 ++++++++++++++++++++
+ vs2012/Engine/K15_Engine.vcxproj             |  5 +++
+ vs2012/Engine/K15_Engine.vcxproj.filters     | 17 +++++++--
+ 17 files changed, 350 insertions(+), 63 deletions(-)
+ create mode 100644 engine/include/K15_ModelComponent.h
+ create mode 100644 engine/include/K15_ModelComponent.inl
+ create mode 100644 engine/include/K15_RenderQueue.inl
+ create mode 100644 engine/src/K15_ModelComponent.cpp
+ create mode 100644 engine/src/K15_RenderQueue.cpp
+
+diff --git a/engine/include/K15_AABB.h b/engine/include/K15_AABB.h
+index ec452bf..134622c 100644
+--- a/engine/include/K15_AABB.h
++++ b/engine/include/K15_AABB.h
+@@ -39,7 +39,7 @@
+ #	include "K15_Prerequisites.h"
+ #endif //K15_USE_PRECOMPILED_HEADERS
+ 
+-#include "K15_Vector4.h"
++#include "K15_Vector3.h"
+ 
+ namespace K15_Engine { namespace Rendering {
+ 	class K15_CORE_API AABB
+@@ -60,34 +60,38 @@ namespace K15_Engine { namespace Rendering {
+ 
+ 			CT_COUNT
+ 		};//CornerTypes
+-		typedef FixedArray(Vector4,CT_COUNT) CornerArray;
++    /*********************************************************************************/
++
++    /*********************************************************************************/
++		typedef FixedArray(Vector3,CT_COUNT) CornerArray;
++    /*********************************************************************************/
+ 	public:
+ 		AABB();
+-		AABB(const Math::Vector4& p_Min, const Math::Vector4& p_Max);
++		AABB(const Math::Vector3& p_Min, const Math::Vector3& p_Max);
+ 		~AABB();
+ 
+-		INLINE const Math::Vector4& getFarLeftTop() const;
+-		INLINE const Math::Vector4& getFarLeftBottom() const;
+-		INLINE const Math::Vector4& getFarRightTop() const;
+-		INLINE const Math::Vector4& getFarRightBottom() const;
++		INLINE const Math::Vector3& getFarLeftTop() const;
++		INLINE const Math::Vector3& getFarLeftBottom() const;
++		INLINE const Math::Vector3& getFarRightTop() const;
++		INLINE const Math::Vector3& getFarRightBottom() const;
+ 
+-		INLINE const Math::Vector4& getNearLeftTop() const;
+-		INLINE const Math::Vector4& getNearLeftBottom() const;
+-		INLINE const Math::Vector4& getNearRightTop() const;
+-		INLINE const Math::Vector4& getNearRightBottom() const;
++		INLINE const Math::Vector3& getNearLeftTop() const;
++		INLINE const Math::Vector3& getNearLeftBottom() const;
++		INLINE const Math::Vector3& getNearRightTop() const;
++		INLINE const Math::Vector3& getNearRightBottom() const;
+ 
+-		INLINE void setMin(const Math::Vector4& p_Min);
+-		INLINE void setMax(const Math::Vector4& p_Max);
++		INLINE void setMin(const Math::Vector3& p_Min);
++		INLINE void setMax(const Math::Vector3& p_Max);
+ 
+-		INLINE const Math::Vector4& getMin() const;
+-		INLINE const Math::Vector4& getMax() const;
++		INLINE const Math::Vector3& getMin() const;
++		INLINE const Math::Vector3& getMax() const;
+ 
+ 	private:
+ 		void _calculateCorners();
+ 
+ 	private:
+-		Math::Vector4 m_Min;
+-		Math::Vector4 m_Max;
++		Math::Vector3 m_Min;
++		Math::Vector3 m_Max;
+ 		CornerArray m_Corners;
+ 	};// end of AABB class declaration
+ #include "K15_AABB.inl"
+diff --git a/engine/include/K15_AABB.inl b/engine/include/K15_AABB.inl
+index ce3ab0f..1ecebe2 100644
+--- a/engine/include/K15_AABB.inl
++++ b/engine/include/K15_AABB.inl
+@@ -18,64 +18,64 @@
+  */
+ 
+ /*********************************************************************************/
+-const Vector4& AABB::getMin() const
++const Vector3& AABB::getMin() const
+ {
+ 	return m_Min;
+ }
+ /*********************************************************************************/
+-const Vector4& AABB::getMax() const
++const Vector3& AABB::getMax() const
+ {
+ 	return m_Max;
+ }
+ /*********************************************************************************/
+-void AABB::setMin(const Vector4& p_Min)
++void AABB::setMin(const Vector3& p_Min)
+ {
+ 	m_Min = p_Min;
+ 	_calculateCorners();
+ }
+ /*********************************************************************************/
+-void AABB::setMax(const Vector4& p_Max)
++void AABB::setMax(const Vector3& p_Max)
+ {
+ 	m_Max = p_Max;
+ 	_calculateCorners();
+ }
+ /*********************************************************************************/
+-const Vector4& AABB::getFarLeftTop() const
++const Vector3& AABB::getFarLeftTop() const
+ {
+ 	return m_Corners[CT_FAR_LEFT_TOP];
+ }
+ /*********************************************************************************/
+-const Vector4& AABB::getFarRightTop() const
++const Vector3& AABB::getFarRightTop() const
+ {
+ 	return m_Corners[CT_FAR_RIGHT_TOP];
+ }
+ /*********************************************************************************/
+-const Vector4& AABB::getFarLeftBottom() const
++const Vector3& AABB::getFarLeftBottom() const
+ {
+ 	return m_Corners[CT_FAR_LEFT_BOTTOM];
+ }
+ /*********************************************************************************/
+-const Vector4& AABB::getFarRightBottom() const
++const Vector3& AABB::getFarRightBottom() const
+ {
+ 	return m_Corners[CT_FAR_RIGHT_BOTTOM];
+ }
+ /*********************************************************************************/
+-const Vector4& AABB::getNearLeftTop() const
++const Vector3& AABB::getNearLeftTop() const
+ {
+ 	return m_Corners[CT_NEAR_LEFT_TOP];
+ }
+ /*********************************************************************************/
+-const Vector4& AABB::getNearRightTop() const
++const Vector3& AABB::getNearRightTop() const
+ {
+ 	return m_Corners[CT_NEAR_RIGHT_TOP];
+ }
+ /*********************************************************************************/
+-const Vector4& AABB::getNearLeftBottom() const
++const Vector3& AABB::getNearLeftBottom() const
+ {
+ 	return m_Corners[CT_NEAR_LEFT_BOTTOM];
+ }
+ /*********************************************************************************/
+-const Vector4& AABB::getNearRightBottom() const
++const Vector3& AABB::getNearRightBottom() const
+ {
+ 	return m_Corners[CT_NEAR_RIGHT_BOTTOM];
+ }
+diff --git a/engine/include/K15_CameraComponent.h b/engine/include/K15_CameraComponent.h
+index 6a51223..3886479 100644
+--- a/engine/include/K15_CameraComponent.h
++++ b/engine/include/K15_CameraComponent.h
+@@ -36,18 +36,40 @@ namespace K15_Engine { namespace Rendering {
+   class K15_CORE_API CameraComponent : public GameObjectComponentBase
+   {
+ 	/*********************************************************************************/
+-	//K15_DECLARE_RTTI;
++	K15_DECLARE_RTTI;
+ 	/*********************************************************************************/
+   public:
+-	/*********************************************************************************/
+-	enum eProjectionType
+-	{
+-		PT_PERSPECTIVE = 0,
+-		PT_ORTHOGRAPHIC,
++    /*********************************************************************************/
++    enum eFrustumPoints
++    {
++      FP_NEAR_LEFT_BOTTOM = 0,
++      FP_NEAR_RIGHT_BOTTOM,
++      FP_NEAR_LEFT_TOP,
++      FP_NEAR_RIGHT_TOP,
++
++      FP_FAR_LEFT_BOTTOM,
++      FP_FAR_RIGHT_BOTTOM,
++      FP_FAR_LEFT_TOP,
++      FP_FAR_RIGHT_TOP,
++
++      FP_COUNT
++    }; //FrustumPoints
++    
++    /*********************************************************************************/
++    typedef FixedArray(Vector3,FP_COUNT) FrustumPoints;
++    /*********************************************************************************/
++
+ 
+-		PT_COUNT
+-	}; //ProjectionType
+-	/*********************************************************************************/
++
++	  /*********************************************************************************/
++	  enum eProjectionType
++	  {
++		  PT_PERSPECTIVE = 0,
++		  PT_ORTHOGRAPHIC,
++
++		  PT_COUNT
++	  }; //ProjectionType
++	  /*********************************************************************************/
+ 
+   public:
+     CameraComponent(GameObject* p_Parent);
+@@ -67,9 +89,17 @@ namespace K15_Engine { namespace Rendering {
+     INLINE void setFarClipDistance(float p_Far);
+     INLINE void setNearClipDistance(float p_Near);
+ 
+-	virtual void update(const GameTime& p_GameTime) OVERRIDE {};
++    bool isVisible(const AABB& p_AABB);
++
++    INLINE const FrustumPoints& getFrustumPoints() const;
++
++    const Vector3& getFrustumPoint(Enum p_FrustumPoint) const;
++
++  private:
++    void _calculateFrustumPoints();
+ 
+   private:
++    FrustumPoints m_FrustumPoints;
+     Math::Matrix4 m_ProjectionMatrix;
+     Math::Matrix4 m_ViewMatrix;
+ 
+diff --git a/engine/include/K15_CameraComponent.inl b/engine/include/K15_CameraComponent.inl
+index 231cf4c..1c4b28d 100644
+--- a/engine/include/K15_CameraComponent.inl
++++ b/engine/include/K15_CameraComponent.inl
+@@ -61,4 +61,9 @@ void CameraComponent::setNearClipDistance(float p_Near)
+   m_NearClipDistance = p_Near;
+   m_Dirty = true;
+ }
++/*********************************************************************************/
++const CameraComponent::FrustumPoints& CameraComponent::getFrustumPoints() const
++{
++  return m_FrustumPoints;
++}
+ /*********************************************************************************/
+\ No newline at end of file
+diff --git a/engine/include/K15_GameObjectComponentBase.h b/engine/include/K15_GameObjectComponentBase.h
+index 80d91ad..771d350 100644
+--- a/engine/include/K15_GameObjectComponentBase.h
++++ b/engine/include/K15_GameObjectComponentBase.h
+@@ -39,8 +39,6 @@ namespace K15_Engine { namespace Core {
+ 
+ 		INLINE GameObject* getGameObject() const;
+ 
+-		virtual void update(const GameTime& p_GameTime) = 0;
+-
+ 	protected:
+ 		GameObject* m_GameObject;
+ 	}; // end of GameObjectComponentBase class declaration
+diff --git a/engine/include/K15_ModelComponent.h b/engine/include/K15_ModelComponent.h
+new file mode 100644
+index 0000000..510453f
+--- /dev/null
++++ b/engine/include/K15_ModelComponent.h
+@@ -0,0 +1,52 @@
++/**
++ * @file K15_ModelComponent.h
++ * @author  Felix Klinge <f.klinge@k15games.de>
++ * @version 1.0
++ * @date 2013/12/16
++ * @section LICENSE
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 3 of
++ * the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
++ * General Public License for more details at
++ * http://www.gnu.org/copyleft/gpl.html
++ *
++ * @section DESCRIPTION
++ *
++ * 
++ */
++
++#ifndef _K15Engine_Core_ModelComponent_h_
++#define _K15Engine_Core_ModelComponent_h_
++
++#ifndef K15_USE_PRECOMPILED_HEADERS
++#	include "K15_Prerequisites.h"
++#	include "K15_AllocatedObject.h"
++#endif //K15_USE_PRECOMPILED_HEADERS
++
++#include "K15_GameObjectComponentBase.h"
++#include "K15_Mesh.h"
++
++namespace K15_Engine { namespace Core {
++  class K15_CORE_API ModelComponent : public GameObjectComponentBase
++  {
++    K15_DECLARE_RTTI;
++
++  public:
++    ModelComponent(const String& p_ModelResourceName);
++    ~ModelComponent();
++
++    INLINE Mesh* getMesh() const;
++
++  private:
++    Mesh* m_Mesh;
++  }; //end of ModelComponent class declaration
++# include "K15_ModelComponent.inl"
++}}//end of K15_Engine::Core namespace
++
++#endif //_K15Engine_Core_ModelComponent_h_
+\ No newline at end of file
+diff --git a/engine/include/K15_ModelComponent.inl b/engine/include/K15_ModelComponent.inl
+new file mode 100644
+index 0000000..695db51
+--- /dev/null
++++ b/engine/include/K15_ModelComponent.inl
+@@ -0,0 +1,25 @@
++/**
++ * @file K15_ModelComponent.inl
++ * @author  Felix Klinge <f.klinge@k15games.de>
++ * @version 1.0
++ * @date 2013/12/16
++ * @section LICENSE
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 3 of
++ * the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
++ * General Public License for more details at
++ * http://www.gnu.org/copyleft/gpl.html
++ */
++
++/*********************************************************************************/
++Mesh* ModelComponent::getMesh() const
++{
++  return m_Mesh;
++}
++/*********************************************************************************/
+\ No newline at end of file
+diff --git a/engine/include/K15_RenderQueue.h b/engine/include/K15_RenderQueue.h
+index dcd96c2..9e64f22 100644
+--- a/engine/include/K15_RenderQueue.h
++++ b/engine/include/K15_RenderQueue.h
+@@ -28,13 +28,27 @@
+ #	include "K15_Prerequisites.h"
+ #endif //K15_USE_PRECOMPILED_HEADERS
+ 
+-namespace K15_Engine { namespace Core {
++namespace K15_Engine { namespace Rendering {
+ 	class K15_CORE_API RenderQueue
+ 	{
++    /*********************************************************************************/
++    typedef FixedArray(RenderOperation*,2048) RenderOperationList;
++    /*********************************************************************************/
++
+ 	public:
+ 		RenderQueue();
+-		virtual ~RenderQueue();
++		~RenderQueue();
++
++    INLINE void addRenderOperation(RenderOperation* p_ROP);
++    INLINE uint32 getRenderOperationCount() const;
++
++    INLINE void clearRenderOperations();
++
++  private:
++    uint32 m_RenderOperationCount;
++    RenderOperationList m_RenderOperations;
+ 	};// end of RenderQueue class declaration
+-}}// end of K15_Engine::Core namespace
++# include "K15_RenderQueue.inl"
++}}// end of K15_Engine::Rendering namespace
+ 
+ #endif //_K15Engine_Rendering_RenderQueue_h_
+\ No newline at end of file
+diff --git a/engine/include/K15_RenderQueue.inl b/engine/include/K15_RenderQueue.inl
+new file mode 100644
+index 0000000..41797d8
+--- /dev/null
++++ b/engine/include/K15_RenderQueue.inl
+@@ -0,0 +1,40 @@
++/**
++ * @file K15_RenderQueue.inl
++ * @author  Felix Klinge <f.klinge@k15games.de>
++ * @version 1.0
++ * @date 2013/12/16
++ * @section LICENSE
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 3 of
++ * the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
++ * General Public License for more details at
++ * http://www.gnu.org/copyleft/gpl.html
++ */
++
++/*********************************************************************************/
++void RenderQueue::addRenderOperation(RenderOperation* p_ROP)
++{
++  m_RenderOperations[m_RenderOperationCount++] = p_ROP;
++}
++/*********************************************************************************/
++uint32 RenderQueue::getRenderOperationCount() const
++{
++  return m_RenderOperationCount;
++}
++/*********************************************************************************/
++void RenderQueue::clearRenderOperations()
++{
++//   for(int i = 0;i < m_RenderOperationCount;++i)
++//   {
++//     m_RenderOperations[i] = 0;
++//   }
++//   
++  m_RenderOperationCount = 0;
++}
++/*********************************************************************************/
+\ No newline at end of file
+diff --git a/engine/src/K15_AABB.cpp b/engine/src/K15_AABB.cpp
+index c3a9e5d..b4c87aa 100644
+--- a/engine/src/K15_AABB.cpp
++++ b/engine/src/K15_AABB.cpp
+@@ -24,13 +24,13 @@
+ namespace K15_Engine { namespace Rendering {
+ 	/*********************************************************************************/
+ 	AABB::AABB()
+-		: m_Max(Math::Vector4::Zero),
+-		m_Min(Math::Vector4::Zero)
++		: m_Max(Math::Vector3::Zero),
++		m_Min(Math::Vector3::Zero)
+ 	{
+ 
+ 	}
+ 	/*********************************************************************************/
+-	AABB::AABB(const Math::Vector4& p_Min, const Math::Vector4& p_Max)
++	AABB::AABB(const Math::Vector3& p_Min, const Math::Vector3& p_Max)
+ 		: m_Min(p_Min),
+ 		m_Max(p_Max)
+ 	{
+@@ -45,13 +45,13 @@ namespace K15_Engine { namespace Rendering {
+ 	void AABB::_calculateCorners()
+ 	{
+ 		m_Corners[CT_FAR_LEFT_TOP] = m_Max;
+-		m_Corners[CT_FAR_RIGHT_TOP] = Math::Vector4(m_Min.x,m_Max.y,m_Max.z);
+-		m_Corners[CT_FAR_LEFT_BOTTOM] = Math::Vector4(m_Max.x,m_Min.y,m_Max.z);
+-		m_Corners[CT_FAR_RIGHT_BOTTOM] = Math::Vector4(m_Min.x,m_Min.y,m_Max.z);
++		m_Corners[CT_FAR_RIGHT_TOP] = Math::Vector3(m_Min.x,m_Max.y,m_Max.z);
++		m_Corners[CT_FAR_LEFT_BOTTOM] = Math::Vector3(m_Max.x,m_Min.y,m_Max.z);
++		m_Corners[CT_FAR_RIGHT_BOTTOM] = Math::Vector3(m_Min.x,m_Min.y,m_Max.z);
+ 
+-		m_Corners[CT_NEAR_LEFT_TOP] = Math::Vector4(m_Max.x,m_Max.y,m_Min.z);
+-		m_Corners[CT_NEAR_RIGHT_TOP] = Math::Vector4(m_Min.x,m_Max.y,m_Min.z);
+-		m_Corners[CT_NEAR_LEFT_BOTTOM] = Math::Vector4(m_Max.x,m_Min.y,m_Min.z);
++		m_Corners[CT_NEAR_LEFT_TOP] = Math::Vector3(m_Max.x,m_Max.y,m_Min.z);
++		m_Corners[CT_NEAR_RIGHT_TOP] = Math::Vector3(m_Min.x,m_Max.y,m_Min.z);
++		m_Corners[CT_NEAR_LEFT_BOTTOM] = Math::Vector3(m_Max.x,m_Min.y,m_Min.z);
+ 		m_Corners[CT_NEAR_RIGHT_BOTTOM] = m_Min;
+ 	}
+ 	/*********************************************************************************/
+diff --git a/engine/src/K15_CameraComponent.cpp b/engine/src/K15_CameraComponent.cpp
+index ffcff5d..937900e 100644
+--- a/engine/src/K15_CameraComponent.cpp
++++ b/engine/src/K15_CameraComponent.cpp
+@@ -24,10 +24,14 @@
+ #include "K15_GameObject.h"
+ #include "K15_CameraComponent.h"
+ #include "K15_MatrixUtil.h"
++#include "K15_MathUtil.h"
++#include "K15_Vector3.h"
++#include "K15_Vector2.h"
++#include "K15_AABB.h"
+ 
+ namespace K15_Engine { namespace Rendering {
+ 	/*********************************************************************************/
+-	//K15_IMPLEMENT_RTTI_BASE(Rendering,CameraComponent,Core::GameObjectComponentBase);
++	K15_IMPLEMENT_RTTI_BASE(Rendering,CameraComponent,GameObjectComponentBase);
+ 	/*********************************************************************************/
+ 
+ 	/*********************************************************************************/
+@@ -68,10 +72,7 @@ namespace K15_Engine { namespace Rendering {
+ 	{
+ 		if(!m_Dirty)
+ 		{
+-			if(m_GameObject->getNode()->needUpdate())
+-			{
+-				m_Dirty = true;
+-			}
++      m_Dirty = m_GameObject->getNode()->needUpdate();
+ 		}
+ 
+ 		if(m_Dirty)
+@@ -79,6 +80,7 @@ namespace K15_Engine { namespace Rendering {
+ 			//update view matrix
+ 			m_ViewMatrix = m_GameObject->getNode()->getTransformation();
+ 			m_ViewMatrix = m_ViewMatrix.inverse();
++      _calculateFrustumPoints();
+ 			m_Dirty = false;
+ 		}
+ 
+@@ -94,5 +96,23 @@ namespace K15_Engine { namespace Rendering {
+ 			g_Application->getRenderer()->setActiveCamera(this);
+ 		}
+ 	}
+-	/*********************************************************************************/
++  /*********************************************************************************/
++  bool CameraComponent::isVisible(const AABB& p_AABB)
++  {
++    return p_AABB.getMin() >= m_FrustumPoints[FP_NEAR_RIGHT_BOTTOM] ||
++           p_AABB.getMax() <= m_FrustumPoints[FP_FAR_LEFT_TOP];
++  }
++  /*********************************************************************************/
++  void CameraComponent::_calculateFrustumPoints()
++  {
++    
++  }
++  /*********************************************************************************/
++  const Vector3& CameraComponent::getFrustumPoint(Enum p_FrustumPoint) const
++  {
++    K15_ASSERT(p_FrustumPoint >= 0 && p_FrustumPoint < FP_COUNT,"Invalid frustum point index.");
++
++    return m_FrustumPoints[p_FrustumPoint];
++  }
++  /*********************************************************************************/
+ }}// end of K15_Engine::Rendering namespace
+\ No newline at end of file
+diff --git a/engine/src/K15_GpuProgramAutoParameter.cpp b/engine/src/K15_GpuProgramAutoParameter.cpp
+index 70a7d83..7806083 100644
+--- a/engine/src/K15_GpuProgramAutoParameter.cpp
++++ b/engine/src/K15_GpuProgramAutoParameter.cpp
+@@ -82,6 +82,9 @@ namespace K15_Engine { namespace Rendering {
+ 		UpdateFunctions.insert(Pair(String,AutoParameterSettings)(
+ 			"g_ProjMatrix",AutoParameterSettings(&GpuProgramParameter::UpdateFunctions::UpdateProjectionMatrix,GpuProgramParameter::UF_PER_CAMERA)));
+ 
++//     UpdateFunctions.insert(Pair(String,AutoParameterSettings)(
++//       "g_ModelMatrix",AutoParameterSettings(&GpuProgramParameter::UpdateFunctions::UpdateModelMatrix,GpuProgramParameter::UF_PER_MESH)));
++
+ 		return UpdateFunctions;
+ 	}
+ /*********************************************************************************/
+diff --git a/engine/src/K15_GpuProgramParameter.cpp b/engine/src/K15_GpuProgramParameter.cpp
+index 02a790e..2ad465d 100644
+--- a/engine/src/K15_GpuProgramParameter.cpp
++++ b/engine/src/K15_GpuProgramParameter.cpp
+@@ -139,7 +139,7 @@ namespace K15_Engine { namespace Rendering {
+ 
+ 		return viewProjectionMatrixData;
+ 	}
+-	/*********************************************************************************/
++  /*********************************************************************************/
+ 	void GpuProgramParameter::setUpdateFunction(UpdateFunc p_UpdateFunc)
+ 	{
+ 		K15_ASSERT(p_UpdateFunc.isValid(),
+diff --git a/engine/src/K15_ModelComponent.cpp b/engine/src/K15_ModelComponent.cpp
+new file mode 100644
+index 0000000..8ce84a3
+--- /dev/null
++++ b/engine/src/K15_ModelComponent.cpp
+@@ -0,0 +1,42 @@
++/**
++ * @file K15_ModelComponent.cpp
++ * @author  Felix Klinge <f.klinge@k15games.de>
++ * @version 1.0
++ * @date 2013/12/16
++ * @section LICENSE
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 3 of
++ * the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
++ * General Public License for more details at
++ * http://www.gnu.org/copyleft/gpl.html
++ */
++
++#include "K15_PrecompiledHeader.h"
++
++#include "K15_ModelComponent.h"
++#include "K15_ResourceManager.h"
++
++namespace K15_Engine { namespace Core {
++  /*********************************************************************************/
++  K15_IMPLEMENT_RTTI_BASE(Core,ModelComponent,GameObjectComponentBase);
++  /*********************************************************************************/
++
++  /*********************************************************************************/
++  ModelComponent::ModelComponent(const String& p_ModelResourceName)
++    : GameObjectComponentBase()
++  {
++    m_Mesh = g_ResourceManager->getResource<Mesh>(p_ModelResourceName);
++  }
++  /*********************************************************************************/
++  ModelComponent::~ModelComponent()
++  {
++
++  }
++  /*********************************************************************************/
++}}//end of K15_Engine::Core namespace
+\ No newline at end of file
+diff --git a/engine/src/K15_RenderQueue.cpp b/engine/src/K15_RenderQueue.cpp
+new file mode 100644
+index 0000000..9c2935f
+--- /dev/null
++++ b/engine/src/K15_RenderQueue.cpp
+@@ -0,0 +1,38 @@
++/**
++ * @file K15_RenderQueue.cpp
++ * @author  Felix Klinge <f.klinge@k15games.de>
++ * @version 1.0
++ * @date 2013/12/16
++ * @section LICENSE
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 3 of
++ * the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
++ * General Public License for more details at
++ * http://www.gnu.org/copyleft/gpl.html
++ */
++
++#include "K15_PrecompiledHeader.h"
++
++#include "K15_RenderQueue.h"
++
++namespace K15_Engine { namespace Rendering {
++  /*********************************************************************************/
++  RenderQueue::RenderQueue()
++    : m_RenderOperationCount(0),
++    m_RenderOperations()
++  {
++
++  }
++  /*********************************************************************************/
++  RenderQueue::~RenderQueue()
++  {
++
++  }
++  /*********************************************************************************/
++}}//end of K15_Engine::Rendering namespace
+\ No newline at end of file
+diff --git a/vs2012/Engine/K15_Engine.vcxproj b/vs2012/Engine/K15_Engine.vcxproj
+index 424bc4d..407d1e7 100644
+--- a/vs2012/Engine/K15_Engine.vcxproj
++++ b/vs2012/Engine/K15_Engine.vcxproj
+@@ -237,6 +237,7 @@
+       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+       </Outputs>
+     </ClInclude>
++    <ClInclude Include="..\..\engine\include\K15_ModelComponent.h" />
+     <ClInclude Include="..\..\engine\include\K15_Mouse.h" />
+     <ClInclude Include="..\..\engine\include\K15_NetworkManager.h" />
+     <ClInclude Include="..\..\engine\include\K15_Node.h">
+@@ -417,6 +418,7 @@
+     <ClCompile Include="..\..\engine\src\K15_MemoryBlock.cpp" />
+     <ClCompile Include="..\..\engine\src\K15_MemoryProfilingTask.cpp" />
+     <ClCompile Include="..\..\engine\src\K15_Mesh.cpp" />
++    <ClCompile Include="..\..\engine\src\K15_ModelComponent.cpp" />
+     <ClCompile Include="..\..\engine\src\K15_Mouse.cpp" />
+     <ClCompile Include="..\..\engine\src\K15_NetworkManager.cpp" />
+     <ClCompile Include="..\..\engine\src\K15_Node.cpp">
+@@ -430,6 +432,7 @@
+     <ClCompile Include="..\..\engine\src\K15_RawData.cpp" />
+     <ClCompile Include="..\..\engine\src\K15_RendererBase.cpp" />
+     <ClCompile Include="..\..\engine\src\K15_RenderProcessBase.cpp" />
++    <ClCompile Include="..\..\engine\src\K15_RenderQueue.cpp" />
+     <ClCompile Include="..\..\engine\src\K15_RenderTask.cpp" />
+     <ClCompile Include="..\..\engine\src\K15_RenderWindowBase.cpp" />
+     <ClCompile Include="..\..\engine\src\K15_ResourceArchiveBase.cpp" />
+@@ -499,6 +502,7 @@
+     <None Include="..\..\engine\include\K15_Language.inl" />
+     <None Include="..\..\engine\include\K15_Material.inl" />
+     <None Include="..\..\engine\include\K15_Mesh.inl" />
++    <None Include="..\..\engine\include\K15_ModelComponent.inl" />
+     <None Include="..\..\engine\include\K15_Node.inl">
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+     </None>
+@@ -530,6 +534,7 @@
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+     </None>
+     <None Include="..\..\engine\include\K15_RendererBase.inl" />
++    <None Include="..\..\engine\include\K15_RenderQueue.inl" />
+     <None Include="..\..\engine\include\K15_ResourceBase.inl" />
+     <None Include="..\..\engine\include\K15_ResourceArchiveBase.inl" />
+     <None Include="..\..\engine\include\K15_ResourceHandle.inl" />
+diff --git a/vs2012/Engine/K15_Engine.vcxproj.filters b/vs2012/Engine/K15_Engine.vcxproj.filters
+index fb2853e..2a6a02a 100644
+--- a/vs2012/Engine/K15_Engine.vcxproj.filters
++++ b/vs2012/Engine/K15_Engine.vcxproj.filters
+@@ -279,9 +279,6 @@
+     <ClInclude Include="..\..\engine\include\K15_AlphaState.h">
+       <Filter>Rendering\include</Filter>
+     </ClInclude>
+-    <ClInclude Include="..\..\engine\include\K15_CameraComponent.h">
+-      <Filter>Rendering\include</Filter>
+-    </ClInclude>
+     <ClInclude Include="..\..\engine\include\K15_ColorRGBA.h">
+       <Filter>Rendering\include</Filter>
+     </ClInclude>
+@@ -411,6 +408,12 @@
+     <ClInclude Include="..\..\engine\include\K15_GpuProgramAutoParameter.h">
+       <Filter>Rendering\include</Filter>
+     </ClInclude>
++    <ClInclude Include="..\..\engine\include\K15_ModelComponent.h">
++      <Filter>Components\include</Filter>
++    </ClInclude>
++    <ClInclude Include="..\..\engine\include\K15_CameraComponent.h">
++      <Filter>Components\include</Filter>
++    </ClInclude>
+   </ItemGroup>
+   <ItemGroup>
+     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
+@@ -686,6 +689,10 @@
+     <ClCompile Include="..\..\engine\src\K15_GpuProgramAutoParameter.cpp">
+       <Filter>Rendering\src</Filter>
+     </ClCompile>
++    <ClCompile Include="..\..\engine\src\K15_ModelComponent.cpp">
++      <Filter>Components\src</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\engine\src\K15_RenderQueue.cpp" />
+   </ItemGroup>
+   <ItemGroup>
+     <None Include="module.def" />
+@@ -872,6 +879,10 @@
+     <None Include="..\..\engine\include\K15_ResourceArchiveBase.inl">
+       <Filter>ResourceSystem\include</Filter>
+     </None>
++    <None Include="..\..\engine\include\K15_ModelComponent.inl">
++      <Filter>Components\include</Filter>
++    </None>
++    <None Include="..\..\engine\include\K15_RenderQueue.inl" />
+   </ItemGroup>
+   <ItemGroup>
+     <Text Include="..\..\engine\doc\Folder structure.txt" />
+-- 
+1.8.3.msysgit.0
+

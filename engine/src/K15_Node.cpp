@@ -54,16 +54,16 @@ namespace K15_Engine { namespace Core {
 		}
 	}
 	/*********************************************************************************/
-	const Math::Matrix4& Node::getTransformation()
+	const Matrix4& Node::getTransformation()
 	{
 		if(needUpdate())
 		{
 			//update from parent
 			if(m_Parent)
 			{
-				m_Scale = m_OriginScale * m_Parent->getScale();
-				m_Orientation = m_OriginOrientation * m_Parent->getOrientation();
-				m_Position = m_OriginPosition + m_Parent->getPosition();
+// 				m_Scale = m_OriginScale * m_Parent->getScale();
+// 				m_Orientation = m_OriginOrientation * m_Parent->getOrientation();
+// 				m_Position = m_OriginPosition + m_Parent->getPosition();
 			}
 			else
 			{
@@ -77,27 +77,29 @@ namespace K15_Engine { namespace Core {
 			//    2. Rotate
 			//    3. Translate
 
-			Math::Matrix3 rotation = m_Orientation.toRotationMatrix();
-
 			// Set up final matrix with scale, rotation and translation
-			m_Transformation._1_1 = m_Scale.x * rotation._1_1; 
-			m_Transformation._1_2 = m_Scale.y * rotation._1_2; 
-			m_Transformation._1_3 = m_Scale.z * rotation._1_3;
-			m_Transformation._1_4 = m_Position.x;
+      m_Transformation = glm::scale(glm::mat4(1.0f),m_Scale);
+      m_Transformation *= m_Orientation;
+      m_Transformation *= glm::translate(glm::mat4(1.0f),m_Position);
 
-			m_Transformation._2_1 = m_Scale.x * rotation._2_1; 
-			m_Transformation._2_2 = m_Scale.y * rotation._2_2; 
-			m_Transformation._2_3 = m_Scale.z * rotation._2_3;
-			m_Transformation._2_4 = m_Position.y;
-
-			m_Transformation._3_1 = m_Scale.x * rotation._3_1; 
-			m_Transformation._3_2 = m_Scale.y * rotation._3_2; 
-			m_Transformation._3_3 = m_Scale.z * rotation._3_3;
-			m_Transformation._3_4 = m_Position.z;
-
-			// No projection term
-			m_Transformation._4_1 = m_Transformation._4_2 = m_Transformation._4_3 = 0.0f;
-			m_Transformation._4_4 = 1.0f;
+// 			m_Transformation._1_1 = m_Scale.x * rotation._1_1; 
+// 			m_Transformation._1_2 = m_Scale.y * rotation._1_2; 
+// 			m_Transformation._1_3 = m_Scale.z * rotation._1_3;
+// 			m_Transformation._1_4 = m_Position.x;
+// 
+// 			m_Transformation._2_1 = m_Scale.x * rotation._2_1; 
+// 			m_Transformation._2_2 = m_Scale.y * rotation._2_2; 
+// 			m_Transformation._2_3 = m_Scale.z * rotation._2_3;
+// 			m_Transformation._2_4 = m_Position.y;
+// 
+// 			m_Transformation._3_1 = m_Scale.x * rotation._3_1; 
+// 			m_Transformation._3_2 = m_Scale.y * rotation._3_2; 
+// 			m_Transformation._3_3 = m_Scale.z * rotation._3_3;
+// 			m_Transformation._3_4 = m_Position.z;
+// 
+// 			// No projection term
+// 			m_Transformation._4_1 = m_Transformation._4_2 = m_Transformation._4_3 = 0.0f;
+// 			m_Transformation._4_4 = 1.0f;
 
 			m_NeedUpdate = false;
 		}

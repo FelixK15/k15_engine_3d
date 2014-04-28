@@ -29,8 +29,8 @@
 #	include "K15_Object.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
-#include "K15_Quaternion.h"
-#include "K15_Matrix4.h"
+// #include "K15_Quaternion.h"
+// #include "K15_Matrix4.h"
 
 namespace K15_Engine { namespace Core { 
 	class K15_CORE_API Node : public Object
@@ -44,28 +44,29 @@ namespace K15_Engine { namespace Core {
 		Node(const ObjectName& p_Name = ObjectName::BLANK,Node* p_Parent = 0);
 		~Node();
 
-		INLINE void setPosition(const Math::Vector3& p_Position);
-		INLINE void setOrientation(const Math::Quaternion& p_Orientation);
-		INLINE void setScale(const Math::Vector3& p_Scale);
+		INLINE void setPosition(const Vector3& p_Position);
+		INLINE void setOrientation(const Quaternion& p_Orientation);
+		INLINE void setScale(const Vector3& p_Scale);
 
-		INLINE void translate(const Math::Vector3& p_Translation);
+		INLINE void translate(const Vector3& p_Translation);
 		INLINE void translate(float x, float y, float z);
 
-		INLINE void scale(const Math::Vector3& p_Scale);
+		INLINE void scale(const Vector3& p_Scale);
 		INLINE void scale(float x, float y, float z);
 
-		INLINE void rotate(const Math::Quaternion& p_Rotation);
-		INLINE void rotate(const Math::Vector3& p_Axis, float p_Angle);
+/*		INLINE void rotate(const Quaternion& p_Rotation);*/
+		INLINE void rotate(const Vector3& p_Axis, float p_Angle);
 
 		INLINE void roll(float p_Angle);
 		INLINE void pitch(float p_Angle);
 		INLINE void yaw(float p_Angle);
 
-		INLINE const Math::Vector3& getPosition() const;
-		INLINE const Math::Vector3& getScale() const;
-		INLINE const Math::Quaternion& getOrientation() const;
+		INLINE const Vector3& getPosition() const;
+		INLINE const Vector3& getScale() const;
+
+		/*INLINE const Quaternion& getOrientation() const;*/
 		
-		const Math::Matrix4& getTransformation();
+		const Matrix4& getTransformation();
 
 		INLINE bool needUpdate() const;
 		void setNeedUpdate(bool p_Value);
@@ -82,10 +83,12 @@ namespace K15_Engine { namespace Core {
 	protected:
 		Node* m_Parent;
 		ChildNodes m_Children;
-		Math::Matrix4 m_Transformation;
-		Math::Quaternion m_Orientation, m_OriginOrientation;
-		Math::Vector3 m_Position, m_OriginPosition;
-		Math::Vector3 m_Scale, m_OriginScale;
+		Matrix4 m_Transformation;
+    Matrix4 m_Orientation, m_OriginOrientation;
+/*    Vector4 m_Orientation, m_OriginOrientation;*/
+		/*Quaternion m_Orientation, m_OriginOrientation;*/
+		Vector3 m_Position, m_OriginPosition;
+		Vector3 m_Scale, m_OriginScale;
 		bool m_NeedUpdate;
 	};// end of Node class declaration
 #	include "K15_Node.inl"

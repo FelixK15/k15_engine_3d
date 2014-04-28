@@ -24,9 +24,9 @@
 #include "K15_GameObject.h"
 #include "K15_CameraComponent.h"
 #include "K15_MatrixUtil.h"
-#include "K15_MathUtil.h"
-#include "K15_Vector3.h"
-#include "K15_Vector2.h"
+// #include "K15_MathUtil.h"
+// #include "K15_Vector3.h"
+// #include "K15_Vector2.h"
 #include "K15_AABB.h"
 
 namespace K15_Engine { namespace Rendering {
@@ -48,18 +48,21 @@ namespace K15_Engine { namespace Rendering {
 
 	}
 	/*********************************************************************************/
-	const Math::Matrix4& CameraComponent::getProjectionMatrix()
+	const Matrix4& CameraComponent::getProjectionMatrix()
 	{
 		if(m_Dirty)
 		{
+      float aspect = g_Application->getRenderWindow()->getResolution().getAspectRatio();
+      float width = (float)g_Application->getRenderWindow()->getResolution().width;
+      float height = (float)g_Application->getRenderWindow()->getResolution().height;
 			//update projection matrix 
 			if(m_ProjectionType == PT_PERSPECTIVE)
 			{
-				m_ProjectionMatrix = MatrixUtil::createPerspectiveProjectionMatrix(m_Fov,m_NearClipDistance,m_FarClipDistance);
+				m_ProjectionMatrix = glm::perspective(m_Fov,aspect,m_NearClipDistance,m_FarClipDistance);/*MatrixUtil::createPerspectiveProjectionMatrix(m_Fov,m_NearClipDistance,m_FarClipDistance);*/
 			}
 			else
 			{
-				m_ProjectionMatrix = MatrixUtil::createOrthographicProjectionMatrix(m_NearClipDistance,m_FarClipDistance);
+				m_ProjectionMatrix = glm::ortho(0.0f,width,height,0.0f,m_NearClipDistance,m_FarClipDistance);//MatrixUtil::createOrthographicProjectionMatrix(m_NearClipDistance,m_FarClipDistance);
 			}
       
 			m_Dirty = false;
@@ -68,7 +71,7 @@ namespace K15_Engine { namespace Rendering {
 		return m_ProjectionMatrix;
 	}
 	/*********************************************************************************/
-	const Math::Matrix4& CameraComponent::getViewMatrix()
+	const Matrix4& CameraComponent::getViewMatrix()
 	{
 		if(!m_Dirty)
 		{
@@ -79,7 +82,7 @@ namespace K15_Engine { namespace Rendering {
 		{
 			//update view matrix
 			m_ViewMatrix = m_GameObject->getNode()->getTransformation();
-			m_ViewMatrix = m_ViewMatrix.inverse();
+      m_ViewMatrix = glm::inverse(m_ViewMatrix);
       _calculateFrustumPoints();
 			m_Dirty = false;
 		}
@@ -99,8 +102,10 @@ namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
   bool CameraComponent::isVisible(const AABB& p_AABB)
   {
-    return p_AABB.getMin() >= m_FrustumPoints[FP_NEAR_RIGHT_BOTTOM] ||
-           p_AABB.getMax() <= m_FrustumPoints[FP_FAR_LEFT_TOP];
+//     return glm::greaterThanEqual(p_AABB.getMin(),m_FrustumPoints[FP_NEAR_RIGHT_BOTTOM]) ||
+//            glm::lessThanEqual(p_AABB.getMax(),m_FrustumPoints[FP_FAR_LEFT_TOP]);
+
+    return true;
   }
   /*********************************************************************************/
   void CameraComponent::_calculateFrustumPoints()
