@@ -141,6 +141,7 @@ namespace K15_Engine
 		struct MemoryHeader;
 		struct MemoryBlock;
 		struct ApplicationModuleDescription;
+		struct MouseActionArguments;
 		struct Resolution;
 	} // end of K15_Engine::Core namespace
 	/*********************************************************************************/
@@ -338,7 +339,38 @@ namespace K15_Engine
 #	pragma GCC diagnostic ignored "-Wformat-security"
 #endif
 
-//c std libs
+//Threading
+#if !defined K15_CPP11_SUPPORT
+	#include "..\..\dependencies\TinyThread\include\tinythread.h"
+	#define g_CurrentThread tthread::this_thread
+    typedef tthread::thread Thread;
+    typedef tthread::mutex Mutex;
+    typedef tthread::lock_guard<Mutex> LockGuard;
+#else
+	#include <thread>		
+	#include <mutex>
+	#include <chrono>
+	#define g_CurrentThread std::this_thread
+	typedef std::thread Thread;
+    typedef std::mutex Mutex;
+    typedef std::lock_guard<Mutex> LockGuard;
+#endif //K15_DONT_USE_STL || (!defined K15_DONT_USE_STL && !defined K15_CPP11_SUPPORT)
+
+//std libs
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <algorithm>
+#include <list>
+#include <map>
+#include <stack>
+#include <vector>
+#include <set>
+#include <array>
+#include <memory>
+#include <algorithm>
+#include <sys\stat.h>
+#include <cerrno>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -346,140 +378,96 @@ namespace K15_Engine
 #include <cassert>
 #include <malloc.h>
 
-//Container
-#if defined K15_DONT_USE_STL
-#	include "K15_DynamicArray.h"
-#	include "K15_HashMap.h"
-#	include "K15_List.h"
-#	include "K15_NTree.h"
-#	include "K15_Stack.h"
-#	include "K15_FixedArray.h"
+#define DynamicArray(T)		std::vector<T>
+#define HashMap(K,V)		std::map<K,V>
+#define List(T)				std::list<T>
+#define Stack(T)			std::stack<T>
+#define Deque(T)			std::deque<T>
+#define UniqueSet(T)		std::set<T>
+#define Pair(K,V)			std::pair<K,V>
+#define FixedArray(T,C)		std::array<T,C>
 
-#	define DynamicArray(T)	K15_Engine::Container::DynamicArray<T>
-#	define HashMap(K,V)		K15_Engine::Container::HashMap<K,V>
-#	define List(T)			K15_Engine::Container::List<T>
-#	define Stack(T)			K15_Engine::Container::Stack<T>
-//#	define Set(T)			K15_Engine::Container::Set<T>
-#	define FixedArray(T,C)  K15_Engine::Container::FixedArray<T,C>
-#else
-#	include <list>
-#	include <map>
-#	include <stack>
-#	include <vector>
-#	include <set>
-#	include <array>
-#	include <algorithm>
-#	include <sys\stat.h>
-#	include <cerrno>
+typedef std::string			String;
+typedef std::fstream		FileStream;
+typedef std::ofstream		WriteFileStream;
+typedef std::ifstream		ReadFileStream;
+typedef std::stringstream	StringStream;
 
-#	define DynamicArray(T)	std::vector<T>
-#	define HashMap(K,V)		std::map<K,V>
-#	define List(T)			std::list<T>
-#	define Stack(T)			std::stack<T>
-#	define Deque(T)			std::deque<T>
-#	define UniqueSet(T)		std::set<T>
-#	define Pair(K,V)		std::pair<K,V>
-#	define FixedArray(T,C)	std::array<T,C>
-	
-#endif //K15_DONT_USE_STL
-
- //Strings
-#if defined K15_DONT_USE_STL
-#	include "K15_String.h"
-	typedef K15_Engine::Core::String String;
-#else
-#	include <string>
-#	include <algorithm>
-	typedef std::string String;
-#endif //K15_DONT_USE_STL
-
-//Threading
-#if defined K15_DONT_USE_STL || (!defined K15_DONT_USE_STL && !defined K15_CPP11_SUPPORT)
-#   include "..\..\dependencies\TinyThread\include\tinythread.h"
-#   define g_CurrentThread tthread::this_thread
-    typedef tthread::thread Thread;
-    typedef tthread::mutex Mutex;
-    typedef tthread::lock_guard<Mutex> LockGuard;
-
-#else
-#	  include <thread>		
-#   include <mutex>
-#   include <chrono>
-#   define g_CurrentThread std::this_thread
-	typedef std::thread Thread;
-    typedef std::mutex Mutex;
-    typedef std::lock_guard<Mutex> LockGuard;
-#endif //K15_DONT_USE_STL || (!defined K15_DONT_USE_STL && !defined K15_CPP11_SUPPORT)
-
-//Streams
-#if defined K15_DONT_USE_STL
-#	include "K15_FileStream.h"
-#	include "K15_StringStream.h"
-	typedef K15_Engine::Core::FileStream FileStream;
-	typedef K15_Engine::Core::StringStream StringStream;
-#else
-#	include <fstream>
-#	include <sstream>
-	typedef std::fstream FileStream;
-	typedef std::ofstream WriteFileStream;
-	typedef std::ifstream ReadFileStream;
-	typedef std::stringstream StringStream;
-#endif //K15_DONT_USE_STL
 
 #if defined K15_OS_WINDOWS
-#	if defined K15_BUILD
-#		define K15_CORE_API __declspec(dllexport)
-#	else
-#		define K15_CORE_API __declspec(dllimport)
-#	endif //K15_BUILD
+	#define _WINSOCKAPI_    // stops windows.h including winsock.h
+	#include "windows.h"
+	#include "windowsx.h"
+	#if defined K15_BUILD
+		#define K15_CORE_API __declspec(dllexport)
+	#else
+		#define K15_CORE_API __declspec(dllimport)
+	#endif //K15_BUILD
+
+	#define NOMINMAX
+	#define WIN32_LEAN_AND_MEAN
+	#define K15_DEBUG_MESSAGEBOX(msg,title) MessageBox(0,msg,title,MB_ABORTRETRYIGNORE | MB_ICONERROR | MB_TASKMODAL)
+	#define K15_ID_ABORT IDABORT
+	#define K15_ID_RETRY IDRETRY
+	#define K15_ID_IGNORE IDIGNORE
+	#define K15_BREAK_APPLICATION() __debugbreak()
+	#define K15_TERMINATE_APPLICATION() abort()
+
+	typedef K15_Engine::Core::DynamicLibrary_Win32 DynamicLibraryType;
+	typedef K15_Engine::Core::ApplicationOSLayer_Win32 ApplicationOSLayerType;
+	typedef K15_Engine::Core::RenderWindow_Win32 RenderWindowType;
+
+	//8 bit types
+	typedef signed    __int8  int8;
+	typedef unsigned  __int8  uint8;
+	//16 bit types
+	typedef signed    __int16 int16;
+	typedef unsigned  __int16 uint16;
+	//32 bit types
+	typedef signed    __int32 int32;
+	typedef unsigned  __int32 uint32;
+	//64 bit types
+	typedef signed    __int64 int64;
+	typedef unsigned  __int64 uint64;
 #else
-#	define K15_CORE_API
+	#define K15_CORE_API
 #endif //K15_OS_WINDOWS
   
-#if defined K15_OS_WINDOWS
-#	define NOMINMAX
-#	define WIN32_LEAN_AND_MEAN
-#endif //K15_OS_WINDOWS
 
-#if defined K15_OS_WINDOWS
-#	define K15_DEBUG_MESSAGEBOX(msg,title) MessageBox(0,msg,title,MB_ABORTRETRYIGNORE | MB_ICONERROR | MB_TASKMODAL)
-#endif //K15_OS_WINDOWS
-
-#if defined K15_OS_WINDOWS
-#	define K15_ID_ABORT IDABORT
-#	define K15_ID_RETRY IDRETRY
-#	define K15_ID_IGNORE IDIGNORE
-#endif //K15_OS_WINDOWS
-
-#if defined K15_OS_WINDOWS
-#	define K15_BREAK_APPLICATION() __debugbreak()
-#	define K15_TERMINATE_APPLICATION() abort()
-#endif //K15_OS_WINDOWS
-
-#if defined K15_OS_WINDOWS
-#	include "windows.h"
-#elif defined K15_OS_ANDROID
-
-	/*#	include <android_native_app_glue.h>
-#	include <android\sensor.h>
-#	include <android\input.h>
-#	include <EGL\egl.h>
-#	include <GLES2\gl2.h>*/
-
+#if defined K15_OS_ANDROID
 	struct android_app;
 	struct ANativeWindow;
 	struct ASensorEventQueue;
 	struct ASensor;
 	struct ASensorManager;
-#	include "android_native_app_glue.h"
-#	include <android\sensor.h>
-#	include <android\input.h>
-#	include <android\log.h>
-#	include <dlfcn.h>
-#	include <jni.h>
-#	include <unistd.h>
+	#include "android_native_app_glue.h"
+	#include <android\sensor.h>
+	#include <android\input.h>
+	#include <android\log.h>
+	#include <dlfcn.h>
+	#include <jni.h>
+	#include <unistd.h>
+
+	typedef K15_Engine::Core::DynamicLibrary_Linux DynamicLibraryType;
+	typedef K15_Engine::Core::ApplicationOSLayer_Android ApplicationOSLayerType;
+	typedef K15_Engine::Core::RenderWindow_Android RenderWindowType;
+
+	//8 bit types
+	typedef signed		char		int8;
+	typedef unsigned	char		uint8;
+	//16 bit types
+	typedef signed		short		int16;
+	typedef unsigned	short		uint16;
+	//32 bit types
+	typedef signed		int			int32;
+	typedef unsigned	int			uint32;
+	//64 bit types
+	typedef signed		long long	int64;
+	typedef unsigned	long long	uint64;
 #endif //K15_OS_WINDOWS
 
+
+#define GLM_FORCE_RADIANS
 //include glm math
 #include "glm.hpp"
 #include "gtc\matrix_transform.hpp"
@@ -492,15 +480,6 @@ typedef glm::fvec3 Vector3;
 typedef glm::fvec4 Vector4;
 typedef glm::fquat Quaternion;
 
-#if defined K15_OS_WINDOWS
-	typedef K15_Engine::Core::DynamicLibrary_Win32 DynamicLibraryType;
-	typedef K15_Engine::Core::ApplicationOSLayer_Win32 ApplicationOSLayerType;
-	typedef K15_Engine::Core::RenderWindow_Win32 RenderWindowType;
-#elif defined K15_OS_ANDROID
-	typedef K15_Engine::Core::DynamicLibrary_Linux DynamicLibraryType;
-	typedef K15_Engine::Core::ApplicationOSLayer_Android ApplicationOSLayerType;
-	typedef K15_Engine::Core::RenderWindow_Android RenderWindowType;
-#endif //K15_OS_WINDOWS
  
 #if defined K15_DEBUG
 #	define K15_NEW	  new(__FILE__,__LINE__,__FUNCTION__) 
@@ -592,37 +571,6 @@ typedef std::set<String> StringSet;
 #define g_ResourceManager K15_Engine::Core::ResourceManager::getInstance()
 
 typedef unsigned char byte;
-
-#ifdef K15_OS_WINDOWS
-
-typedef signed    __int8  int8;
-typedef unsigned  __int8  uint8;
-
-typedef signed    __int16 int16;
-typedef unsigned  __int16 uint16;
-
-typedef signed    __int32 int32;
-typedef unsigned  __int32 uint32;
-
-typedef signed    __int64 int64;
-typedef unsigned  __int64 uint64;
-
-#else 
-
-typedef signed		char		int8;
-typedef unsigned	char		uint8;
-
-typedef signed		short		int16;
-typedef unsigned	short		uint16;
-
-typedef signed		int			int32;
-typedef unsigned	int			uint32;
-
-typedef signed		long long	int64;
-typedef unsigned	long long	uint64;
-
-#endif //K15_OS_WINDOWS
-
 typedef unsigned int Enum;
 
 typedef K15_Engine::Core::HashedString ObjectName;
@@ -645,8 +593,6 @@ typedef K15_Engine::Core::HashedString ResourceName;
 
 #define K15_SAFE_DELETE(ptr) if(ptr){ delete ptr; ptr = 0; }
 
-#define K15_SMART_POINTER(type) typedef K15_Engine::Core::Memory::Pointer<type> typePtr
-
 #define K15_INVALID_RESOURCE_ID -1
 
 // #if defined _MSC_VER || K15_GCC_VERSION
@@ -661,7 +607,9 @@ typedef K15_Engine::Core::HashedString ResourceName;
 #define size_megabyte(s) (uint32)(s*MEGABYTE)
 #define size_kilobyte(s) (uint32)(s*KILOBYTE)
 
-#define K15_PTR(T) typedef Pointer<T> T##Ptr;
+#define K15_PTR(T)		 typedef std::shared_ptr<T> T##Ptr;
+#define K15_WEAKPTR(T)	 typedef std::weak_ptr<T>	T##WeakPtr;
+#define K15_UNIQUEPTR(T) typedef std::unique_ptr<T> T##UniquePtr;
 
 #define K15_NON_COPYABLE(T) protected: T(const T&){}; T& operator=(const T&){return *this;};
 

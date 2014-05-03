@@ -66,25 +66,24 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 	/*********************************************************************************/
 	void Mouse::Listener::handleEvent(GameEvent* p_Event)
 	{
+		MouseActionArguments args;
+		args = *(MouseActionArguments*)p_Event->getArgument();
+
 		if(p_Event->getName() == _EN(onMousePressed))
 		{
-			uint32* argument = (uint32*)p_Event->getArgument();
-			onMousePressed(argument[0],argument[1],argument[2]);
+			onMousePressed(args);
 		}
 		else if(p_Event->getName() == _EN(onMouseReleased))
 		{
-			uint32* argument = (uint32*)p_Event->getArgument();
-			onMouseReleased(argument[0],argument[1],argument[2]);
+			onMouseReleased(args);
 		}
 		else if(p_Event->getName() == _EN(onMouseDoubleClicked))
 		{
-			uint32* argument = (uint32*)p_Event->getArgument();
-			onMouseDoubleClicked(argument[0],argument[1],argument[2]);
+			onMouseDoubleClicked(args);
 		}
 		else if(p_Event->getName() == _EN(onMouseMoved))
 		{
-			uint32* argument = (uint32*)p_Event->getArgument();
-			onMouseMoved(argument[0],argument[1]);
+			onMouseMoved(args);
 		}
 		else if(p_Event->getName() == _EN(onMouseWheel))
 		{

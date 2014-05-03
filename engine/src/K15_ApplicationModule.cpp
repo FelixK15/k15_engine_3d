@@ -1,8 +1,8 @@
 /**
- * @file K15_SubMesh.cpp
+ * @file K15_ApplicationModule.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/12/10
+ * @date 2014/04/29
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -19,36 +19,24 @@
 
 #include "K15_PrecompiledHeader.h"
 
-#include "K15_SubMesh.h"
-#include "K15_Mesh.h"
-#include "K15_RenderOperation.h"
+#include "K15_ApplicationModule.h"
 
-namespace K15_Engine { namespace Rendering {
+namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	SubMesh::SubMesh(Mesh* p_Mesh)
-		: m_Material(0),
-		m_IndexBuffer(0),
-		m_VertexBuffer(0),
-		m_Mesh(p_Mesh)
+	ApplicationModule::ApplicationModule()
+		: m_RendererInitialized(false)
 	{
-		m_Mesh->addSubMesh(this);
-	}
-	/*********************************************************************************/
-	SubMesh::~SubMesh()
-	{
-		
-	}
-	/*********************************************************************************/
-	RenderOperation* SubMesh::createRenderOperation()
-	{
-		static RenderOperation rop;
 
-		rop.indexBuffer = m_IndexBuffer;
-		rop.vertexBuffer = m_VertexBuffer;
-		rop.subMesh = this;
-		rop.topology = RenderOperation::T_TRIANGLE;
-		
-		return &rop;
 	}
 	/*********************************************************************************/
+	ApplicationModule::~ApplicationModule()
+	{
+
+	}
+	/*********************************************************************************/
+	void ApplicationModule::onRendererInitialized()
+	{
+		m_RendererInitialized = true;
+		_onRendererInitialized();
+	}
 }}// end of K15_Engine::Core namespace

@@ -31,6 +31,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libjpeg", "Dependencies\lib
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "minizip", "Dependencies\minizip\minizip.vcxproj", "{CEEB44B7-B4B8-4844-9A6C-24C08186BA04}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tinyobjloader", "Dependencies\tinyobjloader\tinyobjloader.vcxproj", "{9F039019-F3B0-4C36-97DC-CE74FCD8889A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Android = Debug|Android
@@ -39,7 +41,8 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}.Debug|Android.ActiveCfg = Debug|Win32
+		{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}.Debug|Android.ActiveCfg = Debug|Android
+		{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}.Debug|Android.Build.0 = Debug|Android
 		{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}.Debug|Win32.ActiveCfg = Debug|Win32
 		{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}.Debug|Win32.Build.0 = Debug|Win32
 		{3706C4E6-E5F4-4DBD-AD0A-0F521960551C}.Release|Android.ActiveCfg = Release|Win32
@@ -51,13 +54,15 @@ Global
 		{07360CCD-840A-4C93-A6A2-E43347CC313E}.Release|Android.ActiveCfg = Release|Win32
 		{07360CCD-840A-4C93-A6A2-E43347CC313E}.Release|Win32.ActiveCfg = Release|Win32
 		{07360CCD-840A-4C93-A6A2-E43347CC313E}.Release|Win32.Build.0 = Release|Win32
-		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Debug|Android.ActiveCfg = Debug|Win32
+		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Debug|Android.ActiveCfg = Debug|Android
+		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Debug|Android.Build.0 = Debug|Android
 		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Debug|Win32.ActiveCfg = Debug|Win32
 		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Debug|Win32.Build.0 = Debug|Win32
 		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Release|Android.ActiveCfg = Release|Win32
 		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Release|Win32.ActiveCfg = Release|Win32
 		{6E91B28B-BC8F-4B83-AC1C-7AFB39BB1E15}.Release|Win32.Build.0 = Release|Win32
-		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Debug|Android.ActiveCfg = Debug|Win32
+		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Debug|Android.ActiveCfg = Debug|Android
+		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Debug|Android.Build.0 = Debug|Android
 		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Debug|Win32.ActiveCfg = Debug|Win32
 		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Debug|Win32.Build.0 = Debug|Win32
 		{32189EE7-5F26-42F6-8A64-E5AF6DC8B282}.Release|Android.ActiveCfg = Release|Win32
@@ -75,7 +80,8 @@ Global
 		{6BA03C58-C796-4B3E-B4B4-F5E48A3265C7}.Release|Android.ActiveCfg = Release|Win32
 		{6BA03C58-C796-4B3E-B4B4-F5E48A3265C7}.Release|Win32.ActiveCfg = Release|Win32
 		{6BA03C58-C796-4B3E-B4B4-F5E48A3265C7}.Release|Win32.Build.0 = Release|Win32
-		{F9B0EC03-C8A7-4EF9-B5FA-CCD143A520B1}.Debug|Android.ActiveCfg = Debug|Win32
+		{F9B0EC03-C8A7-4EF9-B5FA-CCD143A520B1}.Debug|Android.ActiveCfg = Debug|Android
+		{F9B0EC03-C8A7-4EF9-B5FA-CCD143A520B1}.Debug|Android.Build.0 = Debug|Android
 		{F9B0EC03-C8A7-4EF9-B5FA-CCD143A520B1}.Debug|Win32.ActiveCfg = Debug|Win32
 		{F9B0EC03-C8A7-4EF9-B5FA-CCD143A520B1}.Debug|Win32.Build.0 = Debug|Win32
 		{F9B0EC03-C8A7-4EF9-B5FA-CCD143A520B1}.Release|Android.ActiveCfg = Release|Win32
@@ -99,7 +105,8 @@ Global
 		{0C461216-4F94-4310-9E56-7646428965C1}.Release|Android.ActiveCfg = Release|Win32
 		{0C461216-4F94-4310-9E56-7646428965C1}.Release|Win32.ActiveCfg = Release|Win32
 		{0C461216-4F94-4310-9E56-7646428965C1}.Release|Win32.Build.0 = Release|Win32
-		{BFDFD369-216D-48E0-AC7A-C5F0C075B64B}.Debug|Android.ActiveCfg = Debug|Win32
+		{BFDFD369-216D-48E0-AC7A-C5F0C075B64B}.Debug|Android.ActiveCfg = Debug|Android
+		{BFDFD369-216D-48E0-AC7A-C5F0C075B64B}.Debug|Android.Build.0 = Debug|Android
 		{BFDFD369-216D-48E0-AC7A-C5F0C075B64B}.Debug|Win32.ActiveCfg = Debug|Win32
 		{BFDFD369-216D-48E0-AC7A-C5F0C075B64B}.Debug|Win32.Build.0 = Debug|Win32
 		{BFDFD369-216D-48E0-AC7A-C5F0C075B64B}.Release|Android.ActiveCfg = Release|Win32
@@ -117,12 +124,20 @@ Global
 		{A2267743-E2AB-41A8-9A4A-09E969AA6ABB}.Release|Android.ActiveCfg = Release|Win32
 		{A2267743-E2AB-41A8-9A4A-09E969AA6ABB}.Release|Win32.ActiveCfg = Release|Win32
 		{A2267743-E2AB-41A8-9A4A-09E969AA6ABB}.Release|Win32.Build.0 = Release|Win32
-		{CEEB44B7-B4B8-4844-9A6C-24C08186BA04}.Debug|Android.ActiveCfg = Debug|Win32
+		{CEEB44B7-B4B8-4844-9A6C-24C08186BA04}.Debug|Android.ActiveCfg = Debug|Android
+		{CEEB44B7-B4B8-4844-9A6C-24C08186BA04}.Debug|Android.Build.0 = Debug|Android
 		{CEEB44B7-B4B8-4844-9A6C-24C08186BA04}.Debug|Win32.ActiveCfg = Debug|Win32
 		{CEEB44B7-B4B8-4844-9A6C-24C08186BA04}.Debug|Win32.Build.0 = Debug|Win32
 		{CEEB44B7-B4B8-4844-9A6C-24C08186BA04}.Release|Android.ActiveCfg = Release|Win32
 		{CEEB44B7-B4B8-4844-9A6C-24C08186BA04}.Release|Win32.ActiveCfg = Release|Win32
 		{CEEB44B7-B4B8-4844-9A6C-24C08186BA04}.Release|Win32.Build.0 = Release|Win32
+		{9F039019-F3B0-4C36-97DC-CE74FCD8889A}.Debug|Android.ActiveCfg = Debug|Android
+		{9F039019-F3B0-4C36-97DC-CE74FCD8889A}.Debug|Android.Build.0 = Debug|Android
+		{9F039019-F3B0-4C36-97DC-CE74FCD8889A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9F039019-F3B0-4C36-97DC-CE74FCD8889A}.Debug|Win32.Build.0 = Debug|Win32
+		{9F039019-F3B0-4C36-97DC-CE74FCD8889A}.Release|Android.ActiveCfg = Release|Win32
+		{9F039019-F3B0-4C36-97DC-CE74FCD8889A}.Release|Win32.ActiveCfg = Release|Win32
+		{9F039019-F3B0-4C36-97DC-CE74FCD8889A}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -25,22 +25,31 @@
 #define _K15Engine_Plugin_RenderTest_ApplicationModule_h_
 
 #include "K15_ApplicationModule.h"
+#include "K15_Mouse.h"
 
 namespace K15_Engine { namespace Plugins { namespace RenderTest {
-	class RenderTestApplicationModule : public ApplicationModule
+	class RenderTestApplicationModule : public ApplicationModule, public InputDevices::Mouse::Listener
 	{
 	public:
 		RenderTestApplicationModule();
 		~RenderTestApplicationModule();
 
-		void onRendererInitialized() OVERRIDE;
+		virtual void _onRendererInitialized() OVERRIDE;
 		void onShutdown() OVERRIDE;
 		void onPreTick() OVERRIDE;
 		void onPostTick() OVERRIDE;
 		
+		virtual void onMousePressed(const MouseActionArguments& p_EventArgs) OVERRIDE;
+
 	private:
 		void _dumpMemoryStatistics();
+
+		Material* m_Material;
+		Material* m_MonsterMaterial;
+		GpuProgramBatch* m_ProgramBatch;
 		GameObject* m_Camera;
+		GameObject* m_Monster;
+		GameObject* m_Crate;
 	};// end of RenderTestApplicationModule class declaration
 }}}// end of K15_Engine::Plugins::RenderTest namespace
 

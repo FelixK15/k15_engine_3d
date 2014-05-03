@@ -33,13 +33,15 @@
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API ResourceImporterObj : public ResourceImporterBase, public GeneralAllocatedObject
 	{
+		K15_DECLARE_RTTI;
+
 	public:
 		ResourceImporterObj();
 		~ResourceImporterObj();
 
 		virtual void getExtensionList(ExtensionSet& p_ExtensionSet) OVERRIDE;
 		virtual void getMagicNumber(MagicNumberSet& p_MagicNumber) OVERRIDE;
-		virtual ResourceBase* _load(const RawData& p_ResourceData) OVERRIDE;
+		virtual ResourceBase* _load(const RawData& p_ResourceData, const TypeName& p_ResourceTypeName) OVERRIDE;
 	};// end of ResourceImporterObj class declaration
 }}// end of K15_Engine::Core namespace
 

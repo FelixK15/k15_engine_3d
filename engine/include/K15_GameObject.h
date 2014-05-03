@@ -28,6 +28,8 @@
 # include "K15_Object.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
+#include "K15_GameObjectComponentBase.h"
+
 namespace K15_Engine { namespace Core {
   class K15_CORE_API GameObject : public Object, public GeneralAllocatedObject
   {
@@ -46,6 +48,9 @@ namespace K15_Engine { namespace Core {
 
     INLINE Node* getNode() const;
     GameObjectComponentBase* getComponentByName(const ObjectName& p_TypeName) const;
+	
+	template<class ComponentType>
+	ComponentType* getComponentByType() const;
 
   private:
     ComponentList m_Components;

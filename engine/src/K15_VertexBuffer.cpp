@@ -29,7 +29,7 @@ namespace K15_Engine { namespace Rendering {
 		: GpuBuffer(p_Options),
 		m_Declaration(p_Options.VertexLayout)
 	{
-		
+		setType(GpuBuffer::BT_VERTEX_BUFFER);	
 	}
 	/*********************************************************************************/
 	VertexBuffer::~VertexBuffer()
@@ -44,13 +44,12 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	Vertex* VertexBuffer::getVertex(uint32 p_Index)
 	{
-		K15_ASSERT(p_Index <= m_Declaration->getElementCount(),"Tried to access out of bounds.");
+		K15_ASSERT(p_Index <= getVertexCount(),"Tried to access out of bounds.");
 
 		IndexVertexMap::iterator iter = m_VertexCache.find(p_Index);
 
 		if(iter == m_VertexCache.end())
 		{
-			VertexElement element = m_Declaration->getElement(p_Index);
 			Vertex* vertex = K15_NEW Vertex(this,p_Index);
 
 			m_VertexCache.insert(Pair(uint32,Vertex*)(p_Index,vertex));

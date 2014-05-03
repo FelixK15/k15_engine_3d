@@ -59,10 +59,12 @@ namespace K15_Engine { namespace Core {
 					args.xPx = AMotionEvent_getX(p_Event,0);
 					args.yPx = AMotionEvent_getY(p_Event,0);
 
-					args.xNDC = window_width != 0 ? (float)(args.xPx - window_width*0.5f) / (float)window_width : 0.0;
-					args.yNDC = window_height != 0 ? (float)(args.yPx - window_height*0.5f) / (float)window_height : 0.0;
+					args.xNDC = window_width != 0 ? (float)(args.xPx) / (float)window_width : 0.0;
+					args.yNDC = window_height != 0 ? (float)(args.yPx) / (float)window_height : 0.0;
 
-					//NDC are now -0.5|+0.5
+					args.xNDC -= 0.5f;
+					args.yNDC -= 0.5f;
+
 					args.xNDC *= 2;
 					args.yNDC *= 2;
 
@@ -237,7 +239,6 @@ namespace K15_Engine { namespace Core {
 		//set callbacks
 		m_App->onInputEvent = AndroidCallback_OnInput;
 		m_App->onAppCmd = AndroidCallback_OnCmd;
-		
 		String gameRoot = m_App->activity->externalDataPath;
 		gameRoot += "/";
 
@@ -272,17 +273,17 @@ namespace K15_Engine { namespace Core {
 	double ApplicationOSLayer_Android::getTime()
 	{
 		static timespec now;
+		clock_gettime(CLOCK_MONOTONIC,&now);
 		
-		m_LastTime = now;
-
 		long deltaNanoseconds = now.tv_nsec - m_LastTime.tv_nsec;
-		double milliseconds = deltaNanoseconds / 1000000UL;
-
-		return milliseconds / 1000.0;  
+		_LogDebug("seconds:%.3f",(double)deltaNanoseconds / 1000000000.0);
+		m_LastTime = now;
+		return (double)deltaNanoseconds / 1000000000.0;
 	}
 	/*********************************************************************************/
 	void ApplicationOSLayer_Android::sleep(double p_TimeInSeconds) const
 	{
+		_LogDebug("sleep:%.3f seconds - %u microseconds",p_TimeInSeconds,p_TimeInSeconds * 1000000);
 		unsigned long microseconds = p_TimeInSeconds * 1000000;
 		::usleep(microseconds);
 	}
@@ -293,11 +294,15 @@ namespace K15_Engine { namespace Core {
 		static int events;
 		android_poll_source* source;
 		Application* app = 0;
-		while(ALooper_pollAll(0,NULL,&events,(void**)&source) >= 0)
+
+		if(EventManager::isInitialized())
 		{
-			if(source)
+			while(ALooper_pollAll(0,NULL,&events,(void**)&source) >= 0)
 			{
-				source->process(m_App,source);
+				if(source)
+				{
+					source->process(m_App,source);
+				}
 			}
 		}
 	}

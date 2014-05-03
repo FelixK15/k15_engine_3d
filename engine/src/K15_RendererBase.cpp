@@ -359,8 +359,8 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				_LogError("Error setting clear color to %.1f %.1f %.1f %.1f (RGBA). %s",
-					p_ClearColor.RedComponent,p_ClearColor.GreenComponent,p_ClearColor.BlueComponent,p_ClearColor.AlphaComponent,
+				_LogError("Error setting clear color to %d %d %d %d (RGBA). %s",
+					p_ClearColor.R,p_ClearColor.G,p_ClearColor.B,p_ClearColor.A,
 					getLastError().c_str());
 
 				return false;
@@ -667,18 +667,18 @@ namespace K15_Engine { namespace Rendering {
 
 		if(p_Sampler != m_BoundSamplers[p_Slot])
 		{
-      if(m_BoundSamplers[p_Slot])
-      {
-        m_BoundSamplers[p_Slot]->setSlot(Texture::TS_NO_SLOT);
-      }
+			if(m_BoundSamplers[p_Slot])
+			{
+				m_BoundSamplers[p_Slot]->setSlot(Texture::TS_NO_SLOT);
+			}
 
-      if(p_Sampler)
-      {
-        m_BoundSamplers[p_Slot] = p_Sampler;
-        p_Sampler->setSlot(p_Slot);
-      }
+			if(p_Sampler)
+			{
+				m_BoundSamplers[p_Slot] = p_Sampler;
+				p_Sampler->setSlot(p_Slot);
+			}
 
-      _bindTextureSampler(p_Sampler,p_Slot);
+			_bindTextureSampler(p_Sampler,p_Slot);
 
 			if(errorOccured())
 			{
@@ -701,6 +701,12 @@ namespace K15_Engine { namespace Rendering {
 		{
 			m_GpuProgramBatch = p_GpuProgramBatch;
 			_bindProgramBatch(m_GpuProgramBatch);
+
+			for(GpuProgramBatch::GpuProgramList::const_iterator iter = m_GpuProgramBatch->getGpuProgramList().begin();
+				iter != m_GpuProgramBatch->getGpuProgramList().end();++iter)
+			{
+				bindGpuProgram((*iter),(*iter)->getStage());
+			}
 
 			if(errorOccured())
 			{

@@ -42,6 +42,11 @@ namespace K15_Engine { namespace Core {
 
 			return m_Instance; 
 		}
+
+		static bool isInitialized()
+		{
+			return m_Instance != 0;
+		}
 	private:
 		static T* m_Instance;
 

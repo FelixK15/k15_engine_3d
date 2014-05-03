@@ -25,42 +25,42 @@
 
 namespace K15_Engine { namespace Core {
   /*********************************************************************************/
-  const Math::Matrix4& MatrixUtil::createPerspectiveProjectionMatrix(float p_Fov, float p_NearClip, float p_FarClip)
+  const Matrix4& MatrixUtil::createPerspectiveProjectionMatrix(float p_Fov, float p_NearClip, float p_FarClip)
   {
-    static Math::Matrix4 mat;
-    mat = Math::Matrix4::Identity;
-    RenderWindowBase* window = g_Application->getRenderWindow();
-    float aspect = (float)window->getResolution().width / (float)window->getResolution().height;
-    float halfFov = p_Fov * 0.5f;
-    float h = p_NearClip * MathUtil::tan(p_Fov * MathUtil::DegreeToRadian);
-    float w = h * aspect;
-
-    mat._1_1 = w;
-    mat._2_2 = h;
-    mat._3_3 = (p_FarClip + p_NearClip) / (p_NearClip - p_FarClip);
-    mat._3_4 = (2 * p_NearClip * p_FarClip) / (p_NearClip - p_FarClip);
-    mat._4_3 = 1;
-    mat._4_4 = 0.0f;
+     static Matrix4 mat;
+//     mat = Math::Matrix4::Identity;
+//     RenderWindowBase* window = g_Application->getRenderWindow();
+//     float aspect = (float)window->getResolution().width / (float)window->getResolution().height;
+//     float halfFov = p_Fov * 0.5f;
+//     float h = p_NearClip * MathUtil::tan(p_Fov * MathUtil::DegreeToRadian);
+//     float w = h * aspect;
+// 
+//     mat._1_1 = w;
+//     mat._2_2 = h;
+//     mat._3_3 = (p_FarClip + p_NearClip) / (p_NearClip - p_FarClip);
+//     mat._3_4 = (2 * p_NearClip * p_FarClip) / (p_NearClip - p_FarClip);
+//     mat._4_3 = 1;
+//     mat._4_4 = 0.0f;
 
     return mat;
   }
   /*********************************************************************************/
-  const Math::Matrix4& MatrixUtil::createOrthographicProjectionMatrix(float p_NearClip, float p_FarClip)
+  const Matrix4& MatrixUtil::createOrthographicProjectionMatrix(float p_NearClip, float p_FarClip)
   {
-    static Math::Matrix4 mat;
-    mat = Math::Matrix4::Identity;
-    RenderWindowBase* window = g_Application->getRenderWindow();
-    const Resolution& res = window->getResolution();
-    float tx = 1.0f;
-    float ty = 1.0f;
-    float tz = (p_FarClip + p_NearClip) / (p_FarClip - p_NearClip);
-
-    mat._1_1 = 2 / (float)res.width;
-    mat._2_2 = 2 / (float)res.height;
-    mat._3_3 = -2 / p_FarClip - p_NearClip;
-    mat._4_1 = tx;
-    mat._4_2 = ty;
-    mat._4_3 = tz;
+    static Matrix4 mat;
+//     mat = Math::Matrix4::Identity;
+//     RenderWindowBase* window = g_Application->getRenderWindow();
+//     const Resolution& res = window->getResolution();
+//     float tx = 1.0f;
+//     float ty = 1.0f;
+//     float tz = (p_FarClip + p_NearClip) / (p_FarClip - p_NearClip);
+// 
+//     mat._1_1 = 2 / (float)res.width;
+//     mat._2_2 = 2 / (float)res.height;
+//     mat._3_3 = -2 / p_FarClip - p_NearClip;
+//     mat._4_1 = tx;
+//     mat._4_2 = ty;
+//     mat._4_3 = tz;
   
     return mat;
   }

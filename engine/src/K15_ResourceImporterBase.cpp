@@ -25,6 +25,10 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
+	K15_IMPLEMENT_RTTI_BASE(Core,ResourceImporterBase,Object);
+	/*********************************************************************************/
+
+	/*********************************************************************************/
 	ResourceImporterBase::ResourceImporterBase(const String& p_ResourceTypeName)
 		: Object(),
 		m_Error(),
@@ -104,11 +108,11 @@ namespace K15_Engine { namespace Core {
 		return match;
 	}
 	/*********************************************************************************/
-	ResourceBase* ResourceImporterBase::load(const RawData& p_ResourceData)
+	ResourceBase* ResourceImporterBase::load(const RawData& p_ResourceData, const TypeName& p_ResourceTypeName)
 	{
 		ResourceBase* resource = 0;
 
-		if((resource = _load(p_ResourceData)) != 0)
+		if((resource = _load(p_ResourceData,p_ResourceTypeName)) != 0)
 		{
 			return resource;
 		}

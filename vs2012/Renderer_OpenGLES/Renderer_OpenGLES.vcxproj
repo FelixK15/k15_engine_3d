@@ -31,7 +31,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
     <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\renderer_opengl_es\include\GLES2;$(ProjectDir)..\..\renderer_opengl_es\include;$(ProjectDir)..\..\dependencies\Android\native_app_glue\include;$(ProjectDir)..\..\engine\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\renderer_opengl_es\include\GLES2;$(ProjectDir)..\..\dependencies\glm\;$(ProjectDir)..\..\renderer_opengl_es\include;$(ProjectDir)..\..\dependencies\Android\native_app_glue\include;$(ProjectDir)..\..\engine\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(ProjectDir)..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
     <TargetName>lib$(ProjectName)</TargetName>
   </PropertyGroup>

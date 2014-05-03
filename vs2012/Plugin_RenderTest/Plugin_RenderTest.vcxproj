@@ -70,7 +70,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
     <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>..\..\engine\include\;..\..\plugins\rendertest\include\;..\..\dependencies\Android\native_app_glue\include;..\..\math\include\;$(ANDROID_NDK_ROOT)\sources\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\engine\include\;..\..\plugins\rendertest\include\;..\..\dependencies\glm\;..\..\dependencies\Android\native_app_glue\include;..\..\math\include\;$(ANDROID_NDK_ROOT)\sources\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
     <TargetName>lib$(ProjectName)</TargetName>
   </PropertyGroup>

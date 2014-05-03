@@ -33,6 +33,8 @@
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API ResourceImporterBase : public Object
 	{
+		K15_DECLARE_RTTI;
+
 	public:
 		typedef UniqueSet(String) ExtensionSet;
 		typedef DynamicArray(RawData) MagicNumberSet;
@@ -50,7 +52,7 @@ namespace K15_Engine { namespace Core {
 
 		bool canLoad(const String& p_FileName);
 		bool canLoadBaseOnSignature(const RawData& p_Data);
-		ResourceBase* load(const RawData& p_ResourceData);
+		ResourceBase* load(const RawData& p_ResourceData, const TypeName& p_ResourceTypeName);
 
 		INLINE const String& getError() const;
 		INLINE const String& getResourceTypeName() const;
@@ -59,7 +61,7 @@ namespace K15_Engine { namespace Core {
 	protected:
 		INLINE void setError(const String& p_Error);
 
-		virtual ResourceBase* _load(const RawData& p_ResourceData) = 0;
+		virtual ResourceBase* _load(const RawData& p_ResourceData, const TypeName& p_ResourceTypeName) = 0;
 		virtual bool _initialize() { return true; }
 		virtual bool _shutdown() { return true; }
 

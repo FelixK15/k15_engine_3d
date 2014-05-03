@@ -28,6 +28,7 @@
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
+#include "K15_EventListener.h"
 #include "K15_InputTriggerBase.h"
 
 namespace K15_Engine { namespace Core { namespace InputDevices {
@@ -55,10 +56,10 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		public:
 			virtual ~Listener();
 
-			virtual void onMousePressed(Enum p_Button, int32 x, int32 y){}
-			virtual void onMouseReleased(Enum p_Button, int32 x, int32 y){}
-			virtual void onMouseDoubleClicked(Enum p_Button, int32 x, int32 y){}
-			virtual void onMouseMoved(int32 x, int32 y){}
+			virtual void onMousePressed(const MouseActionArguments& p_EventArguments){}
+			virtual void onMouseReleased(const MouseActionArguments& p_EventArguments){}
+			virtual void onMouseDoubleClicked( const MouseActionArguments& p_EventArguments){}
+			virtual void onMouseMoved(const MouseActionArguments& p_EventArguments){}
 			virtual void onMouseWheel(int32 p_Delta, int32 x, int32 y){}
 
 			virtual void handleEvent(GameEvent* p_Event) OVERRIDE;

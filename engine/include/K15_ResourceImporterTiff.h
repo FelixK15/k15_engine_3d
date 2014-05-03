@@ -1,5 +1,5 @@
 /**
- * @file K15_ZipResourceArchive.h
+ * @file K15_TiffResourceImporter.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2014/04/15
@@ -21,32 +21,31 @@
  * 
  */
 
-#ifndef _K15Engine_Core_ZipResourceArchive_h_
-#define _K15Engine_Core_ZipResourceArchive_h_
+#ifndef _K15Engine_Core_TiffResourceImporter_h_
+#define _K15Engine_Core_TiffResourceImporter_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-#include "K15_ResourceArchiveBase.h"
+#include "K15_ResourceImporterBase.h"
 
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API ZipResourceArchive : public ResourceArchiveBase, public ResourceAllocatedObject
+	class K15_CORE_API ResourceImporterTiff : public ResourceImporterBase, public ResourceAllocatedObject
 	{
-	public:
-		ZipResourceArchive(const String& p_ZipFile);
-		~ZipResourceArchive();
+		K15_DECLARE_RTTI;
 
-		virtual bool getResource(const String& p_ResourceName, RawData* p_Data);
-		virtual bool hasResource(const String& p_ResourceName);
+	public:
+		ResourceImporterTiff();
+		~ResourceImporterTiff();
+
+		virtual void getExtensionList(ExtensionSet& p_ExtensionSet) OVERRIDE;
+		virtual void getMagicNumber(MagicNumberSet& p_MagicNumber) OVERRIDE;
 
 	protected:
-		virtual bool _open();
-		virtual bool _close(); 
+		virtual ResourceBase* _load(const RawData& p_ResourceData, const TypeName& p_ResourceTypeName) OVERRIDE;
 
-	private:
-		void* m_ZipFile;
-	};// end of ZipResourceArchive class declaration
+	};// end of TiffResourceImporter class declaration
 }}// end of K15_Engine::Core namespace
 
-#endif //_K15Engine_Core_ZipResourceArchive_h_
+#endif //_K15Engine_Core_TiffResourceImporter_h_

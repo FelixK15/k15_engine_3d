@@ -27,7 +27,7 @@ ResourceType* ResourceManager::getResource(const String& p_ResourceName,Enum p_P
 	ResourceType* resource = 0;
 	if(iter == m_ResourceDataCache.end())
 	{
-		if(cacheResource(p_ResourceName,p_Priority))
+		if(cacheResource(p_ResourceName, ResourceType::TYPE.getName(), p_Priority))
 		{
 			iter = m_ResourceDataCache.find(p_ResourceName);
 

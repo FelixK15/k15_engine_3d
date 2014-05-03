@@ -153,6 +153,14 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 			glBindTexture(target,0);
 		}
 
+#if defined K15_DEBUG
+			GLenum error = glGetError();
+			if(error != GL_NO_ERROR)
+			{
+				_LogError("GLES2 Error:\"%s\".",glGetString(error));
+			}
+#endif //K15_DEBUG
+
 		return true;
 	}
 	/*********************************************************************************/

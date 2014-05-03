@@ -39,15 +39,7 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 
 		virtual void renderSingleFrame();
 
-	private:
-		RenderOperation* m_Rop;
-		Material* m_Material;
-		GpuProgramBatch* m_ProgramBatch;
-		Mesh* m_Mesh;
-		VertexDeclaration* m_VertexDeclaration;
-		Texture* m_Texture;
-		TextureSampler* m_Sampler;
-
+		RenderOperation* rop[2];
 	}; //K15_RenderSampleProcess class declaration
 }}} // end of K15_Engine::Plugins::RenderTest namespace
 

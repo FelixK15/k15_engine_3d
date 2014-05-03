@@ -76,11 +76,14 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 		virtual void _setClearColor(const ColorRGBA& p_ClearColor) OVERRIDE;
 		virtual void _updateGpuProgramParameter(const GpuProgramParameter& p_Parameter) OVERRIDE;
 		virtual void _bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType) OVERRIDE;
-		virtual void _bindProgram(GpuProgram* p_Program, Enum p_ProgramType) OVERRIDE;
 		virtual void _bindProgramBatch(GpuProgramBatch* p_ProgramBatch) OVERRIDE;
 		virtual void _bindTexture(Texture* p_Texture, Enum p_Type) OVERRIDE;
 		virtual void _drawIndexed(uint32 p_Offset = 0) OVERRIDE;
 		virtual void _drawDirect(uint32 p_Offset = 0) OVERRIDE;
+
+	private:
+		void _checkForError();
+
 	private:
 		EGLDisplay m_Display;
 		EGLSurface m_Surface;

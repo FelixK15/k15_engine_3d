@@ -26,13 +26,20 @@
 
 #include "K15_Mesh.h"
 #include "K15_SubMesh.h"
-#include "K15_Vector3.h"
+/*#include "K15_Vector3.h"*/
 #include "K15_VertexBuffer.h"
 #include "K15_IndexBuffer.h"
 #include "K15_VertexDeclaration.h"
 #include "K15_Material.h"
 
+#include "tiny_obj_loader.h"
+
 namespace K15_Engine { namespace Core {
+	/*********************************************************************************/
+	K15_IMPLEMENT_RTTI_BASE(Core,ResourceImporterObj,ResourceImporterBase);
+	typedef std::vector<tinyobj::shape_t> ShapeArray;
+	/*********************************************************************************/
+
 	/*********************************************************************************/
 	ResourceImporterObj::ResourceImporterObj()
 		: ResourceImporterBase("Mesh")
@@ -55,135 +62,138 @@ namespace K15_Engine { namespace Core {
 
 	}
 	/*********************************************************************************/
-	ResourceBase* ResourceImporterObj::_load(const RawData& p_ResourceData)
+	ResourceBase* ResourceImporterObj::_load(const RawData& p_ResourceData, const TypeName& p_ResourceTypeName)
 	{
-		String line;
-		StringStream objContent;
-		objContent.write((char*)p_ResourceData.data,p_ResourceData.size);
+		StringStream stream;
+		stream.write((char*)p_ResourceData.data,p_ResourceData.size);
 
-		struct face
+		ShapeArray shapes;
+		tinyobj::MaterialFileReader reader("");
+		String err = tinyobj::LoadObj(shapes,(std::istream&)stream,reader);
+
+		if(!err.empty())
 		{
-			int p1;
-			int n1;
-
-			int p2;
-			int n2;
-
-			int p3;
-			int n3;
-		};
-
-		DynamicArray(Vector3) positions;
-		DynamicArray(Vector3) normals;
-		DynamicArray(face) faces;
-
-		while(std::getline(objContent,line))
-		{
-			//check for normal
-			if(line[0] == 'v' && line[1] == 'n')
-			{
-				Vector3 normal;
-				sscanf(line.c_str(),"vn %f %f %f",&normal.x,&normal.y,&normal.z);
-
-				normals.push_back(normal);
-				
-			}
-			else if(line.find_first_of("v") == 0) //pos
-			{
-				Vector3 pos;
-				sscanf(line.c_str(),"v %f %f %f",&pos.x,&pos.y,&pos.z);
-
-				positions.push_back(pos);
-			}
-			else if(line.find_first_of("f") == 0) //face
-			{
-				face curFace;
-
-				sscanf(line.c_str(),"f %i//%i %i//%i %i//%i",&curFace.p1,&curFace.n1,&curFace.p2,&curFace.n2,&curFace.p3,&curFace.n3);
-
-				faces.push_back(curFace);
-			}
+			setError(err);
+			return 0;
 		}
 
-		int vbo_size = sizeof(float) *  18 * faces.size();
-		int ibo_size = sizeof(uint16) * faces.size();
-		uint16* indexBuffer_temp = K15_NEW_SIZE(Allocators[AC_CORE],ibo_size) uint16;
-		float* vertexBuffer_temp = K15_NEW_SIZE(Allocators[AC_GENERAL],vbo_size) float;
+		Mesh* mesh = K15_NEW Mesh();
+		SubMesh* submesh = 0;
+		IndexBuffer* idbuffer = 0;
+		VertexBuffer* vbbuffer = 0;
+		VertexDeclaration* vdeclaration = 0;
 
-		int id_counter= 0;
-		int counter = 0;
-		for(uint16 i = 0;i < faces.size();++i)
+		for(ShapeArray::iterator iter = shapes.begin();iter != shapes.end();++iter)
 		{
-			int pi1 = faces.at(i).p1 - 1;
-			int pi2 = faces.at(i).p2 - 1;
-			int pi3 = faces.at(i).p3 - 1;
+			submesh = K15_NEW SubMesh(mesh);
+			IndexBuffer::CreationOptions indexOptions;
+			VertexBuffer::CreationOptions vertexOptions;
+			String vertexDeclarationString;
 
-			int ni1 = faces.at(i).n1 - 1;
-			int ni2 = faces.at(i).n2 - 1;
-			int ni3 = faces.at(i).n3 - 1;
+			indexOptions.IndexType = IndexBuffer::IT_UINT16;
 
-			Vector3& p1 = positions.at(pi1);
-			Vector3& p2 = positions.at(pi2);
-			Vector3& p3 = positions.at(pi3);
+			tinyobj::shape_t& shape = (*iter);
 
-			Vector3& n1 = normals.at(ni1);
-			Vector3& n2 = normals.at(ni2);
-			Vector3& n3 = normals.at(ni3);
+			//Check if the indices are greater than 16bit
+			for(uint32 i = 0;i < shape.mesh.indices.size();++i)
+			{
+				if(shape.mesh.indices.at(i) > std::numeric_limits<uint16>::max())
+				{
+					indexOptions.IndexType = IndexBuffer::IT_UINT32;
+				}
+			}
 
-			//Vertex 1
-			memcpy(vertexBuffer_temp + counter,&p1,sizeof(Vector3));
-			counter += 3;
-			memcpy(vertexBuffer_temp + counter,&n1,sizeof(Vector3));
-			counter +=3;
+			uint32 indexSize = indexOptions.IndexType == IndexBuffer::IT_UINT32 ?  sizeof(uint32) : sizeof(uint16);
+			uint32 indexDataSize = indexSize * shape.mesh.indices.size();
 
-			//Vertex 2
-			memcpy(vertexBuffer_temp + counter,&p2,sizeof(Vector3));
-			counter += 3;
-			memcpy(vertexBuffer_temp + counter,&n2,sizeof(Vector3));
-			counter +=3;
+			byte* indexTempBuffer = K15_NEW_SIZE(Allocators[AC_GENERAL],indexDataSize) byte;
 
-			//Vertex 3
-			memcpy(vertexBuffer_temp + counter,&p3,sizeof(Vector3));
-			counter += 3;
-			memcpy(vertexBuffer_temp + counter,&n3,sizeof(Vector3));
-			counter +=3;
+			//copy index data
+			uint32 indexBufferPos = 0;
+			for(uint32 i = 0;i < shape.mesh.indices.size();++i)
+			{
+				memcpy(indexTempBuffer + indexBufferPos,&shape.mesh.indices[i],indexSize);
+				indexBufferPos += indexSize;
+			}
 
+			//set index data
+			indexOptions.InitialData.data = indexTempBuffer;
+			indexOptions.InitialData.size = indexDataSize;
 
-			indexBuffer_temp[id_counter++] = i;
+			uint32 vertexDataSize = 0;
+			byte* vertexTempBuffer = 0;
+
+			//calculate vertex buffer size
+			vertexDataSize = (shape.mesh.positions.size() + shape.mesh.positions.size() / 3) * sizeof(float);
+			vertexDataSize += shape.mesh.normals.size() * sizeof(float);
+			vertexDataSize += shape.mesh.texcoords.size() * sizeof(float);
+
+			//allocate vertex temp buffer
+			vertexTempBuffer = (byte*)K15_NEW_SIZE(Allocators[AC_GENERAL],vertexDataSize) byte;
+
+			if(shape.mesh.positions.size() > 0)
+			{
+				vertexDeclarationString += "PF4";
+			}
+
+			if(shape.mesh.normals.size() > 0)
+			{
+				vertexDeclarationString += "NF3";
+			}
+
+			if(shape.mesh.texcoords.size() > 0)
+			{
+				vertexDeclarationString += "TF2";
+			}
+
+			uint32 bufferPosition = 0;
+			static const float wComponent = 1.0f;
+
+			uint32 pos_position = 0, pos_normal = 0, pos_tex = 0;
+			for(uint32 i = 0;i < shape.mesh.indices.size();++i)
+			{
+				if(shape.mesh.positions.size() > pos_position)
+				{
+					memcpy(vertexTempBuffer + bufferPosition,&shape.mesh.positions[pos_position],sizeof(float)*3);
+					bufferPosition += sizeof(float)*3;
+					memcpy(vertexTempBuffer + bufferPosition,&wComponent,sizeof(float));
+					bufferPosition += sizeof(float);
+
+					pos_position += 3;
+				}
+
+				if(shape.mesh.normals.size() > pos_normal)
+				{
+					memcpy(vertexTempBuffer + bufferPosition,&shape.mesh.normals[pos_normal],sizeof(float)*3);
+					bufferPosition += sizeof(float)*3;
+
+					pos_normal += 3;
+				}
+
+				if(shape.mesh.texcoords.size() > pos_tex)
+				{
+					memcpy(vertexTempBuffer + bufferPosition,&shape.mesh.texcoords[pos_tex],sizeof(float)*2);
+					bufferPosition += sizeof(float)*2;
+
+					pos_tex += 2;
+				}
+			}
+
+			vertexOptions.InitialData.data = vertexTempBuffer;
+			vertexOptions.InitialData.size = vertexDataSize;
+
+			vbbuffer = K15_NEW VertexBuffer(vertexOptions);
+			idbuffer = K15_NEW IndexBuffer(indexOptions);
+			vdeclaration = K15_NEW VertexDeclaration(vertexDeclarationString);
+
+			vbbuffer->setVertexDeclaration(vdeclaration);
+
+			submesh->setVertexBuffer(vbbuffer);
+			submesh->setIndexBUffer(idbuffer);
+		
+			K15_DELETE_SIZE(Allocators[AC_GENERAL],vertexTempBuffer,vertexDataSize);
+			K15_DELETE_SIZE(Allocators[AC_GENERAL],indexTempBuffer,indexDataSize);
 		}
-
-		VertexBuffer::CreationOptions vbo_opts;
-		IndexBuffer::CreationOptions id_opts;
-
-		vbo_opts.BufferType = VertexBuffer::BT_VERTEX_BUFFER;
-		vbo_opts.AccessOption = VertexBuffer::BA_WRITE_ONLY;
-		vbo_opts.LockOption = VertexBuffer::LO_NORMAL;
-		vbo_opts.UsageOption = VertexBuffer::UO_STATIC;
-		vbo_opts.VertexLayout = K15_NEW VertexDeclaration("PF3NF3");
-		vbo_opts.InitialData.data = (byte*)vertexBuffer_temp;
-		vbo_opts.InitialData.size = vbo_size;
-
-		id_opts.AccessOption = IndexBuffer::BA_WRITE_ONLY;
-		id_opts.LockOption = IndexBuffer::BA_WRITE_ONLY;
-		id_opts.IndexType = IndexBuffer::IT_UINT16;
-		id_opts.InitialData.data = (byte*)indexBuffer_temp;
-		id_opts.InitialData.size = ibo_size;
-
-		VertexBuffer* vbo = K15_NEW VertexBuffer(vbo_opts);
-		IndexBuffer* ibo = K15_NEW IndexBuffer(id_opts);
-
-		Mesh* mesh = K15_NEW Mesh("");
-		SubMesh* submesh = K15_NEW SubMesh();
-		Material* mat = K15_NEW Material();
-		
-		mat->getPass(0,true)->setFillMode(RendererBase::FM_WIREFRAME);
-
-		
-		submesh->setVertexBuffer(vbo);
-		submesh->setIndexBUffer(ibo);
-		submesh->setMaterial(mat);
-
-		mesh->addSubMesh(submesh);
 
 		return mesh;
 	}

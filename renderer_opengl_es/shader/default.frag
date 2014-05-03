@@ -1,7 +1,9 @@
-varying lowp vec2 ps_uv;
-uniform lowp sampler2D g_Diffuse;
+precision mediump float;
+
+uniform sampler2D g_Texture_1;
+varying vec2 texcoord;
 
 void main(void)
 {
-	gl_FragColor = texture2D(g_Diffuse,ps_uv);
+	gl_FragColor = texture2D(g_Texture_1,texcoord);
 }

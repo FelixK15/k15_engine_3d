@@ -19,26 +19,30 @@
 
 #include "K15_PrecompiledHeader.h"
 
-#include "K15_ZipResourceArchive.h"
+#include "K15_ResourceArchiveZip.h"
 #include "K15_RawData.h"
 
 #include "unzip.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	ZipResourceArchive::ZipResourceArchive(const String& p_ZipFile)
+	K15_IMPLEMENT_RTTI_BASE(Core,ResourceArchiveZip,ResourceArchiveBase);
+	/*********************************************************************************/
+
+	/*********************************************************************************/
+	ResourceArchiveZip::ResourceArchiveZip(const String& p_ZipFile)
 		: ResourceArchiveBase(p_ZipFile),
 		m_ZipFile(0)
 	{
 
 	}
 	/*********************************************************************************/
-	ZipResourceArchive::~ZipResourceArchive()
+	ResourceArchiveZip::~ResourceArchiveZip()
 	{
 
 	}
 	/*********************************************************************************/
-	bool ZipResourceArchive::getResource(const String& p_ResourceName, RawData* p_Data)
+	bool ResourceArchiveZip::getResource(const String& p_ResourceName, RawData* p_Data)
 	{
 		unzLocateFile(m_ZipFile, p_ResourceName.c_str(),1);
 
@@ -66,12 +70,12 @@ namespace K15_Engine { namespace Core {
 		return true;
 	}
 	/*********************************************************************************/
-	bool ZipResourceArchive::hasResource(const String& p_ResourceName)
+	bool ResourceArchiveZip::hasResource(const String& p_ResourceName)
 	{
 		return unzLocateFile(m_ZipFile,p_ResourceName.c_str(),1) == UNZ_OK;
 	}
 	/*********************************************************************************/
-	bool ZipResourceArchive::_open()
+	bool ResourceArchiveZip::_open()
 	{
 		m_ZipFile = unzOpen(getFileName().c_str());
 		if(!m_ZipFile)
@@ -83,7 +87,7 @@ namespace K15_Engine { namespace Core {
 		return true;
 	}
 	/*********************************************************************************/
-	bool ZipResourceArchive::_close()
+	bool ResourceArchiveZip::_close()
 	{
 		if(unzClose(m_ZipFile) != UNZ_OK)
 		{

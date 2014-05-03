@@ -23,6 +23,11 @@ void GpuBuffer::setLockOption(Enum p_LockOption)
 	m_LockOption = p_LockOption;
 }
 /*********************************************************************************/
+void GpuBuffer::setType(Enum p_BufferType)
+{
+	m_BufferType = p_BufferType;
+}
+/*********************************************************************************/
 void GpuBuffer::setUsageOption(Enum p_UsageOption)
 {
 	m_UsageOption = p_UsageOption;

@@ -31,77 +31,29 @@
 #include "K15_Image.h"
 
 #include "K15_Mesh.h"
+#include "K15_SubMesh.h"
 
 namespace K15_Engine { namespace Plugins { namespace RenderTest {
-	/*********************************************************************************/
-	RawData UpdateDiffuseSampler(const GpuProgramParameter& p_Param, void* p_UserData)
-	{
-		Texture* texture = *(Texture**)p_UserData;
-		Enum slot = texture->getSlot();
-
-		return RawData((byte*)slot,sizeof(Enum));
-	}
-	/*********************************************************************************/
 
 	/*********************************************************************************/
 	RenderSampleProcess::RenderSampleProcess()
 	{
- 		m_Material = K15_NEW Material();
- 		MaterialPass* pass = m_Material->getPass(0,true);
- 
- 		GpuProgram* vertexShader = K15_NEW GpuProgram("default_vertex",GpuProgram::PS_VERTEX);
- 		GpuProgram* fragmetShader = K15_NEW GpuProgram("default_fragment",GpuProgram::PS_FRAGMENT);
- 
-		String vertexShaderFile = g_Application->getGameRootDir() + "default.vert";
-		String fragmentShaderFile = g_Application->getGameRootDir() + "default.frag";
-
-		vertexShader->setProgramCode(IOUtil::readWholeFile(vertexShaderFile),false);
-		fragmetShader->setProgramCode(IOUtil::readWholeFile(fragmentShaderFile),false);
-
-		m_ProgramBatch = K15_NEW GpuProgramBatch();
-
-		m_ProgramBatch->addGpuProgram(vertexShader);
-		m_ProgramBatch->addGpuProgram(fragmetShader);
-		
-		m_ProgramBatch->compile();
-
-		m_VertexDeclaration = K15_NEW VertexDeclaration("PF4TF2");
-
-		pass->setProgramBatch(m_ProgramBatch);
-
-		pass->setFillMode(RendererBase::FM_SOLID);
-		pass->setCullingMode(RendererBase::CM_CW);
-	
-		m_Texture = g_ResourceManager->getResource<Texture>("Test_Image.tif",0);
-		m_Mesh = g_ResourceManager->getResource<Mesh>("cube.obj",0);
-
-		m_Sampler = K15_NEW TextureSampler();
-
-		m_Sampler->setMagFilterMode(TextureSampler::TFM_LINEAR);
-		m_Sampler->setMinFilterMode(TextureSampler::TFM_LINEAR);
-
-		pass->setDiffuseMap(m_Texture);
-		pass->setDiffuseSampler(m_Sampler);
-
-		m_Rop = K15_NEW RenderOperation();
-
-		m_Rop->subMesh = m_Mesh->getSubMeshes()[0];
-		m_Rop->material = m_Material;
-		m_Rop->topology = RenderOperation::T_TRIANGLE_STRIP;
+ 		rop[0] = 0;
+		rop[1] = 0;
 	}
 	/*********************************************************************************/
 	RenderSampleProcess::~RenderSampleProcess()
 	{
-		K15_DELETE m_Rop;
-		K15_DELETE m_Material;
-		K15_DELETE m_ProgramBatch;
-		K15_DELETE m_VertexDeclaration;
-		K15_DELETE m_Texture;
+
 	}
 	/*********************************************************************************/
 	void RenderSampleProcess::renderSingleFrame()
 	{
-		g_Application->getRenderer()->draw(m_Rop);
+		if(rop[0] != 0 && rop[1] != 0)
+		{
+			g_Application->getRenderer()->draw(rop[0]);
+			g_Application->getRenderer()->draw(rop[1]);
+		}
 	}
 	/*********************************************************************************/
-}}}// end of K15_Engine::Plugins::RenderTest namespace
+}}}// end of K15_Engine::Plugins::RenderTest namespace`

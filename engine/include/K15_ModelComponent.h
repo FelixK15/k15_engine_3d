@@ -33,18 +33,19 @@
 #include "K15_Mesh.h"
 
 namespace K15_Engine { namespace Core {
-  class K15_CORE_API ModelComponent : public GameObjectComponentBase
-  {
-    K15_DECLARE_RTTI;
+	class K15_CORE_API ModelComponent : public GameObjectComponentBase
+	{
+	K15_DECLARE_RTTI;
 
-  public:
-    ModelComponent(const String& p_ModelResourceName);
-    ~ModelComponent();
+	public:
+		ModelComponent();
+		ModelComponent(const String& p_ModelResourceName);
+		~ModelComponent();
 
-    INLINE Mesh* getMesh() const;
-
-  private:
-    Mesh* m_Mesh;
+		INLINE Mesh* getMesh() const;
+		INLINE void setMesh(Mesh* p_Mesh);
+	private:
+		Mesh* m_Mesh;
   }; //end of ModelComponent class declaration
 # include "K15_ModelComponent.inl"
 }}//end of K15_Engine::Core namespace

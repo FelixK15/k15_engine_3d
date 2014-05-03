@@ -27,6 +27,7 @@
 #include "K15_StringUtil.h"
 #include "K15_Functor.h"
 #include "K15_RenderTask.h"
+#include "K15_ResourceManager.h"
 #include "K15_IniFileParser.h"
 #include "K15_Texture.h"
 #include "K15_PhysicsTask.h"
@@ -72,6 +73,7 @@ namespace K15_Engine { namespace Core {
 		m_LogManager(0),
 		m_AvgFramesPerSecond(0),
 		m_MemoryProfilingTask(0),
+		m_ResourceManager(0),
 		m_Plugins(),
 		m_RunningTime(0.0),
 		m_ApplicationParameter(),
@@ -235,6 +237,9 @@ namespace K15_Engine { namespace Core {
 
 		_LogNormal("Initializing ThreadWorker...");
 		m_ThreadWorker = K15_NEW ThreadWorker();
+
+		_LogNormal("Initializing ResourceManager...");
+		m_ResourceManager = K15_NEW ResourceManager();
 
 		_LogNormal("Tasks will get created and added to the task manager.");
 		_LogNormal("Creating and adding event task...");
@@ -614,6 +619,9 @@ namespace K15_Engine { namespace Core {
 
 		_LogNormal("Destroying RenderWindow...");
 		K15_DELETE m_RenderWindow;
+
+		_LogNormal("Destroying ResourceManager...");
+		K15_DELETE m_ResourceManager;
 
 		_LogNormal("Destroying ThreadWorker...");
 		K15_DELETE m_ThreadWorker;

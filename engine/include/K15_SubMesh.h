@@ -54,7 +54,7 @@ namespace K15_Engine { namespace Rendering {
 		VertexBuffer* m_VertexBuffer;
 		IndexBuffer* m_IndexBuffer;
 		Material* m_Material;
-    Mesh* m_Mesh;
+		Mesh* m_Mesh;
 	};// end of SubMesh class declaration
 #	include "K15_SubMesh.inl"
 }}// end of K15_Engine::Rendering namespace

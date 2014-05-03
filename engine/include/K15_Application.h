@@ -168,6 +168,7 @@ namespace K15_Engine { namespace Core {
 
 				RenderWindowBase* m_RenderWindow;
 				TaskManager* m_TaskManager;
+				ResourceManager* m_ResourceManager;
 				ProfilingManager* m_ProfileManager;
 				EventManager* m_EventManager;
 				LogManager* m_LogManager;

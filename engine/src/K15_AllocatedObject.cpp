@@ -32,19 +32,19 @@
 
 namespace K15_Engine { namespace Core {
   /*********************************************************************************/
-  uint32 BaseAllocatedObject::CoreAllocatorSizes::GeneralAllocatorSize = size_megabyte(10);
-  uint32 BaseAllocatedObject::CoreAllocatorSizes::ModuleAllocatorSize = size_megabyte(10);
+  uint32 BaseAllocatedObject::CoreAllocatorSizes::GeneralAllocatorSize = size_megabyte(1);
+  uint32 BaseAllocatedObject::CoreAllocatorSizes::ModuleAllocatorSize = size_megabyte(1);
 #if defined K15_DEBUG
-  uint32 BaseAllocatedObject::CoreAllocatorSizes::DebugAllocatorSize = size_megabyte(30);
-  uint32 BaseAllocatedObject::CoreAllocatorSizes::ProfilingAllocatorSize = size_megabyte(20);
-  uint32 BaseAllocatedObject::CoreAllocatorSizes::ProfilingNodePoolCount = 512;
+  uint32 BaseAllocatedObject::CoreAllocatorSizes::DebugAllocatorSize = size_megabyte(10);
+  uint32 BaseAllocatedObject::CoreAllocatorSizes::ProfilingAllocatorSize = size_megabyte(9);
+  uint32 BaseAllocatedObject::CoreAllocatorSizes::ProfilingNodePoolCount = 128;
 #endif //K15_DEBUG
-  uint32 BaseAllocatedObject::CoreAllocatorSizes::RenderAllocatorSize = size_megabyte(5);
-  uint32 BaseAllocatedObject::CoreAllocatorSizes::GameEventAllocatorSize = size_megabyte(5);
-  uint32 BaseAllocatedObject::CoreAllocatorSizes::ThreadingAllocatorSize = size_megabyte(5);
-  uint32 BaseAllocatedObject::CoreAllocatorSizes::TaskAllocatorSize = size_megabyte(5);
+  uint32 BaseAllocatedObject::CoreAllocatorSizes::RenderAllocatorSize = size_megabyte(2);
+  uint32 BaseAllocatedObject::CoreAllocatorSizes::GameEventAllocatorSize = size_megabyte(1);
+  uint32 BaseAllocatedObject::CoreAllocatorSizes::ThreadingAllocatorSize = size_megabyte(1);
+  uint32 BaseAllocatedObject::CoreAllocatorSizes::TaskAllocatorSize = size_megabyte(1);
   uint32 BaseAllocatedObject::CoreAllocatorSizes::LoggingAllocatorSize = size_megabyte(1);
-  uint32 BaseAllocatedObject::CoreAllocatorSizes::ResourceAllocatorSize = size_megabyte(30);
+  uint32 BaseAllocatedObject::CoreAllocatorSizes::ResourceAllocatorSize = size_megabyte(2);
   uint32 BaseAllocatedObject::CoreAllocatorSizes::VertexPoolCount = 10000;
   uint32 BaseAllocatedObject::CoreAllocatorSizes::RenderOperationPoolCount = 512;
   /*********************************************************************************/
@@ -52,9 +52,9 @@ namespace K15_Engine { namespace Core {
   /*********************************************************************************/
   BaseAllocatedObject::AllocatorArray BaseAllocatedObject::Allocators;
 #if defined K15_DEBUG
-  uint32 BaseAllocatedObject::MemorySize = size_megabyte(150); //Default - Debug is 150MB
+  uint32 BaseAllocatedObject::MemorySize = size_megabyte(22); //Default - Debug is 150MB
 #else
-  uint32 BaseAllocatedObject::MemorySize = size_megabyte(100); //Default is 100MB
+  uint32 BaseAllocatedObject::MemorySize = size_megabyte(30); //Default is 100MB
 #endif //K15_DEBUG
   uint32 BaseAllocatedObject::AllocatorCount = 0;
   /*********************************************************************************/
@@ -65,25 +65,25 @@ namespace K15_Engine { namespace Core {
 		BaseAllocator* CoreAllocator = new StackAllocator(MemorySize,"CoreAllocator");
 
 		Allocators[AC_CORE] = CoreAllocator;
-    AllocatorCount = 1;
+		AllocatorCount = 1;
 
-    addAllocator<BlockAllocator>("GeneralAllocator",CoreAllocatorSizes::GeneralAllocatorSize);
-    addAllocator<BlockAllocator>("ModuleAllocator",CoreAllocatorSizes::ModuleAllocatorSize);
+		addAllocator<BlockAllocator>("GeneralAllocator",CoreAllocatorSizes::GeneralAllocatorSize);
+		addAllocator<BlockAllocator>("ModuleAllocator",CoreAllocatorSizes::ModuleAllocatorSize);
 
-#if defined K15_DEBUG
-    addAllocator<BlockAllocator>("DebugAllocator",CoreAllocatorSizes::DebugAllocatorSize);
-    addAllocator<BlockAllocator>("ProfilingAllocator",CoreAllocatorSizes::ProfilingAllocatorSize,Allocators[AC_DEBUG]);
-    addAllocator<PoolAllocator<ProfilingNode> >("ProfilingNodePool",CoreAllocatorSizes::ProfilingNodePoolCount * sizeof(ProfilingNode),Allocators[AC_PROFILING]);
-#endif //K15_DEBUG
+	#if defined K15_DEBUG
+		addAllocator<BlockAllocator>("DebugAllocator",CoreAllocatorSizes::DebugAllocatorSize);
+		addAllocator<BlockAllocator>("ProfilingAllocator",CoreAllocatorSizes::ProfilingAllocatorSize,Allocators[AC_DEBUG]);
+		addAllocator<PoolAllocator<ProfilingNode> >("ProfilingNodePool",CoreAllocatorSizes::ProfilingNodePoolCount * sizeof(ProfilingNode),Allocators[AC_PROFILING]);
+	#endif //K15_DEBUG
 
-    addAllocator<BlockAllocator>("RenderAllocator",CoreAllocatorSizes::RenderAllocatorSize);
-    addAllocator<BlockAllocator>("GameEventAllocator",CoreAllocatorSizes::GameEventAllocatorSize);
-    addAllocator<BlockAllocator>("TreadingAllocator",CoreAllocatorSizes::ThreadingAllocatorSize);
-    addAllocator<BlockAllocator>("TaskAllocator",CoreAllocatorSizes::TaskAllocatorSize);
-    addAllocator<BlockAllocator>("LoggingAllocator",CoreAllocatorSizes::LoggingAllocatorSize);
-    addAllocator<BlockAllocator>("ResourceAllocator",CoreAllocatorSizes::ResourceAllocatorSize);
-    addAllocator<PoolAllocator<RenderOperation> >("RenderOperationPool",CoreAllocatorSizes::RenderOperationPoolCount * sizeof(RenderOperation),Allocators[AC_RENDERING]);
-    addAllocator<PoolAllocator<Vertex> >("VertexPool",CoreAllocatorSizes::VertexPoolCount * sizeof(Vertex),Allocators[AC_RENDERING]);
+		addAllocator<BlockAllocator>("RenderAllocator",CoreAllocatorSizes::RenderAllocatorSize);
+		addAllocator<BlockAllocator>("GameEventAllocator",CoreAllocatorSizes::GameEventAllocatorSize);
+		addAllocator<BlockAllocator>("TreadingAllocator",CoreAllocatorSizes::ThreadingAllocatorSize);
+		addAllocator<BlockAllocator>("TaskAllocator",CoreAllocatorSizes::TaskAllocatorSize);
+		addAllocator<BlockAllocator>("LoggingAllocator",CoreAllocatorSizes::LoggingAllocatorSize);
+		addAllocator<BlockAllocator>("ResourceAllocator",CoreAllocatorSizes::ResourceAllocatorSize);
+		addAllocator<PoolAllocator<RenderOperation> >("RenderOperationPool",CoreAllocatorSizes::RenderOperationPoolCount * sizeof(RenderOperation),Allocators[AC_RENDERING]);
+		addAllocator<PoolAllocator<Vertex> >("VertexPool",CoreAllocatorSizes::VertexPoolCount * sizeof(Vertex),Allocators[AC_RENDERING]);
 	}
 	/*********************************************************************************/
 	void BaseAllocatedObject::removeAllocators()

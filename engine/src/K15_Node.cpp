@@ -56,8 +56,8 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	const Matrix4& Node::getTransformation()
 	{
-		if(needUpdate())
-		{
+// 		if(needUpdate())
+// 		{
 			//update from parent
 			if(m_Parent)
 			{
@@ -67,9 +67,9 @@ namespace K15_Engine { namespace Core {
 			}
 			else
 			{
-				m_Scale = m_OriginScale;
-				m_Orientation = m_OriginOrientation;
-				m_Position = m_OriginPosition;
+// 				m_Scale = m_OriginScale;
+// 				m_Orientation = m_OriginOrientation;
+// 				m_Position = m_OriginPosition;
 			}
 
 			// Ordering:
@@ -78,9 +78,14 @@ namespace K15_Engine { namespace Core {
 			//    3. Translate
 
 			// Set up final matrix with scale, rotation and translation
-      m_Transformation = glm::scale(glm::mat4(1.0f),m_Scale);
-      m_Transformation *= m_Orientation;
-      m_Transformation *= glm::translate(glm::mat4(1.0f),m_Position);
+// 			m_Transformation = glm::scale(glm::mat4(1.0f),m_Scale);
+// 			m_Transformation *= m_Orientation;
+// 			m_Transformation *= glm::translate(glm::mat4(1.0f),m_Position);
+
+			m_Transformation = glm::scale(glm::mat4(1.0f),m_Scale);
+			m_Transformation *= glm::translate(glm::mat4(1.0f),m_Position);
+			m_Transformation *= m_Orientation;
+			
 
 // 			m_Transformation._1_1 = m_Scale.x * rotation._1_1; 
 // 			m_Transformation._1_2 = m_Scale.y * rotation._1_2; 
@@ -102,7 +107,7 @@ namespace K15_Engine { namespace Core {
 // 			m_Transformation._4_4 = 1.0f;
 
 			m_NeedUpdate = false;
-		}
+		/*}*/
 
 		return m_Transformation;
 	}

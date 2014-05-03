@@ -194,6 +194,13 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 		window->setResolution(resolution,false);
 
 		_LogDebug("Supported OpenGL ES Extensions:%s",glGetString(GL_EXTENSIONS));
+
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_STENCIL_TEST);
+		glEnable(GL_BLEND);
+		glFrontFace(GL_CCW);
+
+		_checkForError();
 		return true;
 	}
 	/*********************************************************************************/
@@ -317,7 +324,10 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 	/*********************************************************************************/
 	void Renderer::_setClearColor(const ColorRGBA& p_ClearColor)
 	{
-		glClearColor(p_ClearColor.RedComponent,p_ClearColor.GreenComponent,p_ClearColor.BlueComponent,1.0f);
+		glClearColor((float)p_ClearColor.R / 255.f,
+				     (float)p_ClearColor.G / 255.f,
+					 (float)p_ClearColor.B / 255.f,
+					 1.0f);
 	}
 	/*********************************************************************************/
 	void Renderer::_bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType)
@@ -333,6 +343,8 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 		{
 			glBindBuffer(target,0);
 		}
+
+		_checkForError();
 	}
 	/*********************************************************************************/
 	void Renderer::_drawIndexed(uint32 p_Offset)
@@ -352,21 +364,30 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 	void Renderer::_setVertexDeclaration(VertexDeclaration* p_Declaration)
 	{
 		VertexDeclarationImpl* impl = static_cast<VertexDeclarationImpl*>(p_Declaration->getImpl());
-		
+
 		if(m_GpuProgramBatch)
 		{
 			GLint program = ((GLES2::GpuProgramBatchImpl*)m_GpuProgramBatch->getImpl())->getProgram();
 
-			for(uint32 i = 0;i < m_MaxVertexAttribs;++i)
+			if(m_VertexDeclaration)
 			{
-				glDisableVertexAttribArray(i);
+				if(m_VertexDeclaration->getElementCount() < p_Declaration->getElementCount())
+				{
+					//disable old attribts
+					uint32 diff = m_VertexDeclaration->getElementCount() - p_Declaration->getElementCount();
+					for(uint32 i = diff;i != m_VertexDeclaration->getElementCount();++i)
+					{
+						glDisableVertexAttribArray(i);
+					}
+				}
 			}
 
 			for(uint32 i = 0;i < p_Declaration->getElementCount();++i)
 			{
-				char* semanticName = 0;
 				const VertexElement& element = p_Declaration->getElement(i);
+				char* semanticName = 0;
 				GLuint index = 0;
+
 				if(element.semantic == VertexElement::ES_POSITION)
 				{
 					semanticName = "g_Position";
@@ -384,17 +405,18 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 
 				if(index == -1)
 				{
-					_LogDebug("Could not find semantic \"%s\" in vertex shader \"%s\".",semanticName,m_GpuProgramBatch->getGpuProgramByStage(GpuProgram::PS_VERTEX)->getName().c_str());
+					_LogError("Could not find semantic \"%s\" in vertex shader \"%s\".",semanticName,m_GpuProgramBatch->getGpuProgramByStage(GpuProgram::PS_VERTEX)->getName().c_str());
 				}
 				else
 				{
-					_LogDebug("Enabling vertex attribute %i for semantic \"%s\".",index,semanticName);
-
+					//_LogDebug("Enabling vertex attribute %i for semantic \"%s\".",index,semanticName);
 					glEnableVertexAttribArray(index);
 					glVertexAttribPointer(index,element.size,VertexDeclarationImpl::GLVertexElementTypeConverter[element.type],GL_FALSE,p_Declaration->getVertexSize(),(void*)element.offset);
-				}
+				}	
 			}
 		}
+
+		_checkForError();
 	}
 	/*********************************************************************************/
 	void Renderer::_setRenderWindow(RenderWindowBase* p_RenderWindow)
@@ -430,13 +452,15 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 			glBlendFunc(GLBlendFunctionConverter[p_AlphaState.getSourceBlendFunction()],
 				GLBlendFunctionConverter[p_AlphaState.getDestinationBlendFunction()]);
 
-			glBlendColor(p_AlphaState.getConstantColor().RedComponent,
-				p_AlphaState.getConstantColor().GreenComponent,
-				p_AlphaState.getConstantColor().BlueComponent,
-				p_AlphaState.getConstantColor().AlphaComponent);
+			glBlendColor((float)p_AlphaState.getConstantColor().R / 255.f,
+				(float)p_AlphaState.getConstantColor().G / 255.f,
+				(float)p_AlphaState.getConstantColor().B / 255.f,
+				(float)p_AlphaState.getConstantColor().A / 255.f);
 
 			glBlendEquation(GLBlendOperationConverter[p_AlphaState.getBlendOperation()]);
 		}
+
+		_checkForError();
 	}
 	/*********************************************************************************/
 	void Renderer::_setRenderTarget(RenderTarget* p_RenderTarget)
@@ -469,11 +493,6 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 
 	}
 	/*********************************************************************************/
-	void Renderer::_bindProgram(GpuProgram* p_Program, Enum p_ProgramType)
-	{
-
-	}
-	/*********************************************************************************/
 	void Renderer::_bindProgramBatch(GpuProgramBatch* p_Program)
 	{
 		GLint program = ((GpuProgramBatchImpl*)p_Program->getImpl())->getProgram();
@@ -484,6 +503,8 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 
 		//rebound declaration
 		_setVertexDeclaration(getVertexDeclaration());
+
+		_checkForError();
 	}
 	/*********************************************************************************/
 	void Renderer::_bindTexture(Texture* p_Texture, Enum p_Type)
@@ -500,6 +521,8 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 		{
 			glBindTexture(textureType,0);
 		}
+
+		_checkForError();
 	}
 	/*********************************************************************************/
 	void Renderer::_updateGpuProgramParameter(const GpuProgramParameter& p_Parameter)
@@ -549,6 +572,19 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 	    {
 	      glUniformMatrix4fv(p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
 	    }
+
+		_checkForError();
+	}
+	/*********************************************************************************/
+	void Renderer::_checkForError()
+	{
+		#if defined K15_DEBUG
+			GLenum error = glGetError();
+			if(error != GL_NO_ERROR)
+			{
+				_LogError("GLES2 Error:\"%s\".",glGetString(error));
+			}
+		#endif //K15_DEBUG
 	}
 	/*********************************************************************************/
 }}}//end of K15_Engine::Rendering::GLES2 namespace

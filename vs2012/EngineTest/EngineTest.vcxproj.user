@@ -7,7 +7,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
     <Deploy>
       <DeployUninstall>UninstallKeep</DeployUninstall>
-      <DeploymentType>DeployToDevice</DeploymentType>
+      <DeploymentType>DeployToAny</DeploymentType>
     </Deploy>
   </ItemDefinitionGroup>
 </Project>

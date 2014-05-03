@@ -396,13 +396,7 @@
     <ClInclude Include="..\..\engine\include\K15_ResourceManager.h">
       <Filter>ResourceSystem\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_TiffResourceImporter.h">
-      <Filter>ResourceSystem\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_ResourceArchiveBase.h">
-      <Filter>ResourceSystem\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ZipResourceArchive.h">
       <Filter>ResourceSystem\include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_ModelComponent.h">
@@ -410,6 +404,15 @@
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_CameraComponent.h">
       <Filter>Components\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ResourceImporterObj.h">
+      <Filter>ResourceSystem\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ResourceImporterTiff.h">
+      <Filter>ResourceSystem\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ResourceArchiveZip.h">
+      <Filter>ResourceSystem\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -677,16 +680,24 @@
     <ClCompile Include="..\..\engine\src\K15_ResourceArchiveBase.cpp">
       <Filter>ResourceSystem\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_ZipResourceArchive.cpp">
-      <Filter>ResourceSystem\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_TiffResourceImporter.cpp">
-      <Filter>ResourceSystem\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_ModelComponent.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_RenderQueue.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_RenderQueue.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ResourceImporterObj.cpp">
+      <Filter>ResourceSystem\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ResourceImporterTiff.cpp">
+      <Filter>ResourceSystem\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ResourceArchiveZip.cpp">
+      <Filter>ResourceSystem\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ApplicationModule.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -876,7 +887,9 @@
     <None Include="..\..\engine\include\K15_ModelComponent.inl">
       <Filter>Components\include</Filter>
     </None>
-    <None Include="..\..\engine\include\K15_RenderQueue.inl" />
+    <None Include="..\..\engine\include\K15_RenderQueue.inl">
+      <Filter>Rendering\include</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />

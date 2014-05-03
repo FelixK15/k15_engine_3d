@@ -27,7 +27,7 @@ namespace K15_Engine { namespace Rendering {
 		: m_BlendOperation(0),
 		m_SourceBlendFunction(0),
 		m_DestinationBlendFunction(0),
-		m_ConstantColor(ColorRGBA::Transparent)
+		m_ConstantColor(ColorRGBA(0,0,0,0))
 	{
 
 	}
@@ -36,11 +36,11 @@ namespace K15_Engine { namespace Rendering {
 	{
 
 	}
-  /*********************************************************************************/
-  bool AlphaState::operator!=(const AlphaState& p_Other) const
-  {
-    return !(m_BlendOperation == p_Other.m_BlendOperation && m_SourceBlendFunction == p_Other.m_SourceBlendFunction &&
-      m_DestinationBlendFunction == p_Other.m_DestinationBlendFunction && m_ConstantColor == p_Other.m_ConstantColor);
-  }
-  /*********************************************************************************/
+	/*********************************************************************************/
+	bool AlphaState::operator!=(const AlphaState& p_Other) const
+	{
+	return !(m_BlendOperation == p_Other.m_BlendOperation && m_SourceBlendFunction == p_Other.m_SourceBlendFunction &&
+		m_DestinationBlendFunction == p_Other.m_DestinationBlendFunction && m_ConstantColor == p_Other.m_ConstantColor);
+	}
+	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

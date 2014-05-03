@@ -64,7 +64,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>K15_Engine</TargetName>
-    <IncludePath>..\..\dependencies\glm\;..\..\dependencies\Enet\include\;..\..\dependencies\LuaPlus\include\;..\..\dependencies\freetype\include\;..\..\engine\include\;..\..\renderer\include\;..\..\dependencies\TinyThread\include\;..\..\dependencies\JsonCPP\include\;..\..\dependencies\libbmp\include\;..\..\dependencies\zlib\include\;..\..\dependencies\minizip\include\;..\..\dependencies\libtiff\include\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\dependencies\tinyobjloader\include\;..\..\dependencies\glm\;..\..\dependencies\Enet\include\;..\..\dependencies\LuaPlus\include\;..\..\dependencies\freetype\include\;..\..\engine\include\;..\..\renderer\include\;..\..\dependencies\TinyThread\include\;..\..\dependencies\JsonCPP\include\;..\..\dependencies\libbmp\include\;..\..\dependencies\zlib\include\;..\..\dependencies\minizip\include\;..\..\dependencies\libtiff\include\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -82,7 +82,7 @@
     <LibraryPath>..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
-    <IncludePath>..\..\dependencies\Enet\include\;..\..\dependencies\LuaPlus\include\;..\..\dependencies\minizip\include\;..\..\dependencies\libtiff\include\;..\..\dependencies\freetype\include\;..\..\engine\include\;..\..\math\include\;..\..\plugins\rendertest\include;..\..\dependencies\TinyThread\include\;..\..\dependencies\Android\native_app_glue\include\;..\..\dependencies\JsonCPP\include\;$(ANDROID_NDK_ROOT)\sources\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\dependencies\tinyobjloader\include\;..\..\dependencies\glm\;..\..\dependencies\Enet\include\;..\..\dependencies\LuaPlus\include\;..\..\dependencies\minizip\include\;..\..\dependencies\libtiff\include\;..\..\dependencies\freetype\include\;..\..\engine\include\;..\..\math\include\;..\..\plugins\rendertest\include;..\..\dependencies\TinyThread\include\;..\..\dependencies\Android\native_app_glue\include\;..\..\dependencies\JsonCPP\include\;$(ANDROID_NDK_ROOT)\sources\;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
@@ -108,7 +108,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>module.def</ModuleDefinitionFile>
-      <AdditionalDependencies>LuaPlus.lib;Enet.lib;TinyThread.lib;Ws2_32.lib;zlib.lib;libtiff.lib;minizip.lib;JsonCPP.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>LuaPlus.lib;Enet.lib;TinyThread.lib;Ws2_32.lib;zlib.lib;libtiff.lib;minizip.lib;JsonCPP.lib;tinyobjloader.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -279,6 +279,7 @@
     <ClInclude Include="..\..\engine\include\K15_RenderWindowBase.h" />
     <ClInclude Include="..\..\engine\include\K15_ResourceImporterBase.h" />
     <ClInclude Include="..\..\engine\include\K15_ResourceImporterBitmap.h" />
+    <ClInclude Include="..\..\engine\include\K15_ResourceImporterObj.h" />
     <ClInclude Include="..\..\engine\include\K15_Serialization.h" />
     <ClInclude Include="..\..\engine\include\K15_Serializer.h" />
     <ClInclude Include="..\..\engine\include\K15_SerializerBase.h" />
@@ -306,7 +307,7 @@
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_ThreadSafe.h" />
     <ClInclude Include="..\..\engine\include\K15_ThreadWorker.h" />
-    <ClInclude Include="..\..\engine\include\K15_TiffResourceImporter.h" />
+    <ClInclude Include="..\..\engine\include\K15_ResourceImporterTiff.h" />
     <ClInclude Include="..\..\engine\include\K15_Vertex.h" />
     <ClInclude Include="..\..\engine\include\K15_VertexBuffer.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
@@ -318,7 +319,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </Outputs>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ZipResourceArchive.h" />
+    <ClInclude Include="..\..\engine\include\K15_ResourceArchiveZip.h" />
     <ClInclude Include="..\..\engine\include\Linux\K15_DynamicLibrary_Linux.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_ApplicationOSLayer_Win32.h" />
     <ClInclude Include="..\..\engine\include\win32\K15_DynamicLibrary_Win32.h" />
@@ -388,6 +389,7 @@
     <ClCompile Include="..\..\engine\src\K15_AABB.cpp" />
     <ClCompile Include="..\..\engine\src\K15_AllocatedObject.cpp" />
     <ClCompile Include="..\..\engine\src\K15_AlphaState.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_ApplicationModule.cpp" />
     <ClCompile Include="..\..\engine\src\K15_BlockAllocator.cpp" />
     <ClCompile Include="..\..\engine\src\K15_ColorRGBA.cpp" />
     <ClCompile Include="..\..\engine\src\K15_DepthState.cpp" />
@@ -442,6 +444,7 @@
     <ClCompile Include="..\..\engine\src\K15_ResourceImporterBitmap.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ResourceImporterObj.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Serializer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_SerializerBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_SerialReader.cpp" />
@@ -452,11 +455,11 @@
     <ClCompile Include="..\..\engine\src\K15_TextureSampler.cpp" />
     <ClCompile Include="..\..\engine\src\K15_ThreadSafe.cpp" />
     <ClCompile Include="..\..\engine\src\K15_ThreadWorker.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_TiffResourceImporter.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_ResourceImporterTiff.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Vertex.cpp" />
     <ClCompile Include="..\..\engine\src\K15_VertexBuffer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_VertexDeclaration.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_ZipResourceArchive.cpp">
+    <ClCompile Include="..\..\engine\src\K15_ResourceArchiveZip.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\Linux\K15_DynamicLibrary_Linux.cpp">

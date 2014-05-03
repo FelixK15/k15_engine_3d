@@ -36,6 +36,7 @@ namespace K15_Engine { namespace Rendering {
 		m_IndexType(p_Options.IndexType)
 	{
 		setIndexType(p_Options.IndexType);
+		setType(GpuBuffer::BT_INDEX_BUFFER);
 	}
 	/*********************************************************************************/
 	IndexBuffer::~IndexBuffer()

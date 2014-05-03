@@ -117,8 +117,8 @@ namespace K15_Engine { namespace Core {
 				p_MSG == WM_MOUSEMOVE || p_MSG == WM_MOUSEWHEEL)
 		{
 			int x,y;
-			y = p_lParam & 0xFFFF0000;
-			x = p_lParam & 0x0000FFFF;
+			y = GET_Y_LPARAM(p_lParam);
+			x = GET_X_LPARAM(p_lParam);
 
 			EventName name;
 			if(p_MSG == WM_MBUTTONDOWN || p_MSG == WM_LBUTTONDOWN || p_MSG == WM_RBUTTONDOWN || p_MSG == WM_XBUTTONDOWN)
@@ -143,33 +143,46 @@ namespace K15_Engine { namespace Core {
 				g_EventManager->triggerEvent(mouseWheelEvent);
 			}
 
-			uint32 eventArguments[3] = {0};
+			MouseActionArguments args;
 
-			eventArguments[1] = x;
-			eventArguments[2] = y;
+			args.xPx = x;
+			args.yPx = y;
+
+			args.xNDC = (float)x / (float)window->getResolution().width;
+			args.yNDC = (float)y / (float)window->getResolution().height;
+
+			//ndc are now from 0 to 1.
+
+			args.xNDC -= 0.5f;
+			args.yNDC -= 0.5f;
+
+			args.xNDC *= 2;
+			args.yNDC *= 2;
+
+			//ndc are now from -1 to +1;
 
 			if(p_wParam & MK_LBUTTON)
 			{
-				eventArguments[0] = InputDevices::Mouse::BTN_LEFT;
+				args.button = InputDevices::Mouse::BTN_LEFT;
 			}
 			else if(p_wParam & MK_RBUTTON)
 			{
-				eventArguments[0] = InputDevices::Mouse::BTN_RIGHT;
+				args.button = InputDevices::Mouse::BTN_RIGHT;
 			}
 			else if(p_wParam & MK_MBUTTON)
 			{
-				eventArguments[0] = InputDevices::Mouse::BTN_MIDDLE;
+				args.button = InputDevices::Mouse::BTN_MIDDLE;
 			}
 			else if(p_wParam & MK_XBUTTON1)
 			{
-				eventArguments[0] = InputDevices::Mouse::BTN_SPECIAL1;
+				args.button = InputDevices::Mouse::BTN_SPECIAL1;
 			}
 			else if(p_wParam & MK_XBUTTON2)
 			{
-				eventArguments[0] = InputDevices::Mouse::BTN_SPECIAL2;
+				args.button = InputDevices::Mouse::BTN_SPECIAL2;
 			}
 
-			GameEvent* mouseEvent = K15_NEW GameEvent(name,(void*)eventArguments,96);
+			GameEvent* mouseEvent = K15_NEW GameEvent(name,(void*)&args,sizeof(MouseActionArguments));
 			g_EventManager->triggerEvent(mouseEvent);
 		}
 		else if(p_MSG == WM_KEYDOWN || p_MSG == WM_KEYUP)

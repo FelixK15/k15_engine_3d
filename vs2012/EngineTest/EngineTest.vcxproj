@@ -40,7 +40,7 @@
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
     <PlatformToolset>arm-linux-androideabi-4.6</PlatformToolset>
-    <AndroidStlType>gnustl_dynamic</AndroidStlType>
+    <AndroidStlType>gnustl_static</AndroidStlType>
     <AndroidAPILevel>android-9</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
@@ -85,7 +85,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
     <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>..\..\engine\include;..\..\dependencies\Android\native_app_glue\include;..\..\renderer_opengl_es\include;..\..\plugins\rendertest\include;..\..\math\include;$(ANDROID_NDK_ROOT)\sources\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\engine\include;..\..\dependencies\glm\;..\..\dependencies\Android\native_app_glue\include;..\..\renderer_opengl_es\include;..\..\plugins\rendertest\include;..\..\math\include;$(ANDROID_NDK_ROOT)\sources\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)</TargetName>
     <PreBuildEventUseInBuild>true</PreBuildEventUseInBuild>
@@ -140,7 +140,7 @@
     </ClCompile>
     <Link>
       <AndroidSystemLibs>android;dl;GLESv2;EGL;%(AndroidSystemLibs)</AndroidSystemLibs>
-      <AdditionalDependencies>-lPlugin_RenderTest;-lRenderer_OpenGLES;-lEngine;-lMath;-lnative_app_glue;-lTinyThread;-lEnet;-lJsonCPP;-lminizip;-lzlib;-ltiff</AdditionalDependencies>
+      <AdditionalDependencies>-lPlugin_RenderTest;-lRenderer_OpenGLES;-lEngine;-ltinyobjloader;-lnative_app_glue;-lTinyThread;-lEnet;-lJsonCPP;-lminizip;-lzlib;-ltiff</AdditionalDependencies>
       <SoName>lib$(TargetName)</SoName>
       <AdditionalOptions>-rdynamic %(AdditionalOptions)</AdditionalOptions>
       <ReportUndefinedSymbols>true</ReportUndefinedSymbols>

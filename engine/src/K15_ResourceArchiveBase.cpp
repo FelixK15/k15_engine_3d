@@ -23,6 +23,10 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
+	K15_IMPLEMENT_RTTI_BASE(Core,ResourceArchiveBase,Object);
+	/*********************************************************************************/
+
+	/*********************************************************************************/
 	ResourceArchiveBase::ResourceArchiveBase(const String& p_FileName)
 		: Object(p_FileName),
 		m_FileName(p_FileName),

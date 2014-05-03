@@ -84,8 +84,8 @@ namespace K15_Engine { namespace Core {
 		Node* m_Parent;
 		ChildNodes m_Children;
 		Matrix4 m_Transformation;
-    Matrix4 m_Orientation, m_OriginOrientation;
-/*    Vector4 m_Orientation, m_OriginOrientation;*/
+		Matrix4 m_Orientation, m_OriginOrientation;
+/*		Vector4 m_Orientation, m_OriginOrientation;*/
 		/*Quaternion m_Orientation, m_OriginOrientation;*/
 		Vector3 m_Position, m_OriginPosition;
 		Vector3 m_Scale, m_OriginScale;

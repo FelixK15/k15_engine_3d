@@ -32,6 +32,7 @@ namespace K15_Engine { namespace Rendering {
     "g_ProjMatrix",     //PI_PROJECTION_MATRIX
     "g_ModelMatrix",    //PI_MODEL_MATRIX
     "g_ViewProjMatrix", //PI_VIEW_PROJECTION_MATRIX
+	"g_Time",			//PI_TIME
 
     "g_Texture_1",      //PI_TEXTURE_1
     "g_Texture_2",      //PI_TEXTURE_2
@@ -55,7 +56,8 @@ namespace K15_Engine { namespace Rendering {
 		m_Identifier(0),
 		m_BufferIndex(-1),
 		m_AutoParameter(false),
-		m_Program(0)
+		m_Program(0),
+		m_Data(0)
 	{
 
 	}

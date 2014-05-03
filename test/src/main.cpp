@@ -14,13 +14,13 @@ void android_main(struct android_app* app)
 int main(int argc,char** argv)
 #endif //K15_OS_ANDROID
 {
-  BaseAllocatedObject::createCoreAllocators();
+	BaseAllocatedObject::createCoreAllocators();
 
 	Application* application = K15_NEW Application();
 #if defined K15_OS_ANDROID
 	app_dummy();
-	application->addApplicationModule(K15_NEW K15_Engine::Plugins::RenderTest::RenderTestApplicationModule());
 	application->initialize(app);
+	application->addApplicationModule(K15_NEW K15_Engine::Plugins::RenderTest::RenderTestApplicationModule());
 	application->setRenderer(K15_NEW K15_Engine::Rendering::GLES2::Renderer());
 #else
 	application->initialize(argc,argv);

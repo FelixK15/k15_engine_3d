@@ -23,3 +23,16 @@ Node* GameObject::getNode() const
   return m_Node;
 }
 /*********************************************************************************/
+template<class ComponentType>
+ComponentType* GameObject::getComponentByType() const
+{
+	for(ComponentList::const_iterator iter = m_Components.begin();iter != m_Components.end();++iter)
+	{
+		if((*iter)->getType().isInstanceOf(ComponentType::TYPE))
+		{
+			return (ComponentType*)(*iter);
+		}
+	}
+	return 0;
+}
+/*********************************************************************************/

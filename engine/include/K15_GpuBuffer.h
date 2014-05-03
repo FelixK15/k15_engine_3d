@@ -127,6 +127,7 @@ namespace K15_Engine { namespace Rendering {
 		GpuBuffer(const CreationOptions& p_Options = DefaultOptions);
 		~GpuBuffer();
 
+		INLINE void setType(Enum p_BufferType);
 		INLINE void setShadowCopyEnabled(bool p_Enabled);
 		INLINE void setLockOption(Enum p_LockOption);
 		INLINE void setUsageOption(Enum p_UsageOption);

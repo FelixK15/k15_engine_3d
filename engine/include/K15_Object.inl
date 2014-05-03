@@ -18,44 +18,29 @@
  */
 
 /*********************************************************************************/
-const TypeName& Object::getTypeName() const
+const TypeName& Object::getTypeName()
 {
   return TYPE.getName();
 }
 /*********************************************************************************/
-void Object::increaseReferences()
-{
-	++m_References;
-}
-/*********************************************************************************/
-void Object::decreaseReferences()
-{
-	--m_References;
-}
-/*********************************************************************************/
-bool Object::isInstanceOf(const Rtti& p_Type) const
+bool Object::isInstanceOf(const Rtti& p_Type)
 {
 	return TYPE.isInstanceOf(p_Type);
 }
 /*********************************************************************************/
-bool Object::isInstanceOf(const Object* p_Object) const
+bool Object::isInstanceOf(const Object* p_Object)
 {
 	return p_Object && TYPE.isInstanceOf(p_Object->getType());
 }
 /*********************************************************************************/
-bool Object::isDerivedFrom(const Rtti& p_Type) const
+bool Object::isDerivedFrom(const Rtti& p_Type)
 {
 	return TYPE.isDerivedFrom(p_Type);
 }
 /*********************************************************************************/
-bool Object::isDerivedFrom(const Object* p_Object) const
+bool Object::isDerivedFrom(const Object* p_Object)
 {
 	return p_Object && TYPE.isDerivedFrom(p_Object->getType());
-}
-/*********************************************************************************/
-uint32 Object::getReferenceCount() const
-{
-	return m_References;
 }
 /*********************************************************************************/
 const TypeName& Object::getName() const

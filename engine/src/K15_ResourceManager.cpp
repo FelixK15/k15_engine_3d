@@ -79,6 +79,7 @@ namespace K15_Engine { namespace Core {
 			if((*iter) == pResource)
 			{
 				m_Resources.erase(iter);
+				break;
 			}
 		}
 
@@ -101,7 +102,7 @@ namespace K15_Engine { namespace Core {
 	{
 		for(ResourceCache::iterator iter = m_ResourceDataCache.begin();iter != m_ResourceDataCache.end();++iter)
 		{
-			deleteResource(iter->second);
+			K15_DELETE iter->second;
 		}
 
 		m_ResourceDataCache.clear();
@@ -118,10 +119,7 @@ namespace K15_Engine { namespace Core {
 			}
 		}
 
-		for(ResourceList::iterator iter = toDelete.begin();iter != toDelete.end();++iter)
-		{
-			deleteResource((*iter));
-		}
+		clearResourceCache();
 
 		m_Resources.clear();
 	}
@@ -139,9 +137,11 @@ namespace K15_Engine { namespace Core {
 		return false;
 	}
 	/*********************************************************************************/
-	bool ResourceManager::cacheResource(const String& p_ResourceName,Enum p_Priority)
+	bool ResourceManager::cacheResource(const String& p_ResourceName, const TypeName& p_ResourceTypeName, Enum p_Priority)
 	{
 		K15_PROFILE(StringUtil::format("ResourceManager::cacheResource (%s)",p_ResourceName.c_str()));
+
+		_LogDebug("Trying to cache resource \"%s\".",p_ResourceName.c_str());
 
 		bool cachedResource = false;
 		RawData resourceData(0,0);
@@ -157,7 +157,7 @@ namespace K15_Engine { namespace Core {
 			if(!resourceArchive->open())
 			{
 				//log error and load debug resoure
-				_LogError("Could not open resource archive %s. (%s)",
+				_LogError("Could not open resource archive %s. Error:\"%s\".",
 					resourceArchive->getFileName().c_str(),resourceArchive->getError().c_str());
 			}
 			else
@@ -166,9 +166,9 @@ namespace K15_Engine { namespace Core {
 				{
 					if(!resourceArchive->getResource(p_ResourceName.c_str(),&resourceData))
 					{
-						_LogError("Could not load resource from resource archive \"%s\", "
-							"eventhough resource confirms to hold the resource. (%s)",
-							resourceArchive->getFileName().c_str(),resourceArchive->getError().c_str());
+						_LogError("Could not load resource \"%s\" from resource archive \"%s\", "
+							"eventhough resource confirms to hold the resource. Error:\"%s\".",
+							p_ResourceName.c_str(),resourceArchive->getFileName().c_str(),resourceArchive->getError().c_str());
 
 						//try next resource archive
 						continue;
@@ -195,14 +195,20 @@ namespace K15_Engine { namespace Core {
 						}
 					}
 
+					_LogDebug("Loading resource \"%s\" using resource loader \"%s\".",
+						p_ResourceName.c_str(),importer->getTypeName().c_str());
+
 					//load resource using importer
-					if((resource = importer->load(resourceData)) == 0)
+					if((resource = importer->load(resourceData,p_ResourceTypeName)) == 0)
 					{
 						_LogError("Could not load Resource \"%s\" using Resource Importer \"%s\". Error\"%s\".",
 							p_ResourceName.c_str(),importer->getName().c_str(),importer->getError().c_str());
 					}
 					else
 					{
+						_LogSuccess("Successfully loaded resource \"%s\" using resource loader \"%s\".",
+							p_ResourceName.c_str(),importer->getTypeName().c_str());
+
 						m_ResourceDataCache.insert(Pair(ResourceName,ResourceBase*)(p_ResourceName,resource));
 						cachedResource = true;
 						break;

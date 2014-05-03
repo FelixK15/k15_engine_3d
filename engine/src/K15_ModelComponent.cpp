@@ -28,6 +28,13 @@ namespace K15_Engine { namespace Core {
   /*********************************************************************************/
 
   /*********************************************************************************/
+  ModelComponent::ModelComponent()
+	  : GameObjectComponentBase(),
+	  m_Mesh(0)
+  {
+
+  }
+  /*********************************************************************************/
   ModelComponent::ModelComponent(const String& p_ModelResourceName)
     : GameObjectComponentBase()
   {

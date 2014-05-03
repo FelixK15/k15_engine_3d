@@ -23,19 +23,31 @@
 #include "K15_InputManager.h"
 #include "K15_Keyboard.h"
 #include "K15_RendererBase.h"
-#include "K15_Vertex.h"
-#include "K15_Vector4.h"
 
 #include "K15_VertexDeclaration.h"
 #include "K15_RenderTask.h"
 #include "K15_RenderSampleProcess.h"
 
 #include "K15_GameObject.h"
+#include "K15_Node.h"
 #include "K15_CameraComponent.h"
+#include "K15_ModelComponent.h"
+#include "K15_Mesh.h"
+#include "K15_SubMesh.h"
+#include "K15_Material.h"
+#include "K15_GpuProgramBatch.h"
+#include "K15_IOUtil.h"
+#include "K15_RenderOperation.h"
+#include "K15_IndexBuffer.h"
+#include "K15_VertexBuffer.h"
+#include "K15_Vertex.h"
+
+#include "K15_GameEvent.h"
 
 #include "K15_ResourceManager.h"
-#include "K15_ZipResourceArchive.h"
-#include "K15_TiffResourceImporter.h"
+#include "K15_ResourceArchiveZip.h"
+#include "K15_ResourceImporterTiff.h"
+#include "K15_ResourceImporterObj.h"
 
 namespace K15_Engine { namespace Plugins { namespace RenderTest {
 	/*********************************************************************************/
@@ -49,80 +61,197 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 
 	}
 	/*********************************************************************************/
-	void RenderTestApplicationModule::onRendererInitialized()
+	void RenderTestApplicationModule::_onRendererInitialized()
 	{
-		g_ResourceManager->addResourceFile(K15_NEW ZipResourceArchive(g_Application->getGameRootDir() + "resources.zip"));
-		g_ResourceManager->addResourceImporter(K15_NEW TiffResourceImporter());
+		g_ResourceManager->addResourceFile(K15_NEW ResourceArchiveZip(g_Application->getGameRootDir() + "resources.zip"));
+		g_ResourceManager->addResourceImporter(K15_NEW ResourceImporterTiff());
+		g_ResourceManager->addResourceImporter(K15_NEW ResourceImporterObj());
 		g_Application->getRenderTask()->setRenderProcess(K15_NEW K15_Engine::Plugins::RenderTest::RenderSampleProcess());
 
-		m_Camera = K15_NEW GameObject();
+		m_Monster = K15_NEW GameObject("Monster");
+		m_Monster->addComponent(K15_NEW ModelComponent("plane.obj"));
+
+		m_Camera = K15_NEW GameObject("Camera");
 		m_Camera->addComponent(K15_NEW CameraComponent());
 
+		m_Crate = K15_NEW GameObject("Crate");
+		m_Crate->addComponent(K15_NEW ModelComponent("cube.obj"));
+
+// 		Mesh* mesh = K15_NEW Mesh();
+// 		SubMesh* submesh = K15_NEW SubMesh(mesh);
+// 
+// 		float vbodata[] = {
+// 			-1.0f,-1.0f,-1.0f,1.0f,
+// 			0.0f,1.0f,-1.0f,1.0f,
+// 			1.0f,-1.0f,-1.0f,1.0f
+// 		};
+// 
+// 		uint16 indexdata[] = {
+// 			0,1,2
+// 		};
+// 
+// 		VertexBuffer::CreationOptions opts;
+// 		opts.BufferType = GpuBuffer::BT_VERTEX_BUFFER;
+// 		opts.InitialData.data = (byte*)vbodata;
+// 		opts.InitialData.size = sizeof(vbodata);
+// 
+// 		IndexBuffer::CreationOptions ipts;
+// 		ipts.BufferType = GpuBuffer::BT_INDEX_BUFFER;
+// 		ipts.IndexType = IndexBuffer::IT_UINT16;
+// 		ipts.InitialData.data = (byte*)indexdata;
+// 		ipts.InitialData.size = sizeof(indexdata);
+// 
+// 		VertexBuffer* vbo = K15_NEW VertexBuffer(opts);
+// 		IndexBuffer* ibo = K15_NEW IndexBuffer(ipts);
+// 
+// 		vbo->setVertexDeclaration(K15_NEW VertexDeclaration("PF4"));
+// 
+// 		submesh->setVertexBuffer(vbo);
+// 		submesh->setIndexBUffer(ibo);
+// 
+// 		ModelComponent* mc = K15_NEW ModelComponent();
+// 		mc->setMesh(mesh);
+// 
+// 		m_Crate->addComponent(mc);
+
+		m_Monster->getNode()->translate(0.0f,0.0f,-2.0f);
+
 		g_Application->getRenderer()->setActiveCameraGameObject(m_Camera);
-		//_dumpMemoryStatistics();
+		g_Application->getRenderer()->setClearColor(0.0f,0.0f,0.0f);
+
+		m_Material = K15_NEW Material();
+		MaterialPass* pass = m_Material->getPass(0,true);
+		
+		GpuProgram* vertexShader = K15_NEW GpuProgram("default_vertex",GpuProgram::PS_VERTEX);
+		GpuProgram* fragmetShader = K15_NEW GpuProgram("default_fragment",GpuProgram::PS_FRAGMENT);
+
+		String vertexShaderFile = g_Application->getGameRootDir() + "default.vert";
+		String fragmentShaderFile = g_Application->getGameRootDir() + "default.frag";
+
+		Texture* tex = g_ResourceManager->getResource<Texture>("Test_Image.tif");
+		TextureSampler* sampler = K15_NEW TextureSampler();
+
+		tex->setTextureSamplerSlot(Texture::TS_SLOT1);
+
+		sampler->setUWrappingMode(TextureSampler::TWM_REPEAT);
+		sampler->setMagFilterMode(TextureSampler::TFM_NEAREST);
+		sampler->setMinFilterMode(TextureSampler::TFM_LINEAR);
+
+		pass->setDiffuseMap(tex);
+		pass->setDiffuseSampler(sampler);
+
+		vertexShader->setProgramCode(IOUtil::readWholeFile(vertexShaderFile),false);
+		fragmetShader->setProgramCode(IOUtil::readWholeFile(fragmentShaderFile),false);
+
+		m_ProgramBatch = K15_NEW GpuProgramBatch();
+
+		m_ProgramBatch->addGpuProgram(vertexShader);
+		m_ProgramBatch->addGpuProgram(fragmetShader);
+
+		m_ProgramBatch->compile();
+
+		pass->setProgramBatch(m_ProgramBatch);
+
+		pass->setFillMode(RendererBase::FM_SOLID);
+
+		m_MonsterMaterial = K15_NEW Material();
+		MaterialPass* mPass = m_MonsterMaterial->getPass(0,true);
+
+		tex = g_ResourceManager->getResource<Texture>("monster.tif");
+		tex->setTextureSamplerSlot(Texture::TS_SLOT1);
+		
+		mPass->setDiffuseMap(tex);
+		mPass->setProgramBatch(m_ProgramBatch);
+
+		mPass->setFillMode(RendererBase::FM_SOLID);
+
+		AlphaState state;
+		state.setBlendOperation(AlphaState::BO_ADD);
+		state.setSourceBlendFunction(AlphaState::BF_SRC_ALPHA);
+		state.setDestinationBlendFunction(AlphaState::BF_ONE_MINUS_SRC_ALPHA);
+
+		mPass->setAlphaState(state);
+		
+		m_Crate->getComponentByType<ModelComponent>()->getMesh()->getSubMeshes()[0]->setMaterial(m_Material);
+		m_Monster->getComponentByType<ModelComponent>()->getMesh()->getSubMeshes()[0]->setMaterial(m_MonsterMaterial);
 	}
 	/*********************************************************************************/
 	void RenderTestApplicationModule::onPreTick()
 	{
-		if(g_InputManager->isActive(_ON(Color_1)))
+		if(m_RendererInitialized)
 		{
-			g_Application->getRenderer()->setClearColor(1.0f,0.0f,0.0f);
-		}
-		else if(g_InputManager->isActive(_ON(Color_2)))
-		{
-			g_Application->getRenderer()->setClearColor(0.0f,1.0f,0.0f);
-		}
-		else if(g_InputManager->isActive(_ON(Color_3)))
-		{
-			g_Application->getRenderer()->setClearColor(0.0f,0.0f,1.0f);
-		}
-		else if(g_InputManager->isActive(_ON(Color_4)))
-		{
-			g_Application->getRenderer()->setClearColor(1.0f,1.0f,0.0f);
-		}
-		else if(g_InputManager->isActive(_ON(Color_5)))
-		{
-			g_Application->getRenderer()->setClearColor(0.0f,1.0f,1.0f);
-		}
+			if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_UP))
+			{
+				m_Camera->getNode()->translate(0.0f,0.0f,-1.0f);
+			}
+			else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_DOWN))
+			{
+				m_Camera->getNode()->translate(0.0f,0.0f,1.0f);
+			}
 
+			if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_LEFT))
+			{
+				m_Camera->getNode()->translate(-1.0f,0.0f,0.0f);
+			}
+			else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_RIGHT))
+			{
+				m_Camera->getNode()->translate(1.0f,0.0f,0.0f);
+			}
+			else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_F1))
+			{
+				m_Camera->getComponentByType<CameraComponent>()->setProjectionType(CameraComponent::PT_ORTHOGRAPHIC);
+			}
+			else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_F2))
+			{
+				m_Camera->getComponentByType<CameraComponent>()->setProjectionType(CameraComponent::PT_PERSPECTIVE);
+			}
+			else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_F3))
+			{
+				_dumpMemoryStatistics();
+			}
 
-		if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_F1))
-		{
-			_dumpMemoryStatistics();
-		}
+			static const float gametime_threshold = 0.1f;
+			static float gametime_counter = 0.0f;
+			static float y = 0.0f;
+			static float angle = 0.02f;
 
-		if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_F2))
-		{
-			g_Application->getRenderWindow()->setIsFullscreen(true);
-		}
-		else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_F3))
-		{
-			g_Application->getRenderWindow()->setIsFullscreen(false);
-		}
+			angle += 0.02f;
+			y = glm::sin(angle);
 
-		if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_UP))
-		{
-			VertexBuffer* buff = (VertexBuffer*)g_Application->getRenderer()->getBoundBuffer(GpuBuffer::BT_VERTEX_BUFFER);
-			Vertex* vertex = buff->getVertex(1);
+			m_Crate->getNode()->setPosition(Vector3(0.0f,0.0f,-4.0f));
+			m_Crate->getNode()->rotate(Vector3(0.0f,1.0f,0.0f),0.02f);
+			m_Crate->getNode()->translate(0.0f,y,0.0f);
 
-			Vector4 pos = vertex->getPosition();
-			ColorRGBA color = vertex->getColor();
-			pos.y += 0.02f;
-			color.GreenComponent += 0.02f;
-			vertex->setPosition(pos);
-			vertex->setColor(color);
-		}
-		else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_DOWN))
-		{
-			VertexBuffer* buff = (VertexBuffer*)g_Application->getRenderer()->getBoundBuffer(GpuBuffer::BT_VERTEX_BUFFER);
-			Vertex* vertex = buff->getVertex(1);
+			gametime_counter += g_Application->getGameTime().getDeltaTime();
+			_LogDebug("%.3f gametime",gametime_counter);
+			if(gametime_counter >= gametime_threshold)
+			{
+				Vector2 uv;
+				gametime_counter = 0.0f;
+				VertexBuffer* buffer = m_Monster->getComponentByType<ModelComponent>()->getMesh()->getSubMeshes()[0]->getVertexBuffer();
+				for(uint32 i = 0;i < buffer->getVertexCount();++i)
+				{
+					Vertex* vertex = buffer->getVertex(i);
+					uv = vertex->getUV();
+					uv.x += 0.25;
+					vertex->setUV(uv);
+				}
+			}
 
-			Vector4 pos = vertex->getPosition();
-			ColorRGBA color = vertex->getColor();
-			pos.y -= 0.02f;
-			color.GreenComponent -= 0.02f;
-			vertex->setPosition(pos);
-			vertex->setColor(color);
+			static RenderOperation rop[2];
+
+			rop[0] = *m_Crate->getComponentByType<ModelComponent>()->getMesh()->getSubMeshes()[0]->createRenderOperation();
+			rop[0].material = m_Material;
+			rop[0].gameobject = m_Crate;
+			rop[0].topology = RenderOperation::T_TRIANGLE;
+
+			rop[1] = *m_Monster->getComponentByType<ModelComponent>()->getMesh()->getSubMeshes()[0]->createRenderOperation();
+			rop[1].material = m_MonsterMaterial;
+			rop[1].gameobject = m_Monster;
+			rop[1].topology = RenderOperation::T_TRIANGLE;
+
+			((RenderSampleProcess*)g_Application->getRenderTask()->getRenderProcess())->rop[0] = &rop[0];
+			((RenderSampleProcess*)g_Application->getRenderTask()->getRenderProcess())->rop[1] = &rop[1];
 		}
 	}
 	/*********************************************************************************/
@@ -157,4 +286,24 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 		}
 	}
 	/*********************************************************************************/
+	void RenderTestApplicationModule::onMousePressed(const MouseActionArguments& p_EventArgs)
+	{
+		if(p_EventArgs.xNDC < -0.2f)
+		{
+			m_Camera->getNode()->translate(-0.5f,0.0f,0.0f);
+		}else if(p_EventArgs.xNDC > 0.2f)
+		{
+			m_Camera->getNode()->translate(0.5f,0.0f,0.0f);
+		}
+
+		if(p_EventArgs.yNDC < -0.2f)
+		{
+			m_Camera->getNode()->translate(0.0f,0.0f,0.5f);
+		}else if(p_EventArgs.yNDC > 0.2f)
+		{
+			m_Camera->getNode()->translate(0.0f,0.0f,-0.5f);
+		}
+	}
+	/*********************************************************************************/
+
 }}}// end of K15_Engine::Plugins::RenderTest namespace

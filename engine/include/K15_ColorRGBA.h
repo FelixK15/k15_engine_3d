@@ -56,11 +56,7 @@ namespace K15_Engine { namespace Rendering {
 		static const ColorRGBA DarkBrown;
 		static const ColorRGBA LightBrown;
 		/*********************************************************************************/
-
-		ColorRGBA(float p_Red = 0.0f,float p_Green = 0.0f,float p_Blue = 0.0f,float p_Alpha = 1.0f);
-		ColorRGBA(const ColorRGBA& p_Color);
-
-		void clamp();
+		ColorRGBA(byte p_Red = 0,byte p_Green = 0,byte p_Blue = 0,byte p_Alpha = 255);
 
 		bool operator==(const ColorRGBA& p_Color) const;
 		bool operator!=(const ColorRGBA& p_Color) const;
@@ -68,36 +64,34 @@ namespace K15_Engine { namespace Rendering {
 		bool operator<(const ColorRGBA& p_Color) const;
 		bool operator>(const ColorRGBA& p_Color) const;
 
-		const ColorRGBA& operator=(const ColorRGBA& p_Color);
-
 		const ColorRGBA& operator+=(const ColorRGBA& p_Color);
-		const ColorRGBA& operator+=(float p_Value);
+		const ColorRGBA& operator+=(byte p_Value);
 
 		const ColorRGBA& operator-=(const ColorRGBA& p_Color);
-		const ColorRGBA& operator-=(float p_Value);
+		const ColorRGBA& operator-=(byte p_Value);
 
 		const ColorRGBA& operator*=(const ColorRGBA& p_Color);
-		const ColorRGBA& operator*=(float p_Value);
+		const ColorRGBA& operator*=(byte p_Value);
 
 		const ColorRGBA& operator/=(const ColorRGBA& p_Color);
-		const ColorRGBA& operator/=(float p_Value);
+		const ColorRGBA& operator/=(byte p_Value);
 
 		ColorRGBA operator+(const ColorRGBA& p_Color);
-		ColorRGBA operator+(float p_Value);
+		ColorRGBA operator+(byte p_Value);
 
 		ColorRGBA operator-(const ColorRGBA& p_Color);
-		ColorRGBA operator-(float p_Value);
+		ColorRGBA operator-(byte p_Value);
 
 		ColorRGBA operator*(const ColorRGBA& p_Color);
-		ColorRGBA operator*(float p_Value);
+		ColorRGBA operator*(byte p_Value);
 
 		ColorRGBA operator/(const ColorRGBA& p_Color);
-		ColorRGBA operator/(float p_Value);
+		ColorRGBA operator/(byte p_Value);
 
-		float RedComponent;
-		float GreenComponent;
-		float BlueComponent;
-		float AlphaComponent;
+		byte R;
+		byte G;
+		byte B;
+		byte A;
 	};// end of Color struct
 }}//end of K15_Engine::Rendering namespace
 

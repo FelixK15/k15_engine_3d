@@ -32,6 +32,8 @@
 namespace K15_Engine { namespace Core { 
 	class K15_CORE_API ResourceArchiveBase : public Object
 	{
+		K15_DECLARE_RTTI;
+
 	public:
 		bool open();
 		bool close();
@@ -42,6 +44,7 @@ namespace K15_Engine { namespace Core {
 		INLINE bool isOpen() const;
 		INLINE const String& getFileName() const;
 		INLINE const String& getError() const;
+
 	protected:
 		ResourceArchiveBase(const String& p_FileName);
 		virtual ~ResourceArchiveBase();
@@ -50,6 +53,7 @@ namespace K15_Engine { namespace Core {
 		virtual bool _close() = 0;
 
 		INLINE void setError(const String& p_Error);
+
 	private:
 		String m_Error;
 		String m_FileName;

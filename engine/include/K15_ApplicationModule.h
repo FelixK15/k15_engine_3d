@@ -31,13 +31,14 @@
 
 namespace K15_Engine { namespace Core { 
 
-	class ApplicationModule : public ModuleAllocatedObject
+	class K15_CORE_API ApplicationModule : public ModuleAllocatedObject
 	{
 	public:
+		void onRendererInitialized();
+
 		virtual void evaluateSettings(const StringSet& p_ApplicationSettings){}
 
 		virtual void onInitialize(){}
-		virtual void onRendererInitialized(){}
 		virtual void onShutdown(){}
 
 		virtual void onPreTick(){}
@@ -47,6 +48,14 @@ namespace K15_Engine { namespace Core {
 		virtual void onPostTick(){}
 		virtual void onPostRun(){}
 		virtual void onPostRender(/*const RenderContext* p_RenderContext*/){}
+
+	protected:
+		ApplicationModule();
+		virtual ~ApplicationModule();
+
+		virtual void _onRendererInitialized() {};
+
+		bool m_RendererInitialized;
 	}; //end of ApplicationModule class
 }} //end of K15_Engine::Core namespace
 

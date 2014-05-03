@@ -273,7 +273,7 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 		setClearColor(0.8f,0.2224f,0.005f);
 		glEnable(GL_STENCIL_TEST); //enable stencil testing
 		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_BLEND);
+		glEnable(GL_BLEND);
 		return m_LastError.empty();
 	}
 	/*********************************************************************************/
@@ -395,10 +395,10 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 			glBlendFunc(GLBlendFunctionConverter[p_AlphaState.getSourceBlendFunction()],
 			GLBlendFunctionConverter[p_AlphaState.getDestinationBlendFunction()]);
 
-			glBlendColor(p_AlphaState.getConstantColor().RedComponent,
-			p_AlphaState.getConstantColor().GreenComponent,
-			p_AlphaState.getConstantColor().BlueComponent,
-			p_AlphaState.getConstantColor().AlphaComponent);
+			glBlendColor((float)p_AlphaState.getConstantColor().R / 255.f,
+						 (float)p_AlphaState.getConstantColor().G / 255.f,
+						 (float)p_AlphaState.getConstantColor().B / 255.f,
+						 (float)p_AlphaState.getConstantColor().A / 255.f);
 
 			glBlendEquation(GLBlendOperationConverter[p_AlphaState.getBlendOperation()]);
 		}
@@ -482,7 +482,10 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 	/*********************************************************************************/
 	void Renderer::_setClearColor(const ColorRGBA& p_ClearColor)
 	{
-		glClearColor(p_ClearColor.RedComponent,p_ClearColor.GreenComponent,p_ClearColor.BlueComponent,1.0f);
+		glClearColor((float)p_ClearColor.R / 255.f,
+					 (float)p_ClearColor.G / 255.f,
+					 (float)p_ClearColor.B / 255.f,
+					 1.0f);
 	}
 	/*********************************************************************************/
 	void Renderer::_bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType)
@@ -612,71 +615,77 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 	void Renderer::_updateGpuProgramParameter(const GpuProgramParameter& p_Parameter)
 	{
 		const GpuProgramImpl* glProgram =  static_cast<const GpuProgramImpl*>(p_Parameter.getGpuProgram()->getImpl());
-    GLuint program = glProgram->getProgramGL();
-    if(p_Parameter.getType() == GpuProgramParameter::VT_UNKNOW)
-    {
-      _LogError("GpuProgramParameter \"%s\" from GpuProgram \"%s\" is unknown.",
-        p_Parameter.getGpuProgram()->getName().c_str(),
-        p_Parameter.getName().c_str());
-    }
-    else if(p_Parameter.getType() == GpuProgramParameter::VT_INT  ||
-            p_Parameter.getType() == GpuProgramParameter::VT_BOOL ||
-            p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_1D ||
-            p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_2D ||
-            p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_3D)
-    {
-      GLint value = p_Parameter.getType() != GpuProgramParameter::VT_BOOL ? 
-        *(GLint*)p_Parameter.getData() :
-        (*(bool*)p_Parameter.getData()) ? GL_TRUE : GL_FALSE;
+		GLuint program = glProgram->getProgramGL();
+		if(p_Parameter.getType() == GpuProgramParameter::VT_UNKNOW)
+		{
+		  _LogError("GpuProgramParameter \"%s\" from GpuProgram \"%s\" is unknown.",
+			p_Parameter.getName().c_str(),
+			p_Parameter.getGpuProgram()->getName().c_str());
+		}
+		else if(!p_Parameter.getData())
+		{
+			_LogError("GpuProgramParameter \"%s\" from GpuProgram \"%s\" has no data.",
+				p_Parameter.getName().c_str(),
+				p_Parameter.getGpuProgram()->getName().c_str());
+		}
+		else if(p_Parameter.getType() == GpuProgramParameter::VT_INT  ||
+				p_Parameter.getType() == GpuProgramParameter::VT_BOOL ||
+				p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_1D ||
+				p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_2D ||
+				p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_3D)
+		{
+		  GLint value = p_Parameter.getType() != GpuProgramParameter::VT_BOOL ? 
+			*(GLint*)p_Parameter.getData() :
+			(*(bool*)p_Parameter.getData()) ? GL_TRUE : GL_FALSE;
 
-      glProgramUniform1i(program, p_Parameter.getRegisterIndex(), value);
+		  glProgramUniform1i(program, p_Parameter.getRegisterIndex(), value);
 
-      if(p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_1D ||
-        p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_2D ||
-        p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_3D)
-      {
-        TextureImpl* glTex = static_cast<TextureImpl*>(m_BoundTextures[value]->getImpl());
-        TextureSamplerImpl* glSampler = static_cast<TextureSamplerImpl*>(m_BoundSamplers[glTex->getTexture()->getTextureSamplerSlot()]->getImpl());
+		  if(p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_1D ||
+			p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_2D ||
+			p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_3D)
+		  {
+			TextureImpl* glTex = static_cast<TextureImpl*>(m_BoundTextures[value]->getImpl());
+			TextureSamplerImpl* glSampler = static_cast<TextureSamplerImpl*>(m_BoundSamplers[glTex->getTexture()->getTextureSamplerSlot()]->getImpl());
 
-        glBindSampler(glTex->getTextureHandle(),glSampler->getHandle());
-      }
-    }
-    else if(p_Parameter.getType() == GpuProgramParameter::VT_FLOAT)
-    {
-      GLfloat value = *(GLfloat*)p_Parameter.getData();
+			glBindSampler(value,glSampler->getHandle());
+		  }
+		}
+		else if(p_Parameter.getType() == GpuProgramParameter::VT_FLOAT)
+		{
+		  GLfloat value = *(GLfloat*)p_Parameter.getData();
 
-      glProgramUniform1f(program, p_Parameter.getRegisterIndex(),value);
-    }
-    else if(p_Parameter.getType() == GpuProgramParameter::VT_VECTOR2)
-    {
-      Vector2 value = *(Vector2*)p_Parameter.getData();
+		  glProgramUniform1f(program, p_Parameter.getRegisterIndex(),value);
+		}
+		else if(p_Parameter.getType() == GpuProgramParameter::VT_VECTOR2)
+		{
+		  Vector2 value = *(Vector2*)p_Parameter.getData();
       
-      glProgramUniform2f(program, p_Parameter.getRegisterIndex(),value.x,value.y);
-    }
-    else if(p_Parameter.getType() == GpuProgramParameter::VT_VECTOR3)
-    {
-      Vector3 value = *(Vector3*)p_Parameter.getData();
+		  glProgramUniform2f(program, p_Parameter.getRegisterIndex(),value.x,value.y);
+		}
+		else if(p_Parameter.getType() == GpuProgramParameter::VT_VECTOR3)
+		{
+		  Vector3 value = *(Vector3*)p_Parameter.getData();
 
-      glProgramUniform3f(program, p_Parameter.getRegisterIndex(),value.x,value.y,value.z);
-    }
-    else if(p_Parameter.getType() == GpuProgramParameter::VT_VECTOR4)
-    {
-      Vector4 value = *(Vector4*)p_Parameter.getData();
+		  glProgramUniform3f(program, p_Parameter.getRegisterIndex(),value.x,value.y,value.z);
+		}
+		else if(p_Parameter.getType() == GpuProgramParameter::VT_VECTOR4)
+		{
+		  Vector4 value = *(Vector4*)p_Parameter.getData();
 
-      glProgramUniform4f(program, p_Parameter.getRegisterIndex(),value.x,value.y,value.z,value.w);
-    }
-    else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX2)
-    {
-      glProgramUniformMatrix2fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
-    }
-    else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX3)
-    {
-      glProgramUniformMatrix3fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
-    }
-    else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX4)
-    {
-      glProgramUniformMatrix4fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
-    }
+		  glProgramUniform4f(program, p_Parameter.getRegisterIndex(),value.x,value.y,value.z,value.w);
+		}
+		else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX2)
+		{
+		  glProgramUniformMatrix2fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
+		}
+		else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX3)
+		{
+		  glProgramUniformMatrix3fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
+		}
+		else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX4)
+		{
+		  glProgramUniformMatrix4fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
+		}
 	}
 	/*********************************************************************************/
 }}}// end of K15_Engine::Rendering::WGL

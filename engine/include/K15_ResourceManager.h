@@ -55,7 +55,7 @@ namespace K15_Engine { namespace Core {
 
 		template<class ResourceType> ResourceType* getResource(const String& p_ResourceName,Enum p_Priority = ResourceBase::RP_NORMAL);
 
-		bool cacheResource(const String& p_ResourceName,Enum p_Priority);
+		bool cacheResource(const String& p_ResourceName, const TypeName& p_ResourceTypeName, Enum p_Priority);
 		bool isResourceInCache(const String& p_ResourceName);
 		
 		INLINE void addResourceFile(ResourceArchiveBase *p_ResourceFile);

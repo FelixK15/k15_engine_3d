@@ -19,7 +19,7 @@
 
 #include "K15_PrecompiledHeader.h"
 
-#include "K15_TiffResourceImporter.h"
+#include "K15_ResourceImporterTiff.h"
 #include "K15_RawData.h"
 #include "K15_Texture.h"
 #include "K15_RendererBase.h"
@@ -30,25 +30,29 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	TiffResourceImporter::TiffResourceImporter()
+	K15_IMPLEMENT_RTTI_BASE(Core,ResourceImporterTiff,ResourceImporterBase);
+	/*********************************************************************************/
+
+	/*********************************************************************************/
+	ResourceImporterTiff::ResourceImporterTiff()
 		: ResourceImporterBase("Tiff Image")
 	{
 
 	}
 	/*********************************************************************************/
-	TiffResourceImporter::~TiffResourceImporter()
+	ResourceImporterTiff::~ResourceImporterTiff()
 	{
 
 	}
 	/*********************************************************************************/
-	void TiffResourceImporter::getExtensionList(ExtensionSet& p_ExtensionSet)
+	void ResourceImporterTiff::getExtensionList(ExtensionSet& p_ExtensionSet)
 	{
 		p_ExtensionSet.insert(".tiff");
 		p_ExtensionSet.insert(".TIFF");
 		p_ExtensionSet.insert(".tif");
 	}
 	/*********************************************************************************/
-	void TiffResourceImporter::getMagicNumber(MagicNumberSet& p_MagicNumber)
+	void ResourceImporterTiff::getMagicNumber(MagicNumberSet& p_MagicNumber)
 	{
 		static byte MagicNumber_LittleEndian[] = {0x49,0x49,0x2A,0x00};
 		static byte MagicNumber_BigEndian[] = {0x4D,0x4D,0x00,0x2A};
@@ -57,7 +61,7 @@ namespace K15_Engine { namespace Core {
 		p_MagicNumber.push_back(RawData(MagicNumber_BigEndian,4));
 	}
 	/*********************************************************************************/
-	ResourceBase* TiffResourceImporter::_load(const RawData& p_ResourceData)
+	ResourceBase* ResourceImporterTiff::_load(const RawData& p_ResourceData, const TypeName& p_ResourceTypeName)
 	{
 		StackAllocator* frameAllocator = g_Application->getFrameAllocator();
 

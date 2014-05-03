@@ -28,22 +28,19 @@ namespace K15_Engine { namespace Core {
 
 	/*********************************************************************************/
 	Object::Object()
-		: m_References(0),
-		  m_Name(TypeName::BLANK)
+		: m_Name(TypeName::BLANK)
 	{
 
 	}
 	/*********************************************************************************/
 	Object::Object(const String& p_Name)
-		: m_References(0),
-		  m_Name(p_Name)
+		: m_Name(p_Name)
 	{
 
 	}
 	/*********************************************************************************/
 	Object::Object(const ObjectName& p_Name)
-		: m_References(0),
-		  m_Name(p_Name)
+		: m_Name(p_Name)
 	{
 
 	}
