@@ -1,0 +1,11 @@
+{
+  "Name" : "Start",
+  "Passes" : [
+  	{
+	    "DiffuseMap":"start.tif",
+    	"VertexShader":"default.vert",
+    	"FragmentShader":"default.frag",
+    	"CullingMode":"CM_CCW"
+  	}
+  ]
+}

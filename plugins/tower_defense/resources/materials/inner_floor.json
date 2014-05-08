@@ -1,0 +1,10 @@
+{
+  "Name" : "InnerFloor",
+  "Passes" : [
+  	{
+	    "DiffuseMap":"inner_floor.tif",
+    	"VertexShader":"default.vert",
+    	"FragmentShader":"default.frag"
+  	}
+  ]
+}

@@ -1,0 +1,4 @@
+EXPORTS
+pluginLoad
+pluginUnload
+getDescription

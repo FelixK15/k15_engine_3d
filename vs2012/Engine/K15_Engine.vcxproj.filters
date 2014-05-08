@@ -414,6 +414,8 @@
     <ClInclude Include="..\..\engine\include\K15_ResourceArchiveZip.h">
       <Filter>ResourceSystem\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_GameState.h" />
+    <ClInclude Include="..\..\engine\include\K15_ResourceImporterMaterial.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -698,6 +700,8 @@
     <ClCompile Include="..\..\engine\src\K15_ApplicationModule.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_GameState.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_ResourceImporterMaterial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
