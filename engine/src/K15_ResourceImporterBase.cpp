@@ -108,11 +108,11 @@ namespace K15_Engine { namespace Core {
 		return match;
 	}
 	/*********************************************************************************/
-	ResourceBase* ResourceImporterBase::load(const RawData& p_ResourceData, const TypeName& p_ResourceTypeName)
+	ResourceBase* ResourceImporterBase::load(const RawData& p_ResourceData, const Rtti& p_ResourceType)
 	{
 		ResourceBase* resource = 0;
 
-		if((resource = _load(p_ResourceData,p_ResourceTypeName)) != 0)
+		if((resource = _load(p_ResourceData,p_ResourceType)) != 0)
 		{
 			return resource;
 		}

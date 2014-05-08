@@ -34,6 +34,8 @@
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API Image : public ResourceBase, public ResourceAllocatedObject
 	{
+		K15_DECLARE_RTTI;
+
 	public:
 		Image();
 		Image(const Image& p_Rs);
@@ -42,8 +44,8 @@ namespace K15_Engine { namespace Core {
 		~Image();
 
 		INLINE ColorRGBA* getPixels() const;
-		INLINE ColorRGBA getPixel(uint32 p_PosX,uint32 p_PosY);
-		INLINE void setPixel(uint32 p_PosX, uint32 p_PosY, const ColorRGBA& p_Color);
+		ColorRGBA getPixel(uint32 p_PosX,uint32 p_PosY);
+		void setPixel(uint32 p_PosX, uint32 p_PosY, const ColorRGBA& p_Color);
 
 		INLINE uint32 getWidth() const;
 		INLINE uint32 getHeight() const;

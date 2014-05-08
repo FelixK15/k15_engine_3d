@@ -53,9 +53,9 @@ namespace K15_Engine { namespace Core {
 
 		void update(const GameTime &gtTime);
 
-		template<class ResourceType> ResourceType* getResource(const String& p_ResourceName,Enum p_Priority = ResourceBase::RP_NORMAL);
+		template<class ResourceType> ResourceType* getResource(const String& p_ResourceName, Enum p_Priority = ResourceBase::RP_NORMAL);
 
-		bool cacheResource(const String& p_ResourceName, const TypeName& p_ResourceTypeName, Enum p_Priority);
+		bool cacheResource(const String& p_ResourceName, const Rtti& p_ResourceType, Enum p_Priority);
 		bool isResourceInCache(const String& p_ResourceName);
 		
 		INLINE void addResourceFile(ResourceArchiveBase *p_ResourceFile);

@@ -50,6 +50,7 @@ namespace K15_Engine { namespace Rendering {
 		void calculateAABB();
 
 		INLINE void addSubMesh(SubMesh* p_SubMesh);
+		INLINE SubMesh* getSubMesh(uint32 p_Index) const;
   private:
 		SubMeshArray m_SubMeshes;
 		AABB m_AxisAlignedBoundingBox;

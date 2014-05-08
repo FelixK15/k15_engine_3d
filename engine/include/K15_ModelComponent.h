@@ -40,6 +40,7 @@ namespace K15_Engine { namespace Core {
 	public:
 		ModelComponent();
 		ModelComponent(const String& p_ModelResourceName);
+		ModelComponent(Mesh* p_Mesh);
 		~ModelComponent();
 
 		INLINE Mesh* getMesh() const;

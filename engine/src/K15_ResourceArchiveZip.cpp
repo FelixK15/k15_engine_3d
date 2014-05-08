@@ -34,7 +34,7 @@ namespace K15_Engine { namespace Core {
 		: ResourceArchiveBase(p_ZipFile),
 		m_ZipFile(0)
 	{
-
+		
 	}
 	/*********************************************************************************/
 	ResourceArchiveZip::~ResourceArchiveZip()

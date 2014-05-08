@@ -50,6 +50,8 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	class K15_CORE_API Texture : public ResourceBase, public RenderingAllocatedObject
 	{
+		K15_DECLARE_RTTI;
+
 	public:
 		/*********************************************************************************/
 		enum eTextureType

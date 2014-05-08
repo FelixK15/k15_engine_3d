@@ -42,11 +42,10 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	bool ResourceArchiveBase::open()
 	{
-		K15_ASSERT(!isOpen(),
-			StringUtil::format("ResourceFile<%s> \"%s\" is already open.",
-			getName().c_str(),getFileName().c_str()));
-
-		m_isOpen = _open();
+		if(!isOpen())
+		{
+			m_isOpen = _open();
+		}
 
 		K15_ASSERT(isOpen(),StringUtil::format("Could not open ResourceFile<%s> \"%s\". Error:\"%s\".",
 			getName().c_str(),getFileName().c_str(),getError().c_str()));

@@ -370,7 +370,7 @@ namespace K15_Engine { namespace Rendering {
 		return true;
 	}
 	/*********************************************************************************/
-	bool RendererBase::setClearColor(float p_Red, float p_Green, float p_Blue)
+	bool RendererBase::setClearColor(byte p_Red, byte p_Green, byte p_Blue)
 	{
 		return setClearColor(ColorRGBA(p_Red,p_Green,p_Blue));
 	}
@@ -506,10 +506,17 @@ namespace K15_Engine { namespace Rendering {
 				setLightningEnabled(pass->isLightningEnabled());
 
 				//bind textures
-				if( !bindTexture(pass->getDiffuseMap(),Texture::TT_2D,Texture::TS_SLOT1) ||
-					!bindTextureSampler(pass->getDiffuseSampler(),Texture::TS_SLOT1))
+				if(!bindTexture(pass->getDiffuseMap(),Texture::TT_2D,Texture::TS_SLOT1))
 				{
 					continue;
+				}
+
+				if(pass->getDiffuseSampler())
+				{
+					if(!bindTextureSampler(pass->getDiffuseSampler(),Texture::TS_SLOT1))
+					{
+						continue;
+					}
 				}
 
 				updateGpuProgramParameter(p_Rop);

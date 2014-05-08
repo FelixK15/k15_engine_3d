@@ -92,7 +92,7 @@ namespace K15_Engine { namespace Core {
 			p_Stream.getline(bufferline,256);
 			line = StringUtil::removeWhitespaces(bufferline);
 
-			if(line.find_first_of("//") != String::npos || line.find_first_of(";") != String::npos) //comment?
+			if(line[0] == '#' || line[0] == ';' || (line[0] == '//' && line[1] == '//')) //comment?
 			{
 				continue;
 			}

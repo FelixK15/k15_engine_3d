@@ -25,6 +25,8 @@
 #include "K15_RendererBase.h"
 #include "K15_ColorRGBA.h"
 
+#include "K15_Image.h"
+
 #include "tiffio.h"
 #include "tiffio.hxx"
 
@@ -61,7 +63,7 @@ namespace K15_Engine { namespace Core {
 		p_MagicNumber.push_back(RawData(MagicNumber_BigEndian,4));
 	}
 	/*********************************************************************************/
-	ResourceBase* ResourceImporterTiff::_load(const RawData& p_ResourceData, const TypeName& p_ResourceTypeName)
+	ResourceBase* ResourceImporterTiff::_load(const RawData& p_ResourceData, const Rtti& p_ResourceType)
 	{
 		StackAllocator* frameAllocator = g_Application->getFrameAllocator();
 
@@ -82,7 +84,8 @@ namespace K15_Engine { namespace Core {
 		TIFFGetField(tiffImg,TIFFTAG_IMAGELENGTH,&height);
 
 		uint32 pixelCount = width*height;
-		uint32* pixelBuffer = (uint32*)K15_MALLOC(pixelCount * sizeof(uint32)); //pixels are packed into 32 bit. 8bit per component
+		uint32 pixelBufferSize = pixelCount * sizeof(uint32);
+		uint32* pixelBuffer = (uint32*)K15_NEW_SIZE(Allocators[AC_GENERAL],pixelBufferSize) uint32; //pixels are packed into 32 bit. 8bit per component
 
 		if(!TIFFReadRGBAImage(tiffImg,width,height,pixelBuffer,0))
 		{
@@ -91,18 +94,37 @@ namespace K15_Engine { namespace Core {
 			return 0;
 		}
 		
+		ResourceBase* resource = 0;
+
+		if(p_ResourceType.isInstanceOf(Texture::TYPE))
+		{
+			resource = _loadTexture(width,height,pixelBuffer);
+		}
+		else if(p_ResourceType.isInstanceOf(Image::TYPE))
+		{
+			resource = _loadImage(width,height,pixelBuffer);
+		}
+
+		K15_DELETE_SIZE(Allocators[AC_GENERAL],pixelBuffer,pixelBufferSize);
+
+		return resource;
+	}
+	/*********************************************************************************/
+	Texture* ResourceImporterTiff::_loadTexture(uint32 p_Width, uint32 p_Height, uint32* p_PixelBuffer)
+	{
 		Texture::CreationOptions opts;
 		opts.createMipMaps = true;
-		opts.height = height;
-		opts.width = width;
+		opts.height = p_Height;
+		opts.width = p_Width;
 		opts.pixelFormat = RendererBase::PF_RGBA_8_U;
-		opts.pixels.data = (byte*)pixelBuffer;
-		opts.pixels.size = pixelCount * sizeof(uint32);
-		Texture* tex = K15_NEW Texture(opts);
-
-		K15_FREE(pixelBuffer);
-
-		return tex;
+		opts.pixels.data = (byte*)p_PixelBuffer;
+		opts.pixels.size = (p_Width * p_Height) * sizeof(uint32);
+		return K15_NEW Texture(opts);
+	}
+	/*********************************************************************************/
+	Image* ResourceImporterTiff::_loadImage(uint32 p_Width, uint32 p_Height, uint32* p_PixelBuffer)
+	{
+		return K15_NEW Image(p_Width,p_Height,(ColorRGBA*)p_PixelBuffer);
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

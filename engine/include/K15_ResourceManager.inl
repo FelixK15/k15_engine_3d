@@ -21,25 +21,24 @@
 template<class ResourceType>
 ResourceType* ResourceManager::getResource(const String& p_ResourceName,Enum p_Priority)
 {
-	K15_PROFILE(StringUtil::format("ResourceManager::getResource (%s)",p_ResourceName.c_str()));
+	//K15_PROFILE(StringUtil::format("ResourceManager::getResource (%s)",p_ResourceName.c_str()));
 
 	ResourceCache::iterator iter = m_ResourceDataCache.find(p_ResourceName);
 	ResourceType* resource = 0;
 	if(iter == m_ResourceDataCache.end())
 	{
-		if(cacheResource(p_ResourceName, ResourceType::TYPE.getName(), p_Priority))
+		if(cacheResource(p_ResourceName, ResourceType::TYPE, p_Priority))
 		{
 			iter = m_ResourceDataCache.find(p_ResourceName);
 
 			m_Resources.push_back(iter->second);
-			resource = (ResourceType*)iter->second;
 		}
 		else
 		{
 			_LogError("Could not load resource \"%s\".",p_ResourceName.c_str());
 		}
 	}
-
+	resource = (ResourceType*)iter->second;
 	return resource;
 }
 /*********************************************************************************/

@@ -24,6 +24,10 @@
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
+	K15_IMPLEMENT_RTTI_BASE(Rendering,Texture,ResourceBase);
+	/*********************************************************************************/
+
+	/*********************************************************************************/
 	Texture::CreationOptions::CreationOptions()
 		: width(0),
 		height(0),
@@ -74,7 +78,7 @@ namespace K15_Engine { namespace Rendering {
 		m_HasShadowCopy(false),
 		m_ShadowCopy(0),
 		m_Slot(TS_NO_SLOT),
-    m_SamplerSlot(TS_NO_SLOT)
+		m_SamplerSlot(TS_SLOT1)
 	{
  		m_Impl = g_Application->getRenderer()->createTextureImpl();
 		m_Impl->setTexture(this);
@@ -93,7 +97,7 @@ namespace K15_Engine { namespace Rendering {
 		m_HasShadowCopy(false),
 		m_ShadowCopy(0),
 		m_Slot(TS_NO_SLOT),
-    m_SamplerSlot(TS_NO_SLOT)
+		m_SamplerSlot(TS_SLOT1)
 	{
 		m_Impl = g_Application->getRenderer()->createTextureImpl();
 		m_Impl->setTexture(this);

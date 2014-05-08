@@ -137,12 +137,13 @@ namespace K15_Engine { namespace Core {
 		return false;
 	}
 	/*********************************************************************************/
-	bool ResourceManager::cacheResource(const String& p_ResourceName, const TypeName& p_ResourceTypeName, Enum p_Priority)
+	bool ResourceManager::cacheResource(const String& p_ResourceName, const Rtti& p_ResourceTypeName, Enum p_Priority)
 	{
-		K15_PROFILE(StringUtil::format("ResourceManager::cacheResource (%s)",p_ResourceName.c_str()));
+		//K15_PROFILE(StringUtil::format("ResourceManager::cacheResource (%s)",p_ResourceName.c_str()));
 
 		_LogDebug("Trying to cache resource \"%s\".",p_ResourceName.c_str());
 
+		bool alreadyOpen = false;
 		bool cachedResource = false;
 		RawData resourceData(0,0);
 		ResourceArchiveBase* resourceArchive = 0;
@@ -153,8 +154,9 @@ namespace K15_Engine { namespace Core {
 		{
 			resourceArchive = (*iter);
 			//try to open the resource file
+			alreadyOpen = resourceArchive->isOpen();
 
-			if(!resourceArchive->open())
+			if(!resourceArchive->open() && !alreadyOpen)
 			{
 				//log error and load debug resoure
 				_LogError("Could not open resource archive %s. Error:\"%s\".",
@@ -216,8 +218,12 @@ namespace K15_Engine { namespace Core {
 				}
 			}
 
-			//close the file after we're finished
-			resourceArchive->close();
+			if(!alreadyOpen)
+			{
+				//close the file after we're finished
+				resourceArchive->close();
+			}
+
 
 			//if the resource has been cached, exit loop.
 			if(cachedResource)

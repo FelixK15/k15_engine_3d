@@ -24,17 +24,17 @@
 #include "json\reader.h"
 
 namespace K15_Engine { namespace Serialization {
-  /*********************************************************************************/
-  void traverseDocument_R(Json::Value& p_Root, JsonSerializer::KeyValueMap& p_KeyValueMap)
-  {
-    // we could do this as a member function but then we'd have to include the json file into the header of 
-    // the json serializer...And I don't want that.
+	/*********************************************************************************/
+	void traverseDocument_R(Json::Value& p_Root, JsonSerializer::KeyValueMap& p_KeyValueMap)
+	{
+		// we could do this as a member function but then we'd have to include the json file into the header of 
+		// the json serializer...And I don't want that.
 
-    for(Json::Value::iterator iter = p_Root.begin();iter != p_Root.end();++iter)
-    {
-      //p_KeyValueMap[]
-    }
-  }
+		for(Json::Value::iterator iter = p_Root.begin();iter != p_Root.end();++iter)
+		{
+			//p_KeyValueMap[]
+		}
+	}
 	/*********************************************************************************/
 	JsonSerializer::JsonSerializer(const String& p_FilePath)
     : m_FilePath(p_FilePath),
@@ -47,72 +47,72 @@ namespace K15_Engine { namespace Serialization {
 	{
 
 	}
-  /*********************************************************************************/
-  void JsonSerializer::writeInt8(const String& p_Key, int8 p_Value)
-  {
-    m_KeyValueMap[p_Key] = StringUtil::toString<int8>(p_Value);
-  }
-  /*********************************************************************************/
-  void JsonSerializer::writeUInt8(const String& p_Key, uint8 p_Value)
-  {
-    m_KeyValueMap[p_Key] = StringUtil::toString<uint8>(p_Value);
-  }
-  /*********************************************************************************/
-  void JsonSerializer::writeInt16(const String& p_Key, int16 p_Value)
-  {
-    m_KeyValueMap[p_Key] = StringUtil::toString<int16>(p_Value);
-  }
-  /*********************************************************************************/
-  void JsonSerializer::writeUInt16(const String& p_Key, uint16 p_Value)
-  {
-    m_KeyValueMap[p_Key] = StringUtil::toString<uint16>(p_Value);
-  }
-  /*********************************************************************************/
-  void JsonSerializer::writeInt32(const String& p_Key, int32 p_Value)
-  {
-    m_KeyValueMap[p_Key] = StringUtil::toString<int32>(p_Value);
-  }
-  /*********************************************************************************/
-  void JsonSerializer::writeUInt32(const String& p_Key, uint32 p_Value)
-  {
-    m_KeyValueMap[p_Key] = StringUtil::toString<uint32>(p_Value);
-  }
-  /*********************************************************************************/
-  void JsonSerializer::writeInt64(const String& p_Key, int64 p_Value)
-  {
-    m_KeyValueMap[p_Key] = StringUtil::toString<int64>(p_Value);
-  }
-  /*********************************************************************************/
-  void JsonSerializer::writeUInt64(const String& p_Key, uint64 p_Value)
-  {
-    m_KeyValueMap[p_Key] = StringUtil::toString<uint64>(p_Value);
-  }
-  /*********************************************************************************/
-  void JsonSerializer::writeFloat(const String& p_Key, float p_Value)
-  {
-    m_KeyValueMap[p_Key] = StringUtil::toString(p_Value,2);
-  }
-  /*********************************************************************************/
-  void JsonSerializer::writeString(const String& p_Key, const String& p_Value)
-  {
-    m_KeyValueMap[p_Key] = p_Value;
-  }
-  /*********************************************************************************/
-  void JsonSerializer::_parse()
-  {
-    Json::Reader reader;
-    Json::Value root;
+	/*********************************************************************************/
+	void JsonSerializer::writeInt8(const String& p_Key, int8 p_Value)
+	{
+		m_KeyValueMap[p_Key] = StringUtil::toString<int8>(p_Value);
+	}
+	/*********************************************************************************/
+	void JsonSerializer::writeUInt8(const String& p_Key, uint8 p_Value)
+	{
+		m_KeyValueMap[p_Key] = StringUtil::toString<uint8>(p_Value);
+	}
+	/*********************************************************************************/
+	void JsonSerializer::writeInt16(const String& p_Key, int16 p_Value)
+	{
+		m_KeyValueMap[p_Key] = StringUtil::toString<int16>(p_Value);
+	}
+	/*********************************************************************************/
+	void JsonSerializer::writeUInt16(const String& p_Key, uint16 p_Value)
+	{
+		m_KeyValueMap[p_Key] = StringUtil::toString<uint16>(p_Value);
+	}
+	/*********************************************************************************/
+	void JsonSerializer::writeInt32(const String& p_Key, int32 p_Value)
+	{
+		m_KeyValueMap[p_Key] = StringUtil::toString<int32>(p_Value);
+	}
+	/*********************************************************************************/
+	void JsonSerializer::writeUInt32(const String& p_Key, uint32 p_Value)
+	{
+		m_KeyValueMap[p_Key] = StringUtil::toString<uint32>(p_Value);
+	}
+	/*********************************************************************************/
+	void JsonSerializer::writeInt64(const String& p_Key, int64 p_Value)
+	{
+		m_KeyValueMap[p_Key] = StringUtil::toString<int64>(p_Value);
+	}
+	/*********************************************************************************/
+	void JsonSerializer::writeUInt64(const String& p_Key, uint64 p_Value)
+	{
+		m_KeyValueMap[p_Key] = StringUtil::toString<uint64>(p_Value);
+	}
+	/*********************************************************************************/
+	void JsonSerializer::writeFloat(const String& p_Key, float p_Value)
+	{
+		m_KeyValueMap[p_Key] = StringUtil::toString(p_Value,2);
+	}
+	/*********************************************************************************/
+	void JsonSerializer::writeString(const String& p_Key, const String& p_Value)
+	{
+		m_KeyValueMap[p_Key] = p_Value;
+	}
+	/*********************************************************************************/
+	void JsonSerializer::_parse()
+	{
+		Json::Reader reader;
+		Json::Value root;
 
-    if(reader.parse(m_FilePath,root,false))
-    {
+		if(reader.parse(m_FilePath,root,false))
+		{
       
-    }
-    else
-    {
-      m_Valid = false;
-      m_Error = reader.getFormattedErrorMessages();
-    }
-  }
-  /*********************************************************************************/
+		}
+		else
+		{
+			m_Valid = false;
+			m_Error = reader.getFormattedErrorMessages();
+		}
+	}
+	/*********************************************************************************/
 
 }}// end of K15_Engine::Core namespace

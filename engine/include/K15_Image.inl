@@ -23,24 +23,6 @@ ColorRGBA* Image::getPixels() const
 	return m_Pixels;
 }
 /*********************************************************************************/
-ColorRGBA Image::getPixel(uint32 p_PosX,uint32 p_PosY)
-{
-	K15_ASSERT(m_Width >= p_PosX && m_Height >= p_PosY,
-		StringUtil::format("Trying to access pixel out of bounds. Image dimension: %ux%u. Trying to read pixel location %ux%u.",
-		m_Width,m_Height,p_PosX,p_PosY));
-
-	return m_Pixels[p_PosX + (p_PosY * m_Width)];
-}
-/*********************************************************************************/
-void Image::setPixel(uint32 p_PosX, uint32 p_PosY, const ColorRGBA& p_Color)
-{
-	K15_ASSERT(m_Width >= p_PosX && m_Height >= p_PosY,
-		StringUtil::format("Trying to access pixel out of bounds. Image dimension: %ux%u. Trying to read pixel location %ux%u.",
-		m_Width,m_Height,p_PosX,p_PosY));
-
-	m_Pixels[p_PosX + (p_PosY * m_Width)] = p_Color;
-}
-/*********************************************************************************/
 uint32 Image::getWidth() const
 {
 	return m_Width;

@@ -69,28 +69,28 @@ namespace K15_Engine { namespace Rendering {
 		/*********************************************************************************/
 		enum eParameterIdentifier
 		{
-		  PI_VIEW_MATRIX = 0,
-		  PI_PROJECTION_MATRIX,
-		  PI_MODEL_MATRIX,
-		  PI_VIEW_PROJECTION_MATRIX,
-		  PI_TIME,
+			PI_VIEW_MATRIX = 0,
+			PI_PROJECTION_MATRIX,
+			PI_MODEL_MATRIX,
+			PI_VIEW_PROJECTION_MATRIX,
+			PI_TIME,
 
-		  PI_TEXTURE_1,
-		  PI_TEXTURE_2,
-		  PI_TEXTURE_3,
-		  PI_TEXTURE_4,
-		  PI_TEXTURE_5,
-		  PI_TEXTURE_6,
-		  PI_TEXTURE_7,
-		  PI_TEXTURE_8,
+			PI_TEXTURE_1,
+			PI_TEXTURE_2,
+			PI_TEXTURE_3,
+			PI_TEXTURE_4,
+			PI_TEXTURE_5,
+			PI_TEXTURE_6,
+			PI_TEXTURE_7,
+			PI_TEXTURE_8,
 
-		  PI_COUNT,
-		  PI_USER = PI_COUNT + 128
+			PI_COUNT,
+			PI_USER = PI_COUNT + 128
 		}; //ParameterName
 		/*********************************************************************************/
 
 		/*********************************************************************************/
-    static const String ParameterIdentifierName[PI_COUNT];
+		static const String UniformIdentifierName[PI_COUNT];
 		/*********************************************************************************/
 
 	public:

@@ -41,7 +41,8 @@ namespace K15_Engine { namespace Rendering {
 		m_ProjectionType(PT_PERSPECTIVE),
 		m_Dirty(true),
 		m_NearClipDistance(1.0f),
-		m_FarClipDistance(200.0f)
+		m_FarClipDistance(200.0f),
+		m_Zoom(1.0f)
 	{
 
 	}
@@ -65,7 +66,10 @@ namespace K15_Engine { namespace Rendering {
 			}
 			else
 			{
-				m_ProjectionMatrix = glm::ortho(0.0f,width,height,0.0f,m_NearClipDistance,m_FarClipDistance);//MatrixUtil::createOrthographicProjectionMatrix(m_NearClipDistance,m_FarClipDistance);
+				float left = -aspect / m_Zoom;
+				float right = aspect / m_Zoom;
+				float top_bottom = 1.0f / m_Zoom;
+				m_ProjectionMatrix = glm::ortho(left,right,-top_bottom,top_bottom,m_NearClipDistance,m_FarClipDistance);//MatrixUtil::createOrthographicProjectionMatrix(m_NearClipDistance,m_FarClipDistance);
 			}
       
 			m_Dirty = false;

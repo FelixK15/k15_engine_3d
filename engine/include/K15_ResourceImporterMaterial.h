@@ -1,8 +1,8 @@
 /**
- * @file K15_ResourceImporterObj.h
+ * @file K15_ResourceImporterMaterial.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2014/04/26
+ * @date 2014/05/05
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,28 +21,30 @@
  * 
  */
 
-#ifndef _K15Engine_Core_ResourceImporterObj_h_
-#define _K15Engine_Core_ResourceImporterObj_h_
+#ifndef _K15Engine_Core_ResourceImporterMaterial_h_
+#define _K15Engine_Core_ResourceImporterMaterial_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
 #	include "K15_Prerequisites.h"
+#	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
 #include "K15_ResourceImporterBase.h"
 
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API ResourceImporterObj : public ResourceImporterBase, public GeneralAllocatedObject
+	class K15_CORE_API ResourceImporterMaterial : public ResourceImporterBase, public GeneralAllocatedObject
 	{
-		K15_DECLARE_RTTI;
-
 	public:
-		ResourceImporterObj();
-		~ResourceImporterObj();
+		ResourceImporterMaterial();
+		~ResourceImporterMaterial();
 
-		virtual void getExtensionList(ExtensionSet& p_ExtensionSet) OVERRIDE;
+		virtual void getExtensionList(ExtensionSet& p_ExtensionSet) OVERRIDE; 
 		virtual void getMagicNumber(MagicNumberSet& p_MagicNumber) OVERRIDE;
+
+	private:
 		virtual ResourceBase* _load(const RawData& p_ResourceData, const Rtti& p_ResourceType) OVERRIDE;
-	};// end of ResourceImporterObj class declaration
+
+	};// end of ResourceImporterMaterial class declaration
 }}// end of K15_Engine::Core namespace
 
-#endif //_K15Engine_Core_ResourceImporterObj_h_
+#endif //_K15Engine_Core_ResourceImporterMaterial_h_

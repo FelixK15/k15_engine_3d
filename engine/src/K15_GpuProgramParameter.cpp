@@ -27,7 +27,7 @@
 
 namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
-  const String GpuProgramParameter::ParameterIdentifierName[GpuProgramParameter::PI_COUNT] = {
+  const String GpuProgramParameter::UniformIdentifierName[GpuProgramParameter::PI_COUNT] = {
     "g_ViewMatrix",     //PI_VIEW_MATRIX
     "g_ProjMatrix",     //PI_PROJECTION_MATRIX
     "g_ModelMatrix",    //PI_MODEL_MATRIX
@@ -42,7 +42,7 @@ namespace K15_Engine { namespace Rendering {
     "g_Texture_6",      //PI_TEXTURE_6
     "g_Texture_7",      //PI_TEXTURE_7
     "g_Texture_8"       //PI_TEXTURE_8
-  }; //ParameterIdentifierName
+  }; //UniformIdentifierName
   /*********************************************************************************/
 
 	/*********************************************************************************/

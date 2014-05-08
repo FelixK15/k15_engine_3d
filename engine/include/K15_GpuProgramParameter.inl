@@ -82,7 +82,7 @@ void GpuProgramParameter::setIdentifier(Enum p_Identifier)
 {
   if(m_Identifier < PI_COUNT)
   {
-      m_Name = ParameterIdentifierName[m_Identifier];
+      m_Name = UniformIdentifierName[m_Identifier];
       m_AutoParameter = true;
   }
 

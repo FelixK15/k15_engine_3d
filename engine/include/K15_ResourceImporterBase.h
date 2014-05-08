@@ -52,7 +52,7 @@ namespace K15_Engine { namespace Core {
 
 		bool canLoad(const String& p_FileName);
 		bool canLoadBaseOnSignature(const RawData& p_Data);
-		ResourceBase* load(const RawData& p_ResourceData, const TypeName& p_ResourceTypeName);
+		ResourceBase* load(const RawData& p_ResourceData, const Rtti& p_ResourceType);
 
 		INLINE const String& getError() const;
 		INLINE const String& getResourceTypeName() const;
@@ -61,7 +61,7 @@ namespace K15_Engine { namespace Core {
 	protected:
 		INLINE void setError(const String& p_Error);
 
-		virtual ResourceBase* _load(const RawData& p_ResourceData, const TypeName& p_ResourceTypeName) = 0;
+		virtual ResourceBase* _load(const RawData& p_ResourceData, const Rtti& p_ResourceType) = 0;
 		virtual bool _initialize() { return true; }
 		virtual bool _shutdown() { return true; }
 

@@ -38,3 +38,8 @@ void Mesh::addSubMesh(SubMesh* p_SubMesh)
 	m_SubMeshes.push_back(p_SubMesh);
 }
 /*********************************************************************************/
+SubMesh* Mesh::getSubMesh(uint32 p_Index) const
+{
+	return m_SubMeshes.at(p_Index);
+}
+/*********************************************************************************/

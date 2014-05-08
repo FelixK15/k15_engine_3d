@@ -48,8 +48,6 @@
 #	elif defined K15_OS_ANDROID
 #		include "Android/K15_RenderWindow_Android.h"
 #		include "Android/K15_Logcat_Android.h"
-//#		include "GLES2/K15_GLES2_Renderer.h"
-#		include "K15_SampleApplicationModule.h"
 #	endif //K15_OS_WINDOWS
 #endif //K15_DEBUG
 
@@ -385,8 +383,10 @@ namespace K15_Engine { namespace Core {
 		}
 
 		//increase frame counter
-		if(++m_FrameCounter == UINT_MAX) m_FrameCounter = 0;
 		++FPSFrameCounter;
+		++m_FrameCounter;
+
+	#if defined K15_DEBUG
 		//save statistic for this frame
 		static uint32 FrameStatisticIndex = 0;
 		FrameStatisticIndex = m_FrameCounter % (FrameStatisticCount - 1);
@@ -399,6 +399,7 @@ namespace K15_Engine { namespace Core {
 		{
 			  g_ProfileManager->eraseProfilingForFrame((m_FrameCounter - 1) - FrameStatisticCount);
 		}
+	#endif //K15_DEBUG
 	}
 	/*********************************************************************************/
 	void Application::onPostTick()

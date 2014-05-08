@@ -180,7 +180,7 @@ namespace K15_Engine { namespace Rendering {
 		INLINE TextureSampler* getBoundSampler(Enum p_Slot) const;
 
 		bool setClearColor(const ColorRGBA& p_ClearColor);
-		bool setClearColor(float p_Red = 1.0f, float p_Green = 1.0f, float p_Blue = 1.0f);
+		bool setClearColor(byte p_Red = 255, byte p_Green = 255, byte p_Blue = 255);
 		INLINE const ColorRGBA& getClearColor() const;
 
 		INLINE void setLightningEnabled(bool p_Enabled);

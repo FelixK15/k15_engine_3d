@@ -85,7 +85,6 @@ namespace K15_Engine { namespace Core {
 			m_Transformation = glm::scale(glm::mat4(1.0f),m_Scale);
 			m_Transformation *= glm::translate(glm::mat4(1.0f),m_Position);
 			m_Transformation *= m_Orientation;
-			
 
 // 			m_Transformation._1_1 = m_Scale.x * rotation._1_1; 
 // 			m_Transformation._1_2 = m_Scale.y * rotation._1_2; 

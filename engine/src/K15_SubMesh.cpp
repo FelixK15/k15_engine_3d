@@ -47,6 +47,7 @@ namespace K15_Engine { namespace Rendering {
 		rop.vertexBuffer = m_VertexBuffer;
 		rop.subMesh = this;
 		rop.topology = RenderOperation::T_TRIANGLE;
+		rop.material = m_Material;
 		
 		return &rop;
 	}

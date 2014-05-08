@@ -276,14 +276,14 @@ namespace K15_Engine { namespace Core {
 		clock_gettime(CLOCK_MONOTONIC,&now);
 		
 		long deltaNanoseconds = now.tv_nsec - m_LastTime.tv_nsec;
-		_LogDebug("seconds:%.3f",(double)deltaNanoseconds / 1000000000.0);
+		//_LogDebug("seconds:%.3f",(double)deltaNanoseconds / 1000000000.0);
 		m_LastTime = now;
 		return (double)deltaNanoseconds / 1000000000.0;
 	}
 	/*********************************************************************************/
 	void ApplicationOSLayer_Android::sleep(double p_TimeInSeconds) const
 	{
-		_LogDebug("sleep:%.3f seconds - %u microseconds",p_TimeInSeconds,p_TimeInSeconds * 1000000);
+		//_LogDebug("sleep:%.3f seconds - %u microseconds",p_TimeInSeconds,p_TimeInSeconds * 1000000);
 		unsigned long microseconds = p_TimeInSeconds * 1000000;
 		::usleep(microseconds);
 	}

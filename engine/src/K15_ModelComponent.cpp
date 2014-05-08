@@ -36,9 +36,17 @@ namespace K15_Engine { namespace Core {
   }
   /*********************************************************************************/
   ModelComponent::ModelComponent(const String& p_ModelResourceName)
-    : GameObjectComponentBase()
+	: GameObjectComponentBase(),
+	m_Mesh(0)
   {
     m_Mesh = g_ResourceManager->getResource<Mesh>(p_ModelResourceName);
+  }
+  /*********************************************************************************/
+  ModelComponent::ModelComponent(Mesh* p_Mesh)
+	  : GameObjectComponentBase(),
+	  m_Mesh(p_Mesh)
+  {
+
   }
   /*********************************************************************************/
   ModelComponent::~ModelComponent()

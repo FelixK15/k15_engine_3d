@@ -23,6 +23,19 @@ bool CameraComponent::getActive() const
   return m_Active;
 }
 /*********************************************************************************/
+float CameraComponent::getZoom() const
+{
+	return m_Zoom;
+}
+/*********************************************************************************/
+void CameraComponent::setZoom(float p_Zoom)
+{
+	if(p_Zoom > 0.0f)
+	{
+		m_Zoom = p_Zoom;
+	}
+}
+/*********************************************************************************/
 float CameraComponent::getFov() const
 {
   return m_Fov;

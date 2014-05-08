@@ -197,18 +197,18 @@ namespace K15_Engine { namespace Rendering {
 			{
 				m_Uniforms[i].setGpuProgram(this);
 				
-        for(int j = 0;j < GpuProgramParameter::PI_COUNT;++j)
-        {
-          if(m_Uniforms[i].getName() == GpuProgramParameter::ParameterIdentifierName[j])
-          {
-            _LogDebug("Found auto parameter \"%s\" in GpuProgram \"%s\".",
-              m_Uniforms[i].getName().c_str(),
-              getName().c_str());
+				for(int j = 0;j < GpuProgramParameter::PI_COUNT;++j)
+				{
+					if(m_Uniforms[i].getName() == GpuProgramParameter::UniformIdentifierName[j])
+					{
+						_LogDebug("Found auto parameter \"%s\" in GpuProgram \"%s\".",
+							m_Uniforms[i].getName().c_str(),
+							getName().c_str());
 
-            m_Uniforms[i].setIdentifier(j);
-            break;
-          }
-        }
+						m_Uniforms[i].setIdentifier(j);
+						break;
+					}
+				}
 			}
 
 			for(uint32 i = 0;i < m_UsedAttributes;++i)

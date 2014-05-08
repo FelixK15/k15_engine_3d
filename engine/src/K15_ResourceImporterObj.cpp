@@ -62,7 +62,7 @@ namespace K15_Engine { namespace Core {
 
 	}
 	/*********************************************************************************/
-	ResourceBase* ResourceImporterObj::_load(const RawData& p_ResourceData, const TypeName& p_ResourceTypeName)
+	ResourceBase* ResourceImporterObj::_load(const RawData& p_ResourceData, const Rtti& p_ResourceType)
 	{
 		StringStream stream;
 		stream.write((char*)p_ResourceData.data,p_ResourceData.size);

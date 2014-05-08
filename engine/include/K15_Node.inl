@@ -18,6 +18,11 @@
  */
 
 /*********************************************************************************/
+void Node::lookAt(const Vector3& p_Position)
+{
+	m_Orientation = glm::lookAt(m_Position,p_Position,Vector3(0.0f,1.0f,0.0f));
+}
+/*********************************************************************************/
 void Node::setPosition(const Vector3& p_Position)
 {
 	m_Position = p_Position;
@@ -58,9 +63,9 @@ void Node::scale(float x, float y, float z)
 // 	m_Orientation *= p_Rotation;
 // }
 /*********************************************************************************/
-void Node::rotate(const Vector3& p_Axis, float p_Angle)
+void Node::rotate(const Vector3& p_Axis, float p_Radians)
 {
-	m_Orientation *= glm::rotate(glm::mat4(1.0f),p_Angle,p_Axis);
+	m_Orientation *= glm::rotate(glm::mat4(1.0f),p_Radians,p_Axis);
 }
 /*********************************************************************************/
 void Node::roll(float p_Angle)

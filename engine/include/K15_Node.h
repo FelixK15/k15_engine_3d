@@ -44,6 +44,8 @@ namespace K15_Engine { namespace Core {
 		Node(const ObjectName& p_Name = ObjectName::BLANK,Node* p_Parent = 0);
 		~Node();
 
+		INLINE void lookAt(const Vector3& p_Position);
+
 		INLINE void setPosition(const Vector3& p_Position);
 		INLINE void setOrientation(const Quaternion& p_Orientation);
 		INLINE void setScale(const Vector3& p_Scale);
@@ -55,7 +57,7 @@ namespace K15_Engine { namespace Core {
 		INLINE void scale(float x, float y, float z);
 
 /*		INLINE void rotate(const Quaternion& p_Rotation);*/
-		INLINE void rotate(const Vector3& p_Axis, float p_Angle);
+		INLINE void rotate(const Vector3& p_Axis, float p_Radians);
 
 		INLINE void roll(float p_Angle);
 		INLINE void pitch(float p_Angle);

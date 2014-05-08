@@ -29,6 +29,7 @@
 #	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
+#include "K15_ResourceBase.h"
 #include "K15_Texture.h"
 #include "K15_TextureSampler.h"
 #include "K15_GpuProgram.h"
@@ -114,7 +115,7 @@ namespace K15_Engine { namespace Rendering {
 	}; //end of MaterialPass class declaration
 	K15_PTR(MaterialPass);
 	/*********************************************************************************/
-	class K15_CORE_API Material : public Object,
+	class K15_CORE_API Material : public ResourceBase,
 								  public RenderingAllocatedObject
 	{
 	public:

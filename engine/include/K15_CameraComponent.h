@@ -79,6 +79,7 @@ namespace K15_Engine { namespace Rendering {
 		INLINE float getFov() const;
 		INLINE float getFarClipDistance() const;
 		INLINE float getNearClipDistance() const;
+		INLINE float getZoom() const;
 
 		const Matrix4& getProjectionMatrix();
 		const Matrix4& getViewMatrix();
@@ -88,6 +89,7 @@ namespace K15_Engine { namespace Rendering {
 		INLINE void setProjectionType(Enum p_ProjectionType);
 		INLINE void setFarClipDistance(float p_Far);
 		INLINE void setNearClipDistance(float p_Near);
+		INLINE void setZoom(float p_Zoom);
 
 		bool isVisible(const AABB& p_AABB);
 
@@ -106,6 +108,7 @@ namespace K15_Engine { namespace Rendering {
 		expose float m_Fov;
 		expose float m_FarClipDistance;
 		expose float m_NearClipDistance;
+		expose float m_Zoom;
 		expose Enum m_ProjectionType;
 		bool m_Dirty;
 		bool m_Active;
