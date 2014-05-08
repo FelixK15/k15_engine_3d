@@ -44,15 +44,32 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 		GpuProgramImpl* programImpl = 0;
 		GLint shader = 0;
 		GLint compileSuccess = 0;
-		const char* shadercode = 0;
+		const char* shadercode[] = {
+			"#version 120\n"
+			"precision mediump float;\n",
+			0,
+			0
+		};
 
 		for(GpuProgramBatch::GpuProgramList::const_iterator iter = programs.begin();iter != programs.end();++iter)
 		{
 			program = (*iter);
 			programImpl = (GpuProgramImpl*)(program->getImpl());
 			shader = glCreateShader(GpuProgramImpl::GLShaderStageConverter[program->getStage()]);
-			shadercode = program->getShaderCode().c_str();
-			glShaderSource(shader,1,&shadercode,0);
+
+			//set shader code for compatibility reasons
+			if(program->getStage() == GpuProgram::PS_VERTEX)
+			{
+				shadercode[1] = "#define in attribute\n"
+								"#define out varying\n";
+			}
+			else if(program->getStage() == GpuProgram::PS_FRAGMENT)
+			{
+				shadercode[1] = "#define in varying\n";
+			}
+
+			shadercode[2] = program->getShaderCode().c_str();
+			glShaderSource(shader,3,shadercode,0);
 			glCompileShader(shader);
 
 			glGetShaderiv(shader,GL_COMPILE_STATUS,&compileSuccess);

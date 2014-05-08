@@ -125,6 +125,8 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 			EGL_BLUE_SIZE, 8,
 			EGL_GREEN_SIZE, 8,
 			EGL_RED_SIZE, 8,
+			EGL_DEPTH_SIZE, 24,
+			EGL_STENCIL_SIZE, 8,
 			EGL_NONE
 		};
 
@@ -199,6 +201,9 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 		glEnable(GL_STENCIL_TEST);
 		glEnable(GL_BLEND);
 		glFrontFace(GL_CCW);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glDepthFunc(GL_LESS);
 
 		_checkForError();
 		return true;
@@ -297,11 +302,11 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 	{
 		if(p_CullingMode == CM_CCW)
 		{
-			glFrontFace(GL_CCW);
+			//glFrontFace(GL_CCW);
 		}
 		else
 		{
-			glFrontFace(GL_CW);
+			//glFrontFace(GL_CW);
 		}
 	}
 	/*********************************************************************************/
@@ -309,11 +314,11 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 	{
 		if(p_Enabled)
 		{
-			glEnable(GL_CULL_FACE);
+			//glEnable(GL_CULL_FACE);
 		}
 		else
 		{
-			glDisable(GL_CULL_FACE);
+			//glDisable(GL_CULL_FACE);
 		}
 	}
 	/*********************************************************************************/

@@ -124,13 +124,32 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 			m_Program = 0;
 		}
 		
-		const char* shaderCode = m_GpuProgram->getShaderCode().c_str();
+		const char* shaderCode[3] = {
+			"#version 330\n",
+
+			0,
+
+			m_GpuProgram->getShaderCode().c_str()
+		};
 		
 		m_Shader = glCreateShader(shaderStage);
 
 		if(m_Shader) 
 		{
-			glShaderSource(m_Shader, 1, &shaderCode, NULL);
+			if(shaderStage == GL_VERTEX_SHADER)
+			{
+				shaderCode[1] = "out gl_PerVertex {\n"
+								"vec4 gl_Position;\n"
+								"float gl_PointSize;\n"
+								"float gl_ClipDistance[];\n"
+								"};\n";
+			}
+			else if(shaderStage == GL_FRAGMENT_SHADER)
+			{
+				shaderCode[1] = "";
+			}
+			
+			glShaderSource(m_Shader, 3, shaderCode, NULL);
 			glCompileShader(m_Shader);
 			m_Program = glCreateProgram();
 			if (m_Program) 
