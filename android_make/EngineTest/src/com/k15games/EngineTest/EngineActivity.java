@@ -7,7 +7,7 @@ public class EngineActivity extends NativeActivity  {
 	private static final String TAG = "EngineActivity";
 
     static {
-        System.loadLibrary("gnustl_shared");
+        //System.loadLibrary("gnustl_shared");
         System.loadLibrary("EngineTest");
     }
 

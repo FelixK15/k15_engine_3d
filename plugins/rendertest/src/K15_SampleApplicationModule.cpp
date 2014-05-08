@@ -182,20 +182,20 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 		{
 			if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_UP))
 			{
-				m_Camera->getNode()->translate(0.0f,0.0f,-1.0f);
+				m_Camera->getNode()->rotate(Vector3(1.0f,0.0f,0.0f),glm::radians(5.0f));
 			}
 			else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_DOWN))
 			{
-				m_Camera->getNode()->translate(0.0f,0.0f,1.0f);
+				m_Camera->getNode()->rotate(Vector3(1.0f,0.0f,0.0f),glm::radians(-5.0f));
 			}
 
 			if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_LEFT))
 			{
-				m_Camera->getNode()->translate(-1.0f,0.0f,0.0f);
+				m_Camera->getNode()->rotate(Vector3(0.0f,1.0f,0.0f),glm::radians(-5.0f));
 			}
 			else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_RIGHT))
 			{
-				m_Camera->getNode()->translate(1.0f,0.0f,0.0f);
+				m_Camera->getNode()->rotate(Vector3(0.0f,1.0f,0.0f),glm::radians(5.0f));
 			}
 			else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_F1))
 			{
@@ -209,7 +209,22 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 			{
 				_dumpMemoryStatistics();
 			}
-
+			else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_F4))
+			{
+				m_Camera->getComponentByType<CameraComponent>()->setZoom(0.5f);
+			}
+			else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_F5))
+			{
+				m_Camera->getComponentByType<CameraComponent>()->setZoom(0.25f);
+			}
+			else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_F6))
+			{
+				m_Camera->getComponentByType<CameraComponent>()->setZoom(1.0f);
+			}
+			else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_F7))
+			{
+				m_Camera->getComponentByType<CameraComponent>()->setZoom(1.5f);
+			}
 			static const float gametime_threshold = 0.1f;
 			static float gametime_counter = 0.0f;
 			static float y = 0.0f;
@@ -288,20 +303,28 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 	/*********************************************************************************/
 	void RenderTestApplicationModule::onMousePressed(const MouseActionArguments& p_EventArgs)
 	{
+		Vector4 translate(0.5f,0.0f,0.0f,0.0f);
 		if(p_EventArgs.xNDC < -0.2f)
 		{
-			m_Camera->getNode()->translate(-0.5f,0.0f,0.0f);
+			translate = -translate;
+			translate = m_Camera->getNode()->getTransformation() * translate;
+			m_Camera->getNode()->translate(translate.x,translate.y,translate.z);
 		}else if(p_EventArgs.xNDC > 0.2f)
 		{
-			m_Camera->getNode()->translate(0.5f,0.0f,0.0f);
+			translate = m_Camera->getNode()->getTransformation() * translate;
+			m_Camera->getNode()->translate(translate.x,translate.y,translate.z);
 		}
-
+		translate.x = 0.0f;
+		translate.z = 0.5f;
 		if(p_EventArgs.yNDC < -0.2f)
 		{
-			m_Camera->getNode()->translate(0.0f,0.0f,0.5f);
+			translate = m_Camera->getNode()->getTransformation() * translate;
+			m_Camera->getNode()->translate(translate.x,translate.y,translate.z);
 		}else if(p_EventArgs.yNDC > 0.2f)
 		{
-			m_Camera->getNode()->translate(0.0f,0.0f,-0.5f);
+			translate = -translate;
+			translate = m_Camera->getNode()->getTransformation() * translate;
+			m_Camera->getNode()->translate(translate.x,translate.y,translate.z);
 		}
 	}
 	/*********************************************************************************/

@@ -21,3 +21,7 @@ Jamfile
 android_make/EngineTest/libs/
 archives/
 *.diff
+*.so
+*.d
+android_make/TowerDefense/gen/
+*.zip

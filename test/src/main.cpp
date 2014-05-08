@@ -25,6 +25,7 @@ int main(int argc,char** argv)
 #else
 	application->initialize(argc,argv);
 #endif //K15_OS_ANDROID
+
 	application->run();
  	application->shutdown();
 
