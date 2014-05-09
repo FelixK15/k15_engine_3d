@@ -44,7 +44,22 @@ namespace K15_Engine { namespace Rendering {
     "g_Texture_8"       //PI_TEXTURE_8
   }; //UniformIdentifierName
   /*********************************************************************************/
+  const Enum GpuProgramParameter::UniformUpdateFrequency[PI_COUNT] = {
+	  UF_PER_CAMERA | UF_PER_FRAME, //PI_VIEW_MATRIX
+	  UF_PER_CAMERA,				//PI_PROJECTION_MATRIX
+	  UF_PER_OBJECT,			//PI_MODEL_MATRIX
+	  UF_PER_CAMERA | UF_PER_FRAME, //PI_VIEW_PROJECTION_MATRIX
+	  UF_PER_FRAME,					//PI_TIME
 
+	  UF_PER_MATERIAL,	//PI_TEXTURE_1,
+	  UF_PER_MATERIAL,	//PI_TEXTURE_2,
+	  UF_PER_MATERIAL,	//PI_TEXTURE_3,
+	  UF_PER_MATERIAL,	//PI_TEXTURE_4,
+	  UF_PER_MATERIAL,	//PI_TEXTURE_5,
+	  UF_PER_MATERIAL,	//PI_TEXTURE_6,
+	  UF_PER_MATERIAL,	//PI_TEXTURE_7,
+	  UF_PER_MATERIAL,	//PI_TEXTURE_8,
+  };
 	/*********************************************************************************/
 	GpuProgramParameter::GpuProgramParameter()
 		:  m_Offset(0),
@@ -66,5 +81,5 @@ namespace K15_Engine { namespace Rendering {
 	{
 
 	}
-  /*********************************************************************************/
+	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

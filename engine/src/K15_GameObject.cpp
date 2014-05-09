@@ -21,7 +21,6 @@
 
 #include "K15_GameObject.h"
 #include "K15_GameObjectComponentBase.h"
-#include "K15_Node.h"
 
 namespace K15_Engine { namespace Core {
   /*********************************************************************************/
@@ -29,7 +28,7 @@ namespace K15_Engine { namespace Core {
   /*********************************************************************************/
   GameObject::GameObject()
 	  : Object(),
-	  m_Node(K15_NEW Node()),
+	  m_Node(),
 	  m_Components()
   {
   
@@ -37,7 +36,7 @@ namespace K15_Engine { namespace Core {
   /*********************************************************************************/
   GameObject::GameObject(const ObjectName& p_Name)
 	  : Object(p_Name),
-	  m_Node(K15_NEW Node()),
+	  m_Node(),
 	  m_Components()
   {
 
@@ -45,7 +44,7 @@ namespace K15_Engine { namespace Core {
   /*********************************************************************************/
   GameObject::~GameObject()
   {
-	  K15_DELETE m_Node;
+	  
   }
   /*********************************************************************************/
   void GameObject::addComponent(GameObjectComponentBase* p_Component)

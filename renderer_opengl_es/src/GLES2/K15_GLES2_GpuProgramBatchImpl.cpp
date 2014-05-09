@@ -45,7 +45,6 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 		GLint shader = 0;
 		GLint compileSuccess = 0;
 		const char* shadercode[] = {
-			"#version 120\n"
 			"precision mediump float;\n",
 			0,
 			0

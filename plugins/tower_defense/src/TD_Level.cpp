@@ -50,7 +50,7 @@ namespace TowerDefense
 			{
 				ColorRGBA color = layout->getPixel(x + width_half, y + height_half);
 				currentGameObject = K15_NEW GameObject();
-				currentGameObject->getNode()->translate(x,0,y);
+				currentGameObject->getNode().translate(x,0,y);
 
 				Mesh* modelMesh = 0;
 
@@ -68,7 +68,7 @@ namespace TowerDefense
 					else
 					{
 						//ground
-						currentGameObject->getNode()->translate(0.0f,-1.0f,0.0f);
+						currentGameObject->getNode().translate(0.0f,-1.0f,0.0f);
 
 						if(color == ColorRGBA::Green)
 						{

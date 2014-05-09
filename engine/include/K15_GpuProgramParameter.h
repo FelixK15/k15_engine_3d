@@ -59,10 +59,12 @@ namespace K15_Engine { namespace Rendering {
 		/*********************************************************************************/
 		enum eUpdateFrequency
 		{
-			UF_PER_MATERIAL = 0x0001,
-			UF_PER_MESH		= 0x0002,
-			UF_PER_FRAME	= 0x0004,
-			UF_PER_CAMERA	= 0x0008,
+			UF_PER_MATERIAL		= 0x0001,
+			UF_PER_OBJECT		= 0x0002,
+			UF_PER_FRAME		= 0x0004,
+			UF_PER_CAMERA		= 0x0008,
+
+			UF_ALL			= UF_PER_CAMERA | UF_PER_OBJECT | UF_PER_FRAME | UF_PER_CAMERA,
 
 			UF_COUNT = 4
 		}; //UpdateFrequency
@@ -91,6 +93,7 @@ namespace K15_Engine { namespace Rendering {
 
 		/*********************************************************************************/
 		static const String UniformIdentifierName[PI_COUNT];
+		static const Enum UniformUpdateFrequency[PI_COUNT];
 		/*********************************************************************************/
 
 	public:

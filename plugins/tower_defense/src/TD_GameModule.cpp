@@ -42,7 +42,7 @@ namespace TowerDefense
 	/*********************************************************************************/
 	void GameModule::_onRendererInitialized()
 	{
-		g_ResourceManager->addResourceFile(K15_NEW ResourceArchiveZip(g_Application->getGameRootDir() + "resources.zip"));
+		g_ResourceManager->addResourceArchive(K15_NEW ResourceArchiveZip(g_Application->getGameRootDir() + "resources.zip"));
 		g_ResourceManager->addResourceImporter(K15_NEW ResourceImporterTiff());
 		g_ResourceManager->addResourceImporter(K15_NEW ResourceImporterObj());
 		g_ResourceManager->addResourceImporter(K15_NEW ResourceImporterMaterial());
@@ -51,8 +51,8 @@ namespace TowerDefense
 		m_Camera->addComponent(K15_NEW CameraComponent());
 		m_RenderProcess = K15_NEW RenderProcess();
 		m_Level = K15_NEW Level("level0");
-		m_Camera->getNode()->translate(0.0f,5.0f,0.0f);
-		m_Camera->getNode()->rotate(Vector3(1.0f,0.0f,0.0f),-glm::half_pi<float>() * 0.5f);
+		m_Camera->getNode().translate(0.0f,5.0f,0.0f);
+		m_Camera->getNode().rotate(Vector3(1.0f,0.0f,0.0f),-glm::half_pi<float>() * 0.5f);
 		g_Application->getRenderer()->setActiveCameraGameObject(m_Camera);
 
 		TextureSampler* sampler = K15_NEW TextureSampler();
@@ -69,30 +69,30 @@ namespace TowerDefense
 			if(forward)
 			{
 				forward = ++counter >= 100;
-				m_Camera->getNode()->translate(0.0f,0.0f,0.05f);
+				m_Camera->getNode().translate(0.0f,0.0f,0.05f);
 			}
 			else
 			{
 				forward = --counter <= 100;
-				m_Camera->getNode()->translate(0.0f,0.0f,-0.05f);
+				m_Camera->getNode().translate(0.0f,0.0f,-0.05f);
 			}
 
 			if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_W))
 			{
-				m_Camera->getNode()->rotate(Vector3(1.0f,0.0f,0.0f),0.02f);
+				m_Camera->getNode().rotate(Vector3(1.0f,0.0f,0.0f),0.02f);
 			}
 			else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_S))
 			{
-				m_Camera->getNode()->rotate(Vector3(1.0f,0.0f,0.0f),-0.02f);
+				m_Camera->getNode().rotate(Vector3(1.0f,0.0f,0.0f),-0.02f);
 			}
 
 			if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_A))
 			{
-				m_Camera->getNode()->rotate(Vector3(0.0f,1.0f,0.0f),0.02f);
+				m_Camera->getNode().rotate(Vector3(0.0f,1.0f,0.0f),0.02f);
 			}
 			else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_D))
 			{
-				m_Camera->getNode()->rotate(Vector3(0.0f,1.0f,0.0f),-0.02f);
+				m_Camera->getNode().rotate(Vector3(0.0f,1.0f,0.0f),-0.02f);
 			}
 // 			m_Camera->getNode()->rotate(Vector3(1.0f,0.0f,0.0f),-(glm::pi<float>() * 2) * 0.4f);
 // 			m_Camera->getNode()->rotate(Vector3(0.0f,1.0f,0.0f),(glm::pi<float>() * 2) * 0.01f);

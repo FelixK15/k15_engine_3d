@@ -496,7 +496,10 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 		glUseProgram(program);
 
 		//rebound declaration
-		_setVertexDeclaration(getVertexDeclaration());
+		if(getVertexDeclaration())
+		{
+			setVertexDeclaration(getVertexDeclaration());
+		}
 
 		_checkForError();
 	}

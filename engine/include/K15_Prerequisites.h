@@ -444,6 +444,8 @@ typedef std::stringstream	StringStream;
 	#include <android\sensor.h>
 	#include <android\input.h>
 	#include <android\log.h>
+	#include <android\asset_manager.h>
+	#include <android\asset_manager_jni.h>
 	#include <dlfcn.h>
 	#include <jni.h>
 	#include <unistd.h>

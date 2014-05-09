@@ -81,10 +81,10 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	const Matrix4& CameraComponent::getViewMatrix()
 	{
- 		if(m_Dirty || m_GameObject->getNode()->needUpdate())
+ 		if(m_Dirty || m_GameObject->getNode().needUpdate())
  		{
 			//update view matrix
-			m_ViewMatrix = m_GameObject->getNode()->getTransformation();
+			m_ViewMatrix = m_GameObject->getNode().getTransformation();
 			m_ViewMatrix = glm::inverse(m_ViewMatrix);
 			_calculateFrustumPoints();
 			m_Dirty = false;

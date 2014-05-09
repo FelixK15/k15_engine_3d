@@ -47,6 +47,9 @@ namespace K15_Engine { namespace Core {
 		GameObject* m_GameObject;
 	}; // end of GameObjectComponentBase class declaration
 	#include "K15_GameObjectComponentBase.inl"
+
+	K15_PTR(GameObjectComponentBase);
+	K15_WEAKPTR(GameObjectComponentBase);
 }}// end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_GameObjectComponent_h_

@@ -57,7 +57,7 @@ const ResourceManager::ResourceArchiveList& ResourceManager::getResourceFileList
 // 	return m_Resources[p_ResourceID];
 // }
 /*********************************************************************************/
-void ResourceManager::addResourceFile(ResourceArchiveBase *p_ResourceFile)
+void ResourceManager::addResourceArchive(ResourceArchiveBase *p_ResourceFile)
 {
 	m_ResoureFiles.push_back(p_ResourceFile);
 }

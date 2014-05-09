@@ -58,7 +58,7 @@ namespace K15_Engine { namespace Core {
 		bool cacheResource(const String& p_ResourceName, const Rtti& p_ResourceType, Enum p_Priority);
 		bool isResourceInCache(const String& p_ResourceName);
 		
-		INLINE void addResourceFile(ResourceArchiveBase *p_ResourceFile);
+		INLINE void addResourceArchive(ResourceArchiveBase *p_ResourceFile);
 		INLINE void addResourceImporter(ResourceImporterBase* p_ResourceImporter);
 
 		//INLINE ResourceBase* getResourceByID(ResourceID p_ResourceID);

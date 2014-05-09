@@ -63,7 +63,7 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 	/*********************************************************************************/
 	void RenderTestApplicationModule::_onRendererInitialized()
 	{
-		g_ResourceManager->addResourceFile(K15_NEW ResourceArchiveZip(g_Application->getGameRootDir() + "resources.zip"));
+		g_ResourceManager->addResourceArchive(K15_NEW ResourceArchiveZip(g_Application->getGameRootDir() + "resources.zip"));
 		g_ResourceManager->addResourceImporter(K15_NEW ResourceImporterTiff());
 		g_ResourceManager->addResourceImporter(K15_NEW ResourceImporterObj());
 		g_Application->getRenderTask()->setRenderProcess(K15_NEW K15_Engine::Plugins::RenderTest::RenderSampleProcess());

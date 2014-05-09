@@ -18,7 +18,7 @@
  */
 
 /*********************************************************************************/
-Node* GameObject::getNode() const
+Node& GameObject::getNode()
 {
   return m_Node;
 }

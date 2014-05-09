@@ -171,6 +171,8 @@ namespace K15_Engine { namespace Rendering {
 			m_ActiveCamera = p_Camera;
 			_setActiveCamera(m_ActiveCamera);
 
+			m_GpuParameterUpdateMask |= GpuProgramParameter::UF_PER_CAMERA;
+
 			if(errorOccured())
 			{
 				_LogError("Error setting active camera. %s",getLastError().c_str());
@@ -296,7 +298,7 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	bool RendererBase::setFrameBufferPixelFormat(Enum p_PixelFormat)
 	{
-		K15_ASSERT(p_PixelFormat < PF_COUNT,StringUtil::format("Invalid frame buffer format \"%u\"",p_PixelFormat));
+		K15_ASSERT(p_PixelFormat < PF_COUNT,StringUtil::format("Invalid frame buffer format \"%d\"",p_PixelFormat));
 
 		if(m_FrameBufferFormat != p_PixelFormat)
 		{
@@ -385,6 +387,8 @@ namespace K15_Engine { namespace Rendering {
 			m_GpuPrograms[p_Stage] = p_GpuProgram;
 			_bindProgram(p_GpuProgram,p_Stage);
 
+			m_GpuParameterUpdateMask = GpuProgramParameter::UF_ALL;
+
 			if(errorOccured())
 			{
 				char* stage = 0;
@@ -462,11 +466,11 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	bool RendererBase::draw(RenderOperation* p_Rop)
 	{
-		static RenderOperation* currentRop = p_Rop;
-
 		K15_ASSERT(p_Rop,"RenderOperation is NULL.");
 		K15_ASSERT(p_Rop->vertexBuffer,"RenderOperation has no vertex buffer.");
 		
+		m_GpuParameterUpdateMask |= GpuProgramParameter::UF_PER_OBJECT;
+
 		if(!bindBuffer(p_Rop->vertexBuffer,GpuBuffer::BT_VERTEX_BUFFER) ||
 		   !bindBuffer(p_Rop->indexBuffer,GpuBuffer::BT_INDEX_BUFFER) ||
 		   !bindMaterial(p_Rop->material) || !setTopology(p_Rop->topology))
@@ -526,11 +530,6 @@ namespace K15_Engine { namespace Rendering {
 					continue;
 				}
 
-				if(currentRop->gameobject != p_Rop->gameobject)
-				{
-					m_GpuParameterUpdateMask |= GpuProgramParameter::UF_PER_MESH;
-				}
-
 				updateGpuProgramParameter(p_Rop);
 
 				if(p_Rop->indexBuffer != 0)
@@ -550,8 +549,6 @@ namespace K15_Engine { namespace Rendering {
 				}
 			}
 		}
-
-		m_GpuParameterUpdateMask = 0;
 
 		return true;
 	}
@@ -579,6 +576,7 @@ namespace K15_Engine { namespace Rendering {
 		if(m_Material != p_Material)
 		{
 			m_Material = p_Material;
+			m_GpuParameterUpdateMask |= GpuProgramParameter::UF_PER_MATERIAL;
 		}
 
 		return true;
@@ -755,7 +753,7 @@ namespace K15_Engine { namespace Rendering {
 					
 					if(param.isAutoParameter())
 					{
-						if(param.getUpdateFrequency() & m_GpuParameterUpdateMask == param.getUpdateFrequency())
+						if((m_GpuParameterUpdateMask & param.getUpdateFrequency()) != 0)
 						{
 			
 							if(param.getIdentifier() == GpuProgramParameter::PI_VIEW_MATRIX ||
@@ -791,7 +789,7 @@ namespace K15_Engine { namespace Rendering {
 								GameObject* gameObject = 0;
 								if((gameObject = p_Rop->gameobject) != 0)
 								{
-									Matrix4 modelMat = gameObject->getNode()->getTransformation();
+									Matrix4 modelMat = gameObject->getNode().getTransformation();
 
 									param.setData((void*)&modelMat);
 								}
@@ -808,17 +806,19 @@ namespace K15_Engine { namespace Rendering {
 
 								param.setData((void*)&actualTexSlot);
 							}
-						}
-					
-						//if data has been set, upload them to the gpu
-						if(param.getData())
-						{
-							_updateGpuProgramParameter(param);
+
+							//if data has been set, upload them to the gpu
+							if(param.getData())
+							{
+								_updateGpuProgramParameter(param);
+							}
 						}
 					}
 				}
 			}
 		}
+
+		m_GpuParameterUpdateMask = 0;
 	}
 	/*********************************************************************************/
 	bool RendererBase::setActiveCameraGameObject(GameObject* p_Camera)

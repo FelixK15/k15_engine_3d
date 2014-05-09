@@ -152,6 +152,7 @@
     <ClInclude Include="..\..\engine\include\Android\K15_Logcat_Android.h" />
     <ClInclude Include="..\..\engine\include\Android\K15_ApplicationLayerOS_Android.h" />
     <ClInclude Include="..\..\engine\include\Android\K15_RenderWindow_Android.h" />
+    <ClInclude Include="..\..\engine\include\Android\K15_ResourceArchiveAndroid.h" />
     <ClInclude Include="..\..\engine\include\K15_AABB.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -386,6 +387,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\Android\K15_RenderWindow_Android.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\Android\K15_ResourceArchiveAndroid.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_AABB.cpp" />

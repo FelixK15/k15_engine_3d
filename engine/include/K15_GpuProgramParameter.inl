@@ -25,12 +25,12 @@ bool GpuProgramParameter::isAutoParameter() const
 /*********************************************************************************/
 Enum GpuProgramParameter::getType() const
 {
-  return m_Type;
+	return m_Type;
 }
 /*********************************************************************************/
 Enum GpuProgramParameter::getIdentifier() const
 {
-  return m_Identifier;
+	return m_Identifier;
 }
 /*********************************************************************************/
 Enum GpuProgramParameter::getUpdateFrequency() const
@@ -40,32 +40,32 @@ Enum GpuProgramParameter::getUpdateFrequency() const
 /*********************************************************************************/
 uint32 GpuProgramParameter::getSize() const
 {
-  return m_Size;
+	return m_Size;
 }
 /*********************************************************************************/
 const String& GpuProgramParameter::getName() const
 {
-  return m_Name;
+	return m_Name;
 }
 /*********************************************************************************/
 int32 GpuProgramParameter::getBufferIndex() const
 {
-  return m_BufferIndex;
+	return m_BufferIndex;
 }
 /*********************************************************************************/
 uint32 GpuProgramParameter::getOffset() const
 {
-  return m_Offset;
+	return m_Offset;
 }
 /*********************************************************************************/
 uint32 GpuProgramParameter::getRegisterIndex() const
 {
-  return m_RegisterIndex;
+	return m_RegisterIndex;
 }
 /*********************************************************************************/
 void GpuProgramParameter::setType(Enum p_VariableType)
 {
-  m_Type = p_VariableType;
+	m_Type = p_VariableType;
 }
 /*********************************************************************************/
 void GpuProgramParameter::setUpdateFrequency(Enum p_UpdateFrequency)
@@ -75,27 +75,19 @@ void GpuProgramParameter::setUpdateFrequency(Enum p_UpdateFrequency)
 /*********************************************************************************/
 void GpuProgramParameter::setSize(uint32 p_Size)
 {
-  m_Size = p_Size;
+	m_Size = p_Size;
 }
 /*********************************************************************************/
 void GpuProgramParameter::setIdentifier(Enum p_Identifier)
 {
-  if(m_Identifier < PI_COUNT)
-  {
-      m_Name = UniformIdentifierName[m_Identifier];
-      m_AutoParameter = true;
-  }
+	if(m_Identifier < PI_COUNT)
+	{
+		m_Name = UniformIdentifierName[m_Identifier];
+		m_AutoParameter = true;
+		m_UpdateFrequency = UniformUpdateFrequency[p_Identifier];
+	}
 
-  if(m_Identifier == GpuProgramParameter::PI_MODEL_MATRIX)
-  {
-	  m_UpdateFrequency = GpuProgramParameter::UF_PER_MESH;
-  }
-  else
-  {
-	  m_UpdateFrequency = GpuProgramParameter::UF_PER_FRAME;
-  }
-
-  m_Identifier = p_Identifier;
+	m_Identifier = p_Identifier;
 }
 /*********************************************************************************/
 void GpuProgramParameter::setAutoParameter(bool p_Value)
@@ -105,22 +97,22 @@ void GpuProgramParameter::setAutoParameter(bool p_Value)
 /*********************************************************************************/
 void GpuProgramParameter::setName(const String& p_Name)
 {
-  m_Name = p_Name;
+	m_Name = p_Name;
 }
 /*********************************************************************************/
 void GpuProgramParameter::setBufferIndex(int32 p_Block)
 {
-  m_BufferIndex = p_Block;
+	m_BufferIndex = p_Block;
 }
 /*********************************************************************************/
 void GpuProgramParameter::setOffset(uint32 p_Offset)
 {
-  m_Offset = p_Offset;
+	m_Offset = p_Offset;
 }
 /*********************************************************************************/
 void GpuProgramParameter::setRegisterIndex(uint32 p_Location)
 {
-  m_RegisterIndex = p_Location;
+	m_RegisterIndex = p_Location;
 }
 /*********************************************************************************/
 void* GpuProgramParameter::getData() const

@@ -22,9 +22,11 @@
 #include "K15_RenderTask.h"
 #include "K15_RenderProcessBase.h"
 #include "K15_Mouse.h"
+#include "K15_ResourceManager.h"
 
 #include "Android\K15_ApplicationLayerOS_Android.h"
-#include "ANdroid\K15_RenderWindow_Android.h"
+#include "Android\K15_RenderWindow_Android.h"
+#include "Android\K15_ResourceArchiveAndroid.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
@@ -46,11 +48,17 @@ namespace K15_Engine { namespace Core {
 			if(window)
 			{
 				_LogDebug("RenderWindow received.");
-				int32 eventAction = 0;//AMotionEvent_getAction(p_Event);
+				int32 eventAction = 0;
+				if(p_Event)
+				{
+					eventAction = AMotionEvent_getAction(p_Event);	
+				}
 
 				GameEvent* motionEvent = 0;
 
-				if(eventAction == AMOTION_EVENT_ACTION_DOWN || eventAction == AMOTION_EVENT_ACTION_UP)
+				if(eventAction == AMOTION_EVENT_ACTION_DOWN 
+					|| eventAction == AMOTION_EVENT_ACTION_UP 
+					|| eventAction == AMOTION_EVENT_ACTION_MOVE)
 				{
 					MouseActionArguments args;
 					uint32 window_width = window->getResolution().width;
@@ -67,24 +75,23 @@ namespace K15_Engine { namespace Core {
 
 					args.xNDC *= 2;
 					args.yNDC *= 2;
-
 					//NDC are now -1.0|+1.0
-					motionEvent = K15_NEW GameEvent(eventAction == AMOTION_EVENT_ACTION_DOWN ? _EN(onMousePressed) : _EN(onMouseReleased),(void*)&args,sizeof(MouseActionArguments));
+					
+					motionEvent = K15_NEW GameEvent(eventAction == AMOTION_EVENT_ACTION_DOWN ? 
+													_EN(onMousePressed) : eventAction == AMOTION_EVENT_ACTION_UP ?
+													_EN(onMouseReleased) : _EN(onMouseMoved),(void*)&args,sizeof(MouseActionArguments));
 
 					_LogDebug("x:%d y:%d  |  nx:%.3f ny:%.3f",args.xPx,args.yPx,args.xNDC,args.yNDC);
 				}
 
 				if(motionEvent)
 				{
-					_LogDebug("returned ANDROID_EVENT_HANDLED");
 					g_EventManager->triggerEvent(motionEvent);
 					return ANDROID_EVENT_HANDLED;
 				}
 			}
 		}
 		
-
-		_LogDebug("returned ANDROID_EVENT_NOT_HANDLED");
 		return ANDROID_EVENT_NOT_HANDLED;
 	}
 	/*********************************************************************************/
@@ -101,12 +108,10 @@ namespace K15_Engine { namespace Core {
 		int32 inputType = AInputEvent_getType(p_Event);
 		if(inputType == AINPUT_EVENT_TYPE_KEY)
 		{
-			_LogDebug("AINPUT_EVENT_TYPE_KEY received.");
 			return Android_HandleKey(p_App,p_Event);
 		}
 		else if(inputType == AINPUT_EVENT_TYPE_MOTION)
 		{
-			_LogDebug("AINPUT_EVENT_TYPE_MOTION received.");
 			return Android_HandleMotion(p_App,p_Event);
 		}
 
@@ -123,44 +128,15 @@ namespace K15_Engine { namespace Core {
 		}
 		else if(p_Cmd == APP_CMD_GAINED_FOCUS || p_Cmd == APP_CMD_LOST_FOCUS)
 		{
-			if(p_Cmd == APP_CMD_GAINED_FOCUS)
-			{
-				_LogDebug("APP_CMD_GAINED_FOCUS received.");
-			}
-			else
-			{
-				_LogDebug("APP_CMD_LOST_FOCUS received.");
-			}
-
 			RenderWindowBase* window = 0;
 			if((window = app->getRenderWindow()) != 0)
 			{
 				window->setHasFocus(p_Cmd == APP_CMD_GAINED_FOCUS);
 				return;
 			}
-
-			_LogError("Could not get render window.");
-		}
-		else if(p_Cmd == APP_CMD_WINDOW_REDRAW_NEEDED)
-		{
-			_LogDebug("APP_CMD_WINDOW_REDRAW_NEEDED received.");
-			RenderProcessBase* renderProcess = 0;
-			if(app->getRenderTask())
-			{
-				if((renderProcess = app->getRenderTask()->getRenderProcess()) != 0)
-				{
-					renderProcess->renderSingleFrame();
-					return;
-				}
-
-				_LogError("Could not get render process.");
-			}
-
-			_LogError("Could not get render task.");
 		}
 		else if(p_Cmd == APP_CMD_INIT_WINDOW)
 		{
-			_LogDebug("APP_CMD_INIT_WINDOW received.");
 			RenderWindowType* window = static_cast<RenderWindowType*>(app->getRenderWindow());
 			window->setNativeWindow(p_App->window);
 
@@ -243,7 +219,7 @@ namespace K15_Engine { namespace Core {
 		gameRoot += "/";
 
 		g_Application->setGameRootDir(gameRoot);
-
+		//g_ResourceManager->addResourceFile(K15_NEW ResourceArchiveAndroid());
 		return true;
 	}
 	/*********************************************************************************/
