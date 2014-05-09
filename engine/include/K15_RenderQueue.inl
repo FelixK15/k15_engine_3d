@@ -18,23 +18,34 @@
  */
 
 /*********************************************************************************/
+void RenderQueue::setSortMode(Enum p_SortMode)
+{
+	m_SortMode = p_SortMode;
+}
+/*********************************************************************************/
+Enum RenderQueue::getSortMode() const
+{
+	return m_SortMode;
+}
+/*********************************************************************************/
+RenderOperation* RenderQueue::getRenderOperation(uint32 p_Index) const
+{
+	return m_RenderOperations.at(p_Index);
+}
+/*********************************************************************************/
 void RenderQueue::addRenderOperation(RenderOperation* p_ROP)
 {
-  m_RenderOperations[m_RenderOperationCount++] = p_ROP;
+	m_Dirty = true;
+	m_RenderOperations.push_back(p_ROP);
 }
 /*********************************************************************************/
-uint32 RenderQueue::getRenderOperationCount() const
+uint32 RenderQueue::size() const
 {
-  return m_RenderOperationCount;
+	return m_RenderOperations.size();
 }
 /*********************************************************************************/
-void RenderQueue::clearRenderOperations()
+void RenderQueue::clear()
 {
-//   for(int i = 0;i < m_RenderOperationCount;++i)
-//   {
-//     m_RenderOperations[i] = 0;
-//   }
-//   
-  m_RenderOperationCount = 0;
+	m_RenderOperations.clear();
 }
 /*********************************************************************************/

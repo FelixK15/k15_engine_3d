@@ -21,11 +21,13 @@
 void Node::lookAt(const Vector3& p_Position)
 {
 	m_Orientation = glm::lookAt(m_Position,p_Position,Vector3(0.0f,1.0f,0.0f));
+	m_NeedUpdate = true;
 }
 /*********************************************************************************/
 void Node::setPosition(const Vector3& p_Position)
 {
 	m_Position = p_Position;
+	m_NeedUpdate = true;
 }
 /*********************************************************************************/
 // void Node::setOrientation(const Quaternion& p_Orientation)
@@ -36,26 +38,31 @@ void Node::setPosition(const Vector3& p_Position)
 void Node::setScale(const Vector3& p_Scale)
 {
 	m_Scale = p_Scale;
+	m_NeedUpdate = true;
 }
 /*********************************************************************************/
 void Node::translate(const Vector3& p_Translation)
 {
 	m_Position += p_Translation;
+	m_NeedUpdate = true;
 }
 /*********************************************************************************/
 void Node::translate(float x, float y, float z)
 {
 	m_Position += Vector3(x,y,z);
+	m_NeedUpdate = true;
 }
 /*********************************************************************************/
 void Node::scale(const Vector3& p_Scale)
 {
 	m_Scale += p_Scale;
+	m_NeedUpdate = true;
 }
 /*********************************************************************************/
 void Node::scale(float x, float y, float z)
 {
 	m_Scale += Vector3(x,y,z);
+	m_NeedUpdate = true;
 }
 /*********************************************************************************/
 // void Node::rotate(const Quaternion& p_Rotation)
@@ -66,21 +73,25 @@ void Node::scale(float x, float y, float z)
 void Node::rotate(const Vector3& p_Axis, float p_Radians)
 {
 	m_Orientation *= glm::rotate(glm::mat4(1.0f),p_Radians,p_Axis);
+	m_NeedUpdate = true;
 }
 /*********************************************************************************/
 void Node::roll(float p_Angle)
 {
 	rotate(Vector3(0.0f,0.0f,1.0f),p_Angle);
+	m_NeedUpdate = true;
 }
 /*********************************************************************************/
 void Node::pitch(float p_Angle)
 {
 	rotate(Vector3(1.0f,0.0f,0.0f),p_Angle);
+	m_NeedUpdate = true;
 }
 /*********************************************************************************/
 void Node::yaw(float p_Angle)
 {
 	rotate(Vector3(0.0f,1.0f,0.0f),p_Angle);
+	m_NeedUpdate = true;
 }
 /*********************************************************************************/
 const Vector3& Node::getPosition() const

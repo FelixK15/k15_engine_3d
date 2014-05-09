@@ -92,7 +92,7 @@ namespace K15_Engine { namespace Rendering {
 		GpuProgramParameter& getUniform(uint32 p_Index);
 		GpuProgramParameter& getAttribute(uint32 p_Index);
 		
-		INLINE const GpuProgramImplBase* getImpl() const;
+		INLINE GpuProgramImplBase* getImpl();
 
 	private:
 		const String& _resolveIncludes(const char* p_ShaderCode);

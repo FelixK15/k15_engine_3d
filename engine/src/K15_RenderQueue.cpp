@@ -20,12 +20,15 @@
 #include "K15_PrecompiledHeader.h"
 
 #include "K15_RenderQueue.h"
+#include "K15_RenderOperation.h"
 
 namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
   RenderQueue::RenderQueue()
     : m_RenderOperationCount(0),
-    m_RenderOperations()
+	m_SortMode(0),
+    m_RenderOperations(),
+	m_Dirty(true)
   {
 
   }
@@ -35,4 +38,19 @@ namespace K15_Engine { namespace Rendering {
 
   }
   /*********************************************************************************/
+  void RenderQueue::sort()
+  {
+	  if(m_Dirty)
+	  {
+		  if(m_SortMode == SP_SORT_BY_MATERIAL)
+		  {
+			  Sort(m_RenderOperations.begin(),m_RenderOperations.end(),[](RenderOperation* rop1, RenderOperation* rop2)->bool
+			  {
+				  return (size_t)rop1->material < (size_t)rop2->material;
+			  });
+		  }
+
+		  m_Dirty = false;
+	  }
+  }
 }}//end of K15_Engine::Rendering namespace

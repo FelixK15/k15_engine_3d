@@ -16,6 +16,7 @@
 #include "K15_VertexDeclaration.h"
 #include "K15_Node.h"
 #include "K15_RenderOperation.h"
+#include "K15_RenderQueue.h"
 
 namespace TowerDefense
 {
@@ -103,13 +104,13 @@ namespace TowerDefense
 	/*********************************************************************************/
 	void Level::draw(RenderProcess* p_Process)
 	{
-		static DynamicArray(RenderOperation*) rops;
+		static RenderQueue* rops = K15_NEW RenderQueue();
 		GameObject* currentGameObject = 0;
 		
 		for(uint32 i = 0 ;i < m_GameObjects.size() - 1;++i)
 		{
 			currentGameObject = m_GameObjects.at(i);
-			if(rops.size() < m_GameObjects.size())
+			if(rops->size() < m_GameObjects.size())
 			{
 				RenderOperation* rop = K15_NEW RenderOperation();
 				rop->gameobject = currentGameObject;
@@ -117,10 +118,10 @@ namespace TowerDefense
 				rop->vertexBuffer = currentGameObject->getComponentByType<ModelComponent>()->getMesh()->getSubMeshes()[0]->getVertexBuffer();
 				rop->material = currentGameObject->getComponentByType<ModelComponent>()->getMesh()->getSubMeshes()[0]->getMaterial();
 				rop->topology = RenderOperation::T_TRIANGLE;
-				rops.push_back(rop);
+				rops->addRenderOperation(rop);
 			}
 
-			p_Process->addRop(rops.at(i));
+			p_Process->setRenderQueue(rops);
 		}
 	}
 	/*********************************************************************************/

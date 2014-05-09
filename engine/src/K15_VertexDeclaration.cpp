@@ -24,6 +24,15 @@
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
+	const char* VertexElement::SemanticNames[VertexElement::ES_COUNT] = {
+		"a_Position",	//ES_POSITION
+		"a_Normal",		//ES_NORMAL
+		"a_TexCoord",	//ES_TEXCOORD
+		"a_Color"		//ES_COLOR
+	}; //SemanticNames
+	/*********************************************************************************/
+
+	/*********************************************************************************/
 	const char VertexDeclaration::SemanticToCharConverter[VertexElement::ES_COUNT] = {
 		'P', //ES_POSITION
 		'N', //ES_NORMAL

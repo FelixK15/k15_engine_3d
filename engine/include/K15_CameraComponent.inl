@@ -57,12 +57,6 @@ void CameraComponent::setFieldOfView(float p_Fov)
   m_Dirty = true;
 }
 /*********************************************************************************/
-void CameraComponent::setProjectionType(Enum p_ProjectionType)
-{
-  m_ProjectionType = p_ProjectionType;
-  m_Dirty = true;
-}
-/*********************************************************************************/
 void CameraComponent::setFarClipDistance(float p_Far)
 {
   m_FarClipDistance = p_Far;

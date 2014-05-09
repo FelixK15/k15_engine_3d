@@ -26,27 +26,50 @@
 
 #ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
+#	include "K15_AllocatedObject.h"
+#	include "K15_Object.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 namespace K15_Engine { namespace Rendering {
-	class K15_CORE_API RenderQueue
+	class K15_CORE_API RenderQueue : public Object, public RenderingAllocatedObject
 	{
-    /*********************************************************************************/
-    typedef FixedArray(RenderOperation*,2048) RenderOperationArray;
-    /*********************************************************************************/
+		/*********************************************************************************/
+		typedef DynamicArray(RenderOperation*) RenderOperationArray;
+		/*********************************************************************************/
+
+	public:
+		/*********************************************************************************/
+		enum eSortMode
+		{
+			SP_SORT_BY_MATERIAL = 0,
+			SP_SORT_FRONT_TO_BACK,
+			SP_SORT_BACK_TO_FRONT,
+
+			SP_COUNT
+		}; //SortPriority
+		/*********************************************************************************/
 
 	public:
 		RenderQueue();
 		~RenderQueue();
 
-    INLINE void addRenderOperation(RenderOperation* p_ROP);
-    INLINE uint32 getRenderOperationCount() const;
+		INLINE void setSortMode(Enum p_SortMode);
+		INLINE void addRenderOperation(RenderOperation* p_ROP);
+		
+		INLINE RenderOperation* getRenderOperation(uint32 p_Index) const;
 
-    INLINE void clearRenderOperations();
+		INLINE uint32 size() const;
+		INLINE Enum getSortMode() const;
 
-  private:
-    uint32 m_RenderOperationCount;
-    RenderOperationArray m_RenderOperations;
+		INLINE void clear();
+		
+		void sort();
+
+	private:
+		bool m_Dirty;
+		Enum m_SortMode;
+		uint32 m_RenderOperationCount;
+		RenderOperationArray m_RenderOperations;
 	};// end of RenderQueue class declaration
 # include "K15_RenderQueue.inl"
 }}// end of K15_Engine::Rendering namespace

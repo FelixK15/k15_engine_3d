@@ -85,8 +85,8 @@ namespace K15_Engine { namespace Rendering {
 		const Matrix4& getViewMatrix();
     
 		void setActive(bool p_Active);
+		void setProjectionType(Enum p_ProjectionType);
 		INLINE void setFieldOfView(float p_Fov);
-		INLINE void setProjectionType(Enum p_ProjectionType);
 		INLINE void setFarClipDistance(float p_Far);
 		INLINE void setNearClipDistance(float p_Near);
 		INLINE void setZoom(float p_Zoom);

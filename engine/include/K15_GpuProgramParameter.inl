@@ -86,6 +86,15 @@ void GpuProgramParameter::setIdentifier(Enum p_Identifier)
       m_AutoParameter = true;
   }
 
+  if(m_Identifier == GpuProgramParameter::PI_MODEL_MATRIX)
+  {
+	  m_UpdateFrequency = GpuProgramParameter::UF_PER_MESH;
+  }
+  else
+  {
+	  m_UpdateFrequency = GpuProgramParameter::UF_PER_FRAME;
+  }
+
   m_Identifier = p_Identifier;
 }
 /*********************************************************************************/

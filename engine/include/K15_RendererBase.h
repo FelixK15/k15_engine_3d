@@ -276,6 +276,7 @@ namespace K15_Engine { namespace Rendering {
 		Enum m_FrameBufferFormat;
 		Enum m_DepthBufferFormat;
 		Enum m_StencilBufferFormat;
+		uint32 m_GpuParameterUpdateMask;
 		bool m_LightningEnabled;
 		bool m_BackFaceCullingEnabled;
 		bool m_Initialized;

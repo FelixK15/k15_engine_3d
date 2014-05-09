@@ -65,7 +65,7 @@ void GpuProgram::setError(const String& p_Error)
 	m_Error = p_Error;
 }
 /*********************************************************************************/
-const GpuProgramImplBase* GpuProgram::getImpl() const
+GpuProgramImplBase* GpuProgram::getImpl()
 {
 	return m_Impl;
 }

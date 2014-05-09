@@ -92,7 +92,8 @@ namespace K15_Engine { namespace Rendering {
 		m_GpuPrograms(),
 		m_RenderWindow(g_Application->getRenderWindow()),
 		m_StencilBufferFormat(SBF_COMPONENT_8_I),
-		m_Topology(RenderOperation::T_TRIANGLE)
+		m_Topology(RenderOperation::T_TRIANGLE),
+		m_GpuParameterUpdateMask(0)
 	{
 		for(int i = 0;i < GpuBuffer::BT_COUNT;++i)
 		{
@@ -461,13 +462,14 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	bool RendererBase::draw(RenderOperation* p_Rop)
 	{
+		static RenderOperation* currentRop = p_Rop;
+
 		K15_ASSERT(p_Rop,"RenderOperation is NULL.");
 		K15_ASSERT(p_Rop->vertexBuffer,"RenderOperation has no vertex buffer.");
 		
 		if(!bindBuffer(p_Rop->vertexBuffer,GpuBuffer::BT_VERTEX_BUFFER) ||
 		   !bindBuffer(p_Rop->indexBuffer,GpuBuffer::BT_INDEX_BUFFER) ||
-		   !bindMaterial(p_Rop->material) || !setVertexDeclaration(p_Rop->vertexBuffer->getVertexDeclaration()) ||
-		   !setTopology(p_Rop->topology))
+		   !bindMaterial(p_Rop->material) || !setTopology(p_Rop->topology))
 		{
 			return false;
 		}
@@ -519,6 +521,16 @@ namespace K15_Engine { namespace Rendering {
 					}
 				}
 
+				if(!setVertexDeclaration(p_Rop->vertexBuffer->getVertexDeclaration()))
+				{
+					continue;
+				}
+
+				if(currentRop->gameobject != p_Rop->gameobject)
+				{
+					m_GpuParameterUpdateMask |= GpuProgramParameter::UF_PER_MESH;
+				}
+
 				updateGpuProgramParameter(p_Rop);
 
 				if(p_Rop->indexBuffer != 0)
@@ -538,6 +550,8 @@ namespace K15_Engine { namespace Rendering {
 				}
 			}
 		}
+
+		m_GpuParameterUpdateMask = 0;
 
 		return true;
 	}
@@ -741,62 +755,66 @@ namespace K15_Engine { namespace Rendering {
 					
 					if(param.isAutoParameter())
 					{
-						if(param.getIdentifier() == GpuProgramParameter::PI_VIEW_MATRIX ||
-							param.getIdentifier() == GpuProgramParameter::PI_PROJECTION_MATRIX ||
-							param.getIdentifier() == GpuProgramParameter::PI_VIEW_PROJECTION_MATRIX)
+						if(param.getUpdateFrequency() & m_GpuParameterUpdateMask == param.getUpdateFrequency())
 						{
-							CameraComponent* p_Camera = getActiveCamera();
-
-							K15_ASSERT(p_Camera,
-							StringUtil::format("Trying to set view/projection matrix in shader \"%s\", but there's no active camera to get it from.",
-							program->getName().c_str()));
-
-							Matrix4 mat;
-
-							if(param.getIdentifier() == GpuProgramParameter::PI_VIEW_MATRIX)
+			
+							if(param.getIdentifier() == GpuProgramParameter::PI_VIEW_MATRIX ||
+								param.getIdentifier() == GpuProgramParameter::PI_PROJECTION_MATRIX ||
+								param.getIdentifier() == GpuProgramParameter::PI_VIEW_PROJECTION_MATRIX)
 							{
-								mat = p_Camera->getViewMatrix();
-							}
-							else if(param.getIdentifier() == GpuProgramParameter::PI_PROJECTION_MATRIX)
-							{
-								mat = p_Camera->getProjectionMatrix();
-							}
-							else
-							{
-								mat = p_Camera->getProjectionMatrix();
-								mat *= p_Camera->getViewMatrix();
-							}
+								CameraComponent* p_Camera = getActiveCamera();
 
-							param.setData((void*)&mat); 
+								K15_ASSERT(p_Camera,
+								StringUtil::format("Trying to set view/projection matrix in shader \"%s\", but there's no active camera to get it from.",
+								program->getName().c_str()));
+
+								Matrix4 mat;
+
+								if(param.getIdentifier() == GpuProgramParameter::PI_VIEW_MATRIX)
+								{
+									mat = p_Camera->getViewMatrix();
+								}
+								else if(param.getIdentifier() == GpuProgramParameter::PI_PROJECTION_MATRIX)
+								{
+									mat = p_Camera->getProjectionMatrix();
+								}
+								else
+								{
+									mat = p_Camera->getProjectionMatrix();
+									mat *= p_Camera->getViewMatrix();
+								}
+
+								param.setData((void*)&mat); 
+							}
+							else if(param.getIdentifier() == GpuProgramParameter::PI_MODEL_MATRIX && p_Rop)
+							{
+								GameObject* gameObject = 0;
+								if((gameObject = p_Rop->gameobject) != 0)
+								{
+									Matrix4 modelMat = gameObject->getNode()->getTransformation();
+
+									param.setData((void*)&modelMat);
+								}
+							}
+							else if(param.getIdentifier() >= GpuProgramParameter::PI_TEXTURE_1 || param.getIdentifier() <= GpuProgramParameter::PI_TEXTURE_8)
+							{
+								int actualTexSlot = param.getIdentifier() - GpuProgramParameter::PI_TEXTURE_1;
+
+								K15_ASSERT(m_BoundTextures[actualTexSlot],
+								StringUtil::format("Trying to use unbound texture on slot %d.",actualTexSlot));
+
+								K15_ASSERT(m_BoundSamplers[m_BoundTextures[actualTexSlot]->getTextureSamplerSlot()],
+								StringUtil::format("Texture on slot %d is trying to access NULL texture sampler on slot %d.",m_BoundTextures[actualTexSlot]->getTextureSamplerSlot()));
+
+								param.setData((void*)&actualTexSlot);
+							}
 						}
-						else if(param.getIdentifier() == GpuProgramParameter::PI_MODEL_MATRIX && p_Rop)
+					
+						//if data has been set, upload them to the gpu
+						if(param.getData())
 						{
-							GameObject* gameObject = 0;
-							if((gameObject = p_Rop->gameobject) != 0)
-							{
-								Matrix4 modelMat = gameObject->getNode()->getTransformation();
-
-								param.setData((void*)&modelMat);
-							}
+							_updateGpuProgramParameter(param);
 						}
-						else if(param.getIdentifier() >= GpuProgramParameter::PI_TEXTURE_1 || param.getIdentifier() <= GpuProgramParameter::PI_TEXTURE_8)
-						{
-							int actualTexSlot = param.getIdentifier() - GpuProgramParameter::PI_TEXTURE_1;
-
-							K15_ASSERT(m_BoundTextures[actualTexSlot],
-							StringUtil::format("Trying to use unbound texture on slot %d.",actualTexSlot));
-
-							K15_ASSERT(m_BoundSamplers[m_BoundTextures[actualTexSlot]->getTextureSamplerSlot()],
-							StringUtil::format("Texture on slot %d is trying to access NULL texture sampler on slot %d.",m_BoundTextures[actualTexSlot]->getTextureSamplerSlot()));
-
-							param.setData((void*)&actualTexSlot);
-						}
-					}
-
-					//if data has been set, upload them to the gpu
-					if(param.getData())
-					{
-						_updateGpuProgramParameter(param);
 					}
 				}
 			}

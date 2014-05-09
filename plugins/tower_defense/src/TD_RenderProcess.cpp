@@ -1,11 +1,12 @@
 #include "TD_RenderProcess.h"
+#include "K15_RenderQueue.h"
 
 namespace TowerDefense
 {
 	/*********************************************************************************/
 	RenderProcess::RenderProcess()
 		: RenderProcessBase(),
-		m_RopArray()
+		m_RenderQueue(0)
 	{
 
 	}
@@ -15,19 +16,19 @@ namespace TowerDefense
 
 	}
 	/*********************************************************************************/
-	void RenderProcess::addRop(RenderOperation* p_Rop)
-	{
-		m_RopArray.push_back(p_Rop);
-	}
-	/*********************************************************************************/
 	void RenderProcess::renderSingleFrame()
 	{
-		for(RenderOperationArray::iterator iter = m_RopArray.begin();iter != m_RopArray.end();++iter)
-		{
-			g_Application->getRenderer()->draw((*iter));
-		}
+		m_RenderQueue->sort();
 
-		m_RopArray.clear();
+		for(uint32 i = 0;i < m_RenderQueue->size();++i)
+		{
+			g_Application->getRenderer()->draw(m_RenderQueue->getRenderOperation(i));
+		}
+	}
+	/*********************************************************************************/
+	void RenderProcess::setRenderQueue(RenderQueue* p_RenderQueue)
+	{
+		m_RenderQueue = p_RenderQueue;
 	}
 	/*********************************************************************************/
 }

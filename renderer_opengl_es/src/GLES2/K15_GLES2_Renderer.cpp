@@ -390,21 +390,10 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 			for(uint32 i = 0;i < p_Declaration->getElementCount();++i)
 			{
 				const VertexElement& element = p_Declaration->getElement(i);
-				char* semanticName = 0;
+				const char* semanticName = 0;
 				GLuint index = 0;
 
-				if(element.semantic == VertexElement::ES_POSITION)
-				{
-					semanticName = "g_Position";
-				}
-				else if(element.semantic == VertexElement::ES_COLOR)
-				{
-					semanticName = "g_Color";
-				}
-				else if(element.semantic == VertexElement::ES_TEXCOORD)
-				{
-					semanticName = "g_TexCoord";
-				}
+				semanticName = VertexElement::SemanticNames[element.semantic];
 
 				index = glGetAttribLocation(program,semanticName);
 
@@ -587,7 +576,7 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 			GLenum error = glGetError();
 			if(error != GL_NO_ERROR)
 			{
-				_LogError("GLES2 Error:\"%s\".",glGetString(error));
+				_LogError("GLES2 Error:\"%d\".",error);
 			}
 		#endif //K15_DEBUG
 	}

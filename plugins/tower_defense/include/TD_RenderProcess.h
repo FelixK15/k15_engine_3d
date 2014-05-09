@@ -15,12 +15,12 @@ namespace TowerDefense
 		RenderProcess();
 		~RenderProcess();
 
-		void addRop(RenderOperation* p_Rop);
+		void setRenderQueue(RenderQueue* p_RenderQueue);
 		
 		virtual void renderSingleFrame() OVERRIDE;
 
 	private:
-		RenderOperationArray m_RopArray;
+		RenderQueue* m_RenderQueue;
 	};
 }
 

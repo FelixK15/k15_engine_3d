@@ -44,7 +44,7 @@ namespace K15_Engine { namespace Rendering {
 		m_FarClipDistance(200.0f),
 		m_Zoom(1.0f)
 	{
-
+		setProjectionType(PT_PERSPECTIVE);
 	}
 	/*********************************************************************************/
 	CameraComponent::~CameraComponent()
@@ -52,47 +52,43 @@ namespace K15_Engine { namespace Rendering {
 
 	}
 	/*********************************************************************************/
+	void CameraComponent::setProjectionType(Enum p_ProjectionType)
+	{
+		m_ProjectionType = p_ProjectionType;
+		
+		float aspect = g_Application->getRenderWindow()->getResolution().getAspectRatio();
+		float width = (float)g_Application->getRenderWindow()->getResolution().width;
+		float height = (float)g_Application->getRenderWindow()->getResolution().height;
+		//update projection matrix 
+		if(m_ProjectionType == PT_PERSPECTIVE)
+		{
+			m_ProjectionMatrix = glm::perspective(glm::radians(m_Fov),aspect,m_NearClipDistance,m_FarClipDistance);/*MatrixUtil::createPerspectiveProjectionMatrix(m_Fov,m_NearClipDistance,m_FarClipDistance);*/
+		}
+		else
+		{
+			float left = -aspect / m_Zoom;
+			float right = aspect / m_Zoom;
+			float top_bottom = 1.0f / m_Zoom;
+			m_ProjectionMatrix = glm::ortho(left,right,-top_bottom,top_bottom,m_NearClipDistance,m_FarClipDistance);//MatrixUtil::createOrthographicProjectionMatrix(m_NearClipDistance,m_FarClipDistance);
+		}
+
+	}
+	/*********************************************************************************/
 	const Matrix4& CameraComponent::getProjectionMatrix()
 	{
-// 		if(m_Dirty)
-// 		{
-			float aspect = g_Application->getRenderWindow()->getResolution().getAspectRatio();
-			float width = (float)g_Application->getRenderWindow()->getResolution().width;
-			float height = (float)g_Application->getRenderWindow()->getResolution().height;
-			//update projection matrix 
-			if(m_ProjectionType == PT_PERSPECTIVE)
-			{
-				m_ProjectionMatrix = glm::perspective(glm::radians(m_Fov),aspect,m_NearClipDistance,m_FarClipDistance);/*MatrixUtil::createPerspectiveProjectionMatrix(m_Fov,m_NearClipDistance,m_FarClipDistance);*/
-			}
-			else
-			{
-				float left = -aspect / m_Zoom;
-				float right = aspect / m_Zoom;
-				float top_bottom = 1.0f / m_Zoom;
-				m_ProjectionMatrix = glm::ortho(left,right,-top_bottom,top_bottom,m_NearClipDistance,m_FarClipDistance);//MatrixUtil::createOrthographicProjectionMatrix(m_NearClipDistance,m_FarClipDistance);
-			}
-      
-			m_Dirty = false;
-		//}
-
 		return m_ProjectionMatrix;
 	}
 	/*********************************************************************************/
 	const Matrix4& CameraComponent::getViewMatrix()
 	{
-// 		if(!m_Dirty)
-// 		{
-// 			m_Dirty = m_GameObject->getNode()->needUpdate();
-// 		}
-
-// 		if(m_Dirty)
-// 		{
+ 		if(m_Dirty || m_GameObject->getNode()->needUpdate())
+ 		{
 			//update view matrix
 			m_ViewMatrix = m_GameObject->getNode()->getTransformation();
 			m_ViewMatrix = glm::inverse(m_ViewMatrix);
 			_calculateFrustumPoints();
 			m_Dirty = false;
-		//}
+		}
 
 		return m_ViewMatrix;
 	}

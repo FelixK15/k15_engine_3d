@@ -561,7 +561,8 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 	void Renderer::_setVertexDeclaration(VertexDeclaration* p_Declaration)
 	{
 		VertexDeclarationImpl* impl = static_cast<VertexDeclarationImpl*>(p_Declaration->getImpl());
-		
+		int index = 0;
+		const char* semanticname = 0;
 		if(m_VertexDeclaration)
 		{
 			if(m_VertexDeclaration->getElementCount() < p_Declaration->getElementCount())
@@ -578,8 +579,20 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 		for(uint32 i = 0;i < p_Declaration->getElementCount();++i)
 		{
 			const VertexElement& element = p_Declaration->getElement(i);
-			glEnableVertexAttribArray(i);
-			glVertexAttribPointer(i,element.size,VertexDeclarationImpl::GLVertexElementTypeConverter[element.type],GL_FALSE,p_Declaration->getVertexSize(),(void*)element.offset);
+			
+			semanticname = VertexElement::SemanticNames[element.semantic];
+			GpuProgramImpl* impl = static_cast<GpuProgramImpl*>(m_GpuPrograms[GpuProgram::PS_VERTEX]->getImpl());
+			GLuint program = impl->getProgramGL();
+			if((index = glGetAttribLocation(program,semanticname)) != -1)
+			{
+				glEnableVertexAttribArray(index);
+				glVertexAttribPointer(index,element.size,VertexDeclarationImpl::GLVertexElementTypeConverter[element.type],GL_FALSE,p_Declaration->getVertexSize(),(void*)element.offset);
+			}
+			else
+			{
+				_LogError("Could not set vertex attribute \"%s\" for GpuProgram \"%s\".",
+					semanticname,m_GpuPrograms[GpuProgram::PS_VERTEX]->getName().c_str());
+			}
 		}
 	}
 	/*********************************************************************************/

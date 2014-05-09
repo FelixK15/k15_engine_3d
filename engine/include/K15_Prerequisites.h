@@ -386,7 +386,7 @@ namespace K15_Engine
 #define UniqueSet(T)		std::set<T>
 #define Pair(K,V)			std::pair<K,V>
 #define FixedArray(T,C)		std::array<T,C>
-
+#define Sort(S,E,F)			std::sort(S,E,F);
 typedef std::string			String;
 typedef std::fstream		FileStream;
 typedef std::ofstream		WriteFileStream;
