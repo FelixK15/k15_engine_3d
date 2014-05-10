@@ -28,7 +28,7 @@ VertexBuffer* SubMesh::getVertexBuffer() const
 	return m_VertexBuffer;
 }
 /*********************************************************************************/
-void SubMesh::setIndexBUffer(IndexBuffer* p_IndexBuffer)
+void SubMesh::setIndexBuffer(IndexBuffer* p_IndexBuffer)
 {
 	m_IndexBuffer = p_IndexBuffer;
 }

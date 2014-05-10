@@ -184,12 +184,12 @@ namespace K15_Engine { namespace Core {
 
 			vbbuffer = K15_NEW VertexBuffer(vertexOptions);
 			idbuffer = K15_NEW IndexBuffer(indexOptions);
-			vdeclaration = K15_NEW VertexDeclaration(vertexDeclarationString);
+			vdeclaration = VertexDeclaration::create(vertexDeclarationString);
 
 			vbbuffer->setVertexDeclaration(vdeclaration);
 
 			submesh->setVertexBuffer(vbbuffer);
-			submesh->setIndexBUffer(idbuffer);
+			submesh->setIndexBuffer(idbuffer);
 		
 			K15_DELETE_SIZE(Allocators[AC_GENERAL],vertexTempBuffer,vertexDataSize);
 			K15_DELETE_SIZE(Allocators[AC_GENERAL],indexTempBuffer,indexDataSize);

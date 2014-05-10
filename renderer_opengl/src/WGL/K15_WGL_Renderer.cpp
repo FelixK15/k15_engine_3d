@@ -35,12 +35,12 @@
 namespace K15_Engine { namespace Rendering { namespace WGL {
 	/*********************************************************************************/
 	const GLenum Renderer::GLFunctionTestConverter[RendererBase::FT_COUNT] = {
-		GL_NONE, 	  //FT_NONE
-		GL_LESS,    //FT_LESS
-		GL_LEQUAL,  //FT_LESS_EQUAL
-		GL_EQUAL,   //FT_EQUAL
-		GL_GEQUAL,  //FT_GREATER_EQUAL
-		GL_GREATER  //FT_GREATER
+		GL_NONE, 		//FT_NONE
+		GL_LESS,		//FT_LESS
+		GL_LEQUAL,		//FT_LESS_EQUAL
+		GL_EQUAL,		//FT_EQUAL
+		GL_GEQUAL,		//FT_GREATER_EQUAL
+		GL_GREATER		//FT_GREATER
 	};//DepthTestConverter
 	/*********************************************************************************/
 	const GLenum Renderer::GLTopologyConverter[RenderOperation::T_COUNT] = {
@@ -270,10 +270,11 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 		const Resolution& resolution = renderwindow->getResolution();
 		//force viewport resizing
 		onResolutionChanged(resolution);
-		setClearColor(0.8f,0.2224f,0.005f);
 		glEnable(GL_STENCIL_TEST); //enable stencil testing
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
+
+		glEnable(GL_POLYGON_OFFSET_FILL); //enable glPolygonOffset for filled polys
 		return m_LastError.empty();
 	}
 	/*********************************************************************************/
@@ -412,6 +413,7 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 			{
 				glEnable(GL_DEPTH_TEST);
 				glDepthFunc(GLFunctionTestConverter[p_DepthState.getFunction()]);
+				glPolygonOffset(0.0f,p_DepthState.getBias());
 			}
 			else
 			{
@@ -423,6 +425,7 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 			if(m_DepthState.getEnabled())
 			{
 				glDepthFunc(GLFunctionTestConverter[p_DepthState.getFunction()]);
+				glPolygonOffset(0.0f,p_DepthState.getBias());
 			}
 		}
 	}

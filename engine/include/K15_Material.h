@@ -54,9 +54,9 @@ namespace K15_Engine { namespace Rendering {
 		INLINE void setProgram(GpuProgram* p_Program, Enum p_Stage);
 		INLINE void setProgramBatch(GpuProgramBatch* p_ProgramBatch);
 
-		INLINE const ColorRGBA& getSpecular() const;
-		INLINE const ColorRGBA& getDiffuse() const;
-		INLINE const ColorRGBA& getAmbient() const;
+		INLINE ColorRGBA& getSpecular();
+		INLINE ColorRGBA& getDiffuse();
+		INLINE ColorRGBA& getAmbient();
 		INLINE float getShininess() const;
 
 		INLINE Texture* getDiffuseMap() const;
@@ -85,10 +85,10 @@ namespace K15_Engine { namespace Rendering {
 		INLINE bool isDepthTestEnabled() const;
 		INLINE void setDepthTestEnabled(bool p_DepthTestEnabled);
 		
-		INLINE const AlphaState& getAlphaState() const;
+		INLINE AlphaState& getAlphaState();
 		INLINE void setAlphaState(const AlphaState& p_AlphaState);
 
-		INLINE const DepthState& getDepthState() const;
+		INLINE DepthState& getDepthState();
 		INLINE void setDepthState(const DepthState& p_DepthState);
 
 		INLINE bool isEnabled() const;

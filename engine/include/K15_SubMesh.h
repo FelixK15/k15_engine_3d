@@ -41,7 +41,7 @@ namespace K15_Engine { namespace Rendering {
 		INLINE void setVertexBuffer(VertexBuffer* p_VertexBuffer);
 		INLINE VertexBuffer* getVertexBuffer() const;
 
-		INLINE void setIndexBUffer(IndexBuffer* p_IndexBuffer);
+		INLINE void setIndexBuffer(IndexBuffer* p_IndexBuffer);
 		INLINE IndexBuffer* getIndexBuffer() const;
 
 		INLINE void setMaterial(Material* p_Material);

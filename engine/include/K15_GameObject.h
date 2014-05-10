@@ -29,6 +29,7 @@
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_Node.h"
+#include "K15_GameObjectComponentBase.h"
 
 namespace K15_Engine { namespace Core {
   class K15_CORE_API GameObject : public Object, public GeneralAllocatedObject

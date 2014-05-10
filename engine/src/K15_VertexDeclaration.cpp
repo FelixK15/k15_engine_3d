@@ -24,6 +24,10 @@
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
+	VertexDeclaration::VertexDeclarationMap VertexDeclaration::VertexDeclarationCache = VertexDeclaration::VertexDeclarationMap();
+	/*********************************************************************************/
+
+	/*********************************************************************************/
 	const char* VertexElement::SemanticNames[VertexElement::ES_COUNT] = {
 		"a_Position",	//ES_POSITION
 		"a_Normal",		//ES_NORMAL
@@ -79,27 +83,19 @@ namespace K15_Engine { namespace Rendering {
 	}; //ElementTypeSize
 	/*********************************************************************************/
 
-	/*********************************************************************************/
-	VertexDeclaration::VertexDeclaration()
-	: m_Dirty(true),
-		m_Elements(),
-		m_Size(0),
-		m_Impl(g_Application->getRenderer()->createVertexDeclarationImpl())
+	VertexDeclaration* VertexDeclaration::create(const String& p_DeclarationString)
 	{
-		m_Impl->setVertexDeclaration(this);
-	}
-	/*********************************************************************************/
-	VertexDeclaration::VertexDeclaration(const VertexElementArray& p_Elements)
-	: m_Impl(g_Application->getRenderer()->createVertexDeclarationImpl())
-	{
-		m_Impl->setVertexDeclaration(this);
+// 		VertexDeclarationMap::iterator iter = VertexDeclarationCache.find(p_DeclarationString);
+// 
+// 		if(iter == VertexDeclarationCache.end())
+// 		{
+// 			VertexDeclarationCache.insert(Pair(ObjectName,VertexDeclaration*)(ObjectName(p_DeclarationString),K15_NEW VertexDeclaration(p_DeclarationString)));
+// 			iter = VertexDeclarationCache.find(p_DeclarationString);
+// 		}
+// 
+// 		return iter->second;
 
-		for(VertexElementArray::const_iterator iter = p_Elements.begin();iter != p_Elements.end();++iter)
-		{
-			m_Elements.push_back((*iter));
-		}
-
-		_updateElements();
+		return K15_NEW VertexDeclaration(p_DeclarationString);
 	}
 	/*********************************************************************************/
 	VertexDeclaration::VertexDeclaration(const String& p_DeclarationString)

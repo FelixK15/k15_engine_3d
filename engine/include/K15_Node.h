@@ -51,6 +51,7 @@ namespace K15_Engine { namespace Core {
 		INLINE void setScale(const Vector3& p_Scale);
 
 		INLINE void translate(const Vector3& p_Translation);
+		INLINE void translate(const Vector4& p_Translation);
 		INLINE void translate(float x, float y, float z);
 
 		INLINE void scale(const Vector3& p_Scale);
@@ -66,7 +67,7 @@ namespace K15_Engine { namespace Core {
 		INLINE const Vector3& getPosition() const;
 		INLINE const Vector3& getScale() const;
 
-		/*INLINE const Quaternion& getOrientation() const;*/
+		INLINE const Matrix4& getOrientation() const;
 		
 		const Matrix4& getTransformation();
 

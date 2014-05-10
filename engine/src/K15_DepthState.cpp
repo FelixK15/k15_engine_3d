@@ -25,9 +25,9 @@
 namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
   DepthState::DepthState()
-    : m_Enabled(false),
+    : m_Enabled(true),
     m_Bias(0.0f),
-    m_Function(0)
+    m_Function(RendererBase::FT_LESS_EQUAL)
   {
 
   }

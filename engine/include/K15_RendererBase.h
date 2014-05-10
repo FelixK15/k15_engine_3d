@@ -181,16 +181,16 @@ namespace K15_Engine { namespace Rendering {
 
 		bool setClearColor(const ColorRGBA& p_ClearColor);
 		bool setClearColor(byte p_Red = 255, byte p_Green = 255, byte p_Blue = 255);
-		INLINE const ColorRGBA& getClearColor() const;
+		INLINE ColorRGBA& getClearColor();
 
 		INLINE void setLightningEnabled(bool p_Enabled);
 		INLINE bool getLightningEnabled() const;
 
 		bool setAlphaState(const AlphaState& p_AlphaState);
-		INLINE const AlphaState& getAlphaState() const;
+		INLINE AlphaState& getAlphaState();
 
 		bool setDepthState(const DepthState& p_DepthState);
-		INLINE const DepthState& getDepthState() const;
+		INLINE DepthState& getDepthState();
 
 		bool bindGpuProgramBatch(GpuProgramBatch* p_GpuProgramBatch);
 		INLINE GpuProgramBatch* getBoundGpuProgramBatch() const;

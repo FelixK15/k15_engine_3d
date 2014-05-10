@@ -93,14 +93,19 @@ bool RendererBase::getLightningEnabled() const
 	return m_LightningEnabled;
 }
 /*********************************************************************************/
-const AlphaState& RendererBase::getAlphaState() const
+AlphaState& RendererBase::getAlphaState()
 {
 	return m_AlphaState;
 }
 /*********************************************************************************/
-const DepthState& RendererBase::getDepthState() const
+DepthState& RendererBase::getDepthState()
 {
   return m_DepthState;
+}
+/*********************************************************************************/
+ColorRGBA& RendererBase::getClearColor()
+{
+	return m_ClearColor;
 }
 /*********************************************************************************/
 GpuProgram* RendererBase::getBoundGpuProgram(Enum p_GpuProgramType) const

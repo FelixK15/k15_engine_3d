@@ -38,17 +38,17 @@ void MaterialPass::setProgramBatch(GpuProgramBatch* p_ProgramBatch)
 	m_ProgramBatch = p_ProgramBatch;
 }
 /*********************************************************************************/
-const ColorRGBA& MaterialPass::getSpecular() const
+ColorRGBA& MaterialPass::getSpecular()
 {
 	return m_Specular;
 }
 /*********************************************************************************/
-const ColorRGBA& MaterialPass::getDiffuse() const
+ColorRGBA& MaterialPass::getDiffuse()
 {
 	return m_Diffuse;
 }
 /*********************************************************************************/
-const ColorRGBA& MaterialPass::getAmbient() const
+ColorRGBA& MaterialPass::getAmbient()
 {
 	return m_Ambient;
 }
@@ -138,7 +138,7 @@ void MaterialPass::setCullingMode(Enum p_CullingMode)
 	m_CullingMode = p_CullingMode;
 }
 /*********************************************************************************/
-const DepthState& MaterialPass::getDepthState() const
+DepthState& MaterialPass::getDepthState()
 {
 	return m_DepthState;
 }
@@ -148,7 +148,7 @@ void MaterialPass::setDepthState(const DepthState& p_DepthState)
 	m_DepthState = p_DepthState;
 }
 /*********************************************************************************/
-const AlphaState& MaterialPass::getAlphaState() const
+AlphaState& MaterialPass::getAlphaState()
 {
 	return m_AlphaState;
 }

@@ -47,6 +47,11 @@ void Node::translate(const Vector3& p_Translation)
 	m_NeedUpdate = true;
 }
 /*********************************************************************************/
+void Node::translate(const Vector4& p_Translation)
+{
+	translate(p_Translation.x,p_Translation.y,p_Translation.z);
+}
+/*********************************************************************************/
 void Node::translate(float x, float y, float z)
 {
 	m_Position += Vector3(x,y,z);
@@ -104,10 +109,10 @@ const Vector3& Node::getScale() const
 	return m_Scale;
 }
 /*********************************************************************************/
-// const Quaternion& Node::getOrientation() const
-// {
-// 	return m_Orientation;
-// }
+const Matrix4& Node::getOrientation() const
+{
+	return m_Orientation;
+}
 /*********************************************************************************/
 bool Node::needUpdate() const
 {

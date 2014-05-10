@@ -49,10 +49,16 @@ namespace TowerDefense
 
 		m_Camera = K15_NEW GameObject("Camera");
 		m_Camera->addComponent(K15_NEW CameraComponent());
+		m_Camera->getComponentByType<CameraComponent>()->setZoom(.1f);
+		m_Camera->getComponentByType<CameraComponent>()->setProjectionType(CameraComponent::PT_ORTHOGRAPHIC);
+		
 		m_RenderProcess = K15_NEW RenderProcess();
 		m_Level = K15_NEW Level("level0");
-		m_Camera->getNode().translate(0.0f,5.0f,0.0f);
-		m_Camera->getNode().rotate(Vector3(1.0f,0.0f,0.0f),-glm::half_pi<float>() * 0.5f);
+		m_Camera->getNode().rotate(Vector3(0.0f,1.0f,0.0f),-glm::radians(45.0f));
+		m_Camera->getNode().rotate(Vector3(1.0f,0.0f,0.0f),-glm::radians(45.264f));
+
+		Vector4 cameraLookAt = m_Camera->getNode().getOrientation() * Vector4(0.0f,0.0f,10.f,1.0f);
+		m_Camera->getNode().translate(cameraLookAt);
 		g_Application->getRenderer()->setActiveCameraGameObject(m_Camera);
 
 		TextureSampler* sampler = K15_NEW TextureSampler();
@@ -64,19 +70,6 @@ namespace TowerDefense
 	{
 		if(m_RendererInitialized)
 		{
-			static bool forward = false;
-			static int counter = 100;
-			if(forward)
-			{
-				forward = ++counter >= 100;
-				m_Camera->getNode().translate(0.0f,0.0f,0.05f);
-			}
-			else
-			{
-				forward = --counter <= 100;
-				m_Camera->getNode().translate(0.0f,0.0f,-0.05f);
-			}
-
 			if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_W))
 			{
 				m_Camera->getNode().rotate(Vector3(1.0f,0.0f,0.0f),0.02f);

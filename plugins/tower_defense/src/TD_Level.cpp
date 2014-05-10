@@ -40,23 +40,31 @@ namespace TowerDefense
 		Image* layout = g_ResourceManager->getResource<Image>(p_Name + ".tif");
 		GameObject* currentGameObject = 0;
 		
-		uint32 height = layout->getHeight() % 2 == 0 ? layout->getHeight() : layout->getHeight() + 1;
-		uint32 width = layout->getWidth() % 2 == 0 ? layout->getWidth() : layout->getWidth() + 1;
+		uint32 height = layout->getHeight() % 2 != 0 ? layout->getHeight() + 1 : layout->getHeight();
+		uint32 width = layout->getWidth() % 2 != 0 ? layout->getWidth() + 1 : layout->getWidth();
 		int32 height_half = height / 2;
 		int32 width_half = width / 2;
+
+		GameObject* plane = _createPlane(height_half,width_half);
+		plane->getNode().translate(0,-.5f,0.0f);
+		m_GameObjects.push_back(plane);
 		for(int y = -height_half; y < height_half;++y)
 		{
 			for(int x = -width_half;x < width_half;++x)
 			{
 				ColorRGBA color = layout->getPixel(x + width_half, y + height_half);
-				currentGameObject = K15_NEW GameObject();
-				currentGameObject->getNode().translate(x,0,y);
-
 				Mesh* modelMesh = 0;
 
-				if(color == ColorRGBA::Yellow || color == ColorRGBA::Blue || color == ColorRGBA::Green || color == ColorRGBA::Red ||
-				   color == ColorRGBA::Black)
+				if(color == ColorRGBA::Yellow)
 				{
+					continue;
+				}
+				else if(color == ColorRGBA::Blue || color == ColorRGBA::Green ||
+					color == ColorRGBA::Red || color == ColorRGBA::Black)
+				{
+					currentGameObject = K15_NEW GameObject();
+					currentGameObject->getNode().translate((float)x,0,(float)y);
+
 					if(color == ColorRGBA::Black)
 					{
 						//wall
@@ -123,6 +131,67 @@ namespace TowerDefense
 
 			p_Process->setRenderQueue(rops);
 		}
+	}
+	/*********************************************************************************/
+	GameObject* Level::_createPlane(uint32 p_HalfHeight, uint32 p_HalfWidth)
+	{
+		GameObject* plane = K15_NEW GameObject("plane");
+		float left = (float)p_HalfWidth * -1.f;
+		float right = (float)p_HalfWidth;
+		float top = (float)p_HalfHeight;
+		float bottom = (float)p_HalfHeight * -1.f;
+
+		float vertexData[] = {
+			left, 0.0f, bottom, 1.0f,
+			0.0f, 0.0f,
+
+			left, 0.0f, top, 1.0f,
+			0.0f, top * 2.f,
+
+			right, 0.0f, top, 1.0f,
+			right * 2.f, top * 2.f,
+
+			right, 0.0f, bottom, 1.0f,
+			right * 2.f, 0.0f
+		};
+
+
+		uint16 indexData[] = {
+			0,3,2,
+			2,1,0
+		};
+
+		VertexBuffer::CreationOptions vbo_opts;
+		IndexBuffer::CreationOptions ibo_opts;
+
+		ibo_opts.InitialData.data = (byte*)indexData;
+		ibo_opts.InitialData.size = sizeof(indexData);
+		ibo_opts.IndexType = IndexBuffer::IT_UINT16;
+
+		vbo_opts.InitialData.data = (byte*)vertexData;
+		vbo_opts.InitialData.size = sizeof(vertexData);
+
+		vbo_opts.VertexLayout = VertexDeclaration::create("PF4TF2");
+		
+		VertexBuffer* vbo = K15_NEW VertexBuffer(vbo_opts);
+		IndexBuffer* ibo = K15_NEW IndexBuffer(ibo_opts);
+
+		Material* material = g_ResourceManager->getResource<Material>("outer_floor.json");
+		DepthState& state = material->getPass(0)->getDepthState();
+		state.setBias(1.0f);
+		material->getPass(0)->setDepthState(state);
+		Mesh* planeMesh = K15_NEW Mesh();
+		SubMesh* planeSubMesh = K15_NEW SubMesh(planeMesh);
+
+		planeSubMesh->setVertexBuffer(vbo);
+		planeSubMesh->setIndexBuffer(ibo);
+		planeSubMesh->setMaterial(material);
+
+		planeMesh->addSubMesh(planeSubMesh);
+
+		plane->addComponent(K15_NEW ModelComponent(planeMesh));
+
+		return plane;
 	}
 	/*********************************************************************************/
 }

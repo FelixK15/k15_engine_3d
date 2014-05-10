@@ -307,24 +307,24 @@ namespace K15_Engine { namespace Plugins { namespace RenderTest {
 		if(p_EventArgs.xNDC < -0.2f)
 		{
 			translate = -translate;
-			translate = m_Camera->getNode()->getTransformation() * translate;
+			translate = m_Camera->getNode().getTransformation() * translate;
 			m_Camera->getNode()->translate(translate.x,translate.y,translate.z);
 		}else if(p_EventArgs.xNDC > 0.2f)
 		{
-			translate = m_Camera->getNode()->getTransformation() * translate;
+			translate = m_Camera->getNode().getTransformation() * translate;
 			m_Camera->getNode()->translate(translate.x,translate.y,translate.z);
 		}
 		translate.x = 0.0f;
 		translate.z = 0.5f;
 		if(p_EventArgs.yNDC < -0.2f)
 		{
-			translate = m_Camera->getNode()->getTransformation() * translate;
-			m_Camera->getNode()->translate(translate.x,translate.y,translate.z);
+			translate = m_Camera->getNode().getTransformation() * translate;
+			m_Camera->getNode().translate(translate.x,translate.y,translate.z);
 		}else if(p_EventArgs.yNDC > 0.2f)
 		{
 			translate = -translate;
-			translate = m_Camera->getNode()->getTransformation() * translate;
-			m_Camera->getNode()->translate(translate.x,translate.y,translate.z);
+			translate = m_Camera->getNode().getTransformation() * translate;
+			m_Camera->getNode().translate(translate.x,translate.y,translate.z);
 		}
 	}
 	/*********************************************************************************/

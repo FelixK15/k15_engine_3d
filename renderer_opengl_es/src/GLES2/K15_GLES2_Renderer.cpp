@@ -283,6 +283,7 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 			{
 				glEnable(GL_DEPTH_TEST);
 				glDepthFunc(GLFunctionTestConverter[p_DepthState.getFunction()]);
+				glPolygonOffset(0.0f,p_DepthState.getBias());
 			}
 			else
 			{
@@ -294,6 +295,7 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 			if(m_DepthState.getEnabled())
 			{
 				glDepthFunc(GLFunctionTestConverter[p_DepthState.getFunction()]);
+				glPolygonOffset(0.0f,p_DepthState.getBias());
 			}
 		}
 	}
