@@ -24,8 +24,10 @@
 #include "K15_ResourceManager.h"
 #include "K15_Material.h"
 #include "K15_GpuProgramBatch.h"
+#include "K15_GpuProgramCatalog.h"
 #include "K15_RawData.h"
 #include "K15_IOUtil.h"
+
 
 #include "json\reader.h"
 
@@ -74,19 +76,14 @@ namespace K15_Engine { namespace Core {
 				MaterialPass* materialPass = material->getPass(passCounter,true);
 
 				materialPass->setDiffuseMap(g_ResourceManager->getResource<Texture>(pass["DiffuseMap"].asString()));
-				GpuProgramBatch* batch = K15_NEW GpuProgramBatch();
-				GpuProgram* vertexShader = K15_NEW GpuProgram("default_vert",GpuProgram::PS_VERTEX);
-				GpuProgram* fragmentShader = K15_NEW GpuProgram("default_frag",GpuProgram::PS_FRAGMENT);
+				
+				String gpuProgramBatchName = pass.get("ShaderBatch","").asString();
 
-				vertexShader->setProgramCode(IOUtil::readWholeFile(g_Application->getGameRootDir() + "default.vert"));
-				fragmentShader->setProgramCode(IOUtil::readWholeFile(g_Application->getGameRootDir() + "default.frag"));
-
-				batch->addGpuProgram(vertexShader);
-				batch->addGpuProgram(fragmentShader);
-
-				batch->compile();
-
-				materialPass->setProgramBatch(batch);
+				if(!gpuProgramBatchName.empty())
+				{
+					GpuProgramBatch* batch = GpuProgramCatalog::getGpuProgramBatch(gpuProgramBatchName);
+					materialPass->setProgramBatch(batch);
+				}
 
 				///cullingmode
 				String cullingmode = pass.get("CullingMode","CM_CCW").asString();

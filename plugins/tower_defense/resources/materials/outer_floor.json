@@ -2,9 +2,8 @@
   "Name" : "OuterFloor",
   "Passes" : [
 	{
-	    "DiffuseMap":"outer_floor.tif",
-    	"VertexShader":"default.vert",
-    	"FragmentShader":"default.frag"
+	    "DiffuseMap":"img/outer_floor.tif",
+    	"ShaderBatch":"default"
 	}
   ]
 }

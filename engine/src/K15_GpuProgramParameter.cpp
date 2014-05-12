@@ -47,7 +47,7 @@ namespace K15_Engine { namespace Rendering {
   const Enum GpuProgramParameter::UniformUpdateFrequency[PI_COUNT] = {
 	  UF_PER_CAMERA | UF_PER_FRAME, //PI_VIEW_MATRIX
 	  UF_PER_CAMERA,				//PI_PROJECTION_MATRIX
-	  UF_PER_OBJECT,			//PI_MODEL_MATRIX
+	  UF_PER_OBJECT,				//PI_MODEL_MATRIX
 	  UF_PER_CAMERA | UF_PER_FRAME, //PI_VIEW_PROJECTION_MATRIX
 	  UF_PER_FRAME,					//PI_TIME
 

@@ -49,7 +49,7 @@ namespace TowerDefense
 
 		m_Camera = K15_NEW GameObject("Camera");
 		m_Camera->addComponent(K15_NEW CameraComponent());
-		m_Camera->getComponentByType<CameraComponent>()->setZoom(.1f);
+		m_Camera->getComponentByType<CameraComponent>()->setZoom(.15f);
 		m_Camera->getComponentByType<CameraComponent>()->setProjectionType(CameraComponent::PT_ORTHOGRAPHIC);
 		
 		m_RenderProcess = K15_NEW RenderProcess();
@@ -86,6 +86,16 @@ namespace TowerDefense
 			else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_D))
 			{
 				m_Camera->getNode().rotate(Vector3(0.0f,1.0f,0.0f),-0.02f);
+			}
+
+			if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_O))
+			{
+				m_Camera->getComponentByType<CameraComponent>()->setProjectionType(CameraComponent::PT_ORTHOGRAPHIC);
+			}
+
+			if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_P))
+			{
+				m_Camera->getComponentByType<CameraComponent>()->setProjectionType(CameraComponent::PT_PERSPECTIVE);
 			}
 // 			m_Camera->getNode()->rotate(Vector3(1.0f,0.0f,0.0f),-(glm::pi<float>() * 2) * 0.4f);
 // 			m_Camera->getNode()->rotate(Vector3(0.0f,1.0f,0.0f),(glm::pi<float>() * 2) * 0.01f);

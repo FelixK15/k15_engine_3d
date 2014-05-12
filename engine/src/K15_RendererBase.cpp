@@ -387,6 +387,12 @@ namespace K15_Engine { namespace Rendering {
 			m_GpuPrograms[p_Stage] = p_GpuProgram;
 			_bindProgram(p_GpuProgram,p_Stage);
 
+			//After a gpu program has been bound, we need to reset the vertex declaration
+			if(m_VertexDeclaration)
+			{
+				_setVertexDeclaration(m_VertexDeclaration);
+			}
+			
 			m_GpuParameterUpdateMask = GpuProgramParameter::UF_ALL;
 
 			if(errorOccured())
@@ -470,6 +476,14 @@ namespace K15_Engine { namespace Rendering {
 		K15_ASSERT(p_Rop->vertexBuffer,"RenderOperation has no vertex buffer.");
 		
 		m_GpuParameterUpdateMask |= GpuProgramParameter::UF_PER_OBJECT;
+
+		if(m_ActiveCamera)
+		{
+			if(m_ActiveCamera->isProjectionMatrixDirty())
+			{
+				m_GpuParameterUpdateMask |= GpuProgramParameter::UF_PER_CAMERA;
+			}
+		}
 
 		if(!bindBuffer(p_Rop->vertexBuffer,GpuBuffer::BT_VERTEX_BUFFER) ||
 		   !bindBuffer(p_Rop->indexBuffer,GpuBuffer::BT_INDEX_BUFFER) ||

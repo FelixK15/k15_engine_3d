@@ -18,9 +18,10 @@ namespace TowerDefense
 		~Level();
 
 		void draw(RenderProcess* m_RenderProcess);
+	
 	private:
 		void _loadLevel(const String& p_Name);
-		GameObject* _createPlane(uint32 height, uint32 width);
+	
 	private:
 		GameObjectArray m_GameObjects;
 	};

@@ -85,17 +85,15 @@ namespace K15_Engine { namespace Rendering {
 
 	VertexDeclaration* VertexDeclaration::create(const String& p_DeclarationString)
 	{
-// 		VertexDeclarationMap::iterator iter = VertexDeclarationCache.find(p_DeclarationString);
-// 
-// 		if(iter == VertexDeclarationCache.end())
-// 		{
-// 			VertexDeclarationCache.insert(Pair(ObjectName,VertexDeclaration*)(ObjectName(p_DeclarationString),K15_NEW VertexDeclaration(p_DeclarationString)));
-// 			iter = VertexDeclarationCache.find(p_DeclarationString);
-// 		}
-// 
-// 		return iter->second;
+		VertexDeclarationMap::iterator iter = VertexDeclarationCache.find(p_DeclarationString);
 
-		return K15_NEW VertexDeclaration(p_DeclarationString);
+		if(iter == VertexDeclarationCache.end())
+		{
+			VertexDeclarationCache.insert(Pair(ObjectName,VertexDeclaration*)(ObjectName(p_DeclarationString),K15_NEW VertexDeclaration(p_DeclarationString)));
+			iter = VertexDeclarationCache.find(p_DeclarationString);
+		}
+
+		return iter->second;
 	}
 	/*********************************************************************************/
 	VertexDeclaration::VertexDeclaration(const String& p_DeclarationString)

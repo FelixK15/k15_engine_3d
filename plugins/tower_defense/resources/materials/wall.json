@@ -2,9 +2,8 @@
   "Name" : "Wall",
   "Passes" : [
   	{
-	    "DiffuseMap":"wall.tif",
-    	"VertexShader":"default.vert",
-    	"FragmentShader":"default.frag"
+	    "DiffuseMap":"img/wall.tif",
+    	"ShaderBatch":"default"
 	}
   ]
 }

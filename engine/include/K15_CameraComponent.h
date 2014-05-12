@@ -85,11 +85,14 @@ namespace K15_Engine { namespace Rendering {
 		const Matrix4& getViewMatrix();
     
 		void setActive(bool p_Active);
-		void setProjectionType(Enum p_ProjectionType);
+		INLINE void setProjectionType(Enum p_ProjectionType);
 		INLINE void setFieldOfView(float p_Fov);
 		INLINE void setFarClipDistance(float p_Far);
 		INLINE void setNearClipDistance(float p_Near);
 		INLINE void setZoom(float p_Zoom);
+
+		INLINE bool isProjectionMatrixDirty() const;
+		INLINE bool isViewMatrixDirty() const;
 
 		bool isVisible(const AABB& p_AABB);
 
@@ -110,7 +113,8 @@ namespace K15_Engine { namespace Rendering {
 		expose float m_NearClipDistance;
 		expose float m_Zoom;
 		expose Enum m_ProjectionType;
-		bool m_Dirty;
+		bool m_ViewMatrixDirty;
+		bool m_ProjMatrixDirty;
 		bool m_Active;
   }; //end of Camera class declaration
 #include "K15_CameraComponent.inl"

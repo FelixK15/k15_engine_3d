@@ -2,9 +2,8 @@
   "Name" : "Goal",
   "Passes" : [
 	{
-	    "DiffuseMap":"goal.tif",
-	    "VertexShader":"default.vert",
-	    "FragmentShader":"default.frag"
+	    "DiffuseMap":"img/goal.tif",
+	    "ShaderBatch":"default"
 	}
   ]
 }

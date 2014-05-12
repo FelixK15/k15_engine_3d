@@ -188,6 +188,7 @@
     <ClInclude Include="..\..\engine\include\K15_EventTask.h" />
     <ClInclude Include="..\..\engine\include\K15_GameState.h" />
     <ClInclude Include="..\..\engine\include\K15_GpuProgramBatch.h" />
+    <ClInclude Include="..\..\engine\include\K15_GpuProgramCatalog.h" />
     <ClInclude Include="..\..\engine\include\K15_Image.h" />
     <ClInclude Include="..\..\engine\include\K15_IOUtil.h" />
     <ClInclude Include="..\..\engine\include\K15_FrameStatistic.h" />
@@ -407,6 +408,7 @@
     <ClCompile Include="..\..\engine\src\K15_GpuBuffer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GpuProgram.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GpuProgramBatch.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_GpuProgramCatalog.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GpuProgramParameter.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Image.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>

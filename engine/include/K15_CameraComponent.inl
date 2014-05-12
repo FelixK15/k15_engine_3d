@@ -33,6 +33,7 @@ void CameraComponent::setZoom(float p_Zoom)
 	if(p_Zoom > 0.0f)
 	{
 		m_Zoom = p_Zoom;
+		m_ProjMatrixDirty = true;
 	}
 }
 /*********************************************************************************/
@@ -54,23 +55,39 @@ float CameraComponent::getNearClipDistance() const
 void CameraComponent::setFieldOfView(float p_Fov)
 {
   m_Fov = p_Fov;
-  m_Dirty = true;
+  m_ViewMatrixDirty = true;
 }
 /*********************************************************************************/
 void CameraComponent::setFarClipDistance(float p_Far)
 {
   m_FarClipDistance = p_Far;
-  m_Dirty = true;
+  m_ProjMatrixDirty = true;
 }
 /*********************************************************************************/
 void CameraComponent::setNearClipDistance(float p_Near)
 {
   m_NearClipDistance = p_Near;
-  m_Dirty = true;
+  m_ProjMatrixDirty = true;
 }
 /*********************************************************************************/
 const CameraComponent::FrustumPoints& CameraComponent::getFrustumPoints() const
 {
   return m_FrustumPoints;
+}
+/*********************************************************************************/
+void CameraComponent::setProjectionType(Enum p_ProjectionType)
+{
+	m_ProjectionType = p_ProjectionType;
+	m_ProjMatrixDirty = true;
+}
+/*********************************************************************************/
+bool CameraComponent::isProjectionMatrixDirty() const
+{
+	return m_ProjMatrixDirty;
+}
+/*********************************************************************************/
+bool CameraComponent::isViewMatrixDirty() const
+{
+	return m_ViewMatrixDirty;
 }
 /*********************************************************************************/
