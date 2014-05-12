@@ -20,14 +20,20 @@
 #include "K15_PrecompiledHeader.h"
 #include "K15_RendererBase.h"
 
+#include "K15_GpuProgramCatalog.h"
 #include "K15_GpuProgramParameter.h"
 #include "K15_GpuProgram.h"
 #include "K15_GpuProgramBatch.h"
 #include "K15_GpuBuffer.h"
 
+#include "K15_Vertex.h"
 #include "K15_VertexBuffer.h"
 #include "K15_IndexBuffer.h"
 #include "K15_VertexDeclaration.h"
+
+#include "K15_RawData.h"
+#include "K15_ResourceManager.h"
+#include "K15_Font.h"
 
 #include "K15_GameObject.h"
 #include "K15_Node.h"
@@ -113,8 +119,11 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	bool RendererBase::initialize()
 	{
-		m_Initialized = _initialize();
-
+		if((m_Initialized = _initialize()) == true)
+		{
+			_createFontRenderingResources();
+		}
+		
 		return m_Initialized;
 	}
 	/*********************************************************************************/
@@ -853,6 +862,142 @@ namespace K15_Engine { namespace Rendering {
 		}
 
 		return 0;
+	}
+	/*********************************************************************************/
+	bool RendererBase::drawText(const String& p_Text, const String& p_FontName, float p_ScreenSpacePosX, float p_ScreenSpacePosY)
+	{
+		return drawText(p_Text,g_ResourceManager->getResource<Font>(p_FontName),p_ScreenSpacePosX,p_ScreenSpacePosY);
+	}
+	/*********************************************************************************/
+	bool RendererBase::drawText(const String& p_Text, Font* p_Font, float p_ScreenSpacePosX, float p_ScreenSpacePosY)
+	{
+		K15_ASSERT(p_Font,"Font is NULL!");
+		K15_ASSERT(p_Font->getTexture(),
+			StringUtil::format("Font \"%s\" has no texture!",p_Font->getName().c_str()));
+
+		//bind font texture
+		bindTexture(p_Font->getTexture(),Texture::TT_2D,Texture::TS_SLOT1);
+
+		//bind resources
+		bindBuffer(m_FontVBO,GpuBuffer::BT_VERTEX_BUFFER);
+		bindBuffer(m_FontIBO,GpuBuffer::BT_INDEX_BUFFER);
+		bindGpuProgramBatch(m_FontGpuProgramBatch);
+
+		for(uint32 i = 0;i < p_Text.size();++i)
+		{
+			const Font::Letter& letter = p_Font->getLetter(p_Text[i]);
+
+			//update font vbo buffer
+			Vector4 pos_left_bottom = m_FontVBO->getVertex(0)->getPosition();
+			Vector4 pos_right_bottom = m_FontVBO->getVertex(1)->getPosition();
+			Vector4 pos_right_top = m_FontVBO->getVertex(2)->getPosition();
+			Vector4 pos_left_top = m_FontVBO->getVertex(3)->getPosition();
+
+			Vector2 uv_left_bottom = m_FontVBO->getVertex(0)->getUV();
+			Vector2 uv_right_bottom = m_FontVBO->getVertex(1)->getUV();
+			Vector2 uv_right_top = m_FontVBO->getVertex(2)->getUV();
+			Vector2 uv_left_top = m_FontVBO->getVertex(3)->getUV();
+
+			pos_left_bottom.x = p_ScreenSpacePosX;
+			pos_left_bottom.y = p_ScreenSpacePosY + letter.bottom;
+
+			pos_right_bottom.x = p_ScreenSpacePosX + letter.right;
+			pos_right_bottom.y = p_ScreenSpacePosY + letter.bottom;
+
+			pos_right_top.x = p_ScreenSpacePosX + letter.right;
+			pos_right_top.y = p_ScreenSpacePosY;
+
+			pos_left_top.x = p_ScreenSpacePosX;
+			pos_left_top.y = p_ScreenSpacePosY;
+
+			uv_left_bottom.x = letter.left;
+			uv_left_bottom.y = letter.bottom;
+
+			uv_right_bottom.x = letter.right;
+			uv_right_bottom.y = letter.bottom;
+
+			uv_right_top.x = letter.right;
+			uv_right_top.y = letter.top;
+
+			uv_left_top.x = letter.left;
+			uv_left_top.y = letter.top;
+
+			m_FontVBO->getVertex(0)->setPosition(pos_left_bottom);
+			m_FontVBO->getVertex(0)->setUV(uv_left_bottom);
+
+			m_FontVBO->getVertex(1)->setPosition(pos_right_bottom);
+			m_FontVBO->getVertex(1)->setUV(uv_right_bottom);
+
+			m_FontVBO->getVertex(2)->setPosition(pos_right_top);
+			m_FontVBO->getVertex(2)->setUV(uv_right_top);
+
+			m_FontVBO->getVertex(3)->setPosition(pos_left_top);
+			m_FontVBO->getVertex(3)->setUV(uv_left_top);
+
+			//upload changes to gpu
+			m_FontVBO->uploadShadowBufferToGpu();
+
+			//increase position
+			p_ScreenSpacePosX += letter.right;
+
+			//draw letter
+			_drawIndexed();
+		}
+
+		return true;
+	}
+	/*********************************************************************************/
+	void RendererBase::_createFontRenderingResources()
+	{
+		VertexBuffer::CreationOptions vboOpts;
+		IndexBuffer::CreationOptions iboOpts;
+
+		float vertexData[] = {
+			//pos + uv
+			//bottom left
+			-1.0f, -1.0f, 0.0f, 1.0f,
+			0.0f, 0.0f,
+
+			//bottom right
+			1.0f, -1.0f, 0.0f, 1.0f,
+			1.0f, 0.0f,
+
+			//top right
+			1.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, 1.0f,
+
+			//top left
+			-1.0f, 1.0f, 0.0f, 1.0f,
+			0.0f, 1.0f
+		};
+
+		uint16 indexData[] = {
+			0,1,2,
+			2,3,0
+		};
+
+		vboOpts.AccessOption = VertexBuffer::BA_WRITE_ONLY;
+		vboOpts.LockOption = VertexBuffer::LO_NORMAL;
+		vboOpts.UsageOption = VertexBuffer::UO_STATIC;
+		vboOpts.VertexLayout = VertexDeclaration::create("PF4TF2");
+		vboOpts.InitialData.data = (byte*)vertexData;
+		vboOpts.InitialData.size = sizeof(vertexData);
+
+		iboOpts.AccessOption = IndexBuffer::BA_WRITE_ONLY;
+		iboOpts.LockOption = IndexBuffer::LO_NORMAL;
+		iboOpts.UsageOption = IndexBuffer::UO_STATIC;
+		iboOpts.IndexType =  IndexBuffer::IT_UINT16;
+		iboOpts.InitialData.data = (byte*)indexData;
+		iboOpts.InitialData.size = sizeof(indexData); 
+
+		m_FontVBO = K15_NEW VertexBuffer(vboOpts);
+		m_FontIBO = K15_NEW IndexBuffer(iboOpts);
+		m_FontGpuProgramBatch = GpuProgramCatalog::getGpuProgramBatch("font");
+		m_FontSampler = K15_NEW TextureSampler();
+
+		m_FontSampler->setSlot(Texture::TS_SLOT8);
+		m_FontSampler->setMagFilterMode(TextureSampler::TFM_LINEAR);
+		m_FontSampler->setMinFilterMode(TextureSampler::TFM_LINEAR);
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace

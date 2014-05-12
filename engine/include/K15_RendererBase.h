@@ -140,6 +140,8 @@ namespace K15_Engine { namespace Rendering {
 		void shutdown();
 
 		bool draw(RenderOperation* p_Rop);
+		bool drawText(const String& p_Text, const String& p_FontName, float p_ScreenSpacePosX, float p_ScreenSpacePosY);
+		bool drawText(const String& p_Text, Font* p_Font, float p_ScreenSpacePosX, float p_ScreenSpacePosY);
 
 		bool setRenderWindow(RenderWindowBase* p_RenderWindow);
 		INLINE RenderWindowBase* getRenderWindow() const;
@@ -253,8 +255,13 @@ namespace K15_Engine { namespace Rendering {
 		virtual void _bindTextureSampler(TextureSampler* p_Sampler, Enum p_Slot){}
 		virtual void _drawIndexed(uint32 p_Offset = 0){}
 		virtual void _drawDirect(uint32 p_Offset = 0){}
-
+		void _createFontRenderingResources();
 	protected:
+		VertexBuffer* m_FontVBO;
+		IndexBuffer* m_FontIBO;
+		GpuProgramBatch* m_FontGpuProgramBatch;
+		TextureSampler* m_FontSampler;
+
 		RenderWindowBase* m_RenderWindow;
 		AlphaState m_AlphaState;
 		DepthState m_DepthState;

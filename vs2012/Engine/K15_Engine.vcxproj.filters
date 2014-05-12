@@ -429,7 +429,15 @@
     <ClInclude Include="..\..\engine\include\Android\K15_ResourceArchiveAndroid.h">
       <Filter>ResourceSystem\include\Android</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_GpuProgramCatalog.h" />
+    <ClInclude Include="..\..\engine\include\K15_Font.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_GpuProgramCatalog.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_ResourceImporterFont.h">
+      <Filter>ResourceSystem\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -723,7 +731,15 @@
     <ClCompile Include="..\..\engine\src\Android\K15_ResourceArchiveAndroid.cpp">
       <Filter>ResourceSystem\src\Android</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_GpuProgramCatalog.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_Font.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_GpuProgramCatalog.cpp">
+      <Filter>Rendering\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ResourceImporterFont.cpp">
+      <Filter>ResourceSystem\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -915,6 +931,9 @@
     </None>
     <None Include="..\..\engine\include\K15_RenderQueue.inl">
       <Filter>Rendering\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_Font.inl">
+      <Filter>Core\include</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -21,37 +21,49 @@
  * 
  */
 
-#ifndef _K15Engine_Core_Font_h_
-#define _K15Engine_Core_Font_h_
+#ifndef _K15Engine_Rendering_Font_h_
+#define _K15Engine_Rendering_Font_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_ResourceBase.h"
-#include "K15_ResourceHandle.h"
-
-struct FT_Face;
 
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API Font : public ResourceBase
+	class K15_CORE_API Font : public ResourceBase, public GeneralAllocatedObject
 	{
+		K15_DECLARE_RTTI;
+
+	public:
+		struct Letter
+		{
+			float left;
+			float right;
+			float top;
+			float bottom;
+
+			char character;
+		}; // end of Letter struct declaration
+		typedef DynamicArray(Letter) LetterArray;
 	public:
 		Font();
-		virtual ~Font();
+		~Font();
 
-		virtual void loadDebug(RawData& p_Data);
-		virtual bool internalLoad(const RawData& p_Data);
+		const Letter& getLetter(char p_Character) const;
+		void addLetter(const Letter& p_Letter);
+		void setTexture(Texture* p_Texture);
+
+		INLINE Texture* getTexture() const;
+	
+	private:
+		int32 _getLetterIndex(char p_Character) const;
 
 	private:
-		ResourceHandle<TrueTypeFont> m_Font;
-		//ResourceHandle<Texture> m_Texture;
-		ObjectName m_FontName;
-		uint8 m_StartGlyph;
-		uint8 m_EndGlyph;
-		uint8 m_GlyphSize;
-		uint8 m_Resolution;
+		Texture* m_FontTexture;
+		LetterArray m_Letters;
 	};// end of Font class declaration
+#	include "K15_Font.inl"
 }}// end of K15_Engine::Core namespace
 
-#endif //_K15Engine_Core_Font_h_
+#endif //_K15Engine_Rendering_Font_h_

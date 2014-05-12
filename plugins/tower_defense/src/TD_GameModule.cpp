@@ -15,6 +15,7 @@
 #include "K15_ResourceImporterObj.h"
 #include "K15_ResourceImporterTiff.h"
 #include "K15_ResourceImporterMaterial.h"
+#include "K15_ResourceImporterFont.h"
 #include "K15_Keyboard.h"
 
 namespace TowerDefense
@@ -46,6 +47,7 @@ namespace TowerDefense
 		g_ResourceManager->addResourceImporter(K15_NEW ResourceImporterTiff());
 		g_ResourceManager->addResourceImporter(K15_NEW ResourceImporterObj());
 		g_ResourceManager->addResourceImporter(K15_NEW ResourceImporterMaterial());
+		g_ResourceManager->addResourceImporter(K15_NEW ResourceImporterFont());
 
 		m_Camera = K15_NEW GameObject("Camera");
 		m_Camera->addComponent(K15_NEW CameraComponent());

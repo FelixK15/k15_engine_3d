@@ -24,6 +24,8 @@ namespace TowerDefense
 		{
 			g_Application->getRenderer()->draw(m_RenderQueue->getRenderOperation(i));
 		}
+
+		g_Application->getRenderer()->drawText("This is a sample Text!","fonts/arial.font",0.3f,0.3f);
 	}
 	/*********************************************************************************/
 	void RenderProcess::setRenderQueue(RenderQueue* p_RenderQueue)

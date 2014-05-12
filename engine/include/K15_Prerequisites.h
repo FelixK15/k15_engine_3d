@@ -398,6 +398,7 @@ typedef std::stringstream	StringStream;
 	#define _WINSOCKAPI_    // stops windows.h including winsock.h
 	#include "windows.h"
 	#include "windowsx.h"
+	#include "winnt.h"
 	#if defined K15_BUILD
 		#define K15_CORE_API __declspec(dllexport)
 	#else
@@ -450,6 +451,9 @@ typedef std::stringstream	StringStream;
 	#include <jni.h>
 	#include <unistd.h>
 
+	//TEXT macro from windows
+	#define TEXT(x) x
+
 	typedef K15_Engine::Core::DynamicLibrary_Linux DynamicLibraryType;
 	typedef K15_Engine::Core::ApplicationOSLayer_Android ApplicationOSLayerType;
 	typedef K15_Engine::Core::RenderWindow_Android RenderWindowType;
@@ -466,6 +470,7 @@ typedef std::stringstream	StringStream;
 	//64 bit types
 	typedef signed		long long	int64;
 	typedef unsigned	long long	uint64;
+
 #endif //K15_OS_WINDOWS
 
 

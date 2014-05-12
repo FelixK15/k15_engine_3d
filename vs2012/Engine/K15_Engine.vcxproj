@@ -186,6 +186,7 @@
     <ClInclude Include="..\..\engine\include\K15_DynamicLibraryBase.h" />
     <ClInclude Include="..\..\engine\include\K15_DynamicLibraryManager.h" />
     <ClInclude Include="..\..\engine\include\K15_EventTask.h" />
+    <ClInclude Include="..\..\engine\include\K15_Font.h" />
     <ClInclude Include="..\..\engine\include\K15_GameState.h" />
     <ClInclude Include="..\..\engine\include\K15_GpuProgramBatch.h" />
     <ClInclude Include="..\..\engine\include\K15_GpuProgramCatalog.h" />
@@ -282,6 +283,7 @@
     <ClInclude Include="..\..\engine\include\K15_RenderWindowBase.h" />
     <ClInclude Include="..\..\engine\include\K15_ResourceImporterBase.h" />
     <ClInclude Include="..\..\engine\include\K15_ResourceImporterBitmap.h" />
+    <ClInclude Include="..\..\engine\include\K15_ResourceImporterFont.h" />
     <ClInclude Include="..\..\engine\include\K15_ResourceImporterMaterial.h" />
     <ClInclude Include="..\..\engine\include\K15_ResourceImporterObj.h" />
     <ClInclude Include="..\..\engine\include\K15_Serialization.h" />
@@ -402,6 +404,7 @@
     <ClCompile Include="..\..\engine\src\K15_DepthState.cpp" />
     <ClCompile Include="..\..\engine\src\K15_DynamicLibraryBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_EventTask.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_Font.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GameObject.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GameObjectComponentBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GameState.cpp" />
@@ -453,6 +456,7 @@
     <ClCompile Include="..\..\engine\src\K15_ResourceImporterBitmap.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_ResourceImporterFont.cpp" />
     <ClCompile Include="..\..\engine\src\K15_ResourceImporterMaterial.cpp" />
     <ClCompile Include="..\..\engine\src\K15_ResourceImporterObj.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Serializer.cpp" />
@@ -500,6 +504,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
     <None Include="..\..\engine\include\K15_DynamicLibraryBase.inl" />
+    <None Include="..\..\engine\include\K15_Font.inl" />
     <None Include="..\..\engine\include\K15_Functor.inl" />
     <None Include="..\..\engine\include\K15_GameEvent.inl" />
     <None Include="..\..\engine\include\K15_GameObject.inl" />
