@@ -88,9 +88,27 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void BaseAllocatedObject::removeAllocators()
 	{
-    Allocators[AC_CORE]->clear();
+		K15_DELETE_T(Allocators[AC_RENDERING],Allocators[AC_VERTEX_POOL],PoolAllocator<Vertex>); Allocators[AC_VERTEX_POOL] = 0;
+		K15_DELETE_T(Allocators[AC_RENDERING],Allocators[AC_RENDEROP_POOL],PoolAllocator<RenderOperation>); Allocators[AC_RENDEROP_POOL] = 0;
+		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_RESOURCE],BlockAllocator);
+		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_LOGGING],BlockAllocator);
+		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_TASKS],BlockAllocator);
+		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_THREADING],BlockAllocator);
+		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_GAMEVENTS],BlockAllocator);
+		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_RENDERING],BlockAllocator);
 
-    delete Allocators[AC_CORE]; //only one that got created on the heap.
+		#if defined K15_DEBUG
+			K15_DELETE_T(Allocators[AC_DEBUG],Allocators[AC_PROFILING_NODE_POOL],PoolAllocator<ProfilingNode>);
+			K15_DELETE_T(Allocators[AC_DEBUG],Allocators[AC_PROFILING],BlockAllocator);
+			K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_DEBUG],BlockAllocator);
+		#endif
+
+		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_MODULE],BlockAllocator);
+		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_GENERAL],BlockAllocator);
+
+		Allocators[AC_CORE]->clear();
+
+		delete Allocators[AC_CORE]; //only one that got created on the heap.
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

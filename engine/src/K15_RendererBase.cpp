@@ -875,6 +875,20 @@ namespace K15_Engine { namespace Rendering {
 		K15_ASSERT(p_Font->getTexture(),
 			StringUtil::format("Font \"%s\" has no texture!",p_Font->getName().c_str()));
 
+		AlphaState prevAlpha = getAlphaState();
+		DepthState prevDepth = getDepthState();
+		DepthState depthState = getDepthState();
+		AlphaState alphaState = getAlphaState();
+		
+		alphaState.setBlendOperation(AlphaState::BO_ADD);
+		alphaState.setSourceBlendFunction(AlphaState::BF_SRC_ALPHA);
+		alphaState.setDestinationBlendFunction(AlphaState::BF_ONE_MINUS_SRC_ALPHA);
+
+		depthState.setEnabled(false);
+
+		setAlphaState(alphaState);
+		setDepthState(depthState);
+
 		//bind font texture
 		bindTexture(p_Font->getTexture(),Texture::TT_2D,Texture::TS_SLOT1);
 
@@ -943,6 +957,9 @@ namespace K15_Engine { namespace Rendering {
 			//draw letter
 			_drawIndexed();
 		}
+
+		setDepthState(prevDepth);
+		setAlphaState(prevAlpha);
 
 		return true;
 	}

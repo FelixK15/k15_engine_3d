@@ -34,7 +34,7 @@ namespace K15_Engine { namespace Core {
 	class K15_CORE_API ApplicationModule : public ModuleAllocatedObject
 	{
 	public:
-		void onRendererInitialized();
+		void onRendererInitialized(const RendererBase* p_Renderer);
 
 		virtual void evaluateSettings(const StringSet& p_ApplicationSettings){}
 
@@ -53,7 +53,7 @@ namespace K15_Engine { namespace Core {
 		ApplicationModule();
 		virtual ~ApplicationModule();
 
-		virtual void _onRendererInitialized() {};
+		virtual void _onRendererInitialized(const RendererBase* p_Renderer) {};
 
 		bool m_RendererInitialized;
 	}; //end of ApplicationModule class
