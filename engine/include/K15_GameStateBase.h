@@ -1,5 +1,5 @@
 /**
- * @file K15_GameState.cpp
+ * @file K15_GameState.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2014/05/03
@@ -15,23 +15,32 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @section DESCRIPTION
+ *
+ * 
  */
 
-#include "K15_PrecompiledHeader.h"
+#ifndef _K15Engine_Core_GameState_h_
+#define _K15Engine_Core_GameState_h_
 
-#include "K15_GameState.h"
+#ifndef K15_USE_PRECOMPILED_HEADER
+#	include "K15_Prerequisites.h"
+#	include "K15_Object.h"
+#endif //K15_USE_PRECOMPILED_HEADER
 
 namespace K15_Engine { namespace Core {
-	/*********************************************************************************/
-	GameState::GameState(const ObjectName& p_Name)
-		: Object(p_Name)
+	class K15_CORE_API GameStateBase : public Object
 	{
+	public:
+		virtual void initialize(GameStateBase* p_PrevGameState) = 0;
+		virtual void shutdown() = 0;
+		virtual void update(const GameTime& p_GameTime) = 0;
+	protected:
+		GameStateBase(const ObjectName& p_Name);
+		virtual ~GameStateBase();
 
-	}
-	/*********************************************************************************/
-	GameState::~GameState()
-	{
-
-	}
-	/*********************************************************************************/
+	};// end of GameStateBase class declaration
 }}// end of K15_Engine::Core namespace
+
+#endif //_K15Engine_Core_GameState_h_

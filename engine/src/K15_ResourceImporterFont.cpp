@@ -79,20 +79,20 @@ namespace K15_Engine { namespace Core {
 				#pragma message("Temporary hard coded")
 				for(uint32 y = 0;y < 256;y+=32)
 				{
-					for(uint32 x = 0;x < 512;x+=32, ++counter, posX += 1.0f / 512.f)
+					for(uint32 x = 0;x < 512;x+=32, ++counter, posX += (32.0f / 512.f))
 					{
 						Font::Letter letter;
 						letter.character = ' ' + counter;
 						letter.left = posX;
 						letter.top = posY;
-						letter.right = posX + 1.0f / 512.f;
-						letter.bottom = posY + 1.0f / 256.f;
+						letter.right = posX + (32.0f / 512.f);
+						letter.bottom = posY + (32.0f / 256.f);
 
 						font->addLetter(letter);
 					}
 
 					posX = 0.0f;
-					posY += 1.0f / 256.f;
+					posY += (32.0f / 256.f);
 				}
 			}
 			else

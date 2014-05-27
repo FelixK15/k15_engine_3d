@@ -14,16 +14,13 @@ namespace TowerDefense
 		~GameModule();
 
 		virtual void onInitialize() OVERRIDE;
-		//virtual void onShutdown() OVERRIDE;
-		virtual void onPreTick() OVERRIDE;
+		virtual void onShutdown() OVERRIDE;
 
 	protected:
-		virtual void _onRendererInitialized() OVERRIDE;
+		virtual void _onRendererInitialized(const RendererBase* p_Renderer) OVERRIDE;
 
 	private:
 		RenderProcess* m_RenderProcess;
-		GameObject* m_Camera;
-		Level* m_Level;
 	}; //end of GameModule class declaration
 } //End of TowerDefense namespace
 

@@ -119,6 +119,7 @@ namespace K15_Engine
 		class ProfilingManager;
 		class GameObject;
 		class GameObjectComponentBase;
+		class GameStateBase;
 		class EventManager;
 		class RenderWindowBase;
 		class MemoryProfiler;

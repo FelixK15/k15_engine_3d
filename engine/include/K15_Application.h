@@ -132,6 +132,9 @@ namespace K15_Engine { namespace Core {
 
 		INLINE uint32 getFramesPerSecond() const;
 
+		void setGameState(GameStateBase* p_GameState);
+		INLINE GameStateBase* getGameState() const;
+
 	private:
 		void createCommandList(int p_CommandCount,char** p_Commands);
 		void createApplicationParameterList();
@@ -179,6 +182,8 @@ namespace K15_Engine { namespace Core {
 				RenderTask* m_RenderTask;
 				PhysicsTask* m_PhysicsTask;
 				EventTask* m_EventTask;
+				
+				GameStateBase* m_GameState;
 #			if defined K15_DEBUG
 				MemoryProfilingTask* m_MemoryProfilingTask;
 #			endif

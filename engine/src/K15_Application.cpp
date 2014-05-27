@@ -53,6 +53,7 @@
 
 #include "K15_RendererBase.h"
 #include "K15_RenderProcessBase.h"
+#include "K15_GameStateBase.h"
 
 namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
@@ -81,7 +82,8 @@ namespace K15_Engine { namespace Core {
 		m_FrameCounter(0),
 		m_MaxFPS(30),
 		m_AvgFrameTime(0.033),
-		m_FrameAllocator(0)
+		m_FrameAllocator(0),
+		m_GameState(0)
 	{
 		memset(m_FrameStatistics,0,sizeof(FrameStatistic) * FrameStatisticCount);
 
@@ -336,6 +338,11 @@ namespace K15_Engine { namespace Core {
 		K15_PROFILE_BLOCK("TaskManager::update",
 		  m_TaskManager->update(m_GameTime);
 		);
+
+		if(m_GameState)
+		{
+			m_GameState->update(m_GameTime);
+		}
 	
 		K15_PROFILE_BLOCK("Application::onPostTick",
 		  onPostTick();
@@ -714,17 +721,30 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void Application::tryInitializeRenderer()
 	{
+		static RendererBase* renderer = 0;
 		//try to initialize renderer
-		if(getRenderer())
+		if((renderer = getRenderer()) != 0)
 		{
-			if(getRenderer()->initialize())
+			if(renderer->initialize())
 			{
 				for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
 				{
-					(*iter)->onRendererInitialized();
+					(*iter)->onRendererInitialized(renderer);
 				}
 			}
 		}
+	}
+	/*********************************************************************************/
+	void Application::setGameState(GameStateBase* p_GameState)
+	{
+		p_GameState->initialize(m_GameState);
+
+		if(m_GameState)
+		{
+			m_GameState->shutdown();		
+		}
+
+		m_GameState = p_GameState;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace
