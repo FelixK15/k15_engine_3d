@@ -153,6 +153,7 @@
     <ClInclude Include="..\..\plugins\tower_defense\include\TD_GameModule.h" />
     <ClInclude Include="..\..\plugins\tower_defense\include\TD_MainGameState.h" />
     <ClInclude Include="..\..\plugins\tower_defense\include\TD_Level.h" />
+    <ClInclude Include="..\..\plugins\tower_defense\include\TD_MoveComponent.h" />
     <ClInclude Include="..\..\plugins\tower_defense\include\TD_Prerequisities.h" />
     <ClInclude Include="..\..\plugins\tower_defense\include\TD_RenderProcess.h" />
   </ItemGroup>
@@ -161,6 +162,7 @@
     <ClCompile Include="..\..\plugins\tower_defense\src\TD_GameModule.cpp" />
     <ClCompile Include="..\..\plugins\tower_defense\src\TD_MainGameState.cpp" />
     <ClCompile Include="..\..\plugins\tower_defense\src\TD_Level.cpp" />
+    <ClCompile Include="..\..\plugins\tower_defense\src\TD_MoveComponent.cpp" />
     <ClCompile Include="..\..\plugins\tower_defense\src\TD_RenderProcess.cpp" />
   </ItemGroup>
   <ItemGroup>

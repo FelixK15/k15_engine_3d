@@ -40,6 +40,8 @@ namespace K15_Engine { namespace Core {
 		INLINE GameObject* getGameObject() const;
 		INLINE void setGameObject(GameObject* p_GameObject);
 
+		virtual void update(const GameTime& p_GameTime) {}
+
 	protected:
 		virtual void _onGameObjectSet() {}
 
