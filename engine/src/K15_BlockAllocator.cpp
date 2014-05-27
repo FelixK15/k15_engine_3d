@@ -26,7 +26,8 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	BlockAllocator::BlockAllocator(size_t p_Size,const String& p_Name,BaseAllocator* p_BaseAllocator)
 		: BaseAllocator(p_Size,p_Name,p_BaseAllocator),
-		  m_First(0)
+		  m_First(0),
+		  m_Current(0)
 	{
 
 	}
@@ -52,10 +53,12 @@ namespace K15_Engine { namespace Core {
 			m_First->Size = p_Size -= sizeof(MemoryBlock);
 			m_First->Next = 0;
 
+			m_Current = m_First;
+
 			return m_First->Memory;
 		}
   
-		MemoryBlock* block = findBlock_R(m_First,p_Size);
+		MemoryBlock* block = findBlock_R(m_Current,p_Size);
 
 		if(!block)
 		{
@@ -69,6 +72,8 @@ namespace K15_Engine { namespace Core {
 				return 0;
 			}
 		}
+
+		m_Current = block;
 
 		return block->Memory;
 	}
@@ -105,33 +110,32 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void BlockAllocator::defragment_R(MemoryBlock* p_Block)
 	{
-	if(p_Block && p_Block->Next)
-	{
-		if(!p_Block->Used && !p_Block->Next->Used)
+		while(p_Block && p_Block->Next)
 		{
-			_LogDebug("Merging block %p(size %u) and block %p(size %u) from BlockAllocator \"%s\"...",
-				p_Block,p_Block->Size,p_Block->Next,p_Block->Next->Size,m_Name.c_str());
+			if(!p_Block->Used && !p_Block->Next->Used)
+			{
+				_LogDebug("Merging block %p(size %u) and block %p(size %u) from BlockAllocator \"%s\"...",
+					p_Block,p_Block->Size,p_Block->Next,p_Block->Next->Size,m_Name.c_str());
 
-			p_Block->Size += p_Block->Next->Size + sizeof(MemoryBlock); //memblock is part of memory so we add the size of the block to get the 'real' size.
-			p_Block->Next = p_Block->Next->Next;
-		}
+				p_Block->Size += p_Block->Next->Size + sizeof(MemoryBlock); //memblock is part of memory so we add the size of the block to get the 'real' size.
+				p_Block->Next = p_Block->Next->Next;
+			}
 
-		defragment_R(p_Block->Next);
+			p_Block = p_Block->Next;
 		}
 	}
 	/*********************************************************************************/
 	void BlockAllocator::dealloc_R(MemoryBlock* p_Block,void* p_Pointer,size_t p_Size)
 	{
-		if(p_Block)
+		while(p_Block)
 		{
-			if(p_Block->Memory != p_Pointer)
-			{
-				dealloc_R(p_Block->Next,p_Pointer,p_Size);
-			}
-			else
+			if(p_Block->Memory == p_Pointer)
 			{
 				p_Block->Used = false;
+				break;
 			}
+
+			p_Block = p_Block->Next;
 		}
 	}
 	/*********************************************************************************/

@@ -17,6 +17,7 @@ int main(int argc,char** argv)
 	BaseAllocatedObject::createCoreAllocators();
 
 	Application* application = K15_NEW Application();
+	application->initialize(argc,argv);
 #if defined K15_OS_ANDROID
 	app_dummy();
 	application->initialize(app);

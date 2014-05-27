@@ -50,6 +50,7 @@ namespace K15_Engine { namespace Core {
 
 	private:
 		MemoryBlock* m_First;
+		MemoryBlock* m_Current;
 	};// end of BlockAllocator class declaration
 }}// end of K15_Engine::Core namespace
 
