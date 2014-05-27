@@ -423,9 +423,6 @@
     <ClInclude Include="..\..\engine\include\K15_ResourceImporterMaterial.h">
       <Filter>ResourceSystem\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_GameState.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\Android\K15_ResourceArchiveAndroid.h">
       <Filter>ResourceSystem\include\Android</Filter>
     </ClInclude>
@@ -437,6 +434,9 @@
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_ResourceImporterFont.h">
       <Filter>ResourceSystem\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_GameStateBase.h">
+      <Filter>Core\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -725,9 +725,6 @@
     <ClCompile Include="..\..\engine\src\K15_ResourceImporterMaterial.cpp">
       <Filter>ResourceSystem\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_GameState.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\engine\src\Android\K15_ResourceArchiveAndroid.cpp">
       <Filter>ResourceSystem\src\Android</Filter>
     </ClCompile>
@@ -739,6 +736,9 @@
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_ResourceImporterFont.cpp">
       <Filter>ResourceSystem\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_GameStateBase.cpp">
+      <Filter>Core\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

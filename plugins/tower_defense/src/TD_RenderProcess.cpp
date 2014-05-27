@@ -18,14 +18,17 @@ namespace TowerDefense
 	/*********************************************************************************/
 	void RenderProcess::renderSingleFrame()
 	{
-		m_RenderQueue->sort();
-
-		for(uint32 i = 0;i < m_RenderQueue->size();++i)
+		if(m_RenderQueue)
 		{
-			g_Application->getRenderer()->draw(m_RenderQueue->getRenderOperation(i));
-		}
+			m_RenderQueue->sort();
 
-		g_Application->getRenderer()->drawText("This is a sample Text!","fonts/arial.font",0.3f,0.3f);
+			for(uint32 i = 0;i < m_RenderQueue->size();++i)
+			{
+				g_Application->getRenderer()->draw(m_RenderQueue->getRenderOperation(i));
+			}
+
+			g_Application->getRenderer()->drawText("????","fonts/arial.font",0.0f,-0.5f);
+		}
 	}
 	/*********************************************************************************/
 	void RenderProcess::setRenderQueue(RenderQueue* p_RenderQueue)

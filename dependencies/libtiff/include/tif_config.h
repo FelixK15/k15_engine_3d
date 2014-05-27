@@ -61,6 +61,9 @@
 /* Set the native cpu bit order */
 #define HOST_FILLORDER FILLORDER_LSB2MSB
 
+/* Disable win32 message boxes */
+#define TIF_PLATFORM_CONSOLE
+
 #define snprintf _snprintf
 
 /* Define to 1 if your processor stores words with the most significant byte

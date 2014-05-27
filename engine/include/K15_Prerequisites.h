@@ -24,6 +24,8 @@
 #ifndef _K15Engine_Prerequisites_h_
 #define _K15Engine_Prerequisites_h_
 
+#include "K15_EnumStrings.h"
+
 #ifdef __ANDROID__
 #	define K15_OS_ANDROID
 #elif defined _WIN32
@@ -56,10 +58,12 @@
 //edit export defines
 #if defined K15_CODE_GENERATOR
 #	define expose		__attribute__((annotate("expose")))
+# define expose_enum(x) __attribute__((annotate("expose")))
 #	define expose_read  __attribute__((annotate("expose_readonly")));
 #else
 #	define expose 
 #	define expose_read 
+# define expose_enum(x)
 #endif //K15_CODE_GENERATOR
 
 namespace K15_Engine
@@ -115,6 +119,7 @@ namespace K15_Engine
 		class ProfilingManager;
 		class GameObject;
 		class GameObjectComponentBase;
+		class GameStateBase;
 		class EventManager;
 		class RenderWindowBase;
 		class MemoryProfiler;

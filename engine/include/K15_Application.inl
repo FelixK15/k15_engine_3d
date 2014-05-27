@@ -178,3 +178,8 @@ void Application::addApplicationModule(ApplicationModule* p_Module)
 	m_LoadedModules.push_back(p_Module);
 }
 /*********************************************************************************/
+GameStateBase* Application::getGameState() const
+{
+	return m_GameState;
+}
+/*********************************************************************************/

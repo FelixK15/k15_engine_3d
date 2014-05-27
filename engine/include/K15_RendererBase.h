@@ -140,8 +140,6 @@ namespace K15_Engine { namespace Rendering {
 		void shutdown();
 
 		bool draw(RenderOperation* p_Rop);
-		bool drawText(const String& p_Text, const String& p_FontName, float p_ScreenSpacePosX, float p_ScreenSpacePosY);
-		bool drawText(const String& p_Text, Font* p_Font, float p_ScreenSpacePosX, float p_ScreenSpacePosY);
 
 		bool setRenderWindow(RenderWindowBase* p_RenderWindow);
 		INLINE RenderWindowBase* getRenderWindow() const;
@@ -255,35 +253,30 @@ namespace K15_Engine { namespace Rendering {
 		virtual void _bindTextureSampler(TextureSampler* p_Sampler, Enum p_Slot){}
 		virtual void _drawIndexed(uint32 p_Offset = 0){}
 		virtual void _drawDirect(uint32 p_Offset = 0){}
-		void _createFontRenderingResources();
-	protected:
-		VertexBuffer* m_FontVBO;
-		IndexBuffer* m_FontIBO;
-		GpuProgramBatch* m_FontGpuProgramBatch;
-		TextureSampler* m_FontSampler;
 
-		RenderWindowBase* m_RenderWindow;
-		AlphaState m_AlphaState;
-		DepthState m_DepthState;
+	protected:
+    ColorRGBA m_ClearColor;
+    AlphaState m_AlphaState;
+    DepthState m_DepthState;
+    GpuProgramArray m_GpuPrograms;
+    GpuBufferArray m_GpuBuffers;
+    TextureArray m_BoundTextures;
+    TextureSamplerArray m_BoundSamplers;
+    String m_LastError;
+    RenderWindowBase* m_RenderWindow;
 		CameraComponent* m_ActiveCamera;
 		RenderTarget* m_RenderTarget;
 		RenderTarget* m_DefaultRenderTarget;
 		Material* m_Material;
 		VertexDeclaration* m_VertexDeclaration;
 		GpuProgramBatch* m_GpuProgramBatch;
-		GpuProgramArray m_GpuPrograms;
-		GpuBufferArray m_GpuBuffers;
-		TextureArray m_BoundTextures;
-		TextureSamplerArray m_BoundSamplers;
-		ColorRGBA m_ClearColor;
-		String m_LastError;
+    uint32 m_GpuParameterUpdateMask;
 		Enum m_FillMode;
 		Enum m_CullingMode;
 		Enum m_Topology;
 		Enum m_FrameBufferFormat;
 		Enum m_DepthBufferFormat;
 		Enum m_StencilBufferFormat;
-		uint32 m_GpuParameterUpdateMask;
 		bool m_LightningEnabled;
 		bool m_BackFaceCullingEnabled;
 		bool m_Initialized;

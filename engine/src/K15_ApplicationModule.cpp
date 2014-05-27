@@ -34,9 +34,10 @@ namespace K15_Engine { namespace Core {
 
 	}
 	/*********************************************************************************/
-	void ApplicationModule::onRendererInitialized()
+	void ApplicationModule::onRendererInitialized(const RendererBase* p_Renderer)
 	{
 		m_RendererInitialized = true;
-		_onRendererInitialized();
+		_onRendererInitialized(p_Renderer);
 	}
+	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

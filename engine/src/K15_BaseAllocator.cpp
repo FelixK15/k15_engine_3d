@@ -62,14 +62,18 @@ namespace K15_Engine { namespace Core {
 #if defined K15_DEBUG
 		if(m_MemoryHeaderMap.size() > 0)
 		{
-			_LogWarning("Memory from allocator %s is still being used at destruction time. Dumping memory statistics.",m_Name.c_str());
+			//_LogWarning("Memory from allocator %s is still being used at destruction time. Dumping memory statistics.",m_Name.c_str());
 
 			for(PointerMemoryHeaderMap::iterator iter = m_MemoryHeaderMap.begin();iter != m_MemoryHeaderMap.end();++iter)
 			{
-				_LogWarning("Address: %p. Size:%u byte Array:%s\n\tFile: %s(%u)\n\tFunction: %s\n\tFrom Allocator: %s",(void*)iter->first,iter->second->Size,
+				/*_LogWarning("Address: %p. Size:%u byte Array:%s\n\tFile: %s(%u)\n\tFunction: %s\n\tFrom Allocator: %s",(void*)iter->first,iter->second->Size,
 					iter->second->IsArray ? "true" : "false",iter->second->File,iter->second->Line,iter->second->Function,
-					((BaseAllocator*)iter->second->Allocator)->getName().c_str());
+					((BaseAllocator*)iter->second->Allocator)->getName().c_str());*/
+
+				
 			}
+
+
 		}
 #endif //K15_DEBUG
 	}
