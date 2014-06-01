@@ -1,8 +1,8 @@
 /**
- * @file K15_Object.cpp
- * @author  Felix Klinge <f.klinge15@gmail.com>
+ * @file K15_EventHandler.cpp
+ * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/08/09
+ * @date 2014/06/02
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -19,29 +19,27 @@
 
 #include "K15_PrecompiledHeader.h"
 
-#include "K15_Object.h"
+#include "K15_EventHandler.h"
 
-namespace K15_Engine { namespace Core { 
+namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	K15_IMPLEMENT_RTTI(Core,Object);
-	/*********************************************************************************/
-
-	/*********************************************************************************/
-	Object::Object()
-		: m_Name(ObjectName::BLANK)
+	EventHandler::EventHandler()
+		: m_Object(0),
+		m_Handler(0)
 	{
 
 	}
 	/*********************************************************************************/
-	Object::Object(const ObjectName& p_Name)
-		: m_Name(p_Name)
+	EventHandler::EventHandler(const EventHandler& p_Rhs)
+		: m_Object(p_Rhs.m_Object),
+		m_Handler(p_Rhs.m_Handler)
 	{
 
 	}
 	/*********************************************************************************/
-	Object::~Object()
+	EventHandler::~EventHandler()
 	{
-
+		
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace
