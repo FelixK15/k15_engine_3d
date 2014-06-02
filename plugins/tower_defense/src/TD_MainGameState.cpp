@@ -18,14 +18,21 @@
  */
 #include "TD_MainGameState.h"
 #include "TD_Level.h"
-
+#include "TD_GameObjectFactory.h"
+#include "TD_RenderProcess.h"
+#include "TD_MoveComponent.h"
 
 #include "K15_Application.h"
+#include "K15_Mesh.h"
+#include "K15_SubMesh.h"
 #include "K15_RenderTask.h"
 #include "K15_GameObject.h"
+#include "K15_ModelComponent.h"
 #include "K15_Texture.h"
 #include "K15_TextureSampler.h"
 #include "K15_CameraComponent.h"
+#include "K15_RenderQueue.h"
+#include "K15_RenderOperation.h"
 #include "K15_RendererBase.h"
 #include "K15_ResourceManager.h"
 #include "K15_ResourceArchiveZip.h"
@@ -39,9 +46,15 @@ namespace TowerDefense {
 	MainGameState::MainGameState()
 		: GameStateBase("MainGameState"),
 		m_Camera(0),
-		m_Level(0)
+		m_Level(0),
+		m_WaveCounter(0),
+		m_SpawnRate(1.0f),
+		m_SpawnRateTimer(1.0f)
 	{
-
+		for(int i = 0;i < AMOUNT_ENEMIES;++i)
+		{
+			m_Enemies[i] = 0;
+		}
 	}
 	/*********************************************************************************/
 	MainGameState::~MainGameState()
@@ -81,8 +94,113 @@ namespace TowerDefense {
 	/*********************************************************************************/
 	void MainGameState::update(const GameTime& p_GameTime)
 	{
-		static RenderProcess* renderProcess = (RenderProcess*)g_Application->getRenderTask()->getRenderProcess();
-		m_Level->draw(renderProcess);
+		if(g_Application->getRenderer() && g_Application->getRenderer()->isInitialized())
+		{
+			static RenderProcess* renderProcess = (RenderProcess*)g_Application->getRenderTask()->getRenderProcess();
+			static RenderQueue* rops = K15_NEW RenderQueue();		
+			static int currentEnemy = 0;
+			m_SpawnRateTimer -= p_GameTime.getDeltaTime();
+			if(m_SpawnRateTimer <= 0.0f)
+			{
+				if(currentEnemy != AMOUNT_ENEMIES)
+				{
+					m_SpawnRateTimer = m_SpawnRate;
+					m_Enemies[currentEnemy] = GameObjectFactory::createSpider();
+					m_Enemies[currentEnemy++]->getNode().setPosition(m_Level->getStartPosition() + Vector3(0.0f,1.0f,0.0f));
+				}
+			}
+
+			m_Level->draw(rops);
+
+			for(int i = 0;i < AMOUNT_ENEMIES;++i)
+			{
+				if(m_Enemies[i])
+				{
+					m_Enemies[i]->update(p_GameTime);
+					_checkCollision(m_Enemies[i]);
+
+					if(_isInGoal(m_Enemies[i]))
+					{
+						K15_DELETE m_Enemies[i];
+						m_Enemies[i] = 0;
+					}
+					else
+					{
+						RenderOperation* rop = K15_NEW RenderOperation();
+						rop->gameobject = m_Enemies[i];
+						rop->indexBuffer = m_Enemies[i]->getComponentByType<ModelComponent>()->getMesh()->getSubMeshes()[0]->getIndexBuffer();
+						rop->vertexBuffer = m_Enemies[i]->getComponentByType<ModelComponent>()->getMesh()->getSubMeshes()[0]->getVertexBuffer();
+						rop->material = m_Enemies[i]->getComponentByType<ModelComponent>()->getMesh()->getSubMeshes()[0]->getMaterial();
+						rop->topology = RenderOperation::T_TRIANGLE;
+						rops->addRenderOperation(rop);
+					}
+				}
+			}
+
+			if(renderProcess)
+			{
+				renderProcess->setRenderQueue(rops);
+			}
+		}
 	}
 	/*********************************************************************************/
-} // end of TowerDefense namepsace
+	void MainGameState::onMousePressed(const MouseActionArguments& p_EventArguments)
+	{
+		
+	}
+	/*********************************************************************************/
+	void MainGameState::_checkCollision(GameObject* p_Enemy)
+	{
+		const Level::GameObjectArray& walls = m_Level->getWalls();
+		bool collided = true;
+		for(uint32 i = 0;i < walls.size();++i)
+		{
+			const AABB& aabb = walls.at(i)->getComponentByType<ModelComponent>()->getMesh()->getAABB(true);
+			const Vector3& meshPosition = walls.at(i)->getNode().getPosition();
+			const Vector3& enemyPos = p_Enemy->getNode().getPosition() + p_Enemy->getComponentByType<MoveComponent>()->getSpeed();
+
+			if(enemyPos.x > aabb.getMaxX() + meshPosition.x) collided = false;
+			//if(enemyPos.y > aabb.getMaxY()) collided = false;
+			if(enemyPos.z > aabb.getMaxZ() + meshPosition.z) collided = false;
+
+			if(enemyPos.x < aabb.getMinX() + meshPosition.x) collided = false;
+			//if(enemyPos.x < aabb.getMinY()) collided = false;
+			if(enemyPos.z < aabb.getMinZ() + meshPosition.z) collided = false;
+
+			if(collided)
+			{
+				if(p_Enemy->getComponentByType<MoveComponent>()->getSpeed() == Vector3(0.0f,0.0f,1.0f))
+				{
+					p_Enemy->getComponentByType<MoveComponent>()->setSpeed(Vector3(1.0f,0.0f,0.0f));
+				}
+				else
+				{
+					p_Enemy->getComponentByType<MoveComponent>()->setSpeed(Vector3(0.0f,0.0f,1.0f));
+				}
+			}
+
+			collided = true;
+
+		}
+		
+	}
+	/*********************************************************************************/
+	bool MainGameState::_isInGoal(GameObject* p_Enemy)
+	{
+		const AABB& endAABB = m_Level->getEnd()->getComponentByType<ModelComponent>()->getMesh()->getAABB(true);
+		const Vector3& meshPosition = m_Level->getEnd()->getNode().getPosition();
+		const Vector3& enemyPos = p_Enemy->getNode().getPosition();
+		bool collided = true;
+
+		if(enemyPos.x > endAABB.getMaxX() + meshPosition.x) collided = false;
+		//if(enemyPos.y > aabb.getMaxY()) collided = false;
+		if(enemyPos.z > endAABB.getMaxZ() + meshPosition.z) collided = false;
+
+		if(enemyPos.x < endAABB.getMinX() + meshPosition.x) collided = false;
+		//if(enemyPos.x < aabb.getMinY()) collided = false;
+		if(enemyPos.z < endAABB.getMinZ() + meshPosition.z) collided = false;
+
+		return collided;
+	}
+	/*********************************************************************************/
+} // end of TowerDefense namespace

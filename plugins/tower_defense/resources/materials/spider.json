@@ -1,0 +1,9 @@
+{
+  "Name" : "Spider",
+  "Passes" : [
+  	{
+	    "DiffuseMap":"img/spider.tif",
+    	"ShaderBatch":"default"
+	}
+  ]
+}

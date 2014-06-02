@@ -53,4 +53,14 @@ namespace K15_Engine { namespace Rendering {
 		  m_Dirty = false;
 	  }
   }
+  /*********************************************************************************/
+  void RenderQueue::clear()
+  {
+	  for(uint32 i = 0;i < m_RenderOperations.size();++i)
+	  {
+		  K15_DELETE m_RenderOperations.at(i);
+	  }
+	  m_RenderOperations.clear();
+  }
+  /*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace

@@ -150,22 +150,31 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\tower_defense\include\plugin.h" />
+    <ClInclude Include="..\..\plugins\tower_defense\include\TD_AnimationComponent.h" />
+    <ClInclude Include="..\..\plugins\tower_defense\include\TD_CharacterStatsComponent.h" />
     <ClInclude Include="..\..\plugins\tower_defense\include\TD_GameModule.h" />
+    <ClInclude Include="..\..\plugins\tower_defense\include\TD_GameObjectFactory.h" />
     <ClInclude Include="..\..\plugins\tower_defense\include\TD_MainGameState.h" />
     <ClInclude Include="..\..\plugins\tower_defense\include\TD_Level.h" />
     <ClInclude Include="..\..\plugins\tower_defense\include\TD_MoveComponent.h" />
+    <ClInclude Include="..\..\plugins\tower_defense\include\TD_PiercingTower.h" />
     <ClInclude Include="..\..\plugins\tower_defense\include\TD_Prerequisities.h" />
     <ClInclude Include="..\..\plugins\tower_defense\include\TD_RenderProcess.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\tower_defense\src\plugin.cpp" />
+    <ClCompile Include="..\..\plugins\tower_defense\src\TD_AnimationComponent.cpp" />
+    <ClCompile Include="..\..\plugins\tower_defense\src\TD_CharacterStatsComponent.cpp" />
     <ClCompile Include="..\..\plugins\tower_defense\src\TD_GameModule.cpp" />
+    <ClCompile Include="..\..\plugins\tower_defense\src\TD_GameObjectFactory.cpp" />
     <ClCompile Include="..\..\plugins\tower_defense\src\TD_MainGameState.cpp" />
     <ClCompile Include="..\..\plugins\tower_defense\src\TD_Level.cpp" />
     <ClCompile Include="..\..\plugins\tower_defense\src\TD_MoveComponent.cpp" />
     <ClCompile Include="..\..\plugins\tower_defense\src\TD_RenderProcess.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\plugins\tower_defense\include\TD_CharacterStatsComponent.inl" />
+    <None Include="..\..\plugins\tower_defense\include\TD_MoveComponent.inl" />
     <None Include="module.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

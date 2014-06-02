@@ -185,6 +185,7 @@
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_DynamicLibraryBase.h" />
     <ClInclude Include="..\..\engine\include\K15_DynamicLibraryManager.h" />
+    <ClInclude Include="..\..\engine\include\K15_EnumStrings.h" />
     <ClInclude Include="..\..\engine\include\K15_EventTask.h" />
     <ClInclude Include="..\..\engine\include\K15_Font.h" />
     <ClInclude Include="..\..\engine\include\K15_GameStateBase.h" />

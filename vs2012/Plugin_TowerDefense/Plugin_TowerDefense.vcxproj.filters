@@ -43,6 +43,18 @@
     <ClInclude Include="..\..\plugins\tower_defense\include\TD_MoveComponent.h">
       <Filter>Core\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\tower_defense\include\TD_CharacterStatsComponent.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\tower_defense\include\TD_AnimationComponent.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\tower_defense\include\TD_GameObjectFactory.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\tower_defense\include\TD_PiercingTower.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\tower_defense\src\plugin.cpp">
@@ -63,8 +75,23 @@
     <ClCompile Include="..\..\plugins\tower_defense\src\TD_MoveComponent.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\tower_defense\src\TD_AnimationComponent.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\tower_defense\src\TD_GameObjectFactory.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\tower_defense\src\TD_CharacterStatsComponent.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
+    <None Include="..\..\plugins\tower_defense\include\TD_MoveComponent.inl">
+      <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\plugins\tower_defense\include\TD_CharacterStatsComponent.inl">
+      <Filter>Core\include</Filter>
+    </None>
   </ItemGroup>
 </Project>

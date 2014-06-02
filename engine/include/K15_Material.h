@@ -118,6 +118,8 @@ namespace K15_Engine { namespace Rendering {
 	class K15_CORE_API Material : public ResourceBase,
 								  public RenderingAllocatedObject
 	{
+		K15_DECLARE_RTTI;
+
 	public:
 		/*********************************************************************************/
 		static const uint32 MaximumMaterialPasses = 8;

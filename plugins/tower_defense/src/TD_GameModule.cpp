@@ -25,7 +25,7 @@ namespace TowerDefense
 	/*********************************************************************************/
 	void GameModule::onInitialize()
 	{
-		m_RenderProcess = K15_NEW RenderProcess();
+		
 	}
 	/*********************************************************************************/
 	void GameModule::onShutdown()
@@ -39,6 +39,7 @@ namespace TowerDefense
 	{
 		//MainGameState* state = K15_NEW MainGameState();
 		static MainGameState state;
+		m_RenderProcess = K15_NEW RenderProcess();
 		g_Application->getRenderTask()->setRenderProcess(m_RenderProcess);
 		g_Application->setGameState(&state);
 	}

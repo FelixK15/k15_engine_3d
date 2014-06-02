@@ -17,13 +17,23 @@ namespace TowerDefense
 		Level(const String& p_Name);
 		~Level();
 
-		void draw(RenderProcess* m_RenderProcess);
-	
+		void draw(RenderQueue* p_RenderQueue);
+		
+		const GameObjectArray& getWalls() const;
+
+		const Vector3& getStartPosition() const;
+		const Vector3& getEndPosition() const;
+
+		GameObject* getEnd() const;
 	private:
 		void _loadLevel(const String& p_Name);
 	
 	private:
 		GameObjectArray m_GameObjects;
+		GameObjectArray m_Walls;
+		GameObjectArray m_Floor;
+		GameObject* m_Start;
+		GameObject* m_End;
 	};
 }
 

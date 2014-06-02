@@ -27,7 +27,7 @@ namespace TowerDefense
 				g_Application->getRenderer()->draw(m_RenderQueue->getRenderOperation(i));
 			}
 
-			g_Application->getRenderer()->drawText("????","fonts/arial.font",0.0f,-0.5f);
+			m_RenderQueue->clear();
 		}
 	}
 	/*********************************************************************************/

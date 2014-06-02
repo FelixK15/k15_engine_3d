@@ -1,8 +1,8 @@
 /**
- * @file TD_MoveComponent.cpp
+ * @file TD_CharacterStatsComponent.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2014/05/27
+ * @date 2014/05/28
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -17,34 +17,26 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "TD_MoveComponent.h"
+#include "TD_CharacterStatsComponent.h"
 
-#include "K15_GameObject.h"
-#include "K15_GameTime.h"
-
-namespace TowerDefense {
+namespace TowerDefense
+{
 	/*********************************************************************************/
-	K15_IMPLEMENT_RTTI_BASE(TowerDefense,MoveComponent,GameObjectComponentBase);
+	K15_IMPLEMENT_RTTI_BASE(TowerDefense,CharacterStatsComponent,GameObjectComponentBase);
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	MoveComponent::MoveComponent(const Vector3& p_Speed)
-		: GameObjectComponentBase(_TN(MoveComponent)),
-		m_Speed(p_Speed)
+	CharacterStatsComponent::CharacterStatsComponent(int p_MaxHealth, int p_Gold)
+		: GameObjectComponentBase(_TN(CharacterStatsComponent)),
+		m_MaxHealth(p_MaxHealth),
+		m_Gold(p_Gold)
 	{
 
 	}
 	/*********************************************************************************/
-	MoveComponent::~MoveComponent()
+	CharacterStatsComponent::~CharacterStatsComponent()
 	{
 
 	}
 	/*********************************************************************************/
-	void MoveComponent::update(const GameTime& p_GameTime)
-	{
-		Node& node = getGameObject()->getNode();
-		Vector3 velocity = m_Speed * (float)p_GameTime.getDeltaTime();
-		node.translate(velocity);
-	}
-	/*********************************************************************************/
-}// end of TowerDefense namespace
+}

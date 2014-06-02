@@ -20,13 +20,14 @@
 #include "K15_PrecompiledHeader.h"
 
 #include "K15_Mesh.h"
+#include "K15_SubMesh.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	Mesh::Mesh()
 		: ResourceBase(),
 		m_SubMeshes(),
-		m_AxisAlignedBoundingBox()
+		m_AABB()
 	{
 
 	}
@@ -34,7 +35,7 @@ namespace K15_Engine { namespace Rendering {
 	Mesh::Mesh(const ObjectName& p_Name)
 		: ResourceBase(p_Name),
 		m_SubMeshes(),
-		m_AxisAlignedBoundingBox()
+		m_AABB()
 	{
 
 	}
@@ -46,7 +47,40 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	void Mesh::calculateAABB()
 	{
+		float x_max = 0.0f,y_max = 0.0f,z_max = 0.0f;
+		float x_min = 0.0f,y_min = 0.0f,z_min = 0.0f;
 
+		SubMesh* subMesh = 0;
+		for(int i = 0;i < m_SubMeshes.size();++i)
+		{
+			subMesh = m_SubMeshes.at(i);
+
+			const AABB& subMeshAABB = subMesh->getAABB();
+
+			for(int j = 0;j < AABB::CT_COUNT;++j)
+			{
+				const Vector3& corner = subMeshAABB.getCorner(j);
+
+				if(corner.x > x_max)		x_max = corner.x;
+				else if(corner.x < x_min)	x_min = corner.x;
+
+				if(corner.y > y_max)		y_max = corner.y;
+				else if(corner.y < y_min)	y_min = corner.y;
+
+				if(corner.z > z_max)		z_max = corner.z;
+				else if(corner.z < z_min)	z_min = corner.z;
+			}
+		}
+
+		m_AABB.setCorner(Vector3(x_min,y_min,z_min),AABB::CT_FAR_LEFT_BOTTOM);
+		m_AABB.setCorner(Vector3(x_max,y_min,z_min),AABB::CT_FAR_RIGHT_BOTTOM);
+		m_AABB.setCorner(Vector3(x_min,y_max,z_min),AABB::CT_FAR_LEFT_TOP);
+		m_AABB.setCorner(Vector3(x_max,y_max,z_min),AABB::CT_FAR_RIGHT_TOP);
+
+		m_AABB.setCorner(Vector3(x_min,y_min,z_max),AABB::CT_NEAR_LEFT_BOTTOM);
+		m_AABB.setCorner(Vector3(x_max,y_min,z_max),AABB::CT_NEAR_RIGHT_BOTTOM);
+		m_AABB.setCorner(Vector3(x_min,y_max,z_max),AABB::CT_NEAR_LEFT_TOP);
+		m_AABB.setCorner(Vector3(x_max,y_max,z_max),AABB::CT_NEAR_LEFT_TOP);
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Rendering namespace

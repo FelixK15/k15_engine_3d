@@ -80,3 +80,103 @@ const Vector3& AABB::getNearRightBottom() const
 	return m_Corners[CT_NEAR_RIGHT_BOTTOM];
 }
 /*********************************************************************************/
+void AABB::setCorner(const Vector3& p_Positon, Enum p_Corner)
+{
+	m_Corners[p_Corner] = p_Positon;
+}
+/*********************************************************************************/
+const Vector3& AABB::getCorner(Enum p_Corner) const
+{
+	return m_Corners[p_Corner];
+}
+/*********************************************************************************/
+float AABB::getMaxX() const
+{
+	float max_x = 0.0f;
+
+	for(int i =0; i<CT_COUNT;++i)
+	{
+		if(max_x < m_Corners[i].x)
+		{
+			max_x = m_Corners[i].x;
+		}
+	}
+
+	return max_x;
+}
+/*********************************************************************************/
+float AABB::getMaxY() const
+{
+	float max_y = 0.0f;
+
+	for(int i =0; i<CT_COUNT;++i)
+	{
+		if(max_y < m_Corners[i].y)
+		{
+			max_y = m_Corners[i].y;
+		}
+	}
+
+	return max_y;
+}
+/*********************************************************************************/
+float AABB::getMaxZ() const
+{
+	float max_z = 0.0f;
+
+	for(int i =0; i<CT_COUNT;++i)
+	{
+		if(max_z < m_Corners[i].z)
+		{
+			max_z = m_Corners[i].z;
+		}
+	}
+
+	return max_z;
+}
+/*********************************************************************************/
+float AABB::getMinX() const
+{
+	float min_x = 0.0f;
+
+	for(int i =0; i<CT_COUNT;++i)
+	{
+		if(min_x > m_Corners[i].x)
+		{
+			min_x = m_Corners[i].x;
+		}
+	}
+
+	return min_x;
+}
+/*********************************************************************************/
+float AABB::getMinY() const
+{
+	float min_y = 0.0f;
+
+	for(int i =0; i<CT_COUNT;++i)
+	{
+		if(min_y > m_Corners[i].y)
+		{
+			min_y = m_Corners[i].y;
+		}
+	}
+
+	return min_y;
+}
+/*********************************************************************************/
+float AABB::getMinZ() const
+{
+	float min_z = 0.0f;
+
+	for(int i =0; i<CT_COUNT;++i)
+	{
+		if(min_z > m_Corners[i].z)
+		{
+			min_z = m_Corners[i].z;
+		}
+	}
+
+	return min_z;
+}
+/*********************************************************************************/

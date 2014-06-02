@@ -438,6 +438,9 @@
     <ClInclude Include="..\..\engine\include\K15_GameStateBase.h">
       <Filter>Core\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_EnumStrings.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">

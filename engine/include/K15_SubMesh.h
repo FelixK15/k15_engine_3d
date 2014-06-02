@@ -49,8 +49,16 @@ namespace K15_Engine { namespace Rendering {
 
 		INLINE Mesh* getMesh() const;
 
+		const AABB& getAABB();
+
 		RenderOperation* createRenderOperation();
+
+	private:
+		void _calculateAABB();
+
 	protected:
+
+		AABB m_AABB;
 		VertexBuffer* m_VertexBuffer;
 		IndexBuffer* m_IndexBuffer;
 		Material* m_Material;

@@ -248,13 +248,10 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	double ApplicationOSLayer_Android::getTime()
 	{
-		static timespec now;
-		clock_gettime(CLOCK_MONOTONIC,&now);
-		
-		long deltaNanoseconds = now.tv_nsec - m_LastTime.tv_nsec;
-		//_LogDebug("seconds:%.3f",(double)deltaNanoseconds / 1000000000.0);
-		m_LastTime = now;
-		return (double)deltaNanoseconds / 1000000000.0;
+		//http://stackoverflow.com/questions/3832097/how-to-get-the-current-time-in-native-android-code
+		struct timespec res;
+		clock_gettime(CLOCK_REALTIME, &res);
+		return res.tv_sec + (double) res.tv_nsec / 1e6;
 	}
 	/*********************************************************************************/
 	void ApplicationOSLayer_Android::sleep(double p_TimeInSeconds) const

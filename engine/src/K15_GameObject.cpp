@@ -79,4 +79,12 @@ namespace K15_Engine { namespace Core {
     return 0;
   }
   /*********************************************************************************/
+  void GameObject::update(const GameTime& p_GameTime)
+  {
+	  for(ComponentList::iterator iter = m_Components.begin();iter != m_Components.end();++iter)
+	  {
+		  (*iter)->update(p_GameTime);
+	  }
+  }
+  /*********************************************************************************/
 }}// end of K15_Engine::Core namespace

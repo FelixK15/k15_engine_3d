@@ -61,7 +61,7 @@ namespace K15_Engine { namespace Rendering {
 		INLINE uint32 size() const;
 		INLINE Enum getSortMode() const;
 
-		INLINE void clear();
+		void clear();
 		
 		void sort();
 

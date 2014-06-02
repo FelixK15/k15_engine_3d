@@ -24,8 +24,6 @@
 #ifndef _K15Engine_Prerequisites_h_
 #define _K15Engine_Prerequisites_h_
 
-#include "K15_EnumStrings.h"
-
 #ifdef __ANDROID__
 #	define K15_OS_ANDROID
 #elif defined _WIN32

@@ -1,8 +1,8 @@
 /**
- * @file TD_MoveComponent.h
+ * @file TD_CharacterStatsComponent.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2014/05/27
+ * @date 2014/05/28
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,30 +21,38 @@
  * 
  */
 
-#ifndef _TD_MoveComponent_h_
-#define _TD_MoveComponent_h_
+#ifndef _TD_CharacterStatsComponent_h_
+#define _TD_CharacterStatsComponent_h_
 
 #include "TD_Prerequisities.h"
 
 #include "K15_GameObjectComponentBase.h"
 
 namespace TowerDefense {
-	class MoveComponent : public GameObjectComponentBase
+	class CharacterStatsComponent : public GameObjectComponentBase
 	{
 		K15_DECLARE_RTTI;
 
 	public:
-		MoveComponent(const Vector3& p_Speed = Vector3(.0f,.0f,.0f));
-		~MoveComponent();
+		CharacterStatsComponent(int m_MaxHealth, int m_Gold);
+		~CharacterStatsComponent();
 
-		virtual void update(const GameTime& p_GameTime);
+		INLINE int getHealth() const;
+		INLINE int getGold() const;
+		INLINE int getMaxHealth() const;
 
-		INLINE void setSpeed(const Vector3& p_Speed);
-		INLINE const Vector3& getSpeed() const;
+		INLINE void decreaseHealth(int p_Health);
+		INLINE void setHealth(int p_Health);
+		INLINE void setGold(int p_Gold);
+
+		INLINE void resetHealth();
+
 	private:
-		Vector3 m_Speed;
-	}; //MoveComponent class declaration
-#	include "TD_MoveComponent.inl"
+		int m_MaxHealth;
+		int m_Health;
+		int m_Gold;
+	}; // CharacterStatsComponent class declaration
+#	include "TD_CharacterStatsComponent.inl"
 } // end of TowerDefense namespace
 
-#endif //_TD_MoveComponent_h_
+#endif //_TD_CharacterStatsComponent_h_

@@ -25,13 +25,18 @@
 #define _TD_MainGameState_h_
 
 #include "TD_Prerequisities.h"
+#include "K15_Mouse.h"
 #include "K15_GameStateBase.h"
 #include "K15_AllocatedObject.h"
 
 namespace TowerDefense 
 {
-	class MainGameState : public GameStateBase, public GeneralAllocatedObject
+	class MainGameState : public GameStateBase, public GeneralAllocatedObject, public InputDevices::Mouse::Listener
 	{
+	public:
+		static const int AMOUNT_ENEMIES = 10;
+		typedef FixedArray(GameObject*,AMOUNT_ENEMIES) GameObjectFixedArray;
+
 	public:
 		MainGameState();
 		~MainGameState();
@@ -40,9 +45,19 @@ namespace TowerDefense
 		virtual void shutdown() OVERRIDE;
 		virtual void update(const GameTime& p_GameTime) OVERRIDE;
 
+		virtual void onMousePressed(const MouseActionArguments& p_EventArguments) OVERRIDE;
+
 	private:
+		void _checkCollision(GameObject* p_Enemy);
+		bool _isInGoal(GameObject* p_Enemy);
+
+	private:
+		GameObjectFixedArray m_Enemies;
 		GameObject* m_Camera;
 		Level* m_Level;
+		float m_SpawnRateTimer;
+		float m_SpawnRate;
+		int m_WaveCounter;
 	};// end of MainGameState class declaration
 }// end of TowerDefense namespace
 

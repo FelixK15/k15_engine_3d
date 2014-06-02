@@ -96,6 +96,7 @@ namespace K15_Engine { namespace Rendering {
 		if(p_Options.InitialData.size > 0)
 		{
 			writeData(p_Options.InitialData.size,p_Options.InitialData.data,0);
+			uploadShadowBufferToGpu();
 		}
 	}
 	/*********************************************************************************/

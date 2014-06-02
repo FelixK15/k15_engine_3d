@@ -19,6 +19,7 @@
 
 #include "K15_PrecompiledHeader.h"
 #include "K15_RendererBase.h"
+#include "K15_EnumStrings.h"
 
 #include "K15_GpuProgramCatalog.h"
 #include "K15_GpuProgramParameter.h"
@@ -119,6 +120,10 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	bool RendererBase::initialize()
 	{
+		if(!m_Initialized)
+		{
+			m_Initialized = _initialize();
+		}
 		return m_Initialized;
 	}
 	/*********************************************************************************/

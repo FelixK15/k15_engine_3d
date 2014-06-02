@@ -53,6 +53,7 @@ namespace K15_Engine { namespace Core {
 	template<class ComponentType>
 	ComponentType* getComponentByType() const;
 
+	void update(const GameTime& p_GameTime);
   private:
     ComponentList m_Components;
 	Node m_Node;

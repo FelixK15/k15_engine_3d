@@ -20,6 +20,7 @@
                 android:launchMode="singleTask"
                 android:screenOrientation="landscape"
                 android:debuggable="true"
+                android:keepScreenOn="true"
                 android:configChanges="orientation|keyboardHidden">
             <!-- Tell NativeActivity the name of or .so -->
             <meta-data android:name="android.app.lib_name"

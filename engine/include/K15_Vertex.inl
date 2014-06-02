@@ -36,9 +36,9 @@ Type K15_Engine::Rendering::Vertex::get(Enum p_Semantic) const
 			
 			uint32 offset = element.offset + (m_Index * m_Buffer->getVertexSize());
 			uint32 bytesRead = m_Buffer->readData(typeSize,(byte*)&returnVal,offset);
-			K15_ASSERT(bytesRead == typeSize,
-				StringUtil::format("Read less data from vertexbuffer than what was needed. Read:%ubytes, needed:%ubytes",
-				bytesRead,typeSize));
+// 			K15_ASSERT(bytesRead == typeSize,
+// 				StringUtil::format("Read less data from vertexbuffer than what was needed. Read:%ubytes, needed:%ubytes",
+// 				bytesRead,typeSize));
 		
 			return returnVal;
 		}
@@ -64,9 +64,9 @@ void Vertex::set(const Type& p_Value,Enum p_Semantic)
 			uint32 offset = element.offset + (m_Index * m_Buffer->getVertexSize());
 			uint32 bytesWritten = m_Buffer->writeData(typeSize,(byte*)&p_Value,offset);
 
-			K15_ASSERT(bytesWritten == typeSize,
-				StringUtil::format("Wrote less data to vertexbuffer than what was asked for. Wrote:%ubytes, needed:%ubytes",
-				bytesWritten,typeSize));
+// 			K15_ASSERT(bytesWritten == typeSize,
+// 				StringUtil::format("Wrote less data to vertexbuffer than what was asked for. Wrote:%ubytes, needed:%ubytes",
+// 				bytesWritten,typeSize));
 
 			return;
 		}

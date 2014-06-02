@@ -47,13 +47,15 @@ namespace K15_Engine { namespace Rendering {
 		INLINE const AABB& getAABB(bool p_Calculate = false);
 		INLINE const SubMeshArray& getSubMeshes() const;
 
-		void calculateAABB();
-
 		INLINE void addSubMesh(SubMesh* p_SubMesh);
 		INLINE SubMesh* getSubMesh(uint32 p_Index) const;
-  private:
+
+	private:
+		void calculateAABB();
+
+	private:
 		SubMeshArray m_SubMeshes;
-		AABB m_AxisAlignedBoundingBox;
+		AABB m_AABB;
 	};// end of Mesh class declaration
 #	include "K15_Mesh.inl"
 }}// end of K15_Engine::Core namespace

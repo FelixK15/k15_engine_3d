@@ -1,8 +1,8 @@
 /**
- * @file K15_RenderQueue.inl
+ * @file TD_MoveComponent.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/12/16
+ * @date 2014/05/28
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,29 +18,13 @@
  */
 
 /*********************************************************************************/
-void RenderQueue::setSortMode(Enum p_SortMode)
+void MoveComponent::setSpeed(const Vector3& p_Speed)
 {
-	m_SortMode = p_SortMode;
+	m_Speed = p_Speed;
 }
 /*********************************************************************************/
-Enum RenderQueue::getSortMode() const
+const Vector3& MoveComponent::getSpeed() const
 {
-	return m_SortMode;
-}
-/*********************************************************************************/
-RenderOperation* RenderQueue::getRenderOperation(uint32 p_Index) const
-{
-	return m_RenderOperations.at(p_Index);
-}
-/*********************************************************************************/
-void RenderQueue::addRenderOperation(RenderOperation* p_ROP)
-{
-	m_Dirty = true;
-	m_RenderOperations.push_back(p_ROP);
-}
-/*********************************************************************************/
-uint32 RenderQueue::size() const
-{
-	return m_RenderOperations.size();
+	return m_Speed;
 }
 /*********************************************************************************/

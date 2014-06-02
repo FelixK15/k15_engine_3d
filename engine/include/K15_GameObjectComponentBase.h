@@ -26,6 +26,7 @@
 #ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
 #	include "K15_Object.h"
+#	include "K15_AllocatedObject.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 namespace K15_Engine { namespace Core {

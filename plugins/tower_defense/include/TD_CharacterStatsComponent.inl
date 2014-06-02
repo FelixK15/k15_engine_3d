@@ -1,8 +1,8 @@
 /**
- * @file K15_SubMesh.inl
+ * @file TD_CharacterStatsComponent.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2014/02/08
+ * @date 2014/05/28
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,39 +18,38 @@
  */
 
 /*********************************************************************************/
-void SubMesh::setVertexBuffer(VertexBuffer* p_VertexBuffer)
+int CharacterStatsComponent::getHealth() const
 {
-	m_VertexBuffer = p_VertexBuffer;
-	_calculateAABB();
+	return m_Health;
 }
 /*********************************************************************************/
-VertexBuffer* SubMesh::getVertexBuffer() const
+int CharacterStatsComponent::getGold() const
 {
-	return m_VertexBuffer;
+	return m_Gold;
 }
 /*********************************************************************************/
-void SubMesh::setIndexBuffer(IndexBuffer* p_IndexBuffer)
+int CharacterStatsComponent::getMaxHealth() const
 {
-	m_IndexBuffer = p_IndexBuffer;
+	return m_MaxHealth;
 }
 /*********************************************************************************/
-IndexBuffer* SubMesh::getIndexBuffer() const
+void CharacterStatsComponent::decreaseHealth(int p_Health)
 {
-	return m_IndexBuffer;
+	m_Health -= p_Health;
 }
 /*********************************************************************************/
-void SubMesh::setMaterial(Material* p_Material)
+void CharacterStatsComponent::setHealth(int p_Health)
 {
-	m_Material = p_Material;
+	m_Health = p_Health;
 }
 /*********************************************************************************/
-Material* SubMesh::getMaterial() const
+void CharacterStatsComponent::setGold(int p_Gold)
 {
-	return m_Material;
+	m_Gold = p_Gold;
 }
 /*********************************************************************************/
-Mesh* SubMesh::getMesh() const
+void CharacterStatsComponent::resetHealth()
 {
-  return m_Mesh;
+	m_Health = m_MaxHealth;
 }
 /*********************************************************************************/

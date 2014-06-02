@@ -22,7 +22,12 @@ namespace TowerDefense
 {
 	/*********************************************************************************/
 	Level::Level(const String& p_Name)
-		: Object(p_Name)
+		: Object(p_Name),
+		m_Walls(),
+		m_Floor(),
+		m_GameObjects(),
+		m_End(0),
+		m_Start(0)
 	{
 		_loadLevel(p_Name);
 	}
@@ -33,6 +38,11 @@ namespace TowerDefense
 		{
 			K15_DELETE m_GameObjects.at(i);
 		}
+
+		m_Walls.clear();
+		m_Floor.clear();
+		m_Start = 0;
+		m_End = 0;
 	}
 	/*********************************************************************************/
 	void Level::_loadLevel(const String& p_Name)
@@ -66,9 +76,11 @@ namespace TowerDefense
 					{
 						//wall
 						currentGameObject->setName("wall");
+						_LogDebug("meshes/cube_wall.obj");
 						currentGameObject->addComponent(K15_NEW ModelComponent("meshes/cube_wall.obj"));
 						modelMesh = currentGameObject->getComponentByType<ModelComponent>()->getMesh();
 						modelMesh->getSubMesh(0)->setMaterial(g_ResourceManager->getResource<Material>("materials/wall.json"));
+						m_Walls.push_back(currentGameObject);
 					}
 					else
 					{
@@ -80,24 +92,28 @@ namespace TowerDefense
 							currentGameObject->addComponent(K15_NEW ModelComponent("meshes/cube_goal.obj"));
 							modelMesh = currentGameObject->getComponentByType<ModelComponent>()->getMesh();
 							modelMesh->getSubMeshes()[0]->setMaterial(g_ResourceManager->getResource<Material>("materials/goal.json"));
+							m_End = currentGameObject;
 						}
 						else if(color == ColorRGBA::Red)
 						{
 							currentGameObject->addComponent(K15_NEW ModelComponent("meshes/cube_start.obj"));
 							modelMesh = currentGameObject->getComponentByType<ModelComponent>()->getMesh();
 							modelMesh->getSubMeshes()[0]->setMaterial(g_ResourceManager->getResource<Material>("materials/start.json"));
+							m_Start = currentGameObject;
 						}
 						else if(color == ColorRGBA::Yellow)
 						{
 							currentGameObject->addComponent(K15_NEW ModelComponent("meshes/cube_outer_floor.obj"));
 							modelMesh = currentGameObject->getComponentByType<ModelComponent>()->getMesh();
 							modelMesh->getSubMeshes()[0]->setMaterial(g_ResourceManager->getResource<Material>("materials/outer_floor.json"));
+							m_Floor.push_back(currentGameObject);
 						}
 						else if(color == ColorRGBA::Blue)
 						{
 							currentGameObject->addComponent(K15_NEW ModelComponent("meshes/cube_inner_floor.obj"));
 							modelMesh = currentGameObject->getComponentByType<ModelComponent>()->getMesh();
 							modelMesh->getSubMeshes()[0]->setMaterial(g_ResourceManager->getResource<Material>("materials/inner_floor.json"));
+							m_Floor.push_back(currentGameObject);
 						}
 					}
 				}
@@ -107,15 +123,14 @@ namespace TowerDefense
 		}
 	}
 	/*********************************************************************************/
-	void Level::draw(RenderProcess* p_Process)
+	void Level::draw(RenderQueue* p_RenderQueue)
 	{
-		static RenderQueue* rops = K15_NEW RenderQueue();
 		GameObject* currentGameObject = 0;
 		
 		for(uint32 i = 0 ;i < m_GameObjects.size() - 1;++i)
 		{
 			currentGameObject = m_GameObjects.at(i);
-			if(rops->size() < m_GameObjects.size())
+			if(p_RenderQueue->size() < m_GameObjects.size())
 			{
 				RenderOperation* rop = K15_NEW RenderOperation();
 				rop->gameobject = currentGameObject;
@@ -123,11 +138,43 @@ namespace TowerDefense
 				rop->vertexBuffer = currentGameObject->getComponentByType<ModelComponent>()->getMesh()->getSubMeshes()[0]->getVertexBuffer();
 				rop->material = currentGameObject->getComponentByType<ModelComponent>()->getMesh()->getSubMeshes()[0]->getMaterial();
 				rop->topology = RenderOperation::T_TRIANGLE;
-				rops->addRenderOperation(rop);
+				p_RenderQueue->addRenderOperation(rop);
 			}
-
-			p_Process->setRenderQueue(rops);
 		}
+	}
+	/*********************************************************************************/
+	const Level::GameObjectArray& Level::getWalls() const
+	{
+		return m_Walls;
+	}
+	/*********************************************************************************/
+	const Vector3& Level::getStartPosition() const
+	{
+		static Vector3 pos;
+
+		if(m_Start)
+		{
+			pos = m_Start->getNode().getPosition();
+		}
+
+		return pos;
+	}
+	/*********************************************************************************/
+	const Vector3& Level::getEndPosition() const
+	{
+		static Vector3 pos;
+
+		if(m_End)
+		{
+			pos = m_End->getNode().getPosition();
+		}
+
+		return pos;
+	}
+	/*********************************************************************************/
+	GameObject* Level::getEnd() const
+	{
+		return m_End;
 	}
 	/*********************************************************************************/
 }
