@@ -62,7 +62,7 @@ namespace TowerDefense {
 			{
 				VertexBuffer* vbo = component->getMesh()->getSubMesh(0)->getVertexBuffer();
 				
-				for(int i = 0;i < vbo->getVertexCount();++i)
+				for(uint32 i = 0;i < vbo->getVertexCount();++i)
 				{
 					Vertex* vertex = vbo->getVertex(i);
 					Vector2 vertexUV = vertex->getUV();

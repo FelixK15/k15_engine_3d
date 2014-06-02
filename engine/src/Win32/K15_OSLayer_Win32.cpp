@@ -19,7 +19,7 @@
 
 #include "K15_PrecompiledHeader.h"
 
-#include "Win32\K15_ApplicationOSLayer_Win32.h"
+#include "Win32\K15_OSLayer_Win32.h"
 #include "Win32\K15_RenderWindow_Win32.h"
 #include "K15_RenderWindowBase.h"
 #include "K15_LogManager.h"
@@ -28,12 +28,14 @@
 
 namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
-	const String ApplicationOSLayer_Win32::OSName = "Microsoft Windows";
-	const String ApplicationOSLayer_Win32::PluginExtension = "dll";
+	const String OSLayer_Win32::OSName = "Microsoft Windows";
+	const String OSLayer_Win32::PluginExtension = "dll";
+	LARGE_INTEGER OSLayer_Win32::ms_PCF = {0};
+	float OSLayer_Win32::ms_Frequency = 0.0f;
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	void* ApplicationOSLayer_Win32::os_malloc(uint32 p_Size)
+	void* OSLayer_Win32::os_malloc(uint32 p_Size)
 	{
 		static HANDLE processHeap = GetProcessHeap();
 #		if defined K15_DEBUG
@@ -49,7 +51,7 @@ namespace K15_Engine { namespace Core {
 		return memory;
 	}
 	/*********************************************************************************/
-	void ApplicationOSLayer_Win32::os_free(void* p_Pointer)
+	void OSLayer_Win32::os_free(void* p_Pointer)
 	{
 		static HANDLE processHeap = GetProcessHeap();
 
@@ -61,37 +63,25 @@ namespace K15_Engine { namespace Core {
 		HeapFree(processHeap,0,p_Pointer);
 	}
 	/*********************************************************************************/
-
-	/*********************************************************************************/
-	ApplicationOSLayer_Win32::ApplicationOSLayer_Win32()
+	bool OSLayer_Win32::initialize()
 	{
-
-	}
-	/*********************************************************************************/
-	ApplicationOSLayer_Win32::~ApplicationOSLayer_Win32()
-	{
-
-	}
-	/*********************************************************************************/
-	bool ApplicationOSLayer_Win32::initialize()
-	{
-		if(QueryPerformanceFrequency(&m_PerformanceCounterFrequency) == FALSE)
+		if(QueryPerformanceFrequency(&ms_PCF) == FALSE)
 		{
 			_LogError("Could not get performance counter frequency. Error:%s",Application::getInstance()->getLastError().c_str());
 			return false;
 		}
 
-		m_Frequency = double(m_PerformanceCounterFrequency.QuadPart);
+		ms_Frequency = float(ms_PCF.QuadPart);
 
 		return true;
 	}
 	/*********************************************************************************/
-	void ApplicationOSLayer_Win32::shutdown()
+	void OSLayer_Win32::shutdown()
 	{
 
 	}
 	/*********************************************************************************/
-	const String& ApplicationOSLayer_Win32::getError() const
+	const String& OSLayer_Win32::getError()
 	{
 		static const uint32 ErrorBufferSize = 768;
 		static String errorMsg;
@@ -117,34 +107,34 @@ namespace K15_Engine { namespace Core {
 		return errorMsg;
 	}
 	/*********************************************************************************/
-	void ApplicationOSLayer_Win32::getSupportedResolutions(SupportedResolutionSet* p_ResolutionSet) const
+	void OSLayer_Win32::getSupportedResolutions(SupportedResolutionSet* p_ResolutionSet)
 	{
 		DEVMODE dm = {0};
 		dm.dmSize = sizeof(dm);
 		
-		for(int i = 0;EnumDisplaySettings(0,i,&dm) != 0;++i)
+		for(int i = 0; EnumDisplaySettings(0,i,&dm) != 0; ++i)
 		{
 			Resolution currentResolution = {dm.dmPelsWidth,dm.dmPelsHeight};
 			p_ResolutionSet->push_back(currentResolution);
 		}
 	}
 	/*********************************************************************************/
-	double ApplicationOSLayer_Win32::getTime() const
+	float OSLayer_Win32::getTime()
 	{
 		LARGE_INTEGER counts;
 		QueryPerformanceCounter(&counts);
 
-		return counts.QuadPart / m_Frequency;
+		return counts.QuadPart / ms_Frequency;
 	}
 	/*********************************************************************************/
-	void ApplicationOSLayer_Win32::sleep(double p_TimeInSeconds) const
+	void OSLayer_Win32::sleep(float p_TimeInSeconds)
 	{
 		static DWORD msecs = 0;
 		msecs = (DWORD)(p_TimeInSeconds * 1000);
 		Sleep(msecs);
 	}
 	/*********************************************************************************/
-	void ApplicationOSLayer_Win32::onPreTick()
+	void OSLayer_Win32::onPreTick()
 	{
 		static MSG msg;
 		static HWND hwnd = (HWND)INVALID_HANDLE_VALUE;
@@ -163,7 +153,7 @@ namespace K15_Engine { namespace Core {
 		}
 	}
 	/*********************************************************************************/
-	void ApplicationOSLayer_Win32::onPostTick()
+	void OSLayer_Win32::onPostTick()
 	{
 
 	}

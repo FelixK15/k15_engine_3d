@@ -30,7 +30,7 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	class K15_CORE_API ApplicationOSLayer_Win32
+	class K15_CORE_API OSLayer_Win32
 	{
 	public:
 		/*********************************************************************************/
@@ -56,45 +56,33 @@ namespace K15_Engine { namespace Core {
 		*/
 		static void os_free(void* p_Pointer);
 
-	public:
-		/**
-		* Default Constructor
-		*/
-		ApplicationOSLayer_Win32();
-
-		/**
-		* Destructor
-		*/
-		~ApplicationOSLayer_Win32();
-
 		/**
 		* initialize the OS layer
 		*
 		*
 		* @return bool - true initialization succeeded, false initialization failed (refer to program log for further information)
 		*/
-		bool initialize();
+		static bool initialize();
 
 		/**
 		* shutdown OS layer
 		*/
-
-		void shutdown();
-		// 
+		static void shutdown();
+		
 		/**
 		* get the last error set by the OS
 		*
 		*
 		* @return const String& - Error string
 		*/
-		const String& getError() const;
+		static const String& getError();
 
 		/** 
 		* get supported resolutions
 		*
 		* @param p_ResolutionSet - Pointer to a SupportedResolutionSet variable. The function will fill the container.
 		*/
-		void getSupportedResolutions(SupportedResolutionSet* p_ResolutionSet) const;
+		static void getSupportedResolutions(SupportedResolutionSet* p_ResolutionSet);
 
 		/**
 		* get current time (1.0 = 1 sec)
@@ -102,27 +90,28 @@ namespace K15_Engine { namespace Core {
 		*
 		* @return double - current time in second format.
 		*/
-		double getTime() const;
+		static float getTime();
 	
 		/**
 		* Put the calling thread to sleep for a specific amount of time.
 		*
 		* @param p_TimeInSeconds - seconds the calling thread should idle
 		*/
-		void sleep(double p_TimeInSeconds) const;
+		static void sleep(float p_TimeInSeconds);
 
 		/**
 		* callback before the game gets ticked (pumps messages)
 		*/
-		void onPreTick();
+		static void onPreTick();
 
 		/**
 		* callback after the game gets ticked
 		*/
-		void onPostTick();
+		static void onPostTick();
+
 	private:
-		LARGE_INTEGER m_PerformanceCounterFrequency;
-		double m_Frequency;
+		static LARGE_INTEGER ms_PCF; //Perforamnce Counter Frequency
+		static float ms_Frequency;
 	};//end of ApplicationOSLayer_Win32 class
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

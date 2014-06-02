@@ -117,9 +117,6 @@
     <ClInclude Include="..\..\engine\include\K15_TaskManager.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\win32\K15_ApplicationOSLayer_Win32.h">
-      <Filter>Core\include\Win32</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\win32\K15_RenderWindow_Win32.h">
       <Filter>Core\include\Win32</Filter>
     </ClInclude>
@@ -363,9 +360,6 @@
     <ClInclude Include="..\..\engine\include\K15_GpuProgramParameter.h">
       <Filter>Rendering\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\Android\K15_ApplicationLayerOS_Android.h">
-      <Filter>Core\include\Android</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\Android\K15_RenderWindow_Android.h">
       <Filter>Core\include\Android</Filter>
     </ClInclude>
@@ -438,7 +432,15 @@
     <ClInclude Include="..\..\engine\include\K15_GameStateBase.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_EventHandler.h" />
+    <ClInclude Include="..\..\engine\include\K15_EventHandler.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\win32\K15_OSLayer_Win32.h">
+      <Filter>Core\include\Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\Android\K15_OSLayer_Android.h">
+      <Filter>Core\include\Android</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -458,9 +460,6 @@
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_TaskManager.cpp">
       <Filter>Core\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\Win32\K15_ApplicationOSLayer_Win32.cpp">
-      <Filter>Core\src\Win32</Filter>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\win32\K15_RenderWindow_Win32.cpp">
       <Filter>Core\src\Win32</Filter>
@@ -654,9 +653,6 @@
     <ClCompile Include="..\..\engine\src\K15_CameraComponent.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\Android\K15_ApplicationLayerOS_Android.cpp">
-      <Filter>Core\src\Android</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\engine\src\Android\K15_RenderWindow_Android.cpp">
       <Filter>Core\src\Android</Filter>
     </ClCompile>
@@ -741,7 +737,15 @@
     <ClCompile Include="..\..\engine\src\K15_GameStateBase.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_EventHandler.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_EventHandler.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\Win32\K15_OSLayer_Win32.cpp">
+      <Filter>Core\src\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\Android\K15_OSLayer_Android.cpp">
+      <Filter>Core\src\Android</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -898,9 +902,6 @@
     <None Include="..\..\engine\include\K15_StringUtil.inl">
       <Filter>Core\include</Filter>
     </None>
-    <None Include="..\..\engine\include\Android\K15_ApplicationLayerOS_Android.inl">
-      <Filter>Core\include\Android</Filter>
-    </None>
     <None Include="..\..\engine\include\K15_Language.inl">
       <Filter>Core\include</Filter>
     </None>
@@ -937,8 +938,15 @@
     <None Include="..\..\engine\include\K15_Font.inl">
       <Filter>Core\include</Filter>
     </None>
-    <None Include="..\..\engine\include\K15_EventHandler.inl" />
-    <None Include="..\..\engine\include\K15_EventManager.inl" />
+    <None Include="..\..\engine\include\K15_EventManager.inl">
+      <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_EventHandler.inl">
+      <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\Android\K15_OSLayer_Android.inl">
+      <Filter>Core\include\Android</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />

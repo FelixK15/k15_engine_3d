@@ -23,7 +23,7 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	GameTime::GameTime(double p_DeltaTime,double p_Multiplier)
+	GameTime::GameTime(float p_DeltaTime, float p_Multiplier)
 		: m_DeltaTime(p_DeltaTime * p_Multiplier),
 		  m_Mulitplicator(p_Multiplier),
 		  m_RawDeltaTime(p_DeltaTime)

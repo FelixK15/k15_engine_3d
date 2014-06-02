@@ -37,9 +37,9 @@
 #include "K15_Serializer.h"
 
 #if defined (K15_OS_WINDOWS)
-#	include "Win32\K15_ApplicationOSLayer_Win32.h"
+#	include "Win32\K15_OSLayer_Win32.h"
 #elif defined (K15_OS_ANDROID)
-#	include "Android/K15_ApplicationLayerOS_Android.h"
+#	include "Android/K15_OSLayer_Android.h"
 #endif //K15_OS_WINDOWS
 
 namespace K15_Engine { namespace Core {
@@ -110,19 +110,18 @@ namespace K15_Engine { namespace Core {
 		INLINE LogManager* getLogManager() const;
 		INLINE InputManager* getInputManager() const;
 		INLINE StackAllocator* getFrameAllocator();
-		INLINE ApplicationOSLayerType& getOSLayer();
 
-		INLINE double getRunningTime() const;
+		INLINE float getRunningTime() const;
 
 		INLINE void setRunning(bool p_Running);
 		INLINE bool getRunning() const;
 
 		INLINE String getLastError();
-		INLINE double getTime();
+		INLINE float getTime();
 
 		INLINE const GameTime& getGameTime() const;
-		INLINE const double getDeltaTime() const;
-		INLINE const double getRawDeltaTime() const;
+		INLINE const float getDeltaTime() const;
+		INLINE const float getRawDeltaTime() const;
 
 		INLINE void setMaxFPS(uint32 p_MaxFPS);
 		INLINE uint32 getMaxFPS() const;
@@ -151,9 +150,9 @@ namespace K15_Engine { namespace Core {
 	expose		uint32 m_MaxFPS;
 	expose_read uint32 m_FrameCounter;
 	expose_read uint32 m_AvgFramesPerSecond;
-	expose_read double m_AvgFrameTime;
-				double m_RunningTime;
-				double m_TimeLastFrame;
+	expose_read float m_AvgFrameTime;
+				float m_RunningTime;
+				float m_TimeLastFrame;
 
 				StackAllocator* m_FrameAllocator; //allocator which will get reset each frame.
 				FrameStatistic m_FrameStatistics[FrameStatisticCount];
@@ -166,8 +165,6 @@ namespace K15_Engine { namespace Core {
 				StringSet m_Commands;
 				ApplicationParameterList m_ApplicationParameter;
 				ApplicationModuleList m_LoadedModules;
-
-				ApplicationOSLayerType m_OSLayer;
 
 				RenderWindowBase* m_RenderWindow;
 				TaskManager* m_TaskManager;

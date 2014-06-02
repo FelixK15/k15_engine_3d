@@ -30,7 +30,7 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	class K15_CORE_API ApplicationOSLayer_Android
+	class K15_CORE_API OSLayer_Android
 	{
 	public:
 		/*********************************************************************************/
@@ -56,30 +56,18 @@ namespace K15_Engine { namespace Core {
 		*/
 		static void os_free(void* p_Pointer);
 
-	public:
-		/**
-		* Default Constructor
-		*/
-		ApplicationOSLayer_Android();
-
-		/**
-		* Destructor
-		*/
-		~ApplicationOSLayer_Android();
-
 		/**
 		* initialize the OS layer
 		*
 		*
 		* @return bool - true initialization succeeded, false initialization failed (refer to program log for further information)
 		*/
-		bool initialize();
+		static bool initialize();
 
 		/**
 		* shutdown OS layer
 		*/
-
-		void shutdown();
+		static void shutdown();
 		
 		/**
 		* get the last error set by the OS
@@ -87,7 +75,7 @@ namespace K15_Engine { namespace Core {
 		*
 		* @return const String& - Error string
 		*/
-		const String& getError();
+		static const String& getError();
 
 		/**
 		* set the current error that will get returned
@@ -95,14 +83,14 @@ namespace K15_Engine { namespace Core {
 		*
 		* @param p_Error - String containing the error.
 		*/
-		INLINE void setError(const String& p_Error);
+		INLINE static void setError(const String& p_Error);
 
 		/** 
 		* get supported resolutions
 		*
 		* @param p_ResolutionSet - Pointer to a SupportedResolutionSet variable. The function will fill the container.
 		*/
-		void getSupportedResolutions(SupportedResolutionSet* p_ResolutionSet) const;
+		static void getSupportedResolutions(SupportedResolutionSet* p_ResolutionSet);
 
 		/**
 		* get current time (1.0 = 1 sec)
@@ -110,40 +98,40 @@ namespace K15_Engine { namespace Core {
 		*
 		* @return double - current time in second format.
 		*/
-		double getTime();
+		static float getTime();
 	
 		/**
 		* Put the calling thread to sleep for a specific amount of time.
 		*
 		* @param p_TimeInSeconds - seconds the calling thread should idle
 		*/
-		void sleep(double p_TimeInSeconds) const;
+		static void sleep(float p_TimeInSeconds);
 
 		/**
 		* callback before the game gets ticked (pumps messages)
 		*/
-		void onPreTick();
+		static void onPreTick();
 
 		/**
 		* callback after the game gets ticked
 		*/
-		void onPostTick();
+		static void onPostTick();
 
 		/**
 		* setter for the android_app instance from the application running the engine.
 		*/
-		INLINE void setAndroidApp(android_app* p_App);
+		INLINE static void setAndroidApp(android_app* p_App);
 
-		INLINE android_app* getAndroidApp() const;
+		INLINE static android_app* getAndroidApp();
 	private:
-		timespec m_LastTime;
-		String m_Error;
-		android_app* m_App;
-		ASensor* m_AccelerometerSensor;
-		ASensorEventQueue* m_SensorEventQueue;
-		ASensorManager* m_SensorManager;
+		static timespec ms_LastTime;
+		static String ms_Error;
+		static android_app* ms_App;
+		static ASensor* ms_AccelerometerSensor;
+		static ASensorEventQueue* ms_SensorEventQueue;
+		static ASensorManager* ms_SensorManager;
 	};//end of ApplicationOSLayer_Android class
-	#include "K15_ApplicationLayerOS_Android.inl"
+	#include "K15_OSLayer_Android.inl"
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace
 

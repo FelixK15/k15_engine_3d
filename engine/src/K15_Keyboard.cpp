@@ -5,6 +5,8 @@
 namespace K15_Engine { namespace Core { namespace InputDevices {
 	/*********************************************************************************/
 	Keyboard::InputStringToEnumMap Keyboard::InputStringToEnum = Keyboard::createStringToEnumMap();
+	EventName Keyboard::EventKeyPress	= _EN(EventKeyPress);
+	EventName Keyboard::EventKeyRelease = _EN(EventKeyRelease);
 	/*********************************************************************************/
 
 	/*********************************************************************************/

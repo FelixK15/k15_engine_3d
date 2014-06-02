@@ -44,11 +44,6 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	EventManager::~EventManager()
 	{
-		for(EventHandlerArray::iterator iter = m_Listener.begin();iter != m_Listener.end();++iter)
-		{
-			K15_DELETE_SIZE(Allocators[AC_GAMEVENTS],iter->second,sizeof(EventHandlerList));
-		}
-
 		while(m_Events.size() > 0)
 		{
 			K15_DELETE m_Events.top();
@@ -66,35 +61,36 @@ namespace K15_Engine { namespace Core {
 		 */
 		EventHandlerArray::iterator iter = Find(m_Listener.begin(), m_Listener.end(), p_EventName);
 
-    if(iter == m_Listener.end())
-    {
-      m_Listener.push_back(EventHandlerArrayEntry(p_EventName));
-      addHandler(p_EventName, p_Handler);
-    }
+		if(iter == m_Listener.end())
+		{
+		  m_Listener.push_back(EventHandlerArrayEntry(p_EventName));
+		  addHandler(p_EventName, p_Handler);
+		  return;
+		}
 
-    iter->handlerList.push_back(p_Handler);
+		iter->handlerList.push_back(p_Handler);
 	}
 	/*********************************************************************************/
 	void EventManager::removeListener(const EventName& p_EventName, const EventHandler& p_Handler)
 	{
-    EventHandlerArray::iterator iter = Find(m_Listener.begin(), m_Listener.end(), p_EventName);
+		EventHandlerArray::iterator iter = Find(m_Listener.begin(), m_Listener.end(), p_EventName);
 
-    if(iter == m_Listener.end())
-    {
-      _LogError("No handler for event \"%s\".",p_EventName.c_str());
-      return;
-    }
+		if(iter == m_Listener.end())
+		{
+			_LogError("No handler for event \"%s\".",p_EventName.c_str());
+			return;
+		}
 
-    EventHandlerList& handlers = iter->handlerList;
+		EventHandlerList& handlers = iter->handlerList;
 
-    for(EventHandlerList::iterator handlerIter = handlers.begin(); handlerIter != handlers.end(); ++handlerIter)
-    {
-      if(p_Handler == (*handlerIter))
-      {
-        handlers.erase(handlerIter);
-        break;
-      }
-    }
+		for(EventHandlerList::iterator handlerIter = handlers.begin(); handlerIter != handlers.end(); ++handlerIter)
+		{
+			if(p_Handler == (*handlerIter))
+			{
+				handlers.erase(handlerIter);
+				break;
+			}
+		}
 	}
 	/*********************************************************************************/
 	void EventManager::addEventToQueue(GameEvent* p_Event)
@@ -104,16 +100,19 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void EventManager::triggerEvent(GameEvent* p_Event)
 	{
-    K15_ASSERT(p_Event,"Event is NULL!");
+		K15_ASSERT(p_Event,"Event is NULL!");
 
 		EventHandlerArray::iterator iter = Find(m_Listener.begin(), m_Listener.end(), p_Event->getName());
 
-    EventHandlerList& handlers = iter->handlerList;
+		if(iter != m_Listener.end())
+		{
+			EventHandlerList& handlers = iter->handlerList;
 
-    for(EventHandlerList::iterator handlerIter = handlers.begin(); handlerIter != handlers.end(); ++handlerIter)
-    {
-      (*handlerIter)(p_Event);
-    }
+			for(EventHandlerList::iterator handlerIter = handlers.begin(); handlerIter != handlers.end(); ++handlerIter)
+			{
+				(*handlerIter)(p_Event);
+			}
+		}
 
 		//delete event after it has been processed
 		K15_DELETE p_Event;

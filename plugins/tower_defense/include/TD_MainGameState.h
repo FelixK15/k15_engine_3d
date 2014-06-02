@@ -31,7 +31,7 @@
 
 namespace TowerDefense 
 {
-	class MainGameState : public GameStateBase, public GeneralAllocatedObject, public InputDevices::Mouse::Listener
+	class MainGameState : public GameStateBase, public GeneralAllocatedObject
 	{
 	public:
 		static const int AMOUNT_ENEMIES = 10;
@@ -45,7 +45,7 @@ namespace TowerDefense
 		virtual void shutdown() OVERRIDE;
 		virtual void update(const GameTime& p_GameTime) OVERRIDE;
 
-		virtual void onMousePressed(const MouseActionArguments& p_EventArguments) OVERRIDE;
+		bool onEventMousePressed(GameEvent* p_Event);
 
 	private:
 		void _checkCollision(GameObject* p_Enemy);

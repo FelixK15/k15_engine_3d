@@ -114,7 +114,7 @@ namespace K15_Engine { namespace Rendering {
 			m_GpuPrograms[i] = 0;
 		}
 
-    g_EventManager->addHandler(RenderWindowBase::EventResolutionChanged,EventHandler::create<RendererBase,RendererBase::onEventResolutionChanged>(this));
+    g_EventManager->addHandler(RenderWindowBase::EventResolutionChanged,K15_EventHandler(RendererBase,onEventResolutionChanged,this));
 	}
 	/*********************************************************************************/
 	RendererBase::~RendererBase()
@@ -800,6 +800,18 @@ namespace K15_Engine { namespace Rendering {
 		}
 
 		return 0;
+	}
+	/*********************************************************************************/
+	bool RendererBase::onEventResolutionChanged(GameEvent* p_Event)
+	{
+		if(p_Event->getArgumentSize() == sizeof(Resolution))
+		{
+			Resolution* resolution = static_cast<Resolution*>(p_Event->getArgument());
+
+			_resolutionChanged(*resolution);
+		}
+
+		return true;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace

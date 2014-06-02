@@ -78,11 +78,11 @@ namespace K15_Engine
 		class GameTime;
 #		if defined K15_OS_ANDROID
 			class DynamicLibrary_Linux;
-			class ApplicationOSLayer_Android;
+			class OSLayer_Android;
 			class RenderWindow_Android;
 #		elif defined K15_OS_WINDOWS
 			class DynamicLibrary_Win32;
-			class ApplicationOSLayer_Win32;
+			class OSLayer_Win32;
 			class RenderWindow_Win32;
 #		endif //K15_OS_WINDOWS
 		class DynamicLibraryBase;
@@ -391,7 +391,7 @@ namespace K15_Engine
 #define Pair(K,V)			std::pair<K,V>
 #define FixedArray(T,C)		std::array<T,C>
 #define Sort(S,E,F)			std::sort(S,E,F)
-#define Find(S,E,O)     std::find(S,E,O)
+#define Find(S,E,O)			std::find(S,E,O)
 typedef std::string			String;
 typedef std::fstream		FileStream;
 typedef std::ofstream		WriteFileStream;
@@ -420,7 +420,7 @@ typedef std::stringstream	StringStream;
 	#define K15_TERMINATE_APPLICATION() abort()
 
 	typedef K15_Engine::Core::DynamicLibrary_Win32 DynamicLibraryType;
-	typedef K15_Engine::Core::ApplicationOSLayer_Win32 ApplicationOSLayerType;
+	typedef K15_Engine::Core::OSLayer_Win32 OSLayer;
 	typedef K15_Engine::Core::RenderWindow_Win32 RenderWindowType;
 
 	//8 bit types
@@ -460,7 +460,7 @@ typedef std::stringstream	StringStream;
 	#define TEXT(x) x
 
 	typedef K15_Engine::Core::DynamicLibrary_Linux DynamicLibraryType;
-	typedef K15_Engine::Core::ApplicationOSLayer_Android ApplicationOSLayerType;
+	typedef K15_Engine::Core::OSLayer_Android OSLayer;
 	typedef K15_Engine::Core::RenderWindow_Android RenderWindowType;
 
 	//8 bit types
@@ -515,8 +515,8 @@ typedef glm::fquat Quaternion;
 #endif //K15_DEBUG
 
 
-#define K15_MALLOC(size) ApplicationOSLayerType::os_malloc(size)
-#define K15_FREE(ptr) ApplicationOSLayerType::os_free(ptr)
+#define K15_MALLOC(size)	OSLayer::os_malloc(size)
+#define K15_FREE(ptr)		OSLayer::os_free(ptr)
 #define K15_MEMCPY(destination,source,size) memcpy(destination,source,size)
 
 # define K15_PLACEMENT_NEW new(ptr)

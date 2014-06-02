@@ -269,7 +269,7 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 
 		const Resolution& resolution = renderwindow->getResolution();
 		//force viewport resizing
-		onResolutionChanged(resolution);
+		_resolutionChanged(resolution);
 		glEnable(GL_STENCIL_TEST); //enable stencil testing
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
@@ -301,7 +301,7 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 		}
 	}
 	/*********************************************************************************/
-	void Renderer::onResolutionChanged(const Resolution& p_Resolution)
+	void Renderer::_resolutionChanged(const Resolution& p_Resolution)
 	{
 		glViewport(0,0,p_Resolution.width,p_Resolution.height);
 	}

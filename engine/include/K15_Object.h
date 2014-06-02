@@ -56,7 +56,7 @@ namespace K15_Engine { namespace Core {
 		INLINE void setName(const ObjectName& p_Name);
 		INLINE const ObjectName& getName() const;
 		
-		protected:
+	protected:
 		ObjectName m_Name;
 	};
   

@@ -58,13 +58,12 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 		virtual bool _initialize() OVERRIDE;
 		virtual void _shutdown() OVERRIDE;
 
-		virtual void onResolutionChanged(const Resolution& p_Resolution) OVERRIDE;
-
 		//inline HGLRC getRenderContext() const;
 
 	protected:
 		bool createDummyContext(HWND*,HDC*);
 
+		virtual void _resolutionChanged(const Resolution& p_Resolution) OVERRIDE;
 		virtual void _setFillMode(Enum p_FillMode) OVERRIDE;
 		virtual void _setAlphaState(const AlphaState& p_AlphaState) OVERRIDE;
 		virtual void _setDepthState(const DepthState& p_DepthState) OVERRIDE;

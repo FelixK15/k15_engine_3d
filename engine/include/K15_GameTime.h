@@ -31,7 +31,7 @@ namespace K15_Engine { namespace Core {
 	class K15_CORE_API GameTime
 	{
 	public:
-		GameTime(double p_DeltaTime,double p_Multiplier = 1.0);
+		GameTime(float p_DeltaTime, float p_Multiplier = 1.0);
 		~GameTime();
 
 		/**
@@ -40,7 +40,7 @@ namespace K15_Engine { namespace Core {
 		*
 		* @return double - modified delta time (unmodified if getMultiplier() == 1.0)
 		*/
-		INLINE const double getDeltaTime() const{return m_DeltaTime * m_Mulitplicator;}
+		INLINE const float getDeltaTime() const{return m_DeltaTime * m_Mulitplicator;}
 
 		/**
 		* get the delta time (e.g. the time it took to process the last frame).
@@ -48,22 +48,22 @@ namespace K15_Engine { namespace Core {
 		*
 		* @return double - unmodified delta time (unmodified if getMultiplier() == 1.0)
 		*/
-		INLINE const double getRawDeltaTime() const{return m_RawDeltaTime;}
+		INLINE const float getRawDeltaTime() const{return m_RawDeltaTime;}
 
 		/**
 		* Returns the multiplier that affects the value of getDeltaTime()
 		*
 		* @return double - multiplier that affects the value of getDeltaTime()
 		*/
-		INLINE const double getMultiplier() const{return m_Mulitplicator;}
+		INLINE const float getMultiplier() const{return m_Mulitplicator;}
 
-		INLINE void setDeltaTime(double p_DeltaTime){m_DeltaTime = p_DeltaTime;}
+		INLINE void setDeltaTime(float p_DeltaTime){m_DeltaTime = p_DeltaTime;}
 
-		INLINE void setMultiplier(double p_Multiplier){m_Mulitplicator = p_Multiplier;}
+		INLINE void setMultiplier(float p_Multiplier){m_Mulitplicator = p_Multiplier;}
 	private:
-		double m_DeltaTime;
-		double m_Mulitplicator;
-		double m_RawDeltaTime;
+		float m_DeltaTime;
+		float m_Mulitplicator;
+		float m_RawDeltaTime;
 	};// end of GameTime class
 	//#include "K15_GameTime.inl"
 }}// end of K15_Engine::Core namespace

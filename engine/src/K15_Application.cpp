@@ -81,7 +81,7 @@ namespace K15_Engine { namespace Core {
 		m_GameTime(0.0,1.0),
 		m_FrameCounter(0),
 		m_MaxFPS(30),
-		m_AvgFrameTime(0.033),
+		m_AvgFrameTime(0.033f),
 		m_FrameAllocator(0),
 		m_GameState(0)
 	{
@@ -139,7 +139,8 @@ namespace K15_Engine { namespace Core {
 			m_GameRootDir = appPath.substr(0,pos+1);
 		}
 
-		for(int i = 1;i < p_CommandCount;++i){
+		for(int i = 1;i < p_CommandCount;++i)
+		{
 			m_Commands.insert(String(p_Commands[i]));
 		}
 	}
@@ -191,7 +192,7 @@ namespace K15_Engine { namespace Core {
 #if defined K15_OS_ANDROID
 	void Application::initialize(android_app* p_App)
 	{
-		m_OSLayer.setAndroidApp(p_App);
+		OSLayer::setAndroidApp(p_App);
 		initialize();
 	}
 #endif //K15_OS_ANDROID
@@ -206,10 +207,10 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void Application::initialize()
 	{
-		_LogNormal("Initializing OS layer (OS:\"%s\")",m_OSLayer.OSName.c_str());
+		_LogNormal("Initializing OS layer (OS:\"%s\")",OSLayer::OSName.c_str());
 
 		//try to initialize the os layer
-		if(!m_OSLayer.initialize())
+		if(!OSLayer::initialize())
 		{
 			_LogError("Failed to initialize OS layer");
 			return;
@@ -312,7 +313,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void Application::onPreTick()
 	{
-		m_OSLayer.onPreTick();
+		OSLayer::onPreTick();
 		for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
 		{
 			(*iter)->onPreTick();
@@ -321,10 +322,10 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void Application::tick()
 	{
-		static double startFrameTime = 0.0;
-		static double endFrameTime = 0.0;
-		static double diffTime = m_AvgFrameTime;
-		static double FPSTime = 0.0; //counting to 1 second and then restarts
+		static float startFrameTime = 0.0;
+		static float endFrameTime = 0.0;
+		static float diffTime = m_AvgFrameTime;
+		static float FPSTime = 0.0; //counting to 1 second and then restarts
 		static uint32 FPSFrameCounter = 0;
 		//clear the frame allocator on the start of each frame
 		m_FrameAllocator->clear();
@@ -359,11 +360,11 @@ namespace K15_Engine { namespace Core {
 			m_RunningTime += m_AvgFrameTime;
 			FPSTime += m_AvgFrameTime;
 
-			static double sleepTime = 0.0;
+			static float sleepTime = 0.0f;
 			sleepTime = m_AvgFrameTime - diffTime;
 
 			K15_PROFILE_BLOCK("Application::sleep",
-					m_OSLayer.sleep(sleepTime);
+					OSLayer::sleep(sleepTime);
 			);
 		}
 		else if(diffTime > m_AvgFrameTime)
@@ -539,7 +540,7 @@ namespace K15_Engine { namespace Core {
 				for(IniFileGroup::IniEntryList::iterator iter = group.entries.begin();iter != group.entries.end();++iter)
 				{
 					pluginPath.clear();
-					pluginPath = iter->value + "." + m_OSLayer.PluginExtension;
+					pluginPath = iter->value + "." + OSLayer::PluginExtension;
 					pluginsToLoad.insert(pluginPath);
 				}
 
@@ -622,7 +623,7 @@ namespace K15_Engine { namespace Core {
 		}
 
 		m_RenderWindow->shutdown();
-		m_OSLayer.shutdown();
+		OSLayer::shutdown();
 		m_ProfileManager->clear();
 
 		_LogNormal("Destroying RenderWindow...");
@@ -703,7 +704,7 @@ namespace K15_Engine { namespace Core {
 
 			if(currentParam.Name == "Renderer")
 			{
-				String rendererLibrary = StringUtil::format("%s.%s",currentParam.Value.c_str(),m_OSLayer.PluginExtension.c_str());
+				String rendererLibrary = StringUtil::format("%s.%s", currentParam.Value.c_str(), OSLayer::PluginExtension.c_str());
 				DynamicLibraryBase* rendererLib = g_DynamicLibraryManager->load(rendererLibrary);
 
 				if(rendererLib)

@@ -23,14 +23,20 @@
 #include "K15_GameEvent.h"
 
 namespace K15_Engine { namespace Core {
-  /*********************************************************************************/
-  float Resolution::getAspectRatio() const
-  {
-    if(height == 0) return 0.0f;
+	/*********************************************************************************/
+	float Resolution::getAspectRatio() const
+	{
+		if(height == 0) return 0.0f;
 
-    return (float)((float)width / (float)height);
-  }
-  /*********************************************************************************/
+		return (float)((float)width / (float)height);
+	}
+	/*********************************************************************************/
+
+	/*********************************************************************************/
+	EventName RenderWindowBase::EventFocusLost = _EN(EventFocusLost);
+	EventName RenderWindowBase::EventFocusReceived = _EN(EventFocusReceived);
+	EventName RenderWindowBase::EventResolutionChanged = _EN(EventResolutionChanged);
+	/*********************************************************************************/
 
 	/*********************************************************************************/
 	RenderWindowBase::RenderWindowBase()

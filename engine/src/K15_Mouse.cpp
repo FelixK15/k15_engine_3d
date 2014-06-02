@@ -31,6 +31,11 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 	int g_LastMousePos_x = 0;
 	int g_LastMousePos_y = 0;
 	Mouse::InputStringToEnumMap Mouse::InputStringToEnum = Mouse::createStringToEnumMap();
+	EventName Mouse::EventDoubleClicked = _EN(EventDoubleClicked);
+	EventName Mouse::EventMouseMoved	= _EN(EventMouseMoved);
+	EventName Mouse::EventMousePressed	= _EN(EventMousePressed);
+	EventName Mouse::EventMouseReleased = _EN(EventMouseReleased);
+	EventName Mouse::EventMouseWheel	= _EN(EventMouseWheel);
 	/*********************************************************************************/
 	Mouse::InputTrigger::InputTrigger(Enum p_Button)
 		: m_Button(p_Button)

@@ -99,7 +99,7 @@ StackAllocator* Application::getFrameAllocator()
 	return m_FrameAllocator;
 }
 /*********************************************************************************/
-double Application::getRunningTime() const
+float Application::getRunningTime() const
 {
 	return m_RunningTime;
 }
@@ -109,30 +109,30 @@ const GameTime& Application::getGameTime() const
   return m_GameTime;
 }
 /*********************************************************************************/
-const double Application::getDeltaTime() const
+const float Application::getDeltaTime() const
 {
   return m_GameTime.getDeltaTime();
 }
 /*********************************************************************************/
-const double Application::getRawDeltaTime() const
+const float Application::getRawDeltaTime() const
 {
   return m_GameTime.getRawDeltaTime();
 }
 /*********************************************************************************/
 String Application::getLastError()
 {
-	return m_OSLayer.getError();
+	return OSLayer::getError();
 }
 /*********************************************************************************/
-double Application::getTime()
+float Application::getTime()
 {
-	return m_OSLayer.getTime();
+	return OSLayer::getTime();
 }
 /*********************************************************************************/
 void Application::setMaxFPS(uint32 p_MaxFPS)
 {
 	m_MaxFPS = p_MaxFPS;
-	m_AvgFrameTime = 1.0 / p_MaxFPS;
+	m_AvgFrameTime = 1.0f / p_MaxFPS;
 }
 /*********************************************************************************/
 uint32 Application::getMaxFPS() const
@@ -156,11 +156,6 @@ const FrameStatistic& Application::getFrameStatistic(uint32 p_FrameNumber) const
 		StringUtil::format("Requestes frame statistics from frame %i, but only statistics from the last %i frames get saved.",
 		p_FrameNumber,FrameStatisticCount));
 	return m_FrameStatistics[p_FrameNumber];
-}
-/*********************************************************************************/
-ApplicationOSLayerType& Application::getOSLayer()
-{
-  return m_OSLayer;
 }
 /*********************************************************************************/
 FrameStatistic& Application::getCurrentFrameStatistic()

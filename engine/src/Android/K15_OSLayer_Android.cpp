@@ -24,16 +24,22 @@
 #include "K15_Mouse.h"
 #include "K15_ResourceManager.h"
 
-#include "Android\K15_ApplicationLayerOS_Android.h"
+#include "Android\K15_OSLayer_Android.h"
 #include "Android\K15_RenderWindow_Android.h"
 #include "Android\K15_ResourceArchiveAndroid.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	const String ApplicationOSLayer_Android::OSName = "Android";
-	const String ApplicationOSLayer_Android::PluginExtension = "so";
+	const String OSLayer_Android::OSName = "Android";
+	const String OSLayer_Android::PluginExtension = "so";
 	const int32 ANDROID_EVENT_HANDLED = 1;
 	const int32 ANDROID_EVENT_NOT_HANDLED = 0;
+	timespec OSLayer_Android::ms_LastTime = {0};
+	String OSLayer_Android::ms_Error = "";
+	android_app* OSLayer_Android::ms_App = 0;
+	ASensor* OSLayer_Android::ms_AccelerometerSensor = 0;
+	ASensorEventQueue* OSLayer_Android::ms_SensorEventQueue = 0;
+	ASensorManager* OSLayer_Android::ms_SensorManager = 0;
 	/*********************************************************************************/
 	
 	/*********************************************************************************/
@@ -78,8 +84,8 @@ namespace K15_Engine { namespace Core {
 					//NDC are now -1.0|+1.0
 					
 					motionEvent = K15_NEW GameEvent(eventAction == AMOTION_EVENT_ACTION_DOWN ? 
-													_EN(onMousePressed) : eventAction == AMOTION_EVENT_ACTION_UP ?
-													_EN(onMouseReleased) : _EN(onMouseMoved),(void*)&args,sizeof(MouseActionArguments));
+													InputDevices::Mouse::EventMousePressed  : eventAction == AMOTION_EVENT_ACTION_UP ?
+													InputDevices::Mouse::EventMouseReleased : InputDevices::Mouse::EventMouseMoved, (void*)&args, sizeof(MouseActionArguments));
 
 					_LogDebug("x:%d y:%d  |  nx:%.3f ny:%.3f",args.xPx,args.yPx,args.xNDC,args.yNDC);
 				}
@@ -161,31 +167,31 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	void* ApplicationOSLayer_Android::os_malloc(uint32 p_Size)
+	void* OSLayer_Android::os_malloc(uint32 p_Size)
 	{
 		return malloc(p_Size);
 	}
 	/*********************************************************************************/
-	void ApplicationOSLayer_Android::os_free(void* p_Pointer)
+	void OSLayer_Android::os_free(void* p_Pointer)
 	{
 		free(p_Pointer);
 	}	
 	/*********************************************************************************/
-	ApplicationOSLayer_Android::ApplicationOSLayer_Android()
-		: m_SensorEventQueue(0),
-		m_SensorManager(0)
+	OSLayer_Android::OSLayer_Android()
+		: ms_SensorEventQueue(0),
+		ms_SensorManager(0)
 	{
 
 	}
 	/*********************************************************************************/
-	ApplicationOSLayer_Android::~ApplicationOSLayer_Android()
+	OSLayer_Android::~OSLayer_Android()
 	{
 
 	}
 	/*********************************************************************************/
-	bool ApplicationOSLayer_Android::initialize()
+	bool OSLayer_Android::initialize()
 	{
-		K15_ASSERT(m_App,"Need to set app instance before initializing android application.");
+		K15_ASSERT(ms_App,"Need to set app instance before initializing android application.");
 
 // 		if((m_SensorManager = ASensorManager_getInstance()) == 0);
 // 		{
@@ -208,14 +214,14 @@ namespace K15_Engine { namespace Core {
 // 		}
 
 		//get time of engine initialization
-		clock_gettime(CLOCK_MONOTONIC,&m_LastTime);
+		clock_gettime(CLOCK_MONOTONIC,&ms_LastTime);
 
-		m_App->userData = g_Application;
+		ms_App->userData = g_Application;
 		
 		//set callbacks
-		m_App->onInputEvent = AndroidCallback_OnInput;
-		m_App->onAppCmd = AndroidCallback_OnCmd;
-		String gameRoot = m_App->activity->externalDataPath;
+		ms_App->onInputEvent = AndroidCallback_OnInput;
+		ms_App->onAppCmd = AndroidCallback_OnCmd;
+		String gameRoot = ms_App->activity->externalDataPath;
 		gameRoot += "/";
 
 		g_Application->setGameRootDir(gameRoot);
@@ -223,45 +229,45 @@ namespace K15_Engine { namespace Core {
 		return true;
 	}
 	/*********************************************************************************/
-	void ApplicationOSLayer_Android::shutdown()
+	void OSLayer_Android::shutdown()
 	{
 
 	}
 	/*********************************************************************************/
-	const String& ApplicationOSLayer_Android::getError()
+	const String& OSLayer_Android::getError()
 	{
 		static String err = "Could not retrieve last error from OS.";
 
-		if(!m_Error.empty())
+		if(!ms_Error.empty())
 		{
-			err = m_Error;
-			m_Error.clear();
+			err = ms_Error;
+			ms_Error.clear();
 		}
 
 		return err;
 	}
 	/*********************************************************************************/
-	void ApplicationOSLayer_Android::getSupportedResolutions(SupportedResolutionSet* p_ResolutionSet) const
+	void OSLayer_Android::getSupportedResolutions(SupportedResolutionSet* p_ResolutionSet)
 	{
 
 	}
 	/*********************************************************************************/
-	double ApplicationOSLayer_Android::getTime()
+	float OSLayer_Android::getTime()
 	{
 		//http://stackoverflow.com/questions/3832097/how-to-get-the-current-time-in-native-android-code
 		struct timespec res;
 		clock_gettime(CLOCK_REALTIME, &res);
-		return res.tv_sec + (double) res.tv_nsec / 1e6;
+		return res.tv_sec + (float) res.tv_nsec / 1e6;
 	}
 	/*********************************************************************************/
-	void ApplicationOSLayer_Android::sleep(double p_TimeInSeconds) const
+	void OSLayer_Android::sleep(float p_TimeInSeconds)
 	{
 		//_LogDebug("sleep:%.3f seconds - %u microseconds",p_TimeInSeconds,p_TimeInSeconds * 1000000);
 		unsigned long microseconds = p_TimeInSeconds * 1000000;
 		::usleep(microseconds);
 	}
 	/*********************************************************************************/
-	void ApplicationOSLayer_Android::onPreTick()
+	void OSLayer_Android::onPreTick()
 	{
 		static int ident;
 		static int events;
@@ -274,13 +280,13 @@ namespace K15_Engine { namespace Core {
 			{
 				if(source)
 				{
-					source->process(m_App,source);
+					source->process(ms_App,source);
 				}
 			}
 		}
 	}
 	/*********************************************************************************/
-	void ApplicationOSLayer_Android::onPostTick()
+	void OSLayer_Android::onPostTick()
 	{
 
 	}

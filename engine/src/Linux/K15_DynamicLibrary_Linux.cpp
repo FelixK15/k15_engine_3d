@@ -1,6 +1,6 @@
 #include "K15_PrecompiledHeader.h"
 
-#include "Android\K15_ApplicationLayerOS_Android.h"
+#include "Android\K15_OSLayer_Android.h"
 #include "Linux\K15_DynamicLibrary_Linux.h"
 
 

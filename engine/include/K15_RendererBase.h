@@ -228,7 +228,7 @@ namespace K15_Engine { namespace Rendering {
 		bool onEventResolutionChanged(GameEvent* p_Event);
 
 	protected:
-    virtual void _resolutionChanged(const Resolution& p_Resolution){}
+		virtual void _resolutionChanged(const Resolution& p_Resolution){}
 		virtual bool _initialize() = 0;
 		virtual void _shutdown() = 0;
 		virtual void _setFillMode(Enum p_FillMode){}
@@ -255,22 +255,22 @@ namespace K15_Engine { namespace Rendering {
 		virtual void _drawDirect(uint32 p_Offset = 0){}
 
 	protected:
-    ColorRGBA m_ClearColor;
-    AlphaState m_AlphaState;
-    DepthState m_DepthState;
-    GpuProgramArray m_GpuPrograms;
-    GpuBufferArray m_GpuBuffers;
-    TextureArray m_BoundTextures;
-    TextureSamplerArray m_BoundSamplers;
-    String m_LastError;
-    RenderWindowBase* m_RenderWindow;
+		ColorRGBA m_ClearColor;
+		AlphaState m_AlphaState;
+		DepthState m_DepthState;
+		GpuProgramArray m_GpuPrograms;
+		GpuBufferArray m_GpuBuffers;
+		TextureArray m_BoundTextures;
+		TextureSamplerArray m_BoundSamplers;
+		String m_LastError;
+		RenderWindowBase* m_RenderWindow;
 		CameraComponent* m_ActiveCamera;
 		RenderTarget* m_RenderTarget;
 		RenderTarget* m_DefaultRenderTarget;
 		Material* m_Material;
 		VertexDeclaration* m_VertexDeclaration;
 		GpuProgramBatch* m_GpuProgramBatch;
-    uint32 m_GpuParameterUpdateMask;
+		uint32 m_GpuParameterUpdateMask;
 		Enum m_FillMode;
 		Enum m_CullingMode;
 		Enum m_Topology;

@@ -31,7 +31,6 @@ namespace K15_Engine { namespace Core {
 	void ThreadWorker::execute(void*)
 	{
 		static Mutex mutex;
-		static const ApplicationOSLayerType& os_layer = g_Application->getOSLayer();
 		while(Running)
 		{
 			JobBase* job = 0;
@@ -65,7 +64,7 @@ namespace K15_Engine { namespace Core {
 			}
 
 			//put the current thread to sleep for 10 milliseconds.
-			os_layer.sleep(0.01);
+			OSLayer::sleep(0.01f);
 		}
 	}
 	/*********************************************************************************/

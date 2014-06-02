@@ -144,11 +144,6 @@ namespace TowerDefense {
 		}
 	}
 	/*********************************************************************************/
-	void MainGameState::onMousePressed(const MouseActionArguments& p_EventArguments)
-	{
-		
-	}
-	/*********************************************************************************/
 	void MainGameState::_checkCollision(GameObject* p_Enemy)
 	{
 		const Level::GameObjectArray& walls = m_Level->getWalls();
@@ -201,6 +196,11 @@ namespace TowerDefense {
 		if(enemyPos.z < endAABB.getMinZ() + meshPosition.z) collided = false;
 
 		return collided;
+	}
+	/*********************************************************************************/
+	bool MainGameState::onEventMousePressed(GameEvent* p_Event)
+	{
+		return true;
 	}
 	/*********************************************************************************/
 } // end of TowerDefense namespace

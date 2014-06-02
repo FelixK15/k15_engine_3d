@@ -1,7 +1,7 @@
 #include "K15_PrecompiledHeader.h"
 
 #include "Android\K15_RenderWindow_Android.h"
-#include "Android\K15_ApplicationLayerOS_Android.h"
+#include "Android\K15_OSLayer_Android.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
@@ -19,7 +19,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	bool RenderWindow_Android::initialize()
 	{
-		if((m_Window = ((ApplicationOSLayerType)g_Application->getOSLayer()).getAndroidApp()->window) == 0)
+		if((m_Window = ((OSLayer)g_Application->getOSLayer()).getAndroidApp()->window) == 0)
 		{
 			_LogError("android_app::window is NULL");
 			return false;

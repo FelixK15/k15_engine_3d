@@ -18,18 +18,18 @@
  */
 
 /*********************************************************************************/
-void ApplicationOSLayer_Android::setAndroidApp(android_app* p_App)
+void OSLayer_Android::setAndroidApp(android_app* p_App)
 {
-	m_App = p_App;
+	ms_App = p_App;
 }
 /*********************************************************************************/
-android_app* ApplicationOSLayer_Android::getAndroidApp() const
+android_app* OSLayer_Android::getAndroidApp()
 {
-	return m_App;
+	return ms_App;
 }
 /*********************************************************************************/
-void ApplicationOSLayer_Android::setError(const String& p_Error)
+void OSLayer_Android::setError(const String& p_Error)
 {
-	m_Error += p_Error + "\n";
+	ms_Error += p_Error + "\n";
 }
 /*********************************************************************************/

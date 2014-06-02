@@ -28,7 +28,7 @@
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-#define K15_EVENTHANDLER(c,f,o) EventHandler::create<c,c::f>(o)
+#define K15_EventHandler(c,f,o) EventHandler::create<c,&c::f>(o)
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/

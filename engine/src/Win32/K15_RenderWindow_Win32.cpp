@@ -21,11 +21,13 @@
 
 #include "Win32\K15_RenderWindow_Win32.h"
 #include "K15_Mouse.h"
+#include "K15_Keyboard.h"
 #include "K15_RenderTask.h"
 #include "K15_RendererBase.h"
 #include "K15_Application.h"
 
 namespace K15_Engine { namespace Core {
+	/*********************************************************************************/
 	LRESULT CALLBACK K15_WindowProc(HWND p_HandleWindow,UINT p_MSG,WPARAM p_wParam,LPARAM p_lParam)
 	{
 	    RenderWindowBase* window = (RenderWindowBase*)GetWindowLong(p_HandleWindow,GWL_USERDATA);
@@ -123,19 +125,19 @@ namespace K15_Engine { namespace Core {
 			EventName name;
 			if(p_MSG == WM_MBUTTONDOWN || p_MSG == WM_LBUTTONDOWN || p_MSG == WM_RBUTTONDOWN || p_MSG == WM_XBUTTONDOWN)
 			{
-				name = _EN(onMousePressed);
+				name = InputDevices::Mouse::EventMousePressed;
 			}
 			else if(p_MSG == WM_MBUTTONUP || p_MSG == WM_LBUTTONUP || p_MSG == WM_RBUTTONUP || p_MSG == WM_XBUTTONUP)
 			{
-				name = _EN(onMouseReleased);
+				name = InputDevices::Mouse::EventMouseReleased;
 			}
 			else if(p_MSG == WM_MBUTTONDBLCLK || p_MSG == WM_LBUTTONDBLCLK || p_MSG == WM_RBUTTONDBLCLK || p_MSG == WM_XBUTTONDBLCLK)
 			{
-				name = _EN(onMouseDoubleClicked);
+				name = InputDevices::Mouse::EventDoubleClicked;
 			}
 			else if(p_MSG == WM_MOUSEWHEEL)
 			{
-				name = _EN(onMouseWheel);
+				name = InputDevices::Mouse::EventMouseWheel;
 
 				uint32 eventArguments[3] = {(uint32)(p_wParam & 0xFFFF0000),x,y};
 				
@@ -191,11 +193,11 @@ namespace K15_Engine { namespace Core {
 			EventName name;
 			if(p_MSG == WM_KEYDOWN)
 			{
-				name = _EN(onKeyPressed);
+				name = InputDevices::Keyboard::EventKeyPress;
 			}
 			else if(p_MSG == WM_KEYUP)
 			{
-				name = _EN(onKeyReleased);
+				name = InputDevices::Keyboard::EventKeyRelease;
 			}
 			uint32 key = p_wParam;
 			GameEvent* keyEvent = K15_NEW GameEvent(name,(void*)&key,32);
@@ -214,10 +216,8 @@ namespace K15_Engine { namespace Core {
 
 				if(res.width != 0 && res.height != 0)
 				{
-					if(g_Application->getRenderTask()->getRenderer())
-					{
-						g_Application->getRenderTask()->getRenderer()->onResolutionChanged(res);
-					}
+					GameEvent* resolutionChanged = K15_NEW GameEvent(RenderWindowBase::EventResolutionChanged,(void*)&res,sizeof(Resolution));
+					g_EventManager->triggerEvent(resolutionChanged);
 				}
 			}
 		}
