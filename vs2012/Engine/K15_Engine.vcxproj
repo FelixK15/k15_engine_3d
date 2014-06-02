@@ -185,7 +185,7 @@
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_DynamicLibraryBase.h" />
     <ClInclude Include="..\..\engine\include\K15_DynamicLibraryManager.h" />
-    <ClInclude Include="..\..\engine\include\K15_EnumStrings.h" />
+    <ClInclude Include="..\..\engine\include\K15_EventHandler.h" />
     <ClInclude Include="..\..\engine\include\K15_EventTask.h" />
     <ClInclude Include="..\..\engine\include\K15_Font.h" />
     <ClInclude Include="..\..\engine\include\K15_GameStateBase.h" />
@@ -404,6 +404,7 @@
     <ClCompile Include="..\..\engine\src\K15_ColorRGBA.cpp" />
     <ClCompile Include="..\..\engine\src\K15_DepthState.cpp" />
     <ClCompile Include="..\..\engine\src\K15_DynamicLibraryBase.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_EventHandler.cpp" />
     <ClCompile Include="..\..\engine\src\K15_EventTask.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Font.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GameObject.cpp" />
@@ -505,6 +506,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
     <None Include="..\..\engine\include\K15_DynamicLibraryBase.inl" />
+    <None Include="..\..\engine\include\K15_EventHandler.inl" />
     <None Include="..\..\engine\include\K15_Font.inl" />
     <None Include="..\..\engine\include\K15_Functor.inl" />
     <None Include="..\..\engine\include\K15_GameEvent.inl" />

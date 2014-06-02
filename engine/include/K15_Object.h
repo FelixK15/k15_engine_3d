@@ -32,6 +32,7 @@
 
 #include "K15_Rtti.h"
 #include "K15_Pointer.h"
+#include "K15_EventHandler.h"
 
 namespace K15_Engine { namespace Core { 
 
@@ -41,7 +42,6 @@ namespace K15_Engine { namespace Core {
 
 	public:
 		Object();
-		Object(const String& p_Name);
 		Object(const ObjectName& p_Name);
 
 		virtual ~Object();
@@ -57,6 +57,11 @@ namespace K15_Engine { namespace Core {
 		INLINE void setName(const ObjectName& p_Name);
 		INLINE const ObjectName& getName() const;
 		
+		bool fireEvent(const EventName& p_EventName, const EventArgs& p_Args);
+
+		static void connect(const EventName& p_EventName, const EventHandler& p_Handler, const EventArgs& p_Args);
+		static void disconnect(const EventName& p_EventName, const EventHandler& p_Handler);
+
 	protected:
 		ObjectName m_Name;
 	};
