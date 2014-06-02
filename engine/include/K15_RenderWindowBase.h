@@ -45,20 +45,10 @@ namespace K15_Engine { namespace Core {
 	class K15_CORE_API RenderWindowBase : public RenderingAllocatedObject
 	{
 	public:
-		/*********************************************************************************/
-		class K15_CORE_API Listener : public EventListener
-		{
-		public:
-			Listener(){}
-			virtual ~Listener(){}
+		static EventName EventFocusLost;
+    static EventName EventFocusReceived;
+    static EventName EventResolutionChanged;
 
-			virtual void onFocusLost(){}
-			virtual void onFocusReceived(){}
-			virtual void onResolutionChanged(const Resolution& p_Resolution){}
-
-			virtual void handleEvent(GameEvent* p_Event) OVERRIDE{}
-		};// end of RenderWindowListener class definition
-		/*********************************************************************************/
 	public:
 		RenderWindowBase();
 		virtual ~RenderWindowBase();

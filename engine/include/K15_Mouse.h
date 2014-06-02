@@ -51,22 +51,12 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 			Enum m_Button;
 		};// end of Mouse::InputTrigger class declaration
 		/*********************************************************************************/
-		class K15_CORE_API Listener : public EventListener
-		{
-		public:
-			virtual ~Listener();
-
-			virtual void onMousePressed(const MouseActionArguments& p_EventArguments){}
-			virtual void onMouseReleased(const MouseActionArguments& p_EventArguments){}
-			virtual void onMouseDoubleClicked( const MouseActionArguments& p_EventArguments){}
-			virtual void onMouseMoved(const MouseActionArguments& p_EventArguments){}
-			virtual void onMouseWheel(int32 p_Delta, int32 x, int32 y){}
-
-			virtual void handleEvent(GameEvent* p_Event) OVERRIDE;
-		protected:
-			Listener();
-		};// end of Mouse::Listener class declaration
-		/*********************************************************************************/
+    static EventName EventMousePressed;
+    static EventName EventMouseReleased;
+    static EventName EventDoubleClicked;
+    static EventName EventMouseMoved;
+    static EventName EventMouseWheel;
+    /*********************************************************************************/
 		enum eButton
 		{
 			BTN_LEFT = 0,		//<! Left Mouse Button

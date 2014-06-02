@@ -49,21 +49,9 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 			Enum m_Key;
 		};// end of K15_Engine::InputTrigger class declaraton
 		/*********************************************************************************/
-
-		/*********************************************************************************/
-		class K15_CORE_API Listener : public EventListener
-		{
-		public:
-			virtual ~Listener();
-
-			virtual void onKeyPress(Enum p_Key){}
-			virtual void onKeyRelease(Enum p_Key){}
-
-			virtual void handleEvent(GameEvent* p_Event) OVERRIDE;
-		protected:
-			Listener();
-		};// end of Keyboard::Listener class declaration
-		/*********************************************************************************/
+    static EventName EventKeyPress;
+    static EventName EventKeyRelease;
+    /*********************************************************************************/
 		enum eKeyboardKeys
 		{
 			//numpad

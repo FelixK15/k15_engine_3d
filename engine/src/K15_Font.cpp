@@ -52,7 +52,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	int32 Font::_getLetterIndex(char p_Character) const
 	{
-		for(int32 i = 0;i < m_Letters.size();++i)
+		for(uint32 i = 0;i < m_Letters.size();++i)
 		{
 			if(m_Letters[i].character == p_Character)
 			{

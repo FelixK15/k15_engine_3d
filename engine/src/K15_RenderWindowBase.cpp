@@ -23,29 +23,6 @@
 #include "K15_GameEvent.h"
 
 namespace K15_Engine { namespace Core {
-// 	/*********************************************************************************/
-// 	RenderWindowBase::Listener::Listener()
-// 		: EventListener()
-// 	{
-// 		g_EventManager->addListener(_EN(ResolutionChanged),this);
-// 	}
-// 	/*********************************************************************************/
-// 	RenderWindowBase::Listener::~Listener()
-// 	{
-// 		g_EventManager->removeListener(_EN(ResolutionChanged),this);
-// 	}
-// 	/*********************************************************************************/
-// 	void RenderWindowBase::Listener::handleEvent(GameEvent* p_Event)
-// 	{
-// 		if(p_Event->getName() == _EN(ResolutionChanged) && p_Event->getArgumentSize() == sizeof(Resolution))
-// 		{
-// 			Resolution* resolution = (Resolution*)p_Event->getArgument();
-// 			onResolutionChanged(*resolution);
-// 			return;
-// 		}
-// 	}
-// 	/*********************************************************************************/
-
   /*********************************************************************************/
   float Resolution::getAspectRatio() const
   {
@@ -86,7 +63,7 @@ namespace K15_Engine { namespace Core {
 
 		if(p_ForceChange || (m_CurrentResolution.width == p_Resolution.width || m_CurrentResolution.height == p_Resolution.height))
 		{
-			g_EventManager->triggerEvent(K15_NEW GameEvent(_EN(ResolutionChanged),(void*)&p_Resolution,K15_PTR_SIZE));
+			g_EventManager->triggerEvent(K15_NEW GameEvent(EventResolutionChanged,(void*)&p_Resolution,K15_PTR_SIZE));
 		}
 		
 	}
@@ -117,11 +94,11 @@ namespace K15_Engine { namespace Core {
 
   		if(p_HasFocus)
   		{
-      		focusEvent = K15_NEW GameEvent(_EN(FocusGained));
+      		focusEvent = K15_NEW GameEvent(EventFocusReceived);
   		}
   		else
     	{
-      		focusEvent = K15_NEW GameEvent(_EN(FocusLost));
+      		focusEvent = K15_NEW GameEvent(EventFocusLost);
     	}
 
     	m_HasFocus = p_HasFocus;

@@ -507,6 +507,7 @@
     </None>
     <None Include="..\..\engine\include\K15_DynamicLibraryBase.inl" />
     <None Include="..\..\engine\include\K15_EventHandler.inl" />
+    <None Include="..\..\engine\include\K15_EventManager.inl" />
     <None Include="..\..\engine\include\K15_Font.inl" />
     <None Include="..\..\engine\include\K15_Functor.inl" />
     <None Include="..\..\engine\include\K15_GameEvent.inl" />

@@ -51,7 +51,7 @@ namespace K15_Engine { namespace Rendering {
 		float x_min = 0.0f,y_min = 0.0f,z_min = 0.0f;
 
 		SubMesh* subMesh = 0;
-		for(int i = 0;i < m_SubMeshes.size();++i)
+		for(uint32 i = 0;i < m_SubMeshes.size();++i)
 		{
 			subMesh = m_SubMeshes.at(i);
 

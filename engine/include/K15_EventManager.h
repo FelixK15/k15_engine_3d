@@ -36,14 +36,28 @@
 #	include "K15_Singleton.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
+#include "K15_EventHandler.h"
+
 namespace K15_Engine { namespace Core { 
-	/*********************************************************************************/
-	typedef List(EventListener*) EventListenerList;
-	typedef HashMap(EventName,EventListenerList*) EventTypeListenerMap;
-	typedef Stack(GameEvent*) EventStack;
-	/*********************************************************************************/
+  /*********************************************************************************/
+  typedef DynamicArray(EventHandler) EventHandlerList;
+  typedef DynamicArray(EventHandlerArrayEntry) EventHandlerArray;
+  typedef Stack(GameEvent*) EventStack;
+  /*********************************************************************************/
+
+  /*********************************************************************************/
+  struct K15_CORE_API EventHandlerArrayEntry
+  {
+    EventHandlerArrayEntry(const EventName& p_EventName);
+
+    INLINE bool operator==(const EventName& p_EventName) const;
+
+    EventName eventName;
+    EventHandlerList handlerList;
+  };
+  /*********************************************************************************/
 	class K15_CORE_API EventManager : public CoreAllocatedObject, 
-									  public Singleton<EventManager>
+									                  public Singleton<EventManager>
 	{
 	public:
 		/**
@@ -62,14 +76,14 @@ namespace K15_Engine { namespace Core {
 		* @param  etType - type of the Event that the listener shall listen to.
 		* @param  pListener - pointer to EventListener implementation.
 		*/
-		void addListener(const EventName& p_EventName,EventListener* p_Listener);
+		void addHandler(const EventName& p_EventName, const EventHandler& p_Handler);
 		/**
 		* You can remove a previously added EventListener using this function.
 		*
 		* @param  etType - type of the Event that the listener should stop listen to.
 		* @param  pListener - pointer to a previously added (AddListener()) EventListener.
 		*/
-		void removeListener(const EventName& p_EventName,EventListener* p_Listener);
+		void removeListener(const EventName& p_EventName, const EventHandler& p_Handler);
 
 		/**
 		* If you want to add a new Event to the event queue.
@@ -94,8 +108,9 @@ namespace K15_Engine { namespace Core {
 		void update();
 	private:
 		EventStack m_Events; //Event Queue
-		EventTypeListenerMap m_Listener; //Map where the EventTypes are associated with EventListeners.
+		EventHandlerArray m_Listener; //Map where the EventTypes are associated with EventListeners.
 	};//end of EventManager class
+# include "K15_EventManager.inl"
 }}//end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_EventManager_h_

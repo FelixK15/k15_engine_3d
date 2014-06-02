@@ -28,7 +28,6 @@
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
-#include "K15_RenderWindowBase.h"
 #include "K15_ColorRGBA.h"
 
 #include "K15_GpuProgram.h"
@@ -40,7 +39,7 @@
 
 namespace K15_Engine { namespace Rendering { 
 	
-	class K15_CORE_API RendererBase : public RenderWindowBase::Listener, public RenderingAllocatedObject
+	class K15_CORE_API RendererBase : public RenderingAllocatedObject
 	{
 	public:
 		/*********************************************************************************/
@@ -226,9 +225,10 @@ namespace K15_Engine { namespace Rendering {
 		virtual void beginFrame() = 0;
 		virtual void endFrame() = 0;
 
-		virtual void onResolutionChanged(const Resolution& p_Resolution){};
+		bool onEventResolutionChanged(GameEvent* p_Event);
 
 	protected:
+    virtual void _resolutionChanged(const Resolution& p_Resolution){}
 		virtual bool _initialize() = 0;
 		virtual void _shutdown() = 0;
 		virtual void _setFillMode(Enum p_FillMode){}

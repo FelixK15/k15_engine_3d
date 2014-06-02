@@ -45,55 +45,6 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	Mouse::Listener::Listener()
-		: EventListener()
-	{
-		g_EventManager->addListener(_EN(onMousePressed),this);
-		g_EventManager->addListener(_EN(onMouseReleased),this);
-		g_EventManager->addListener(_EN(onMouseDoubleClicked),this);
-		g_EventManager->addListener(_EN(onMouseMoved),this);
-		g_EventManager->addListener(_EN(onMouseWheel),this);
-	}
-	/*********************************************************************************/
-	Mouse::Listener::~Listener()
-	{
-		g_EventManager->removeListener(_EN(onMousePressed),this);
-		g_EventManager->removeListener(_EN(onMouseReleased),this);
-		g_EventManager->removeListener(_EN(onMouseDoubleClicked),this);
-		g_EventManager->removeListener(_EN(onMouseMoved),this);
-		g_EventManager->removeListener(_EN(onMouseWheel),this);
-	}
-	/*********************************************************************************/
-	void Mouse::Listener::handleEvent(GameEvent* p_Event)
-	{
-		MouseActionArguments args;
-		args = *(MouseActionArguments*)p_Event->getArgument();
-
-		if(p_Event->getName() == _EN(onMousePressed))
-		{
-			onMousePressed(args);
-		}
-		else if(p_Event->getName() == _EN(onMouseReleased))
-		{
-			onMouseReleased(args);
-		}
-		else if(p_Event->getName() == _EN(onMouseDoubleClicked))
-		{
-			onMouseDoubleClicked(args);
-		}
-		else if(p_Event->getName() == _EN(onMouseMoved))
-		{
-			onMouseMoved(args);
-		}
-		else if(p_Event->getName() == _EN(onMouseWheel))
-		{
-			uint32* argument = (uint32*)p_Event->getArgument();
-			onMouseWheel(argument[0],argument[1],argument[2]);
-		}
-	}
-	/*********************************************************************************/
-
-	/*********************************************************************************/
 	void Mouse::getMousePosDelta(int32 *x,int32 *y)
 	{
 		static int temp_x;

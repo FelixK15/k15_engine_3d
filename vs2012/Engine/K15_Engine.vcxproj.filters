@@ -938,6 +938,7 @@
       <Filter>Core\include</Filter>
     </None>
     <None Include="..\..\engine\include\K15_EventHandler.inl" />
+    <None Include="..\..\engine\include\K15_EventManager.inl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />

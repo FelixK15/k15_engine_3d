@@ -146,6 +146,7 @@ namespace K15_Engine
 		struct ApplicationModuleDescription;
 		struct MouseActionArguments;
 		struct Resolution;
+    struct EventHandlerArrayEntry;
 	} // end of K15_Engine::Core namespace
 	/*********************************************************************************/
 	namespace Rendering
@@ -389,7 +390,8 @@ namespace K15_Engine
 #define UniqueSet(T)		std::set<T>
 #define Pair(K,V)			std::pair<K,V>
 #define FixedArray(T,C)		std::array<T,C>
-#define Sort(S,E,F)			std::sort(S,E,F);
+#define Sort(S,E,F)			std::sort(S,E,F)
+#define Find(S,E,O)     std::find(S,E,O)
 typedef std::string			String;
 typedef std::fstream		FileStream;
 typedef std::ofstream		WriteFileStream;

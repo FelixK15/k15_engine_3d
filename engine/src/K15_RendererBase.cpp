@@ -19,6 +19,8 @@
 
 #include "K15_PrecompiledHeader.h"
 #include "K15_RendererBase.h"
+#include "K15_RenderWindowBase.h"
+#include "K15_EventHandler.h"
 #include "K15_EnumStrings.h"
 
 #include "K15_GpuProgramCatalog.h"
@@ -111,6 +113,8 @@ namespace K15_Engine { namespace Rendering {
 		{
 			m_GpuPrograms[i] = 0;
 		}
+
+    g_EventManager->addHandler(RenderWindowBase::EventResolutionChanged,EventHandler::create<RendererBase,RendererBase::onEventResolutionChanged>(this));
 	}
 	/*********************************************************************************/
 	RendererBase::~RendererBase()

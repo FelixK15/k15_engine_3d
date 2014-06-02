@@ -28,39 +28,31 @@
 #	include "K15_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
-#define K15_EVENTHANDLER(c,f,o)(EventHandler::create<c,c::f>(o));
+#define K15_EVENTHANDLER(c,f,o) EventHandler::create<c,c::f>(o)
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	struct K15_CORE_API EventArgs
-	{
-		EventArgs(Object* sender, uint32 type, void* userdata = 0);
-
-		uint32 type;
-		Object* sender;
-		void* userdata;
-	}; //EventArgs struct declaration
-	/*********************************************************************************/
 	class K15_CORE_API EventHandler
 	{
-		typedef bool (*HandlerFunction)(void*, const EventArgs&);
+		typedef bool (*HandlerFunction)(void*, GameEvent*);
 	public:
 		EventHandler();
 		EventHandler(const EventHandler& p_Rhs);
 
 		~EventHandler();
 
-		template<class T, bool (T::*MemberFunction)(const EventArgs&)>
-		static EventHandler create(T* p_Object);
+		template<class T, bool (T::*MemberFunction)(GameEvent*)>
+		static EventHandler create(const T* p_Object);
 
-		INLINE bool operator()(const EventArgs& p_Args) const;
-
-	private:
-		template<class T, bool (T::*MemberFunction)(const EventArgs&)>
-		static bool getHandlerFunction(void* p_Object, const EventArgs& p_Args);
+		INLINE bool operator()(GameEvent* p_Args) const;
+    INLINE bool operator==(const EventHandler& p_Rhs) const;
 
 	private:
-		Object* m_Object;
+		template<class T, bool (T::*MemberFunction)(GameEvent*)>
+		static bool getHandlerFunction(void* p_Object, GameEvent* p_Args);
+
+	private:
+		void* m_Object;
 		HandlerFunction m_Handler;
 	}; //EventHandler class declaration
 #	include "K15_EventHandler.inl"

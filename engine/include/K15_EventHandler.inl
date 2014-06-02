@@ -18,24 +18,29 @@
  */
 
 /*********************************************************************************/
-template<class T, bool (T::*MemberFunction)(const EventArgs&)>
-static EventHandler EventHandler::create(T* p_Object)
+template<class T, bool (T::*MemberFunction)(GameEvent*)>
+static EventHandler EventHandler::create(const T* p_Object)
 {
 	EventHandler handler;
-	handler.m_Object = p_Object;
+	handler.m_Object = (void*)p_Object;
 	handler.m_Handler = &getHandlerFunction<T,MemberFunction>;
 	return handler;
 }
 /*********************************************************************************/
-template<class T, bool (T::*MemberFunction)(const EventArgs&)>
-static bool EventHandler::getHandlerFunction(void* p_Object, const EventArgs& p_Args)
+template<class T, bool (T::*MemberFunction)(GameEvent*)>
+static bool EventHandler::getHandlerFunction(void* p_Object, GameEvent* p_Event)
 {
 	T* obj = static_cast<T*>(p_Object);
-	return (obj->*MemberFunction)(p_Args);
+	return (obj->*MemberFunction)(p_Event);
 }
 /*********************************************************************************/
-bool EventHandler::operator()(const EventArgs& p_Args) const
+bool EventHandler::operator()(GameEvent* p_Args) const
 {
 	return m_Handler(m_Object, p_Args);
+}
+/*********************************************************************************/
+bool EventHandler::operator==(const EventHandler& p_Rhs) const
+{
+  return m_Object == p_Rhs.m_Object && m_Handler == p_Rhs.m_Handler;
 }
 /*********************************************************************************/
