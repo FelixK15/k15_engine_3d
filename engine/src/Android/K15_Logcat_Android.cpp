@@ -19,6 +19,8 @@
 
 #include "K15_PrecompiledHeader.h"
 
+#ifdef K15_OS_ANDROID
+
 #include "Android\K15_Logcat_Android.h"
 
 namespace K15_Engine { namespace Core {
@@ -62,3 +64,5 @@ namespace K15_Engine { namespace Core {
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace
+
+#endif //K15_OS_ANDROID

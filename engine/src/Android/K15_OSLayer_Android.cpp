@@ -18,6 +18,9 @@
  */
 
 #include "K15_PrecompiledHeader.h"
+
+#ifdef K15_OS_ANDROID
+
 #include "K15_RenderWindowBase.h"
 #include "K15_RenderTask.h"
 #include "K15_RenderProcessBase.h"
@@ -292,3 +295,5 @@ namespace K15_Engine { namespace Core {
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace
+
+#endif //K15_OS_ANDROID

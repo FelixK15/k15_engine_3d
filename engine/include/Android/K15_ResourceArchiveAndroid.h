@@ -31,6 +31,8 @@
 
 #include "K15_ResourceArchiveBase.h"
 
+#ifdef K15_OS_ANDROID
+
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API ResourceArchiveAndroid : public ResourceArchiveBase, public ResourceAllocatedObject
 	{
@@ -50,5 +52,7 @@ namespace K15_Engine { namespace Core {
 		AAssetManager* m_AssetManager;
 	};// end of * class declaration
 }}// end of K15_Engine::Core namespace
+
+#endif //K15_OS_ANDROID
 
 #endif //_K15Engine_Core_ResourceArchiveAndroid_h_

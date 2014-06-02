@@ -18,6 +18,9 @@
  */
 
 #include "K15_PrecompiledHeader.h"
+
+#ifdef K15_OS_WINDOWS
+
 #include "Win32\K15_TextConsoleLog_Win32.h"
 
 namespace K15_Engine { namespace Core {
@@ -69,3 +72,5 @@ namespace K15_Engine { namespace Core {
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace
+
+#endif //K15_OS_WINDOWS

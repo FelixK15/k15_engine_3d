@@ -50,3 +50,4 @@ namespace K15_Engine { namespace Core {
 }}// end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_DynamicLibrary_Android_h_
+

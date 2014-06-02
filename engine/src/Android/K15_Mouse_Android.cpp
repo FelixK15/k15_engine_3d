@@ -19,6 +19,8 @@
 
 #include "K15_PrecompiledHeader.h"
 
+#ifdef K15_OS_ANDROID
+
 #include "K15_Mouse.h"
 
 namespace K15_Engine { namespace Core { namespace InputDevices {
@@ -59,3 +61,5 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 	}
 	/*********************************************************************************/
 }}}//end of K15_Engine::Core::InputDevices namespace
+
+#endif //K15_OS_ANDROID

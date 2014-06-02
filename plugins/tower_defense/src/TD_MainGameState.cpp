@@ -104,9 +104,9 @@ namespace TowerDefense {
 			{
 				if(currentEnemy != AMOUNT_ENEMIES)
 				{
-					m_SpawnRateTimer = m_SpawnRate;
-					m_Enemies[currentEnemy] = GameObjectFactory::createSpider();
-					m_Enemies[currentEnemy++]->getNode().setPosition(m_Level->getStartPosition() + Vector3(0.0f,1.0f,0.0f));
+					//m_SpawnRateTimer = m_SpawnRate;
+					//m_Enemies[currentEnemy] = GameObjectFactory::createSpider();
+					//m_Enemies[currentEnemy++]->getNode().setPosition(m_Level->getStartPosition() + Vector3(0.0f,1.0f,0.0f));
 				}
 			}
 

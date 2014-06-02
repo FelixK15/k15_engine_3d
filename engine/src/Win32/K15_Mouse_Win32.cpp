@@ -23,6 +23,8 @@
 
 #include "K15_PrecompiledHeader.h"
 
+#ifdef K15_OS_WINDOWS
+
 #include "K15_Mouse.h"
 #include "K15_LogManager.h"
 
@@ -143,3 +145,5 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 	}
 	/*********************************************************************************/
 }}}/// end of K15_Engine::Core::InputDevice namespace
+
+#endif //K15_OS_WINDOWS

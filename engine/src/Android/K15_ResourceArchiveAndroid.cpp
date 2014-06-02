@@ -19,6 +19,8 @@
 
 #include "K15_PrecompiledHeader.h"
 
+#ifdef K15_OS_ANDROID
+
 #include "K15_RawData.h"
 #include "Android/K15_ResourceArchiveAndroid.h"
 
@@ -78,3 +80,5 @@ namespace K15_Engine { namespace Core {
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace
+
+#endif //K15_OS_ANDROID

@@ -19,6 +19,8 @@
 
 #include "K15_PrecompiledHeader.h"
 
+#ifdef K15_OS_WINDOWS
+
 #include "Win32\K15_DynamicLibrary_win32.h"
 #include "K15_LogManager.h"
 #include "K15_StringUtil.h"
@@ -90,3 +92,5 @@ namespace K15_Engine { namespace Core {
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace
+
+#endif //K15_OS_WINDOWS

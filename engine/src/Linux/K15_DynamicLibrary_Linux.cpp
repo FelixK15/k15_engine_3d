@@ -1,8 +1,31 @@
+/**
+ * @file K15_DynamicLibrary_Linux.cpp
+ * @author  Felix Klinge <f.klinge@k15games.de>
+ * @version 1.0
+ * @date 2014/03/02
+ * @section LICENSE
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 3 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details at
+ * http://www.gnu.org/copyleft/gpl.html
+ */
+
 #include "K15_PrecompiledHeader.h"
 
-#include "Android\K15_OSLayer_Android.h"
-#include "Linux\K15_DynamicLibrary_Linux.h"
+#ifdef K15_OS_LINUX
 
+#ifdef K15_OS_ANDROID
+#include "Android\K15_OSLayer_Android.h"
+#endif //K15_OS_ANDROID
+
+#include "Linux\K15_DynamicLibrary_Linux.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
@@ -35,7 +58,7 @@ namespace K15_Engine { namespace Core {
 
 		if(!m_Module)
 		{
-			g_Application->getOSLayer().setError(dlerror());
+			OSLayer::setError(dlerror());
 			return false;
 		}
 
@@ -54,5 +77,6 @@ namespace K15_Engine { namespace Core {
 		return dlsym(m_Module,p_SymbolName.c_str());
 	}
 	/*********************************************************************************/
-
 }}//end of K15_Engine::Core namespace
+
+#endif //K15_OS_LINUX
