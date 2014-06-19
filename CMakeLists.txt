@@ -1,9 +1,12 @@
 #CMAKE Version 2.6 required
 cmake_minimum_required(VERSION 2.8.10)
 
-#Configuration Parameters
-set(BUILD_ANDROID OFF CACHE BOOL "Create Android make files")
-set(BUILD_STATIC_CORE OFF CACHE BOOL "Compile the core into a static library")
+#Configuration Parameters	
+option(BUILD_ANDROID OFF "Build Android Binaries")
+option(BUILD_STATIC_CORE OFF "Build Static Libraries")
+set(DEPENDENCY_PATH CACHE STRING)
+
+set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${DEPENDENCY_PATH})
 
 #If build for android has been selected,
 #set BUILD_STATIC_CORE to 1 
