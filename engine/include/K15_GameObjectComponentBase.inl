@@ -30,3 +30,8 @@ void GameObjectComponentBase::setGameObject(GameObject* p_GameObject)
   _onGameObjectSet();
 }
 /*********************************************************************************/
+bool GameObjectComponentBase::_AABBBNeedsUpdate()
+{
+	return false;
+}
+/*********************************************************************************/

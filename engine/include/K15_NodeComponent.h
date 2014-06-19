@@ -26,28 +26,26 @@
 
 #ifndef K15_USE_PRECOMPILED_HEADERS
 #	include "K15_Prerequisites.h"
-#	include "K15_Object.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
-// #include "K15_Quaternion.h"
-// #include "K15_Matrix4.h"
+#include "K15_GameObjectComponentBase.h"
 
 namespace K15_Engine { namespace Core { 
-	class K15_CORE_API Node : public Object, public GeneralAllocatedObject
+	class K15_CORE_API NodeComponent : public GameObjectComponentBase
 	{
 	public:
 		/*********************************************************************************/
 		K15_DECLARE_RTTI;
-		typedef DynamicArray(Node*) ChildNodes;
+		typedef DynamicArray(GameObject*) ChildObjects;
 		/*********************************************************************************/
 	public:
-		Node(const ObjectName& p_Name = ObjectName::BLANK,Node* p_Parent = 0);
-		~Node();
+		NodeComponent(GameObject* p_Parent);
+		~NodeComponent();
 
 		INLINE void lookAt(const Vector3& p_Position);
 
 		INLINE void setPosition(const Vector3& p_Position);
-		INLINE void setOrientation(const Quaternion& p_Orientation);
+		//INLINE void setOrientation(const Quaternion& p_Orientation);
 		INLINE void setScale(const Vector3& p_Scale);
 
 		INLINE void translate(const Vector3& p_Translation);
@@ -75,21 +73,19 @@ namespace K15_Engine { namespace Core {
 		INLINE bool needUpdate() const;
 		void setNeedUpdate(bool p_Value);
 
-		Node* createChild(const ObjectName& p_Name = ObjectName::BLANK);
-
-		void addChild(Node* p_Child);
-		void removeChild(Node* p_Child);
+		void addChild(GameObject* p_Child);
+		void removeChild(GameObject* p_Child);
 		void removeChild(const ObjectName& p_Name);
 
-		void setParent(Node* p_Parent);
-		INLINE Node* getParent() const;
+		void setParent(NodeComponent* p_Parent);
+		INLINE GameObject* getParent() const;
 
 	private:
 		void _calcLookAt();
 
 	protected:
-		Node* m_Parent;
-		ChildNodes m_Children;
+		GameObject* m_Parent;
+		ChildObjects m_Children;
 		Matrix4 m_Transformation;
 		Matrix4 m_Orientation, m_OriginOrientation;
 /*		Vector4 m_Orientation, m_OriginOrientation;*/
@@ -99,7 +95,10 @@ namespace K15_Engine { namespace Core {
 		Vector3 m_LookAt;
 		bool m_NeedUpdate;
 	};// end of Node class declaration
-#	include "K15_Node.inl"
+#	include "K15_NodeComponent.inl"
+
+  K15_PTR(NodeComponent);
+  K15_WEAKPTR(NodeComponent);
 }}// end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_Node_h_

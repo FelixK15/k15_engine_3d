@@ -18,46 +18,48 @@
  */
 
 #include "K15_PrecompiledHeader.h"
-#include "K15_Node.h"
+#include "K15_NodeComponent.h"
+#include "K15_GameObject.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	K15_IMPLEMENT_RTTI_BASE(Core,Node,Core::Object);
+	K15_IMPLEMENT_RTTI_BASE(Core,NodeComponent,Core::Object);
 	/*********************************************************************************/
-	Node::Node(const ObjectName& p_Name,Node* p_Parent)
-		: Object(p_Name),
-		  m_NeedUpdate(false),
-		  m_Parent(p_Parent),
-		  m_OriginOrientation(),
-		  m_OriginPosition(),
-		  m_Position(),
-		  m_Scale(1.0f,1.0f,1.0f),
-		  m_Orientation(),
-		  m_OriginScale(1.0f,1.0f,1.0f),
-		  m_Transformation()
+	NodeComponent::NodeComponent(GameObject* p_Parent)
+		: GameObjectComponentBase(_TN(NodeComponent)),
+		m_NeedUpdate(false),
+		m_Parent(p_Parent),
+		m_OriginOrientation(),
+		m_OriginPosition(),
+		m_Position(),
+		m_Children(),
+		m_Scale(1.0f,1.0f,1.0f),
+		m_Orientation(),
+		m_OriginScale(1.0f,1.0f,1.0f),
+		m_Transformation()
 	{
 
 	}
 	/*********************************************************************************/
-	Node::~Node()
+	NodeComponent::~NodeComponent()
 	{
 
 	}
 	/*********************************************************************************/
-	void Node::setNeedUpdate(bool p_Value)
+	void NodeComponent::setNeedUpdate(bool p_Value)
 	{
 		m_NeedUpdate = p_Value;
 
-		for(ChildNodes::iterator iter = m_Children.begin();iter != m_Children.end();++iter)
+		for(ChildObjects::iterator iter = m_Children.begin();iter != m_Children.end();++iter)
 		{
-			(*iter)->setNeedUpdate(p_Value);
+			(*iter)->getNodeComponent()->setNeedUpdate(p_Value);
 		}
 	}
 	/*********************************************************************************/
-	const Matrix4& Node::getTransformation()
+	const Matrix4& NodeComponent::getTransformation()
 	{
-// 		if(needUpdate())
-// 		{
+		if(needUpdate())
+		{
 			//update from parent
 			if(m_Parent)
 			{
@@ -106,14 +108,14 @@ namespace K15_Engine { namespace Core {
 // 			m_Transformation._4_4 = 1.0f;
 
 			m_NeedUpdate = false;
-		/*}*/
+		}
 
 		return m_Transformation;
 	}
 	/*********************************************************************************/
-	void Node::_calcLookAt()
+	void NodeComponent::_calcLookAt()
 	{
-		static Vector4 viewNormal(0.0f,0.0f,-1.0f,0.0f);
+		Vector4 viewNormal(0.0f,0.0f,-1.0f,0.0f);
 		viewNormal = m_Orientation * viewNormal;
 		viewNormal = glm::normalize(viewNormal);
 		m_LookAt.x = viewNormal.x;

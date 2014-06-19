@@ -133,7 +133,7 @@ namespace K15_Engine { namespace Core {
     
 		PointerMemoryHeaderMap::iterator iter = m_MemoryHeaderMap.find((size_t)p_Pointer);
 
-		K15_ASSERT(iter != m_MemoryHeaderMap.end(),StringUtil::format("Pointer %p is not part of Allocator:%s",m_Name.c_str()));
+		K15_ASSERT(iter != m_MemoryHeaderMap.end(),StringUtil::format("Pointer %p is not part of Allocator:%s",p_Pointer,m_Name.c_str()));
 
 		MemoryHeader* header = iter->second;
 		K15_ASSERT(header->IsArray == p_Array,StringUtil::format(

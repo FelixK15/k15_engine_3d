@@ -18,28 +18,6 @@
  */
 
 /*********************************************************************************/
-const Vector3& AABB::getMin() const
-{
-	return m_Min;
-}
-/*********************************************************************************/
-const Vector3& AABB::getMax() const
-{
-	return m_Max;
-}
-/*********************************************************************************/
-void AABB::setMin(const Vector3& p_Min)
-{
-	m_Min = p_Min;
-	_calculateCorners();
-}
-/*********************************************************************************/
-void AABB::setMax(const Vector3& p_Max)
-{
-	m_Max = p_Max;
-	_calculateCorners();
-}
-/*********************************************************************************/
 const Vector3& AABB::getFarLeftTop() const
 {
 	return m_Corners[CT_FAR_LEFT_TOP];
@@ -90,6 +68,11 @@ const Vector3& AABB::getCorner(Enum p_Corner) const
 	return m_Corners[p_Corner];
 }
 /*********************************************************************************/
+AABB::CornerArray& AABB::getCorners()
+{
+	return m_Corners;
+}
+/*********************************************************************************/
 float AABB::getMaxX() const
 {
 	float max_x = 0.0f;
@@ -109,7 +92,7 @@ float AABB::getMaxY() const
 {
 	float max_y = 0.0f;
 
-	for(int i =0; i<CT_COUNT;++i)
+	for(int i = 0; i < CT_COUNT; ++i)
 	{
 		if(max_y < m_Corners[i].y)
 		{
@@ -124,7 +107,7 @@ float AABB::getMaxZ() const
 {
 	float max_z = 0.0f;
 
-	for(int i =0; i<CT_COUNT;++i)
+	for(int i = 0; i < CT_COUNT; ++i)
 	{
 		if(max_z < m_Corners[i].z)
 		{
@@ -154,7 +137,7 @@ float AABB::getMinY() const
 {
 	float min_y = 0.0f;
 
-	for(int i =0; i<CT_COUNT;++i)
+	for(int i = 0; i < CT_COUNT; ++i)
 	{
 		if(min_y > m_Corners[i].y)
 		{
@@ -169,7 +152,7 @@ float AABB::getMinZ() const
 {
 	float min_z = 0.0f;
 
-	for(int i =0; i<CT_COUNT;++i)
+	for(int i = 0; i < CT_COUNT; ++i)
 	{
 		if(min_z > m_Corners[i].z)
 		{
@@ -178,5 +161,34 @@ float AABB::getMinZ() const
 	}
 
 	return min_z;
+}
+/*********************************************************************************/
+void AABB::merge(const AABB& p_AABB)
+{
+	for(int i = 0; i < CT_COUNT; ++i)
+	{
+		if(glm::any(glm::greaterThan(getCorner(i), p_AABB.getCorner(i))))
+		{
+			m_Corners[i] = p_AABB.m_Corners[i];
+		}
+	}
+}
+/*********************************************************************************/
+bool AABB::operator<(const AABB& p_Rhs)
+{
+	for(int i = 0; i < CT_COUNT; ++i)
+	{
+		if(glm::any(glm::greaterThan(getCorner(i), p_Rhs.getCorner(i))))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+/*********************************************************************************/
+bool AABB::operator>(const AABB& p_Rhs)
+{
+	return !operator<(p_Rhs);
 }
 /*********************************************************************************/

@@ -44,7 +44,7 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		public:
 			InputTrigger(Enum p_Key);
 
-			virtual bool isActive() OVERRIDE;
+			virtual float getValue() OVERRIDE;
 		private:
 			Enum m_Key;
 		};// end of K15_Engine::InputTrigger class declaraton

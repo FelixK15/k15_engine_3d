@@ -24,35 +24,24 @@
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	AABB::AABB()
-		: m_Max(Vector3(0,0,0)),
-		m_Min(Vector3(0,0,0))
 	{
+		float f	= 0.5f, t = 0.5f, r = 0.5f;
+		float n	= -f,	b = -t,	  l = -r;
 
+		m_Corners[CT_FAR_LEFT_TOP] = Vector3(l,t,f);
+		m_Corners[CT_FAR_RIGHT_TOP] = Vector3(r,t,f);
+		m_Corners[CT_FAR_LEFT_BOTTOM] = Vector3(l,b,f);
+		m_Corners[CT_FAR_RIGHT_BOTTOM] = Vector3(r,b,f);
+
+		m_Corners[CT_NEAR_LEFT_TOP] = Vector3(l,t,n);
+		m_Corners[CT_NEAR_RIGHT_TOP] = Vector3(r,t,n);
+		m_Corners[CT_NEAR_LEFT_BOTTOM] = Vector3(l,b,n);
+		m_Corners[CT_NEAR_RIGHT_BOTTOM] = Vector3(r,b,n);
 	}
 	/*********************************************************************************/
-	AABB::AABB(const Vector3& p_Min, const Vector3& p_Max)
-		: m_Min(p_Min),
-		m_Max(p_Max)
+	AABB::~AABB()
 	{
 
-	}
-  /*********************************************************************************/
-  AABB::~AABB()
-  {
-
-  }
-	/*********************************************************************************/
-	void AABB::_calculateCorners()
-	{
-		m_Corners[CT_FAR_LEFT_TOP] = m_Max;
-		m_Corners[CT_FAR_RIGHT_TOP] = Vector3(m_Min.x,m_Max.y,m_Max.z);
-		m_Corners[CT_FAR_LEFT_BOTTOM] = Vector3(m_Max.x,m_Min.y,m_Max.z);
-		m_Corners[CT_FAR_RIGHT_BOTTOM] = Vector3(m_Min.x,m_Min.y,m_Max.z);
-
-		m_Corners[CT_NEAR_LEFT_TOP] = Vector3(m_Max.x,m_Max.y,m_Min.z);
-		m_Corners[CT_NEAR_RIGHT_TOP] = Vector3(m_Min.x,m_Max.y,m_Min.z);
-		m_Corners[CT_NEAR_LEFT_BOTTOM] = Vector3(m_Max.x,m_Min.y,m_Min.z);
-		m_Corners[CT_NEAR_RIGHT_BOTTOM] = m_Min;
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

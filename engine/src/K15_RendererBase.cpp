@@ -39,7 +39,7 @@
 #include "K15_Font.h"
 
 #include "K15_GameObject.h"
-#include "K15_Node.h"
+#include "K15_NodeComponent.h"
 
 #include "K15_CameraComponent.h"
 
@@ -426,7 +426,8 @@ namespace K15_Engine { namespace Rendering {
 
 		if(m_ActiveCamera)
 		{
-			if(m_ActiveCamera->isProjectionMatrixDirty())
+			if(m_ActiveCamera->isProjectionMatrixDirty() || 
+				m_ActiveCamera->isViewMatrixDirty())
 			{
 				m_GpuParameterUpdateMask |= GpuProgramParameter::UF_PER_CAMERA;
 			}
@@ -720,7 +721,7 @@ namespace K15_Engine { namespace Rendering {
 							if(param.getIdentifier() == GpuProgramParameter::PI_VIEW_MATRIX ||
 								param.getIdentifier() == GpuProgramParameter::PI_PROJECTION_MATRIX ||
 								param.getIdentifier() == GpuProgramParameter::PI_VIEW_PROJECTION_MATRIX)
-							{
+							{ 
 								CameraComponent* p_Camera = getActiveCamera();
 
 								K15_ASSERT(p_Camera,
@@ -750,7 +751,7 @@ namespace K15_Engine { namespace Rendering {
 								GameObject* gameObject = 0;
 								if((gameObject = p_Rop->gameobject) != 0)
 								{
-									Matrix4 modelMat = gameObject->getNode().getTransformation();
+									Matrix4 modelMat = gameObject->getTransformation();
 
 									param.setData((void*)&modelMat);
 								}

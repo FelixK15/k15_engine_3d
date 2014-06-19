@@ -40,13 +40,17 @@ namespace K15_Engine { namespace Core {
 	public:
 		ModelComponent();
 		ModelComponent(const String& p_ModelResourceName);
-		ModelComponent(Mesh* p_Mesh);
+		ModelComponent(Model* p_Model);
 		~ModelComponent();
 
-		INLINE Mesh* getMesh() const;
-		INLINE void setMesh(Mesh* p_Mesh);
+		INLINE Model* getMesh() const;
+		INLINE void setMesh(Model* p_Model);
+	
+	protected:
+		virtual AABB _calculateAABB() OVERRIDE;
+
 	private:
-		Mesh* m_Mesh;
+		Model* m_Model;
   }; //end of ModelComponent class declaration
 # include "K15_ModelComponent.inl"
 }}//end of K15_Engine::Core namespace

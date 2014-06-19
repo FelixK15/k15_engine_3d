@@ -1,8 +1,8 @@
 /**
- * @file K15_GameObjectComponentBase.cpp
- * @author Felix Klinge <f.klinge@k15games.de>
+ * @file K15_LightComponent.cpp
+ * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/09/09
+ * @date 2014/06/04
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,42 +18,35 @@
  */
 
 #include "K15_PrecompiledHeader.h"
-#include "K15_GameObjectComponentBase.h"
-#include "K15_AABB.h"
+
+#include "K15_LightComponent.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	K15_IMPLEMENT_RTTI_BASE(Core,GameObjectComponentBase,Core::Object);
+	K15_IMPLEMENT_RTTI_BASE(Core,LightComponent,GameObjectComponentBase);
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	GameObjectComponentBase::GameObjectComponentBase( const ObjectName& p_Name)
-		: Object(p_Name),
-		m_GameObject(0)
+	LightComponent::LightComponent()
+		: GameObjectComponentBase(_TN(LightComponent)),
+		m_LightType(LT_POINT),
+		m_Range(0),
+		m_DiffuseColor(ColorRGBA::White),
+    m_SpecularColor(ColorRGBA::White),
+		m_Active(true),
+		m_Dirty(false)
 	{
 
 	}
 	/*********************************************************************************/
-	GameObjectComponentBase::~GameObjectComponentBase()
+	LightComponent::~LightComponent()
+	{
+		
+	}
+	/*********************************************************************************/
+	void LightComponent::onAddedToRenderQueue(RenderQueue* p_RenderQueue)
 	{
 
 	}
 	/*********************************************************************************/
-	const AABB& GameObjectComponentBase::getAABB()
-	{
-		static AABB aabb;
-
-		if(_AABBBNeedsUpdate())
-		{
-			aabb = _calculateAABB();
-		}
-
-		return aabb;
-	}
-	/*********************************************************************************/
-	AABB GameObjectComponentBase::_calculateAABB()
-	{
-		return AABB();	
-	}
-	/*********************************************************************************/
-}}//end of K15_Engine::Core namespace
+}}// end of K15_Engine::Core namespace

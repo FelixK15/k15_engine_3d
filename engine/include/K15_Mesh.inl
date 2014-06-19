@@ -18,16 +18,6 @@
  */
 
 /*********************************************************************************/
-const AABB& Mesh::getAABB(bool p_Calculate)
-{
-	if(p_Calculate)
-	{
-		calculateAABB();
-	}
-
-	return m_AABB;
-}
-/*********************************************************************************/
 const Mesh::SubMeshArray& Mesh::getSubMeshes() const
 {
 	return m_SubMeshes;

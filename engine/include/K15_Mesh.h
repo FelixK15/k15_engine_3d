@@ -44,7 +44,7 @@ namespace K15_Engine { namespace Rendering {
 		Mesh(const ObjectName& p_Name);
 		~Mesh();
 
-		INLINE const AABB& getAABB(bool p_Calculate = false);
+		INLINE const AABB& getAABB();
 		INLINE const SubMeshArray& getSubMeshes() const;
 
 		INLINE void addSubMesh(SubMesh* p_SubMesh);

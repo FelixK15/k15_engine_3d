@@ -18,15 +18,20 @@
  */
 
 /*********************************************************************************/
-Node& GameObject::getNode()
+NodeComponent* GameObject::getNodeComponent()
 {
-  return m_Node;
+  return m_NodeComponent;
+}
+/*********************************************************************************/
+CameraComponent* GameObject::getCameraComponent()
+{
+	return m_CameraComponent;
 }
 /*********************************************************************************/
 template<class ComponentType>
 ComponentType* GameObject::getComponentByType() const
 {
-	for(ComponentList::const_iterator iter = m_Components.begin();iter != m_Components.end();++iter)
+	for(ComponentArray::const_iterator iter = m_Components.begin();iter != m_Components.end();++iter)
 	{
 		if((*iter)->getType().isInstanceOf(ComponentType::TYPE))
 		{

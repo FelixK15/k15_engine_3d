@@ -28,41 +28,72 @@
 # include "K15_Object.h"
 #endif //K15_USE_PRECOMPILED_HEADERS
 
-#include "K15_Node.h"
+#include "K15_NodeComponent.h"
 #include "K15_GameObjectComponentBase.h"
 
 namespace K15_Engine { namespace Core {
-  class K15_CORE_API GameObject : public Object, public GeneralAllocatedObject
-  {
-  public:
-    /*********************************************************************************/
-	K15_DECLARE_RTTI;
-	typedef DynamicArray(GameObjectComponentBase*) ComponentList;
-    /*********************************************************************************/
-  public:
-    GameObject();
-	GameObject(const ObjectName& p_Name);
-    ~GameObject();
+	class K15_CORE_API GameObject : public Object, public GeneralAllocatedObject
+	{
+	public:
+		/*********************************************************************************/
+		K15_DECLARE_RTTI;
+		typedef DynamicArray(GameObjectComponentBase*) ComponentArray;
+		/*********************************************************************************/
+	public:
+		GameObject();
+		GameObject(const ObjectName& p_Name);
+		~GameObject();
 
-    void addComponent(GameObjectComponentBase* p_Component);
-    void onAddedToRenderQueue(RenderQueue* p_RenderQueue);
-	
-	INLINE Node& getNode();
-    GameObjectComponentBase* getComponentByName(const ObjectName& p_TypeName) const;
-	
-	template<class ComponentType>
-	ComponentType* getComponentByType() const;
+		const AABB& getAABB();
 
-	void update(const GameTime& p_GameTime);
-  private:
-    ComponentList m_Components;
-	Node m_Node;
-  };// end of GameObject class declaration
+		void addComponent(GameObjectComponentBase* p_Component);
+		void onAddedToRenderQueue(RenderQueue* p_RenderQueue);
+	
+		INLINE NodeComponent* getNodeComponent();
+		INLINE CameraComponent* getCameraComponent();
+
+		GameObjectComponentBase* getComponentByName(const ObjectName& p_TypeName) const;
+	
+		template<class ComponentType>
+		ComponentType* getComponentByType() const;
+
+		void update(const GameTime& p_GameTime);
+
+		void lookAt(const Vector3& p_Position);
+
+		void setPosition(const Vector3& p_Position);
+		//void setOrientation(const Quaternion& p_Orientation);
+		void setScale(const Vector3& p_Scale);
+
+		void translate(const Vector3& p_Translation);
+		void translate(float x, float y, float z);
+
+		void scale(const Vector3& p_Scale);
+		void scale(float x, float y, float z);
+
+		void rotate(const Vector3& p_Axis, float p_Radians);
+
+		void roll(float p_Radians);
+		void pitch(float p_Radians);
+		void yaw(float p_Radians);
+
+		const Vector3& getPosition() const;
+		const Vector3& getScale() const;
+
+		const Matrix4& getOrientation() const;
+		const Vector3& getLookAt() const;
+
+		const Matrix4& getTransformation();
+
+	private:
+		ComponentArray m_Components;
+		NodeComponent* m_NodeComponent;
+		CameraComponent* m_CameraComponent;
+
+	};// end of GameObject class declaration
 #include "K15_GameObject.inl"
-
-  K15_PTR(GameObject);
-  K15_WEAKPTR(GameObject);
-
+	K15_PTR(GameObject);
+	K15_WEAKPTR(GameObject);
 }} // end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_GameObject_h_

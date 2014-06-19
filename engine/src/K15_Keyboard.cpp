@@ -16,9 +16,9 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 
 	}
 	/*********************************************************************************/
-	bool Keyboard::InputTrigger::isActive()
+	float Keyboard::InputTrigger::getValue()
 	{
-		return Keyboard::isPressed(m_Key);
+		return Keyboard::isPressed(m_Key) ? 1.0f : 0.0f;
 	}
 	/*********************************************************************************/
 

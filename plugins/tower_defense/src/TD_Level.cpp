@@ -14,7 +14,7 @@
 #include "K15_GpuProgramBatch.h"
 #include "K15_Material.h"
 #include "K15_VertexDeclaration.h"
-#include "K15_Node.h"
+#include "K15_NodeComponent.h"
 #include "K15_RenderOperation.h"
 #include "K15_RenderQueue.h"
 
@@ -70,7 +70,7 @@ namespace TowerDefense
 					color == ColorRGBA::Red || color == ColorRGBA::Black)
 				{
 					currentGameObject = K15_NEW GameObject();
-					currentGameObject->getNode().translate((float)x,0,(float)y);
+					currentGameObject->translate((float)x,0,(float)y);
 
 					if(color == ColorRGBA::Black)
 					{
@@ -85,7 +85,7 @@ namespace TowerDefense
 					else
 					{
 						//ground
-						currentGameObject->getNode().translate(0.0f,-1.0f,0.0f);
+						currentGameObject->translate(0.0f,-1.0f,0.0f);
 
 						if(color == ColorRGBA::Green)
 						{
@@ -154,7 +154,7 @@ namespace TowerDefense
 
 		if(m_Start)
 		{
-			pos = m_Start->getNode().getPosition();
+			pos = m_Start->getPosition();
 		}
 
 		return pos;
@@ -166,7 +166,7 @@ namespace TowerDefense
 
 		if(m_End)
 		{
-			pos = m_End->getNode().getPosition();
+			pos = m_End->getPosition();
 		}
 
 		return pos;

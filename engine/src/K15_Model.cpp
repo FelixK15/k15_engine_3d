@@ -1,8 +1,8 @@
 /**
- * @file K15_InputTrigger.h
+ * @file K15_Model.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/09/10
+ * @date 2014/06/14
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -15,27 +15,21 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
- *
- * @section DESCRIPTION
- *
- * 
  */
 
-#ifndef _K15Engine_Core_InputTriggerBase_h_
-#define _K15Engine_Core_InputTriggerBase_h_
-
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#	include "K15_AllocatedObject.h"
-#	include "K15_InputManager.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
+#include "K15_PrecompiledHeaders.h"
+#include "K15_Model.h"
 
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API InputTriggerBase : public InputManagerAllocatedObject
+	/*********************************************************************************/
+	Model::Model()
 	{
-	public:
-		virtual float getValue() = 0;
-	};// end of InputTriggerBase class declaration
-}}// end of K15_Engine::Core namespace
 
-#endif //_K15Engine_Core_InputTriggerBase_h_
+	}
+	/*********************************************************************************/
+	Model::~Model()
+	{
+
+	}
+	/*********************************************************************************/
+}} //end of K15_Engine::Core namespace

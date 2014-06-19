@@ -222,9 +222,6 @@
     <ClInclude Include="..\..\engine\include\K15_EventTask.h">
       <Filter>Core\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Node.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_Mouse.h">
       <Filter>Core\include</Filter>
     </ClInclude>
@@ -441,6 +438,21 @@
     <ClInclude Include="..\..\engine\include\Android\K15_OSLayer_Android.h">
       <Filter>Core\include\Android</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_LightComponent.h">
+      <Filter>Components\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_SceneGraph.h">
+      <Filter>Rendering\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_NodeComponent.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Frustum.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Model.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\src\K15_Application.cpp">
@@ -519,9 +531,6 @@
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_EventTask.cpp">
-      <Filter>Core\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_Node.cpp">
       <Filter>Core\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_Keyboard.cpp">
@@ -746,6 +755,21 @@
     <ClCompile Include="..\..\engine\src\Android\K15_OSLayer_Android.cpp">
       <Filter>Core\src\Android</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_LightComponent.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_NodeComponent.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_Frustum.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_SceneGraph.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\src\K15_Model.cpp">
+      <Filter>Core\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
@@ -817,9 +841,6 @@
     </None>
     <None Include="..\..\engine\include\K15_GameObjectComponentBase.inl">
       <Filter>Components\include</Filter>
-    </None>
-    <None Include="..\..\engine\include\K15_Node.inl">
-      <Filter>Core\include</Filter>
     </None>
     <None Include="..\..\engine\include\K15_Functor.inl">
       <Filter>Core\include</Filter>
@@ -946,6 +967,15 @@
     </None>
     <None Include="..\..\engine\include\Android\K15_OSLayer_Android.inl">
       <Filter>Core\include\Android</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_LightComponent.inl">
+      <Filter>Components\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_NodeComponent.inl">
+      <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\engine\include\K15_Frustum.inl">
+      <Filter>Core\include</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

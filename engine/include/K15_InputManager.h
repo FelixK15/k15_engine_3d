@@ -75,7 +75,7 @@ namespace K15_Engine { namespace Core {
 
 		void removeInputBinding(const ObjectName& p_ActionName);
 		
-		bool isActive(const ObjectName& p_ActionName);
+		float getValue(const ObjectName& p_ActionName);
 	private:
 		InputMapping m_InputMap;
 	};

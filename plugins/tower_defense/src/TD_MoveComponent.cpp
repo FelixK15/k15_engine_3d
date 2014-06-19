@@ -42,9 +42,8 @@ namespace TowerDefense {
 	/*********************************************************************************/
 	void MoveComponent::update(const GameTime& p_GameTime)
 	{
-		Node& node = getGameObject()->getNode();
 		Vector3 velocity = m_Speed * (float)p_GameTime.getDeltaTime();
-		node.translate(velocity);
+		getGameObject()->translate(velocity);
 	}
 	/*********************************************************************************/
 }// end of TowerDefense namespace

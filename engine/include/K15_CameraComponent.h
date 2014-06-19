@@ -30,6 +30,7 @@
 #endif //K15_USE_PRECOMPILED_HEADERS
 
 #include "K15_GameObjectComponentBase.h"
+#include "K15_Frustum.h"
 // #include "K15_Matrix4.h"
 
 namespace K15_Engine { namespace Rendering {
@@ -38,29 +39,8 @@ namespace K15_Engine { namespace Rendering {
 		/*********************************************************************************/
 		K15_DECLARE_RTTI;
 		/*********************************************************************************/
+
 	public:
-		/*********************************************************************************/
-		enum eFrustumPoints
-		{
-			FP_NEAR_LEFT_BOTTOM = 0,
-			FP_NEAR_RIGHT_BOTTOM,
-			FP_NEAR_LEFT_TOP,
-			FP_NEAR_RIGHT_TOP,
-
-			FP_FAR_LEFT_BOTTOM,
-			FP_FAR_RIGHT_BOTTOM,
-			FP_FAR_LEFT_TOP,
-			FP_FAR_RIGHT_TOP,
-
-			FP_COUNT
-
-		}; //FrustumPoints
-		/*********************************************************************************/
-
-		/*********************************************************************************/
-		typedef FixedArray(Vector3,FP_COUNT) FrustumPoints;
-		/*********************************************************************************/
-
 		/*********************************************************************************/
 		enum eProjectionType
 		{
@@ -91,23 +71,21 @@ namespace K15_Engine { namespace Rendering {
 		INLINE void setNearClipDistance(float p_Near);
 		INLINE void setZoom(float p_Zoom);
 
+		INLINE void setProjectionMatrixDirty(bool p_Dirty);
+		INLINE void setViewMatrixDirty(bool p_Dirty);
+
 		INLINE bool isProjectionMatrixDirty() const;
 		INLINE bool isViewMatrixDirty() const;
 
 		bool isVisible(const AABB& p_AABB);
 
-		INLINE const FrustumPoints& getFrustumPoints() const;
-
-		const Vector3& getFrustumPoint(Enum p_FrustumPoint) const;
+	private:
+		void _calculateFrustum();
 
 	private:
-		void _calculateFrustumPoints();
-
-	private:
-		FrustumPoints m_FrustumPoints;
-		Matrix4 m_ProjectionMatrix;
-		Matrix4 m_ViewMatrix;
-
+		expose Matrix4 m_ProjectionMatrix;
+		expose Matrix4 m_ViewMatrix;
+		Frustum m_Frustum;
 		expose float m_Fov;
 		expose float m_FarClipDistance;
 		expose float m_NearClipDistance;
