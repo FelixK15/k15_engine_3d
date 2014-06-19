@@ -30,6 +30,8 @@
  */
 #include "tiffiop.h"
 
+#ifdef _WIN32
+
 #include <windows.h>
 
 static tmsize_t
@@ -430,6 +432,7 @@ TIFFErrorHandler _TIFFerrorHandler = Win32ErrorHandler;
 
 #endif /* ndef _WIN32_WCE */
 
+#endif //_WIN32
 /* vim: set ts=8 sts=8 sw=8 noet: */
 /*
  * Local Variables:

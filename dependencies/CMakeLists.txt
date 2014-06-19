@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 2.8.10)
+
 #new project for the dependencies
 project(k15_engine_dependencies)
 
@@ -23,12 +25,15 @@ endif()
 #iterate through list of dependencies
 foreach(DEPENDENCY ${DEPENDENCY_LIST})
 	#gather src and includes files per dependency
-	file(GLOB DEPENDENCY_SRC "./${DEPENDENCY}/src/*.cpp"
-				 "./${DEPENDENCY}/src/*.c")
+	file(GLOB DEPENDENCY_SRC "${DEPENDENCY}/src/*.cpp"
+				 "${DEPENDENCY}/src/*.c")
 
-	file(GLOB DEPENDENCY_INC "./${DEPENDENCY}/include/*.h"
-				 "./${DEPENDENCY}/include/*.hpp"
-				 "./${DEPENDENCY}/include/*.inl")
+	file(GLOB DEPENDENCY_INC "${DEPENDENCY}/include/*.h"
+				 "${DEPENDENCY}/include/*.hpp"
+				 "${DEPENDENCY}/include/*.inl")
+
+	#add include folder
+	include_directories("${DEPENDENCY}/include/")
 
 	#organizing dependency include and src files into groups
 	if(DEPENDENCY_SRC)

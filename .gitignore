@@ -26,4 +26,6 @@ archives/
 android_make/TowerDefense/gen/
 *.zip
 android_make/TowerDefense/res/
+build
+build-dependencies
 *.lnk
