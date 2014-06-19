@@ -3,6 +3,14 @@ cmake_minimum_required(VERSION 2.8.10)
 
 #Configuration Parameters
 set(BUILD_ANDROID OFF CACHE BOOL "Create Android make files")
+set(BUILD_STATIC_CORE OFF CACHE BOOL "Compile the core into a static library")
+
+#If build for android has been selected,
+#set BUILD_STATIC_CORE to 1 
+#(android doesn't work well with shared libs)
+if(BUILD_ANDROID)
+	set(BUILD_STATIC_CORE 1)
+endif()
 
 #Project Name
 project(k15_engine_3d)
@@ -39,7 +47,6 @@ endif()
 
 #Define Subdirectories
 add_subdirectory(engine)
-add_subdirectory(dependencies)
 
 if(BUILD_ANDROID)
 	#opengl es for android

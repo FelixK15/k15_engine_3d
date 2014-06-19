@@ -22,7 +22,7 @@
 #ifdef K15_OS_ANDROID
 
 #include "K15_RawData.h"
-#include "Android/K15_ResourceArchiveAndroid.h"
+#include "Android/K15_ResourceArchive_Android.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
