@@ -188,6 +188,7 @@
     <ClInclude Include="..\..\engine\include\K15_EventHandler.h" />
     <ClInclude Include="..\..\engine\include\K15_EventTask.h" />
     <ClInclude Include="..\..\engine\include\K15_Font.h" />
+    <ClInclude Include="..\..\engine\include\K15_Frustum.h" />
     <ClInclude Include="..\..\engine\include\K15_GameStateBase.h" />
     <ClInclude Include="..\..\engine\include\K15_GpuProgramBatch.h" />
     <ClInclude Include="..\..\engine\include\K15_GpuProgramCatalog.h" />
@@ -223,6 +224,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </Outputs>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_LightComponent.h" />
     <ClInclude Include="..\..\engine\include\K15_LogBase.h" />
     <ClInclude Include="..\..\engine\include\K15_LogManager.h" />
     <ClInclude Include="..\..\engine\include\K15_Material.h">
@@ -241,10 +243,11 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </Outputs>
     </ClInclude>
+    <ClInclude Include="..\..\engine\include\K15_Model.h" />
     <ClInclude Include="..\..\engine\include\K15_ModelComponent.h" />
     <ClInclude Include="..\..\engine\include\K15_Mouse.h" />
     <ClInclude Include="..\..\engine\include\K15_NetworkManager.h" />
-    <ClInclude Include="..\..\engine\include\K15_Node.h">
+    <ClInclude Include="..\..\engine\include\K15_NodeComponent.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\..\engine\include\K15_NTreeNode.h">
@@ -287,6 +290,7 @@
     <ClInclude Include="..\..\engine\include\K15_ResourceImporterFont.h" />
     <ClInclude Include="..\..\engine\include\K15_ResourceImporterMaterial.h" />
     <ClInclude Include="..\..\engine\include\K15_ResourceImporterObj.h" />
+    <ClInclude Include="..\..\engine\include\K15_SceneGraph.h" />
     <ClInclude Include="..\..\engine\include\K15_Serialization.h" />
     <ClInclude Include="..\..\engine\include\K15_Serializer.h" />
     <ClInclude Include="..\..\engine\include\K15_SerializerBase.h" />
@@ -407,6 +411,7 @@
     <ClCompile Include="..\..\engine\src\K15_EventHandler.cpp" />
     <ClCompile Include="..\..\engine\src\K15_EventTask.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Font.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_Frustum.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GameObject.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GameObjectComponentBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_GameStateBase.cpp" />
@@ -426,6 +431,7 @@
     <ClCompile Include="..\..\engine\src\K15_JsonSerializer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Keyboard.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Language.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_LightComponent.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Material.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MaterialData.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MatrixUtil.cpp">
@@ -434,10 +440,11 @@
     <ClCompile Include="..\..\engine\src\K15_MemoryBlock.cpp" />
     <ClCompile Include="..\..\engine\src\K15_MemoryProfilingTask.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Mesh.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_Model.cpp" />
     <ClCompile Include="..\..\engine\src\K15_ModelComponent.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Mouse.cpp" />
     <ClCompile Include="..\..\engine\src\K15_NetworkManager.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Node.cpp">
+    <ClCompile Include="..\..\engine\src\K15_NodeComponent.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\engine\src\K15_PhysicsTask.cpp" />
@@ -461,6 +468,7 @@
     <ClCompile Include="..\..\engine\src\K15_ResourceImporterFont.cpp" />
     <ClCompile Include="..\..\engine\src\K15_ResourceImporterMaterial.cpp" />
     <ClCompile Include="..\..\engine\src\K15_ResourceImporterObj.cpp" />
+    <ClCompile Include="..\..\engine\src\K15_SceneGraph.cpp" />
     <ClCompile Include="..\..\engine\src\K15_Serializer.cpp" />
     <ClCompile Include="..\..\engine\src\K15_SerializerBase.cpp" />
     <ClCompile Include="..\..\engine\src\K15_SerialReader.cpp" />
@@ -509,6 +517,7 @@
     <None Include="..\..\engine\include\K15_EventHandler.inl" />
     <None Include="..\..\engine\include\K15_EventManager.inl" />
     <None Include="..\..\engine\include\K15_Font.inl" />
+    <None Include="..\..\engine\include\K15_Frustum.inl" />
     <None Include="..\..\engine\include\K15_Functor.inl" />
     <None Include="..\..\engine\include\K15_GameEvent.inl" />
     <None Include="..\..\engine\include\K15_GameObject.inl" />
@@ -522,10 +531,11 @@
     <None Include="..\..\engine\include\K15_IniFileParser.inl" />
     <None Include="..\..\engine\include\K15_JobBase.inl" />
     <None Include="..\..\engine\include\K15_Language.inl" />
+    <None Include="..\..\engine\include\K15_LightComponent.inl" />
     <None Include="..\..\engine\include\K15_Material.inl" />
     <None Include="..\..\engine\include\K15_Mesh.inl" />
     <None Include="..\..\engine\include\K15_ModelComponent.inl" />
-    <None Include="..\..\engine\include\K15_Node.inl">
+    <None Include="..\..\engine\include\K15_NodeComponent.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </None>
     <None Include="..\..\engine\include\K15_PoolAllocator.inl" />

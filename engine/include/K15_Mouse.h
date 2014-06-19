@@ -37,7 +37,9 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 	public:
 		/*********************************************************************************/
 		typedef HashMap(ObjectName,Enum) InputStringToEnumMap;
+		typedef HashMap(ObjectName,Enum) AxisStringToEnumMap;
 		static InputStringToEnumMap InputStringToEnum;
+		static AxisStringToEnumMap AxisStringToEnum;
 		/*********************************************************************************/
 
 		/*********************************************************************************/
@@ -46,17 +48,35 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		public:
 			InputTrigger(Enum p_Button);
 
-			virtual bool isActive() OVERRIDE;
+			virtual float getValue() OVERRIDE;
 		private:
 			Enum m_Button;
 		};// end of Mouse::InputTrigger class declaration
 		/*********************************************************************************/
-    static EventName EventMousePressed;
-    static EventName EventMouseReleased;
-    static EventName EventDoubleClicked;
-    static EventName EventMouseMoved;
-    static EventName EventMouseWheel;
-    /*********************************************************************************/
+		class K15_CORE_API AxisTrigger : public InputTriggerBase
+		{
+		public:
+			AxisTrigger(Enum p_Axis);
+
+			virtual float getValue() OVERRIDE;
+		private:
+			Enum m_Axis;
+		};// end of Mouse::AxisTrigger class declaration
+		/*********************************************************************************/
+		class K15_CORE_API WheelTrigger : public InputTriggerBase
+		{
+		public:
+			WheelTrigger();
+
+			virtual float getValue() OVERRIDE;
+		};
+		/*********************************************************************************/
+		static EventName EventMousePressed;
+		static EventName EventMouseReleased;
+		static EventName EventDoubleClicked;
+		static EventName EventMouseMoved;
+		static EventName EventMouseWheel;
+		/*********************************************************************************/
 		enum eButton
 		{
 			BTN_LEFT = 0,		//<! Left Mouse Button
@@ -67,13 +87,23 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 			BTN_SPECIAL2,	//<! Special Mouse Button 2 (To support mice with more than 3 buttons)
 		};//Button
 		/*********************************************************************************/
-
+		enum eMouseAxis
+		{
+			MA_HORIZONTAL_POSITIVE = 0,
+			MA_HORIZONTAL_NEGATIVE,
+			MA_VERTICAL_POSITIVE,
+			MA_VERTICAL_NEGATIVE
+		};
+		/*********************************************************************************/
 	public:
 		static void hideMouse();
 		static void showMouse();
 
 		static void setMousePos(int32 x, int32 y);
 		static void getMousePos(int32 *x,int32 *y);
+
+		static void setMouseWheelDelta(float p_Delta);
+		static float getMouseWheelDelta();
 
 		static void getMousePosDelta(int32 *x,int32 *y);
 
@@ -83,7 +113,8 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		static bool isPressed(Enum p_Button);
 
 	private:
-		static const InputStringToEnumMap& createStringToEnumMap();
+		static const InputStringToEnumMap& createButtonToEnumMap();
+		static const AxisStringToEnumMap&  createAxisToEnumMap();
 	};// end of Mouse class declaration
 }}}// end of K15_Engine::Core::InputDevice namespace
 

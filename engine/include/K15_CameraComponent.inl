@@ -70,15 +70,20 @@ void CameraComponent::setNearClipDistance(float p_Near)
   m_ProjMatrixDirty = true;
 }
 /*********************************************************************************/
-const CameraComponent::FrustumPoints& CameraComponent::getFrustumPoints() const
-{
-  return m_FrustumPoints;
-}
-/*********************************************************************************/
 void CameraComponent::setProjectionType(Enum p_ProjectionType)
 {
 	m_ProjectionType = p_ProjectionType;
 	m_ProjMatrixDirty = true;
+}
+/*********************************************************************************/
+void CameraComponent::setProjectionMatrixDirty(bool p_Dirty)
+{
+	m_ProjMatrixDirty = p_Dirty;
+}
+/*********************************************************************************/
+void CameraComponent::setViewMatrixDirty(bool p_Dirty)
+{
+	m_ViewMatrixDirty = p_Dirty;
 }
 /*********************************************************************************/
 bool CameraComponent::isProjectionMatrixDirty() const

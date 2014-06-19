@@ -1,8 +1,8 @@
 /**
- * @file K15_ModelComponent.cpp
+ * @file K15_SceneGraph.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/12/16
+ * @date 2014/06/04
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,52 +18,38 @@
  */
 
 #include "K15_PrecompiledHeader.h"
-
-#include "K15_ModelComponent.h"
-#include "K15_ResourceManager.h"
+#include "K15_SceneGraph.h"
 
 namespace K15_Engine { namespace Core {
   /*********************************************************************************/
-  K15_IMPLEMENT_RTTI_BASE(Core,ModelComponent,GameObjectComponentBase);
+  K15_IMPLEMENT_RTTI_BASE(Core,SceneGraph,Object);
+  SceneGraph* SceneGraph::ms_Default = 0;
   /*********************************************************************************/
 
   /*********************************************************************************/
-  ModelComponent::ModelComponent()
-	  : GameObjectComponentBase(),
-	  m_Mesh(0)
+  SceneGraph::SceneGraph()
   {
 
   }
   /*********************************************************************************/
-  ModelComponent::ModelComponent(const String& p_ModelResourceName)
-	: GameObjectComponentBase(),
-	m_Mesh(0)
-  {
-    m_Mesh = g_ResourceManager->getResource<Mesh>(p_ModelResourceName);
-  }
-  /*********************************************************************************/
-  ModelComponent::ModelComponent(Mesh* p_Mesh)
-	  : GameObjectComponentBase(),
-	  m_Mesh(p_Mesh)
+  SceneGraph::~SceneGraph()
   {
 
   }
   /*********************************************************************************/
-  ModelComponent::~ModelComponent()
+  void SceneGraph::traverse(RenderQueue* p_RenderQueue)
   {
-
+    
   }
   /*********************************************************************************/
-  AABB ModelComponent::_calculateAABB()
+  SceneGraph* SceneGraph::getDefault()
   {
-	  AABB aabb;
+    if(!ms_Default)
+    {
+      ms_Default = K15_NEW SceneGraph();
+    }
 
-	  if(m_Mesh)
-	  {
-		  aabb = m_Mesh->getAABB();
-	  }
-
-	  return aabb;
+    return ms_Default;
   }
   /*********************************************************************************/
-}}//end of K15_Engine::Core namespace
+}}// end of K15_Engine::Core namespace

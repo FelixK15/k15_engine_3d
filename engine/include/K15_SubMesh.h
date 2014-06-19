@@ -38,6 +38,9 @@ namespace K15_Engine { namespace Rendering {
 		SubMesh(Mesh* p_Mesh);
 		virtual ~SubMesh();
 
+		INLINE void setIsDirty(bool p_Dirty);
+		INLINE bool isDirty() const;
+
 		INLINE void setVertexBuffer(VertexBuffer* p_VertexBuffer);
 		INLINE VertexBuffer* getVertexBuffer() const;
 
@@ -57,12 +60,12 @@ namespace K15_Engine { namespace Rendering {
 		void _calculateAABB();
 
 	protected:
-
 		AABB m_AABB;
 		VertexBuffer* m_VertexBuffer;
 		IndexBuffer* m_IndexBuffer;
 		Material* m_Material;
 		Mesh* m_Mesh;
+		bool m_Dirty;
 	};// end of SubMesh class declaration
 #	include "K15_SubMesh.inl"
 }}// end of K15_Engine::Rendering namespace

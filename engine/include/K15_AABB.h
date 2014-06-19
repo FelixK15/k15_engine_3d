@@ -18,18 +18,6 @@
  *
  * @section DESCRIPTION
  *
- *
-    (Max)
-		  -------------
-	   /|	         /|
-	  /	|	        / |
-	 /  |        /  |
-  /   /-------/---/ 
- /-----------|---/
- |  /        |  /
- | /		     | /
- |/	         |/
- |-----------| (Min)
  */
 
 #ifndef _K15Engine_Rendering_AABB_h_
@@ -60,14 +48,13 @@ namespace K15_Engine { namespace Rendering {
 
 			CT_COUNT
 		};//CornerTypes
-    /*********************************************************************************/
+		/*********************************************************************************/
 
-    /*********************************************************************************/
+		/*********************************************************************************/
 		typedef FixedArray(Vector3,CT_COUNT) CornerArray;
-    /*********************************************************************************/
+		/*********************************************************************************/
 	public:
 		AABB();
-		AABB(const Vector3& p_Min, const Vector3& p_Max);
 		~AABB();
 
 		INLINE const Vector3& getFarLeftTop() const;
@@ -79,7 +66,9 @@ namespace K15_Engine { namespace Rendering {
 		INLINE const Vector3& getNearLeftBottom() const;
 		INLINE const Vector3& getNearRightTop() const;
 		INLINE const Vector3& getNearRightBottom() const;
+
 		INLINE const Vector3& getCorner(Enum p_Corner) const;
+		INLINE CornerArray& getCorners();
 
 		INLINE float getMaxX() const;
 		INLINE float getMaxY() const;
@@ -91,18 +80,12 @@ namespace K15_Engine { namespace Rendering {
 
 		INLINE void setCorner(const Vector3& p_Positon, Enum p_Corner);
 		
-		INLINE void setMin(const Vector3& p_Min);
-		INLINE void setMax(const Vector3& p_Max);
+		INLINE void merge(const AABB& p_AABB);
 
-		INLINE const Vector3& getMin() const;
-		INLINE const Vector3& getMax() const;
-
+		INLINE bool operator>(const AABB& p_Rhs);
+		INLINE bool operator<(const AABB& p_Rhs);
+	
 	private:
-		void _calculateCorners();
-
-	private:
-		Vector3 m_Min;
-		Vector3 m_Max;
 		CornerArray m_Corners;
 	};// end of AABB class declaration
 #include "K15_AABB.inl"

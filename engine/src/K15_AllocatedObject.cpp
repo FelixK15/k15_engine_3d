@@ -98,7 +98,7 @@ namespace K15_Engine { namespace Core {
 		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_RENDERING],BlockAllocator);
 
 		#if defined K15_DEBUG
-			K15_DELETE_T(Allocators[AC_DEBUG],Allocators[AC_PROFILING_NODE_POOL],PoolAllocator<ProfilingNode>);
+			K15_DELETE_T(Allocators[AC_PROFILING],Allocators[AC_PROFILING_NODE_POOL],PoolAllocator<ProfilingNode>);
 			K15_DELETE_T(Allocators[AC_DEBUG],Allocators[AC_PROFILING],BlockAllocator);
 			K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_DEBUG],BlockAllocator);
 		#endif

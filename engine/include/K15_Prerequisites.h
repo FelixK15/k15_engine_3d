@@ -111,7 +111,7 @@ namespace K15_Engine
 		class ResourceImporterBase;
 		class ResourceImporterBitmap;
 		class EventTask;
-		class Node;
+		class NodeComponent;
 		class Image;
 		class ProfilingNode;
 		class ProfilingManager;
@@ -127,6 +127,8 @@ namespace K15_Engine
 		class Font;
 		class TrueTypeFont;
 		class StackAllocator;
+		class Frustum;
+		class Model;
 
 		template<class T>
 		class Singleton;
@@ -180,6 +182,7 @@ namespace K15_Engine
 		class DepthState;
 		class VertexBuffer;
 		class Vertex;
+		class RendererBase;
 		struct RenderOperation;
 		struct VertexElement;
 		struct TextureCreationOptions;

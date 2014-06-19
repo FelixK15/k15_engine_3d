@@ -38,13 +38,18 @@ namespace K15_Engine { namespace Core {
 		GameObjectComponentBase(const ObjectName& p_Name = ObjectName::BLANK);
 		virtual ~GameObjectComponentBase();
 
+		const AABB& getAABB();
 		INLINE GameObject* getGameObject() const;
+
 		INLINE void setGameObject(GameObject* p_GameObject);
 
 		virtual void update(const GameTime& p_GameTime) {}
+		virtual void onAddedToRenderQueue(RenderQueue* p_RenderQueue) {}
 
 	protected:
+		INLINE virtual bool _AABBBNeedsUpdate();
 		virtual void _onGameObjectSet() {}
+		virtual AABB _calculateAABB();
 
 	protected:
 		GameObject* m_GameObject;

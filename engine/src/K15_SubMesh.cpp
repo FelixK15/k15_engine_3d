@@ -31,7 +31,8 @@ namespace K15_Engine { namespace Rendering {
 		: m_Material(0),
 		m_IndexBuffer(0),
 		m_VertexBuffer(0),
-		m_Mesh(p_Mesh)
+		m_Mesh(p_Mesh),
+		m_Dirty(true)
 	{
 		m_Mesh->addSubMesh(this);
 
@@ -61,12 +62,13 @@ namespace K15_Engine { namespace Rendering {
 		float x_max = 0.0f,y_max = 0.0f,z_max = 0.0f;
 		float x_min = 0.0f,y_min = 0.0f,z_min = 0.0f;
 		Vertex* vertex = 0;
+		Vector4 pos;
 		if(m_VertexBuffer)
 		{
 			for(uint32 i = 0;i < m_VertexBuffer->getVertexCount();++i)
 			{
 				vertex = m_VertexBuffer->getVertex(i);
-				Vector4 pos = vertex->getPosition();
+				pos = vertex->getPosition();
 
 				if(pos.x > x_max)		x_max = pos.x;
 				else if(pos.x < x_min)	x_min = pos.x;
@@ -95,6 +97,7 @@ namespace K15_Engine { namespace Rendering {
 		if(m_VertexBuffer && m_VertexBuffer->isDirty())
 		{
 			_calculateAABB();
+			m_Dirty = true;
 		}
 
 		return m_AABB;

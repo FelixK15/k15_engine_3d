@@ -1,8 +1,8 @@
 /**
- * @file K15_SubMesh.inl
+ * @file K15_Frustum.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2014/02/08
+ * @date 2014/06/12
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,49 +18,28 @@
  */
 
 /*********************************************************************************/
-void SubMesh::setIsDirty(bool p_Dirty)
+void Frustum::setCorner(const Vector3& p_CornerPos, Enum p_Corner)
 {
-	m_Dirty = p_Dirty;
+	m_Corners[p_Corner] = p_CornerPos;
 }
 /*********************************************************************************/
-bool SubMesh::isDirty() const
+Frustum::PlaneArray& Frustum::getPlanes()
 {
-	return m_Dirty;
+	return m_Planes;
 }
 /*********************************************************************************/
-void SubMesh::setVertexBuffer(VertexBuffer* p_VertexBuffer)
+Frustum::CornerArray& Frustum::getCorners()
 {
-	m_VertexBuffer = p_VertexBuffer;
-	_calculateAABB();
+	return m_Corners;
 }
 /*********************************************************************************/
-VertexBuffer* SubMesh::getVertexBuffer() const
+const Frustum::Plane& Frustum::getPlane(Enum p_Plane) const
 {
-	return m_VertexBuffer;
+	return m_Planes[p_Plane];
 }
 /*********************************************************************************/
-void SubMesh::setIndexBuffer(IndexBuffer* p_IndexBuffer)
+const Vector3& Frustum::getCorner(Enum p_Corner) const
 {
-	m_IndexBuffer = p_IndexBuffer;
-}
-/*********************************************************************************/
-IndexBuffer* SubMesh::getIndexBuffer() const
-{
-	return m_IndexBuffer;
-}
-/*********************************************************************************/
-void SubMesh::setMaterial(Material* p_Material)
-{
-	m_Material = p_Material;
-}
-/*********************************************************************************/
-Material* SubMesh::getMaterial() const
-{
-	return m_Material;
-}
-/*********************************************************************************/
-Mesh* SubMesh::getMesh() const
-{
-  return m_Mesh;
+	return m_Corners[p_Corner];
 }
 /*********************************************************************************/

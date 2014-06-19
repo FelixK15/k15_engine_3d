@@ -92,7 +92,7 @@ namespace K15_Engine { namespace Core {
 			p_Stream.getline(bufferline,256);
 			line = StringUtil::removeWhitespaces(bufferline);
 
-			if(line[0] == '#' || line[0] == ';' || (line[0] == '/' && line[1] == '/')) //comment?
+			if(line[0] == '#' || line[0] == ';' || (line[0] == '/' && line[1] == '/') || line.empty()) //comment?
 			{
 				continue;
 			}

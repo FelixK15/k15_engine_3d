@@ -1,8 +1,8 @@
 /**
- * @file K15_SubMesh.inl
+ * @file K15_LightComponent.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2014/02/08
+ * @date 2014/06/04
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,49 +18,54 @@
  */
 
 /*********************************************************************************/
-void SubMesh::setIsDirty(bool p_Dirty)
+Enum LightComponent::getLightType() const
 {
-	m_Dirty = p_Dirty;
+	return m_LightType;
 }
 /*********************************************************************************/
-bool SubMesh::isDirty() const
+float LightComponent::getRadius() const
 {
-	return m_Dirty;
+	return m_Range;
+}	
+/*********************************************************************************/
+const ColorRGBA& LightComponent::getDiffuseColor() const
+{
+	return m_DiffuseColor;
 }
 /*********************************************************************************/
-void SubMesh::setVertexBuffer(VertexBuffer* p_VertexBuffer)
+const ColorRGBA& LightComponent::getSpecularColor() const
 {
-	m_VertexBuffer = p_VertexBuffer;
-	_calculateAABB();
+  return m_SpecularColor;
 }
 /*********************************************************************************/
-VertexBuffer* SubMesh::getVertexBuffer() const
+bool LightComponent::isActive() const
 {
-	return m_VertexBuffer;
+	return m_Active;
 }
 /*********************************************************************************/
-void SubMesh::setIndexBuffer(IndexBuffer* p_IndexBuffer)
+void LightComponent::setLightType(Enum p_LightType)
 {
-	m_IndexBuffer = p_IndexBuffer;
+	K15_ASSERT(p_LightType >= LT_COUNT,"Invalid light type. (value:%i)");
+	m_LightType = p_LightType;
 }
 /*********************************************************************************/
-IndexBuffer* SubMesh::getIndexBuffer() const
+void LightComponent::setRadius(float p_Radius)
 {
-	return m_IndexBuffer;
+	m_Range = p_Radius;
 }
 /*********************************************************************************/
-void SubMesh::setMaterial(Material* p_Material)
+void LightComponent::setActive(bool p_Active)
 {
-	m_Material = p_Material;
+	m_Active = p_Active;
 }
 /*********************************************************************************/
-Material* SubMesh::getMaterial() const
+void LightComponent::setDiffuseColor(const ColorRGBA& p_DiffuseColor)
 {
-	return m_Material;
+	m_DiffuseColor = p_DiffuseColor;
 }
 /*********************************************************************************/
-Mesh* SubMesh::getMesh() const
+void LightComponent::setSpecularColor(const ColorRGBA& p_SpecularColor)
 {
-  return m_Mesh;
+  m_SpecularColor = p_SpecularColor;
 }
 /*********************************************************************************/

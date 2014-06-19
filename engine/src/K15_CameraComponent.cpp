@@ -20,7 +20,7 @@
 #include "K15_PrecompiledHeader.h"
 
 #include "K15_RendererBase.h"
-#include "K15_Node.h"
+#include "K15_NodeComponent.h"
 #include "K15_GameObject.h"
 #include "K15_CameraComponent.h"
 #include "K15_MatrixUtil.h"
@@ -73,6 +73,7 @@ namespace K15_Engine { namespace Rendering {
 				m_ProjectionMatrix = glm::ortho(left,right,-top_bottom,top_bottom,m_NearClipDistance,m_FarClipDistance);//MatrixUtil::createOrthographicProjectionMatrix(m_NearClipDistance,m_FarClipDistance);
 			}
 
+			_calculateFrustum();
 			m_ProjMatrixDirty = false;
 		}
 
@@ -81,12 +82,12 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	const Matrix4& CameraComponent::getViewMatrix()
 	{
- 		if(m_ViewMatrixDirty || m_GameObject->getNode().needUpdate())
+ 		if(m_ViewMatrixDirty || m_GameObject->getNodeComponent()->needUpdate())
  		{
 			//update view matrix
-			m_ViewMatrix = m_GameObject->getNode().getTransformation();
+			m_ViewMatrix = m_GameObject->getTransformation();
 			m_ViewMatrix = glm::inverse(m_ViewMatrix);
-			_calculateFrustumPoints();
+			_calculateFrustum();
 			m_ViewMatrixDirty = false;
 		}
 
@@ -102,25 +103,50 @@ namespace K15_Engine { namespace Rendering {
 			g_Application->getRenderer()->setActiveCamera(this);
 		}
 	}
-  /*********************************************************************************/
-  bool CameraComponent::isVisible(const AABB& p_AABB)
-  {
-//     return glm::greaterThanEqual(p_AABB.getMin(),m_FrustumPoints[FP_NEAR_RIGHT_BOTTOM]) ||
-//            glm::lessThanEqual(p_AABB.getMax(),m_FrustumPoints[FP_FAR_LEFT_TOP]);
+	/*********************************************************************************/
+	bool CameraComponent::isVisible(const AABB& p_AABB)
+	{
+    for(int i = 0; i < AABB::CT_COUNT; ++i)
+    {
+      if(m_Frustum.isInside(p_AABB.getCorner(i)))
+      {
+        return true;
+      }
+    }
 
-    return true;
-  }
-  /*********************************************************************************/
-  void CameraComponent::_calculateFrustumPoints()
-  {
-    
-  }
-  /*********************************************************************************/
-  const Vector3& CameraComponent::getFrustumPoint(Enum p_FrustumPoint) const
-  {
-	K15_ASSERT(p_FrustumPoint >= 0 && p_FrustumPoint < FP_COUNT,"Invalid frustum point index.");
+		return false;
+	}
+	/*********************************************************************************/
+	void CameraComponent::_calculateFrustum()
+	{
+		static FixedArray(Vector4, Frustum::FP_COUNT) FrustumPointsHomogenous;
 
-    return m_FrustumPoints[p_FrustumPoint];
-  }
-  /*********************************************************************************/
+		float left	 = -1.0f;
+		float right	 =  1.0f;
+		float top	 = -1.0f;
+		float bottom =  1.0f;
+		float f		 = -1.0f;
+		float n		 =  1.0f;
+
+		Matrix4 viewProjectionMatrix = m_ViewMatrix * m_ProjectionMatrix;
+
+		FrustumPointsHomogenous[Frustum::FP_FAR_LEFT_BOTTOM]	= Vector4(left,bottom,f,1.0f);
+		FrustumPointsHomogenous[Frustum::FP_FAR_RIGHT_BOTTOM] = Vector4(right,bottom,f,1.0f);
+		FrustumPointsHomogenous[Frustum::FP_FAR_LEFT_TOP]	    = Vector4(left,top,f,1.0f);
+		FrustumPointsHomogenous[Frustum::FP_FAR_RIGHT_TOP]	  = Vector4(right,top,f,1.0f);
+
+		FrustumPointsHomogenous[Frustum::FP_NEAR_LEFT_BOTTOM]   = Vector4(left,bottom,n,1.0f);
+		FrustumPointsHomogenous[Frustum::FP_NEAR_RIGHT_BOTTOM]  = Vector4(right,bottom,n,1.0f);
+		FrustumPointsHomogenous[Frustum::FP_NEAR_LEFT_TOP]	    = Vector4(left,top,n,1.0f);
+		FrustumPointsHomogenous[Frustum::FP_NEAR_RIGHT_TOP]     = Vector4(right,top,n,1.0f);
+
+		for(int i = 0; i < Frustum::FP_COUNT; ++i)
+		{
+			FrustumPointsHomogenous[i] = FrustumPointsHomogenous[i] * viewProjectionMatrix;
+			m_Frustum.setCorner(Vector3(FrustumPointsHomogenous[i].x, FrustumPointsHomogenous[i].y, FrustumPointsHomogenous[i].z),i);
+		}
+
+		m_Frustum.calculatePlanes();
+	}
+	/*********************************************************************************/
 }}// end of K15_Engine::Rendering namespace

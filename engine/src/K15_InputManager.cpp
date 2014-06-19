@@ -111,7 +111,7 @@ namespace K15_Engine { namespace Core {
 		}
 	}
 	/*********************************************************************************/
-	bool InputManager::isActive(const ObjectName& p_ActionName)
+	float InputManager::getValue(const ObjectName& p_ActionName)
 	{
 		InputMapping::iterator iter = m_InputMap.find(p_ActionName);
 		bool active = false;
@@ -120,15 +120,11 @@ namespace K15_Engine { namespace Core {
 		{
 			if(iter->second)
 			{
-				active = iter->second->isActive();
-				if(active)
-				{
-					return true;
-				}
+				return iter->second->getValue();;
 			}
 		}
 
-		return false;
+		return 0.0f;
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

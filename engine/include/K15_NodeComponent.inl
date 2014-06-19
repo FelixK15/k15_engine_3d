@@ -18,14 +18,14 @@
  */
 
 /*********************************************************************************/
-void Node::lookAt(const Vector3& p_Position)
+void NodeComponent::lookAt(const Vector3& p_Position)
 {
 	m_Orientation = glm::lookAt(m_Position,p_Position,Vector3(0.0f,1.0f,0.0f));
 	m_NeedUpdate = true;
 	_calcLookAt();
 }
 /*********************************************************************************/
-void Node::setPosition(const Vector3& p_Position)
+void NodeComponent::setPosition(const Vector3& p_Position)
 {
 	m_Position = p_Position;
 	m_NeedUpdate = true;
@@ -36,36 +36,38 @@ void Node::setPosition(const Vector3& p_Position)
 // 	m_Orientation = p_Orientation;
 // }
 /*********************************************************************************/
-void Node::setScale(const Vector3& p_Scale)
+void NodeComponent::setScale(const Vector3& p_Scale)
 {
 	m_Scale = p_Scale;
 	m_NeedUpdate = true;
 }
 /*********************************************************************************/
-void Node::translate(const Vector3& p_Translation)
+void NodeComponent::translate(const Vector3& p_Translation)
 {
 	m_Position += p_Translation;
+	_calcLookAt();
 	m_NeedUpdate = true;
 }
 /*********************************************************************************/
-void Node::translate(const Vector4& p_Translation)
+void NodeComponent::translate(const Vector4& p_Translation)
 {
 	translate(p_Translation.x,p_Translation.y,p_Translation.z);
 }
 /*********************************************************************************/
-void Node::translate(float x, float y, float z)
+void NodeComponent::translate(float x, float y, float z)
 {
 	m_Position += Vector3(x,y,z);
+	_calcLookAt();
 	m_NeedUpdate = true;
 }
 /*********************************************************************************/
-void Node::scale(const Vector3& p_Scale)
+void NodeComponent::scale(const Vector3& p_Scale)
 {
 	m_Scale += p_Scale;
 	m_NeedUpdate = true;
 }
 /*********************************************************************************/
-void Node::scale(float x, float y, float z)
+void NodeComponent::scale(float x, float y, float z)
 {
 	m_Scale += Vector3(x,y,z);
 	m_NeedUpdate = true;
@@ -76,56 +78,57 @@ void Node::scale(float x, float y, float z)
 // 	m_Orientation *= p_Rotation;
 // }
 /*********************************************************************************/
-void Node::rotate(const Vector3& p_Axis, float p_Radians)
+void NodeComponent::rotate(const Vector3& p_Axis, float p_Radians)
 {
 	m_Orientation *= glm::rotate(glm::mat4(1.0f),p_Radians,p_Axis);
+	_calcLookAt();
 	m_NeedUpdate = true;
 }
 /*********************************************************************************/
-void Node::roll(float p_Radians)
+void NodeComponent::roll(float p_Radians)
 {
 	rotate(Vector3(0.0f,0.0f,1.0f),p_Radians);
 	m_NeedUpdate = true;
 }
 /*********************************************************************************/
-void Node::pitch(float p_Radians)
+void NodeComponent::pitch(float p_Radians)
 {
 	rotate(Vector3(1.0f,0.0f,0.0f),p_Radians);
 	m_NeedUpdate = true;
 }
 /*********************************************************************************/
-void Node::yaw(float p_Radians)
+void NodeComponent::yaw(float p_Radians)
 {
 	rotate(Vector3(0.0f,1.0f,0.0f),p_Radians);
 	m_NeedUpdate = true;
 }
 /*********************************************************************************/
-const Vector3& Node::getPosition() const
+const Vector3& NodeComponent::getPosition() const
 {
 	return m_Position;
 }
 /*********************************************************************************/
-const Vector3& Node::getScale() const
+const Vector3& NodeComponent::getScale() const
 {
 	return m_Scale;
 }
 /*********************************************************************************/
-const Matrix4& Node::getOrientation() const
+const Matrix4& NodeComponent::getOrientation() const
 {
 	return m_Orientation;
 }
 /*********************************************************************************/
-bool Node::needUpdate() const
+bool NodeComponent::needUpdate() const
 {
 	return m_NeedUpdate;
 }
 /*********************************************************************************/
-const Vector3& Node::getLookAt() const
+const Vector3& NodeComponent::getLookAt() const
 {
 	return m_LookAt;
 }
 /*********************************************************************************/
-Node* Node::getParent() const
+GameObject* NodeComponent::getParent() const
 {
 	return m_Parent;
 }

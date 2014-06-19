@@ -141,8 +141,8 @@ namespace K15_Engine { namespace Core {
 			{
 				name = InputDevices::Mouse::EventMouseWheel;
 
-				uint32 eventArguments[3] = {(uint32)(p_wParam & 0xFFFF0000),x,y};
-				
+				uint32 eventArguments[3] = {(uint32)GET_WHEEL_DELTA_WPARAM(p_wParam),x,y};
+				InputDevices::Mouse::setMouseWheelDelta(GET_WHEEL_DELTA_WPARAM(p_wParam)); //reset somewhere
 				GameEvent* mouseWheelEvent = K15_NEW GameEvent(name,(void*)eventArguments,96);
 				g_EventManager->triggerEvent(mouseWheelEvent);
 			}

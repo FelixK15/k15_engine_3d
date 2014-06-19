@@ -41,6 +41,8 @@
 #include "K15_ResourceImporterTiff.h"
 #include "K15_ResourceImporterMaterial.h"
 
+#include "K15_Keyboard.h"
+
 namespace TowerDefense {
 	/*********************************************************************************/
 	MainGameState::MainGameState()
@@ -72,15 +74,14 @@ namespace TowerDefense {
 
 		m_Camera = K15_NEW GameObject("Camera");
 		m_Camera->addComponent(K15_NEW CameraComponent());
-		m_Camera->getComponentByType<CameraComponent>()->setZoom(.15f);
-		m_Camera->getComponentByType<CameraComponent>()->setProjectionType(CameraComponent::PT_ORTHOGRAPHIC);
+		m_Camera->getCameraComponent()->setZoom(.15f);
+		m_Camera->getCameraComponent()->setProjectionType(CameraComponent::PT_ORTHOGRAPHIC);
 
 		m_Level = K15_NEW Level("level0");
-		m_Camera->getNode().rotate(Vector3(0.0f,1.0f,0.0f),-glm::radians(45.0f));
-		m_Camera->getNode().rotate(Vector3(1.0f,0.0f,0.0f),-glm::radians(45.264f));
+		m_Camera->rotate(Vector3(0.0f,1.0f,0.0f),-glm::radians(45.0f));
+		m_Camera->rotate(Vector3(1.0f,0.0f,0.0f),-glm::radians(45.264f));
+		m_Camera->translate(m_Camera->getLookAt() * -5.0f);
 
-		Vector4 cameraLookAt = m_Camera->getNode().getOrientation() * Vector4(0.0f,0.0f,10.f,1.0f);
-		m_Camera->getNode().translate(cameraLookAt);
 		g_Application->getRenderer()->setActiveCameraGameObject(m_Camera);
 
 		TextureSampler* sampler = K15_NEW TextureSampler();
@@ -150,9 +151,9 @@ namespace TowerDefense {
 		bool collided = true;
 		for(uint32 i = 0;i < walls.size();++i)
 		{
-			const AABB& aabb = walls.at(i)->getComponentByType<ModelComponent>()->getMesh()->getAABB(true);
-			const Vector3& meshPosition = walls.at(i)->getNode().getPosition();
-			const Vector3& enemyPos = p_Enemy->getNode().getPosition() + p_Enemy->getComponentByType<MoveComponent>()->getSpeed();
+			const AABB& aabb = walls.at(i)->getComponentByType<ModelComponent>()->getMesh()->getAABB();
+			const Vector3& meshPosition = walls.at(i)->getPosition();
+			const Vector3& enemyPos = p_Enemy->getPosition() + p_Enemy->getComponentByType<MoveComponent>()->getSpeed();
 
 			if(enemyPos.x > aabb.getMaxX() + meshPosition.x) collided = false;
 			//if(enemyPos.y > aabb.getMaxY()) collided = false;
@@ -182,9 +183,9 @@ namespace TowerDefense {
 	/*********************************************************************************/
 	bool MainGameState::_isInGoal(GameObject* p_Enemy)
 	{
-		const AABB& endAABB = m_Level->getEnd()->getComponentByType<ModelComponent>()->getMesh()->getAABB(true);
-		const Vector3& meshPosition = m_Level->getEnd()->getNode().getPosition();
-		const Vector3& enemyPos = p_Enemy->getNode().getPosition();
+		const AABB& endAABB = m_Level->getEnd()->getComponentByType<ModelComponent>()->getMesh()->getAABB();
+		const Vector3& meshPosition = m_Level->getEnd()->getPosition();
+		const Vector3& enemyPos = p_Enemy->getPosition();
 		bool collided = true;
 
 		if(enemyPos.x > endAABB.getMaxX() + meshPosition.x) collided = false;

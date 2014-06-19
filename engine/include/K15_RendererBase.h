@@ -139,6 +139,7 @@ namespace K15_Engine { namespace Rendering {
 		void shutdown();
 
 		bool draw(RenderOperation* p_Rop);
+		//bool draw(RenderQueue* m_RenderQueue);
 
 		bool setRenderWindow(RenderWindowBase* p_RenderWindow);
 		INLINE RenderWindowBase* getRenderWindow() const;

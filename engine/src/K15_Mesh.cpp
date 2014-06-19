@@ -45,6 +45,26 @@ namespace K15_Engine { namespace Rendering {
 
 	}
 	/*********************************************************************************/
+	const AABB& Mesh::getAABB()
+	{
+		bool dirty = false;
+		for(SubMeshArray::iterator iter = m_SubMeshes.begin(); iter != m_SubMeshes.end(); ++iter)
+		{
+			if((*iter)->isDirty())
+			{
+				dirty = true;
+				(*iter)->setIsDirty(false);
+			}
+		}
+
+		if(dirty)
+		{
+			calculateAABB();
+		}
+
+		return m_AABB;
+	}
+	/*********************************************************************************/
 	void Mesh::calculateAABB()
 	{
 		float x_max = 0.0f,y_max = 0.0f,z_max = 0.0f;
