@@ -24,11 +24,8 @@
 #ifndef _K15Engine_Renderer_GpuProgram_h_
 #define _K15Engine_Renderer_GpuProgram_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#	include "K15_AllocatedObject.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
-
+#include "K15_Prerequisites.h"
+#include "K15_AllocatedObject.h"
 #include "K15_ResourceBase.h"
 #include "K15_GpuProgramParameter.h"
 

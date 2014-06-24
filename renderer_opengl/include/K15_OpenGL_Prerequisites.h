@@ -42,9 +42,9 @@ typedef GLvoid*   (GLAPIENTRY * PFNGLGETPROCADDRESS)(GLchar*);
 
 #ifdef K15_OS_WINDOWS
   #include "K15_OpenGL_WGL.h"
-  PFNK15GLINIT kglInit                  = _wglInit;
+  PFNK15GLINIT		  kglInit           = _wglInit;
   PFNK15GLSWAPBUFFERS kglSwapBuffers    = _wglSwapBuffers;
-  PFNK15GLSHUTDOWN kglShutdown          = _wglShutdown;
+  PFNK15GLSHUTDOWN	  kglShutdown       = _wglShutdown;
   PFNGLGETPROCADDRESS kglGetProcAddress = _wglGetProcAddress;
 
 //experimentals to test perf with different approaches.

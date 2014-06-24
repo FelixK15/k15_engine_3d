@@ -43,7 +43,7 @@ namespace K15_Engine { namespace Core {
 			return true;
 		}
 
-		_LogError("Could not initialize enet network library.");
+		K15_LOG_ERROR("Could not initialize enet network library.");
 		return false;
 	}
 	/*********************************************************************************/

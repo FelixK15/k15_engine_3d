@@ -138,14 +138,14 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		{
 			if(p_Size > m_Buffer->getSize())
 			{
-				_LogWarning("Buffer size is %ibyte and you want to read %ibyte. Clamping value to max buffer size.",m_Buffer->getSize(),p_Size);
+				K15_LOG_WARNING("Buffer size is %ibyte and you want to read %ibyte. Clamping value to max buffer size.",m_Buffer->getSize(),p_Size);
 				p_Size = m_Buffer->getSize();
 			}
 
 			if((p_Size + p_Offset) > m_Buffer->getSize())
 			{
 				uint32 newOffset = p_Size - m_Buffer->getSize();
-				_LogWarning("Buffer size is %ibyte and you want to read %ibyte starting at %ibyte. Setting offset = %i.",m_Buffer->getSize(),p_Size,p_Offset,newOffset);
+				K15_LOG_WARNING("Buffer size is %ibyte and you want to read %ibyte starting at %ibyte. Setting offset = %i.",m_Buffer->getSize(),p_Size,p_Offset,newOffset);
 				p_Offset = newOffset;
 			}
 
@@ -167,14 +167,14 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 
 		if(p_Size > m_Buffer->getSize())
 		{
-			_LogWarning("Buffer size is %i byte and you want to write %i byte. Clamping value to max buffer size.",m_Buffer->getSize(),p_Size);
+			K15_LOG_WARNING("Buffer size is %i byte and you want to write %i byte. Clamping value to max buffer size.",m_Buffer->getSize(),p_Size);
 			p_Size = m_Buffer->getSize();
 		}
 
 		if((p_Size + p_Offset) > m_Buffer->getSize())
 		{
 			uint32 newOffset = p_Size - m_Buffer->getSize();
-			_LogWarning("Buffer size is %i byte and you want to write %i byte starting at %i byte. Setting offset = %i.",m_Buffer->getSize(),p_Size,p_Offset,newOffset);
+			K15_LOG_WARNING("Buffer size is %i byte and you want to write %i byte starting at %i byte. Setting offset = %i.",m_Buffer->getSize(),p_Size,p_Offset,newOffset);
 			p_Offset = newOffset;
 		}
 		GLenum target = GLBufferTypeConverter[m_Buffer->getType()];

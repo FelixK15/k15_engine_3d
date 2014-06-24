@@ -21,9 +21,10 @@
 
 #include "K15_DynamicLibraryManager.h"
 #include "K15_LogManager.h"
+#include "K15_Functor.h"
 
 #if defined K15_OS_WINDOWS
-#	include "Win32\K15_DynamicLibrary_win32.h"
+#	include "win32/K15_DynamicLibrary_win32.h"
 #elif defined K15_OS_ANDROID || defined K15_OS_LINUX || defined K15_OS_APPLE
 #	include "Linux/K15_DynamicLibrary_Linux.h"
 #endif //K15_OS_WINDOWS
@@ -33,7 +34,7 @@ namespace K15_Engine { namespace Core {
 	DynamicLibraryManager::DynamicLibraryManager()
 		: m_LoadedLibs()
 	{
-		_LogNormal("Initializing DynamicLibraryManager...");
+		K15_LOG_NORMAL("Initializing DynamicLibraryManager...");
 	}
 	/*********************************************************************************/
 	DynamicLibraryManager::~DynamicLibraryManager()
@@ -64,7 +65,7 @@ namespace K15_Engine { namespace Core {
 	
 		if (iter != m_LoadedLibs.end())
 		{
-			_LogNormal("Library \"%s\" already loaded. Returning cached libray.",p_FileName.c_str());
+			K15_LOG_NORMAL("Library \"%s\" already loaded. Returning cached libray.",p_FileName.c_str());
 			return iter->second;
 		}
 
@@ -73,13 +74,13 @@ namespace K15_Engine { namespace Core {
 
 		if(!library->load())
 		{
-			_LogError("Could not load library (\"%s\") Error:%s",p_FileName.c_str(),g_Application->getLastError().c_str());
+			K15_LOG_ERROR("Could not load library (\"%s\") Error:%s",p_FileName.c_str(),g_Application->getLastError().c_str());
 	
 			K15_DELETE library;
 			return 0;
 		}
 
-		_LogSuccess("Successfully load library \"%s\".",p_FileName.c_str());
+		K15_LOG_SUCCESS("Successfully load library \"%s\".",p_FileName.c_str());
 
 		m_LoadedLibs.insert(Pair(String,DynamicLibraryBase*)(p_FileName,library));
 
@@ -95,10 +96,10 @@ namespace K15_Engine { namespace Core {
 			unloadFunc();
 		}
 
-		_LogNormal("Unloading dynamic library \"%s\".",p_Lib->getFileName().c_str());
+		K15_LOG_NORMAL("Unloading dynamic library \"%s\".",p_Lib->getFileName().c_str());
 		if(p_Lib->unload())
 		{
-			_LogSuccess("Successfully unloaded dynamic library \"%s\".",p_Lib->getFileName().c_str());
+			K15_LOG_SUCCESS("Successfully unloaded dynamic library \"%s\".",p_Lib->getFileName().c_str());
 			m_LoadedLibs.erase(p_Lib->getFileName());
 			return true;
 		}

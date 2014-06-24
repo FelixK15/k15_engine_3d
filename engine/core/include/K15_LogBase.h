@@ -23,10 +23,8 @@
 #ifndef _K15Engine_Core_LogBase_h_
 #define _K15Engine_Core_LogBase_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#	include "K15_LogManager.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
+#include "K15_Prerequisites.h"
+#include "K15_LogManager.h"
 
 namespace K15_Engine { namespace Core { 
 

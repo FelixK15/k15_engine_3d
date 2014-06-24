@@ -76,7 +76,7 @@ namespace TowerDefense
 					{
 						//wall
 						currentGameObject->setName("wall");
-						_LogDebug("meshes/cube_wall.obj");
+						K15_LOG_DEBUG("meshes/cube_wall.obj");
 						currentGameObject->addComponent(K15_NEW ModelComponent("meshes/cube_wall.obj"));
 						modelMesh = currentGameObject->getComponentByType<ModelComponent>()->getMesh();
 						modelMesh->getSubMesh(0)->setMaterial(g_ResourceManager->getResource<Material>("materials/wall.json"));

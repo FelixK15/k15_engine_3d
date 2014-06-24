@@ -24,12 +24,9 @@
 #ifndef _K15Engine_Core_ProfilingManager_h_
 #define _K15Engine_Core_ProfilingManager_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#	include "K15_AllocatedObject.h"
-#	include "K15_Singleton.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
-
+#include "K15_Prerequisites.h"
+#include "K15_AllocatedObject.h"
+#include "K15_Singleton.h"
 #include "K15_ProfilingNode.h"
 
 #define K15_PROFILE(profile_name) K15_Engine::Core::AutoProfilingNode p_##__COUNTER__(K15_NEW ProfilingNode(profile_name));

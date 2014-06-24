@@ -24,10 +24,7 @@
 #ifndef _K15Engine_Core_Image_h_
 #define _K15Engine_Core_Image_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
-#	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADER
-
+#include "K15_Prerequisites.h"
 #include "K15_ResourceBase.h"
 #include "K15_ColorRGBA.h"
 

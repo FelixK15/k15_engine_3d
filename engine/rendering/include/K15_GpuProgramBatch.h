@@ -24,10 +24,8 @@
 #ifndef _K15Engine_Renderer_GpuProgramBatch_h_
 #define _K15Engine_Renderer_GpuProgramBatch_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
-#	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADER
 
+#include "K15_Prerequisites.h"
 #include "K15_GpuProgram.h"
 
 namespace K15_Engine { namespace Rendering {

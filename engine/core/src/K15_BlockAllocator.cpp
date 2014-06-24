@@ -114,7 +114,7 @@ namespace K15_Engine { namespace Core {
 		{
 			if(!p_Block->Used && !p_Block->Next->Used)
 			{
-				_LogDebug("Merging block %p(size %u) and block %p(size %u) from BlockAllocator \"%s\"...",
+				K15_LOG_DEBUG("Merging block %p(size %u) and block %p(size %u) from BlockAllocator \"%s\"...",
 					p_Block,p_Block->Size,p_Block->Next,p_Block->Next->Size,m_Name.c_str());
 
 				p_Block->Size += p_Block->Next->Size + sizeof(MemoryBlock); //memblock is part of memory so we add the size of the block to get the 'real' size.

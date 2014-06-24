@@ -23,9 +23,7 @@
 #ifndef _K15Engine_Core_PhysicsProcessBase_h_
 #define _K15Engine_Core_PhysicsProcessBase_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
+#include "K15_Prerequisites.h"
 
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API PhysicsProcessBase

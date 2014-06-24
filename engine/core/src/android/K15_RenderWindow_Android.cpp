@@ -27,7 +27,7 @@
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	RenderWindow_Android::RenderWindow_Android()
-		: RenderWindowBase(),
+		: RenderWindow(),
 		m_Window(0)
 	{
 		
@@ -42,12 +42,12 @@ namespace K15_Engine { namespace Core {
 	{
 		if((m_Window = ((OSLayer)g_Application->getOSLayer()).getAndroidApp()->window) == 0)
 		{
-			_LogError("android_app::window is NULL");
+			K15_LOG_ERROR("android_app::window is NULL");
 			return false;
 		}
 		else
 		{
-			_LogSuccess("Successfully retrieved android_app::window.");
+			K15_LOG_SUCCESS("Successfully retrieved android_app::window.");
 		}
 		return true;
 	}
@@ -64,12 +64,12 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void RenderWindow_Android::setResolution(const Resolution& p_Resolution, bool p_ForceChange)
 	{
-		RenderWindowBase::setResolution(p_Resolution,p_ForceChange);
+		RenderWindow::setResolution(p_Resolution,p_ForceChange);
 	}
 	/*********************************************************************************/
 	void RenderWindow_Android::setIsFullscreen(bool p_Fullscreen)
 	{
-		RenderWindowBase::setIsFullscreen(p_Fullscreen);
+		RenderWindow::setIsFullscreen(p_Fullscreen);
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace

@@ -24,11 +24,7 @@
 #ifndef _K15Engine_Core_InputDevice_Keyboard_h_
 #define _K15Engine_Core_InputDevice_Keyboard_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#	include "K15_EventListener.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
-
+#include "K15_Prerequisites.h"
 #include "K15_InputTriggerBase.h"
 
 namespace K15_Engine { namespace Core { namespace InputDevices {
@@ -49,9 +45,9 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 			Enum m_Key;
 		};// end of K15_Engine::InputTrigger class declaraton
 		/*********************************************************************************/
-    static EventName EventKeyPress;
-    static EventName EventKeyRelease;
-    /*********************************************************************************/
+		static EventName EventKeyPress;
+		static EventName EventKeyRelease;
+		/*********************************************************************************/
 		enum eKeyboardKeys
 		{
 			//numpad

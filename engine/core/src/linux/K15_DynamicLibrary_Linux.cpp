@@ -53,7 +53,7 @@ namespace K15_Engine { namespace Core {
 	#else
 		String path = g_Application->getGameRootDir() + m_FileName;
 	#endif //K15_OS_ANDROID
-		_LogNormal("Trying to load \"%s\".",path.c_str());
+		K15_LOG_NORMAL("Trying to load \"%s\".",path.c_str());
 		m_Module = dlopen(path.c_str(),RTLD_NOW);
 
 		if(!m_Module)

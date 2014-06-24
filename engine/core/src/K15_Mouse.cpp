@@ -25,7 +25,7 @@
 
 #include "K15_Mouse.h"
 #include "K15_GameEvent.h"
-#include "K15_RenderWindowBase.h"
+#include "K15_RenderWindow.h"
 
 namespace K15_Engine { namespace Core { namespace InputDevices {
 	/*********************************************************************************/
@@ -66,8 +66,8 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		int32 x_delta = 0, y_delta = 0;
 		float x_deltaNDC = 0.0f, y_deltaNDC = 0.0f;
 		getMousePosDelta(&x_delta, &y_delta);
-		x_deltaNDC = (float)x_delta / (float)g_Application->getRenderWindow()->getResolution().width;
-		y_deltaNDC = (float)y_delta / (float)g_Application->getRenderWindow()->getResolution().height;
+		x_deltaNDC = (float)x_delta / (float)RenderWindow::getWidth();
+		y_deltaNDC = (float)y_delta / (float)RenderWindow::getHeight();
 
 		if((m_Axis == MA_VERTICAL_POSITIVE && y_deltaNDC > 0.0f) ||
 		   (m_Axis == MA_VERTICAL_NEGATIVE && y_deltaNDC < 0.0f))

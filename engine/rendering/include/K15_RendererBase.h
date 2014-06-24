@@ -24,9 +24,7 @@
 #ifndef _K15Engine_Renderer_RendererBase_h_
 #define _K15Engine_Renderer_RendererBase_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
+#include "K15_Prerequisites.h"
 
 #include "K15_ColorRGBA.h"
 
@@ -141,9 +139,6 @@ namespace K15_Engine { namespace Rendering {
 		bool draw(RenderOperation* p_Rop);
 		//bool draw(RenderQueue* m_RenderQueue);
 
-		bool setRenderWindow(RenderWindowBase* p_RenderWindow);
-		INLINE RenderWindowBase* getRenderWindow() const;
-
 		bool setRenderTarget(RenderTarget* p_RenderTarget);
 		INLINE RenderTarget* getRenderTarget() const;
 
@@ -227,15 +222,16 @@ namespace K15_Engine { namespace Rendering {
 		virtual void endFrame() = 0;
 
 		bool onEventResolutionChanged(GameEvent* p_Event);
+		bool onEventRenderWindowInitialized(GameEvent* p_Event);
 
 	protected:
 		virtual void _resolutionChanged(const Resolution& p_Resolution){}
+		virtual void _renderWindowInitialized(){}
 		virtual bool _initialize() = 0;
 		virtual void _shutdown() = 0;
 		virtual void _setFillMode(Enum p_FillMode){}
 		virtual void _setAlphaState(const AlphaState& p_AlphaState){}
 		virtual void _setDepthState(const DepthState& p_DepthState){}
-		virtual void _setRenderWindow(RenderWindowBase* p_RenderWindow){}
 		virtual void _setRenderTarget(RenderTarget* p_RenderTarget){}
 		virtual void _setActiveCamera(CameraComponent* p_Camera){}
 		virtual void _setVertexDeclaration(VertexDeclaration* p_Declaration){}
@@ -264,7 +260,6 @@ namespace K15_Engine { namespace Rendering {
 		TextureArray m_BoundTextures;
 		TextureSamplerArray m_BoundSamplers;
 		String m_LastError;
-		RenderWindowBase* m_RenderWindow;
 		CameraComponent* m_ActiveCamera;
 		RenderTarget* m_RenderTarget;
 		RenderTarget* m_DefaultRenderTarget;

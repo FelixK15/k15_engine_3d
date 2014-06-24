@@ -75,14 +75,14 @@ namespace K15_Engine { namespace Core {
 			//move stream pos to begin of the file.
 			if(iter->size == 0 || !iter->data)
 			{
-				_LogError("Resource<%s> - Invalid magic number.",
+				K15_LOG_ERROR("Resource<%s> - Invalid magic number.",
 					m_ResourceTypeName.c_str());
 				continue;
 			}
 
 			if(iter->size > p_Data.size)
 			{
-				_LogError("Resource<%s> - Magic number greater than file content.",
+				K15_LOG_ERROR("Resource<%s> - Magic number greater than file content.",
 					m_ResourceTypeName.c_str());
 				continue;
 			}
@@ -127,7 +127,7 @@ namespace K15_Engine { namespace Core {
 	{
 		if(m_Initialized)
 		{
-			_LogError("ResourceImporter \"%s\" has already been initialized.",getName().c_str());
+			K15_LOG_ERROR("ResourceImporter \"%s\" has already been initialized.",getName().c_str());
 		}
 		else
 		{
@@ -135,7 +135,7 @@ namespace K15_Engine { namespace Core {
 
 			if(!m_Initialized)
 			{
-				_LogError("Could not initialize ResourceImporter \"%s\". Error:\"%s\".",
+				K15_LOG_ERROR("Could not initialize ResourceImporter \"%s\". Error:\"%s\".",
 					getTypeName().c_str(),getError().c_str());
 			}
 		}
@@ -147,7 +147,7 @@ namespace K15_Engine { namespace Core {
 
 		if(m_Initialized)
 		{
-			_LogError("Error shutting down ResourceImporter \"%s\". Error:\"%s\".",
+			K15_LOG_ERROR("Error shutting down ResourceImporter \"%s\". Error:\"%s\".",
 				getTypeName().c_str(),getError().c_str());
 		}
 	}

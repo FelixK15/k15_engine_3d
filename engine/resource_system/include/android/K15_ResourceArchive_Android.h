@@ -24,11 +24,8 @@
 #ifndef _K15Engine_Core_ResourceArchiveAndroid_h_
 #define _K15Engine_Core_ResourceArchiveAndroid_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
-#	include "K15_Prerequisites.h"
-#	include "K15_AllocatedObject.h"
-#endif //K15_USE_PRECOMPILED_HEADER
-
+#include "K15_Prerequisites.h"
+#include "K15_AllocatedObject.h"
 #include "K15_ResourceArchiveBase.h"
 
 #ifdef K15_OS_ANDROID

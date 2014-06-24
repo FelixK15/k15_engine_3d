@@ -78,7 +78,7 @@ namespace K15_Engine { namespace Rendering {
 				if(g_Application->getRenderer()->errorOccured())
 				{
 					m_Error = g_Application->getRenderer()->getLastError();
-					_LogError("Could not load binary code for shader \"%s\". %s",m_Name.c_str(),m_Error.c_str());
+					K15_LOG_ERROR("Could not load binary code for shader \"%s\". %s",m_Name.c_str(),m_Error.c_str());
 					m_Compiled = false;
 				}
 
@@ -92,7 +92,7 @@ namespace K15_Engine { namespace Rendering {
 				if(!m_Impl->compileShaderCode())
 				{
 					m_Error = g_Application->getRenderer()->getLastError();
-					_LogError("Could not compile shader code for shader \"%s\". %s",m_Name.c_str(),m_Error.c_str());
+					K15_LOG_ERROR("Could not compile shader code for shader \"%s\". %s",m_Name.c_str(),m_Error.c_str());
 					m_Compiled = false;
 				}
 				else
@@ -155,7 +155,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(includeFile.empty())
 			{
-				_LogError("Invalid line in GpuProgram. Line: %s, Program: \"%s\"",includeLine.c_str(),m_Name.c_str());
+				K15_LOG_ERROR("Invalid line in GpuProgram. Line: %s, Program: \"%s\"",includeLine.c_str(),m_Name.c_str());
 				continue;
 			}
 
@@ -163,7 +163,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(!stream.is_open())
 			{
-				_LogError("Could not open GpuProgram include \"%s\".",includeFile.c_str());
+				K15_LOG_ERROR("Could not open GpuProgram include \"%s\".",includeFile.c_str());
 				continue;
 			}
       
@@ -185,7 +185,7 @@ namespace K15_Engine { namespace Rendering {
 	{
 		if(!m_Compiled)
 		{
-			_LogError("Can't reflect shader \"%s\". Has not been compiled.",getName().c_str());
+			K15_LOG_ERROR("Can't reflect shader \"%s\". Has not been compiled.",getName().c_str());
 			return false;
 		}
 		else
@@ -201,7 +201,7 @@ namespace K15_Engine { namespace Rendering {
 				{
 					if(m_Uniforms[i].getName() == GpuProgramParameter::UniformIdentifierName[j])
 					{
-						_LogDebug("Found auto parameter \"%s\" in GpuProgram \"%s\".",
+						K15_LOG_DEBUG("Found auto parameter \"%s\" in GpuProgram \"%s\".",
 							m_Uniforms[i].getName().c_str(),
 							getName().c_str());
 
@@ -219,7 +219,7 @@ namespace K15_Engine { namespace Rendering {
 			//did everything went smoothly?
 			if(g_Application->getRenderer()->errorOccured())
 			{
-				_LogError("Could not reflect shader \"%s\". %s.",m_Name.c_str(),g_Application->getRenderer()->getLastError().c_str());
+				K15_LOG_ERROR("Could not reflect shader \"%s\". %s.",m_Name.c_str(),g_Application->getRenderer()->getLastError().c_str());
 				return false;
 			}
 		}

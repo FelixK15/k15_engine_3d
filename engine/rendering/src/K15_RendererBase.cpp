@@ -19,7 +19,7 @@
 
 #include "K15_PrecompiledHeader.h"
 #include "K15_RendererBase.h"
-#include "K15_RenderWindowBase.h"
+#include "K15_RenderWindow.h"
 #include "K15_EventHandler.h"
 #include "K15_EnumStrings.h"
 
@@ -99,7 +99,6 @@ namespace K15_Engine { namespace Rendering {
 		m_Material(0),
 		m_GpuBuffers(),
 		m_GpuPrograms(),
-		m_RenderWindow(g_Application->getRenderWindow()),
 		m_StencilBufferFormat(SBF_COMPONENT_8_I),
 		m_Topology(RenderOperation::T_TRIANGLE),
 		m_GpuParameterUpdateMask(0)
@@ -114,7 +113,8 @@ namespace K15_Engine { namespace Rendering {
 			m_GpuPrograms[i] = 0;
 		}
 
-    g_EventManager->addHandler(RenderWindowBase::EventResolutionChanged,K15_EventHandler(RendererBase,onEventResolutionChanged,this));
+		g_EventManager->addHandler(RenderWindow::EventResolutionChanged,K15_EventHandler(RendererBase,onEventResolutionChanged,this));
+		g_EventManager->addHandler(RenderWindow::EventInitialized,K15_EventHandler(RendererBase,onEventRenderWindowInitialized,this));
 	}
 	/*********************************************************************************/
 	RendererBase::~RendererBase()
@@ -137,25 +137,6 @@ namespace K15_Engine { namespace Rendering {
 		m_Initialized = false;
 	}
 	/*********************************************************************************/
-	bool RendererBase::setRenderWindow(RenderWindowBase* p_RenderWindow)
-	{
-		K15_ASSERT(p_RenderWindow,"Render Window is NULL.");
-
-		if(m_RenderWindow != p_RenderWindow)
-		{
-			m_RenderWindow = p_RenderWindow;
-			_setRenderWindow(m_RenderWindow);
-
-			if(errorOccured())
-			{
-				_LogError("Error setting render window. %s",getLastError().c_str());
-				return false;
-			}
-		}
-
-		return true;
-	}
-	/*********************************************************************************/
 	bool RendererBase::setRenderTarget(RenderTarget* p_RenderTarget)
 	{
 		K15_ASSERT(p_RenderTarget,"Render Target is NULL.");
@@ -167,7 +148,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				_LogError("Error setting render target. %s",getLastError().c_str());
+				K15_LOG_ERROR("Error setting render target. %s",getLastError().c_str());
 				return false;
 			}
 		}
@@ -188,7 +169,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				_LogError("Error setting active camera. %s",getLastError().c_str());
+				K15_LOG_ERROR("Error setting active camera. %s",getLastError().c_str());
 				return false;
 			}
 		}
@@ -207,7 +188,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				_LogError("Error setting culling mode to %s. %s",eCullingModeStr[p_CullingMode],getLastError().c_str());
+				K15_LOG_ERROR("Error setting culling mode to %s. %s",eCullingModeStr[p_CullingMode],getLastError().c_str());
 				return false;
 			}
 		}
@@ -226,7 +207,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				_LogError("Error setting topology to %s. %s",eTopologyStr[p_Topology],getLastError().c_str());
+				K15_LOG_ERROR("Error setting topology to %s. %s",eTopologyStr[p_Topology],getLastError().c_str());
 				return false;
 			}
 		}
@@ -245,7 +226,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				_LogError("Error setting fill mode to %s. %s",eFillModeStr[p_FillMode],getLastError().c_str());
+				K15_LOG_ERROR("Error setting fill mode to %s. %s",eFillModeStr[p_FillMode],getLastError().c_str());
 				return false;
 			}
 		}
@@ -262,7 +243,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				_LogError("Error %s backface culling. %s.",p_Enabled ? "enabling" : "disabling",getLastError().c_str());
+				K15_LOG_ERROR("Error %s backface culling. %s.",p_Enabled ? "enabling" : "disabling",getLastError().c_str());
 				return false;
 			}
 		}
@@ -281,7 +262,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				_LogError("Error setting frame buffer pixelformat. %s",getLastError().c_str());
+				K15_LOG_ERROR("Error setting frame buffer pixelformat. %s",getLastError().c_str());
 				return false;
 			}
 		}
@@ -300,7 +281,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				_LogError("Error setting depth buffer format. %s",getLastError().c_str());
+				K15_LOG_ERROR("Error setting depth buffer format. %s",getLastError().c_str());
 				return false;
 			}
 		}
@@ -319,7 +300,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				_LogError("Error setting stencil buffer format. %s",getLastError().c_str());
+				K15_LOG_ERROR("Error setting stencil buffer format. %s",getLastError().c_str());
 				return false;
 			}
 		}
@@ -336,7 +317,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				_LogError("Error setting clear color to %d %d %d %d (RGBA). %s",
+				K15_LOG_ERROR("Error setting clear color to %d %d %d %d (RGBA). %s",
 					p_ClearColor.R,p_ClearColor.G,p_ClearColor.B,p_ClearColor.A,
 					getLastError().c_str());
 
@@ -371,7 +352,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				_LogError("Error binding gpu program for program stage \"%s\". %s",
+				K15_LOG_ERROR("Error binding gpu program for program stage \"%s\". %s",
 					p_GpuProgram->getName().c_str(),eProgramStageStr[p_Stage],getLastError().c_str());
 
 				return false;
@@ -399,7 +380,7 @@ namespace K15_Engine { namespace Rendering {
 
 				if(errorOccured())
 				{
-					_LogError("Error during buffer binding. Buffer type \"%s\". %s",eBufferTypeStr[p_BufferType],getLastError().c_str());
+					K15_LOG_ERROR("Error during buffer binding. Buffer type \"%s\". %s",eBufferTypeStr[p_BufferType],getLastError().c_str());
 					return false;
 				}
 			}
@@ -505,7 +486,7 @@ namespace K15_Engine { namespace Rendering {
 
 				if(errorOccured())
 				{
-					_LogError_NoSpam("Error during draw. Material: %s (pass %u) %s",
+					K15_LOG_ERROR_NS("Error during draw. Material: %s (pass %u) %s",
 						m_Material->getName().c_str(),i+1,getLastError().c_str());
 					continue;
 				}
@@ -553,7 +534,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				_LogError("Error setting alpha state. %s",getLastError().c_str());
+				K15_LOG_ERROR("Error setting alpha state. %s",getLastError().c_str());
 				return false;
 			}
 		}
@@ -570,7 +551,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				_LogError("Error setting depth state. %s",getLastError().c_str());
+				K15_LOG_ERROR("Error setting depth state. %s",getLastError().c_str());
 				return false;
 			}
     }
@@ -589,7 +570,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				_LogError("Error setting vertex declaration \"%s\".%s",
+				K15_LOG_ERROR("Error setting vertex declaration \"%s\".%s",
 					p_Declaration->getDeclarationString().c_str(),getLastError().c_str());
 
 				return false;
@@ -623,14 +604,14 @@ namespace K15_Engine { namespace Rendering {
 			{
 				if(p_Texture && !m_BoundSamplers[p_Texture->getTextureSamplerSlot()])
 				{
-					_LogWarning("Texture uses sampler in slot %u, but theres currently no sampler bounds to this slot.",
+					K15_LOG_WARNING("Texture uses sampler in slot %u, but theres currently no sampler bounds to this slot.",
 						p_Slot);
 				}
 			}
 
 			if(errorOccured())
 			{
-				_LogError("Error binding texture \"%s\".%s",
+				K15_LOG_ERROR("Error binding texture \"%s\".%s",
 					p_Texture ? p_Texture->getName().c_str() : "",getLastError().c_str());
 
 				return false;
@@ -663,7 +644,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				_LogError("Error binding texture sampler.%s",getLastError().c_str());
+				K15_LOG_ERROR("Error binding texture sampler.%s",getLastError().c_str());
 
 				return false;
 			}
@@ -691,7 +672,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				_LogError("Error binding GpuProgramBatch. Error:\"%s\".",getLastError().c_str());
+				K15_LOG_ERROR("Error binding GpuProgramBatch. Error:\"%s\".",getLastError().c_str());
 
 				return false;
 			}
@@ -815,4 +796,11 @@ namespace K15_Engine { namespace Rendering {
 		return true;
 	}
 	/*********************************************************************************/
-}}//end of K15_Engine::Rendering namespace
+	bool RendererBase::onEventRenderWindowInitialized(GameEvent* p_Event)
+	{
+		_renderWindowInitialized();
+
+		return true;
+	}
+	/*********************************************************************************/
+}}

@@ -22,8 +22,7 @@
 #ifdef K15_OS_WINDOWS
 
 #include "Win32\K15_OSLayer_Win32.h"
-#include "Win32\K15_RenderWindow_Win32.h"
-#include "K15_RenderWindowBase.h"
+#include "K15_RenderWindow.h"
 #include "K15_LogManager.h"
 #include "K15_Application.h"
 #include "K15_StringUtil.h"
@@ -69,7 +68,7 @@ namespace K15_Engine { namespace Core {
 	{
 		if(QueryPerformanceFrequency(&ms_PCF) == FALSE)
 		{
-			_LogError("Could not get performance counter frequency. Error:%s",Application::getInstance()->getLastError().c_str());
+			K15_LOG_ERROR("Could not get performance counter frequency. Error:%s",Application::getInstance()->getLastError().c_str());
 			return false;
 		}
 
@@ -141,7 +140,7 @@ namespace K15_Engine { namespace Core {
 		static MSG msg;
 		static HWND hwnd = (HWND)INVALID_HANDLE_VALUE;
 		
-		hwnd = ((RenderWindow_Win32*)Application::getInstance()->getRenderWindow())->getHandleWindow();
+		hwnd = RenderWindowImpl::getHandleWindow();
 		
 		if(PeekMessage(&msg,0,0,0,PM_REMOVE))
 		{

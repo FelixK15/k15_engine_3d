@@ -24,13 +24,9 @@
 #ifndef _K15Engine_Core_DynamicLibrary_h_
 #define _K15Engine_Core_DynamicLibrary_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#	include "K15_DynamicLibraryManager.h"
-#	include "K15_AllocatedObject.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
-
-#include "K15_Functor.h"
+#include "K15_Prerequisites.h"
+#include "K15_DynamicLibraryManager.h"
+#include "K15_AllocatedObject.h"
 
 namespace K15_Engine { namespace Core {
 

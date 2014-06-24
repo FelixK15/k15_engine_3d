@@ -24,10 +24,7 @@
 #ifndef _K15Engine_Core_Language_h_
 #define _K15Engine_Core_Language_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
-
+#include "K15_Prerequisites.h"
 #include "K15_HashedString.h"
 
 #define LANG_STRING(ID) K15_Engine::Core::Language::getStringForCurrentLanguage(_ON(ID))

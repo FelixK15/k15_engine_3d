@@ -17,7 +17,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_PrecompiledHeaders.h"
+#include "K15_PrecompiledHeader.h"
 #include "K15_Model.h"
 
 namespace K15_Engine { namespace Core {

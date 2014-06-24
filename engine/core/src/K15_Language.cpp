@@ -54,7 +54,7 @@ namespace K15_Engine { namespace Core {
 		K15_ASSERT(p_LanguageID < Language::LID_COUNT,StringUtil::format("Invalid language ID \"%u\".",p_LanguageID));
 		m_CurrentLanguage = p_LanguageID;
 
-		_LogNormal("Language changed to \"%s\".",LanguageString[p_LanguageID].c_str());
+		K15_LOG_NORMAL("Language changed to \"%s\".",LanguageString[p_LanguageID].c_str());
 	}
 	/*********************************************************************************/
 	void Language::serialize()

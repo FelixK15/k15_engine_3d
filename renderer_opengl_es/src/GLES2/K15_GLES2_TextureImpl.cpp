@@ -157,7 +157,7 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 			GLenum error = glGetError();
 			if(error != GL_NO_ERROR)
 			{
-				_LogError("GLES2 Error:\"%s\".",glGetString(error));
+				K15_LOG_ERROR("GLES2 Error:\"%s\".",glGetString(error));
 			}
 #endif //K15_DEBUG
 

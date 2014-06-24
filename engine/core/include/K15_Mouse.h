@@ -24,11 +24,7 @@
 #ifndef _K15Engine_Core_InputDevice_Mouse_h_
 #define _K15Engine_Core_InputDevice_Mouse_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
-
-#include "K15_EventListener.h"
+#include "K15_Prerequisites.h"
 #include "K15_InputTriggerBase.h"
 
 namespace K15_Engine { namespace Core { namespace InputDevices {

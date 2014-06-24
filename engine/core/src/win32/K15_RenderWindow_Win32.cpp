@@ -18,21 +18,14 @@
  */
 
 #include "K15_PrecompiledHeader.h"
+#include "K15_RenderWindow.h"
 
 #ifdef K15_OS_WINDOWS
-
-#include "Win32\K15_RenderWindow_Win32.h"
-#include "K15_Mouse.h"
-#include "K15_Keyboard.h"
-#include "K15_RenderTask.h"
-#include "K15_RendererBase.h"
-#include "K15_Application.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	LRESULT CALLBACK K15_WindowProc(HWND p_HandleWindow,UINT p_MSG,WPARAM p_wParam,LPARAM p_lParam)
 	{
-	    RenderWindowBase* window = (RenderWindowBase*)GetWindowLong(p_HandleWindow,GWL_USERDATA);
 		if(p_MSG == WM_CREATE)
 		{
 			//setup raw input for mouse and gamepads
@@ -50,7 +43,7 @@ namespace K15_Engine { namespace Core {
 
 			if(RegisterRawInputDevices(devices,2,sizeof(devices[0]) == FALSE))
 			{
-				_LogError("Could not create raw input devices. %s.",g_Application->getLastError().c_str());
+				K15_LOG_ERROR("Could not create raw input devices. %s.",g_Application->getLastError().c_str());
 			}
 
       //return 0;
@@ -63,7 +56,7 @@ namespace K15_Engine { namespace Core {
 		else if(p_MSG == WM_ACTIVATE)
 		{
 			bool hasFocus = p_wParam > 0;
-			window->setHasFocus(hasFocus);
+			RenderWindow::setHasFocus(hasFocus);
 
       //return 0;
 		}
@@ -127,22 +120,22 @@ namespace K15_Engine { namespace Core {
 			EventName name;
 			if(p_MSG == WM_MBUTTONDOWN || p_MSG == WM_LBUTTONDOWN || p_MSG == WM_RBUTTONDOWN || p_MSG == WM_XBUTTONDOWN)
 			{
-				name = InputDevices::Mouse::EventMousePressed;
+				//name = InputDevices::Mouse::EventMousePressed;
 			}
 			else if(p_MSG == WM_MBUTTONUP || p_MSG == WM_LBUTTONUP || p_MSG == WM_RBUTTONUP || p_MSG == WM_XBUTTONUP)
 			{
-				name = InputDevices::Mouse::EventMouseReleased;
+				//name = InputDevices::Mouse::EventMouseReleased;
 			}
 			else if(p_MSG == WM_MBUTTONDBLCLK || p_MSG == WM_LBUTTONDBLCLK || p_MSG == WM_RBUTTONDBLCLK || p_MSG == WM_XBUTTONDBLCLK)
 			{
-				name = InputDevices::Mouse::EventDoubleClicked;
+				//name = InputDevices::Mouse::EventDoubleClicked;
 			}
 			else if(p_MSG == WM_MOUSEWHEEL)
 			{
-				name = InputDevices::Mouse::EventMouseWheel;
+				//name = InputDevices::Mouse::EventMouseWheel;
 
 				uint32 eventArguments[3] = {(uint32)GET_WHEEL_DELTA_WPARAM(p_wParam),x,y};
-				InputDevices::Mouse::setMouseWheelDelta(GET_WHEEL_DELTA_WPARAM(p_wParam)); //reset somewhere
+				//InputDevices::Mouse::setMouseWheelDelta(GET_WHEEL_DELTA_WPARAM(p_wParam)); //reset somewhere
 				GameEvent* mouseWheelEvent = K15_NEW GameEvent(name,(void*)eventArguments,96);
 				g_EventManager->triggerEvent(mouseWheelEvent);
 			}
@@ -152,8 +145,8 @@ namespace K15_Engine { namespace Core {
 			args.xPx = x;
 			args.yPx = y;
 
-			args.xNDC = (float)x / (float)window->getResolution().width;
-			args.yNDC = (float)y / (float)window->getResolution().height;
+			args.xNDC = (float)x / (float)RenderWindow::getResolution().width;
+			args.yNDC = (float)y / (float)RenderWindow::getResolution().height;
 
 			//ndc are now from 0 to 1.
 
@@ -167,23 +160,23 @@ namespace K15_Engine { namespace Core {
 
 			if(p_wParam & MK_LBUTTON)
 			{
-				args.button = InputDevices::Mouse::BTN_LEFT;
+				//args.button = InputDevices::Mouse::BTN_LEFT;
 			}
 			else if(p_wParam & MK_RBUTTON)
 			{
-				args.button = InputDevices::Mouse::BTN_RIGHT;
+				//args.button = InputDevices::Mouse::BTN_RIGHT;
 			}
 			else if(p_wParam & MK_MBUTTON)
 			{
-				args.button = InputDevices::Mouse::BTN_MIDDLE;
+				//args.button = InputDevices::Mouse::BTN_MIDDLE;
 			}
 			else if(p_wParam & MK_XBUTTON1)
 			{
-				args.button = InputDevices::Mouse::BTN_SPECIAL1;
+				//args.button = InputDevices::Mouse::BTN_SPECIAL1;
 			}
 			else if(p_wParam & MK_XBUTTON2)
 			{
-				args.button = InputDevices::Mouse::BTN_SPECIAL2;
+				//args.button = InputDevices::Mouse::BTN_SPECIAL2;
 			}
 
 			GameEvent* mouseEvent = K15_NEW GameEvent(name,(void*)&args,sizeof(MouseActionArguments));
@@ -195,11 +188,11 @@ namespace K15_Engine { namespace Core {
 			EventName name;
 			if(p_MSG == WM_KEYDOWN)
 			{
-				name = InputDevices::Keyboard::EventKeyPress;
+				//name = InputDevices::Keyboard::EventKeyPress;
 			}
 			else if(p_MSG == WM_KEYUP)
 			{
-				name = InputDevices::Keyboard::EventKeyRelease;
+				//name = InputDevices::Keyboard::EventKeyRelease;
 			}
 			uint32 key = p_wParam;
 			GameEvent* keyEvent = K15_NEW GameEvent(name,(void*)&key,32);
@@ -218,7 +211,7 @@ namespace K15_Engine { namespace Core {
 
 				if(res.width != 0 && res.height != 0)
 				{
-					GameEvent* resolutionChanged = K15_NEW GameEvent(RenderWindowBase::EventResolutionChanged,(void*)&res,sizeof(Resolution));
+					GameEvent* resolutionChanged = K15_NEW GameEvent(RenderWindow::EventResolutionChanged,(void*)&res,sizeof(Resolution));
 					g_EventManager->triggerEvent(resolutionChanged);
 				}
 			}
@@ -227,24 +220,13 @@ namespace K15_Engine { namespace Core {
 		return DefWindowProc(p_HandleWindow,p_MSG,p_wParam,p_lParam);
 	}
 	/*********************************************************************************/
-	RenderWindow_Win32::RenderWindow_Win32()
-		: RenderWindowBase()
-	{
-
-	}
-	/*********************************************************************************/
-	RenderWindow_Win32::~RenderWindow_Win32()
-	{
-
-	}
-	/*********************************************************************************/
 	bool RenderWindow_Win32::initialize()
 	{
-		m_Instance = GetModuleHandle(0);
+		ms_Instance = GetModuleHandle(0);
 
 		WNDCLASS wc = {0};
 		wc.lpszClassName = "K15_RenderWindowClass";
-		wc.hInstance = m_Instance;
+		wc.hInstance = ms_Instance;
 		wc.lpfnWndProc = K15_WindowProc;
 		wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 		wc.style = CS_OWNDC | CS_VREDRAW | CS_HREDRAW;
@@ -252,122 +234,110 @@ namespace K15_Engine { namespace Core {
 		
 		if(RegisterClass(&wc) == FALSE)
 		{
-			_LogError("Could not register WNDCLASS \"K15_RenderWindowClass\" Error:%s",Application::getInstance()->getLastError().c_str());
+			K15_LOG_ERROR("Could not register WNDCLASS \"K15_RenderWindowClass\" Error:%s", OSLayer::getError().c_str());
 			return false;
 		}
 
-		if((m_HandleWindow = CreateWindow("K15_RenderWindowClass",
-			m_WindowTitle.c_str(),WS_OVERLAPPEDWINDOW,
+		if((ms_HandleWindow = CreateWindow("K15_RenderWindowClass",
+			"",WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,
-			0,0,m_Instance,0)) == INVALID_HANDLE_VALUE)
+			0,0,ms_Instance,0)) == INVALID_HANDLE_VALUE)
 		{
-			_LogError("Could not create window. Error:%s",Application::getInstance()->getLastError().c_str());
+			K15_LOG_ERROR("Could not create window. Error:%s", OSLayer::getError().c_str());
 			return false;
 		}
-		
-		SetWindowLong(m_HandleWindow,GWL_USERDATA,(LONG)this);
 
 		RECT windowrect = {0};
-		GetWindowRect(m_HandleWindow,&windowrect);
+		GetWindowRect(ms_HandleWindow,&windowrect);
 
-		m_CurrentResolution.height = windowrect.bottom - windowrect.top;
-		m_CurrentResolution.width = windowrect.right - windowrect.left;
+		RenderWindow::setResolution(windowrect.right - windowrect.left, windowrect.bottom - windowrect.top);
 
-		m_DeviceContext = GetDC(m_HandleWindow);
+		ms_DeviceContext = GetDC(ms_HandleWindow);
 
-		ShowWindow(m_HandleWindow,SW_SHOW);
+		ShowWindow(ms_HandleWindow,SW_SHOW);
 		return true;
 	}
 	/*********************************************************************************/
 	void RenderWindow_Win32::shutdown()
 	{
-		CloseWindow(m_HandleWindow);
-		DestroyWindow(m_HandleWindow);
-		UnregisterClass("K15_RenderWindowClass",m_Instance);
+		CloseWindow(ms_HandleWindow);
+		DestroyWindow(ms_HandleWindow);
+		UnregisterClass("K15_RenderWindowClass",ms_Instance);
 	}
 	/*********************************************************************************/
 	void RenderWindow_Win32::setWindowTitle(const String& p_WindowTitle)
 	{
-		SetWindowText(m_HandleWindow,p_WindowTitle.c_str());
+		SetWindowText(ms_HandleWindow,p_WindowTitle.c_str());
 	}
 	/*********************************************************************************/
-	void RenderWindow_Win32::setResolution(const Resolution& p_Resolution, bool p_ForceChange)
+	void RenderWindow_Win32::setResolution(const Resolution& p_Resolution)
 	{
-		RenderWindowBase::setResolution(p_Resolution);
-
-		if(p_ForceChange || (p_Resolution.width != m_CurrentResolution.width ||
-			p_Resolution.height != m_CurrentResolution.height))
-		{
-			if(m_IsFullscreen)
-			{
-				DEVMODE dm = {0};
-				dm.dmSize = sizeof(dm);
-				//dm.dmBitsPerPel = g_Application->getRenderTask()->getRenderer() ? RendererBase::PixelFormatSize[g_Application->getRenderTask()->getRenderer()->getFrameBufferPixelFormat()] : 32;
-				dm.dmPelsHeight = p_Resolution.height;
-				dm.dmPelsWidth = p_Resolution.width;
-				dm.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
-				DWORD flags = CDS_RESET;
-				if(isFullscreen())
-				{
-					flags |= CDS_FULLSCREEN;
-				}
-
-				DWORD result = 0;
-				if((result = ChangeDisplaySettings(&dm,flags)) != DISP_CHANGE_SUCCESSFUL)
-				{
-					char* error = 0;
-					if(result == DISP_CHANGE_BADMODE)
-					{
-						error = "Graphics mode not supported";
-					}
-					else if(result == DISP_CHANGE_FAILED)
-					{
-						error = "The display driver failed the specified graphics mode.";
-					}
-					else if(result == DISP_CHANGE_NOTUPDATED)
-					{
-						error = "Unable to write settings to registry";
-					}
-					else if(result == DISP_CHANGE_BADFLAGS)
-					{
-						error = "An invalid set of flags was passed in";
-					}
-
-					_LogError("Could not change fullscreen resolution to \"%ix%i\" Error:%s",p_Resolution.width,p_Resolution.height,error);
-					return;
-				}
-			}
-			else
-			{
-				if(SetWindowPos(m_HandleWindow,HWND_TOP,0,0,p_Resolution.width,p_Resolution.height,
-					SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOZORDER | SWP_NOSENDCHANGING) == FALSE)
-				{
-					_LogError("Could not change resolution to \"%ix%i\" Error:%s",p_Resolution.width,p_Resolution.height,g_Application->getLastError().c_str());
-					return;
-				}
-			}
-		}
+		
 	}
 	/*********************************************************************************/
 	void RenderWindow_Win32::setIsFullscreen(bool p_Fullscreen)
 	{
-		m_IsFullscreen = p_Fullscreen;
-		setResolution(m_CurrentResolution,true);
+		const Resolution& currentResolution = RenderWindow::getResolution();
+
+		if(p_Fullscreen)
+		{
+			DEVMODE dm = {0};
+			dm.dmSize = sizeof(dm);
+			//dm.dmBitsPerPel = g_Application->getRenderTask()->getRenderer() ? RendererBase::PixelFormatSize[g_Application->getRenderTask()->getRenderer()->getFrameBufferPixelFormat()] : 32;
+			dm.dmPelsHeight = currentResolution.height;
+			dm.dmPelsWidth = currentResolution.width;
+			dm.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
+			DWORD flags = CDS_RESET | CDS_FULLSCREEN;
+			DWORD result = 0;
+
+			if((result = ChangeDisplaySettings(&dm,flags)) != DISP_CHANGE_SUCCESSFUL)
+			{
+				char* error = 0;
+				if(result == DISP_CHANGE_BADMODE)
+				{
+					error = "Graphics mode not supported";
+				}
+				else if(result == DISP_CHANGE_FAILED)
+				{
+					error = "The display driver failed the specified graphics mode.";
+				}
+				else if(result == DISP_CHANGE_NOTUPDATED)
+				{
+					error = "Unable to write settings to registry";
+				}
+				else if(result == DISP_CHANGE_BADFLAGS)
+				{
+					error = "An invalid set of flags was passed in";
+				}
+
+				K15_LOG_ERROR("Could not change fullscreen resolution to \"%ix%i\" Error:%s",currentResolution.width, currentResolution.height,error);
+				return;
+			}
+		}
+		else
+		{
+			if(SetWindowPos(ms_HandleWindow,HWND_TOP,0,0,currentResolution.width, currentResolution.height,
+				SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOZORDER | SWP_NOSENDCHANGING) == FALSE)
+			{
+				K15_LOG_ERROR("Could not change resolution to \"%ix%i\" Error:%s",currentResolution.width, currentResolution.height, OSLayer::getError().c_str());
+				return;
+			}
+		}
 	}
 	/*********************************************************************************/
-	HDC RenderWindow_Win32::getDeviceContext() const
+	HDC RenderWindow_Win32::getDeviceContext()
 	{
-		return m_DeviceContext;
+		return ms_DeviceContext;
 	}
 	/*********************************************************************************/
-	HWND RenderWindow_Win32::getHandleWindow() const
+	HWND RenderWindow_Win32::getHandleWindow()
 	{
-		return m_HandleWindow;
+		return ms_HandleWindow;
 	}
 	/*********************************************************************************/
-	HINSTANCE RenderWindow_Win32::getHandleInstance() const
+	HINSTANCE RenderWindow_Win32::getHandleInstance()
 	{
-		return m_Instance;
+		return ms_Instance;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace

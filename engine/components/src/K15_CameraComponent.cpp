@@ -57,9 +57,9 @@ namespace K15_Engine { namespace Rendering {
 	{
 		if(m_ProjMatrixDirty)
 		{
-			float aspect = g_Application->getRenderWindow()->getResolution().getAspectRatio();
-			float width = (float)g_Application->getRenderWindow()->getResolution().width;
-			float height = (float)g_Application->getRenderWindow()->getResolution().height;
+			float aspect = RenderWindow::getAspectRatio();
+			float width = (float)RenderWindow::getWidth();
+			float height = (float)RenderWindow::getHeight();
 			//update projection matrix 
 			if(m_ProjectionType == PT_PERSPECTIVE)
 			{

@@ -81,7 +81,7 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 				char* infoLogBuffer = (char*)alloca(logLength);
 				glGetShaderInfoLog(shader,logLength,&logLength,infoLogBuffer);
 
-				_LogError("Could not compile shader \"%s\" in GpuProgramBatch. Error:\"%s\".",program->getName().c_str(),infoLogBuffer);
+				K15_LOG_ERROR("Could not compile shader \"%s\" in GpuProgramBatch. Error:\"%s\".",program->getName().c_str(),infoLogBuffer);
 				m_ProgramBatch->setError(infoLogBuffer);
 
 				glDeleteShader(shader);
@@ -111,7 +111,7 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 			char* infoLogBuffer = (char*)alloca(logLength);
 			glGetProgramInfoLog(m_Program,logLength,&logLength,infoLogBuffer);
 
-			_LogError("Could not link GpuShaderBatch. Error:\"%s\".",infoLogBuffer);
+			K15_LOG_ERROR("Could not link GpuShaderBatch. Error:\"%s\".",infoLogBuffer);
 			m_ProgramBatch->setError(infoLogBuffer);
 
 			//recreate program

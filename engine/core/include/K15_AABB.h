@@ -23,9 +23,7 @@
 #ifndef _K15Engine_Rendering_AABB_h_
 #define _K15Engine_Rendering_AABB_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
+#include "K15_Prerequisites.h"
 
 /*#include "K15_Vector3.h"*/
 

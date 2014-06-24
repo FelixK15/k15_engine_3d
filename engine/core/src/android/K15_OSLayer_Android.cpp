@@ -21,7 +21,7 @@
 
 #ifdef K15_OS_ANDROID
 
-#include "K15_RenderWindowBase.h"
+#include "K15_RenderWindow.h"
 #include "K15_RenderTask.h"
 #include "K15_RenderProcessBase.h"
 #include "K15_Mouse.h"
@@ -51,12 +51,12 @@ namespace K15_Engine { namespace Core {
 		Application* app = static_cast<Application*>(p_App->userData);
 		if(app)
 		{
-			_LogDebug("App received.");
-			RenderWindowBase* window = app->getRenderWindow();
+			K15_LOG_DEBUG("App received.");
+			RenderWindow* window = app->getRenderWindow();
 
 			if(window)
 			{
-				_LogDebug("RenderWindow received.");
+				K15_LOG_DEBUG("RenderWindow received.");
 				int32 eventAction = 0;
 				if(p_Event)
 				{
@@ -90,7 +90,7 @@ namespace K15_Engine { namespace Core {
 													InputDevices::Mouse::EventMousePressed  : eventAction == AMOTION_EVENT_ACTION_UP ?
 													InputDevices::Mouse::EventMouseReleased : InputDevices::Mouse::EventMouseMoved, (void*)&args, sizeof(MouseActionArguments));
 
-					_LogDebug("x:%d y:%d  |  nx:%.3f ny:%.3f",args.xPx,args.yPx,args.xNDC,args.yNDC);
+					K15_LOG_DEBUG("x:%d y:%d  |  nx:%.3f ny:%.3f",args.xPx,args.yPx,args.xNDC,args.yNDC);
 				}
 
 				if(motionEvent)
@@ -132,12 +132,12 @@ namespace K15_Engine { namespace Core {
 		Application* app = static_cast<Application*>(p_App->userData);
 		if(p_Cmd == APP_CMD_DESTROY)
 		{
-			_LogDebug("APP_CMD_DESTROY received.");
+			K15_LOG_DEBUG("APP_CMD_DESTROY received.");
 			app->setRunning(false);
 		}
 		else if(p_Cmd == APP_CMD_GAINED_FOCUS || p_Cmd == APP_CMD_LOST_FOCUS)
 		{
-			RenderWindowBase* window = 0;
+			RenderWindow* window = 0;
 			if((window = app->getRenderWindow()) != 0)
 			{
 				window->setHasFocus(p_Cmd == APP_CMD_GAINED_FOCUS);
@@ -154,17 +154,17 @@ namespace K15_Engine { namespace Core {
 		}
 		else
 		{
-			if(p_Cmd == APP_CMD_INPUT_CHANGED) _LogDebug("APP_CMD_INPUT_CHANGED received.");
-			if(p_Cmd == APP_CMD_TERM_WINDOW) _LogDebug("APP_CMD_TERM_WINDOW received.");
-			if(p_Cmd == APP_CMD_WINDOW_RESIZED) _LogDebug("APP_CMD_WINDOW_RESIZED received.");
-			if(p_Cmd == APP_CMD_CONTENT_RECT_CHANGED) _LogDebug("APP_CMD_CONTENT_RECT_CHANGED received.");
-			if(p_Cmd == APP_CMD_CONFIG_CHANGED) _LogDebug("APP_CMD_CONFIG_CHANGED received.");
-			if(p_Cmd == APP_CMD_LOW_MEMORY) _LogDebug("APP_CMD_LOW_MEMORY received.");
-			if(p_Cmd == APP_CMD_START) _LogDebug("APP_CMD_START received.");
-			if(p_Cmd == APP_CMD_RESUME) _LogDebug("APP_CMD_RESUME received.");
-			if(p_Cmd == APP_CMD_SAVE_STATE) _LogDebug("APP_CMD_SAVE_STATE received.");
-			if(p_Cmd == APP_CMD_STOP) _LogDebug("APP_CMD_STOP received.");
-			if(p_Cmd == APP_CMD_PAUSE) _LogDebug("APP_CMD_PAUSE received.");
+			if(p_Cmd == APP_CMD_INPUT_CHANGED) K15_LOG_DEBUG("APP_CMD_INPUT_CHANGED received.");
+			if(p_Cmd == APP_CMD_TERM_WINDOW) K15_LOG_DEBUG("APP_CMD_TERM_WINDOW received.");
+			if(p_Cmd == APP_CMD_WINDOW_RESIZED) K15_LOG_DEBUG("APP_CMD_WINDOW_RESIZED received.");
+			if(p_Cmd == APP_CMD_CONTENT_RECT_CHANGED) K15_LOG_DEBUG("APP_CMD_CONTENT_RECT_CHANGED received.");
+			if(p_Cmd == APP_CMD_CONFIG_CHANGED) K15_LOG_DEBUG("APP_CMD_CONFIG_CHANGED received.");
+			if(p_Cmd == APP_CMD_LOW_MEMORY) K15_LOG_DEBUG("APP_CMD_LOW_MEMORY received.");
+			if(p_Cmd == APP_CMD_START) K15_LOG_DEBUG("APP_CMD_START received.");
+			if(p_Cmd == APP_CMD_RESUME) K15_LOG_DEBUG("APP_CMD_RESUME received.");
+			if(p_Cmd == APP_CMD_SAVE_STATE) K15_LOG_DEBUG("APP_CMD_SAVE_STATE received.");
+			if(p_Cmd == APP_CMD_STOP) K15_LOG_DEBUG("APP_CMD_STOP received.");
+			if(p_Cmd == APP_CMD_PAUSE) K15_LOG_DEBUG("APP_CMD_PAUSE received.");
 		}
 	}
 	/*********************************************************************************/

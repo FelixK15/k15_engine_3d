@@ -24,9 +24,7 @@
 #ifndef _K15Engine_Core_ApplicationParameter_h_
 #define _K15Engine_Core_ApplicationParameter_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#endif// K15_USE_PRECOMPILED_HEADERS
+#include "K15_Prerequisites.h"
 
 #define K15_SET_NUMERICAL_SETTING(parameter_variable,setting_name,data_type) \
 	if(parameter_variable.Name == #setting_name)  \

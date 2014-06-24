@@ -24,10 +24,8 @@
 #ifndef _K15Engine_Renderer_RenderOperation_h_
 #define _K15Engine_Renderer_RenderOperation_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#	include "K15_AllocatedObject.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
+#include "K15_Prerequisites.h"
+#include "K15_AllocatedObject.h"
 
 namespace K15_Engine { namespace Rendering {
 	struct K15_CORE_API RenderOperation : public AllocatedObject<BaseAllocatedObject::AC_RENDEROP_POOL>

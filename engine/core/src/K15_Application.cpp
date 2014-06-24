@@ -25,11 +25,11 @@
 #include "K15_TaskManager.h"
 #include "K15_DynamicLibraryBase.h"
 #include "K15_StringUtil.h"
-#include "K15_Functor.h"
 #include "K15_RenderTask.h"
 #include "K15_ResourceManager.h"
 #include "K15_IniFileParser.h"
 #include "K15_Texture.h"
+#include "K15_Functor.h"
 #include "K15_PhysicsTask.h"
 #include "K15_ThreadWorker.h"
 #include "K15_EventTask.h"
@@ -42,11 +42,9 @@
 
 #ifdef K15_DEBUG
 #	ifdef K15_OS_WINDOWS
-#		include "Win32\K15_RenderWindow_Win32.h"
 #		include "Win32\K15_VisualStudioLog_Win32.h"
 #		include "Win32\K15_TextConsoleLog_Win32.h"
 #	elif defined K15_OS_ANDROID
-#		include "Android/K15_RenderWindow_Android.h"
 #		include "Android/K15_Logcat_Android.h"
 #	endif //K15_OS_WINDOWS
 #endif //K15_DEBUG
@@ -66,7 +64,6 @@ namespace K15_Engine { namespace Core {
 		: m_Commands(),
 		m_DynamicLibraryManager(0),
 		m_EventManager(0),
-		m_RenderWindow(0),
 		m_ProfileManager(0),
 		m_TaskManager(0),
 		m_LogManager(0),
@@ -162,13 +159,13 @@ namespace K15_Engine { namespace Core {
 	{
 		static String settingsFileName;
 		settingsFileName = m_GameRootDir + SettingsFileName;
-		_LogNormal("Trying to open settings file %s",SettingsFileName.c_str());
+		K15_LOG_NORMAL("Trying to open settings file %s",SettingsFileName.c_str());
 
 		IniFileParser settingsFile(settingsFileName);
 		
 		if(settingsFile.isValid())
 		{
-			_LogSuccess("Successfully opened settings file!");
+			K15_LOG_SUCCESS("Successfully opened settings file!");
 			IniFileGroup group;
 			if(settingsFile.getGroupEntries("",&group))
 			{
@@ -185,7 +182,7 @@ namespace K15_Engine { namespace Core {
 		}
 		else
 		{
-			_LogError("Could not open settings file. Error:%s",settingsFile.getError().c_str());
+			K15_LOG_ERROR("Could not open settings file. Error:%s",settingsFile.getError().c_str());
 		}
 	}
 	/*********************************************************************************/
@@ -207,63 +204,61 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void Application::initialize()
 	{
-		_LogNormal("Initializing OS layer (OS:\"%s\")",OSLayer::OSName.c_str());
+		K15_LOG_NORMAL("Initializing OS layer (OS:\"%s\")",OSLayer::OSName.c_str());
 
 		//try to initialize the os layer
 		if(!OSLayer::initialize())
 		{
-			_LogError("Failed to initialize OS layer");
+			K15_LOG_ERROR("Failed to initialize OS layer");
 			return;
 		}
 
-		_LogSuccess("OS layer initialized!");
+		K15_LOG_SUCCESS("OS layer initialized!");
 
 		loadGameDirFile();
 		loadSettingsFile();
 		
-		_LogNormal("Initializing DynamicLibraryManager...");
+		K15_LOG_NORMAL("Initializing DynamicLibraryManager...");
 		m_DynamicLibraryManager = K15_NEW DynamicLibraryManager();
 		
-		_LogNormal("Initializing EventManager...");
+		K15_LOG_NORMAL("Initializing EventManager...");
 		m_EventManager = K15_NEW EventManager();
 		
-		_LogNormal("Initializing ProfilingManager...");
+		K15_LOG_NORMAL("Initializing ProfilingManager...");
 		m_ProfileManager = K15_NEW ProfilingManager();;
 
-		_LogNormal("Initializing TaskManager...");
+		K15_LOG_NORMAL("Initializing TaskManager...");
 		m_TaskManager = K15_NEW TaskManager();
 
-		_LogNormal("Initializing InputManager...");
+		K15_LOG_NORMAL("Initializing InputManager...");
 		m_InputManager = K15_NEW InputManager();
 
-		_LogNormal("Initializing ThreadWorker...");
+		K15_LOG_NORMAL("Initializing ThreadWorker...");
 		m_ThreadWorker = K15_NEW ThreadWorker();
 
-		_LogNormal("Initializing ResourceManager...");
+		K15_LOG_NORMAL("Initializing ResourceManager...");
 		m_ResourceManager = K15_NEW ResourceManager();
 
-		_LogNormal("Tasks will get created and added to the task manager.");
-		_LogNormal("Creating and adding event task...");
+		K15_LOG_NORMAL("Tasks will get created and added to the task manager.");
+		K15_LOG_NORMAL("Creating and adding event task...");
 		m_EventTask = K15_NEW EventTask();
 		m_TaskManager->addTask(m_EventTask);
 
-		_LogNormal("Creating and adding render task...");
+		K15_LOG_NORMAL("Creating and adding render task...");
 		m_RenderTask = K15_NEW RenderTask();
 		m_TaskManager->addTask(m_RenderTask);
 
-		_LogNormal("Creating and adding physics task...");
+		K15_LOG_NORMAL("Creating and adding physics task...");
 		m_PhysicsTask = K15_NEW PhysicsTask();
 		m_TaskManager->addTask(m_PhysicsTask);
 
 #		if defined K15_DEBUG
-		_LogNormal("Creating and adding memoryprofiler task...");
+		K15_LOG_NORMAL("Creating and adding memoryprofiler task...");
 		m_MemoryProfilingTask = K15_NEW MemoryProfilingTask();
 		m_TaskManager->addTask(m_MemoryProfilingTask);
 #		endif
-
-		m_RenderWindow = K15_NEW RenderWindowType();
-    
-		m_RenderWindow->initialize();
+  
+		RenderWindow::initialize();
 	
 		//process settings
 		processSettings();
@@ -281,12 +276,6 @@ namespace K15_Engine { namespace Core {
 		}
 
 		tryInitializeRenderer();
-	}
-	/*********************************************************************************/
-	void Application::setWindowTitle(const String& p_WindowTitle) 
-	{
-		if(m_RenderWindow)
-			m_RenderWindow->setWindowTitle(p_WindowTitle);
 	}
 	/*********************************************************************************/
 	void Application::run()
@@ -371,7 +360,7 @@ namespace K15_Engine { namespace Core {
 		{
 			//frame took longer than expected. fire a warning
 			//and then clip diffTime to the max frame time
-			_LogWarning("Frame %i took %.3f seconds to render! (%.3f seconds is average)",m_FrameCounter,diffTime,m_AvgFrameTime);
+			K15_LOG_WARNING("Frame %i took %.3f seconds to render! (%.3f seconds is average)",m_FrameCounter,diffTime,m_AvgFrameTime);
 
 			//update running time
 			m_RunningTime += diffTime;
@@ -401,7 +390,7 @@ namespace K15_Engine { namespace Core {
 		m_FrameStatistics[FrameStatisticIndex].Time = diffTime;
 		m_FrameStatistics[FrameStatisticIndex].FrameNumber = m_FrameCounter;
 		m_FrameStatistics[FrameStatisticIndex].ProfileNode = g_ProfileManager->getRootNode();
-		m_RenderWindow->setWindowTitle(StringUtil::format("msec: %.3f - FPS:%u - Frame Index: %i",diffTime * 1000,m_AvgFramesPerSecond,m_FrameCounter));
+		RenderWindow::setWindowTitle(StringUtil::format("msec: %.3f - FPS:%u - Frame Index: %i",diffTime * 1000,m_AvgFramesPerSecond,m_FrameCounter));
 
 		if(m_FrameCounter > FrameStatisticCount)
 		{
@@ -420,7 +409,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void Application::loadInputFile()
 	{
-		_LogNormal("Trying to open input file \"%s\".",InputFileName.c_str());
+		K15_LOG_NORMAL("Trying to open input file \"%s\".",InputFileName.c_str());
 
 		static ObjectName actionName;
 		static String bindingComplete;
@@ -475,7 +464,7 @@ namespace K15_Engine { namespace Core {
 									}
 									else
 									{
-										_LogError("Could not find input \"%s\".",binding.c_str());
+										K15_LOG_ERROR("Could not find input \"%s\".",binding.c_str());
 									}
 									
 								}
@@ -495,17 +484,17 @@ namespace K15_Engine { namespace Core {
 									}
 									else
 									{
-										_LogError("Could not find input \"%s\".",binding.c_str());
+										K15_LOG_ERROR("Could not find input \"%s\".",binding.c_str());
 									}
 								}
 								else
 								{
-									_LogError("Invalid input device \"%s\"",device.c_str());
+									K15_LOG_ERROR("Invalid input device \"%s\"",device.c_str());
 								}
 							}
 							else
 							{
-								_LogError("invalid binding \"%s\"",bindingComplete.c_str());
+								K15_LOG_ERROR("invalid binding \"%s\"",bindingComplete.c_str());
 							}
 						}
 					} while(!bindingComplete.empty());
@@ -514,13 +503,13 @@ namespace K15_Engine { namespace Core {
 		}
 		else
 		{
-			_LogError("Could not open input file.");
+			K15_LOG_ERROR("Could not open input file.");
 		}
 	}
 	/*********************************************************************************/
 	void Application::loadPluginsFile()
 	{
-		_LogNormal("Trying to open plugin file \"%s\".",PluginFileName.c_str());
+		K15_LOG_NORMAL("Trying to open plugin file \"%s\".",PluginFileName.c_str());
 
 		static String pluginsFileName;
 		pluginsFileName = m_GameRootDir + PluginFileName;
@@ -530,7 +519,7 @@ namespace K15_Engine { namespace Core {
 
 		if(pluginFile.isValid())
 		{
-			_LogSuccess("Opened plugin file \"%s\".",PluginFileName.c_str());
+			K15_LOG_SUCCESS("Opened plugin file \"%s\".",PluginFileName.c_str());
 
 			IniFileGroup group;
 			if(pluginFile.getGroupEntries("",&group))
@@ -549,7 +538,7 @@ namespace K15_Engine { namespace Core {
 		}
 		else
 		{
-			_LogError("Could not open plugin file \"%s\". Error:%s",pluginsFileName.c_str(),pluginFile.getError().c_str());
+			K15_LOG_ERROR("Could not open plugin file \"%s\". Error:%s",pluginsFileName.c_str(),pluginFile.getError().c_str());
 		}
 	}
 	/*********************************************************************************/
@@ -560,7 +549,7 @@ namespace K15_Engine { namespace Core {
 		char* messageBuffer = (char*)alloca(PluginInfoBufferSize);
 		for(StringSet::const_iterator iter = p_PluginNames.begin();iter != p_PluginNames.end();++iter)
 		{
-			_LogNormal("Trying to initialize plugin \"%s\"",iter->c_str());
+			K15_LOG_NORMAL("Trying to initialize plugin \"%s\"",iter->c_str());
 			
 			if((lib = m_DynamicLibraryManager->load(*iter)) != 0)
 			{
@@ -570,16 +559,16 @@ namespace K15_Engine { namespace Core {
 
 				if(!moduleDescFunc.isValid() || !initFunc.isValid())
 				{
-					_LogError("Failed to initialize plugin \"%s\"",(*iter).c_str());
+					K15_LOG_ERROR("Failed to initialize plugin \"%s\"",(*iter).c_str());
 					
 					if(!moduleDescFunc.isValid())
 					{
-						_LogError("Plugin \"%s\" has no \"getDescription\" function.",(*iter).c_str());
+						K15_LOG_ERROR("Plugin \"%s\" has no \"getDescription\" function.",(*iter).c_str());
 					}
 
 					if(!initFunc.isValid())
 					{
-						_LogError("Plugin \"%s\" has no \"pluginLoad\" function.",(*iter).c_str());
+						K15_LOG_ERROR("Plugin \"%s\" has no \"pluginLoad\" function.",(*iter).c_str());
 					}
 
 					break;
@@ -591,14 +580,14 @@ namespace K15_Engine { namespace Core {
 				//get the plugins module description to check what kind of module we're loading
 				ApplicationModuleDescription description = moduleDescFunc();
 				
-				_LogSuccess("Plugin information:\n\tAuthor:\t%s\n\tVersion:\t%u.%u\n\tEngine Version:\t%u",description.Author.c_str(),description.MajorVersion,description.MinorVersion,description.CompiledWithEngineVersion);
+				K15_LOG_SUCCESS("Plugin information:\n\tAuthor:\t%s\n\tVersion:\t%u.%u\n\tEngine Version:\t%u",description.Author.c_str(),description.MajorVersion,description.MinorVersion,description.CompiledWithEngineVersion);
 
 				static ApplicationParameterList pluginSettings;
 
 				//Filter plugin parameter by group name
 				for(StringSet::iterator groupIter = description.GroupFilter.begin();groupIter != description.GroupFilter.end();++groupIter)
 				{
-					_LogNormal("Filtering plugin parameter (by group name \"%s\")...",(*groupIter).c_str());
+					K15_LOG_NORMAL("Filtering plugin parameter (by group name \"%s\")...",(*groupIter).c_str());
 					const String& groupName = *groupIter;
 					uint32 counter = 0;
 					for(ApplicationParameterList::iterator paramIter = m_ApplicationParameter.begin();paramIter != m_ApplicationParameter.end();++paramIter)
@@ -609,7 +598,7 @@ namespace K15_Engine { namespace Core {
 							++counter;
 						}
 					}
-					_LogNormal("...Done filtering plugin parameter. (%i parameter found)",counter);
+					K15_LOG_NORMAL("...Done filtering plugin parameter. (%i parameter found)",counter);
 				}
 			}
 		}
@@ -622,35 +611,32 @@ namespace K15_Engine { namespace Core {
 			(*iter)->onShutdown();
 		}
 
-		m_RenderWindow->shutdown();
+		RenderWindow::shutdown();
 		OSLayer::shutdown();
 		m_ProfileManager->clear();
 
-		_LogNormal("Destroying RenderWindow...");
-		K15_DELETE m_RenderWindow;
-
-		_LogNormal("Destroying ResourceManager...");
+		K15_LOG_NORMAL("Destroying ResourceManager...");
 		K15_DELETE m_ResourceManager;
 
-		_LogNormal("Destroying ThreadWorker...");
+		K15_LOG_NORMAL("Destroying ThreadWorker...");
 		K15_DELETE m_ThreadWorker;
 
-		_LogNormal("Destroying InputManager...");
+		K15_LOG_NORMAL("Destroying InputManager...");
 		K15_DELETE m_InputManager;
 
-		_LogNormal("Destroying TaskMananger...");
+		K15_LOG_NORMAL("Destroying TaskMananger...");
 		K15_DELETE m_TaskManager;
 
-		_LogNormal("Destroying ProfilingManager...");
+		K15_LOG_NORMAL("Destroying ProfilingManager...");
 		K15_DELETE m_ProfileManager;
 
-		_LogNormal("Destroying EventManager...");
+		K15_LOG_NORMAL("Destroying EventManager...");
 		K15_DELETE m_EventManager;
 
-		_LogNormal("Destroying DynamicLibraryManager...");
+		K15_LOG_NORMAL("Destroying DynamicLibraryManager...");
 		K15_DELETE m_DynamicLibraryManager;
 
-		_LogNormal("Destroying LogManager...");
+		K15_LOG_NORMAL("Destroying LogManager...");
 		K15_DELETE m_LogManager;
 
 		m_FrameAllocator->~StackAllocator();
@@ -678,7 +664,7 @@ namespace K15_Engine { namespace Core {
 		}
 		else
 		{
-			_LogWarning("Could not find gamedir file \"%s\"",GameDirFileName.c_str());
+			K15_LOG_WARNING("Could not find gamedir file \"%s\"",GameDirFileName.c_str());
 		}
 	}
 	/*********************************************************************************/
@@ -696,10 +682,7 @@ namespace K15_Engine { namespace Core {
 				int width = atoi(currentParam.Value.substr(0,currentParam.Value.find_first_of('x')).c_str());
 				int height = atoi(currentParam.Value.substr(currentParam.Value.find_first_of('x') + 1).c_str());
 
-				Resolution r;
-				r.width = width;
-				r.height = height;
-				m_RenderWindow->setResolution(r);
+				RenderWindow::setResolution(width, height);
 			}
 
 			if(currentParam.Name == "Renderer")

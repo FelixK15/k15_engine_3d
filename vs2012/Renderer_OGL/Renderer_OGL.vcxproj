@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(ProjectDir)..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\..\obj\$(PlatformToolset)_$(Platform)_$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>..\..\renderer_opengl\include\;..\..\renderer_opengl\include\WGL\;..\..\engine\include\;..\..\renderer\include\;..\..\dependencies\glm\;..\..\dependencies\GLEW\include\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\renderer_opengl\include\;..\..\renderer_opengl\include\WGL\;..\..\engine\core\include\;..\..\engine\rendering\include\;..\..\dependencies\glm\;..\..\dependencies\glew\include\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -81,33 +81,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\renderer_opengl\src\K15_OpenGL_GpuBufferImpl.cpp" />
+    <ClCompile Include="..\..\renderer_opengl\src\K15_OpenGL_GpuProgramBatchImpl.cpp" />
+    <ClCompile Include="..\..\renderer_opengl\src\K15_OpenGL_GpuProgramImpl.cpp" />
+    <ClCompile Include="..\..\renderer_opengl\src\K15_OpenGL_Renderer.cpp" />
+    <ClCompile Include="..\..\renderer_opengl\src\K15_OpenGL_TextureImpl.cpp" />
+    <ClCompile Include="..\..\renderer_opengl\src\K15_OpenGL_TextureSamplerImpl.cpp" />
+    <ClCompile Include="..\..\renderer_opengl\src\K15_OpenGL_VertexDeclarationImpl.cpp" />
     <ClCompile Include="..\..\renderer_opengl\src\plugin.cpp" />
-    <ClCompile Include="..\..\renderer_opengl\src\WGL\K15_OpenGL_GpuBufferImpl.cpp" />
-    <ClCompile Include="..\..\renderer_opengl\src\WGL\K15_WGL_GpuProgramBatchImpl.cpp" />
-    <ClCompile Include="..\..\renderer_opengl\src\WGL\K15_WGL_GpuProgramImpl.cpp" />
-    <ClCompile Include="..\..\renderer_opengl\src\WGL\K15_WGL_Renderer.cpp" />
-    <ClCompile Include="..\..\renderer_opengl\src\WGL\K15_WGL_TextureImpl.cpp" />
-    <ClCompile Include="..\..\renderer_opengl\src\WGL\K15_WGL_TextureSamplerImpl.cpp" />
-    <ClCompile Include="..\..\renderer_opengl\src\WGL\K15_WGL_VertexDeclarationImpl.cpp" />
+    <ClCompile Include="..\..\renderer_opengl\src\WGL\K15_OpenGL_WGL.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\renderer_opengl\include\WGL\K15_WGL_GpuProgramBatchImpl.inl" />
-    <None Include="..\..\renderer_opengl\include\WGL\K15_WGL_TextureImpl.inl" />
-    <None Include="..\..\renderer_opengl\include\WGL\K15_WGL_TextureSamplerImpl.inl" />
+    <None Include="..\..\renderer_opengl\include\K15_OpenGL_TextureImpl.inl" />
+    <None Include="..\..\renderer_opengl\include\K15_OpenGL_TextureSamplerImpl.inl" />
     <None Include="..\..\renderer_opengl\shader\default.frag" />
     <None Include="..\..\renderer_opengl\shader\default.vert" />
     <None Include="module.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\renderer_opengl\include\K15_OpenGL_GpuBufferImpl.h" />
+    <ClInclude Include="..\..\renderer_opengl\include\K15_OpenGL_GpuProgramBatchImpl.h" />
+    <ClInclude Include="..\..\renderer_opengl\include\K15_OpenGL_GpuProgramImpl.h" />
     <ClInclude Include="..\..\renderer_opengl\include\K15_OpenGL_Prerequisites.h" />
+    <ClInclude Include="..\..\renderer_opengl\include\K15_OpenGL_Renderer.h" />
+    <ClInclude Include="..\..\renderer_opengl\include\K15_OpenGL_TextureImpl.h" />
+    <ClInclude Include="..\..\renderer_opengl\include\K15_OpenGL_TextureSamplerImpl.h" />
+    <ClInclude Include="..\..\renderer_opengl\include\K15_OpenGL_VertexDeclarationImpl.h" />
     <ClInclude Include="..\..\renderer_opengl\include\plugin.h" />
     <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_OpenGL_GpuBufferImpl.h" />
-    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_GpuProgramBatchImpl.h" />
-    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_GpuProgramImpl.h" />
-    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_Renderer.h" />
-    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_TextureImpl.h" />
-    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_TextureSamplerImpl.h" />
-    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_VertexDeclarationImpl.h" />
+    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_OpenGL_WGL.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -79,8 +79,8 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 			m_GpuProgram->setAmountUniforms(countActiveUniforms);
 			m_GpuProgram->setAmountAttributes(countActiveAttribs);
 
-			_LogDebug("Found %i active attributes for shader \"%s\".",countActiveAttribs,m_GpuProgram->getName().c_str());
-			_LogDebug("Found %i active uniforms for shader \"%s\".",countActiveUniforms,m_GpuProgram->getName().c_str());
+			K15_LOG_DEBUG("Found %i active attributes for shader \"%s\".",countActiveAttribs,m_GpuProgram->getName().c_str());
+			K15_LOG_DEBUG("Found %i active uniforms for shader \"%s\".",countActiveUniforms,m_GpuProgram->getName().c_str());
 
 			buffer = (char*)alloca(attribBufferSize);
 			for(int i = 0;i < countActiveAttribs;++i)
@@ -95,7 +95,7 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 				currentAttrib.setSize(attribSize);
 				currentAttrib.setType(_getParameterType(attribType));
 
-				_LogDebug("Attribute info: name: \"%s\" - size: %ibyte - index: %i - type: %i",
+				K15_LOG_DEBUG("Attribute info: name: \"%s\" - size: %ibyte - index: %i - type: %i",
 					buffer,attribSize,attribLocation,attribType);
 			}
 
@@ -112,7 +112,7 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 				currentUniform.setSize(uniformSize);
 				currentUniform.setType(_getParameterType(uniformType));
 
-				_LogDebug("Uniform info: name: \"%s\" - size: %ibyte - index: %i - type: %i",
+				K15_LOG_DEBUG("Uniform info: name: \"%s\" - size: %ibyte - index: %i - type: %i",
 					buffer,uniformSize,uniformLocation,uniformType);
 			}
 		}
@@ -146,7 +146,7 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 			char* infoLogBuffer = (char*)alloca(logLength);
 			glGetShaderInfoLog(m_Shader,logLength,&logLength,infoLogBuffer);
 
-			_LogError("Could not compile shader \"%s\". Error:\"%s\".",m_GpuProgram->getName().c_str(),infoLogBuffer);
+			K15_LOG_ERROR("Could not compile shader \"%s\". Error:\"%s\".",m_GpuProgram->getName().c_str(),infoLogBuffer);
 
 			return false;
 		}

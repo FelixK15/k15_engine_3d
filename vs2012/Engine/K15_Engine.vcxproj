@@ -64,7 +64,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>K15_Engine</TargetName>
-    <IncludePath>..\..\dependencies\tinyobjloader\include\;..\..\dependencies\glm\;..\..\dependencies\Enet\include\;..\..\dependencies\LuaPlus\include\;..\..\dependencies\freetype\include\;..\..\engine\include\;..\..\renderer\include\;..\..\dependencies\TinyThread\include\;..\..\dependencies\JsonCPP\include\;..\..\dependencies\libbmp\include\;..\..\dependencies\zlib\include\;..\..\dependencies\minizip\include\;..\..\dependencies\libtiff\include\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\dependencies\tinyobjloader\include\;..\..\dependencies\glm\include\;..\..\dependencies\Enet\include\;..\..\dependencies\LuaPlus\include\;..\..\dependencies\freetype\include\;..\..\engine\components\include\;..\..\engine\core\include\;..\..\engine\resource_system\include\;..\..\engine\serialization\include\;..\..\engine\rendering\include\;..\..\dependencies\TinyThread\include\;..\..\dependencies\JsonCPP\include\;..\..\dependencies\libbmp\include\;..\..\dependencies\zlib\include\;..\..\dependencies\minizip\include\;..\..\dependencies\libtiff\include\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\bin\dependencies\$(PlatformToolset)_$(Platform)_$(Configuration)\;..\..\bin\$(PlatformToolset)_$(Platform)_$(Configuration)\;$(LibraryPath)</LibraryPath>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -108,7 +108,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>module.def</ModuleDefinitionFile>
-      <AdditionalDependencies>LuaPlus.lib;Enet.lib;TinyThread.lib;Ws2_32.lib;zlib.lib;libtiff.lib;minizip.lib;JsonCPP.lib;tinyobjloader.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Enet.lib;TinyThread.lib;Ws2_32.lib;zlib.lib;libtiff.lib;minizip.lib;JsonCPP.lib;tinyobjloader.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -149,482 +149,302 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\engine\include\Android\K15_Logcat_Android.h" />
-    <ClInclude Include="..\..\engine\include\Android\K15_OSLayer_Android.h" />
-    <ClInclude Include="..\..\engine\include\Android\K15_RenderWindow_Android.h" />
-    <ClInclude Include="..\..\engine\include\Android\K15_ResourceArchiveAndroid.h" />
-    <ClInclude Include="..\..\engine\include\K15_AABB.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_AllocatedObject.h" />
-    <ClInclude Include="..\..\engine\include\K15_AlphaState.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Application.h" />
-    <ClInclude Include="..\..\engine\include\K15_ApplicationModule.h" />
-    <ClInclude Include="..\..\engine\include\K15_ApplicationModuleDescription.h" />
-    <ClInclude Include="..\..\engine\include\K15_ApplicationParameter.h" />
-    <ClInclude Include="..\..\engine\include\K15_BaseAllocator.h" />
-    <ClInclude Include="..\..\engine\include\K15_BlockAllocator.h" />
-    <ClInclude Include="..\..\engine\include\K15_CameraComponent.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ColorRGBA.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_DepthState.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_DynamicLibraryBase.h" />
-    <ClInclude Include="..\..\engine\include\K15_DynamicLibraryManager.h" />
-    <ClInclude Include="..\..\engine\include\K15_EventHandler.h" />
-    <ClInclude Include="..\..\engine\include\K15_EventTask.h" />
-    <ClInclude Include="..\..\engine\include\K15_Font.h" />
-    <ClInclude Include="..\..\engine\include\K15_Frustum.h" />
-    <ClInclude Include="..\..\engine\include\K15_GameStateBase.h" />
-    <ClInclude Include="..\..\engine\include\K15_GpuProgramBatch.h" />
-    <ClInclude Include="..\..\engine\include\K15_GpuProgramCatalog.h" />
-    <ClInclude Include="..\..\engine\include\K15_Image.h" />
-    <ClInclude Include="..\..\engine\include\K15_IOUtil.h" />
-    <ClInclude Include="..\..\engine\include\K15_FrameStatistic.h" />
-    <ClInclude Include="..\..\engine\include\K15_GameObject.h" />
-    <ClInclude Include="..\..\engine\include\K15_GameObjectComponentBase.h" />
-    <ClInclude Include="..\..\engine\include\K15_GpuBuffer.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_GpuProgram.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_GpuProgramParameter.h" />
-    <ClInclude Include="..\..\engine\include\K15_IndexBuffer.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_IniFileParser.h" />
-    <ClInclude Include="..\..\engine\include\K15_InputManager.h" />
-    <ClInclude Include="..\..\engine\include\K15_InputTriggerBase.h" />
-    <ClInclude Include="..\..\engine\include\K15_JobBase.h" />
-    <ClInclude Include="..\..\engine\include\K15_JsonSerializer.h" />
-    <ClInclude Include="..\..\engine\include\K15_Keyboard.h" />
-    <ClInclude Include="..\..\engine\include\K15_Light.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_LightComponent.h" />
-    <ClInclude Include="..\..\engine\include\K15_LogBase.h" />
-    <ClInclude Include="..\..\engine\include\K15_LogManager.h" />
-    <ClInclude Include="..\..\engine\include\K15_Material.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_MaterialData.h" />
-    <ClInclude Include="..\..\engine\include\K15_MatrixUtil.h" />
-    <ClInclude Include="..\..\engine\include\K15_MemberFunctor.h" />
-    <ClInclude Include="..\..\engine\include\K15_MemoryBlock.h" />
-    <ClInclude Include="..\..\engine\include\K15_MemoryHeader.h" />
-    <ClInclude Include="..\..\engine\include\K15_MemoryProfilingTask.h" />
-    <ClInclude Include="..\..\engine\include\K15_Mesh.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Model.h" />
-    <ClInclude Include="..\..\engine\include\K15_ModelComponent.h" />
-    <ClInclude Include="..\..\engine\include\K15_Mouse.h" />
-    <ClInclude Include="..\..\engine\include\K15_NetworkManager.h" />
-    <ClInclude Include="..\..\engine\include\K15_NodeComponent.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_NTreeNode.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_PhysicsProcessBase.h" />
-    <ClInclude Include="..\..\engine\include\K15_PhysicsTask.h" />
-    <ClInclude Include="..\..\engine\include\K15_Pointer.h" />
-    <ClInclude Include="..\..\engine\include\K15_PoolAllocator.h" />
-    <ClInclude Include="..\..\engine\include\K15_PrecompiledHeader.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Prerequisites.h" />
-    <ClInclude Include="..\..\engine\include\K15_ProfilingManager.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_NTree.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_RendererBase.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_RenderOperation.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_RenderProcessBase.h" />
-    <ClInclude Include="..\..\engine\include\K15_RenderQueue.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_RenderTask.h" />
-    <ClInclude Include="..\..\engine\include\K15_RenderWindowBase.h" />
-    <ClInclude Include="..\..\engine\include\K15_ResourceImporterBase.h" />
-    <ClInclude Include="..\..\engine\include\K15_ResourceImporterBitmap.h" />
-    <ClInclude Include="..\..\engine\include\K15_ResourceImporterFont.h" />
-    <ClInclude Include="..\..\engine\include\K15_ResourceImporterMaterial.h" />
-    <ClInclude Include="..\..\engine\include\K15_ResourceImporterObj.h" />
-    <ClInclude Include="..\..\engine\include\K15_SceneGraph.h" />
-    <ClInclude Include="..\..\engine\include\K15_Serialization.h" />
-    <ClInclude Include="..\..\engine\include\K15_Serializer.h" />
-    <ClInclude Include="..\..\engine\include\K15_SerializerBase.h" />
-    <ClInclude Include="..\..\engine\include\K15_SerialReader.h" />
-    <ClInclude Include="..\..\engine\include\K15_SerialSizer.h" />
-    <ClInclude Include="..\..\engine\include\K15_SerialWriter.h" />
-    <ClInclude Include="..\..\engine\include\K15_StackAllocator.h" />
-    <ClInclude Include="..\..\engine\include\K15_Language.h" />
-    <ClInclude Include="..\..\engine\include\K15_StringUtil.h" />
-    <ClInclude Include="..\..\engine\include\K15_SubMesh.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_TaskBase.h" />
-    <ClInclude Include="..\..\engine\include\K15_Texture.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_TextureSampler.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ThreadSafe.h" />
-    <ClInclude Include="..\..\engine\include\K15_ThreadWorker.h" />
-    <ClInclude Include="..\..\engine\include\K15_ResourceImporterTiff.h" />
-    <ClInclude Include="..\..\engine\include\K15_Vertex.h" />
-    <ClInclude Include="..\..\engine\include\K15_VertexBuffer.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_VertexDeclaration.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"F:\Programming\C++\My Projects\k15-engine-3d\parser\bin\v110_Win32_Debug\LuaCPP_Parser.exe %(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ResourceArchiveZip.h" />
-    <ClInclude Include="..\..\engine\include\Linux\K15_DynamicLibrary_Linux.h" />
-    <ClInclude Include="..\..\engine\include\win32\K15_OSLayer_Win32.h" />
-    <ClInclude Include="..\..\engine\include\win32\K15_DynamicLibrary_Win32.h" />
-    <ClInclude Include="..\..\engine\include\win32\K15_RenderWindow_Win32.h" />
-    <ClInclude Include="..\..\engine\include\Win32\K15_TextConsoleLog_Win32.h" />
-    <ClInclude Include="..\..\engine\include\win32\K15_VisualStudioLog_Win32.h" />
-    <None Include="..\..\engine\include\Android\K15_OSLayer_Android.inl" />
-    <None Include="..\..\engine\include\Android\K15_RenderWindow_Android.inl" />
-    <None Include="..\..\engine\include\K15_AABB.inl" />
-    <None Include="..\..\engine\include\K15_AlphaState.inl" />
-    <None Include="..\..\engine\include\K15_CameraComponent.inl" />
-    <None Include="..\..\engine\include\K15_ColorRGBA.inl" />
-    <ClInclude Include="..\..\engine\include\K15_DynamicArray.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_GameEvent.h" />
-    <ClInclude Include="..\..\engine\include\K15_EventListener.h" />
-    <ClInclude Include="..\..\engine\include\K15_EventManager.h" />
-    <ClInclude Include="..\..\engine\include\K15_GameTime.h" />
-    <ClInclude Include="..\..\engine\include\K15_HashedString.h" />
-    <ClInclude Include="..\..\engine\include\K15_HashItem.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_HashMap.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_List.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ListNode.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_Object.h" />
-    <ClInclude Include="..\..\engine\include\K15_ProfilingNode.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_ResourceBase.h" />
-    <ClInclude Include="..\..\engine\include\K15_ResourceArchiveBase.h" />
-    <ClInclude Include="..\..\engine\include\K15_ResourceHandle.h" />
-    <ClInclude Include="..\..\engine\include\K15_ResourceManager.h" />
-    <ClInclude Include="..\..\engine\include\K15_Rtti.h" />
-    <ClInclude Include="..\..\engine\include\K15_Singleton.h" />
-    <ClInclude Include="..\..\engine\include\K15_Stack.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_StackItem.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\engine\include\K15_TaskManager.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\engine\src\Android\K15_Logcat_Android.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\Android\K15_OSLayer_Android.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\Android\K15_Keyboard_Android.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\Android\K15_Mouse_Android.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\Android\K15_RenderWindow_Android.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\Android\K15_ResourceArchiveAndroid.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_AABB.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_AllocatedObject.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_AlphaState.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_ApplicationModule.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_BlockAllocator.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_ColorRGBA.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_DepthState.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_DynamicLibraryBase.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_EventHandler.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_EventTask.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Font.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Frustum.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_GameObject.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_GameObjectComponentBase.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_GameStateBase.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_GpuBuffer.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_GpuProgram.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_GpuProgramBatch.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_GpuProgramCatalog.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_GpuProgramParameter.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Image.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_IndexBuffer.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_IniFileParser.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_InputManager.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_IOUtil.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_JobBase.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_JsonSerializer.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Keyboard.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Language.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_LightComponent.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Material.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_MaterialData.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_MatrixUtil.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_MemoryBlock.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_MemoryProfilingTask.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Mesh.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Model.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_ModelComponent.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Mouse.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_NetworkManager.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_NodeComponent.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_PhysicsTask.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_PrecompiledHeader.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_RawData.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_RendererBase.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_RenderProcessBase.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_RenderQueue.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_RenderTask.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_RenderWindowBase.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_ResourceArchiveBase.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_ResourceImporterBase.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_ResourceImporterBitmap.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_ResourceImporterFont.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_ResourceImporterMaterial.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_ResourceImporterObj.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_SceneGraph.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Serializer.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_SerializerBase.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_SerialReader.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_SerialSizer.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_SerialWriter.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_SubMesh.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Texture.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_TextureSampler.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_ThreadSafe.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_ThreadWorker.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_ResourceImporterTiff.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Vertex.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_VertexBuffer.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_VertexDeclaration.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_ResourceArchiveZip.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\Linux\K15_DynamicLibrary_Linux.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\Win32\K15_DynamicLibrary_Win32.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\Win32\K15_Keyboard_Win32.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\Win32\K15_Mouse_Win32.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\win32\K15_RenderWindow_Win32.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\Win32\K15_TextConsoleLog_Win32.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\Win32\K15_VisualStudioLog_Win32.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
-    </ClCompile>
-    <None Include="..\..\engine\include\K15_AllocatedObject.inl" />
-    <None Include="..\..\engine\include\K15_Application.inl" />
-    <None Include="..\..\engine\include\K15_DepthState.inl" />
-    <None Include="..\..\engine\include\K15_DynamicArray.inl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </None>
-    <None Include="..\..\engine\include\K15_DynamicLibraryBase.inl" />
-    <None Include="..\..\engine\include\K15_EventHandler.inl" />
-    <None Include="..\..\engine\include\K15_EventManager.inl" />
-    <None Include="..\..\engine\include\K15_Font.inl" />
-    <None Include="..\..\engine\include\K15_Frustum.inl" />
-    <None Include="..\..\engine\include\K15_Functor.inl" />
-    <None Include="..\..\engine\include\K15_GameEvent.inl" />
-    <None Include="..\..\engine\include\K15_GameObject.inl" />
-    <None Include="..\..\engine\include\K15_GameObjectComponentBase.inl" />
-    <None Include="..\..\engine\include\K15_GpuBuffer.inl" />
-    <None Include="..\..\engine\include\K15_GpuProgram.inl" />
-    <None Include="..\..\engine\include\K15_GpuProgramBatch.inl" />
-    <None Include="..\..\engine\include\K15_GpuProgramParameter.inl" />
-    <None Include="..\..\engine\include\K15_Image.inl" />
-    <None Include="..\..\engine\include\K15_IndexBuffer.inl" />
-    <None Include="..\..\engine\include\K15_IniFileParser.inl" />
-    <None Include="..\..\engine\include\K15_JobBase.inl" />
-    <None Include="..\..\engine\include\K15_Language.inl" />
-    <None Include="..\..\engine\include\K15_LightComponent.inl" />
-    <None Include="..\..\engine\include\K15_Material.inl" />
-    <None Include="..\..\engine\include\K15_Mesh.inl" />
-    <None Include="..\..\engine\include\K15_ModelComponent.inl" />
-    <None Include="..\..\engine\include\K15_NodeComponent.inl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </None>
-    <None Include="..\..\engine\include\K15_PoolAllocator.inl" />
-    <None Include="..\..\engine\include\K15_GameTime.inl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </None>
-    <None Include="..\..\engine\include\K15_HashedString.inl" />
-    <None Include="..\..\engine\include\K15_HashItem.inl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </None>
-    <None Include="..\..\engine\include\K15_HashMap.inl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </None>
-    <None Include="..\..\engine\include\K15_List.inl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </None>
-    <None Include="..\..\engine\include\K15_ListNode.inl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </None>
-    <None Include="..\..\engine\include\K15_LogManager.inl" />
-    <None Include="..\..\engine\include\K15_MemberFunctor.inl" />
-    <None Include="..\..\engine\include\K15_NTree.inl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </None>
-    <None Include="..\..\engine\include\K15_Object.inl" />
-    <None Include="..\..\engine\include\K15_Pointer.inl" />
-    <None Include="..\..\engine\include\K15_ProfilingManager.inl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </None>
-    <None Include="..\..\engine\include\K15_RendererBase.inl" />
-    <None Include="..\..\engine\include\K15_RenderQueue.inl" />
-    <None Include="..\..\engine\include\K15_ResourceBase.inl" />
-    <None Include="..\..\engine\include\K15_ResourceArchiveBase.inl" />
-    <None Include="..\..\engine\include\K15_ResourceHandle.inl" />
-    <None Include="..\..\engine\include\K15_ResourceImporterBase.inl" />
-    <None Include="..\..\engine\include\K15_ResourceManager.inl" />
-    <None Include="..\..\engine\include\K15_Rtti.inl" />
-    <None Include="..\..\engine\include\K15_SerializerBase.inl" />
-    <None Include="..\..\engine\include\K15_SerialReader.inl" />
-    <None Include="..\..\engine\include\K15_Stack.inl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </None>
-    <None Include="..\..\engine\include\K15_StackItem.inl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </None>
-    <ClCompile Include="..\..\engine\src\K15_Application.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_BaseAllocator.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_DynamicLibraryManager.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_GameEvent.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_EventManager.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_GameTime.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_HashedString.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_LogBase.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_LogManager.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Object.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_ProfilingManager.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_ProfilingNode.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\engine\src\K15_ResourceBase.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_ResourceManager.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_Rtti.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_StackAllocator.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_StringUtil.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_TaskBase.cpp" />
-    <ClCompile Include="..\..\engine\src\K15_TaskManager.cpp" />
-    <ClCompile Include="..\..\engine\src\Win32\K15_OSLayer_Win32.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">true</ExcludedFromBuild>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\engine\include\K15_StringUtil.inl" />
-    <None Include="..\..\engine\include\K15_SubMesh.inl" />
-    <None Include="..\..\engine\include\K15_TaskBase.inl" />
-    <None Include="..\..\engine\include\K15_TaskManager.inl" />
-    <None Include="..\..\engine\include\K15_Texture.inl" />
-    <None Include="..\..\engine\include\K15_TextureSampler.inl" />
-    <None Include="..\..\engine\include\K15_ThreadSafe.inl" />
-    <None Include="..\..\engine\include\K15_Vertex.inl" />
-    <None Include="..\..\engine\include\K15_VertexBuffer.inl" />
-    <None Include="..\..\engine\include\K15_VertexDeclaration.inl" />
-    <ClCompile Include="..\..\engine\src\K15_CameraComponent.cpp" />
+    <None Include="..\..\engine\components\include\K15_CameraComponent.inl" />
+    <None Include="..\..\engine\components\include\K15_LightComponent.inl" />
+    <None Include="..\..\engine\components\include\K15_ModelComponent.inl" />
+    <None Include="..\..\engine\components\include\K15_NodeComponent.inl" />
+    <None Include="..\..\engine\core\include\android\K15_OSLayer_Android.inl" />
+    <None Include="..\..\engine\core\include\android\K15_RenderWindow_Android.inl" />
+    <None Include="..\..\engine\core\include\K15_AABB.inl" />
+    <None Include="..\..\engine\core\include\K15_AllocatedObject.inl" />
+    <None Include="..\..\engine\core\include\K15_Application.inl" />
+    <None Include="..\..\engine\core\include\K15_BaseAllocator.inl" />
+    <None Include="..\..\engine\core\include\K15_ColorRGBA.inl" />
+    <None Include="..\..\engine\core\include\K15_DynamicLibraryBase.inl" />
+    <None Include="..\..\engine\core\include\K15_EventHandler.inl" />
+    <None Include="..\..\engine\core\include\K15_EventManager.inl" />
+    <None Include="..\..\engine\core\include\K15_Font.inl" />
+    <None Include="..\..\engine\core\include\K15_Frustum.inl" />
+    <None Include="..\..\engine\core\include\K15_Functor.inl" />
+    <None Include="..\..\engine\core\include\K15_GameEvent.inl" />
+    <None Include="..\..\engine\core\include\K15_GameObject.inl" />
+    <None Include="..\..\engine\core\include\K15_GameObjectComponentBase.inl" />
+    <None Include="..\..\engine\core\include\K15_GameTime.inl" />
+    <None Include="..\..\engine\core\include\K15_HashedString.inl" />
+    <None Include="..\..\engine\core\include\K15_Image.inl" />
+    <None Include="..\..\engine\core\include\K15_IniFileParser.inl" />
+    <None Include="..\..\engine\core\include\K15_JobBase.inl" />
+    <None Include="..\..\engine\core\include\K15_Language.inl" />
+    <None Include="..\..\engine\core\include\K15_LogManager.inl" />
+    <None Include="..\..\engine\core\include\K15_Node.inl" />
+    <None Include="..\..\engine\core\include\K15_Object.inl" />
+    <None Include="..\..\engine\core\include\K15_PoolAllocator.inl" />
+    <None Include="..\..\engine\core\include\K15_ProfilingManager.inl" />
+    <None Include="..\..\engine\core\include\K15_RenderWindow.inl" />
+    <None Include="..\..\engine\core\include\K15_Rtti.inl" />
+    <None Include="..\..\engine\core\include\K15_StringUtil.inl" />
+    <None Include="..\..\engine\core\include\K15_TaskBase.inl" />
+    <None Include="..\..\engine\core\include\K15_TaskManager.inl" />
+    <None Include="..\..\engine\core\include\K15_ThreadSafe.inl" />
+    <None Include="..\..\engine\rendering\include\K15_AlphaState.inl" />
+    <None Include="..\..\engine\rendering\include\K15_DepthState.inl" />
+    <None Include="..\..\engine\rendering\include\K15_GpuBuffer.inl" />
+    <None Include="..\..\engine\rendering\include\K15_GpuProgram.inl" />
+    <None Include="..\..\engine\rendering\include\K15_GpuProgramBatch.inl" />
+    <None Include="..\..\engine\rendering\include\K15_GpuProgramParameter.inl" />
+    <None Include="..\..\engine\rendering\include\K15_IndexBuffer.inl" />
+    <None Include="..\..\engine\rendering\include\K15_Material.inl" />
+    <None Include="..\..\engine\rendering\include\K15_Mesh.inl" />
+    <None Include="..\..\engine\rendering\include\K15_RendererBase.inl" />
+    <None Include="..\..\engine\rendering\include\K15_RenderQueue.inl" />
+    <None Include="..\..\engine\rendering\include\K15_SubMesh.inl" />
+    <None Include="..\..\engine\rendering\include\K15_Texture.inl" />
+    <None Include="..\..\engine\rendering\include\K15_TextureSampler.inl" />
+    <None Include="..\..\engine\rendering\include\K15_Vertex.inl" />
+    <None Include="..\..\engine\rendering\include\K15_VertexBuffer.inl" />
+    <None Include="..\..\engine\rendering\include\K15_VertexDeclaration.inl" />
+    <None Include="..\..\engine\resource_system\include\K15_ResourceArchiveBase.inl" />
+    <None Include="..\..\engine\resource_system\include\K15_ResourceBase.inl" />
+    <None Include="..\..\engine\resource_system\include\K15_ResourceHandle.inl" />
+    <None Include="..\..\engine\resource_system\include\K15_ResourceImporterBase.inl" />
+    <None Include="..\..\engine\resource_system\include\K15_ResourceManager.inl" />
+    <None Include="..\..\engine\serialization\include\K15_SerializerBase.inl" />
+    <None Include="..\..\engine\serialization\include\K15_SerialReader.inl" />
     <None Include="module.def" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\engine\doc\Folder structure.txt" />
     <Text Include="File formats.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\engine\components\include\K15_CameraComponent.h" />
+    <ClInclude Include="..\..\engine\components\include\K15_LightComponent.h" />
+    <ClInclude Include="..\..\engine\components\include\K15_ModelComponent.h" />
+    <ClInclude Include="..\..\engine\components\include\K15_NodeComponent.h" />
+    <ClInclude Include="..\..\engine\core\include\android\K15_Logcat_Android.h" />
+    <ClInclude Include="..\..\engine\core\include\android\K15_OSLayer_Android.h" />
+    <ClInclude Include="..\..\engine\core\include\android\K15_RenderWindow_Android.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_AABB.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_AllocatedObject.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_Application.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_ApplicationModule.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_ApplicationModuleDescription.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_ApplicationParameter.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_BaseAllocator.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_BlockAllocator.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_ColorRGBA.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_DynamicLibraryBase.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_DynamicLibraryManager.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_EnumStrings.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_EventHandler.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_EventManager.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_EventTask.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_Font.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_FrameStatistic.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_Frustum.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_Functor.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_GameEvent.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_GameObject.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_GameObjectComponentBase.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_GameStateBase.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_GameTime.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_HashedString.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_Image.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_IniFileParser.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_InputManager.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_InputTriggerBase.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_IOUtil.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_JobBase.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_Keyboard.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_Language.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_LogBase.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_LogManager.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_MatrixUtil.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_MemoryBlock.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_MemoryHeader.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_MemoryProfilingTask.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_Mouse.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_NetworkManager.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_Node.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_Object.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_PhysicsProcessBase.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_PhysicsTask.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_PoolAllocator.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_PrecompiledHeader.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_Prerequisites.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_ProfilingManager.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_ProfilingNode.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_RawData.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_RenderWindow.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_Rtti.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_Singleton.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_StackAllocator.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_StringUtil.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_TaskBase.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_TaskManager.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_ThreadSafe.h" />
+    <ClInclude Include="..\..\engine\core\include\K15_ThreadWorker.h" />
+    <ClInclude Include="..\..\engine\core\include\linux\K15_DynamicLibrary_Linux.h" />
+    <ClInclude Include="..\..\engine\core\include\win32\K15_DynamicLibrary_Win32.h" />
+    <ClInclude Include="..\..\engine\core\include\win32\K15_OSLayer_Win32.h" />
+    <ClInclude Include="..\..\engine\core\include\win32\K15_RenderWindow_Win32.h" />
+    <ClInclude Include="..\..\engine\core\include\win32\K15_TextConsoleLog_Win32.h" />
+    <ClInclude Include="..\..\engine\core\include\win32\K15_VisualStudioLog_Win32.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_AlphaState.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_DepthState.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_GpuBuffer.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_GpuProgram.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_GpuProgramBatch.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_GpuProgramCatalog.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_GpuProgramParameter.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_IndexBuffer.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_Light.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_Material.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_MaterialData.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_Mesh.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_Model.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_RendererBase.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_RenderOperation.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_RenderProcessBase.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_RenderQueue.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_RenderTask.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_SceneGraph.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_SubMesh.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_Texture.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_TextureSampler.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_Vertex.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_VertexBuffer.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_VertexBufferCache.h" />
+    <ClInclude Include="..\..\engine\rendering\include\K15_VertexDeclaration.h" />
+    <ClInclude Include="..\..\engine\resource_system\include\android\K15_ResourceArchive_Android.h" />
+    <ClInclude Include="..\..\engine\resource_system\include\K15_ResourceArchiveBase.h" />
+    <ClInclude Include="..\..\engine\resource_system\include\K15_ResourceArchiveZip.h" />
+    <ClInclude Include="..\..\engine\resource_system\include\K15_ResourceBase.h" />
+    <ClInclude Include="..\..\engine\resource_system\include\K15_ResourceHandle.h" />
+    <ClInclude Include="..\..\engine\resource_system\include\K15_ResourceImporterBase.h" />
+    <ClInclude Include="..\..\engine\resource_system\include\K15_ResourceImporterBitmap.h" />
+    <ClInclude Include="..\..\engine\resource_system\include\K15_ResourceImporterFont.h" />
+    <ClInclude Include="..\..\engine\resource_system\include\K15_ResourceImporterMaterial.h" />
+    <ClInclude Include="..\..\engine\resource_system\include\K15_ResourceImporterObj.h" />
+    <ClInclude Include="..\..\engine\resource_system\include\K15_ResourceImporterTiff.h" />
+    <ClInclude Include="..\..\engine\resource_system\include\K15_ResourceManager.h" />
+    <ClInclude Include="..\..\engine\serialization\include\K15_JsonSerializer.h" />
+    <ClInclude Include="..\..\engine\serialization\include\K15_Serialization.h" />
+    <ClInclude Include="..\..\engine\serialization\include\K15_Serializer.h" />
+    <ClInclude Include="..\..\engine\serialization\include\K15_SerializerBase.h" />
+    <ClInclude Include="..\..\engine\serialization\include\K15_SerialReader.h" />
+    <ClInclude Include="..\..\engine\serialization\include\K15_SerialSizer.h" />
+    <ClInclude Include="..\..\engine\serialization\include\K15_SerialWriter.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\engine\components\src\K15_CameraComponent.cpp" />
+    <ClCompile Include="..\..\engine\components\src\K15_LightComponent.cpp" />
+    <ClCompile Include="..\..\engine\components\src\K15_ModelComponent.cpp" />
+    <ClCompile Include="..\..\engine\components\src\K15_NodeComponent.cpp" />
+    <ClCompile Include="..\..\engine\core\src\android\K15_Keyboard_Android.cpp" />
+    <ClCompile Include="..\..\engine\core\src\android\K15_Logcat_Android.cpp" />
+    <ClCompile Include="..\..\engine\core\src\android\K15_Mouse_Android.cpp" />
+    <ClCompile Include="..\..\engine\core\src\android\K15_OSLayer_Android.cpp" />
+    <ClCompile Include="..\..\engine\core\src\android\K15_RenderWindow_Android.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_AABB.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_AllocatedObject.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_Application.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_ApplicationModule.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_BaseAllocator.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_BlockAllocator.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_ColorRGBA.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_DynamicLibraryBase.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_DynamicLibraryManager.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_EventHandler.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_EventManager.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_EventTask.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_Font.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_Frustum.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_GameEvent.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_GameObject.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_GameObjectComponentBase.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_GameStateBase.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_GameTime.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_HashedString.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_Image.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_IniFileParser.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_InputManager.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_IOUtil.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_JobBase.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_Keyboard.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_Language.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_LogBase.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_LogManager.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_MatrixUtil.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_MemoryBlock.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_MemoryProfilingTask.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_Mouse.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_NetworkManager.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_Node.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_Object.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_PhysicsTask.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_PrecompiledHeader.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\core\src\K15_ProfilingManager.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_ProfilingNode.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_RawData.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_RenderWindow.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_Rtti.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_StackAllocator.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_StringUtil.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_TaskBase.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_TaskManager.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_ThreadSafe.cpp" />
+    <ClCompile Include="..\..\engine\core\src\K15_ThreadWorker.cpp" />
+    <ClCompile Include="..\..\engine\core\src\linux\K15_DynamicLibrary_Linux.cpp" />
+    <ClCompile Include="..\..\engine\core\src\win32\K15_DynamicLibrary_win32.cpp" />
+    <ClCompile Include="..\..\engine\core\src\win32\K15_Keyboard_Win32.cpp" />
+    <ClCompile Include="..\..\engine\core\src\win32\K15_Mouse_Win32.cpp" />
+    <ClCompile Include="..\..\engine\core\src\win32\K15_OSLayer_Win32.cpp" />
+    <ClCompile Include="..\..\engine\core\src\win32\K15_RenderWindow_Win32.cpp" />
+    <ClCompile Include="..\..\engine\core\src\win32\K15_TextConsoleLog_Win32.cpp" />
+    <ClCompile Include="..\..\engine\core\src\win32\K15_VisualStudioLog_Win32.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_AlphaState.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_DepthState.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_GpuBuffer.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_GpuProgram.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_GpuProgramBatch.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_GpuProgramCatalog.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_GpuProgramParameter.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_IndexBuffer.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_Material.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_MaterialData.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_Mesh.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_Model.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_RendererBase.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_RenderProcessBase.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_RenderQueue.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_RenderTask.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_SceneGraph.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_SubMesh.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_Texture.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_TextureSampler.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_Vertex.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_VertexBuffer.cpp" />
+    <ClCompile Include="..\..\engine\rendering\src\K15_VertexDeclaration.cpp" />
+    <ClCompile Include="..\..\engine\resource_system\src\android\K15_ResourceArchive_Android.cpp" />
+    <ClCompile Include="..\..\engine\resource_system\src\K15_ResourceArchiveBase.cpp" />
+    <ClCompile Include="..\..\engine\resource_system\src\K15_ResourceArchiveZip.cpp" />
+    <ClCompile Include="..\..\engine\resource_system\src\K15_ResourceBase.cpp" />
+    <ClCompile Include="..\..\engine\resource_system\src\K15_ResourceImporterBase.cpp" />
+    <ClCompile Include="..\..\engine\resource_system\src\K15_ResourceImporterBitmap.cpp" />
+    <ClCompile Include="..\..\engine\resource_system\src\K15_ResourceImporterFont.cpp" />
+    <ClCompile Include="..\..\engine\resource_system\src\K15_ResourceImporterMaterial.cpp" />
+    <ClCompile Include="..\..\engine\resource_system\src\K15_ResourceImporterObj.cpp" />
+    <ClCompile Include="..\..\engine\resource_system\src\K15_ResourceImporterTiff.cpp" />
+    <ClCompile Include="..\..\engine\resource_system\src\K15_ResourceManager.cpp" />
+    <ClCompile Include="..\..\engine\serialization\src\K15_JsonSerializer.cpp" />
+    <ClCompile Include="..\..\engine\serialization\src\K15_Serializer.cpp" />
+    <ClCompile Include="..\..\engine\serialization\src\K15_SerializerBase.cpp" />
+    <ClCompile Include="..\..\engine\serialization\src\K15_SerialReader.cpp" />
+    <ClCompile Include="..\..\engine\serialization\src\K15_SerialSizer.cpp" />
+    <ClCompile Include="..\..\engine\serialization\src\K15_SerialWriter.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

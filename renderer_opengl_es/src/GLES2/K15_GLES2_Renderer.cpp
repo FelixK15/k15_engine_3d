@@ -109,12 +109,12 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 
 		if(eglInitialize(m_Display,&ver_Major,&ver_Minor) == EGL_FALSE)
 		{
-			_LogError("Could not initialize EGL Display.");
+			K15_LOG_ERROR("Could not initialize EGL Display.");
 			return false;
 		}
 
-		_LogSuccess("Successfully initialize EGL Display.");
-		_LogSuccess("EGL Version: %i.%i",ver_Major,ver_Minor);
+		K15_LOG_SUCCESS("Successfully initialize EGL Display.");
+		K15_LOG_SUCCESS("EGL Version: %i.%i",ver_Major,ver_Minor);
 
 		EGLConfig config = 0;
 		EGLint configCount = 0;
@@ -132,19 +132,19 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 
 		if(eglChooseConfig(m_Display,attribs,&config,1,&configCount) == EGL_FALSE)
 		{
-			_LogError("Could not get EGL config.");
+			K15_LOG_ERROR("Could not get EGL config.");
 			return false;
 		}
 		
-		_LogSuccess("EGL config retrieved.");
+		K15_LOG_SUCCESS("EGL config retrieved.");
 
 		if(eglGetConfigAttrib(m_Display,config,EGL_NATIVE_VISUAL_ID,&format) == EGL_FALSE)
 		{
-			_LogError("Could not get config attributes 'EGL_NATIVE_VISUAL_ID'.");
+			K15_LOG_ERROR("Could not get config attributes 'EGL_NATIVE_VISUAL_ID'.");
 			return false;
 		}
 
-		_LogSuccess("Retrieved 'EGL_NATIVE_VISUAL_ID'. (%i)",format);
+		K15_LOG_SUCCESS("Retrieved 'EGL_NATIVE_VISUAL_ID'. (%i)",format);
 
 #if defined K15_OS_ANDROID
 		RenderWindow_Android* window = static_cast<RenderWindow_Android*>(m_RenderWindow);
@@ -152,11 +152,11 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 		if((m_Surface = eglCreateWindowSurface(m_Display,config,window->getNativeWindow(),0)) == 0)
 #endif //K15_OS_ANDROID
 		{
-			_LogError("Could not create EGL window surface.");
+			K15_LOG_ERROR("Could not create EGL window surface.");
 			return false;
 		}
 
-		_LogSuccess("Created EGL window surface.");
+		K15_LOG_SUCCESS("Created EGL window surface.");
 
 		const EGLint contextAttribList[] = {
 			EGL_CONTEXT_CLIENT_VERSION, 2,
@@ -165,24 +165,24 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 
 		if((m_Context = eglCreateContext(m_Display,config,0,contextAttribList)) == 0)
 		{
-			_LogError("Could not create GLES context.");
+			K15_LOG_ERROR("Could not create GLES context.");
 			return false;
 		}
 
-		_LogSuccess("Created GLES context.");
+		K15_LOG_SUCCESS("Created GLES context.");
 
 		if(eglMakeCurrent(m_Display,m_Surface,m_Surface,m_Context) == EGL_FALSE)
 		{
-			_LogError("Could not set GLES context as current context.");
+			K15_LOG_ERROR("Could not set GLES context as current context.");
 			return false;
 		}
 
-		_LogSuccess("Set GLES context as current context.");
+		K15_LOG_SUCCESS("Set GLES context as current context.");
 
 		const unsigned char* glesVersion = glGetString(GL_VERSION);
 		glGetIntegerv(GL_MAX_VERTEX_ATTRIBS,&m_MaxVertexAttribs);
 
-		_LogSuccess("GLES Version: %s",glesVersion);
+		K15_LOG_SUCCESS("GLES Version: %s",glesVersion);
 
 		GLint width,height;
 		eglQuerySurface(m_Display,m_Surface,EGL_WIDTH,&width);
@@ -192,10 +192,10 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 		resolution.width = width;
 		resolution.height = height;
 
-		_LogNormal("Setting resolution to %ix%i...",width,height);
+		K15_LOG_NORMAL("Setting resolution to %ix%i...",width,height);
 		window->setResolution(resolution,false);
 
-		_LogDebug("Supported OpenGL ES Extensions:%s",glGetString(GL_EXTENSIONS));
+		K15_LOG_DEBUG("Supported OpenGL ES Extensions:%s",glGetString(GL_EXTENSIONS));
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_STENCIL_TEST);
@@ -401,7 +401,7 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 
 				if(index == -1)
 				{
-					_LogError("Could not find semantic \"%s\" in vertex shader \"%s\".",semanticName,m_GpuProgramBatch->getGpuProgramByStage(GpuProgram::PS_VERTEX)->getName().c_str());
+					K15_LOG_ERROR("Could not find semantic \"%s\" in vertex shader \"%s\".",semanticName,m_GpuProgramBatch->getGpuProgramByStage(GpuProgram::PS_VERTEX)->getName().c_str());
 				}
 				else
 				{
@@ -415,7 +415,7 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 		_checkForError();
 	}
 	/*********************************************************************************/
-	void Renderer::_setRenderWindow(RenderWindowBase* p_RenderWindow)
+	void Renderer::_setRenderWindow(RenderWindow* p_RenderWindow)
 	{
 
 	}
@@ -581,7 +581,7 @@ namespace K15_Engine { namespace Rendering { namespace GLES2 {
 			GLenum error = glGetError();
 			if(error != GL_NO_ERROR)
 			{
-				_LogError("GLES2 Error:\"%d\".",error);
+				K15_LOG_ERROR("GLES2 Error:\"%d\".",error);
 			}
 		#endif //K15_DEBUG
 	}

@@ -30,7 +30,8 @@
 #include "K15_IndexBuffer.h"
 #include "K15_VertexBuffer.h"
 
-#include "Win32\K15_RenderWindow_Win32.h"
+#include "K15_RenderWindow.h"
+#include "win32/K15_RenderWindow_Win32.h"
 
 namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	/*********************************************************************************/
@@ -171,7 +172,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
       }
       else
       {
-        _LogError("Can't use gl extension GL_ARB_separate_shader_objects");
+        K15_LOG_ERROR("Can't use gl extension GL_ARB_separate_shader_objects");
         return false;
       }
 
@@ -258,7 +259,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 				changeState = true;
 			}
 		}
-    
+		RenderWindow::getHasFocus();
 		changeState = m_AlphaState.getEnabled();
 
 		if(changeState)
@@ -300,7 +301,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		}
 	}
 	/*********************************************************************************/
-	void Renderer::_setRenderWindow(RenderWindowBase* p_RenderWindow)
+	void Renderer::_setRenderWindow(RenderWindow* p_RenderWindow)
 	{
 	}
 	/*********************************************************************************/
@@ -463,7 +464,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 			}
 			else
 			{
-				_LogError("Could not set vertex attribute \"%s\" for GpuProgram \"%s\".",
+				K15_LOG_ERROR("Could not set vertex attribute \"%s\" for GpuProgram \"%s\".",
 					semanticname,m_GpuPrograms[GpuProgram::PS_VERTEX]->getName().c_str());
 			}
 		}
@@ -504,13 +505,13 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		GLuint program = glProgram->getProgramGL();
 		if(p_Parameter.getType() == GpuProgramParameter::VT_UNKNOW)
 		{
-		  _LogError("GpuProgramParameter \"%s\" from GpuProgram \"%s\" is unknown.",
+		  K15_LOG_ERROR("GpuProgramParameter \"%s\" from GpuProgram \"%s\" is unknown.",
 			p_Parameter.getName().c_str(),
 			p_Parameter.getGpuProgram()->getName().c_str());
 		}
 		else if(!p_Parameter.getData())
 		{
-			_LogError("GpuProgramParameter \"%s\" from GpuProgram \"%s\" has no data.",
+			K15_LOG_ERROR("GpuProgramParameter \"%s\" from GpuProgram \"%s\" has no data.",
 				p_Parameter.getName().c_str(),
 				p_Parameter.getGpuProgram()->getName().c_str());
 		}

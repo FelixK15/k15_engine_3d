@@ -65,29 +65,29 @@ bool createDummyContext(HWND* p_Hwnd,HDC* p_DC)
 /*********************************************************************************/
 GLboolean _wglInit(GLuint p_ColorBits, GLuint p_DepthBits, GLuint p_StencilBits)
 {
-  _LogNormal("Creating dummy OGL context to initialize GLEW library.");
+  K15_LOG_NORMAL("Creating dummy OGL context to initialize GLEW library.");
   HWND tempHwnd = 0;
   HDC tempDC = 0;
   if(!createDummyContext(&tempHwnd,&tempDC))
   {
-    _LogError("Could not create dummy OGL context (%s)",g_Application->getLastError());
+    K15_LOG_ERROR("Could not create dummy OGL context (%s)",g_Application->getLastError());
     return GL_FALSE;
   }
-  _LogSuccess("Successfully created dummy OGL context!");
+  K15_LOG_SUCCESS("Successfully created dummy OGL context!");
 
-  _LogNormal("Trying to initialize GLEW library...");
+  K15_LOG_NORMAL("Trying to initialize GLEW library...");
 
   GLenum error = glewInit();
   if(error != GLEW_OK)
   {
-    _LogError("Could not initialize GLEW library. (%s)",glewGetErrorString(error));
+    K15_LOG_ERROR("Could not initialize GLEW library. (%s)",glewGetErrorString(error));
     return GL_FALSE;
   }
 
-  _LogSuccess("Successfully initialized GLEW library!");
-  _LogSuccess("Supported GLEW Version:%s",glewGetString(GLEW_VERSION));
+  K15_LOG_SUCCESS("Successfully initialized GLEW library!");
+  K15_LOG_SUCCESS("Supported GLEW Version:%s",glewGetString(GLEW_VERSION));
 
-  _LogNormal("Destroying dummy OGL context...");
+  K15_LOG_NORMAL("Destroying dummy OGL context...");
   _wglShutdown();
   //destroy the objects for the temp handles
   ReleaseDC(tempHwnd,tempDC);
@@ -95,7 +95,7 @@ GLboolean _wglInit(GLuint p_ColorBits, GLuint p_DepthBits, GLuint p_StencilBits)
 
   if(!GLEW_VERSION_3_3)
   {
-    _LogError("OpenGL 3.3 is not supported.");
+    K15_LOG_ERROR("OpenGL 3.3 is not supported.");
     return GL_FALSE;
   }
 
@@ -106,7 +106,7 @@ GLboolean _wglInit(GLuint p_ColorBits, GLuint p_DepthBits, GLuint p_StencilBits)
   int depthBits   = p_DepthBits;
   int stencilBits = p_StencilBits;
 
-  _LogNormal("Creating real OGL context...");
+  K15_LOG_NORMAL("Creating real OGL context...");
 
   const int pixelFormatAttributes[] = {
     WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
@@ -122,14 +122,14 @@ GLboolean _wglInit(GLuint p_ColorBits, GLuint p_DepthBits, GLuint p_StencilBits)
   int pixelFormat = 0;
   unsigned int formatCount = 1;
 
-  _LogNormal("Trying to create pixelformat\n\tColorbuffer size per pixel:%i\n\tDepthbuffer size per pixel:%i\n\tStencilbuffer size per pixel:%i.",
+  K15_LOG_NORMAL("Trying to create pixelformat\n\tColorbuffer size per pixel:%i\n\tDepthbuffer size per pixel:%i\n\tStencilbuffer size per pixel:%i.",
     colorBits,depthBits,stencilBits);
 
   wglChoosePixelFormatARB(ms_DeviceContext,pixelFormatAttributes,0,1,&pixelFormat,&formatCount);
 
   if(!pixelFormat)
   {
-    _LogError("Can't create pixel format because the is not supported. Error:%s",glGetString(glGetError()));
+    K15_LOG_ERROR("Can't create pixel format because the is not supported. Error:%s",glGetString(glGetError()));
   }
 
   SetPixelFormat(ms_DeviceContext,pixelFormat,0);
@@ -141,24 +141,24 @@ GLboolean _wglInit(GLuint p_ColorBits, GLuint p_DepthBits, GLuint p_StencilBits)
     0 //END
   };
 
-  _LogNormal("Creating OGL rendering context...");
+  K15_LOG_NORMAL("Creating OGL rendering context...");
   if((ms_RenderContext = wglCreateContextAttribsARB(ms_DeviceContext,0,contextAttributes)) == 0)
   {
-    _LogError("Could not create OGL rendering context. Error:%s",g_Application->getLastError());
+    K15_LOG_ERROR("Could not create OGL rendering context. Error:%s",g_Application->getLastError());
     return false;
   }
 
-  _LogSuccess("Successfully created OGL rendering context!");
-  _LogNormal("Setting OGL rendering context as current context.");
+  K15_LOG_SUCCESS("Successfully created OGL rendering context!");
+  K15_LOG_NORMAL("Setting OGL rendering context as current context.");
 
   if(wglMakeCurrent(ms_DeviceContext,ms_RenderContext) == FALSE)
   {
-    _LogError("Could not set OGL rendering context as current context. %s",g_Application->getLastError());
+    K15_LOG_ERROR("Could not set OGL rendering context as current context. %s",g_Application->getLastError());
     return GL_FALSE;
   }
 
-  _LogSuccess("Succesfully set OGL rendering context.");
-  _LogSuccess("Supported OpenGL Version:\"%s\"",glGetString(GL_VERSION));
+  K15_LOG_SUCCESS("Succesfully set OGL rendering context.");
+  K15_LOG_SUCCESS("Supported OpenGL Version:\"%s\"",glGetString(GL_VERSION));
 
   return GL_TRUE;
 }

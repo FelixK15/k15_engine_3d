@@ -19,21 +19,20 @@
 #include "K15_PrecompiledHeader.h"
 
 #include "K15_EventManager.h"
-#include "K15_EventListener.h"
 #include "K15_GameEvent.h"
 #include "K15_TaskBase.h"
 #include "K15_GameTime.h"
 #include "K15_ProfilingManager.h"
 
 namespace K15_Engine { namespace Core { 
-  /*********************************************************************************/
-  EventHandlerArrayEntry::EventHandlerArrayEntry(const EventName& p_EventName)
-    : eventName(p_EventName),
-    handlerList()
-  {
+	/*********************************************************************************/
+	EventHandlerArrayEntry::EventHandlerArrayEntry(const EventName& p_EventName)
+		: eventName(p_EventName),
+		handlerList()
+	{
 
-  }
-  /*********************************************************************************/
+	}
+	/*********************************************************************************/
 
 	/*********************************************************************************/
 	EventManager::EventManager()
@@ -77,7 +76,7 @@ namespace K15_Engine { namespace Core {
 
 		if(iter == m_Listener.end())
 		{
-			_LogError("No handler for event \"%s\".",p_EventName.c_str());
+			K15_LOG_ERROR("No handler for event \"%s\".",p_EventName.c_str());
 			return;
 		}
 

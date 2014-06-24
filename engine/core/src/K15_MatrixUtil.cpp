@@ -19,9 +19,9 @@
 
 #include "K15_PrecompiledHeader.h"
 
-#include "K15_MathUtil.h"
+//#include "K15_MathUtil.h"
 #include "K15_MatrixUtil.h"
-#include "K15_RenderWindowBase.h"
+#include "K15_RenderWindow.h"
 
 namespace K15_Engine { namespace Core {
   /*********************************************************************************/

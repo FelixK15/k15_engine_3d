@@ -24,34 +24,27 @@
 #ifndef _K15Engine_Core_RenderWindow_Win32_h_
 #define _K15Engine_Core_RenderWindow_Win32_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#endif// K15_USE_PRECOMPILED_HEADERS
-
-#include "K15_RenderWindowBase.h"
+#include "K15_Prerequisites.h"
 
 namespace K15_Engine { namespace Core {
-
-	class K15_CORE_API RenderWindow_Win32 : public RenderWindowBase
+	class RenderWindow_Win32
 	{
 	public:
-		RenderWindow_Win32();
-		virtual ~RenderWindow_Win32();
+		static bool initialize();
+		static void shutdown();
 
-		virtual bool initialize();
-		virtual void shutdown();
+		static void setWindowTitle(const String& p_WindowTitle);
+		static void setResolution(const Resolution& p_Resolution); 
+		static void setIsFullscreen(bool p_Fullscreen);
 
-		virtual void setWindowTitle(const String& p_WindowTitle);
-		virtual void setResolution(const Resolution& p_Resolution, bool p_ForceChange = false); 
-		virtual void setIsFullscreen(bool p_Fullscreen);
+		static HDC getDeviceContext();
+		static HWND getHandleWindow();
+		static HINSTANCE getHandleInstance();
 
-		HDC getDeviceContext() const;
-		HWND getHandleWindow() const;
-		HINSTANCE getHandleInstance() const;
 	private:
-		HDC m_DeviceContext;
-		HWND m_HandleWindow;
-		HINSTANCE m_Instance;
+		static HDC ms_DeviceContext;
+		static HWND ms_HandleWindow;
+		static HINSTANCE ms_Instance;
 	};// end of RenderWindow_Win32 class declaration
 }}//end of K15_Engine::Core namespace
 

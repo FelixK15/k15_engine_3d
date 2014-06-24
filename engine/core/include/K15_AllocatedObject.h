@@ -24,10 +24,7 @@
 #ifndef _K15Engine_Core_AllocatedObject_h_
 #define _K15Engine_Core_AllocatedObject_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
-
+#include "K15_Prerequisites.h"
 #include "K15_BaseAllocator.h"
 
 namespace K15_Engine { namespace Core {

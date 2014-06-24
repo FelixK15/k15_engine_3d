@@ -24,12 +24,9 @@
 #ifndef _K15Engine_Renderer_Texture_h_
 #define _K15Engine_Renderer_Texture_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
-
+#include "K15_Prerequisites.h"
 #include "K15_ResourceBase.h"
-#include "K15_RenderWindowBase.h"
+#include "K15_RenderWindow.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/

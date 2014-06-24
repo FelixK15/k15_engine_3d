@@ -74,16 +74,15 @@ namespace K15_Engine
 		class ApplicationOSLayer;
 		class ApplicationModule;
 		class TaskManager;
+		class RenderWindow;
 		class TaskBase;
 		class GameTime;
 #		if defined K15_OS_ANDROID
 			class DynamicLibrary_Linux;
 			class OSLayer_Android;
-			class RenderWindow_Android;
 #		elif defined K15_OS_WINDOWS
 			class DynamicLibrary_Win32;
 			class OSLayer_Win32;
-			class RenderWindow_Win32;
 #		endif //K15_OS_WINDOWS
 		class DynamicLibraryBase;
 		class DynamicLibraryManager;
@@ -119,7 +118,6 @@ namespace K15_Engine
 		class GameObjectComponentBase;
 		class GameStateBase;
 		class EventManager;
-		class RenderWindowBase;
 		class MemoryProfiler;
 		class MemoryProfilingTask;
 		class MemoryPools;
@@ -148,7 +146,7 @@ namespace K15_Engine
 		struct ApplicationModuleDescription;
 		struct MouseActionArguments;
 		struct Resolution;
-    struct EventHandlerArrayEntry;
+		struct EventHandlerArrayEntry;
 	} // end of K15_Engine::Core namespace
 	/*********************************************************************************/
 	namespace Rendering
@@ -424,7 +422,6 @@ typedef std::stringstream	StringStream;
 
 	typedef K15_Engine::Core::DynamicLibrary_Win32 DynamicLibraryType;
 	typedef K15_Engine::Core::OSLayer_Win32 OSLayer;
-	typedef K15_Engine::Core::RenderWindow_Win32 RenderWindowType;
 
 	//8 bit types
 	typedef signed    __int8  int8;

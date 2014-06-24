@@ -24,11 +24,8 @@
 #ifndef _K15Engine_Renderer_Camera_h_
 #define _K15Engine_Renderer_Camera_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-# include "K15_Object.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
-
+#include "K15_Prerequisites.h"
+#include "K15_Object.h"
 #include "K15_GameObjectComponentBase.h"
 #include "K15_Frustum.h"
 // #include "K15_Matrix4.h"

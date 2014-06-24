@@ -44,7 +44,7 @@ namespace K15_Engine { namespace Core {
 				K15_ASSERT(job,"NULL job in job list.");
 
 				jobs.pop_front();
-				_LogDebug("Thread %u will process job \"%s\".",0,job->getName().c_str());
+				K15_LOG_DEBUG("Thread %u will process job \"%s\".",0,job->getName().c_str());
 			}
 
 			mutex.unlock();
@@ -77,9 +77,9 @@ namespace K15_Engine { namespace Core {
 
 		while(counter++ < HardwareThreads)
 		{
-			_LogNormal("Creating %i/%i thread...",counter,HardwareThreads);
+			K15_LOG_NORMAL("Creating %i/%i thread...",counter,HardwareThreads);
 			Thread* thread = K15_NEW_T(Allocators[AC_THREADING],Thread) Thread(execute,(void*)0);
-			_LogNormal("Successfully created %i/%i thread",counter,HardwareThreads);
+			K15_LOG_NORMAL("Successfully created %i/%i thread",counter,HardwareThreads);
 
 			m_Threads.push_back(thread);
 		}

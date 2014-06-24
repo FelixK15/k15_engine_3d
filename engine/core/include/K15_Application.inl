@@ -79,11 +79,6 @@ DynamicLibraryManager* Application::getDynamicLibraryManager() const
 	return m_DynamicLibraryManager;
 }
 /*********************************************************************************/
-RenderWindowBase* Application::getRenderWindow() const
-{
-	return m_RenderWindow;
-}
-/*********************************************************************************/
 LogManager* Application::getLogManager() const
 {
 	return m_LogManager;

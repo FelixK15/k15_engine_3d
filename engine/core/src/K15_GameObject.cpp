@@ -88,7 +88,7 @@ namespace K15_Engine { namespace Core {
 		{
 			if((*iter) == p_Component || (*iter)->getName() == p_Component->getName())
 			{
-				_LogWarning("Component \"%s\"(Type:%s) has already been added to GameObject \"%s\".",p_Component->getName().c_str(),p_Component->getTypeName().c_str(),m_Name.c_str());
+				K15_LOG_WARNING("Component \"%s\"(Type:%s) has already been added to GameObject \"%s\".",p_Component->getName().c_str(),p_Component->getTypeName().c_str(),m_Name.c_str());
 				return;
 			}
 		}

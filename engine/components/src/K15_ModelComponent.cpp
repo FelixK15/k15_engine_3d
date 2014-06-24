@@ -30,21 +30,21 @@ namespace K15_Engine { namespace Core {
   /*********************************************************************************/
   ModelComponent::ModelComponent()
 	  : GameObjectComponentBase(),
-	  m_Mesh(0)
+	  m_Model(0)
   {
 
   }
   /*********************************************************************************/
   ModelComponent::ModelComponent(const String& p_ModelResourceName)
 	: GameObjectComponentBase(),
-	m_Mesh(0)
+	m_Model(0)
   {
-    m_Mesh = g_ResourceManager->getResource<Mesh>(p_ModelResourceName);
+    //m_Model = g_ResourceManager->getResource<Model>(p_ModelResourceName);
   }
   /*********************************************************************************/
-  ModelComponent::ModelComponent(Mesh* p_Mesh)
+  ModelComponent::ModelComponent(Model* p_Mesh)
 	  : GameObjectComponentBase(),
-	  m_Mesh(p_Mesh)
+	  m_Model(m_Model)
   {
 
   }
@@ -57,13 +57,13 @@ namespace K15_Engine { namespace Core {
   AABB ModelComponent::_calculateAABB()
   {
 	  AABB aabb;
-
-	  if(m_Mesh)
-	  {
-		  aabb = m_Mesh->getAABB();
-	  }
-
-	  return aabb;
+// 
+// 	  if(m_Model)
+// 	  {
+// 		  aabb = m_Model->getAABB();
+// 	  }
+// 
+ 	  return aabb;
   }
   /*********************************************************************************/
 }}//end of K15_Engine::Core namespace

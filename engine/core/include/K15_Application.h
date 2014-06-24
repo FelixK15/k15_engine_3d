@@ -23,13 +23,10 @@
 #ifndef _K15Engine_Core_Application_h_
 #define _K15Engine_Core_Application_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#	include "K15_Singleton.h"
-#	include "K15_StringUtil.h"
-#	include "K15_AllocatedObject.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
-
+#include "K15_Prerequisites.h"
+#include "K15_Singleton.h"
+#include "K15_StringUtil.h"
+#include "K15_AllocatedObject.h"
 #include "K15_StackAllocator.h"
 #include "K15_ApplicationParameter.h"
 #include "K15_GameTime.h"
@@ -37,7 +34,7 @@
 #include "K15_Serializer.h"
 
 #if defined (K15_OS_WINDOWS)
-#	include "Win32\K15_OSLayer_Win32.h"
+#	include "win32/K15_OSLayer_Win32.h"
 #elif defined (K15_OS_ANDROID)
 #	include "Android/K15_OSLayer_Android.h"
 #endif //K15_OS_WINDOWS
@@ -69,8 +66,6 @@ namespace K15_Engine { namespace Core {
 		INLINE const StringSet& getPluginList() const;
 		INLINE const StringSet& getCommandList() const;
 		INLINE const ApplicationParameterList& getApplicationParameter() const;
-
-		void setWindowTitle(const String& p_WindowTitle);
 
 #	if defined K15_OS_ANDROID
 		void initialize(android_app* p_App);
@@ -106,7 +101,6 @@ namespace K15_Engine { namespace Core {
 		INLINE ProfilingManager* getProfileManager() const;
 		INLINE EventManager* getEventManager() const;
 		INLINE DynamicLibraryManager* getDynamicLibraryManager() const;
-		INLINE RenderWindowBase* getRenderWindow() const;
 		INLINE LogManager* getLogManager() const;
 		INLINE InputManager* getInputManager() const;
 		INLINE StackAllocator* getFrameAllocator();
@@ -166,7 +160,6 @@ namespace K15_Engine { namespace Core {
 				ApplicationParameterList m_ApplicationParameter;
 				ApplicationModuleList m_LoadedModules;
 
-				RenderWindowBase* m_RenderWindow;
 				TaskManager* m_TaskManager;
 				ResourceManager* m_ResourceManager;
 				ProfilingManager* m_ProfileManager;

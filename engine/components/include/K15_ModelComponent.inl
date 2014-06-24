@@ -18,13 +18,13 @@
  */
 
 /*********************************************************************************/
-Mesh* ModelComponent::getMesh() const
+Model* ModelComponent::getModel() const
 {
-  return m_Mesh;
+	return m_Model;
 }
 /*********************************************************************************/
-void ModelComponent::setMesh(Mesh* p_Mesh)
+void ModelComponent::setModel(Model* p_Model)
 {
-	m_Mesh = p_Mesh;
+	m_Model = p_Model;
 }
 /*********************************************************************************/

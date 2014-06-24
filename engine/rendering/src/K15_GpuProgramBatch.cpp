@@ -103,7 +103,7 @@ namespace K15_Engine { namespace Rendering {
 
 		if(hasGpuProgramStage(p_Program->getStage()) && !p_OverwriteProgramWithSameState)
 		{
-			_LogWarning("Did not add GpuProgram \"%s\" to GpuProgramBatch because the GpuProgramBatch already has a GpuProgram for the stage.");
+			K15_LOG_WARNING("Did not add GpuProgram \"%s\" to GpuProgramBatch because the GpuProgramBatch already has a GpuProgram for the stage.");
 			return;
 		}
 

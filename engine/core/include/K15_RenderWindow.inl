@@ -18,33 +18,54 @@
  */
 
 /*********************************************************************************/
-void RenderWindowBase::setWindowTitle(const String& p_WindowTitle)
+float Resolution::getAspectRatio() const
 {
-	m_WindowTitle = p_WindowTitle;
+	if(height == 0) return 0.0f;
+
+	return (float)((float)width / (float)height);
 }
 /*********************************************************************************/
-const String& RenderWindowBase::getWindowTitle() const
+
+/*********************************************************************************/
+const String& RenderWindow::getWindowTitle()
 {
-	return m_WindowTitle;
+	return ms_WindowTitle;
 }
 /*********************************************************************************/
-void RenderWindowBase::setResolution(const Resolution& p_Resolution)
+void RenderWindow::setResolution(uint32 width, uint32 height)
 {
-	m_CurrentResolution = p_Resolution;
+	Resolution r;
+	r.width = width;
+	r.height = height;
+	setResolution(r);
 }
 /*********************************************************************************/
-const Resolution& RenderWindowBase::getResolution() const
+const Resolution& RenderWindow::getResolution()
 {
-	return m_CurrentResolution;
+	return ms_CurrentResolution;
 }
 /*********************************************************************************/
-void RenderWindowBase::setIsFullscreen(bool p_Fullscreen)
+bool RenderWindow::isFullscreen()
 {
-	m_IsFullscreen = p_Fullscreen;
+	return ms_IsFullscreen;
 }
 /*********************************************************************************/
-bool RenderWindowBase::isFullscreen() const
+bool RenderWindow::getHasFocus()
 {
-	return m_IsFullscreen;
+	return ms_HasFocus;
 }
 /*********************************************************************************/
+uint32 RenderWindow::getHeight()
+{
+	return ms_CurrentResolution.height;
+}
+/*********************************************************************************/
+uint32 RenderWindow::getWidth()
+{
+	return ms_CurrentResolution.width;
+}
+/*********************************************************************************/
+float RenderWindow::getAspectRatio()
+{
+	return ms_CurrentResolution.getAspectRatio();
+}

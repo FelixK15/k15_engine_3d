@@ -28,11 +28,6 @@ Texture* RendererBase::getBoundTexture(Enum p_Slot) const
 	return m_BoundTextures[p_Slot];
 }
 /*********************************************************************************/
-RenderWindowBase* RendererBase::getRenderWindow() const
-{
-	return m_RenderWindow;
-}
-/*********************************************************************************/
 RenderTarget* RendererBase::getRenderTarget() const
 {
 	return m_RenderTarget;

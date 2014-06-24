@@ -24,9 +24,7 @@
 #ifndef _K15Engine_Core_EventHandler_h_
 #define _K15Engine_Core_EventHandler_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADER
-#	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#include "K15_Prerequisites.h"
 
 #define K15_EventHandler(c,f,o) EventHandler::create<c,&c::f>(o)
 

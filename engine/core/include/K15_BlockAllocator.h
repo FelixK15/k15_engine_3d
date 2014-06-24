@@ -24,12 +24,9 @@
 #ifndef _K15Engine_Core_BlockAllocator_h_
 #define _K15Engine_Core_BlockAllocator_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#	include "K15_BaseAllocator.h"
-#	include "K15_AllocatedObject.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
-
+#include "K15_Prerequisites.h"
+#include "K15_BaseAllocator.h"
+#include "K15_AllocatedObject.h"
 
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API BlockAllocator : public BaseAllocator

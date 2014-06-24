@@ -24,12 +24,9 @@
 #ifndef _K15Engine_Core_ThreadWorker_h_
 #define _K15Engine_Core_ThreadWorker_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#	include "K15_Singleton.h"
-#	include "K15_AllocatedObject.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
-
+#include "K15_Prerequisites.h"
+#include "K15_Singleton.h"
+#include "K15_AllocatedObject.h"
 #include "K15_Application.h"
 #include "K15_TaskBase.h"
 

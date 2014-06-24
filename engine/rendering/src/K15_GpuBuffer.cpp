@@ -164,7 +164,7 @@ namespace K15_Engine { namespace Rendering {
 	{
 		if(m_AccessOption == BA_READ_ONLY && p_WriteToGpuBuffer)
 		{
-			_LogWarning("Not allowed to write directly to GPU buffer due to limited access option. (Buffer is read only)");
+			K15_LOG_WARNING("Not allowed to write directly to GPU buffer due to limited access option. (Buffer is read only)");
 			return 0;
 		}
 

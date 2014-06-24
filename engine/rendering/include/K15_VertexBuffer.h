@@ -24,10 +24,7 @@
 #ifndef _K15Engine_Rendering_VertexBuffer_h_
 #define _K15Engine_Rendering_VertexBuffer_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
-
+#include "K15_Prerequisites.h"
 #include "K15_GpuBuffer.h"
 
 namespace K15_Engine { namespace Rendering {

@@ -23,11 +23,9 @@
 #ifndef _K15Engine_Core_GameObjectComponent_h_
 #define _K15Engine_Core_GameObjectComponent_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#	include "K15_Object.h"
-#	include "K15_AllocatedObject.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
+#include "K15_Prerequisites.h"
+#include "K15_Object.h"
+#include "K15_AllocatedObject.h"
 
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API GameObjectComponentBase : public Object, public GeneralAllocatedObject

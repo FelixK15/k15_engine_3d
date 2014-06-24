@@ -24,11 +24,8 @@
 #ifndef _K15Engine_Core_ModelComponent_h_
 #define _K15Engine_Core_ModelComponent_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#	include "K15_AllocatedObject.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
-
+#include "K15_Prerequisites.h"
+#include "K15_AllocatedObject.h"
 #include "K15_GameObjectComponentBase.h"
 #include "K15_Mesh.h"
 
@@ -43,16 +40,16 @@ namespace K15_Engine { namespace Core {
 		ModelComponent(Model* p_Model);
 		~ModelComponent();
 
-		INLINE Model* getMesh() const;
-		INLINE void setMesh(Model* p_Model);
+		INLINE Model* getModel() const;
+		INLINE void setModel(Model* p_Model);
 	
 	protected:
 		virtual AABB _calculateAABB() OVERRIDE;
 
 	private:
 		Model* m_Model;
-  }; //end of ModelComponent class declaration
-# include "K15_ModelComponent.inl"
+	}; //end of ModelComponent class declaration
+	# include "K15_ModelComponent.inl"
 }}//end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_ModelComponent_h_

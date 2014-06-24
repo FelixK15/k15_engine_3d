@@ -55,19 +55,12 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		virtual void beginFrame() OVERRIDE;
 		virtual void endFrame() OVERRIDE;
 
-		virtual bool _initialize() OVERRIDE;
-		virtual void _shutdown() OVERRIDE;
-
-		//inline HGLRC getRenderContext() const;
-
 	protected:
-		bool createDummyContext(HWND*,HDC*);
-
 		virtual void _resolutionChanged(const Resolution& p_Resolution) OVERRIDE;
 		virtual void _setFillMode(Enum p_FillMode) OVERRIDE;
 		virtual void _setAlphaState(const AlphaState& p_AlphaState) OVERRIDE;
 		virtual void _setDepthState(const DepthState& p_DepthState) OVERRIDE;
-		virtual void _setRenderWindow(RenderWindowBase* p_RenderWindow) OVERRIDE;
+		virtual void _setRenderWindow(RenderWindow* p_RenderWindow) OVERRIDE;
 		virtual void _setRenderTarget(RenderTarget* p_RenderTarget) OVERRIDE;
 		virtual void _setActiveCamera(CameraComponent* p_Camera) OVERRIDE;
 		virtual void _setVertexDeclaration(VertexDeclaration* p_Declaration) OVERRIDE;
@@ -88,7 +81,6 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	protected:
 		GLuint m_ProgramPipeline;
 		GLuint m_VertexArray;
-
 	};// end of Renderer class
 }}}//end of K15_Engine::Rendering::WGL
 

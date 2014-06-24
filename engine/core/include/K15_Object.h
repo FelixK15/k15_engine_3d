@@ -25,13 +25,9 @@
 #ifndef _K15Engine_Core_Object_h_
 #define _K15Engine_Core_Object_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
 #include "K15_Prerequisites.h"
 #include "K15_HashedString.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
-
 #include "K15_Rtti.h"
-#include "K15_Pointer.h"
 
 namespace K15_Engine { namespace Core { 
 

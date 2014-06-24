@@ -24,14 +24,11 @@
 #ifndef _K15Engine_Core_RenderWindow_Android_h_
 #define _K15Engine_Core_RenderWindow_Android_h_
 
-#ifndef K15_USE_PRECOMPILED_HEADERS
-#	include "K15_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADERS
-
-#include "K15_RenderWindowBase.h"
+#include "K15_Prerequisites.h"
+#include "K15_RenderWindow.h"
 
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API RenderWindow_Android : public RenderWindowBase
+	class K15_CORE_API RenderWindow_Android : public RenderWindow
 	{
 	public:
 		RenderWindow_Android();

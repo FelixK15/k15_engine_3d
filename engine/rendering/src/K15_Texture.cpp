@@ -307,7 +307,7 @@ namespace K15_Engine { namespace Rendering {
 	{
 		if(p_MipmapLevel > m_MipmapLevels)
 		{
-			_LogWarning("Trying to get the dimension of mipmap %u from texture %s that only has %u mipmaps. Clamping value to %u",p_MipmapLevel,m_Name.c_str(),m_MipmapLevels,m_MipmapLevels);
+			K15_LOG_WARNING("Trying to get the dimension of mipmap %u from texture %s that only has %u mipmaps. Clamping value to %u",p_MipmapLevel,m_Name.c_str(),m_MipmapLevels,m_MipmapLevels);
 			p_MipmapLevel = m_MipmapLevels;
 		}
 

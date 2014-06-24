@@ -71,7 +71,7 @@ namespace K15_Engine { namespace Core {
 		}
 		else
 		{
-			_LogWarning(TEXT("Letter data for letter \"%c\" has already been added to font \"%s\". Skipping letter."),
+			K15_LOG_WARNING(TEXT("Letter data for letter \"%c\" has already been added to font \"%s\". Skipping letter."),
 				p_Letter.character,getName().c_str());
 		}
 	}
