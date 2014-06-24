@@ -21,17 +21,17 @@
  * 
  */
 
-#ifndef _K15Engine_RendererWGL_Renderer_h_
-#define _K15Engine_RendererWGL_Renderer_h_
+#ifndef _K15Engine_Renderer_OpenGL_Renderer_h_
+#define _K15Engine_Renderer_OpenGL_Renderer_h_
 
 #ifndef K15_RENDERER_USE_PREDEFINED_HEADERS
-#	include "K15_RendererOGLPrerequisites.h"
+#	include "K15_OpenGL_Prerequisites.h"
 #endif //K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
 
 #include "K15_RendererBase.h"
 #include "K15_RenderOperation.h"
 
-namespace K15_Engine { namespace Rendering { namespace WGL {
+namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	class Renderer : public RendererBase
 	{
 	public:
@@ -88,10 +88,8 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 	protected:
 		GLuint m_ProgramPipeline;
 		GLuint m_VertexArray;
-		HDC m_DeviceContext;
-		HGLRC m_RenderContext;
 
 	};// end of Renderer class
 }}}//end of K15_Engine::Rendering::WGL
 
-#endif //_K15Engine_RendererWGL_Renderer_h_
+#endif //_K15Engine_Renderer_OpenGL_Renderer_h_

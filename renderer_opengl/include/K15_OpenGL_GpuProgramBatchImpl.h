@@ -21,16 +21,16 @@
  * 
  */
 
-#ifndef _K15Engine_RendererWGL_GpuProgramBatchImpl_h_
-#define _K15Engine_RendererWGL_GpuProgramBatchImpl_h_
+#ifndef _K15Engine_Renderer_OpenGL_GpuProgramBatchImpl_h_
+#define _K15Engine_Renderer_OpenGL_GpuProgramBatchImpl_h_
 
 #ifndef K15_USE_PRECOMPILED_HEADER
-#	include "K15_RendererOGLPrerequisites.h"
+#	include "K15_OpenGL_Prerequisites.h"
 #endif //K15_USE_PRECOMPILED_HEADER
 
 #include "K15_GpuProgramBatch.h"
 
-namespace K15_Engine { namespace Rendering { namespace WGL {
+namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	class K15_RENDERER_API GpuProgramBatchImpl : public GpuProgramBatchImplBase
 	{
 	public:
@@ -41,4 +41,4 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 	}; //GpuProgramBatchImpl class declaration
 }}} // end of K15_Engine::Rendering::WGL namespace
 
-#endif //_K15Engine_RendererWGL_GpuProgramBatchImpl_h_
+#endif //_K15Engine_Renderer_OpenGL_GpuProgramBatchImpl_h_

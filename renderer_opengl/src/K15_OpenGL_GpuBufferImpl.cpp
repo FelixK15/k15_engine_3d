@@ -17,12 +17,12 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_WGL_GpuBufferImpl.h"
+#include "K15_OpenGL_GpuBufferImpl.h"
 #include "K15_LogManager.h"
 
 #include "K15_RendererBase.h"
 
-namespace K15_Engine { namespace Rendering { namespace WGL {
+namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	/*********************************************************************************/
 	const GLenum GpuBufferImpl::GLBufferTypeConverter[GpuBuffer::BT_COUNT] = {
 		GL_ARRAY_BUFFER,		 //BT_VERTEX_BUFFER

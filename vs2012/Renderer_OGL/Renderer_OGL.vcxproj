@@ -82,7 +82,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\renderer_opengl\src\plugin.cpp" />
-    <ClCompile Include="..\..\renderer_opengl\src\WGL\K15_WGL_GpuBufferImpl.cpp" />
+    <ClCompile Include="..\..\renderer_opengl\src\WGL\K15_OpenGL_GpuBufferImpl.cpp" />
     <ClCompile Include="..\..\renderer_opengl\src\WGL\K15_WGL_GpuProgramBatchImpl.cpp" />
     <ClCompile Include="..\..\renderer_opengl\src\WGL\K15_WGL_GpuProgramImpl.cpp" />
     <ClCompile Include="..\..\renderer_opengl\src\WGL\K15_WGL_Renderer.cpp" />
@@ -99,9 +99,9 @@
     <None Include="module.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\renderer_opengl\include\K15_RendererOGLPrerequisites.h" />
+    <ClInclude Include="..\..\renderer_opengl\include\K15_OpenGL_Prerequisites.h" />
     <ClInclude Include="..\..\renderer_opengl\include\plugin.h" />
-    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_GpuBufferImpl.h" />
+    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_OpenGL_GpuBufferImpl.h" />
     <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_GpuProgramBatchImpl.h" />
     <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_GpuProgramImpl.h" />
     <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_Renderer.h" />

@@ -24,7 +24,7 @@
 #define _K15Engine_RendererOGL_Plugin_h_
 
 #ifndef K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
-#	include "K15_RendererOGLPrerequisites.h"
+#	include "K15_OpenGL_Prerequisites.h"
 #endif //K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
 
 #include "K15_ApplicationModuleDescription.h"

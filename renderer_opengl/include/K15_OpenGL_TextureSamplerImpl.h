@@ -21,16 +21,16 @@
  * 
  */
 
-#ifndef _K15Engine_RendererWGL_TextureSamplerImpl_h_
-#define _K15Engine_RendererWGL_TextureSamplerImpl_h_
+#ifndef _K15Engine_Renderer_OpenGL_TextureSamplerImpl_h_
+#define _K15Engine_Renderer_OpenGL_TextureSamplerImpl_h_
 
 #ifndef K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
-#	include "K15_RendererOGLPrerequisites.h"
+#	include "K15_OpenGL_Prerequisites.h"
 #endif //K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
 
 #include "K15_TextureSampler.h"
 
-namespace K15_Engine { namespace Rendering { namespace WGL {
+namespace K15_Engine { namespace Rendering { namespace OpenGL {
   class TextureSamplerImpl : public TextureSamplerImplBase
   {
   public:
@@ -53,7 +53,7 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
   private:
     GLuint m_SamplerHandle;
   };// end of TextureSamplerImpl class declaration
-#	include "K15_WGL_TextureSamplerImpl.inl"
+#	include "K15_OpenGL_TextureSamplerImpl.inl"
 }}}//end of K15_Engine::Rendering::WGL namespace
 
-#endif //_K15Engine_RendererWGL_TextureSamplerImpl_h_
+#endif //_K15Engine_Renderer_OpenGL_TextureSamplerImpl_h_

@@ -31,7 +31,7 @@
 #elif defined __linux__
 #	define K15_OS_LINUX
 #elif defined __APPLE__
-#	define K15_OS_MACOS
+#	define K15_OS_APPLE
 #endif //_WIN32
 
 #if defined (K15_OS_WINDOWS)

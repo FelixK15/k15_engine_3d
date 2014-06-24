@@ -17,13 +17,13 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_WGL_TextureImpl.h"
+#include "K15_OpenGL_TextureImpl.h"
 #include "K15_LogManager.h"
 
 #include "K15_RenderTask.h"
 #include "K15_RendererBase.h"
 
-namespace K15_Engine { namespace Rendering { namespace WGL {
+namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	/*********************************************************************************/
 	const GLuint TextureImpl::GLTextureTypeConverter[Texture::TT_COUNT] = {
 		GL_TEXTURE_1D,			//TT_1D

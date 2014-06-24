@@ -19,11 +19,11 @@
 
 #include "K15_LogManager.h"
 
-#include "K15_WGL_GpuProgramBatchImpl.h"
+#include "K15_OpenGL_GpuProgramBatchImpl.h"
 
-#include "K15_WGL_GpuProgramImpl.h"
+#include "K15_OpenGL_GpuProgramImpl.h"
 
-namespace K15_Engine { namespace Rendering { namespace WGL {
+namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	/*********************************************************************************/
 	GpuProgramBatchImpl::GpuProgramBatchImpl()
 		: GpuProgramBatchImplBase()

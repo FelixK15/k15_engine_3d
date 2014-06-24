@@ -21,17 +21,17 @@
  * 
  */
 
-#ifndef _K15Engine_RendererWGL_TextureImpl_h_
-#define _K15Engine_RendererWGL_TextureImpl_h_
+#ifndef _K15Engine_Renderer_OpenGL_TextureImpl_h_
+#define _K15Engine_Renderer_OpenGL_TextureImpl_h_
 
 #ifndef K15_RENDERER_USE_PREDEFINED_HEADERS
-#	include "K15_RendererOGLPrerequisites.h"
+#	include "K15_OpenGL_Prerequisites.h"
 #endif //K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
 
 #include "K15_RendererBase.h"
 #include "K15_Texture.h"
 
-namespace K15_Engine { namespace Rendering { namespace WGL {
+namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	class TextureImpl : public TextureImplBase
 	{
 	public:
@@ -60,7 +60,7 @@ namespace K15_Engine { namespace Rendering { namespace WGL {
 		GLuint m_TextureHandle;
 		uint32 m_TextureStorageSize;
 	};// end of TextureImplOGL class declaration
-#	include "K15_WGL_TextureImpl.inl"
+#	include "K15_OpenGL_TextureImpl.inl"
 }}}//end of K15_Engine::Rendering::WGL namespace
 
-#endif //_K15Engine_RendererWGL_TextureImpl_h_
+#endif //_K15Engine_Renderer_OpenGL_TextureImpl_h_

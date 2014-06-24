@@ -31,7 +31,7 @@
 void pluginLoad()
 {
 #ifdef K15_OS_WINDOWS
-	g_Application->setRenderer(K15_NEW K15_Engine::Rendering::WGL::Renderer());
+	g_Application->setRenderer(K15_NEW K15_Engine::Rendering::OpenGL::Renderer());
 #endif
 }
 /*********************************************************************************/

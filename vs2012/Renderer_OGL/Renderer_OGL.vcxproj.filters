@@ -36,9 +36,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\renderer_opengl\src\WGL\K15_WGL_GpuBufferImpl.cpp">
-      <Filter>Core\src\WGL</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\renderer_opengl\src\WGL\K15_WGL_GpuProgramImpl.cpp">
       <Filter>Core\src\WGL</Filter>
     </ClCompile>
@@ -60,15 +57,12 @@
     <ClCompile Include="..\..\renderer_opengl\src\WGL\K15_WGL_GpuProgramBatchImpl.cpp">
       <Filter>Core\src\WGL</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\renderer_opengl\src\WGL\K15_OpenGL_GpuBufferImpl.cpp">
+      <Filter>Core\src\WGL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="module.def" />
-    <None Include="..\..\renderer_opengl\include\WGL\K15_WGL_TextureImpl.inl">
-      <Filter>Core\include\WGL</Filter>
-    </None>
-    <None Include="..\..\renderer_opengl\include\WGL\K15_WGL_TextureSamplerImpl.inl">
-      <Filter>Core\include\WGL</Filter>
-    </None>
     <None Include="..\..\renderer_opengl\shader\default.frag">
       <Filter>Shader\Fragment</Filter>
     </None>
@@ -76,36 +70,42 @@
       <Filter>Shader\Vertex</Filter>
     </None>
     <None Include="..\..\renderer_opengl\include\WGL\K15_WGL_GpuProgramBatchImpl.inl">
-      <Filter>Core\include\WGL</Filter>
+      <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\renderer_opengl\include\WGL\K15_WGL_TextureImpl.inl">
+      <Filter>Core\include</Filter>
+    </None>
+    <None Include="..\..\renderer_opengl\include\WGL\K15_WGL_TextureSamplerImpl.inl">
+      <Filter>Core\include</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_GpuBufferImpl.h">
-      <Filter>Core\include\WGL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_GpuProgramImpl.h">
-      <Filter>Core\include\WGL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_Renderer.h">
-      <Filter>Core\include\WGL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_TextureImpl.h">
-      <Filter>Core\include\WGL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_TextureSamplerImpl.h">
-      <Filter>Core\include\WGL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_VertexDeclarationImpl.h">
-      <Filter>Core\include\WGL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\renderer_opengl\include\K15_RendererOGLPrerequisites.h">
-      <Filter>Core\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\renderer_opengl\include\plugin.h">
       <Filter>Plugin\include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_GpuProgramBatchImpl.h">
-      <Filter>Core\include\WGL</Filter>
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_GpuProgramImpl.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_Renderer.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_TextureImpl.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_TextureSamplerImpl.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_WGL_VertexDeclarationImpl.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer_opengl\include\WGL\K15_OpenGL_GpuBufferImpl.h">
+      <Filter>Core\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer_opengl\include\K15_OpenGL_Prerequisites.h">
+      <Filter>Core\include</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

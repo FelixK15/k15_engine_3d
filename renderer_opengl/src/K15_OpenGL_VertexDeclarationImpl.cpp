@@ -17,11 +17,11 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_WGL_VertexDeclarationImpl.h"
+#include "K15_OpenGL_VertexDeclarationImpl.h"
 #include "K15_RendererBase.h"
 #include "K15_LogManager.h"
 
-namespace K15_Engine { namespace Rendering { namespace WGL {
+namespace K15_Engine { namespace Rendering { namespace OpenGL {
   /*********************************************************************************/
   const GLenum VertexDeclarationImpl::GLVertexElementTypeConverter[VertexElement::ET_COUNT] = {
     GL_FLOAT,         //ET_FLOAT1

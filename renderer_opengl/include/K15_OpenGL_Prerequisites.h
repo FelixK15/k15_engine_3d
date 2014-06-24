@@ -26,13 +26,26 @@
 
 #include "K15_Prerequisites.h"
 
+using namespace K15_Engine::Rendering::OpenGL;
+
 #if defined K15_OS_WINDOWS
-#	include "GL\glew.h"
-#	include "GL\wglew.h"
-#	define K15_RENDERER_API __declspec(dllexport)
+  #include "glew.h"
+  #include "wglew.h"
+  #define K15_RENDERER_API __declspec(dllexport)
 #endif //K15_OS_WINDOWS
 
-using namespace K15_Engine::Rendering;
+// custom gl functions (per platform)
+typedef GLboolean (GLAPIENTRY * PFNK15GLINIT)(GLuint, GLuint, GLuint);
+typedef GLboolean (GLAPIENTRY * PFNK15GLSHUTDOWN)(void);
+typedef GLboolean (GLAPIENTRY * PFNK15GLSWAPBUFFERS)(void);
+typedef GLvoid*   (GLAPIENTRY * PFNGLGETPROCADDRESS)(GLchar*);
+
+#ifdef K15_OS_WINDOWS
+  #include "K15_OpenGL_WGL.h"
+  PFNK15GLINIT kglInit                  = _wglInit;
+  PFNK15GLSWAPBUFFERS kglSwapBuffers    = _wglSwapBuffers;
+  PFNK15GLSHUTDOWN kglShutdown          = _wglShutdown;
+  PFNGLGETPROCADDRESS kglGetProcAddress = _wglGetProcAddress;
 
 //experimentals to test perf with different approaches.
 #ifdef K15_OS_WINDOWS

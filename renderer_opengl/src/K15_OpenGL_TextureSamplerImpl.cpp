@@ -17,9 +17,9 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_WGL_TextureSamplerImpl.h"
+#include "K15_OpenGL_TextureSamplerImpl.h"
 
-namespace K15_Engine { namespace Rendering { namespace WGL {
+namespace K15_Engine { namespace Rendering { namespace OpenGL {
   /*********************************************************************************/
   const GLenum TextureSamplerImpl::GLFilterModeConverter[TextureSampler::TFM_COUNT] = {
     GL_LINEAR,    //TFM_LINEAR
