@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8.10)
 #Configuration Parameters	
 option(BUILD_ANDROID OFF "Build Android Binaries")
 option(BUILD_STATIC_CORE OFF "Build Static Libraries")
-set(DEPENDENCY_PATH CACHE STRING)
+set(DEPENDENCY_PATH CACHE STRING "Dependency Directory")
 
 set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${DEPENDENCY_PATH})
 

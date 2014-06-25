@@ -374,7 +374,7 @@ namespace K15_Engine
 #include <array>
 #include <memory>
 #include <algorithm>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>
@@ -456,12 +456,15 @@ typedef std::stringstream	StringStream;
 	#include <jni.h>
 	#include <unistd.h>
 
+    typedef K15_Engine::Core::DynamicLibrary_Linux DynamicLibraryType;
+    typedef K15_Engine::Core::OSLayer_Android OSLayer;
+    typedef K15_Engine::Core::RenderWindow_Android RenderWindowType;
+#endif //K15_OS_ANDROID
+
+
+#ifndef K15_OS_WINDOWS
 	//TEXT macro from windows
 	#define TEXT(x) x
-
-	typedef K15_Engine::Core::DynamicLibrary_Linux DynamicLibraryType;
-	typedef K15_Engine::Core::OSLayer_Android OSLayer;
-	typedef K15_Engine::Core::RenderWindow_Android RenderWindowType;
 
 	//8 bit types
 	typedef signed		char		int8;
@@ -482,8 +485,8 @@ typedef std::stringstream	StringStream;
 #define GLM_FORCE_RADIANS
 //include glm math
 #include "glm.hpp"
-#include "gtc\matrix_transform.hpp"
-#include "gtc\quaternion.hpp"
+#include "gtc/matrix_transform.hpp"
+#include "gtc/quaternion.hpp"
 
 typedef glm::fmat3 Matrix3;
 typedef glm::fmat4 Matrix4;
