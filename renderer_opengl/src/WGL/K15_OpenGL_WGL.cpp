@@ -17,7 +17,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "WGL/K15_OpenGL_WGL.h"
+#include "K15_OpenGL_Prerequisites.h"
 #include "K15_LogManager.h"
 
 /*********************************************************************************/
@@ -99,8 +99,7 @@ GLboolean _wglInit(GLuint p_ColorBits, GLuint p_DepthBits, GLuint p_StencilBits)
     return GL_FALSE;
   }
 
-  RenderWindow_Win32* renderwindow = (RenderWindow_Win32*)m_RenderWindow;
-  ms_DeviceContext = renderwindow->getDeviceContext();
+  ms_DeviceContext = ms_DeviceContext;
 
   int colorBits   = p_ColorBits;
   int depthBits   = p_DepthBits;
@@ -166,6 +165,8 @@ GLboolean _wglInit(GLuint p_ColorBits, GLuint p_DepthBits, GLuint p_StencilBits)
 GLboolean _wglSwapBuffers()
 {
   	SwapBuffers(ms_DeviceContext);
+
+    return GL_TRUE;
 }
 /*********************************************************************************/
 GLboolean _wglShutdown()
@@ -175,6 +176,8 @@ GLboolean _wglShutdown()
     wglMakeCurrent(0,0);
     wglDeleteContext(ms_RenderContext);
   }
+
+  return GL_TRUE;
 }
 /*********************************************************************************/
 GLvoid* _wglGetProcAddess(GLchar* p_ProcName)

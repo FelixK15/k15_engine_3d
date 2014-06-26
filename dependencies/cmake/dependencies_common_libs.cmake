@@ -1,0 +1,10 @@
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/libs")
+
+add_subdirectory(detour)
+add_subdirectory(enet)
+add_subdirectory(glew)
+add_subdirectory(jsoncpp)
+add_subdirectory(libtiff)
+add_subdirectory(minizip)
+add_subdirectory(zlib)
+add_subdirectory(tinyobjloader)

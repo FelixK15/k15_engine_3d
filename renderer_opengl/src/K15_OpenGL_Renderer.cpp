@@ -147,10 +147,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	/*********************************************************************************/
 	bool Renderer::_initialize()
 	{
-		K15_ASSERT(m_RenderWindow,
-			"Render window has not been set. Can not initialize renderer without having a render window.");
-		
-		if(kglInit())
+		if(kglInit(32,24,8))
     {
       PFNGLDEBUGMESSAGECALLBACKARBPROC debugfunc = (PFNGLDEBUGMESSAGECALLBACKARBPROC)kglGetProcAddress("glDebugMessageCallbackARB");
 
@@ -175,9 +172,8 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
         return false;
       }
 
-      const Resolution& resolution = renderwindow->getResolution();
       //force viewport resizing
-      _resolutionChanged(resolution);
+      _resolutionChanged(RenderWindow::getResolution());
       glEnable(GL_STENCIL_TEST); //enable stencil testing
       glEnable(GL_DEPTH_TEST);
       glEnable(GL_BLEND);
@@ -298,10 +294,6 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 				glPolygonOffset(0.0f,p_DepthState.getBias());
 			}
 		}
-	}
-	/*********************************************************************************/
-	void Renderer::_setRenderWindow(RenderWindow* p_RenderWindow)
-	{
 	}
 	/*********************************************************************************/
 	void Renderer::_setRenderTarget(RenderTarget* p_RenderTarget)

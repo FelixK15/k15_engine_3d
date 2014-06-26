@@ -440,37 +440,37 @@ typedef std::stringstream	StringStream;
 #endif //K15_OS_WINDOWS
   
 #if defined K15_OS_LINUX
-    #include <X11/Xlib.h>
-    #include <X11/Xutil.h>
-    #include <GL/gl.h>
-    #include <GL/glext.h>
-    #include <GL/glx.h>
-    #include <GL/glxext.h>
+  #include <X11/Xlib.h>
+  #include <X11/Xutil.h>
+  #include <GL/gl.h>
+  #include <GL/glext.h>
+  #include <GL/glx.h>
+  #include <GL/glxext.h>
 
-    typedef K15_Engine::Core::OSLayer_Linux OSLayer;
-    typedef K15_Engine::CORE::DynamicLibrary_Linux DynamicLibraryType;
+  typedef K15_Engine::Core::OSLayer_Linux OSLayer;
+  typedef K15_Engine::CORE::DynamicLibrary_Linux DynamicLibraryType;
 #endif //K15_OS_LINUX
 
 
 #if defined K15_OS_ANDROID
-	struct android_app;
-	struct ANativeWindow;
-	struct ASensorEventQueue;
-	struct ASensor;
-	struct ASensorManager;
-	#include "android_native_app_glue.h"
-	#include <android\sensor.h>
-	#include <android\input.h>
-	#include <android\log.h>
-	#include <android\asset_manager.h>
-	#include <android\asset_manager_jni.h>
-	#include <dlfcn.h>
-	#include <jni.h>
-	#include <unistd.h>
+  struct android_app;
+  struct ANativeWindow;
+  struct ASensorEventQueue;
+  struct ASensor;
+  struct ASensorManager;
+  #include "android_native_app_glue.h"
+  #include <android\sensor.h>
+  #include <android\input.h>
+  #include <android\log.h>
+  #include <android\asset_manager.h>
+  #include <android\asset_manager_jni.h>
+  #include <dlfcn.h>
+  #include <jni.h>
+  #include <unistd.h>
 
-    typedef K15_Engine::Core::DynamicLibrary_Linux DynamicLibraryType;
-    typedef K15_Engine::Core::OSLayer_Android OSLayer;
-    typedef K15_Engine::Core::RenderWindow_Android RenderWindowType;
+  typedef K15_Engine::Core::DynamicLibrary_Linux DynamicLibraryType;
+  typedef K15_Engine::Core::OSLayer_Android OSLayer;
+  typedef K15_Engine::Core::RenderWindow_Android RenderWindowType;
 #endif //K15_OS_ANDROID
 
 

@@ -54,11 +54,12 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		virtual void endFrame() OVERRIDE;
 
 	protected:
+    virtual bool _initialize() OVERRIDE;
+    virtual void _shutdown() OVERRIDE;
 		virtual void _resolutionChanged(const Resolution& p_Resolution) OVERRIDE;
 		virtual void _setFillMode(Enum p_FillMode) OVERRIDE;
 		virtual void _setAlphaState(const AlphaState& p_AlphaState) OVERRIDE;
 		virtual void _setDepthState(const DepthState& p_DepthState) OVERRIDE;
-		virtual void _setRenderWindow(RenderWindow* p_RenderWindow) OVERRIDE;
 		virtual void _setRenderTarget(RenderTarget* p_RenderTarget) OVERRIDE;
 		virtual void _setActiveCamera(CameraComponent* p_Camera) OVERRIDE;
 		virtual void _setVertexDeclaration(VertexDeclaration* p_Declaration) OVERRIDE;

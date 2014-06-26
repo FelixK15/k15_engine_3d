@@ -24,8 +24,6 @@
 #ifndef _K15Engine_OpenGL_WGL_h_
 #define _K15Engine_OpenGL_WGL_h_
 
-#include <GL/GL.h>
-
 namespace K15_Engine { namespace Rendering { namespace OpenGL {
   /*********************************************************************************/
   GLboolean GLAPIENTRY _wglInit(GLuint, GLuint, GLuint);

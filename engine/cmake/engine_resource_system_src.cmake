@@ -7,10 +7,11 @@ set(RESOURCE_SRC "./resource_system/src/K15_ResourceArchiveBase.cpp"
 "./resource_system/src/K15_ResourceImporterMaterial.cpp"
 "./resource_system/src/K15_ResourceImporterObj.cpp"
 "./resource_system/src/K15_ResourceImporterTiff.cpp"
-"./resource_system/src/K15_ResourceManager.cpp"
-"./resource_system/src/android/K15_ResourceArchive_Android.cpp")
+"./resource_system/src/K15_ResourceManager.cpp")
 
-set(RESOURCE_INC "./resource_system/include/K15_ResourceAchiveBase.h"
+set(RESOURCE_ANDROID_SRC "./resource_system/src/android/K15_ResourceArchive_Android.cpp")
+
+set(RESOURCE_INC "./resource_system/include/K15_ResourceArchiveBase.h"
 "./resource_system/include/K15_ResourceArchiveBase.inl"
 "./resource_system/include/K15_ResourceArchiveZip.h"
 "./resource_system/include/K15_ResourceBase.h"
@@ -26,3 +27,5 @@ set(RESOURCE_INC "./resource_system/include/K15_ResourceAchiveBase.h"
 "./resource_system/include/K15_ResourceImporterTiff.h"
 "./resource_system/include/K15_ResourceManager.h"
 "./resource_system/include/K15_ResourceManager.inl")
+
+set(RESOURCE_ANDROID_INC "./resource_system/include/android/K15_ResourceArchive_Android.h")

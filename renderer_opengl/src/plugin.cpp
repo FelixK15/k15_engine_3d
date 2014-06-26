@@ -19,10 +19,7 @@
 
 #include "plugin.h"
 
-#if defined K15_OS_WINDOWS
-#	include "WGL\K15_WGL_Renderer.h"
-#endif //K15_OS_ANDROID
-
+#include "K15_OpenGL_Renderer.h"
 #include "K15_Application.h"
 #include "K15_RenderTask.h"
 #include "K15_RenderProcessBase.h"
@@ -30,9 +27,7 @@
 /*********************************************************************************/
 void pluginLoad()
 {
-#ifdef K15_OS_WINDOWS
 	g_Application->setRenderer(K15_NEW K15_Engine::Rendering::OpenGL::Renderer());
-#endif
 }
 /*********************************************************************************/
 void pluginUnload()

@@ -16,6 +16,7 @@ set(CORE_SRC "./core/src/K15_AABB.cpp"
 "./core/src/K15_GameObject.cpp"
 "./core/src/K15_GameObjectComponentBase.cpp"
 "./core/src/K15_GameStateBase.cpp"
+"./core/src/K15_GameTime.cpp"
 "./core/src/K15_HashedString.cpp"
 "./core/src/K15_Image.cpp"
 "./core/src/K15_IniFileParser.cpp"
@@ -45,20 +46,23 @@ set(CORE_SRC "./core/src/K15_AABB.cpp"
 "./core/src/K15_TaskBase.cpp"
 "./core/src/K15_TaskManager.cpp"
 "./core/src/K15_ThreadSafe.cpp"
-"./core/src/K15_ThreadWorker.cpp"
-"./core/src/win32/K15_DynamicLibrary_Win32.cpp"
+"./core/src/K15_ThreadWorker.cpp")
+
+set(CORE_WIN32_SRC "./core/src/win32/K15_DynamicLibrary_Win32.cpp"
 "./core/src/win32/K15_Keyboard_Win32.cpp"
 "./core/src/win32/K15_Mouse_Win32.cpp"
 "./core/src/win32/K15_OSLayer_Win32.cpp"
 "./core/src/win32/K15_RenderWindow_Win32.cpp"
 "./core/src/win32/K15_TextConsoleLog_Win32.cpp"
-"./core/src/win32/K15_VisualStudioLog_Win32.cpp"
-"./core/src/android/K15_Keyboard_Android.cpp"
+"./core/src/win32/K15_VisualStudioLog_Win32.cpp")
+
+set(CORE_ANDROID_SRC "./core/src/android/K15_Keyboard_Android.cpp"
 "./core/src/android/K15_Logcat_Android.cpp"
 "./core/src/android/K15_Mouse_Android.cpp"
 "./core/src/android/K15_OSLayer_Android.cpp"
-"./core/src/android/K15_RenderWindow_Android.cpp"
-"./core/src/linux/K15_DynamicLibrary_Linux.cpp"
+"./core/src/android/K15_RenderWindow_Android.cpp")
+
+set(CORE_LINUX_SRC "./core/src/linux/K15_DynamicLibrary_Linux.cpp"
 "./core/src/linux/K15_RenderWindow_Linux.cpp"
 "./core/src/linux/K15_OSLayer_Linux.cpp"
 "./core/src/linux/K15_TextConsoleLog_Linux.cpp"
@@ -155,18 +159,21 @@ set(CORE_INC "./core/include/K15_AABB.h"
 "./core/include/K15_TaskManager.inl"
 "./core/include/K15_ThreadSafe.h"
 "./core/include/K15_ThreadSafe.inl"
-"./core/include/K15_ThreadWorker.h"
-"./core/include/win32/K15_DynamicLibrary_Win32.h"
+"./core/include/K15_ThreadWorker.h")
+
+set(CORE_WIN32_INC "./core/include/win32/K15_DynamicLibrary_Win32.h"
 "./core/include/win32/K15_OSLayer_Win32.h"
 "./core/include/win32/K15_RenderWindow_Win32.h"
 "./core/include/win32/K15_TextConsoleLog_Win32.h"
-"./core/include/win32/K15_VisualStudioLog_Win32.h"
-"./core/include/android/K15_Logcat_Android.h"
+"./core/include/win32/K15_VisualStudioLog_Win32.h")
+
+set(CORE_ANDROID_INC "./core/include/android/K15_Logcat_Android.h"
 "./core/include/android/K15_OSLayer_Android.h"
 "./core/include/android/K15_OSLayer_Android.inl"
 "./core/include/android/K15_RenderWindow_Android.h"
-"./core/include/android/K15_RenderWindow_Android.inl"
-"./core/include/linux/K15_DynamicLibrary_Linux.h"
+"./core/include/android/K15_RenderWindow_Android.inl")
+
+set(CORE_LINUX_INC "./core/include/linux/K15_DynamicLibrary_Linux.h"
 "./core/include/linux/K15_OSLayer_Linux.h"
 "./core/include/linux/K15_TextConsoleLog_Linux.h"
 "./core/include/linux/K15_RenderWindow_Linux.h")	

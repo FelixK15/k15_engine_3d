@@ -19,6 +19,8 @@
 
 #include "GLX/K15_OpenGL_GLX.h"
 
+#ifdef K15_OS_LINUX
+
 #include "K15_LogManager.h"
 #include "K15_RenderWindow.h"
 
@@ -114,3 +116,5 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
     }
     /*********************************************************************************/
 }}} //end of K15_Engine::Rendering::OpenGL namespace
+
+#endif //K15_OS_LINUX

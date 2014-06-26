@@ -23,6 +23,12 @@
 #ifdef K15_OS_WINDOWS
 
 namespace K15_Engine { namespace Core {
+  /*********************************************************************************/
+  HDC       RenderWindow_Win32::ms_DeviceContext  = 0;
+  HWND      RenderWindow_Win32::ms_HandleWindow   = 0;
+  HINSTANCE RenderWindow_Win32::ms_Instance       = 0;
+  /*********************************************************************************/
+
 	/*********************************************************************************/
 	LRESULT CALLBACK K15_WindowProc(HWND p_HandleWindow,UINT p_MSG,WPARAM p_wParam,LPARAM p_lParam)
 	{

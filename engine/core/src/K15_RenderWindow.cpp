@@ -29,14 +29,15 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	EventName  RenderWindow::EventFocusLost			= _EN(EventFocusLost);
-	EventName  RenderWindow::EventFocusReceived		= _EN(EventFocusReceived);
-	EventName  RenderWindow::EventResolutionChanged = _EN(EventResolutionChanged);
-	EventName  RenderWindow::EventInitialized		= _EN(EventRenderWindowInitialized);
-	bool	   RenderWindow::ms_HasFocus			= false;
-	bool	   RenderWindow::ms_IsFullscreen		= false;
-	String	   RenderWindow::ms_WindowTitle;
-	Resolution RenderWindow::ms_CurrentResolution;
+	EventName   RenderWindow::EventFocusLost			    = _EN(EventFocusLost);
+	EventName   RenderWindow::EventFocusReceived		  = _EN(EventFocusReceived);
+	EventName   RenderWindow::EventResolutionChanged  = _EN(EventResolutionChanged);
+	EventName   RenderWindow::EventInitialized		    = _EN(EventRenderWindowInitialized);
+	bool	      RenderWindow::ms_HasFocus			        = false;
+	bool        RenderWindow::ms_IsFullscreen		      = false;
+  bool        RenderWindow::ms_IsInitialized        = false;
+	String	    RenderWindow::ms_WindowTitle;
+	Resolution  RenderWindow::ms_CurrentResolution;
 	/*********************************************************************************/
 
 	/*********************************************************************************/

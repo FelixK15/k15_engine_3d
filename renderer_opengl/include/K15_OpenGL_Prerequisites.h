@@ -25,14 +25,18 @@
 #define _K15Engine_RendererOGL_Prerequisites_h_
 
 #include "K15_Prerequisites.h"
-
-using namespace K15_Engine::Rendering::OpenGL;
-
 #include "glew.h"
 
 #if defined K15_OS_WINDOWS
+    #include "wglew.h"
+    #include "WGL/K15_OpenGL_WGL.h"
     #define K15_RENDERER_API __declspec(dllexport)
+#elif defined K15_OS_LINUX
+    #include "glxew.h"
+    #include "GLX/K15_OpenGL_GLX.h"
 #endif //K15_OS_WINDOWS
+
+using namespace K15_Engine::Rendering::OpenGL;
 
 // custom gl functions (per platform)
 typedef GLboolean (GLAPIENTRY * PFNK15GLINIT)(GLuint, GLuint, GLuint);
@@ -41,15 +45,11 @@ typedef GLboolean (GLAPIENTRY * PFNK15GLSWAPBUFFERS)(void);
 typedef GLvoid*   (GLAPIENTRY * PFNGLGETPROCADDRESS)(GLchar*);
 
 #ifdef K15_OS_WINDOWS
-    #include "wglew.h"
-    #include "WGL/K15_OpenGL_WGL.h"
     PFNK15GLINIT        kglInit             = _wglInit;
     PFNK15GLSWAPBUFFERS kglSwapBuffers      = _wglSwapBuffers;
     PFNK15GLSHUTDOWN    kglShutdown         = _wglShutdown;
     PFNGLGETPROCADDRESS kglGetProcAddress   = _wglGetProcAddress;
-#else ifdef K15_OS_LINUX
-    #include "glxew.h"
-    #include "GLX/K15_OpenGL_GLX.h"
+#elif defined K15_OS_LINUX
     PFNK15GLINIT        kglInit             = _glxInit;
     PFNK15GLSWAPBUFFERS kglSwapBuffers      = _glxSwapBuffers;
     PFNK15GLSHUTDOWN    kglShutdown         = _glxShutdown;

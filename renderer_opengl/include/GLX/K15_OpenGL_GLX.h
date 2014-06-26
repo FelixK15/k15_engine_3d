@@ -30,6 +30,8 @@
 */
 #include "K15_Prerequisites.h"
 
+#ifdef K15_OS_LINUX
+
 namespace K15_Engine { namespace Rendering { namespace OpenGL {
   /*********************************************************************************/
   GLboolean GLAPIENTRY _glxInit(GLuint, GLuint, GLuint);
@@ -38,5 +40,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
   GLvoid*   GLAPIENTRY _glxGetProcAddress(GLchar*);
   /*********************************************************************************/
 }}} // end of K15_Engine::Rendering::OpenGL namespace
+
+#endif //K15_OS_LINUX
 
 #endif //_K15Engine_OpenGL_GLX_h_

@@ -29,3 +29,4 @@ android_make/TowerDefense/res/
 build
 build-dependencies
 *.lnk
+build_dependencies/

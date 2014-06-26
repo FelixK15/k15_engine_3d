@@ -71,7 +71,7 @@ namespace K15_Engine { namespace Core {
 		StringStream dataStream;
 		dataStream.write((const char*)p_ResourceData.data,p_ResourceData.size);
 		
-		TIFF* tiffImg = TIFFStreamOpen("tiff_image",(std::istream*)&dataStream);
+		TIFF* tiffImg = 0;//TIFFStreamOpen("tiff_image",(std::istream*)&dataStream);
 
 		if(!tiffImg)
 		{
