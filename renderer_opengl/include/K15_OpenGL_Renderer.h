@@ -24,9 +24,7 @@
 #ifndef _K15Engine_Renderer_OpenGL_Renderer_h_
 #define _K15Engine_Renderer_OpenGL_Renderer_h_
 
-#ifndef K15_RENDERER_USE_PREDEFINED_HEADERS
-#	include "K15_OpenGL_Prerequisites.h"
-#endif //K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
+#include "K15_OpenGL_Prerequisites.h"
 
 #include "K15_RendererBase.h"
 #include "K15_RenderOperation.h"

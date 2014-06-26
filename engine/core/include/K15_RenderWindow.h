@@ -28,12 +28,16 @@
 
 #ifdef K15_OS_WINDOWS
 	#include "win32/K15_RenderWindow_Win32.h"
+#elif defined K15_OS_LINUX
+    #include "linux/K15_RenderWindow_Linux.h"
 #endif //K15_OS_WINDOWS
 
 namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
 	#ifdef K15_OS_WINDOWS
 		typedef RenderWindow_Win32 RenderWindowImpl;
+    #elif defined K15_OS_LINUX
+        typedef RenderWindow_Linux RenderWindowImpl;
 	#endif //K15_OS_WINDOWS
 	/*********************************************************************************/
 

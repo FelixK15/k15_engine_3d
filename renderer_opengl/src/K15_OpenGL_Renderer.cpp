@@ -31,7 +31,6 @@
 #include "K15_VertexBuffer.h"
 
 #include "K15_RenderWindow.h"
-#include "win32/K15_RenderWindow_Win32.h"
 
 namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	/*********************************************************************************/
@@ -143,7 +142,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	/*********************************************************************************/
 	void Renderer::endFrame()
 	{
-    kglSwapBuffers();
+        kglSwapBuffers();
 	}
 	/*********************************************************************************/
 	bool Renderer::_initialize()

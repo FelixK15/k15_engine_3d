@@ -35,7 +35,7 @@
 #endif //_WIN32
 
 #if defined (K15_OS_WINDOWS)
-	#ifdef _WIN64
+    #ifdef _WIN64
 	#	define K15_64_BIT
 	#endif //_WIN64
 #else
@@ -439,6 +439,18 @@ typedef std::stringstream	StringStream;
 	#define K15_CORE_API
 #endif //K15_OS_WINDOWS
   
+#if defined K15_OS_LINUX
+    #include <X11/Xlib.h>
+    #include <X11/Xutil.h>
+    #include <GL/gl.h>
+    #include <GL/glext.h>
+    #include <GL/glx.h>
+    #include <GL/glxext.h>
+
+    typedef K15_Engine::Core::OSLayer_Linux OSLayer;
+    typedef K15_Engine::CORE::DynamicLibrary_Linux DynamicLibraryType;
+#endif //K15_OS_LINUX
+
 
 #if defined K15_OS_ANDROID
 	struct android_app;
@@ -465,6 +477,9 @@ typedef std::stringstream	StringStream;
 #ifndef K15_OS_WINDOWS
 	//TEXT macro from windows
 	#define TEXT(x) x
+
+    //undef to disable debug mode
+    #define K15_DEBUG
 
 	//8 bit types
 	typedef signed		char		int8;

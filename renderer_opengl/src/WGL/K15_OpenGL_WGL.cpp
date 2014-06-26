@@ -17,7 +17,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_OpenGL_WGL.h"
+#include "WGL/K15_OpenGL_WGL.h"
 #include "K15_LogManager.h"
 
 /*********************************************************************************/

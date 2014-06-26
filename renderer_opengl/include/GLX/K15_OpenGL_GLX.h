@@ -1,5 +1,5 @@
 /**
- * @file K15_OpenGL_WGL.h
+ * @file K15_OpenGL_GLX.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2013/09/10
@@ -18,21 +18,25 @@
  *
  * @section DESCRIPTION
  *
- * 
+ *
  */
 
-#ifndef _K15Engine_OpenGL_WGL_h_
-#define _K15Engine_OpenGL_WGL_h_
+#ifndef _K15Engine_OpenGL_GLX_h_
+#define _K15Engine_OpenGL_GLX_h_
 
-#include <GL/GL.h>
+/*
+#include <GL/gl.h>
+#include <GL/glx.h>
+*/
+#include "K15_Prerequisites.h"
 
 namespace K15_Engine { namespace Rendering { namespace OpenGL {
   /*********************************************************************************/
-  GLboolean GLAPIENTRY _wglInit(GLuint, GLuint, GLuint);
-  GLboolean GLAPIENTRY _wglSwapBuffers(void);
-  GLboolean GLAPIENTRY _wglShutdown(void);
-  GLvoid*   GLAPIENTRY _wglGetProcAddress(GLchar*);
+  GLboolean GLAPIENTRY _glxInit(GLuint, GLuint, GLuint);
+  GLboolean GLAPIENTRY _glxSwapBuffers(void);
+  GLboolean GLAPIENTRY _glxShutdown(void);
+  GLvoid*   GLAPIENTRY _glxGetProcAddress(GLchar*);
   /*********************************************************************************/
 }}} // end of K15_Engine::Rendering::OpenGL namespace
 
-#endif //_K15Engine_OpenGL_WGL_h_
+#endif //_K15Engine_OpenGL_GLX_h_

@@ -58,7 +58,12 @@ set(CORE_SRC "./core/src/K15_AABB.cpp"
 "./core/src/android/K15_Mouse_Android.cpp"
 "./core/src/android/K15_OSLayer_Android.cpp"
 "./core/src/android/K15_RenderWindow_Android.cpp"
-"./core/src/linux/K15_DynamicLibrary_Linux.cpp")
+"./core/src/linux/K15_DynamicLibrary_Linux.cpp"
+"./core/src/linux/K15_RenderWindow_Linux.cpp"
+"./core/src/linux/K15_OSLayer_Linux.cpp"
+"./core/src/linux/K15_TextConsoleLog_Linux.cpp"
+"./core/src/linux/K15_Mouse_Linux.cpp"
+"./core/src/linux/K15_Keyboard_Linux.cpp")
 
 set(CORE_INC "./core/include/K15_AABB.h"
 "./core/include/K15_AABB.inl"
@@ -161,4 +166,7 @@ set(CORE_INC "./core/include/K15_AABB.h"
 "./core/include/android/K15_OSLayer_Android.inl"
 "./core/include/android/K15_RenderWindow_Android.h"
 "./core/include/android/K15_RenderWindow_Android.inl"
-"./core/include/linux/K15_DynamicLibrary_Linux.h")	
+"./core/include/linux/K15_DynamicLibrary_Linux.h"
+"./core/include/linux/K15_OSLayer_Linux.h"
+"./core/include/linux/K15_TextConsoleLog_Linux.h"
+"./core/include/linux/K15_RenderWindow_Linux.h")	
