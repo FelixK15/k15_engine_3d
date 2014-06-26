@@ -77,13 +77,16 @@ namespace K15_Engine
 		class RenderWindow;
 		class TaskBase;
 		class GameTime;
-#		if defined K15_OS_ANDROID
+        #if defined K15_OS_ANDROID
 			class DynamicLibrary_Linux;
 			class OSLayer_Android;
-#		elif defined K15_OS_WINDOWS
+        #elif defined K15_OS_WINDOWS
 			class DynamicLibrary_Win32;
 			class OSLayer_Win32;
-#		endif //K15_OS_WINDOWS
+        #elif defined K15_OS_LINUX
+            class DynamicLibrary_Linux;
+            class OSLayer_Linux;
+        #endif //K15_OS_WINDOWS
 		class DynamicLibraryBase;
 		class DynamicLibraryManager;
 		class EventManager;
@@ -448,7 +451,7 @@ typedef std::stringstream	StringStream;
   #include <GL/glxext.h>
 
   typedef K15_Engine::Core::OSLayer_Linux OSLayer;
-  typedef K15_Engine::CORE::DynamicLibrary_Linux DynamicLibraryType;
+  typedef K15_Engine::Core::DynamicLibrary_Linux DynamicLibraryType;
 #endif //K15_OS_LINUX
 
 
@@ -575,6 +578,8 @@ typedef glm::fquat Quaternion;
 				debugMessage__ += "\"."; \
 				__android_log_assert(#condition,"K15_Engine",debugMessage__.c_str()); \
 			}
+    #elif defined K15_OS_LINUX
+        #define K15_ASSERT(condition, message)
 	#endif //K15_OS_WINDOWS
 #else
 	#define K15_ASSERT(condition,message0)

@@ -22,3 +22,86 @@
  */
 
 #include "K15_Prerequisites.h"
+
+namespace K15_Engine { namespace Core {
+    /*********************************************************************************/
+    class OSLayer_Linux
+    {
+    public:
+        /*********************************************************************************/
+        static const String OSName;
+        static const String PluginExtension;
+        typedef DynamicArray(Resolution) SupportedResolutionSet;
+        /*********************************************************************************/
+    public:
+
+        /**
+        * Allocate memory with OS specific functions.
+        *
+        * @param p_Size - size (in bytes) to allocate.
+        *
+        * @return void* - ptr to allocated memory (0 on error)
+        */
+        static void* os_malloc(uint32 p_Size);
+
+        /**
+        * Free memory with OS specific functions.
+        *
+        * @param p_Pointer - Pointer to previously allocated memory.
+        */
+        static void os_free(void* p_Pointer);
+
+        /**
+        * initialize the OS layer
+        *
+        *
+        * @return bool - true initialization succeeded, false initialization failed (refer to program log for further information)
+        */
+        static bool initialize();
+
+        /**
+        * shutdown OS layer
+        */
+        static void shutdown();
+
+        /**
+        * get the last error set by the OS
+        *
+        *
+        * @return const String& - Error string
+        */
+        static const String& getError();
+
+        /**
+        * get supported resolutions
+        *
+        * @param p_ResolutionSet - Pointer to a SupportedResolutionSet variable. The function will fill the container.
+        */
+        static void getSupportedResolutions(SupportedResolutionSet* p_ResolutionSet);
+
+        /**
+        * get current time (1.0 = 1 sec)
+        *
+        *
+        * @return double - current time in second format.
+        */
+        static float getTime();
+
+        /**
+        * Put the calling thread to sleep for a specific amount of time.
+        *
+        * @param p_TimeInSeconds - seconds the calling thread should idle
+        */
+        static void sleep(float p_TimeInSeconds);
+
+        /**
+        * callback before the game gets ticked (pumps messages)
+        */
+        static void onPreTick();
+
+        /**
+        * callback after the game gets ticked
+        */
+        static void onPostTick();
+    }; // OSLayer_Linux class declaration
+}} //end of K15_Engine::Core namespace

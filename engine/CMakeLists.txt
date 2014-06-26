@@ -6,6 +6,7 @@ include(engine_rendering_src)
 include(engine_resource_system_src)
 include(engine_components_src)
 include(engine_serialization_src)
+include(engine_core_libraries)
 
 set(ENGINE_SRC "${CORE_SRC}"
 "${CORE_WIN32_SRC}"

@@ -34,9 +34,11 @@
 #include "K15_Serializer.h"
 
 #if defined (K15_OS_WINDOWS)
-#	include "win32/K15_OSLayer_Win32.h"
+    #include "win32/K15_OSLayer_Win32.h"
 #elif defined (K15_OS_ANDROID)
-#	include "Android/K15_OSLayer_Android.h"
+    #include "android/K15_OSLayer_Android.h"
+#elif defined (K15_OS_LINUX)
+    #include "linux/K15_OSLayer_Linux.h"
 #endif //K15_OS_WINDOWS
 
 namespace K15_Engine { namespace Core {
@@ -67,9 +69,9 @@ namespace K15_Engine { namespace Core {
 		INLINE const StringSet& getCommandList() const;
 		INLINE const ApplicationParameterList& getApplicationParameter() const;
 
-#	if defined K15_OS_ANDROID
+    #if defined K15_OS_ANDROID
 		void initialize(android_app* p_App);
-#	endif //K15_OS_ANDROID
+    #endif //K15_OS_ANDROID
 		void initialize(int p_CommandCount,char** p_Commands);
 		void initialize();
 		

@@ -43,7 +43,7 @@ namespace K15_Engine { namespace Core {
 		static EventHandler create(const T* p_Object);
 
 		INLINE bool operator()(GameEvent* p_Args) const;
-    INLINE bool operator==(const EventHandler& p_Rhs) const;
+        INLINE bool operator==(const EventHandler& p_Rhs) const;
 
 	private:
 		template<class T, bool (T::*MemberFunction)(GameEvent*)>
