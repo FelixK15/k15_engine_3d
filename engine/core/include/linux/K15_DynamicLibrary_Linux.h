@@ -21,8 +21,8 @@
  * 
  */
 
-#ifndef _K15Engine_Core_DynamicLibrary_Android_h_
-#define _K15Engine_Core_DynamicLibrary_Android_h_
+#ifndef _K15Engine_Core_DynamicLibrary_Linux_h_
+#define _K15Engine_Core_DynamicLibrary_Linux_h_
 
 #include "K15_Prerequisites.h"
 #include "K15_DynamicLibraryBase.h"
@@ -46,5 +46,5 @@ namespace K15_Engine { namespace Core {
 	};// end of DynamicLibrary_Android class declaration
 }}// end of K15_Engine::Core namespace
 
-#endif //_K15Engine_Core_DynamicLibrary_Android_h_
+#endif //_K15Engine_Core_DynamicLibrary_Linux_h_
 

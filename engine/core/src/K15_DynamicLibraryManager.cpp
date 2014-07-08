@@ -26,7 +26,7 @@
 #if defined K15_OS_WINDOWS
 #	include "win32/K15_DynamicLibrary_win32.h"
 #elif defined K15_OS_ANDROID || defined K15_OS_LINUX || defined K15_OS_APPLE
-#	include "Linux/K15_DynamicLibrary_Linux.h"
+#	include "linux/K15_DynamicLibrary_Linux.h"
 #endif //K15_OS_WINDOWS
 
 namespace K15_Engine { namespace Core {

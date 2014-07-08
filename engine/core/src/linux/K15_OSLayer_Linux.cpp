@@ -55,6 +55,11 @@ namespace K15_Engine { namespace Core {
 
         errorMsg = strerror(errno);
 
+        if(errorMsg.empty())
+        {
+            errorMsg = dlerror();
+        }
+
         return errorMsg;
     }
     /*********************************************************************************/

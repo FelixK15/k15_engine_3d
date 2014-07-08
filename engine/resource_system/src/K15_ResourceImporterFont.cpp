@@ -24,7 +24,7 @@
 #include "K15_ResourceManager.h"
 #include "K15_Texture.h"
 
-#include "json\reader.h"
+#include "json/reader.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/

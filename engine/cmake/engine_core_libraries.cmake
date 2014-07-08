@@ -10,9 +10,9 @@ find_library(OBJLOADER_LIB NAMES tinyobjloader libtinyonjloader)
 find_library(ZLIB_LIB NAMES zlib libzlib)
 
 if("${ENET_LIB}" STREQUAL "ENET_LIB-NOTFOUND")
-	message(SEND_ERROR "Could not found library 'enet' ... Wrong DEPENDENCY_PATH?")
+        message(SEND_ERROR "Could not found library 'enet' ... Wrong DEPENDENCY_PATH?")
 else()
-	message(STATUS "Successfully found library 'enet' (${ENET_LIB}).")
+        message(STATUS "Successfully found library 'enet' (${ENET_LIB}).")
 endif()
 
 if("${DETOUR_LIB}" STREQUAL "DETOUR_LIB-NOTFOUND")

@@ -19,7 +19,7 @@
 
 /*********************************************************************************/
 template<class T, bool (T::*MemberFunction)(GameEvent*)>
-static EventHandler EventHandler::create(const T* p_Object)
+EventHandler EventHandler::create(const T* p_Object)
 {
 	EventHandler handler;
 	handler.m_Object = (void*)p_Object;
@@ -28,7 +28,7 @@ static EventHandler EventHandler::create(const T* p_Object)
 }
 /*********************************************************************************/
 template<class T, bool (T::*MemberFunction)(GameEvent*)>
-static bool EventHandler::getHandlerFunction(void* p_Object, GameEvent* p_Event)
+bool EventHandler::getHandlerFunction(void* p_Object, GameEvent* p_Event)
 {
 	T* obj = static_cast<T*>(p_Object);
 	return (obj->*MemberFunction)(p_Event);

@@ -24,8 +24,9 @@
 #ifndef _K15Engine_RendererOGL_Prerequisites_h_
 #define _K15Engine_RendererOGL_Prerequisites_h_
 
-#include "K15_Prerequisites.h"
+//include order is important here!
 #include "glew.h"
+#include "K15_Prerequisites.h"
 
 #if defined K15_OS_WINDOWS
     #include "wglew.h"

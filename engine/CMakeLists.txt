@@ -63,7 +63,7 @@ if(COMPILER_IS_MSVC)
 
 	endforeach()
 	
-	set_source_files_properties("./core/src/K15_PrecompiledHeader.cpp" PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} /YcK15_PrecompiledHeader.h")
+	set_source_files_properties("./core/src/K15_PrecompiledHeader.cpp.gch" PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} /YcK15_PrecompiledHeader.h")
 endif()
 
 source_group("core\\include" FILES ${CORE_INC})
@@ -99,13 +99,13 @@ else(WIN32)
 	add_library(k15core SHARED ${ENGINE_SRC})
 
 	if(WIN32)
-		target_link_libraries(k15core winmm.lib)
-		target_link_libraries(k15core Ws2_32.lib)
-	endif()
-	
-	target_link_libraries(k15core ${ENGINE_LIBS})
+            target_link_libraries(k15core winmm.lib)
+            target_link_libraries(k15core Ws2_32.lib)
+        endif()
+#	target_link_libraries(k15core)
+#	target_link_libraries(k15core ${ENGINE_LIBS})
 	#cmake_policy(PUSH)
-	cmake_policy(SET CMP0022 OLD)
+	#cmake_policy(SET CMP0022 OLD)
 	set_target_properties(k15core PROPERTIES LINK_INTERFACE_LIBRARIES "")
 	#cmake_policy(POP)
 endif() 

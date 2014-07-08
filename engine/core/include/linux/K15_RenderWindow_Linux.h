@@ -21,6 +21,10 @@
  *
  */
 
+#ifndef _K15Engine_Core_RenderWindow_Linux_h_
+#define _K15Engine_Core_RenderWindow_Linux_h_
+
+
 #include "K15_Prerequisites.h"
 
 namespace K15_Engine { namespace Core {
@@ -38,10 +42,12 @@ namespace K15_Engine { namespace Core {
         static Window getWindow();
         static GLXWindow getGLXWindow();
 
-        static setGLXWindow(GLXWindow p_glWindow);
+        static void setGLXWindow(GLXWindow p_glWindow);
     private:
         static Display* ms_Display;
         static Window ms_Window;
         static GLXWindow ms_GLXWindow;
     };
 }} //end of K15_Engine::Core namespace
+
+#endif //_K15Engine_Core_RenderWindow_Linux_h_

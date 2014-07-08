@@ -25,7 +25,7 @@
 #include "Android\K15_OSLayer_Android.h"
 #endif //K15_OS_ANDROID
 
-#include "Linux\K15_DynamicLibrary_Linux.h"
+#include "linux/K15_DynamicLibrary_Linux.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
@@ -58,7 +58,6 @@ namespace K15_Engine { namespace Core {
 
 		if(!m_Module)
 		{
-			OSLayer::setError(dlerror());
 			return false;
 		}
 

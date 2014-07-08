@@ -21,6 +21,9 @@
  *
  */
 
+#ifndef _K15Engine_Core_OSLayer_Linux_h_
+#define _K15Engine_Core_OSLayer_Linux_h_
+
 #include "K15_Prerequisites.h"
 
 namespace K15_Engine { namespace Core {
@@ -105,3 +108,5 @@ namespace K15_Engine { namespace Core {
         static void onPostTick();
     }; // OSLayer_Linux class declaration
 }} //end of K15_Engine::Core namespace
+
+#endif //_K15Engine_Core_OSLayer_Linux_h_

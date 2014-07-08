@@ -39,7 +39,7 @@ namespace K15_Engine { namespace Core {
 		va_end(list);
 
 		return MessageBuffer;
-	}
+    }
 	/*********************************************************************************/
 	String StringUtil::timeAsString(const String& p_Format)
 	{

@@ -29,7 +29,7 @@
 namespace K15_Engine { namespace Core {
     /*********************************************************************************/
     Display* RenderWindow_Linux::ms_Display = 0;
-    Window* RenderWindow_Linux::ms_Window = 0;
+    Window RenderWindow_Linux::ms_Window = 0;
     /*********************************************************************************/
 
     /*********************************************************************************/
@@ -45,7 +45,7 @@ namespace K15_Engine { namespace Core {
         if(ms_Display && ms_Window != BadMatch || ms_Window != BadValue || ms_Window != BadWindow)
         {
             K15_LOG_ERROR("Could not create X11 window. Error:\"%s\" (%d)",
-                          OSLayer::getLastError().c_str(), errno);
+                          OSLayer::getError().c_str(), errno);
 
             return false;
         }

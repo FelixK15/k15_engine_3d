@@ -378,6 +378,7 @@ namespace K15_Engine
 #include <memory>
 #include <algorithm>
 #include <sys/stat.h>
+#include <cstdarg>
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>
@@ -443,15 +444,16 @@ typedef std::stringstream	StringStream;
 #endif //K15_OS_WINDOWS
   
 #if defined K15_OS_LINUX
-  #include <X11/Xlib.h>
-  #include <X11/Xutil.h>
-  #include <GL/gl.h>
-  #include <GL/glext.h>
-  #include <GL/glx.h>
-  #include <GL/glxext.h>
-
-  typedef K15_Engine::Core::OSLayer_Linux OSLayer;
-  typedef K15_Engine::Core::DynamicLibrary_Linux DynamicLibraryType;
+    #include <X11/Xlib.h>
+    #include <X11/Xutil.h>
+    #include <GL/gl.h>
+    #include <GL/glext.h>
+    #include <GL/glx.h>
+    #include <GL/glxext.h>
+    #include <dlfcn.h>
+    #include <unistd.h>
+    typedef K15_Engine::Core::OSLayer_Linux OSLayer;
+    typedef K15_Engine::Core::DynamicLibrary_Linux DynamicLibraryType;
 #endif //K15_OS_LINUX
 
 
