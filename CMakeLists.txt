@@ -23,6 +23,10 @@ endif()
 #Project Name
 project(k15_engine_3d)
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 #Check Which Compiler will be used
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	#GCC

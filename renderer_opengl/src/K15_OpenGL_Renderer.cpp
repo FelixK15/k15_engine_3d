@@ -182,7 +182,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
       return m_LastError.empty();
     }
 
-
+    return true;
 	}
 	/*********************************************************************************/
 	void Renderer::_shutdown()

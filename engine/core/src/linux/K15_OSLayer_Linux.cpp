@@ -22,6 +22,8 @@
 #include "K15_PrecompiledHeader.h"
 #include "linux/K15_OSLayer_Linux.h"
 
+#ifdef K15_OS_LINUX
+
 namespace K15_Engine { namespace Core {
     /*********************************************************************************/
     const String OSLayer_Linux::OSName = "Linux";
@@ -93,3 +95,5 @@ namespace K15_Engine { namespace Core {
     }
     /*********************************************************************************/
 }} //end of K15_Engine::Core namespace
+
+#endif //K15_OS_LINUX
