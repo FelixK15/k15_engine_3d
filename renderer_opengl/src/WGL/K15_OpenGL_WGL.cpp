@@ -17,8 +17,17 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_OpenGL_Prerequisites.h"
+#include "WGL/K15_OpenGL_WGL.h"
 #include "K15_LogManager.h"
+
+#ifdef K15_OS_WINDOWS
+
+/*********************************************************************************/
+PFNK15GLINIT        kglInit =			_wglInit;
+PFNK15GLSWAPBUFFERS kglSwapBuffers =	_wglSwapBuffers;
+PFNK15GLSHUTDOWN    kglShutdown =		_wglShutdown;
+PFNGLGETPROCADDRESS kglGetProcAddress = _wglGetProcAddress;
+/*********************************************************************************/
 
 /*********************************************************************************/
 HDC   ms_DeviceContext  = 0;
@@ -63,7 +72,7 @@ bool createDummyContext(HWND* p_Hwnd,HDC* p_DC)
   return false;
 }
 /*********************************************************************************/
-GLboolean _wglInit(GLuint p_ColorBits, GLuint p_DepthBits, GLuint p_StencilBits)
+bool _wglInit(int p_ColorBits, int p_DepthBits, int p_StencilBits)
 {
   K15_LOG_NORMAL("Creating dummy OGL context to initialize GLEW library.");
   HWND tempHwnd = 0;
@@ -71,7 +80,7 @@ GLboolean _wglInit(GLuint p_ColorBits, GLuint p_DepthBits, GLuint p_StencilBits)
   if(!createDummyContext(&tempHwnd,&tempDC))
   {
     K15_LOG_ERROR("Could not create dummy OGL context (%s)",g_Application->getLastError());
-    return GL_FALSE;
+    return false;
   }
   K15_LOG_SUCCESS("Successfully created dummy OGL context!");
 
@@ -81,14 +90,14 @@ GLboolean _wglInit(GLuint p_ColorBits, GLuint p_DepthBits, GLuint p_StencilBits)
   if(error != GLEW_OK)
   {
     K15_LOG_ERROR("Could not initialize GLEW library. (%s)",glewGetErrorString(error));
-    return GL_FALSE;
+    return false;
   }
 
   K15_LOG_SUCCESS("Successfully initialized GLEW library!");
   K15_LOG_SUCCESS("Supported GLEW Version:%s",glewGetString(GLEW_VERSION));
 
   K15_LOG_NORMAL("Destroying dummy OGL context...");
-  _wglShutdown();
+  //_wglShutdown();
   //destroy the objects for the temp handles
   ReleaseDC(tempHwnd,tempDC);
   DestroyWindow(tempHwnd);
@@ -96,7 +105,7 @@ GLboolean _wglInit(GLuint p_ColorBits, GLuint p_DepthBits, GLuint p_StencilBits)
   if(!GLEW_VERSION_3_3)
   {
     K15_LOG_ERROR("OpenGL 3.3 is not supported.");
-    return GL_FALSE;
+    return false;
   }
 
   ms_DeviceContext = ms_DeviceContext;
@@ -153,35 +162,39 @@ GLboolean _wglInit(GLuint p_ColorBits, GLuint p_DepthBits, GLuint p_StencilBits)
   if(wglMakeCurrent(ms_DeviceContext,ms_RenderContext) == FALSE)
   {
     K15_LOG_ERROR("Could not set OGL rendering context as current context. %s",g_Application->getLastError());
-    return GL_FALSE;
+    return false;
   }
 
   K15_LOG_SUCCESS("Succesfully set OGL rendering context.");
   K15_LOG_SUCCESS("Supported OpenGL Version:\"%s\"",glGetString(GL_VERSION));
 
-  return GL_TRUE;
+  return true;
 }
 /*********************************************************************************/
-GLboolean _wglSwapBuffers()
+bool _wglSwapBuffers()
 {
   	SwapBuffers(ms_DeviceContext);
 
-    return GL_TRUE;
+    return true;
 }
 /*********************************************************************************/
-GLboolean _wglShutdown()
+bool _wglShutdown()
 {
   if(ms_RenderContext)
   {
     wglMakeCurrent(0,0);
     wglDeleteContext(ms_RenderContext);
+
+	return true;
   }
 
-  return GL_TRUE;
+  return false;
 }
 /*********************************************************************************/
-GLvoid* _wglGetProcAddess(GLchar* p_ProcName)
+void* _wglGetProcAddress(char* p_ProcName)
 {
   return (void*)wglGetProcAddress(p_ProcName);
 }
 /*********************************************************************************/
+
+#endif //K15_OS_WINDOWS

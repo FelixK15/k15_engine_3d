@@ -54,8 +54,8 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		virtual void endFrame() OVERRIDE;
 
 	protected:
-    virtual bool _initialize() OVERRIDE;
-    virtual void _shutdown() OVERRIDE;
+		virtual bool _initialize() OVERRIDE;
+		virtual void _shutdown() OVERRIDE;
 		virtual void _resolutionChanged(const Resolution& p_Resolution) OVERRIDE;
 		virtual void _setFillMode(Enum p_FillMode) OVERRIDE;
 		virtual void _setAlphaState(const AlphaState& p_AlphaState) OVERRIDE;

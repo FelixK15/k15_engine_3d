@@ -24,10 +24,6 @@
 #ifndef _K15Engine_OpenGL_GLX_h_
 #define _K15Engine_OpenGL_GLX_h_
 
-/*
-#include <GL/gl.h>
-#include <GL/glx.h>
-*/
 #include "K15_Prerequisites.h"
 
 #ifdef K15_OS_LINUX

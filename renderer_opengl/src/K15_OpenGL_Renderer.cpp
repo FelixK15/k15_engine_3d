@@ -148,41 +148,41 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	bool Renderer::_initialize()
 	{
 		if(kglInit(32,24,8))
-    {
-      PFNGLDEBUGMESSAGECALLBACKARBPROC debugfunc = (PFNGLDEBUGMESSAGECALLBACKARBPROC)kglGetProcAddress("glDebugMessageCallbackARB");
+		{
+			PFNGLDEBUGMESSAGECALLBACKARBPROC debugfunc = (PFNGLDEBUGMESSAGECALLBACKARBPROC)kglGetProcAddress("glDebugMessageCallbackARB");
 
-      if(debugfunc)
-      {
-        debugfunc(glLogError,(const void*)(this));
-        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-      }
+			if(debugfunc)
+			{
+				debugfunc(glLogError,(const void*)(this));
+				glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+			}
 
-      if(GL_ARB_separate_shader_objects)
-      {
-        //create program pipeline
-        glGenProgramPipelines(1,&m_ProgramPipeline);
-        glBindProgramPipeline(m_ProgramPipeline);
+			if(GL_ARB_separate_shader_objects)
+			{
+				//create program pipeline
+				glGenProgramPipelines(1,&m_ProgramPipeline);
+				glBindProgramPipeline(m_ProgramPipeline);
 
-        glGenVertexArrays(1,&m_VertexArray);
-        glBindVertexArray(m_VertexArray);
-      }
-      else
-      {
-        K15_LOG_ERROR("Can't use gl extension GL_ARB_separate_shader_objects");
-        return false;
-      }
+				glGenVertexArrays(1,&m_VertexArray);
+				glBindVertexArray(m_VertexArray);
+			}
+			else
+			{
+				K15_LOG_ERROR("Can't use gl extension GL_ARB_separate_shader_objects");
+				return false;
+			}
 
-      //force viewport resizing
-      _resolutionChanged(RenderWindow::getResolution());
-      glEnable(GL_STENCIL_TEST); //enable stencil testing
-      glEnable(GL_DEPTH_TEST);
-      glEnable(GL_BLEND);
+			//force viewport resizing
+			_resolutionChanged(RenderWindow::getResolution());
+			glEnable(GL_STENCIL_TEST); //enable stencil testing
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_BLEND);
 
-      glEnable(GL_POLYGON_OFFSET_FILL); //enable glPolygonOffset for filled polys
-      return m_LastError.empty();
-    }
+			glEnable(GL_POLYGON_OFFSET_FILL); //enable glPolygonOffset for filled polys
+			return m_LastError.empty();
+		}
 
-    return true;
+		return true;
 	}
 	/*********************************************************************************/
 	void Renderer::_shutdown()

@@ -24,13 +24,25 @@
 #ifndef _K15Engine_OpenGL_WGL_h_
 #define _K15Engine_OpenGL_WGL_h_
 
-namespace K15_Engine { namespace Rendering { namespace OpenGL {
-  /*********************************************************************************/
-  GLboolean GLAPIENTRY _wglInit(GLuint, GLuint, GLuint);
-  GLboolean GLAPIENTRY _wglSwapBuffers(void);
-  GLboolean GLAPIENTRY _wglShutdown(void);
-  GLvoid*   GLAPIENTRY _wglGetProcAddress(GLchar*);
-  /*********************************************************************************/
-}}} // end of K15_Engine::Rendering::OpenGL namespace
+#include "glew.h"
+#include "wglew.h"
+
+// custom gl functions
+typedef bool  (*PFNK15GLINIT)(int, int, int);
+typedef bool  (*PFNK15GLSHUTDOWN)(void);
+typedef bool  (*PFNK15GLSWAPBUFFERS)(void);
+typedef void* (*PFNGLGETPROCADDRESS)(char*);
+
+extern PFNK15GLINIT        kglInit;
+extern PFNK15GLSWAPBUFFERS kglSwapBuffers;
+extern PFNK15GLSHUTDOWN    kglShutdown;
+extern PFNGLGETPROCADDRESS kglGetProcAddress;
+
+/*********************************************************************************/
+bool _wglInit(int, int, int);
+bool _wglSwapBuffers(void);
+bool _wglShutdown(void);
+void* _wglGetProcAddress(char*);
+/*********************************************************************************/
 
 #endif //_K15Engine_OpenGL_WGL_h_

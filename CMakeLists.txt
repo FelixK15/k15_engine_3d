@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 2.8.10)
 option(BUILD_ANDROID OFF "Build Android Binaries")
 option(BUILD_STATIC_CORE OFF "Build Static Libraries")
 set(DEPENDENCY_PATH CACHE STRING "Dependency Directory")
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 
 if("${DEPENDENCY_PATH}" STREQUAL "")
 	set(DEPENDENCY_PATH "${CMAKE_CURRENT_LIST_DIR}/build_dependencies/")
@@ -23,46 +24,11 @@ endif()
 #Project Name
 project(k15_engine_3d)
 
+include(common)
+
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
-#Check Which Compiler will be used
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-	#GCC
-	set(COMPILER_IS_GCC 1)
-        if(NOT BUILD_STATIC)
-            #set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-fPIC")
-        endif()
-elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-	#Clang
-	set(COMPILER_IS_CLANG 1)
-elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-	#MSVC
-	set(COMPILER_IS_MSVC 1)
-	add_definitions(/DK15_BUILD /MP)
-endif()
-
-#Check compiler version
-if(COMPILER_IS_GCC AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.7)
-        set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11 -fPIC -lc -lstdc++")
-	set(CPP11_IS_AVAILABLE 1)
-elseif(COMPILER_IS_MSVC AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 10.0)
-	set(CPP11_IS_AVAILABLE 1)
-elseif(COMPILER_IS_CLANG AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 3.0)
-	set(CPP11_IS_AVAILABLE 1)
-endif()
-
-#message whether c++11 is supported or not.
-if(CPP11_IS_AVAILABLE)
-	message(STATUS "C++11 is available")
-else()
-	message(STATUS "C++11 is not available")
-endif()
-
-
-message(STATUS "Using Compiler: ${CMAKE_CXX_COMPILER_ID}")
-message(STATUS "Compiling with CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 #Define Subdirectories
 add_subdirectory(engine)
@@ -74,4 +40,6 @@ else()
 	#opengl for the rest
 	add_subdirectory(renderer_opengl)
 endif()
-#add_subdirectory(plugins)
+
+message(STATUS "Using Compiler: ${CMAKE_CXX_COMPILER_ID}")
+message(STATUS "Compiling with CXX_FLAGS: ${CMAKE_CXX_FLAGS}")

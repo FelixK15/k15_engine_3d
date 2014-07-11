@@ -1,6 +1,7 @@
 #Set cmake module path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
+include(engine_core_compiler_settings)
 include(engine_core_src)
 include(engine_rendering_src)
 include(engine_resource_system_src)
@@ -53,6 +54,7 @@ if(NOT CPP11_IS_AVAILABLE)
 	include_directories(../dependencies/tinythread/include)
 endif()
 
+#set precompiler header support for msvc
 if(COMPILER_IS_MSVC)
 	foreach(SRC_FILE ${ENGINE_SRC})
 		string(REGEX MATCH ".*cpp" SRC_CPP ${SRC_FILE})

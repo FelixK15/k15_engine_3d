@@ -50,7 +50,7 @@ namespace K15_Engine { namespace Core {
 		INLINE float getAspectRatio() const;
 	};
 	/*********************************************************************************/
-	class RenderWindow
+	class K15_CORE_API RenderWindow
 	{
 	public:
 		static EventName EventFocusLost;
