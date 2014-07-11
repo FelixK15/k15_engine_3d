@@ -43,7 +43,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	bool RenderWindow::initialize()
 	{
-		K15_ASSERT(ms_IsInitialized, "Render window is already initialized!");
+		K15_ASSERT(!ms_IsInitialized, "Render window is already initialized!");
 
 		if(ms_IsInitialized = RenderWindowImpl::initialize())
 		{

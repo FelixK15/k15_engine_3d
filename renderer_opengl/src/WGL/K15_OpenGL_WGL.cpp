@@ -19,6 +19,7 @@
 
 #include "WGL/K15_OpenGL_WGL.h"
 #include "K15_LogManager.h"
+#include "K15_RenderWindow.h"
 
 #ifdef K15_OS_WINDOWS
 
@@ -77,9 +78,9 @@ GLboolean K15_Engine::Rendering::OpenGL::_wglInit(GLuint p_ColorBits, GLuint p_D
   K15_LOG_NORMAL("Creating dummy OGL context to initialize GLEW library.");
   HWND tempHwnd = 0;
   HDC tempDC = 0;
-  if(!createDummyContext(&tempHwnd,&tempDC))
+  if(!createDummyContext(&tempHwnd, &tempDC))
   {
-    K15_LOG_ERROR("Could not create dummy OGL context (%s)",g_Application->getLastError());
+    K15_LOG_ERROR("Could not create dummy OGL context (%s)", g_Application->getLastError());
     return GL_FALSE;
   }
   K15_LOG_SUCCESS("Successfully created dummy OGL context!");
@@ -89,17 +90,17 @@ GLboolean K15_Engine::Rendering::OpenGL::_wglInit(GLuint p_ColorBits, GLuint p_D
   GLenum error = glewInit();
   if(error != GLEW_OK)
   {
-    K15_LOG_ERROR("Could not initialize GLEW library. (%s)",glewGetErrorString(error));
+    K15_LOG_ERROR("Could not initialize GLEW library. (%s)", glewGetErrorString(error));
     return GL_FALSE;
   }
 
   K15_LOG_SUCCESS("Successfully initialized GLEW library!");
-  K15_LOG_SUCCESS("Supported GLEW Version:%s",glewGetString(GLEW_VERSION));
+  K15_LOG_SUCCESS("Supported GLEW Version:%s", glewGetString(GLEW_VERSION));
 
   K15_LOG_NORMAL("Destroying dummy OGL context...");
-  //_wglShutdown();
+  _wglShutdown();
   //destroy the objects for the temp handles
-  ReleaseDC(tempHwnd,tempDC);
+  ReleaseDC(tempHwnd, tempDC);
   DestroyWindow(tempHwnd);
 
   if(!GLEW_VERSION_3_3)
@@ -108,7 +109,7 @@ GLboolean K15_Engine::Rendering::OpenGL::_wglInit(GLuint p_ColorBits, GLuint p_D
     return GL_FALSE;
   }
 
-  ms_DeviceContext = ms_DeviceContext;
+  ms_DeviceContext = RenderWindow_Win32::getDeviceContext();
 
   int colorBits   = p_ColorBits;
   int depthBits   = p_DepthBits;
@@ -131,16 +132,16 @@ GLboolean K15_Engine::Rendering::OpenGL::_wglInit(GLuint p_ColorBits, GLuint p_D
   unsigned int formatCount = 1;
 
   K15_LOG_NORMAL("Trying to create pixelformat\n\tColorbuffer size per pixel:%i\n\tDepthbuffer size per pixel:%i\n\tStencilbuffer size per pixel:%i.",
-    colorBits,depthBits,stencilBits);
+    colorBits, depthBits, stencilBits);
 
-  wglChoosePixelFormatARB(ms_DeviceContext,pixelFormatAttributes,0,1,&pixelFormat,&formatCount);
+  wglChoosePixelFormatARB(ms_DeviceContext, pixelFormatAttributes, 0, 1, &pixelFormat, &formatCount);
 
   if(!pixelFormat)
   {
-    K15_LOG_ERROR("Can't create pixel format because the is not supported. Error:%s",glGetString(glGetError()));
+    K15_LOG_ERROR("Can't create pixel format because the is not supported. Error:%s", glGetString(glGetError()));
   }
 
-  SetPixelFormat(ms_DeviceContext,pixelFormat,0);
+  SetPixelFormat(ms_DeviceContext, pixelFormat, 0);
 
   const int contextAttributes[] = {
     WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
@@ -150,23 +151,23 @@ GLboolean K15_Engine::Rendering::OpenGL::_wglInit(GLuint p_ColorBits, GLuint p_D
   };
 
   K15_LOG_NORMAL("Creating OGL rendering context...");
-  if((ms_RenderContext = wglCreateContextAttribsARB(ms_DeviceContext,0,contextAttributes)) == 0)
+  if((ms_RenderContext = wglCreateContextAttribsARB(ms_DeviceContext, 0, contextAttributes)) == 0)
   {
-    K15_LOG_ERROR("Could not create OGL rendering context. Error:%s",g_Application->getLastError());
+    K15_LOG_ERROR("Could not create OGL rendering context. Error:%s", g_Application->getLastError());
     return GL_FALSE;
   }
 
   K15_LOG_SUCCESS("Successfully created OGL rendering context!");
   K15_LOG_NORMAL("Setting OGL rendering context as current context.");
 
-  if(wglMakeCurrent(ms_DeviceContext,ms_RenderContext) == FALSE)
+  if(wglMakeCurrent(ms_DeviceContext, ms_RenderContext) == FALSE)
   {
-    K15_LOG_ERROR("Could not set OGL rendering context as current context. %s",g_Application->getLastError());
+    K15_LOG_ERROR("Could not set OGL rendering context as current context. %s", g_Application->getLastError());
     return GL_FALSE;
   }
 
   K15_LOG_SUCCESS("Succesfully set OGL rendering context.");
-  K15_LOG_SUCCESS("Supported OpenGL Version:\"%s\"",glGetString(GL_VERSION));
+  K15_LOG_SUCCESS("Supported OpenGL Version:\"%s\"", glGetString(GL_VERSION));
 
   return GL_TRUE;
 }

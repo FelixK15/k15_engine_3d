@@ -15,7 +15,7 @@ include(renderer_opengl_compiler_settings)
 include(renderer_opengl_src)
 include(renderer_opengl_dependencies)
 
-set(RENDERER_OGL_SRC ${OGL_INC} ${OGL_SRC} ${OGL_WGL_SRC} ${OGL_WGL_INC} ${OGL_GLX_INC} ${OGL_GLX_SRC} ${OGL_GLES2_SRC} ${OGL_GLES2_INC})
+set(RENDERER_OGL_SRC ${RENDERER_OGL_SRC} ${OGL_INC} ${OGL_SRC} ${OGL_WGL_SRC} ${OGL_WGL_INC} ${OGL_GLX_INC} ${OGL_GLX_SRC} ${OGL_GLES2_SRC} ${OGL_GLES2_INC})
 
 #organize source files
 source_group("include" FILES ${OGL_INC})

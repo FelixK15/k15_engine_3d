@@ -27,7 +27,7 @@
 #include "K15_Prerequisites.h"
 
 namespace K15_Engine { namespace Core {
-	class RenderWindow_Win32
+	class K15_CORE_API RenderWindow_Win32
 	{
 	public:
 		static bool initialize();

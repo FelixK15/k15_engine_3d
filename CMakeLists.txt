@@ -32,14 +32,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 #Define Subdirectories
 add_subdirectory(engine)
-
-if(BUILD_ANDROID)
-	#opengl es for android
-	add_subdirectory(renderer_opengl_es)
-else()
-	#opengl for the rest
-	add_subdirectory(renderer_opengl)
-endif()
+add_subdirectory(renderer_opengl)
+add_subdirectory(test)
 
 message(STATUS "Using Compiler: ${CMAKE_CXX_COMPILER_ID}")
 message(STATUS "Compiling with CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
