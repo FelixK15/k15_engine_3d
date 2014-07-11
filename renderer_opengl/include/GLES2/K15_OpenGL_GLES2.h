@@ -1,5 +1,5 @@
 /**
- * @file K15_OpenGL_GLX.h
+ * @file K15_OpenGL_GLES2.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2013/09/10
@@ -18,16 +18,18 @@
  *
  * @section DESCRIPTION
  *
- *
+ * 
  */
 
-#ifndef _K15Engine_OpenGL_GLX_h_
-#define _K15Engine_OpenGL_GLX_h_
+#ifndef _K15Engine_OpenGL_GLES2_h_
+#define _K15Engine_OpenGL_GLES2_h_
 
-#ifdef K15_OS_LINUX
+#if defined K15_OS_ANDROID || defined K15_OS_IOS
 
-#include "glew.h"
-#include "glxew.h"
+#include <GLES2\gl2.h>
+#include <GLES2\gl2ext.h>
+#include <GLES2\gl2platform.h>
+#include <EGL\egl.h>
 
 // custom gl functions
 typedef GLboolean (*PFNK15GLINIT)(GLuint, GLuint, GLuint);
@@ -42,13 +44,13 @@ extern PFNGLGETPROCADDRESS kglGetProcAddress;
 
 namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	/*********************************************************************************/
-	GLboolean _glxInit(GLuint, GLuint, GLuint);
-	GLboolean _glxSwapBuffers(void);
-	GLboolean _glxShutdown(void);
-	GLvoid*   _glxGetProcAddress(GLchar*);
+	GLboolean _gles2Init(GLuint, GLuint, GLuint);
+	GLboolean _gles2SwapBuffers(GLvoid);
+	GLboolean _gles2Shutdown(GLvoid);
+	GLvoid*	  _gles2GetProcAddress(GLchar*);
 	/*********************************************************************************/
 }}} //end of K15_Engine::Rendering::OpenGL namespace
 
-#endif //K15_OS_LINUX
+#endif //K15_OS_ANDROID || defined K15_OS_IOS
 
-#endif //_K15Engine_OpenGL_GLX_h_
+#endif //_K15Engine_OpenGL_WGL_h_

@@ -23,10 +23,10 @@
 #ifdef K15_OS_WINDOWS
 
 /*********************************************************************************/
-PFNK15GLINIT        kglInit =			_wglInit;
-PFNK15GLSWAPBUFFERS kglSwapBuffers =	_wglSwapBuffers;
-PFNK15GLSHUTDOWN    kglShutdown =		_wglShutdown;
-PFNGLGETPROCADDRESS kglGetProcAddress = _wglGetProcAddress;
+PFNK15GLINIT        kglInit =			K15_Engine::Rendering::OpenGL::_wglInit;
+PFNK15GLSWAPBUFFERS kglSwapBuffers =	K15_Engine::Rendering::OpenGL::_wglSwapBuffers;
+PFNK15GLSHUTDOWN    kglShutdown =		K15_Engine::Rendering::OpenGL::_wglShutdown;
+PFNGLGETPROCADDRESS kglGetProcAddress = K15_Engine::Rendering::OpenGL::_wglGetProcAddress;
 /*********************************************************************************/
 
 /*********************************************************************************/
@@ -72,7 +72,7 @@ bool createDummyContext(HWND* p_Hwnd,HDC* p_DC)
   return false;
 }
 /*********************************************************************************/
-bool _wglInit(int p_ColorBits, int p_DepthBits, int p_StencilBits)
+GLboolean K15_Engine::Rendering::OpenGL::_wglInit(GLuint p_ColorBits, GLuint p_DepthBits, GLuint p_StencilBits)
 {
   K15_LOG_NORMAL("Creating dummy OGL context to initialize GLEW library.");
   HWND tempHwnd = 0;
@@ -80,7 +80,7 @@ bool _wglInit(int p_ColorBits, int p_DepthBits, int p_StencilBits)
   if(!createDummyContext(&tempHwnd,&tempDC))
   {
     K15_LOG_ERROR("Could not create dummy OGL context (%s)",g_Application->getLastError());
-    return false;
+    return GL_FALSE;
   }
   K15_LOG_SUCCESS("Successfully created dummy OGL context!");
 
@@ -90,7 +90,7 @@ bool _wglInit(int p_ColorBits, int p_DepthBits, int p_StencilBits)
   if(error != GLEW_OK)
   {
     K15_LOG_ERROR("Could not initialize GLEW library. (%s)",glewGetErrorString(error));
-    return false;
+    return GL_FALSE;
   }
 
   K15_LOG_SUCCESS("Successfully initialized GLEW library!");
@@ -105,7 +105,7 @@ bool _wglInit(int p_ColorBits, int p_DepthBits, int p_StencilBits)
   if(!GLEW_VERSION_3_3)
   {
     K15_LOG_ERROR("OpenGL 3.3 is not supported.");
-    return false;
+    return GL_FALSE;
   }
 
   ms_DeviceContext = ms_DeviceContext;
@@ -153,7 +153,7 @@ bool _wglInit(int p_ColorBits, int p_DepthBits, int p_StencilBits)
   if((ms_RenderContext = wglCreateContextAttribsARB(ms_DeviceContext,0,contextAttributes)) == 0)
   {
     K15_LOG_ERROR("Could not create OGL rendering context. Error:%s",g_Application->getLastError());
-    return false;
+    return GL_FALSE;
   }
 
   K15_LOG_SUCCESS("Successfully created OGL rendering context!");
@@ -162,38 +162,38 @@ bool _wglInit(int p_ColorBits, int p_DepthBits, int p_StencilBits)
   if(wglMakeCurrent(ms_DeviceContext,ms_RenderContext) == FALSE)
   {
     K15_LOG_ERROR("Could not set OGL rendering context as current context. %s",g_Application->getLastError());
-    return false;
+    return GL_FALSE;
   }
 
   K15_LOG_SUCCESS("Succesfully set OGL rendering context.");
   K15_LOG_SUCCESS("Supported OpenGL Version:\"%s\"",glGetString(GL_VERSION));
 
-  return true;
+  return GL_TRUE;
 }
 /*********************************************************************************/
-bool _wglSwapBuffers()
+GLboolean K15_Engine::Rendering::OpenGL::_wglSwapBuffers()
 {
   	SwapBuffers(ms_DeviceContext);
 
-    return true;
+    return GL_TRUE;
 }
 /*********************************************************************************/
-bool _wglShutdown()
+GLboolean K15_Engine::Rendering::OpenGL::_wglShutdown()
 {
   if(ms_RenderContext)
   {
     wglMakeCurrent(0,0);
     wglDeleteContext(ms_RenderContext);
 
-	return true;
+	return GL_TRUE;
   }
 
-  return false;
+  return GL_FALSE;
 }
 /*********************************************************************************/
-void* _wglGetProcAddress(char* p_ProcName)
+GLvoid* K15_Engine::Rendering::OpenGL::_wglGetProcAddress(GLchar* p_ProcName)
 {
-  return (void*)wglGetProcAddress(p_ProcName);
+  return (GLvoid*)wglGetProcAddress(p_ProcName);
 }
 /*********************************************************************************/
 

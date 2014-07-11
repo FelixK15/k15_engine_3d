@@ -9,6 +9,7 @@ set(OGL_SRC "./src/K15_OpenGL_GpuBufferImpl.cpp"
 
 set(OGL_WGL_SRC "./src/WGL/K15_OpenGL_WGL.cpp")
 set(OGL_GLX_SRC "./src/GLX/K15_OpenGL_GLX.cpp")
+set(OGL_GLES2_SRC "./src/GLES2/K15_OpenGL_GLES2.cpp")
 
 set(OGL_INC "./include/K15_OpenGL_GpuBufferImpl.h"
 "./include/K15_OpenGL_GpuProgramBatchImpl.h"
@@ -24,3 +25,4 @@ set(OGL_INC "./include/K15_OpenGL_GpuBufferImpl.h"
 
 set(OGL_WGL_INC "./include/WGL/K15_OpenGL_WGL.h")
 set(OGL_GLX_INC "./include/GLX/K15_OpenGL_GLX.h")
+set(OGL_GLES2_INC "./include/GLES2/K15_OpenGL_GLES2.h")

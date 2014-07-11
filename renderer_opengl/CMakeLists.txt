@@ -13,27 +13,22 @@ include_directories(./include/)
 
 include(renderer_opengl_compiler_settings)
 include(renderer_opengl_src)
+include(renderer_opengl_dependencies)
 
-find_library(GLEW_LIB NAMES glew libglew)
-
-if("${GLEW_LIB}" STREQUAL "GLEW_LIB-NOTFOUND")
-	message(SEND_ERROR "Could not find library 'glew' ... Missing DEPENDENCY_PATH?")
-endif()
-
-set(RENDERER_OGL_SRC ${OGL_INC} ${OGL_SRC} ${OGL_WGL_SRC} ${OGL_WGL_INC} ${OGL_GLX_INC} ${OGL_GLX_SRC})
+set(RENDERER_OGL_SRC ${OGL_INC} ${OGL_SRC} ${OGL_WGL_SRC} ${OGL_WGL_INC} ${OGL_GLX_INC} ${OGL_GLX_SRC} ${OGL_GLES2_SRC} ${OGL_GLES2_INC})
 
 #organize source files
 source_group("include" FILES ${OGL_INC})
 source_group("include\\GLX" FILES ${OGL_GLX_INC})
 source_group("include\\WGL" FILES ${OGL_WGL_INC})
+source_group("include\\GLES2" FILES ${OGL_GLES2_INC})
 
 source_group("src" FILES ${OGL_SRC})
 source_group("src\\GLX" FILES ${OGL_GLX_SRC})
 source_group("src\\WGL" FILES ${OGL_WGL_SRC})
+source_group("src\\GLES2" FILES ${OGL_GLES2_SRC})
 
-#specify library
-message("${CMAKE_LINK_INTERFACE_LIBRARIES}")
+
 add_library(renderer_opengl SHARED ${RENDERER_OGL_SRC})
-target_link_libraries(renderer_opengl ${GLEW_LIB})
-target_link_libraries(renderer_opengl k15core)
-target_link_libraries(renderer_opengl LINK_INTERFACE_LIBRARIES)
+target_link_libraries(renderer_opengl ${OGL_DEPENDENCIES})
+#target_link_libraries(renderer_opengl LINK_INTERFACE_LIBRARIES)

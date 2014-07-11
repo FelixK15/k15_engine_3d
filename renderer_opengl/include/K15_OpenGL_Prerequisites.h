@@ -33,6 +33,8 @@
 #elif defined K15_OS_LINUX
     #include "glxew.h"
 	#include "GLX/K15_OpenGL_GLX.h"
+#elif defined K15_OS_ANDROID || defined K15_OS_IOS
+	#include "GLES2/K15_OpenGL_GLES2.h"
 #endif //K15_OS_WINDOWS
 
 #define K15_GL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
