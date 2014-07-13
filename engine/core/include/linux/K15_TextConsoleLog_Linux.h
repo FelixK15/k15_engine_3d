@@ -24,4 +24,18 @@
 #ifndef _K15Engine_Core_TextConsoleLog_Linux_h_
 #define _K15Engine_Core_TextConsoleLog_Linux_h_
 
+#include "K15_Prerequisites.h"
+#include "K15_LogBase.h"
+
+namespace K15_Engine { namespace Core {
+    class TextConsoleLog_Linux : public LogBase
+    {
+    public:
+        TextConsoleLog_Linux();
+        virtual ~TextConsoleLog_Linux();
+
+        virtual void logMessage(const String &p_Message, Enum p_PriorityFlag) OVERRIDE;
+    }; // end of TextConsoleLog_Linux class declaration
+}} //end of K15_Engine::Core namespace
+
 #endif //_K15Engine_Core_TextConsoleLog_Linux_h_

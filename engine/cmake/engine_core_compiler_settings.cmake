@@ -7,7 +7,3 @@ elseif(COMPILER_IS_MSVC)
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /DK15_BUILD /MP")
 	endif()
 endif()
-
-if(COMPILER_IS_GCC AND CPP11_IS_AVAILABLE)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-endif()

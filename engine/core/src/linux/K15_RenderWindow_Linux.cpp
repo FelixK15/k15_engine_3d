@@ -25,11 +25,21 @@
 #ifdef K15_OS_LINUX
 
 #include "linux/K15_RenderWindow_Linux.h"
+#include <GL/gl.h>
+#include <GL/glext.h>
+#include <GL/glx.h>
+#include <GL/glxext.h>
 
 namespace K15_Engine { namespace Core {
     /*********************************************************************************/
     Display* RenderWindow_Linux::ms_Display = 0;
     Window RenderWindow_Linux::ms_Window = 0;
+    GLXWindow RenderWindow_Linux::ms_GLXWindow = 0;
+    Atom RenderWindow_Linux::ms_DeleteWindowID = 0;
+    uint32 RenderWindow_Linux::ms_NotifyFlags = ButtonPressMask | ButtonReleaseMask
+                                                | KeyPressMask  | KeyReleaseMask
+                                                | ExposureMask  | ResizeRedirectMask
+                                                | FocusChangeMask;
     /*********************************************************************************/
 
     /*********************************************************************************/
@@ -37,12 +47,28 @@ namespace K15_Engine { namespace Core {
     {
         if(ms_Display = XOpenDisplay(getenv("DISPLAY")))
         {
-            ms_Window = XCreateSimpleWindow(ms_Display, 0, 0, 0,
-                                            RenderWindow::getWidth(), RenderWindow::getHeight(),
-                                            0, 0, 0);
+            int screen = XDefaultScreen(ms_Display);
+            Window rootwin = XRootWindow(ms_Display, screen);
+
+            uint32 width = RenderWindow::getWidth() == 0 ? 800 : RenderWindow::getWidth();
+            uint32 height = RenderWindow::getHeight() == 0 ? 600 : RenderWindow::getHeight();
+
+            ms_Window = XCreateSimpleWindow(ms_Display, rootwin, 0, 0,
+                                            width, height, 0,
+                                            XBlackPixel(ms_Display, screen),
+                                            XBlackPixel(ms_Display, screen));
+
+            XSelectInput(ms_Display, ms_Window, ms_NotifyFlags);
+
+            XMapWindow(ms_Display, ms_Window);
+
+            //we want to get informed when the window manager wants to delete our window
+            ms_DeleteWindowID = XInternAtom(ms_Display, "WM_DELETE_WINDOW", False);
+            XSetWMProtocols(ms_Display, ms_Window, &ms_DeleteWindowID, 1);
         }
 
-        if(ms_Display && ms_Window != BadMatch || ms_Window != BadValue || ms_Window != BadWindow)
+        if(!ms_Display ||
+          (ms_Window == BadMatch || ms_Window == BadValue || ms_Window == BadWindow))
         {
             K15_LOG_ERROR("Could not create X11 window. Error:\"%s\" (%d)",
                           OSLayer::getError().c_str(), errno);
@@ -64,6 +90,7 @@ namespace K15_Engine { namespace Core {
         ms_Display = 0;
         ms_Window = 0;
         ms_GLXWindow = 0;
+        ms_DeleteWindowID = 0;
     }
     /*********************************************************************************/
     void RenderWindow_Linux::setWindowTitle(const String& p_WindowTitle)

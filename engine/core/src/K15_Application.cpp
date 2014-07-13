@@ -41,12 +41,14 @@
 #include "K15_Keyboard.h"
 
 #ifdef K15_DEBUG
-#	ifdef K15_OS_WINDOWS
-#		include "Win32\K15_VisualStudioLog_Win32.h"
-#		include "Win32\K15_TextConsoleLog_Win32.h"
-#	elif defined K15_OS_ANDROID
-#		include "Android/K15_Logcat_Android.h"
-#	endif //K15_OS_WINDOWS
+    #ifdef K15_OS_WINDOWS
+        #include "win32/K15_VisualStudioLog_Win32.h"
+        #include "win32/K15_TextConsoleLog_Win32.h"
+    #elif defined K15_OS_ANDROID
+        #include "android/K15_Logcat_Android.h"
+    #elif defined K15_OS_LINUX
+        #include "linux/K15_TextConsoleLog_Linux.h"
+    #endif //K15_OS_WINDOWS
 #endif //K15_DEBUG
 
 #include "K15_RendererBase.h"
@@ -90,12 +92,14 @@ namespace K15_Engine { namespace Core {
 		m_LogManager = K15_NEW LogManager();
 
 #if defined (K15_DEBUG)
-#	if defined K15_OS_WINDOWS
+    #if defined K15_OS_WINDOWS
 		m_LogManager->addLog(K15_NEW TextConsoleLog_Win32(),true,LogManager::LP_ALL);
 		m_LogManager->addLog(K15_NEW VisualStudioLog(),false,LogManager::LP_ALL);
-#	elif defined(K15_OS_ANDROID)
+    #elif defined(K15_OS_ANDROID)
 		m_LogManager->addLog(K15_NEW Logcat_Android(),false,LogManager::LP_ALL);
-#	endif //K15_OS_WINDOWS
+    #elif defined (K15_OS_LINUX)
+        m_LogManager->addLog(K15_NEW TextConsoleLog_Linux(), true, LogManager::LP_ALL);
+    #endif //K15_OS_WINDOWS
 #endif //K15_DEBUG
 	}
 	/*********************************************************************************/
@@ -133,8 +137,12 @@ namespace K15_Engine { namespace Core {
 
 		if((pos = appPath.find_last_of('\\')) != String::npos)
 		{
-			m_GameRootDir = appPath.substr(0,pos+1);
+            m_GameRootDir = appPath.substr(0, pos+1);
 		}
+        else if((pos = appPath.find_last_of('/')) != String::npos)
+        {
+            m_GameRootDir = appPath.substr(0, pos+1);
+        }
 
 		for(int i = 1;i < p_CommandCount;++i)
 		{
@@ -258,7 +266,7 @@ namespace K15_Engine { namespace Core {
 		m_TaskManager->addTask(m_MemoryProfilingTask);
 #		endif
   
-		RenderWindow::initialize();
+        K15_ASSERT(RenderWindow::initialize(), "Could not initialize RenderWindow!");
 	
 		//process settings
 		processSettings();
@@ -316,6 +324,7 @@ namespace K15_Engine { namespace Core {
 		static float diffTime = m_AvgFrameTime;
 		static float FPSTime = 0.0; //counting to 1 second and then restarts
 		static uint32 FPSFrameCounter = 0;
+
 		//clear the frame allocator on the start of each frame
 		m_FrameAllocator->clear();
 
@@ -324,10 +333,11 @@ namespace K15_Engine { namespace Core {
 		K15_PROFILE_BLOCK("Application::onPreTick",
 				onPreTick();
 		);
-		
+
 		K15_PROFILE_BLOCK("TaskManager::update",
 		  m_TaskManager->update(m_GameTime);
 		);
+
 
 		if(m_GameState)
 		{
@@ -341,7 +351,16 @@ namespace K15_Engine { namespace Core {
 		endFrameTime = getTime();
 
 		//so is there any frame time left?
-		diffTime = endFrameTime - startFrameTime;
+        if(endFrameTime >= startFrameTime)
+        {
+            diffTime = endFrameTime - startFrameTime;
+        }
+        else
+        {
+            //unlogical..happens sometimes :(
+            diffTime = m_AvgFrameTime;
+        }
+
 
 		if(diffTime < m_AvgFrameTime)
 		{
@@ -362,17 +381,17 @@ namespace K15_Engine { namespace Core {
 			//and then clip diffTime to the max frame time
 			K15_LOG_WARNING("Frame %i took %.3f seconds to render! (%.3f seconds is average)",m_FrameCounter,diffTime,m_AvgFrameTime);
 
-			//update running time
-			m_RunningTime += diffTime;
-			FPSTime += diffTime;
+            //update running time
+            m_RunningTime += diffTime;
+            FPSTime += diffTime;
 
-			diffTime = m_AvgFrameTime;
-		}
+            diffTime = m_AvgFrameTime;
+        }
 
-		//update game time
-		m_GameTime.setDeltaTime(diffTime);
+        //update game time
+        m_GameTime.setDeltaTime(diffTime);
 
-		if(FPSTime >= 1.0)
+        if(FPSTime >= 1.0)
 		{
 			m_AvgFramesPerSecond = (uint32)(FPSFrameCounter / FPSTime);
 			FPSTime = 0.0;
@@ -390,7 +409,10 @@ namespace K15_Engine { namespace Core {
 		m_FrameStatistics[FrameStatisticIndex].Time = diffTime;
 		m_FrameStatistics[FrameStatisticIndex].FrameNumber = m_FrameCounter;
 		m_FrameStatistics[FrameStatisticIndex].ProfileNode = g_ProfileManager->getRootNode();
-		RenderWindow::setWindowTitle(StringUtil::format("msec: %.3f - FPS:%u - Frame Index: %i",diffTime * 1000,m_AvgFramesPerSecond,m_FrameCounter));
+        RenderWindow::setWindowTitle(StringUtil::format("msec: %.3f - FPS:%u - Frame Index: %i",
+                                                        diffTime * 1000,
+                                                        m_AvgFramesPerSecond,
+                                                        m_FrameCounter));
 
 		if(m_FrameCounter > FrameStatisticCount)
 		{

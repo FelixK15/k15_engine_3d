@@ -17,11 +17,12 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "WGL/K15_OpenGL_WGL.h"
 #include "K15_LogManager.h"
 #include "K15_RenderWindow.h"
 
 #ifdef K15_OS_WINDOWS
+
+#include "WGL/K15_OpenGL_WGL.h"
 
 /*********************************************************************************/
 PFNK15GLINIT        kglInit =			K15_Engine::Rendering::OpenGL::_wglInit;
@@ -73,7 +74,7 @@ bool createDummyContext(HWND* p_Hwnd,HDC* p_DC)
   return false;
 }
 /*********************************************************************************/
-GLboolean K15_Engine::Rendering::OpenGL::_wglInit(GLuint p_ColorBits, GLuint p_DepthBits, GLuint p_StencilBits)
+GLboolean K15_Engine::Rendering::OpenGL::_wglInit(GLint p_ColorBits, GLint p_DepthBits, GLint p_StencilBits)
 {
   K15_LOG_NORMAL("Creating dummy OGL context to initialize GLEW library.");
   HWND tempHwnd = 0;

@@ -1,6 +1,8 @@
 #src files
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/..")
+
 link_directories("${DEPENDENCY_PATH}")
 
 include_directories(../engine/core/include)
@@ -28,6 +30,7 @@ source_group("src\\GLX" FILES ${OGL_GLX_SRC})
 source_group("src\\WGL" FILES ${OGL_WGL_SRC})
 source_group("src\\GLES2" FILES ${OGL_GLES2_SRC})
 
+message(STATUS "CXX_FLAGS for renderer_opengl: ${CMAKE_CXX_FLAGS}")
 
 add_library(renderer_opengl SHARED ${RENDERER_OGL_SRC})
 target_link_libraries(renderer_opengl ${OGL_DEPENDENCIES})

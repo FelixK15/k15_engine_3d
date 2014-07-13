@@ -444,14 +444,15 @@ typedef std::stringstream	StringStream;
 #endif //K15_OS_WINDOWS
   
 #if defined K15_OS_LINUX
+    #pragma GCC diagnostic ignored "-fpermissive"
     #include <X11/Xlib.h>
     #include <X11/Xutil.h>
-    #include <GL/gl.h>
-    #include <GL/glext.h>
-    #include <GL/glx.h>
-    #include <GL/glxext.h>
     #include <dlfcn.h>
     #include <unistd.h>
+    struct _XDisplay;
+    typedef _XDisplay Display;
+    typedef unsigned long GLXWindow;
+    typedef unsigned long Window;
     typedef K15_Engine::Core::OSLayer_Linux OSLayer;
     typedef K15_Engine::Core::DynamicLibrary_Linux DynamicLibraryType;
 #endif //K15_OS_LINUX
@@ -542,8 +543,6 @@ typedef glm::fquat Quaternion;
 #define K15_FREE(ptr)		OSLayer::os_free(ptr)
 #define K15_MEMCPY(destination,source,size) memcpy(destination,source,size)
 
-# define K15_PLACEMENT_NEW new(ptr)
-
 #if defined K15_DEBUG
 	#if defined K15_OS_WINDOWS
 		#define K15_ASSERT(condition,message)	\
@@ -581,7 +580,13 @@ typedef glm::fquat Quaternion;
 				__android_log_assert(#condition,"K15_Engine",debugMessage__.c_str()); \
 			}
     #elif defined K15_OS_LINUX
-        #define K15_ASSERT(condition, message)
+        #define K15_ASSERT(condition, message) \
+            if(!(condition)){ \
+                String __dbgmsg = message; \
+                printf("The expression \"%s\" failed.\nFile:%s(%d)\nFunction:%s\nMessage:%s", \
+                    #condition, __BASE_FILE__, __LINE__, __FUNCTION__, __dbgmsg.c_str()); \
+                exit(-1); \
+            }
 	#endif //K15_OS_WINDOWS
 #else
 	#define K15_ASSERT(condition,message0)

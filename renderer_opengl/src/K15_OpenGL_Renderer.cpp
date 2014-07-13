@@ -80,7 +80,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		GL_ONE_MINUS_CONSTANT_ALPHA   //BF_ONE_MINUS_CONSTANT_ALPHA
 	}; //BlendFunctionConverter
 	/*********************************************************************************/
-	void APIENTRY glLogError(GLenum p_Source, GLenum p_Type, GLuint p_ID, GLenum p_Severity, GLsizei p_Length, const GLchar* p_Message, GLvoid* p_UserParam)
+    void GLAPIENTRY glLogError(GLenum p_Source, GLenum p_Type, GLuint p_ID, GLenum p_Severity, GLsizei p_Length, const GLchar* p_Message, GLvoid* p_UserParam)
 	{
 		static String msg;
     

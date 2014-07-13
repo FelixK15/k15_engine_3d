@@ -74,15 +74,15 @@ namespace K15_Engine { namespace Core {
 
 		if(!library->load())
 		{
-			K15_LOG_ERROR("Could not load library (\"%s\") Error:%s",p_FileName.c_str(),g_Application->getLastError().c_str());
+            K15_LOG_ERROR("Could not load library (\"%s\") Error:%s",library->getFileName().c_str(),OSLayer::getError().c_str());
 	
 			K15_DELETE library;
 			return 0;
 		}
 
-		K15_LOG_SUCCESS("Successfully load library \"%s\".",p_FileName.c_str());
+        K15_LOG_SUCCESS("Successfully load library \"%s\".",library->getFileName().c_str());
 
-		m_LoadedLibs.insert(Pair(String,DynamicLibraryBase*)(p_FileName,library));
+        m_LoadedLibs.insert(Pair(String,DynamicLibraryBase*)(library->getFileName(),library));
 
 		return library;
 	}

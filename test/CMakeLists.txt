@@ -9,5 +9,7 @@ include_directories(../dependencies/glm/include)
 
 set(TEST_SRC "./src/main.cpp")
 
+message(STATUS "CXX_FLAGS for engine_test: ${CMAKE_CXX_FLAGS}")
+
 add_executable(engine_test ${TEST_SRC})
 target_link_libraries(engine_test k15core)

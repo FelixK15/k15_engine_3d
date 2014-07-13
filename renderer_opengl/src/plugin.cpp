@@ -24,6 +24,8 @@
 #include "K15_RenderTask.h"
 #include "K15_RenderProcessBase.h"
 
+extern "C"
+{
 /*********************************************************************************/
 void pluginLoad()
 {
@@ -48,3 +50,4 @@ K15_Engine::Core::ApplicationModuleDescription getDescription()
 	return desc;
 }
 /*********************************************************************************/
+}

@@ -18,4 +18,11 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 	add_definitions("-D_CRT_SECURE_NO_WARNINGS")
 endif()
 
+if(COMPILER_IS_GCC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+endif()
+
+message(STATUS "jsoncpp CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+
+
 add_library(jsoncpp STATIC ${JSONCPP_SRC} ${JSONCPP_INC})

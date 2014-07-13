@@ -20,14 +20,21 @@
  */
 
 #include "K15_PrecompiledHeader.h"
-#include "linux/K15_OSLayer_Linux.h"
+#include "K15_RenderWindow.h"
 
 #ifdef K15_OS_LINUX
+
+#include "linux/K15_OSLayer_Linux.h"
 
 namespace K15_Engine { namespace Core {
     /*********************************************************************************/
     const String OSLayer_Linux::OSName = "Linux";
-    const String OSLayer_Linux::PluginExtension = ".so";
+    const String OSLayer_Linux::PluginExtension = "so";
+    /*********************************************************************************/
+
+    /*********************************************************************************/
+    timespec resolution;
+    timespec timer;
     /*********************************************************************************/
 
     /*********************************************************************************/
@@ -43,6 +50,7 @@ namespace K15_Engine { namespace Core {
     /*********************************************************************************/
     bool OSLayer_Linux::initialize()
     {
+        clock_getres(CLOCK_MONOTONIC, &resolution);
         return true;
     }
     /*********************************************************************************/
@@ -73,20 +81,45 @@ namespace K15_Engine { namespace Core {
     float OSLayer_Linux::getTime()
     {
         //http://stackoverflow.com/questions/3832097/how-to-get-the-current-time-in-native-android-code
-        struct timespec res;
-        clock_gettime(CLOCK_REALTIME, &res);
-        return res.tv_sec + (float) res.tv_nsec / 1e6;
+        clock_gettime(CLOCK_MONOTONIC, &timer);
+        timer.tv_sec /= resolution.tv_sec == 0 ? 1 : resolution.tv_sec;
+        timer.tv_nsec /= resolution.tv_nsec == 0 ? 1 : resolution.tv_nsec;
+        float milliseconds = 1000.0 * timer.tv_sec + (float) timer.tv_nsec / 1e6;
+        return milliseconds / 1000.0;
     }
     /*********************************************************************************/
     void OSLayer_Linux::sleep(float p_TimeInSeconds)
     {
-        unsigned long microseconds = p_TimeInSeconds * 1000000;
-        ::usleep(microseconds);
+        float microseconds_float = p_TimeInSeconds * 1000000.f;
+        ::usleep((unsigned long)microseconds_float);
     }
     /*********************************************************************************/
     void OSLayer_Linux::onPreTick()
     {
+        XEvent event;
+        while(XPending(RenderWindowImpl::ms_Display))
+        {
+            XNextEvent(RenderWindowImpl::ms_Display, &event);
+            if(event.type == ButtonPress)
+            {
 
+            }
+            else if(event.type == ResizeRequest)
+            {
+                Resolution newResolution;
+                newResolution.height = event.xresizerequest.height;
+                newResolution.width = event.xresizerequest.width;
+                GameEvent* resolutionChangedEvent = K15_NEW GameEvent(RenderWindow::EventResolutionChanged, (void*)&newResolution, sizeof(Resolution));
+                g_EventManager->triggerEvent(resolutionChangedEvent);
+            }
+            else if(event.type == ClientMessage)
+            {
+                if(event.xclient.data.l[0] == RenderWindowImpl::ms_DeleteWindowID)
+                {
+                    g_Application->setRunning(false);
+                }
+            }
+        }
     }
     /*********************************************************************************/
     void OSLayer_Linux::onPostTick()

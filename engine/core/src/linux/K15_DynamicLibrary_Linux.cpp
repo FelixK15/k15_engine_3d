@@ -47,12 +47,9 @@ namespace K15_Engine { namespace Core {
 	}
 	/*********************************************************************************/
 	bool DynamicLibrary_Linux::load()
-	{
-	#if defined K15_OS_ANDROID
-		String path = "lib" + m_FileName;
-	#else
+    {
+        m_FileName = "lib" + m_FileName;
 		String path = g_Application->getGameRootDir() + m_FileName;
-	#endif //K15_OS_ANDROID
 		K15_LOG_NORMAL("Trying to load \"%s\".",path.c_str());
 		m_Module = dlopen(path.c_str(),RTLD_NOW);
 
@@ -68,7 +65,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	bool DynamicLibrary_Linux::unload()
 	{
-		dlclose(m_Module);
+        return dlclose(m_Module) == 0;
 	}
 	/*********************************************************************************/
 	void* DynamicLibrary_Linux::getSymbolInternal( const String& p_SymbolName )

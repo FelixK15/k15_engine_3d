@@ -29,6 +29,8 @@
 
 #include "K15_ApplicationModuleDescription.h"
 
+extern "C"
+{
 /*********************************************************************************/
 K15_RENDERER_API void pluginLoad();
 /*********************************************************************************/
@@ -36,5 +38,5 @@ K15_RENDERER_API void pluginUnload();
 /*********************************************************************************/
 K15_RENDERER_API K15_Engine::Core::ApplicationModuleDescription getDescription();
 /*********************************************************************************/
-
+}
 #endif //_K15Engine_RendererOGL_Plugin_h_

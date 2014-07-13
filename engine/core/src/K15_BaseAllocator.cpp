@@ -108,8 +108,8 @@ namespace K15_Engine { namespace Core {
 		memset(memory,0,p_Size);
 
 		//memory header will always get created on the heap
- 	 	MemoryHeader* header = 0;
-		K15_ASSERT((header = (MemoryHeader*)K15_MALLOC(sizeof(MemoryHeader))) != 0,"Out of memory.");
+        MemoryHeader* header = (MemoryHeader*)K15_MALLOC(sizeof(MemoryHeader));
+        K15_ASSERT(header, "Out of memory.");
 		header->Allocator = (void*)this;
  	 	header->File = p_File;
  	 	header->Function = p_Function;

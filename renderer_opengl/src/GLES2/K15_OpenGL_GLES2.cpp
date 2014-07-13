@@ -36,7 +36,7 @@ EGLContext ms_Context;
 /*********************************************************************************/
 
 /*********************************************************************************/
-GLboolean K15_Engine::Rendering::OpenGL::_gles2Init(GLuint p_ColorBits, GLuint p_DepthBits, GLuint p_StencilBits)
+GLboolean K15_Engine::Rendering::OpenGL::_gles2Init(GLint p_ColorBits, GLint p_DepthBits, GLint p_StencilBits)
 {
 	ms_Display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 

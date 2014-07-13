@@ -32,7 +32,7 @@
 #include <EGL\egl.h>
 
 // custom gl functions
-typedef GLboolean (*PFNK15GLINIT)(GLuint, GLuint, GLuint);
+typedef GLboolean (*PFNK15GLINIT)(GLint, GLint, GLint);
 typedef GLboolean (*PFNK15GLSHUTDOWN)(GLvoid);
 typedef GLboolean (*PFNK15GLSWAPBUFFERS)(GLvoid);
 typedef GLvoid*	  (*PFNGLGETPROCADDRESS)(GLchar*);
@@ -44,7 +44,7 @@ extern PFNGLGETPROCADDRESS kglGetProcAddress;
 
 namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	/*********************************************************************************/
-	GLboolean _gles2Init(GLuint, GLuint, GLuint);
+    GLboolean _gles2Init(GLint, GLint, GLint);
 	GLboolean _gles2SwapBuffers(GLvoid);
 	GLboolean _gles2Shutdown(GLvoid);
 	GLvoid*	  _gles2GetProcAddress(GLchar*);

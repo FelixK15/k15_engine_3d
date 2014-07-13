@@ -17,10 +17,12 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "GLX/K15_OpenGL_GLX.h"
 #include "K15_LogManager.h"
+#include "K15_RenderWindow.h"
 
 #ifdef K15_OS_LINUX
+
+#include "GLX/K15_OpenGL_GLX.h"
 
 /*********************************************************************************/
 PFNK15GLINIT        kglInit =			K15_Engine::Rendering::OpenGL::_glxInit;
@@ -34,81 +36,117 @@ GLXContext glxContext = 0;
 /*********************************************************************************/
 
 /*********************************************************************************/
-GLboolean K15_Engine::Rendering::OpenGL::_glxInit(GLuint p_ColorBits, GLuint p_DepthBits, GLuint p_StencilBits)
+GLboolean K15_Engine::Rendering::OpenGL::_glxInit(GLint p_ColorBits, GLint p_DepthBits, GLint p_StencilBits)
 {
-    int glAttributes[] = {
-        GLX_BUFFER_SIZE, p_ColorBits,
+    //http://www.opengl.org/wiki/Tutorial:_OpenGL_3.0_Context_Creation_(GLX)
+
+    GLint glAttributes[] = {
+        GLX_RED_SIZE, p_ColorBits / 4,
+        GLX_GREEN_SIZE, p_ColorBits / 4,
+        GLX_BLUE_SIZE, p_ColorBits / 4,
+        GLX_ALPHA_SIZE, p_ColorBits / 4,
         GLX_DEPTH_SIZE, p_DepthBits,
         GLX_STENCIL_SIZE, p_StencilBits,
-        GLX_X_RENDERABLE, GL_TRUE,
-        GLX_DOUBLEBUFFEr, GL_TRUE,
+        GLX_DOUBLEBUFFER, True,
+        GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+        GLX_RENDER_TYPE, GLX_RGBA_BIT,
+        GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR,
         None
     };
 
+    PFNGLXCHOOSEFBCONFIGPROC            kglXChooseFBConfig = (PFNGLXCHOOSEFBCONFIGPROC)kglGetProcAddress("glXChooseFBConfig");
+    PFNGLXGETVISUALFROMFBCONFIGPROC     kglXGetVisualFromFBConfig = (PFNGLXGETVISUALFROMFBCONFIGPROC)kglGetProcAddress("glxGetVisualFromFBConfig");
+    PFNGLXCREATECONTEXTATTRIBSARBPROC   kglXCreateContextAttribARB = (PFNGLXCREATECONTEXTATTRIBSARBPROC)kglGetProcAddress("glXCreateContextAttribsARB");
 
-    Display* display = RenderWindowImpl::getDisplay();
-    Window window = RenderWindowImpl::getWindow();
-    GLXFBConfig config = glXChooseFBConfig(display, DefaultScreen(display), glAttributes,
-                                            sizeof(glAttributes) / sizeof(glAttributes[0]));
-
-    if(!config)
+    if(kglXChooseFBConfig && kglXGetVisualFromFBConfig && kglXCreateContextAttribARB)
     {
-        K15_LOG_ERROR("Could not create GLFXConfig.");
+        Display* display = RenderWindowImpl::ms_Display;
+        Window window = RenderWindowImpl::ms_Window;
+        int countConfigs = 0;
+
+        int glx_major, glx_minor;
+
+        glXQueryVersion(display, &glx_major, &glx_minor);
+
+        GLXFBConfig* configs = kglXChooseFBConfig(display, DefaultScreen(display), glAttributes, &countConfigs);
+
+        if(!configs)
+        {
+            K15_LOG_ERROR("Could not get GLFXConfig.");
+            return GL_FALSE;
+        }
+
+        XVisualInfo* vi = 0;
+        for(int i = 0; i < countConfigs; ++i)
+        {
+            if(vi = kglXGetVisualFromFBConfig(display, configs[i]))
+            {
+                break;
+            }
+        }
+
+        if(vi)
+        {
+            Colormap cmap = XCreateColormap(display, window, vi->visual, AllocNone);
+
+            XSetWindowColormap(display, window, cmap);
+
+            XFree(vi); vi = 0;
+        }
+
+        GLint glVersionAttribs[] = {
+            GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+            GLX_CONTEXT_MINOR_VERSION_ARB, 3,
+            #ifdef K15_DEBUG
+                GLX_CONTEXT_FLAGS_ARB, GLX_CONTEXT_DEBUG_BIT_ARB,
+            #endif //K15_DEBUG
+            None
+        };
+
+        if(glxContext = kglXCreateContextAttribARB(display, configs[0], 0, True, glVersionAttribs))
+        {
+            if(glXIsDirect(display, glxContext))
+            {
+                K15_LOG_SUCCESS("Sucessfully created a direct GLX context.");
+            }
+            else
+            {
+                K15_LOG_SUCCESS("Sucessfully created an indirect GLX context.");
+            }
+
+            glXMakeCurrent(display, window, glxContext);
+        }
+        else
+        {
+            K15_LOG_ERROR("Could not get valid OpenGL 3.3 context.");
+            return GL_FALSE;
+        }
+
+        XFree(configs); configs = 0;
+    }
+    else
+    {
+        K15_LOG_ERROR("Could not retrieve necessary functions.");
         return GL_FALSE;
     }
-
-    GLXWindow glWindow = glXCreateWindow(display, config, window, 0);
-
-    if(glWindow == BadMatch || glWindow == BadWindow || glWindow == BadAlloc)
+    K15_LOG_NORMAL("Trying to initialize glew...");
+    GLenum initState = glewInit();
+    if(initState == GLEW_NO_ERROR)
     {
-        K15_LOG_ERROR("Could not create GLXWindow. Error:%s (%d)",
-                        OSLayer::getLastError().c_str(), errno);
-
+        K15_LOG_SUCCESS("Successfully initialized glew. (Version %s)", glewGetString(GLEW_VERSION));
+    }
+    else
+    {
+        K15_LOG_ERROR("Could not initialize glew. Error: \"%s\"", glewGetString(initState));
         return GL_FALSE;
     }
-
-    K15_LOG_SUCCESS("Succesfully created GLXWindow.");
-
-    K15_LOG_NORMAL("Trying to create temporary GLX context...");
-
-    GLXContext context = glXCreateNewContext(display, config, GLX_RGBA_TYPE, 0, True);
-
-    if(context == BadValue || context == BadMatch || context = GLX_BAD_CONTEXT)
-    {
-        K15_LOG_ERROR("Could not create temporary GLX context. Error:\"%s\" (%d)",
-                        OSLayer::getLastError().c_str(), errno);
-        return GL_FALSE;
-    }
-
-    K15_LOG_SUCCESS("Successfully created temporary GLX context...");
-
-    glewInit();
-
-    GLint glVersionAttribs[] = {
-        GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
-        GLX_CONTEXT_MINOR_VERSION_ARB, 3,
-        #ifdef K15_DEBUG
-            GLX_CONTEXT_FLAGS_ARB, GLX_CONTEXT_DEBUG_BIT_ARB,
-        #endif //K15_DEBUG
-        None
-    };
-
-    K15_LOG_NORMAL("Trying to create final GLX context...");
-
-    glxContext = glXCreateContextAttribARB(display, config, 0, True, glVersionAttribs);
-    if(context == BadValue || context == BadMatch || context = GLX_BAD_CONTEXT)
-    {
-        K15_LOG_ERROR("Could not create final GLX context");
-    }
-
-    K15_LOG_SUCCESS("Successfully created final GLX context");
 
     return GL_TRUE;
 }
 /*********************************************************************************/
 GLboolean K15_Engine::Rendering::OpenGL::_glxSwapBuffers()
 {
-    glXSwapBuffers(RenderWindowImpl::getDisplay(), );
+    //glXSwapBuffers(RenderWindowImpl::getDisplay(), );
 
 	return GL_TRUE;
 }
@@ -120,7 +158,7 @@ GLboolean K15_Engine::Rendering::OpenGL::_glxShutdown()
 /*********************************************************************************/
 GLvoid* K15_Engine::Rendering::OpenGL::_glxGetProcAddress(GLchar* p_ProcName)
 {
-    return (GLvoid*)glXGetProcAddress(p_ProcName);
+    return (GLvoid*)glXGetProcAddress((const GLubyte*)p_ProcName);
 }
 /*********************************************************************************/
 

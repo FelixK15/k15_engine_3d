@@ -27,6 +27,8 @@
 
 #include "K15_Prerequisites.h"
 
+#ifdef K15_OS_LINUX
+
 namespace K15_Engine { namespace Core {
     class RenderWindow_Linux
     {
@@ -38,16 +40,15 @@ namespace K15_Engine { namespace Core {
         static void setResolution(const Resolution& p_Resolution);
         static void setIsFullscreen(bool p_Fullscreen);
 
-        static Display* getDisplay();
-        static Window getWindow();
-        static GLXWindow getGLXWindow();
-
-        static void setGLXWindow(GLXWindow p_glWindow);
-    private:
+    public:
         static Display* ms_Display;
         static Window ms_Window;
         static GLXWindow ms_GLXWindow;
+        static uint32 ms_NotifyFlags;
+        static Atom ms_DeleteWindowID;
     };
 }} //end of K15_Engine::Core namespace
+
+#endif //K15_OS_LINUX
 
 #endif //_K15Engine_Core_RenderWindow_Linux_h_

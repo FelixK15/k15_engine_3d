@@ -28,7 +28,7 @@
 #include "wglew.h"
 
 // custom gl functions
-typedef GLboolean (*PFNK15GLINIT)(GLuint, GLuint, GLuint);
+typedef GLboolean (*PFNK15GLINIT)(GLint, GLint, GLint);
 typedef GLboolean (*PFNK15GLSHUTDOWN)(GLvoid);
 typedef GLboolean (*PFNK15GLSWAPBUFFERS)(GLvoid);
 typedef GLvoid*	  (*PFNGLGETPROCADDRESS)(GLchar*);
@@ -40,10 +40,11 @@ extern PFNGLGETPROCADDRESS kglGetProcAddress;
 
 namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	/*********************************************************************************/
-	GLboolean _wglInit(GLuint, GLuint, GLuint);
+    GLboolean _wglInit(GLint, GLint, GLint);
 	GLboolean _wglSwapBuffers(GLvoid);
 	GLboolean _wglShutdown(GLvoid);
 	GLvoid* _wglGetProcAddress(GLchar*);
 	/*********************************************************************************/
 }}} //end of K15_Engine::Rendering::OpenGL namespace
+
 #endif //_K15Engine_OpenGL_WGL_h_
