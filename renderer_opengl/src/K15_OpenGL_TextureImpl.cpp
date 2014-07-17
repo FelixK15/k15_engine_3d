@@ -134,18 +134,18 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 
 		if(target == GL_TEXTURE_1D)
 		{
-			glTextureImage1DEXT(m_TextureHandle,target,0,internalFormat,p_Width,0,format,type,0);
+			kglTextureImage1DEXT(m_TextureHandle,target,0,internalFormat,p_Width,0,format,type,0);
 			if(p_Data)
 			{
-				glTextureSubImage1DEXT(m_TextureHandle,target,0,0,p_Width,format,type,p_Data);
+				kglTextureSubImage1DEXT(m_TextureHandle,target,0,0,p_Width,format,type,p_Data);
 			}
 		}
 		else if(target == GL_TEXTURE_2D)
 		{
-			glTextureImage2DEXT(m_TextureHandle,target,0,internalFormat,p_Width,p_Height,0,format,type,0);
+			kglTextureImage2DEXT(m_TextureHandle,target,0,internalFormat,p_Width,p_Height,0,format,type,0);
  			if(p_Data)
  			{
-				glTextureSubImage2DEXT(m_TextureHandle,target,0,0,0,p_Width,p_Height,format,type,p_Data);	
+				kglTextureSubImage2DEXT(m_TextureHandle,target,0,0,0,p_Width,p_Height,format,type,p_Data);	
  			}
 		}
 		else if(target == GL_TEXTURE_3D)

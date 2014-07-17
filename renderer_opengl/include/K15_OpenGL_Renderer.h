@@ -25,13 +25,17 @@
 #define _K15Engine_Renderer_OpenGL_Renderer_h_
 
 #include "K15_OpenGL_Prerequisites.h"
-
 #include "K15_RendererBase.h"
 #include "K15_RenderOperation.h"
 
 namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	class Renderer : public RendererBase
 	{
+	public:
+		/*********************************************************************************/
+		typedef DynamicArray(String) ExtensionArray;
+		/*********************************************************************************/
+
 	public:
 		/*********************************************************************************/
 		static const GLenum GLFunctionTestConverter[RendererBase::FT_COUNT];
@@ -77,7 +81,14 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		virtual void _drawIndexed(uint32 p_Offset) OVERRIDE;
 		virtual void _drawDirect(uint32 p_Offset) OVERRIDE;
 
+	private:
+		ExtensionArray _getExtensions();
+		void _loadExtensions();
+		bool _isExtensionSupported(const String& p_ExtensionName);
+		bool _NecessaryExtensionsSupported();
+
 	protected:
+		ExtensionArray m_Extensions;
 		GLuint m_ProgramPipeline;
 		GLuint m_VertexArray;
 	};// end of Renderer class

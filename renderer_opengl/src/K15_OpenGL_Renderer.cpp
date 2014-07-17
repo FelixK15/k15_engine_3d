@@ -26,6 +26,8 @@
 #include "K15_OpenGL_TextureImpl.h"
 #include "K15_OpenGL_TextureSamplerImpl.h"
 #include "K15_OpenGL_VertexDeclarationImpl.h"
+#include "K15_OpenGL_Emulation.h"
+#include "K15_OpenGL_Extensions_Impl.h"
 
 #include "K15_IndexBuffer.h"
 #include "K15_VertexBuffer.h"
@@ -149,28 +151,30 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	{
 		if(kglInit(32,24,8))
 		{
-			PFNGLDEBUGMESSAGECALLBACKARBPROC debugfunc = (PFNGLDEBUGMESSAGECALLBACKARBPROC)kglGetProcAddress("glDebugMessageCallbackARB");
+			GLint minorVersion, majorVersion;
 
-			if(debugfunc)
-			{
-				debugfunc(glLogError,(const void*)(this));
-				glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-			}
+			glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+			glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
 
-			if(GL_ARB_separate_shader_objects)
+			if(majorVersion < K15_MIN_GL_VERSION_MAJOR ||
+			   (majorVersion == K15_MIN_GL_VERSION_MAJOR && 
+			   minorVersion < K15_MIN_GL_VERSION_MINOR))
 			{
-				//create program pipeline
-				glGenProgramPipelines(1,&m_ProgramPipeline);
-				glBindProgramPipeline(m_ProgramPipeline);
+				K15_LOG_ERROR("OpenGL version %u.%u is insufficient. OpenGL version greater or equal %u.%u is required.", 
+					majorVersion, minorVersion, K15_MIN_GL_VERSION_MAJOR, K15_MIN_GL_VERSION_MAJOR);
 
-				glGenVertexArrays(1,&m_VertexArray);
-				glBindVertexArray(m_VertexArray);
-			}
-			else
-			{
-				K15_LOG_ERROR("Can't use gl extension GL_ARB_separate_shader_objects");
+				kglShutdown();
 				return false;
 			}
+
+			m_Extensions = _getExtensions();
+			_loadExtensions();
+
+			kglGenProgramPipelines(1,&m_ProgramPipeline);
+			kglBindProgramPipeline(m_ProgramPipeline);
+
+			kglGenVertexArrays(1,&m_VertexArray);
+			kglBindVertexArray(m_VertexArray);
 
 			//force viewport resizing
 			_resolutionChanged(RenderWindow::getResolution());
@@ -189,15 +193,15 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	{
 		if(m_ProgramPipeline != 0)
 		{
-			glBindProgramPipeline(0);
-			glDeleteProgramPipelines(1,&m_ProgramPipeline);
+			kglBindProgramPipeline(0);
+			kglDeleteProgramPipelines(1,&m_ProgramPipeline);
 			m_ProgramPipeline = 0;
 		}
 
 		if(m_VertexArray != 0)
 		{
-			glBindVertexArray(0);
-			glDeleteVertexArrays(1,&m_VertexArray);
+			kglBindVertexArray(0);
+			kglDeleteVertexArrays(1,&m_VertexArray);
 			m_VertexArray = 0;
 		}
 		
@@ -393,11 +397,11 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 
 		if(p_Program)
 		{
-			glUseProgramStages(m_ProgramPipeline,stages,programOGL->getProgramGL());
+			kglUseProgramStages(m_ProgramPipeline,stages,programOGL->getProgramGL());
 		}
 		else
 		{
-			glUseProgramStages(m_ProgramPipeline,stages,0);
+			kglUseProgramStages(m_ProgramPipeline,stages,0);
 		}
 	}
 	/*********************************************************************************/
@@ -516,7 +520,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 			*(GLint*)p_Parameter.getData() :
 			(*(bool*)p_Parameter.getData()) ? GL_TRUE : GL_FALSE;
 
-		  glProgramUniform1i(program, p_Parameter.getRegisterIndex(), value);
+		  kglProgramUniform1i(program, p_Parameter.getRegisterIndex(), value);
 
 		  if(p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_1D ||
 			p_Parameter.getType() == GpuProgramParameter::VT_SAMPLER_2D ||
@@ -525,45 +529,159 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 			TextureImpl* glTex = static_cast<TextureImpl*>(m_BoundTextures[value]->getImpl());
 			TextureSamplerImpl* glSampler = static_cast<TextureSamplerImpl*>(m_BoundSamplers[glTex->getTexture()->getTextureSamplerSlot()]->getImpl());
 
-			glBindSampler(value,glSampler->getHandle());
+			kglBindSampler(value,glSampler->getHandle());
 		  }
 		}
 		else if(p_Parameter.getType() == GpuProgramParameter::VT_FLOAT)
 		{
 		  GLfloat value = *(GLfloat*)p_Parameter.getData();
 
-		  glProgramUniform1f(program, p_Parameter.getRegisterIndex(),value);
+		  kglProgramUniform1f(program, p_Parameter.getRegisterIndex(),value);
 		}
 		else if(p_Parameter.getType() == GpuProgramParameter::VT_VECTOR2)
 		{
 		  Vector2 value = *(Vector2*)p_Parameter.getData();
       
-		  glProgramUniform2f(program, p_Parameter.getRegisterIndex(),value.x,value.y);
+		  kglProgramUniform2f(program, p_Parameter.getRegisterIndex(),value.x,value.y);
 		}
 		else if(p_Parameter.getType() == GpuProgramParameter::VT_VECTOR3)
 		{
 		  Vector3 value = *(Vector3*)p_Parameter.getData();
 
-		  glProgramUniform3f(program, p_Parameter.getRegisterIndex(),value.x,value.y,value.z);
+		  kglProgramUniform3f(program, p_Parameter.getRegisterIndex(),value.x,value.y,value.z);
 		}
 		else if(p_Parameter.getType() == GpuProgramParameter::VT_VECTOR4)
 		{
 		  Vector4 value = *(Vector4*)p_Parameter.getData();
 
-		  glProgramUniform4f(program, p_Parameter.getRegisterIndex(),value.x,value.y,value.z,value.w);
+		  kglProgramUniform4f(program, p_Parameter.getRegisterIndex(),value.x,value.y,value.z,value.w);
 		}
 		else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX2)
 		{
-		  glProgramUniformMatrix2fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
+		  kglProgramUniformMatrix2fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
 		}
 		else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX3)
 		{
-		  glProgramUniformMatrix3fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
+		  kglProgramUniformMatrix3fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
 		}
 		else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX4)
 		{
-		  glProgramUniformMatrix4fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
+		  kglProgramUniformMatrix4fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
 		}
+	}
+	/*********************************************************************************/
+	Renderer::ExtensionArray Renderer::_getExtensions()
+	{
+		static const char EXTENSION_SEPARATOR = ' ';
+		ExtensionArray extensions;
+
+		String extension;
+		String extensionString = (char*)glGetString(GL_EXTENSIONS);
+		String::size_type pos = String::npos;
+		do 
+		{
+			pos = extensionString.find(EXTENSION_SEPARATOR);
+
+			if(pos != String::npos)
+			{
+				extension = extensionString.substr(0, pos);
+
+				if(pos < extensionString.size())
+				{
+					extensionString = extensionString.substr(pos + 1);
+				}
+				
+				extensions.push_back(extension);
+			}
+
+		} while (pos != String::npos);
+
+		return extensions;
+	}
+	/*********************************************************************************/
+	void Renderer::_loadExtensions()
+	{
+		if(_isExtensionSupported("GL_ARB_debug_output"))
+		{
+			glDebugMessageCallbackARB(glLogError,(const void*)(this));
+			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		}
+
+	#ifndef K15_GL_FORCE_EMULATED_EXTENSIONS
+		if(_isExtensionSupported("GL_ARB_vertex_array_object"))
+		{
+			kglGenVertexArrays	  = glGenVertexArrays;
+			kglBindVertexArray	  = glBindVertexArray;
+			kglDeleteVertexArrays = glDeleteVertexArrays;
+		}
+	#endif //!K15_GL_FORCE_EMULATED_EXTENSIONS
+		//TODO Emulation
+
+	#ifndef K15_GL_FORCE_EMULATED_EXTENSIONS
+		if(_isExtensionSupported("GL_ARB_separate_shader_objects"))
+		{
+			kglGenProgramPipelines = glGenProgramPipelines;
+			kglBindProgramPipeline = glBindProgramPipeline;
+		}
+	#endif //!K15_GL_FORCE_EMULATED_EXTENSIONS
+		//TODO Emulation
+
+	#ifndef K15_GL_FORCE_EMULATED_EXTENSIONS
+		if(_isExtensionSupported("GL_ARB_sampler_objects"))
+		{
+			kglGenSamplers = glGenSamplers;
+			kglDeleteSamplers = glDeleteSamplers;
+			kglBindSampler = glBindSampler;
+			kglSamplerParameteri = glSamplerParameteri;
+			kglSamplerParameterf = glSamplerParameterf;
+			kglSamplerParameteriv = glSamplerParameteriv;
+			kglSamplerParameterfv = glSamplerParameterfv;
+			kglSamplerParameterIiv = glSamplerParameterIiv;
+			kglSamplerParameterIuiv = glSamplerParameterIuiv;
+			kglGetSamplerParameteriv = glGetSamplerParameteriv;
+			kglGetSamplerParameterfv = glGetSamplerParameterfv;
+			kglGetSamplerParameterIiv = glGetSamplerParameterIiv;
+			kglGetSamplerParameterIuiv = glGetSamplerParameterIuiv;
+		}
+	#endif //!K15_GL_FORCE_EMULATED_EXTENSIONS
+		//TODO Emulation
+
+
+	#ifndef K15_GL_FORCE_EMULATED_EXTENSIONS
+		if(_isExtensionSupported("GL_EXT_direct_state_access"))
+		{
+			kglNamedBufferDataEXT = glNamedBufferDataEXT;
+			kglNamedBufferSubDataEXT = glNamedBufferSubDataEXT;
+			kglMapNamedBufferEXT = glMapNamedBufferEXT;
+			kglUnmapNamedBufferEXT = glUnmapNamedBufferEXT;
+			kglTextureImage1DEXT = glTextureImage1DEXT;
+			kglTextureImage2DEXT = glTextureImage2DEXT;
+			kglTextureSubImage1DEXT = glTextureSubImage1DEXT;
+			kglTextureSubImage2DEXT = glTextureSubImage2DEXT;
+		}
+		else
+	#endif //!K15_GL_FORCE_EMULATED_EXTENSIONS
+		{
+			K15_LOG_WARNING("Emulating \"GL_EXT_direct_state_access\"...");
+			kglNamedBufferDataEXT = _kglNamedBufferDataEXT;
+			kglNamedBufferSubDataEXT = _kglNamedBufferSubDataEXT;
+			kglMapNamedBufferEXT = _kglMapNamedBufferEXT;
+			kglUnmapNamedBufferEXT = _kglUnmapNamedBufferEXT;
+			kglTextureImage1DEXT = _kglTextureImage1DEXT;
+			kglTextureImage2DEXT = _kglTextureImage2DEXT;
+			kglTextureSubImage1DEXT = _kglTextureSubImage1DEXT;
+			kglTextureSubImage2DEXT = _kglTextureSubImage2DEXT;
+		}
+	}
+	/*********************************************************************************/
+	bool Renderer::_isExtensionSupported(const String& p_ExtensionName)
+	{
+		return Find(m_Extensions.begin(), m_Extensions.end(), p_ExtensionName) != m_Extensions.end();
+	}
+	/*********************************************************************************/
+	bool Renderer::_NecessaryExtensionsSupported()
+	{
+		return true;
 	}
 	/*********************************************************************************/
 }}}// end of K15_Engine::Rendering::WGL

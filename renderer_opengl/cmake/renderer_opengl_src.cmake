@@ -5,6 +5,7 @@ set(OGL_SRC "./src/K15_OpenGL_GpuBufferImpl.cpp"
 "./src/K15_OpenGL_TextureImpl.cpp"
 "./src/K15_OpenGL_TextureSamplerImpl.cpp"
 "./src/K15_OpenGL_VertexDeclarationImpl.cpp"
+"./src/K15_OpenGL_Emulation.cpp"
 "./src/plugin.cpp")
 
 set(OGL_WGL_SRC "./src/WGL/K15_OpenGL_WGL.cpp")
@@ -21,6 +22,9 @@ set(OGL_INC "./include/K15_OpenGL_GpuBufferImpl.h"
 "./include/K15_OpenGL_TextureSamplerImpl.h"
 "./include/K15_OpenGL_TextureSamplerImpl.inl"
 "./include/K15_OpenGL_VertexDeclarationImpl.h"
+"./include/K15_OpenGL_Emulation.h"
+"./include/K15_OpenGL_Extensions.h"
+"./include/K15_OpenGL_Extensions_Impl.h"
 "./include/plugin.h")
 
 set(OGL_WGL_INC "./include/WGL/K15_OpenGL_WGL.h")

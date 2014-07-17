@@ -125,7 +125,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	{
 		GLenum usage = GLBufferUsageConverter[m_Buffer->getUsageOption()];
 
-		glNamedBufferDataEXT(m_BufferHandle,p_Size,0,usage);
+		kglNamedBufferDataEXT(m_BufferHandle,p_Size,0,usage);
 	
 		return true;
 	}
@@ -180,9 +180,9 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		GLenum target = GLBufferTypeConverter[m_Buffer->getType()];
 
 #if defined K15_WGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
-		glNamedBufferSubDataEXT(m_BufferHandle,p_Offset,p_Size,p_Source);
+		kglNamedBufferSubDataEXT(m_BufferHandle,p_Offset,p_Size,p_Source);
 #else
-    memcpy(m_MappedBufferRange,p_Source,p_Size);
+		memcpy(m_MappedBufferRange,p_Source,p_Size);
 #endif //K15_OGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 
 		return p_Size;
