@@ -54,6 +54,8 @@ namespace K15_Engine { namespace Core {
 		template<class ComponentType>
 		ComponentType* getComponentByType() const;
 
+		INLINE const ComponentArray& getComponents() const;
+
 		void update(const GameTime& p_GameTime);
 
 		void lookAt(const Vector3& p_Position);

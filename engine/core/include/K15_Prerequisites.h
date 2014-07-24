@@ -114,6 +114,8 @@ namespace K15_Engine
 		class ResourceImporterBitmap;
 		class EventTask;
 		class NodeComponent;
+		class MeshInstance;
+		class SubMeshInstance;
 		class Image;
 		class ProfilingNode;
 		class ProfilingManager;

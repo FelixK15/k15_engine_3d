@@ -1,5 +1,5 @@
 /**
- * @file K15_Model.h
+ * @file K15_MeshInstance.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2014/06/14
@@ -21,29 +21,30 @@
  * 
  */
 
-#ifndef _K15Engine_Core_Model_h_
-#define _K15Engine_Core_Model_h_
+#ifndef _K15Engine_Renderer_MeshInstance_h_
+#define _K15Engine_Renderer_MeshInstance_h_
 
 #include "K15_Prerequisites.h"
-#include "K15_Object.h"
+#include "K15_AllocatedObject.h"
 
-namespace K15_Engine { namespace Core {
-	class Model : public Object
+namespace K15_Engine { namespace Rendering {
+	class K15_CORE_API MeshInstance : public RenderingAllocatedObject
 	{
-	K15_DECLARE_RTTI
+	public:
+		/*********************************************************************************/
+		typedef DynamicArray(SubMeshInstance*) SubMeshInstanceArray;
+		/*********************************************************************************/
 
 	public:
-		Model();
-		~Model();
+		MeshInstance(Mesh* p_Model);
+		~MeshInstance();
 
 		INLINE Mesh* getMesh() const;
-		INLINE Material* getMaterial() const;
-
 	private:
 		Mesh* m_Mesh;
-		Material* m_Material;
-	}; //end of Model class declaration
-#include "K15_Model.inl"
-}} //end of K15_Engine::Core namespace
+		SubMeshInstanceArray m_SubModelInstances;
+		//Animations
+	}; // end of ModelInstance class declaration
+}} //end of K15_Engine::Rendering namespace
 
-#endif //_K15Engine_Core_Model_h_
+#endif //_K15Engine_Renderer_MeshInstance_h_

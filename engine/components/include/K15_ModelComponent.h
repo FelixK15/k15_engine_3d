@@ -27,7 +27,6 @@
 #include "K15_Prerequisites.h"
 #include "K15_AllocatedObject.h"
 #include "K15_GameObjectComponentBase.h"
-#include "K15_Mesh.h"
 
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API ModelComponent : public GameObjectComponentBase
@@ -37,17 +36,19 @@ namespace K15_Engine { namespace Core {
 	public:
 		ModelComponent();
 		ModelComponent(const String& p_ModelResourceName);
-		ModelComponent(Model* p_Model);
+		ModelComponent(MeshInstance* p_ModelInstance);
 		~ModelComponent();
 
-		INLINE Model* getModel() const;
-		INLINE void setModel(Model* p_Model);
-	
+		INLINE MeshInstance* getModelInstance() const;
+		INLINE void setModelInstance(MeshInstance* p_Model);
+		
+		virtual void onAddedToRenderQueue(RenderQueue* p_RenderQueue);
+
 	protected:
 		virtual AABB _calculateAABB() OVERRIDE;
 
 	private:
-		Model* m_Model;
+		MeshInstance* m_ModelInstance;
 	}; //end of ModelComponent class declaration
 	# include "K15_ModelComponent.inl"
 }}//end of K15_Engine::Core namespace

@@ -22,6 +22,10 @@
 #include "K15_ModelComponent.h"
 #include "K15_ResourceManager.h"
 
+#include "K15_Model.h"
+
+#include "K15_RenderOperation.h"
+
 namespace K15_Engine { namespace Core {
   /*********************************************************************************/
   K15_IMPLEMENT_RTTI_BASE(Core,ModelComponent,GameObjectComponentBase);
@@ -57,13 +61,26 @@ namespace K15_Engine { namespace Core {
   AABB ModelComponent::_calculateAABB()
   {
 	  AABB aabb;
-// 
+
 // 	  if(m_Model)
 // 	  {
 // 		  aabb = m_Model->getAABB();
 // 	  }
-// 
+
  	  return aabb;
+  }
+  /*********************************************************************************/
+  void ModelComponent::onAddedToRenderQueue(RenderQueue* p_RenderQueue)
+  {
+	  Material* material = 0;
+	  Mesh* mesh = 0;
+
+	  if(m_Model)
+	  {
+		  mesh = m_Model->getMesh();
+		  material = m_Model->getMaterial();
+	  }
+
   }
   /*********************************************************************************/
 }}//end of K15_Engine::Core namespace

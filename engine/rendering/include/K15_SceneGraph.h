@@ -51,8 +51,13 @@ namespace K15_Engine { namespace Core {
 
 		static SceneGraph* getDefault();
 
-  private:
-		static SceneGraph* ms_Default;
+	private:
+		CameraArray _getActiveCameras() const;
+		SceneNodeArray _getVisibleObjects(const CameraArray& p_ActiveCameras) const;
+		GameObject::ComponentArray _collectVisibleComponents(SceneNodeArray p_VisibleNodes) const;
+
+	private:
+		static SceneGraph ms_Default;
 
   private:
 		SceneNodeArray m_SceneNodes;

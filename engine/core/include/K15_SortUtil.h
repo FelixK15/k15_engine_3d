@@ -1,8 +1,8 @@
 /**
- * @file K15_Model.h
- * @author  Felix Klinge <f.klinge@k15games.de>
+ * @file K15_SortUtil.h
+ * @author Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2014/06/14
+ * @date 2013/09/09
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,32 +18,19 @@
  *
  * @section DESCRIPTION
  *
- * 
  */
 
-#ifndef _K15Engine_Core_Model_h_
-#define _K15Engine_Core_Model_h_
+#ifndef _K15Engine_Core_SortUtil_h_
+#define _K15Engine_Core_SortUtil_h_
 
 #include "K15_Prerequisites.h"
-#include "K15_Object.h"
 
 namespace K15_Engine { namespace Core {
-	class Model : public Object
+	class K15_CORE_API SortUtil
 	{
-	K15_DECLARE_RTTI
-
 	public:
-		Model();
-		~Model();
-
-		INLINE Mesh* getMesh() const;
-		INLINE Material* getMaterial() const;
-
-	private:
-		Mesh* m_Mesh;
-		Material* m_Material;
-	}; //end of Model class declaration
-#include "K15_Model.inl"
+		static bool sortComponentsByType(const GameObjectComponentBase* p_Comp1, const GameObjectComponentBase* p_Comp2);
+	}; //end of SortUtil class declaration
 }} //end of K15_Engine::Core namespace
 
-#endif //_K15Engine_Core_Model_h_
+#endif //_K15Engine_Core_SortUtil_h_

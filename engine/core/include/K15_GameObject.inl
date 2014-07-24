@@ -28,6 +28,11 @@ CameraComponent* GameObject::getCameraComponent()
 	return m_CameraComponent;
 }
 /*********************************************************************************/
+const GameObject::ComponentArray& GameObject::getComponents() const
+{
+	return m_Components;
+}
+/*********************************************************************************/
 template<class ComponentType>
 ComponentType* GameObject::getComponentByType() const
 {
