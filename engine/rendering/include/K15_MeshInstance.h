@@ -26,6 +26,7 @@
 
 #include "K15_Prerequisites.h"
 #include "K15_AllocatedObject.h"
+#include "K15_AABB.h"
 
 namespace K15_Engine { namespace Rendering {
 	class K15_CORE_API MeshInstance : public RenderingAllocatedObject
@@ -40,7 +41,17 @@ namespace K15_Engine { namespace Rendering {
 		~MeshInstance();
 
 		INLINE Mesh* getMesh() const;
+    INLINE SubMeshInstance* getSubMeshInstance(int32 p_Index) const;
+    INLINE SubMeshInstanceArray& getSubMeshInstances() const;
+    INLINE int32 getSubMeshInstanceCount() const;
+
+    INLINE const AABB& getAABB() const;
+
+  private:
+    void _calculateAABB();
+
 	private:
+    AABB m_AABB;
 		Mesh* m_Mesh;
 		SubMeshInstanceArray m_SubModelInstances;
 		//Animations

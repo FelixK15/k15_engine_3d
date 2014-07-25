@@ -26,6 +26,7 @@
 
 #include "K15_Prerequisites.h"
 #include "K15_AllocatedObject.h"
+#include "K15_AABB.h"
 
 namespace K15_Engine { namespace Rendering {
 	class K15_CORE_API SubMeshInstance : public RenderingAllocatedObject
@@ -38,7 +39,12 @@ namespace K15_Engine { namespace Rendering {
 		INLINE Material* getMaterial() const;
 		INLINE RenderOperation* getRenderOperation() const;
 
+  private:
+    void _refreshRenderOperation();
+    void _calculateAABB();
+
 	private:
+    AABB m_AABB;
 		SubMesh* m_SubMesh;
 		Material* m_Material;
 		RenderOperation* m_RenderOperation;

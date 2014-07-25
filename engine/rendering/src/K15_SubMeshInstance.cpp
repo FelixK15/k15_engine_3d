@@ -1,5 +1,5 @@
 /**
- * @file K15_MeshInstance.h
+ * @file K15_SubModelInstance.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2014/06/14
@@ -19,41 +19,31 @@
 
 #include "K15_PrecompiledHeader.h"
 
-#include "K15_MeshInstance.h"
 #include "K15_SubMeshInstance.h"
-#include "K15_SubMesh.h"
-#include "K15_VertexBuffer.h"
 
 namespace K15_Engine { namespace Rendering { 
   /*********************************************************************************/
-  MeshInstance::MeshInstance(Mesh* p_Model)
-    : m_AABB(),
-    m_Mesh(p_Model),
-    m_SubModelInstances()
-  {
-    
-  }
-  /*********************************************************************************/
-  MeshInstance::~MeshInstance()
+  SubMeshInstance::SubMeshInstance(SubMesh* p_Model)
+    : m_SubMesh(p_Model),
+    m_AABB(),
+    m_Material(0),
+    m_RenderOperation(0)
   {
 
   }
   /*********************************************************************************/
-  void MeshInstance::_calculateAABB()
+  SubMeshInstance::~SubMeshInstance()
   {
-    SubMeshInstance* submeshinstance = 0;
-    SubMesh* submesh = 0;
-    VertexBuffer* vertexBuffer = 0;
 
-    DynamicArray(AABB) submeshBoundingBoxes;
-
-    for(SubMeshInstanceArray::iterator iter = m_SubModelInstances.begin();
-        iter != m_SubModelInstances.end(); ++iter)
-    {
-      submeshinstance = (*iter);
-      
-      submeshBoundingBoxes.push_back(submeshinstance->getAABB());
-    }
   }
   /*********************************************************************************/
-}} // end of K15_Engine::Rendering
+  void SubMeshInstance::_refreshRenderOperation()
+  {
+
+  }
+  /*********************************************************************************/
+  void SubMeshInstance::_calculateAABB()
+  {
+
+  }
+}} // end of K15_Engine::Rendering namespace
