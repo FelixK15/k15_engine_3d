@@ -23,7 +23,6 @@
 #include "K15_SortUtil.h"
 #include "K15_CameraComponent.h"
 #include "K15_NodeComponent.h"
-#include "K15_GameObject.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/

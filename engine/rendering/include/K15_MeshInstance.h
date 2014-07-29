@@ -41,19 +41,19 @@ namespace K15_Engine { namespace Rendering {
 		~MeshInstance();
 
 		INLINE Mesh* getMesh() const;
-    INLINE SubMeshInstance* getSubMeshInstance(int32 p_Index) const;
-    INLINE SubMeshInstanceArray& getSubMeshInstances() const;
-    INLINE int32 getSubMeshInstanceCount() const;
+        INLINE SubMeshInstance* getSubMeshInstance(int32 p_Index) const;
+        INLINE const SubMeshInstanceArray& getSubMeshInstances() const;
+        INLINE int32 getSubMeshInstanceCount() const;
 
-    INLINE const AABB& getAABB() const;
+        INLINE const AABB& getAABB() const;
 
 	private:
-    AABB m_AABB;
+        AABB m_AABB;
 		Mesh* m_Mesh;
 		SubMeshInstanceArray m_SubModelInstances;
 		//Animations
 	}; // end of ModelInstance class declaration
-//  #include "K15_MeshInstance.inl"
+  #include "K15_MeshInstance.inl"
 }} //end of K15_Engine::Rendering namespace
 
 #endif //_K15Engine_Renderer_MeshInstance_h_

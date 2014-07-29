@@ -40,7 +40,7 @@
 #endif //__ANDROID__))
 
 #if defined K15_SIMD_SUPPORT
-	#include <tmmintrin.h>
+//	#include <tmmintrin.h>
 #elif defined K15_NEON_SUPPORT
 //	#include <arm_neon.h>
 #endif //K15_SIMD_SUPPORT

@@ -1,8 +1,8 @@
 /**
- * @file K15_ModelComponent.inl
+ * @file K15_MeshInstance.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/12/16
+ * @date 2014/06/14
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,13 +18,30 @@
  */
 
 /*********************************************************************************/
-MeshInstance* ModelComponent::getMeshInstance() const
+Mesh* MeshInstance::getMesh() const
 {
-    return m_MeshInstance;
+    return m_Mesh;
 }
 /*********************************************************************************/
-void ModelComponent::setMeshInstance(MeshInstance* p_MeshInstance)
+SubMeshInstance* MeshInstance::getSubMeshInstance(int32 p_Index) const
 {
-    m_MeshInstance = p_MeshInstance;
+    K15_ASSERT(p_Index < m_SubModelInstances.size() && p_Index >= 0, "Access out of bounds.");
+
+    return m_SubModelInstances[p_Index];
+}
+/*********************************************************************************/
+const MeshInstance::SubMeshInstanceArray& MeshInstance::getSubMeshInstances() const
+{
+    return m_SubModelInstances;
+}
+/*********************************************************************************/
+int32 MeshInstance::getSubMeshInstanceCount() const
+{
+    return m_SubModelInstances.size();
+}
+/*********************************************************************************/
+const AABB& MeshInstance::getAABB() const
+{
+    return AABB();
 }
 /*********************************************************************************/

@@ -27,6 +27,7 @@
 #include "K15_Prerequisites.h"
 #include "K15_Object.h"
 #include "K15_AllocatedObject.h"
+#include "K15_GameObject.h"
 
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API SceneGraph : public Object, public RenderingAllocatedObject
@@ -54,7 +55,7 @@ namespace K15_Engine { namespace Core {
 	private:
 		CameraArray _getActiveCameras() const;
 		SceneNodeArray _getVisibleObjects(const CameraArray& p_ActiveCameras) const;
-		GameObject::ComponentArray _collectVisibleComponents(SceneNodeArray p_VisibleNodes) const;
+        GameObject::ComponentArray _collectVisibleComponents(SceneNodeArray p_VisibleNodes) const;
 
 	private:
 		static SceneGraph ms_Default;

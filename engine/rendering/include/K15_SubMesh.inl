@@ -21,7 +21,6 @@
 void SubMesh::setVertexData(VertexData* p_VertexData)
 {
 	m_VertexData = p_VertexData;
-	_calculateAABB();
 }
 /*********************************************************************************/
 VertexData* SubMesh::getVertexData() const

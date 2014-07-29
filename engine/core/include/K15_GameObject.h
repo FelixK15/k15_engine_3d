@@ -33,7 +33,7 @@ namespace K15_Engine { namespace Core {
 	{
 	public:
 		/*********************************************************************************/
-		K15_DECLARE_RTTI;
+        K15_DECLARE_RTTI
 		typedef DynamicArray(GameObjectComponentBase*) ComponentArray;
 		/*********************************************************************************/
 	public:

@@ -47,8 +47,8 @@ namespace K15_Engine { namespace Rendering {
 
 		INLINE Mesh* getMesh() const;
 
-		INLINE const AABB& getAABB();
-    void calculateAABB();
+        INLINE const AABB& getAABB() const;
+        void calculateAABB();
 
 	protected:
 		AABB m_AABB;

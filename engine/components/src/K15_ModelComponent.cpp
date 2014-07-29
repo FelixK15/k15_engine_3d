@@ -22,7 +22,7 @@
 #include "K15_ModelComponent.h"
 #include "K15_ResourceManager.h"
 
-#include "K15_Model.h"
+#include "K15_MeshInstance.h"
 
 #include "K15_RenderOperation.h"
 
@@ -34,21 +34,21 @@ namespace K15_Engine { namespace Core {
   /*********************************************************************************/
   ModelComponent::ModelComponent()
 	  : GameObjectComponentBase(),
-	  m_Model(0)
+      m_MeshInstance(0)
   {
 
   }
   /*********************************************************************************/
   ModelComponent::ModelComponent(const String& p_ModelResourceName)
 	: GameObjectComponentBase(),
-	m_Model(0)
+    m_MeshInstance(0)
   {
     //m_Model = g_ResourceManager->getResource<Model>(p_ModelResourceName);
   }
   /*********************************************************************************/
-  ModelComponent::ModelComponent(Model* p_Mesh)
+  ModelComponent::ModelComponent(MeshInstance* p_MeshInstance)
 	  : GameObjectComponentBase(),
-	  m_Model(m_Model)
+      m_MeshInstance(p_MeshInstance)
   {
 
   }
@@ -62,24 +62,16 @@ namespace K15_Engine { namespace Core {
   {
 	  AABB aabb;
 
-// 	  if(m_Model)
-// 	  {
-// 		  aabb = m_Model->getAABB();
-// 	  }
+      if(m_MeshInstance)
+      {
+          aabb = m_MeshInstance->getAABB();
+      }
 
  	  return aabb;
   }
   /*********************************************************************************/
   void ModelComponent::onAddedToRenderQueue(RenderQueue* p_RenderQueue)
   {
-	  Material* material = 0;
-	  Mesh* mesh = 0;
-
-	  if(m_Model)
-	  {
-		  mesh = m_Model->getMesh();
-		  material = m_Model->getMaterial();
-	  }
 
   }
   /*********************************************************************************/

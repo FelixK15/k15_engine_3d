@@ -114,8 +114,6 @@ namespace K15_Engine
 		class ResourceImporterBitmap;
 		class EventTask;
 		class NodeComponent;
-		class MeshInstance;
-		class SubMeshInstance;
 		class Image;
 		class ProfilingNode;
 		class ProfilingManager;
@@ -175,7 +173,9 @@ namespace K15_Engine
 		class Material;
 		class SubMesh;
 		class Mesh;
-    class IndexData;
+        class MeshInstance;
+        class SubMeshInstance;
+        class IndexData;
 		class AABB;
 		class VertexDeclaration;
 		class VertexDeclarationImplBase;
@@ -185,7 +185,7 @@ namespace K15_Engine
 		class AlphaState;
 		class DepthState;
 		class VertexBuffer;
-    class VertexData;
+        class VertexData;
 		class Vertex;
 		class RendererBase;
 		struct RenderOperation;
@@ -288,8 +288,8 @@ namespace K15_Engine
 		class Matrix3;
 		class Matrix4;
 		class Quaternion;
-    class MatrixUtil;
-    class MathUtil;
+        class MatrixUtil;
+        class MathUtil;
 	} //end of K15_Engine::Math namespace
 	/*********************************************************************************/
  }

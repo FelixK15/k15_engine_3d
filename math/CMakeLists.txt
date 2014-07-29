@@ -1,8 +1,12 @@
 project(k15math)
 
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+set(CMAKE_MODULE_PATH 
+"${CMAKE_CURRENT_LIST_DIR}/cmake"
+"${CMAKE_CURRENT_LIST_DIR}/..")
 
+include(common)
 include(math_core_src)
+include(math_compiler_settings)
 
 include_directories(./include)
 

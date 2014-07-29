@@ -24,6 +24,8 @@
 #ifndef _K15Engine_Core_ResourceImporterObj_h_
 #define _K15Engine_Core_ResourceImporterObj_h_
 
+#if 0
+
 #include "K15_Prerequisites.h"
 
 #include "K15_ResourceImporterBase.h"
@@ -42,5 +44,7 @@ namespace K15_Engine { namespace Core {
 		virtual ResourceBase* _load(const RawData& p_ResourceData, const Rtti& p_ResourceType) OVERRIDE;
 	};// end of ResourceImporterObj class declaration
 }}// end of K15_Engine::Core namespace
+
+#endif
 
 #endif //_K15Engine_Core_ResourceImporterObj_h_

@@ -63,14 +63,21 @@ namespace K15_Engine { namespace Rendering {
 			//update projection matrix 
 			if(m_ProjectionType == PT_PERSPECTIVE)
 			{
-				m_ProjectionMatrix = MatrixUtil::createPerspectiveMatrix(m_Fov,m_NearClipDistance,m_FarClipDistance);
+                m_ProjectionMatrix = MatrixUtil::createPerspectiveMatrix(m_Fov, aspect,
+                                                                         m_NearClipDistance,
+                                                                         m_FarClipDistance);
 			}
 			else
 			{
 				float left = -aspect / m_Zoom;
 				float right = aspect / m_Zoom;
 				float top_bottom = 1.0f / m_Zoom;
-				m_ProjectionMatrix = MatrixUtil::createOrthographicMatrix(left,right,-top_bottom,top_bottom,m_NearClipDistance,m_FarClipDistance);
+                m_ProjectionMatrix = MatrixUtil::createOrthographicMatrix(left,
+                                                                          right,
+                                                                          -top_bottom,
+                                                                          top_bottom,
+                                                                          m_NearClipDistance,
+                                                                          m_FarClipDistance);
 			}
 
 			_calculateFrustum();

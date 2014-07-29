@@ -36,11 +36,11 @@ namespace K15_Engine { namespace Core {
 	public:
 		ModelComponent();
 		ModelComponent(const String& p_ModelResourceName);
-		ModelComponent(MeshInstance* p_ModelInstance);
+        ModelComponent(MeshInstance* p_MeshInstance);
 		~ModelComponent();
 
-		INLINE MeshInstance* getModelInstance() const;
-		INLINE void setModelInstance(MeshInstance* p_Model);
+        INLINE MeshInstance* getMeshInstance() const;
+        INLINE void setMeshInstance(MeshInstance* p_MeshInstance);
 		
 		virtual void onAddedToRenderQueue(RenderQueue* p_RenderQueue);
 
@@ -48,7 +48,7 @@ namespace K15_Engine { namespace Core {
 		virtual AABB _calculateAABB() OVERRIDE;
 
 	private:
-		MeshInstance* m_ModelInstance;
+        MeshInstance* m_MeshInstance;
 	}; //end of ModelComponent class declaration
 	# include "K15_ModelComponent.inl"
 }}//end of K15_Engine::Core namespace

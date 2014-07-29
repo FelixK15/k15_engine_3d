@@ -39,13 +39,13 @@ namespace K15_Engine { namespace Rendering {
 		Mesh();
 		~Mesh();
 
-		INLINE const AABB& getAABB();
+        INLINE const AABB& getAABB() const;
 		INLINE const SubMeshArray& getSubMeshes() const;
 
 		INLINE void addSubMesh(SubMesh* p_SubMesh);
 		INLINE SubMesh* getSubMesh(uint32 p_Index) const;
 
-    void calculateAABB();
+        void calculateAABB();
 
 	private:
 		SubMeshArray m_SubMeshes;

@@ -20,6 +20,9 @@
 #include "K15_PrecompiledHeader.h"
 
 #include "K15_ResourceImporterObj.h"
+
+#if 0
+
 #include "K15_RawData.h"
 
 #include "K15_RendererBase.h"
@@ -199,3 +202,5 @@ namespace K15_Engine { namespace Core {
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace
+
+#endif

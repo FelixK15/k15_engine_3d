@@ -26,6 +26,7 @@
 #include "K15_Prerequisites.h"
 #include "K15_Object.h"
 #include "K15_AllocatedObject.h"
+#include "K15_AABB.h"
 
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API GameObjectComponentBase : public Object, public GeneralAllocatedObject

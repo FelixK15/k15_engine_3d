@@ -89,4 +89,20 @@ namespace K15_Engine { namespace Math {
     return matRot;
   }
   /*********************************************************************************/
+  Matrix4 MatrixUtil::lookAt(const Vector3 &p_EyePos, const Vector3 &p_LookAt, const Vector3 &p_Up)
+  {
+    Matrix4 lookMat;
+    glm::vec3 eyepos, lookat, up;
+
+    memcpy(&eyepos, &p_EyePos, sizeof(Vector3));
+    memcpy(&lookat, &p_LookAt, sizeof(Vector3));
+    memcpy(&up, &p_Up, sizeof(Vector3));
+
+    glm::mat4 mat = glm::lookAt(eyepos, lookat, up);
+
+    memcpy(&lookMat, &mat, sizeof(Matrix4));
+
+    return lookMat;
+  }
+  /*********************************************************************************/
 }} //end of K15_Engine::Math namespace
