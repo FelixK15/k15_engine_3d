@@ -363,12 +363,12 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	/*********************************************************************************/
 	void Renderer::_bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType)
 	{
-		const GpuBufferImpl* bufferOGL = static_cast<const GpuBufferImpl*>(p_Buffer->getImpl());
+		const GpuBufferImpl* bufferOGL = p_Buffer ? static_cast<const GpuBufferImpl*>(p_Buffer->getImpl()) : 0;
 		GLenum target = GpuBufferImpl::GLBufferTypeConverter[p_BufferType];
 
 		if(p_Buffer)
 		{
-			glBindBuffer(target,bufferOGL->getBufferGL());
+			glBindBuffer(target, bufferOGL->getBufferGL());
 		}
 		else
 		{
@@ -397,7 +397,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 			stages |= GL_COMPUTE_SHADER_BIT;
 		}
 
-		const GpuProgramImpl* programOGL = static_cast<const GpuProgramImpl*>(p_Program->getImpl());
+		const GpuProgramImpl* programOGL = p_Program ? static_cast<const GpuProgramImpl*>(p_Program->getImpl()) : 0;
 
 		if(p_Program)
 		{

@@ -25,12 +25,29 @@
 #define _K15Engine_Rendering_VertexBufferCache_h_
 
 #include "K15_Prerequisites.h"
+#include "K15_HashedString.h"
 
-namespace K15_Engine { namespace Core {
+namespace K15_Engine { namespace Rendering {
 	class K15_CORE_API VertexBufferCache
 	{
-		VertexBuffer* getVertexBuffer()
+	private:
+		struct VertexBufferChacheEntry
+		{
+			VertexDeclaration* vertexDeclaration;
+			VertexBuffer* vertexBuffer;
+		};
+
+	public:
+		typedef DynamicArray(VertexBufferChacheEntry) VertexBufferCacheList;
+
+	public:
+
+		static VertexData allocateVertexData(const ObjectName& p_VertexDeclaration, uint32 p_VertexCount);
+
+	private:
+		
+		static VertexBufferCacheList ms_VertexBufferCache;
 	};// end of VertexBufferCache class declaration
-}}// end of K15_Engine::Core namespace
+}}// end of K15_Engine::Rendering namespace
 
 #endif //_K15Engine_Rendering_VertexBufferCache_h_

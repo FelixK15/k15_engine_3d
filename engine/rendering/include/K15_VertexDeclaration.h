@@ -27,6 +27,7 @@
 #include "K15_Prerequisites.h"
 #include "K15_HashedString.h"
 #include "K15_AllocatedObject.h"
+#include "K15_GpuResource.h"
 
 namespace K15_Engine { namespace Rendering {
 	struct K15_CORE_API VertexElement
@@ -69,7 +70,8 @@ namespace K15_Engine { namespace Rendering {
 		uint32 size;
 	}; //end of VertexElement struct
 	/*********************************************************************************/
-	class K15_CORE_API VertexDeclaration : public RenderingAllocatedObject
+	class K15_CORE_API VertexDeclaration : public GpuResource,
+										   public RenderingAllocatedObject
 	{
 	public:
 		/*********************************************************************************/
@@ -87,7 +89,7 @@ namespace K15_Engine { namespace Rendering {
 	public:
 		static VertexDeclaration* create(const String& p_DeclarationString);
 
-		~VertexDeclaration();
+		virtual ~VertexDeclaration();
 
 		void addElement(VertexElement p_Element);
 		void addElement(Enum p_Semantic, Enum p_Type);
@@ -106,12 +108,13 @@ namespace K15_Engine { namespace Rendering {
 
 		void fromDeclarationString(const String& p_DeclarationString);
 
-		String getDeclarationString();
+		String getDeclarationNameAsString();
 		const VertexElement& getElement(uint32 p_Index);
     
 		uint32 getVertexSize();
 		uint32 getElementCount() const;
 
+		INLINE const ObjectName& getDeclarationName() const;
 		INLINE VertexDeclarationImplBase* getImpl() const;
 
 	private:

@@ -142,7 +142,7 @@ namespace K15_Engine { namespace Core {
 		
 		hwnd = RenderWindowImpl::getHandleWindow();
 		
-		if(PeekMessage(&msg,0,0,0,PM_REMOVE))
+		if(PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);

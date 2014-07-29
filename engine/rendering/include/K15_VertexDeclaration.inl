@@ -23,15 +23,21 @@ VertexDeclarationImplBase* VertexDeclaration::getImpl() const
   return m_Impl;
 }
 /*********************************************************************************/
+void VertexDeclarationImplBase::setVertexDeclaration(VertexDeclaration* p_Declaration)
+{
+	m_Declaration = p_Declaration;
+}
+/*********************************************************************************/
 
+/*********************************************************************************/
+const ObjectName& VertexDeclaration::getDeclarationName() const
+{
+	return m_Declaration;
+}
 /*********************************************************************************/
 VertexDeclaration* VertexDeclarationImplBase::getVertexDeclaration() const
 {
   return m_Declaration;
 }
 /*********************************************************************************/
-void VertexDeclarationImplBase::setVertexDeclaration(VertexDeclaration* p_Declaration)
-{
-  m_Declaration = p_Declaration;
-}
-/*********************************************************************************/
+
