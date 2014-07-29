@@ -27,6 +27,7 @@
 
 #include "K15_Prerequisites.h"
 #include "K15_GpuProgram.h"
+#include "K15_GpuResource.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
@@ -45,7 +46,8 @@ namespace K15_Engine { namespace Rendering {
 		GpuProgramBatch* m_ProgramBatch;
 	};
 	/*********************************************************************************/
-	class K15_CORE_API GpuProgramBatch : public RenderingAllocatedObject
+	class K15_CORE_API GpuProgramBatch : public GpuResource,
+										 public RenderingAllocatedObject
 	{
 	public:
 		typedef DynamicArray(GpuProgram*) GpuProgramList;
@@ -53,7 +55,7 @@ namespace K15_Engine { namespace Rendering {
 	public:
 		GpuProgramBatch();
 		GpuProgramBatch(const GpuProgramList& p_Programs);
-		~GpuProgramBatch();
+		virtual ~GpuProgramBatch();
 
 		bool compile();
 		bool hasGpuProgramStage(Enum p_ProgramStage);

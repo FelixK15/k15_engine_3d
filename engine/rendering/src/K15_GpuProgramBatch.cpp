@@ -59,7 +59,10 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	GpuProgramBatch::~GpuProgramBatch()
 	{
-
+		if(isBound())
+		{
+			getRenderer()->bindGpuProgramBatch(0);
+		}
 	}
 	/*********************************************************************************/
 	bool GpuProgramBatch::compile()

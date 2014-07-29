@@ -107,6 +107,11 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	Texture::~Texture()
 	{
+		if(isBound())
+		{
+			getRenderer()->bindTexture(0, m_Type, m_Slot);
+		}
+
 		K15_DELETE m_Impl;
 	}
 	/*********************************************************************************/

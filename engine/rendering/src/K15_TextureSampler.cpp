@@ -39,6 +39,11 @@ namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
   TextureSampler::~TextureSampler()
   {
+	  if(isBound())
+	  {
+		  getRenderer()->bindTextureSampler(0, m_Slot);
+	  }
+
 	  K15_DELETE m_Impl;
   }
   /*********************************************************************************/

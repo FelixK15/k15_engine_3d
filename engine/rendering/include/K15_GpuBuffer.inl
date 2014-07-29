@@ -58,16 +58,6 @@ Enum GpuBuffer::getAccessOption() const
 	return m_AccessOption;
 }
 /*********************************************************************************/
-byte* GpuBuffer::getShadowCopy() const
-{
-	return m_ShadowCopy;
-}
-/*********************************************************************************/
-uint32 GpuBuffer::getShadowCopySize() const
-{
-	return m_ShadowCopySize;
-}
-/*********************************************************************************/
 bool GpuBuffer::isLocked() const
 {
 	return m_Locked;
@@ -81,6 +71,11 @@ uint32 GpuBuffer::getSize() const
 uint32 GpuBuffer::getUsedSize() const
 {
   return m_UsedSize;
+}
+/*********************************************************************************/
+uint32 GpuBuffer::getFreeSize() const
+{
+	return m_Size - m_UsedSize;
 }
 /*********************************************************************************/
 GpuBufferImplBase* GpuBuffer::getImpl()

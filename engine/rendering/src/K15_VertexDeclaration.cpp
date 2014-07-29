@@ -97,7 +97,8 @@ namespace K15_Engine { namespace Rendering {
 	}
 	/*********************************************************************************/
 	VertexDeclaration::VertexDeclaration(const String& p_DeclarationString)
-	: m_Impl(g_Application->getRenderer()->createVertexDeclarationImpl())
+	: GpuResource(),
+	m_Impl(g_Application->getRenderer()->createVertexDeclarationImpl())
 	{
 		m_Impl->setVertexDeclaration(this);
 
@@ -106,6 +107,11 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	VertexDeclaration::~VertexDeclaration()
 	{
+		if(isBound())
+		{
+			getRenderer()->setVertexDeclaration(0);
+		}
+
 		K15_DELETE m_Impl;
 		removeAllElements();
 	}
@@ -320,7 +326,7 @@ namespace K15_Engine { namespace Rendering {
 		m_Dirty = true;
 	}
 	/*********************************************************************************/
-	String VertexDeclaration::getDeclarationString()
+	String VertexDeclaration::getDeclarationNameAsString()
 	{
 		static String declarationString;
 

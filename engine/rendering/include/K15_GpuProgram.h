@@ -28,6 +28,7 @@
 #include "K15_AllocatedObject.h"
 #include "K15_ResourceBase.h"
 #include "K15_GpuProgramParameter.h"
+#include "K15_GpuResource.h"
 
 namespace K15_Engine { namespace Rendering { 
 	class K15_CORE_API GpuProgramImplBase : public RenderingAllocatedObject
@@ -47,7 +48,9 @@ namespace K15_Engine { namespace Rendering {
 		GpuProgram* m_GpuProgram;
 	};// end of GpuProgramImplBase class declaration
 	/*********************************************************************************/
-	class K15_CORE_API GpuProgram : public ResourceBase, public RenderingAllocatedObject
+	class K15_CORE_API GpuProgram : public GpuResource, 
+									public ResourceBase, 
+									public RenderingAllocatedObject
 	{
 	public:
 		/*********************************************************************************/

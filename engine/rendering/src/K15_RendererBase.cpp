@@ -339,8 +339,11 @@ namespace K15_Engine { namespace Rendering {
 
 		if(m_GpuPrograms[p_Stage] != p_GpuProgram && p_GpuProgram)
 		{
+			if(m_GpuPrograms[p_Stage]) m_GpuPrograms[p_Stage]->setIsBound(false);
+
 			m_GpuPrograms[p_Stage] = p_GpuProgram;
 			_bindProgram(p_GpuProgram,p_Stage);
+			p_GpuProgram->setIsBound(true);
 
 			//After a gpu program has been bound, we need to reset the vertex declaration
 			if(m_VertexDeclaration)
@@ -353,7 +356,9 @@ namespace K15_Engine { namespace Rendering {
 			if(errorOccured())
 			{
 				K15_LOG_ERROR("Error binding gpu program for program stage \"%s\". %s",
-					p_GpuProgram->getName().c_str(),eProgramStageStr[p_Stage],getLastError().c_str());
+					p_GpuProgram->getName().c_str(),
+					eProgramStageStr[p_Stage],
+					getLastError().c_str());
 
 				return false;
 			}
@@ -364,7 +369,9 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	bool RendererBase::bindBuffer(GpuBuffer* p_Buffer, Enum p_BufferType)
 	{
-		K15_ASSERT(p_BufferType < GpuBuffer::BT_COUNT,StringUtil::format("Invalid GpuBuffer type. %u",p_BufferType));
+		K15_ASSERT(p_BufferType < GpuBuffer::BT_COUNT,
+			StringUtil::format("Invalid GpuBuffer type. %u",
+			p_BufferType));
 
 		if(p_Buffer)
 		{
@@ -375,12 +382,19 @@ namespace K15_Engine { namespace Rendering {
 
 			if(m_GpuBuffers[p_BufferType] != p_Buffer)
 			{
+				//undbind old buffer
+				if(m_GpuBuffers[p_BufferType]) m_GpuBuffers[p_BufferType]->setIsBound(false);
+
 				m_GpuBuffers[p_BufferType] = p_Buffer;
 				_bindBuffer(p_Buffer,p_BufferType);
+				p_Buffer->setIsBound(true);
 
 				if(errorOccured())
 				{
-					K15_LOG_ERROR("Error during buffer binding. Buffer type \"%s\". %s",eBufferTypeStr[p_BufferType],getLastError().c_str());
+					K15_LOG_ERROR("Error during buffer binding. Buffer type \"%s\". %s",
+						eBufferTypeStr[p_BufferType],
+						getLastError().c_str());
+
 					return false;
 				}
 			}
@@ -565,13 +579,16 @@ namespace K15_Engine { namespace Rendering {
 
 		if(m_VertexDeclaration != p_Declaration)
 		{
+			if(m_VertexDeclaration) m_VertexDeclaration->setIsBound(false);
+
 			m_VertexDeclaration = p_Declaration;
 			_setVertexDeclaration(p_Declaration);
+			p_Declaration->setIsBound(true);
 
 			if(errorOccured())
 			{
 				K15_LOG_ERROR("Error setting vertex declaration \"%s\".%s",
-					p_Declaration->getDeclarationString().c_str(),getLastError().c_str());
+					p_Declaration->getDeclarationNameAsString().c_str(),getLastError().c_str());
 
 				return false;
 			}
@@ -590,6 +607,7 @@ namespace K15_Engine { namespace Rendering {
 			if(m_BoundTextures[p_Slot])
 			{
 				m_BoundTextures[p_Slot]->setSlot(Texture::TS_NO_SLOT);
+				m_BoundTextures[p_Slot]->setIsBound(false);
 			}
 			
 			if(p_Texture)
@@ -599,6 +617,8 @@ namespace K15_Engine { namespace Rendering {
 			}
 
 			_bindTexture(p_Texture,p_Type);
+
+			p_Texture->setIsBound(true);
 
 			if(p_Texture && p_Texture->getTextureSamplerSlot() != Texture::TS_NO_SLOT)
 			{
@@ -632,6 +652,7 @@ namespace K15_Engine { namespace Rendering {
 			if(m_BoundSamplers[p_Slot])
 			{
 				m_BoundSamplers[p_Slot]->setSlot(Texture::TS_NO_SLOT);
+				m_BoundSamplers[p_Slot]->setIsBound(false);
 			}
 
 			if(p_Sampler)
@@ -641,6 +662,7 @@ namespace K15_Engine { namespace Rendering {
 			}
 
 			_bindTextureSampler(p_Sampler,p_Slot);
+			p_Sampler->setIsBound(true);
 
 			if(errorOccured())
 			{
@@ -661,8 +683,12 @@ namespace K15_Engine { namespace Rendering {
 
 		if(m_GpuProgramBatch != p_GpuProgramBatch)
 		{
+			if(m_GpuProgramBatch) m_GpuProgramBatch->setIsBound(false);
+
 			m_GpuProgramBatch = p_GpuProgramBatch;
 			_bindProgramBatch(m_GpuProgramBatch);
+
+			m_GpuProgramBatch->setIsBound(true);
 
 			for(GpuProgramBatch::GpuProgramList::const_iterator iter = m_GpuProgramBatch->getGpuProgramList().begin();
 				iter != m_GpuProgramBatch->getGpuProgramList().end();++iter)

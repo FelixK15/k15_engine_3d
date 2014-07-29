@@ -27,6 +27,7 @@
 #include "K15_Prerequisites.h"
 #include "K15_ResourceBase.h"
 #include "K15_RenderWindow.h"
+#include "K15_GpuResource.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
@@ -45,7 +46,9 @@ namespace K15_Engine { namespace Rendering {
 		Texture *m_Texture;
 	};// end of TexutreImpl class declaration
 	/*********************************************************************************/
-	class K15_CORE_API Texture : public ResourceBase, public RenderingAllocatedObject
+	class K15_CORE_API Texture : public GpuResource, 
+								 public ResourceBase, 
+								 public RenderingAllocatedObject
 	{
 		K15_DECLARE_RTTI;
 
@@ -100,7 +103,7 @@ namespace K15_Engine { namespace Rendering {
 	public:
 		Texture();
 		Texture(const CreationOptions& p_CreationOptions);
-		~Texture();
+		virtual ~Texture();
 
 		INLINE Enum getTextureType() const;
 

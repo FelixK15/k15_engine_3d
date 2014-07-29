@@ -27,6 +27,7 @@
 #include "K15_Prerequisites.h"
 #include "K15_AllocatedObject.h"
 #include "K15_ColorRGBA.h"
+#include "K15_GpuResource.h"
 
 namespace K15_Engine { namespace Rendering { 
   /*********************************************************************************/
@@ -49,7 +50,8 @@ namespace K15_Engine { namespace Rendering {
   /*********************************************************************************/
 
   /*********************************************************************************/
-  class K15_CORE_API TextureSampler : public RenderingAllocatedObject
+  class K15_CORE_API TextureSampler : public GpuResource,
+									  public RenderingAllocatedObject
   {
   public:
     /*********************************************************************************/
@@ -74,7 +76,7 @@ namespace K15_Engine { namespace Rendering {
 
   public:
     TextureSampler();
-    ~TextureSampler();
+    virtual ~TextureSampler();
 
     INLINE const ColorRGBA& getBorderColor() const;
 

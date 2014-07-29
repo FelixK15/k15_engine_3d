@@ -45,7 +45,7 @@ namespace K15_Engine { namespace Rendering {
 		K15_ASSERT(p_ProgramStage >= PS_VERTEX && p_ProgramStage < PS_COUNT,
 			StringUtil::format("Invalid program stage %u",p_ProgramStage));
 
-		m_Impl = g_Application->getRenderer()->createGpuProgramImpl();
+		m_Impl = getRenderer()->createGpuProgramImpl();
 		m_Impl->setGpuProgram(this);
 		
 		m_Attributes.reserve(MaxParameter);
@@ -54,6 +54,11 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	GpuProgram::~GpuProgram()
 	{
+		if(isBound())
+		{
+			getRenderer()->bindGpuProgram(0, m_Stage);
+		}
+
 		K15_DELETE m_Impl;
 	}
 	/*********************************************************************************/
@@ -75,9 +80,9 @@ namespace K15_Engine { namespace Rendering {
 			{
 				m_Impl->loadBinaryCode();
 
-				if(g_Application->getRenderer()->errorOccured())
+				if(getRenderer()->errorOccured())
 				{
-					m_Error = g_Application->getRenderer()->getLastError();
+					m_Error = getRenderer()->getLastError();
 					K15_LOG_ERROR("Could not load binary code for shader \"%s\". %s",m_Name.c_str(),m_Error.c_str());
 					m_Compiled = false;
 				}
@@ -91,7 +96,7 @@ namespace K15_Engine { namespace Rendering {
 			{
 				if(!m_Impl->compileShaderCode())
 				{
-					m_Error = g_Application->getRenderer()->getLastError();
+					m_Error = getRenderer()->getLastError();
 					K15_LOG_ERROR("Could not compile shader code for shader \"%s\". %s",m_Name.c_str(),m_Error.c_str());
 					m_Compiled = false;
 				}
@@ -108,28 +113,38 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	void GpuProgram::setAmountAttributes(uint32 p_Amount)
 	{
-		K15_ASSERT(p_Amount <= MaxParameter,StringUtil::format("Trying to set more than %u attributes to GpuProgram \"%s\".",MaxParameter,m_Name.c_str()));
+		K15_ASSERT(p_Amount <= MaxParameter,
+			StringUtil::format("Trying to set more than %u attributes to GpuProgram \"%s\".",
+			MaxParameter,m_Name.c_str()));
 
 		m_UsedAttributes = p_Amount;
 	}
 	/*********************************************************************************/
 	void GpuProgram::setAmountUniforms(uint32 p_Amount)
 	{
-		K15_ASSERT(p_Amount <= MaxParameter,StringUtil::format("Trying to set more than %u parameters to GpuProgram \"%s\".",MaxParameter,m_Name.c_str()));
+		K15_ASSERT(p_Amount <= MaxParameter,
+			StringUtil::format("Trying to set more than %u parameters to GpuProgram \"%s\".",
+			MaxParameter,m_Name.c_str()));
 
 		m_UsedUniforms = p_Amount;
 	}
 	/*********************************************************************************/
 	GpuProgramParameter& GpuProgram::getUniform(uint32 p_Index)
 	{
-		K15_ASSERT(p_Index <= m_UsedUniforms,StringUtil::format("Trying to access out of bounds. GpuProgram \"%s\"",m_Name.c_str()));
+		K15_ASSERT(p_Index <= m_UsedUniforms,
+			StringUtil::format("Trying to access out of bounds. GpuProgram \"%s\"",
+			m_Name.c_str()));
+
 		if(m_Uniforms.size() == p_Index) m_Uniforms.push_back(GpuProgramParameter());
 		return m_Uniforms[p_Index];
 	}
 	/*********************************************************************************/
 	GpuProgramParameter& GpuProgram::getAttribute(uint32 p_Index)
 	{
-		K15_ASSERT(p_Index <= m_UsedAttributes,StringUtil::format("Trying to acces out of bounds. GpuProgram \"%s\"",m_Name.c_str()));
+		K15_ASSERT(p_Index <= m_UsedAttributes,
+			StringUtil::format("Trying to acces out of bounds. GpuProgram \"%s\"",
+			m_Name.c_str()));
+
 		if(m_Attributes.size() == p_Index) m_Attributes.push_back(GpuProgramParameter());
 		return m_Attributes[p_Index];
 	}
@@ -217,9 +232,9 @@ namespace K15_Engine { namespace Rendering {
 			}
 
 			//did everything went smoothly?
-			if(g_Application->getRenderer()->errorOccured())
+			if(getRenderer()->errorOccured())
 			{
-				K15_LOG_ERROR("Could not reflect shader \"%s\". %s.",m_Name.c_str(),g_Application->getRenderer()->getLastError().c_str());
+				K15_LOG_ERROR("Could not reflect shader \"%s\". %s.",m_Name.c_str(),getRenderer()->getLastError().c_str());
 				return false;
 			}
 		}
