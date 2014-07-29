@@ -18,49 +18,34 @@
  */
 
 /*********************************************************************************/
-void SubMesh::setIsDirty(bool p_Dirty)
+void SubMesh::setVertexData(VertexData* p_VertexData)
 {
-	m_Dirty = p_Dirty;
-}
-/*********************************************************************************/
-bool SubMesh::isDirty() const
-{
-	return m_Dirty;
-}
-/*********************************************************************************/
-void SubMesh::setVertexBuffer(VertexBuffer* p_VertexBuffer)
-{
-	m_VertexBuffer = p_VertexBuffer;
+	m_VertexData = p_VertexData;
 	_calculateAABB();
 }
 /*********************************************************************************/
-VertexBuffer* SubMesh::getVertexBuffer() const
+VertexData* SubMesh::getVertexData() const
 {
-	return m_VertexBuffer;
+	return m_VertexData;
 }
 /*********************************************************************************/
-void SubMesh::setIndexBuffer(IndexBuffer* p_IndexBuffer)
+void SubMesh::setIndexData(IndexData* p_IndexData)
 {
-	m_IndexBuffer = p_IndexBuffer;
+	m_IndexData = p_IndexData;
 }
 /*********************************************************************************/
-IndexBuffer* SubMesh::getIndexBuffer() const
+IndexData* SubMesh::getIndexData() const
 {
-	return m_IndexBuffer;
-}
-/*********************************************************************************/
-void SubMesh::setMaterial(Material* p_Material)
-{
-	m_Material = p_Material;
-}
-/*********************************************************************************/
-Material* SubMesh::getMaterial() const
-{
-	return m_Material;
+	return m_IndexData;
 }
 /*********************************************************************************/
 Mesh* SubMesh::getMesh() const
 {
   return m_Mesh;
+}
+/*********************************************************************************/
+const AABB& SubMesh::getAABB() const
+{
+  return m_AABB;
 }
 /*********************************************************************************/

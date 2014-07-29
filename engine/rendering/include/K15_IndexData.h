@@ -1,8 +1,8 @@
 /**
- * @file K15_MeshInstance.h
+ * @file K15_IndexData.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2014/06/14
+ * @date 2013/11/29
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -15,28 +15,24 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @section DESCRIPTION
+ *
+ * 
  */
 
-#include "K15_PrecompiledHeader.h"
+#ifndef _K15Engine_Rendering_IndexData_h_
+#define _K15Engine_Rendering_IndexData_h_
 
-#include "K15_MeshInstance.h"
-#include "K15_SubMeshInstance.h"
-#include "K15_SubMesh.h"
-#include "K15_VertexBuffer.h"
+#include "K15_Prerequisites.h"
 
 namespace K15_Engine { namespace Rendering { 
-  /*********************************************************************************/
-  MeshInstance::MeshInstance(Mesh* p_Model)
-    : m_AABB(),
-    m_Mesh(p_Model),
-    m_SubModelInstances()
+  struct K15_CORE_API IndexData
   {
-    
-  }
-  /*********************************************************************************/
-  MeshInstance::~MeshInstance()
-  {
+    IndexBuffer* indexBuffer;
+    uint32 offset;
+    uint32 indexCount;
+  }; //end of VertexData struct declaration
+}} //end of K15_Engine::Rendering
 
-  }
-  /*********************************************************************************/
-}} // end of K15_Engine::Rendering
+#endif //_K15Engine_Rendering_IndexData_h_

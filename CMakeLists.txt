@@ -32,6 +32,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 #Define Subdirectories
 add_subdirectory(engine)
+add_subdirectory(math)
 add_subdirectory(renderer_opengl)
 add_subdirectory(test)
 

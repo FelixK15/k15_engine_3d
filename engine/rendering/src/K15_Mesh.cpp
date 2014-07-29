@@ -25,16 +25,7 @@
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	Mesh::Mesh()
-		: ResourceBase(),
-		m_SubMeshes(),
-		m_AABB()
-	{
-
-	}
-	/*********************************************************************************/
-	Mesh::Mesh(const ObjectName& p_Name)
-		: ResourceBase(p_Name),
-		m_SubMeshes(),
+		: m_SubMeshes(),
 		m_AABB()
 	{
 
@@ -43,26 +34,6 @@ namespace K15_Engine { namespace Rendering {
 	Mesh::~Mesh()
 	{
 
-	}
-	/*********************************************************************************/
-	const AABB& Mesh::getAABB()
-	{
-		bool dirty = false;
-		for(SubMeshArray::iterator iter = m_SubMeshes.begin(); iter != m_SubMeshes.end(); ++iter)
-		{
-			if((*iter)->isDirty())
-			{
-				dirty = true;
-				(*iter)->setIsDirty(false);
-			}
-		}
-
-		if(dirty)
-		{
-			calculateAABB();
-		}
-
-		return m_AABB;
 	}
 	/*********************************************************************************/
 	void Mesh::calculateAABB()

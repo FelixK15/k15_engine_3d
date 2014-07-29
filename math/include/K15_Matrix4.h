@@ -55,6 +55,8 @@ namespace K15_Engine { namespace Math {
 
 		bool isIdentity() const;
 		bool isZero() const;
+
+    float operator[](int p_Index) const;
 		
 		Vector3 operator*(const Vector3& p_Vector) const;
 		Vector4 operator*(const Vector4& p_Vector) const;
@@ -84,9 +86,6 @@ namespace K15_Engine { namespace Math {
 				float _4_1,_4_2,_4_3,_4_4;
 			};// struct
 			float m_MatrixArray[16];
-			#if defined K15_SIMD_SUPPORT
-				__m128 m_MatrixSIMD[4];
-			#endif //K15_SIMD_SUPPORT
 		};// union
 	};// end of Matrix4x4 class
  }}//end of K15_Engine::Math namespace

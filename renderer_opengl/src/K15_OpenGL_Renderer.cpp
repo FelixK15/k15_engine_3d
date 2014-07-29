@@ -34,6 +34,10 @@
 
 #include "K15_RenderWindow.h"
 
+#include "K15_Vector2.h"
+#include "K15_Vector3.h"
+#include "K15_Vector4.h"
+
 namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	/*********************************************************************************/
 	const GLenum Renderer::GLFunctionTestConverter[RendererBase::FT_COUNT] = {

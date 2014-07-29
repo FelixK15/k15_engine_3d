@@ -122,7 +122,7 @@ float AABB::getMinX() const
 {
 	float min_x = 0.0f;
 
-	for(int i =0; i<CT_COUNT;++i)
+	for(int i = 0; i < CT_COUNT;++i)
 	{
 		if(min_x > m_Corners[i].x)
 		{
@@ -167,7 +167,7 @@ void AABB::merge(const AABB& p_AABB)
 {
 	for(int i = 0; i < CT_COUNT; ++i)
 	{
-		if(glm::any(glm::greaterThan(getCorner(i), p_AABB.getCorner(i))))
+		if(getCorner(i) < p_AABB.getCorner(i))
 		{
 			m_Corners[i] = p_AABB.m_Corners[i];
 		}
@@ -178,7 +178,7 @@ bool AABB::operator<(const AABB& p_Rhs)
 {
 	for(int i = 0; i < CT_COUNT; ++i)
 	{
-		if(glm::any(glm::greaterThan(getCorner(i), p_Rhs.getCorner(i))))
+		if(getCorner(i) < p_Rhs.getCorner(i))
 		{
 			return true;
 		}

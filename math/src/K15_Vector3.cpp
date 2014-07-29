@@ -258,5 +258,20 @@ namespace K15_Engine { namespace Math {
 		}
 		return true;
 	}
-	/*********************************************************************************/
+  /*********************************************************************************/
+  float Vector3::Dot(const Vector3& p_Vector, const Vector3& p_Vector2)
+  {
+    return p_Vector.dot(p_Vector2);
+  } 
+  /*********************************************************************************/
+  float Vector3::Length(const Vector3& p_Vector)
+  {
+    return p_Vector.length();
+  }
+  /*********************************************************************************/
+  Vector3 Vector3::Cross(const Vector3& p_Vector, const Vector3& p_Vector2)
+  {
+    return p_Vector.cross(p_Vector2);
+  }
+  /*********************************************************************************/
 }}//end of K15_Engine::Math namespace

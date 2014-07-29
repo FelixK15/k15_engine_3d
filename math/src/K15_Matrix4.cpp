@@ -24,6 +24,8 @@
 #include "K15_Matrix4.h"
 #include "K15_MathUtil.h"
 
+#include "glm/matrix.hpp"
+
 namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Matrix4 Matrix4::Identity;
@@ -36,13 +38,13 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	Matrix4::Matrix4()
 	{
-		memset(&m_MatrixArray,0,sizeof(m_MatrixArray));
+		memset(&m_MatrixArray,0,sizeof(Matrix4));
 		m_MatrixArray[3] = m_MatrixArray[6] = m_MatrixArray[9] = m_MatrixArray[12] = 1.0f;
 	}
 	/*********************************************************************************/
 	Matrix4::Matrix4(float p_Values[16])
 	{
-		memcpy(m_MatrixArray,p_Values,sizeof(p_Values));
+		memcpy(m_MatrixArray,p_Values,sizeof(Matrix4));
 	}
 	/*********************************************************************************/
 	Matrix4::Matrix4(float _1_1,float _1_2,float _1_3,float _1_4,
@@ -50,22 +52,15 @@ namespace K15_Engine { namespace Math {
 		float _3_1,float _3_2,float _3_3,float _3_4,
 		float _4_1,float _4_2,float _4_3,float _4_4)
 	{
-		#if defined K15_SIMD_SUPPORT	
-			m_MatrixSIMD[0] = _mm_set_ps(_1_4,_1_3,_1_2,_1_1);
-			m_MatrixSIMD[1] = _mm_set_ps(_2_4,_2_3,_3_2,_2_1);
-			m_MatrixSIMD[2] = _mm_set_ps(_3_4,_3_3,_3_2,_3_1);
-			m_MatrixSIMD[3] = _mm_set_ps(_4_4,_4_3,_4_2,_4_1);
-		#else
-			this->_1_1 = _1_1; this->_1_2 = _1_2; this->_1_3 = _1_3; this->_1_4 = _1_4;
-			this->_2_1 = _2_1; this->_2_2 = _2_2; this->_2_3 = _2_3; this->_2_4 = _2_4;
-			this->_3_1 = _3_1; this->_3_2 = _3_2; this->_3_3 = _3_3; this->_3_4 = _3_4;
-			this->_4_1 = _4_1; this->_4_2 = _4_2; this->_4_3 = _4_3; this->_4_4 = _4_4;
-		#endif //K15_SIMD_SUPPORT
+    this->_1_1 = _1_1; this->_1_2 = _1_2; this->_1_3 = _1_3; this->_1_4 = _1_4;
+    this->_2_1 = _2_1; this->_2_2 = _2_2; this->_2_3 = _2_3; this->_2_4 = _2_4;
+    this->_3_1 = _3_1; this->_3_2 = _3_2; this->_3_3 = _3_3; this->_3_4 = _3_4;
+    this->_4_1 = _4_1; this->_4_2 = _4_2; this->_4_3 = _4_3; this->_4_4 = _4_4;
 	}
 	/*********************************************************************************/
 	Matrix4::Matrix4(const Matrix4& p_Matrix)
 	{
-		memcpy(m_MatrixArray,p_Matrix.m_MatrixArray,sizeof(m_MatrixArray));
+		memcpy(m_MatrixArray,p_Matrix.m_MatrixArray,sizeof(Matrix4));
 	}
 	/*********************************************************************************/
 	Matrix4::~Matrix4()
@@ -75,146 +70,34 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	float Matrix4::determinant() const
 	{
-		return 0.0f;
+		glm::mat4 mat;
+    memcpy(&mat, m_MatrixArray, sizeof(Matrix4));
+
+    return glm::determinant(mat);
 	}
 	/*********************************************************************************/
 	Matrix4 Matrix4::inverse() const
 	{
- 		float tmpDet = determinant();
- 		//K15_ASSERT(tmpDet != 0,"Matrix is not inversable. Determinant == 0!");
+ 		Matrix4 invMat;
+    glm::mat4 mat;
+    memcpy(&mat, m_MatrixArray, sizeof(Matrix4));
 
-		Matrix4 invMatrix;
-		invMatrix.m_MatrixArray[0] =	 m_MatrixArray[5]  * m_MatrixArray[10] * m_MatrixArray[15] - 
-			m_MatrixArray[5]  * m_MatrixArray[11] * m_MatrixArray[14] - 
-			m_MatrixArray[9]  * m_MatrixArray[6]  * m_MatrixArray[15] + 
-			m_MatrixArray[9]  * m_MatrixArray[7]  * m_MatrixArray[14] +
-			m_MatrixArray[13] * m_MatrixArray[6]  * m_MatrixArray[11] - 
-			m_MatrixArray[13] * m_MatrixArray[7]  * m_MatrixArray[10];
+    mat = glm::inverse(mat);
+    memcpy(&invMat, &mat, sizeof(Matrix4));
 
-		invMatrix.m_MatrixArray[1] =	-(m_MatrixArray[1])  * m_MatrixArray[10] * m_MatrixArray[15] + 
-			m_MatrixArray[1]  * m_MatrixArray[11] * m_MatrixArray[14] + 
-			m_MatrixArray[9]  * m_MatrixArray[2] * m_MatrixArray[15] - 
-			m_MatrixArray[9]  * m_MatrixArray[3] * m_MatrixArray[14] - 
-			m_MatrixArray[13] * m_MatrixArray[2] * m_MatrixArray[11] + 
-			m_MatrixArray[13] * m_MatrixArray[3] * m_MatrixArray[10];
-
-		invMatrix.m_MatrixArray[2] =	 m_MatrixArray[1]  * m_MatrixArray[6] * m_MatrixArray[15] - 
-			m_MatrixArray[1]  * m_MatrixArray[7] * m_MatrixArray[14] - 
-			m_MatrixArray[5]  * m_MatrixArray[2] * m_MatrixArray[15] + 
-			m_MatrixArray[5]  * m_MatrixArray[3] * m_MatrixArray[14] + 
-			m_MatrixArray[13] * m_MatrixArray[2] * m_MatrixArray[7] - 
-			m_MatrixArray[13] * m_MatrixArray[3] * m_MatrixArray[6];
-
-		invMatrix.m_MatrixArray[3] =	-m_MatrixArray[1] * m_MatrixArray[6] * m_MatrixArray[11] + 
-			m_MatrixArray[1] * m_MatrixArray[7] * m_MatrixArray[10] + 
-			m_MatrixArray[5] * m_MatrixArray[2] * m_MatrixArray[11] - 
-			m_MatrixArray[5] * m_MatrixArray[3] * m_MatrixArray[10] - 
-			m_MatrixArray[9] * m_MatrixArray[2] * m_MatrixArray[7] + 
-			m_MatrixArray[9] * m_MatrixArray[3] * m_MatrixArray[6];
-
-		invMatrix.m_MatrixArray[4] =	-m_MatrixArray[4]  * m_MatrixArray[10] * m_MatrixArray[15] + 
-			m_MatrixArray[4]  * m_MatrixArray[11] * m_MatrixArray[14] + 
-			m_MatrixArray[8]  * m_MatrixArray[6]  * m_MatrixArray[15] - 
-			m_MatrixArray[8]  * m_MatrixArray[7]  * m_MatrixArray[14] - 
-			m_MatrixArray[12] * m_MatrixArray[6]  * m_MatrixArray[11] + 
-			m_MatrixArray[12] * m_MatrixArray[7]  * m_MatrixArray[10];
-
-		invMatrix.m_MatrixArray[5] =	 m_MatrixArray[0]  * m_MatrixArray[10] * m_MatrixArray[15] - 
-			m_MatrixArray[0]  * m_MatrixArray[11] * m_MatrixArray[14] - 
-			m_MatrixArray[8]  * m_MatrixArray[2] * m_MatrixArray[15] + 
-			m_MatrixArray[8]  * m_MatrixArray[3] * m_MatrixArray[14] + 
-			m_MatrixArray[12] * m_MatrixArray[2] * m_MatrixArray[11] - 
-			m_MatrixArray[12] * m_MatrixArray[3] * m_MatrixArray[10];
-
-		invMatrix.m_MatrixArray[6] =	-m_MatrixArray[0]  * m_MatrixArray[6] * m_MatrixArray[15] + 
-			m_MatrixArray[0]  * m_MatrixArray[7] * m_MatrixArray[14] + 
-			m_MatrixArray[4]  * m_MatrixArray[2] * m_MatrixArray[15] - 
-			m_MatrixArray[4]  * m_MatrixArray[3] * m_MatrixArray[14] - 
-			m_MatrixArray[12] * m_MatrixArray[2] * m_MatrixArray[7] + 
-			m_MatrixArray[12] * m_MatrixArray[3] * m_MatrixArray[6];
-
-		invMatrix.m_MatrixArray[7] =	 m_MatrixArray[0] * m_MatrixArray[6] * m_MatrixArray[11] - 
-			m_MatrixArray[0] * m_MatrixArray[7] * m_MatrixArray[10] - 
-			m_MatrixArray[4] * m_MatrixArray[2] * m_MatrixArray[11] + 
-			m_MatrixArray[4] * m_MatrixArray[3] * m_MatrixArray[10] + 
-			m_MatrixArray[8] * m_MatrixArray[2] * m_MatrixArray[7] - 
-			m_MatrixArray[8] * m_MatrixArray[3] * m_MatrixArray[6];
-
-		invMatrix.m_MatrixArray[8] =	 m_MatrixArray[4]  * m_MatrixArray[9] * m_MatrixArray[15] - 
-			m_MatrixArray[4]  * m_MatrixArray[11] * m_MatrixArray[13] - 
-			m_MatrixArray[8]  * m_MatrixArray[5] * m_MatrixArray[15] + 
-			m_MatrixArray[8]  * m_MatrixArray[7] * m_MatrixArray[13] + 
-			m_MatrixArray[12] * m_MatrixArray[5] * m_MatrixArray[11] - 
-			m_MatrixArray[12] * m_MatrixArray[7] * m_MatrixArray[9];
-
-		invMatrix.m_MatrixArray[9] =	-m_MatrixArray[0]  * m_MatrixArray[9] * m_MatrixArray[15] + 
-			m_MatrixArray[0]  * m_MatrixArray[11] * m_MatrixArray[13] + 
-			m_MatrixArray[8]  * m_MatrixArray[1] * m_MatrixArray[15] - 
-			m_MatrixArray[8]  * m_MatrixArray[3] * m_MatrixArray[13] - 
-			m_MatrixArray[12] * m_MatrixArray[1] * m_MatrixArray[11] + 
-			m_MatrixArray[12] * m_MatrixArray[3] * m_MatrixArray[9];
-
-		invMatrix.m_MatrixArray[10] =	 m_MatrixArray[0]  * m_MatrixArray[5] * m_MatrixArray[15] - 
-			m_MatrixArray[0]  * m_MatrixArray[7] * m_MatrixArray[13] - 
-			m_MatrixArray[4]  * m_MatrixArray[1] * m_MatrixArray[15] + 
-			m_MatrixArray[4]  * m_MatrixArray[3] * m_MatrixArray[13] + 
-			m_MatrixArray[12] * m_MatrixArray[1] * m_MatrixArray[7] - 
-			m_MatrixArray[12] * m_MatrixArray[3] * m_MatrixArray[5];
-
-		invMatrix.m_MatrixArray[11] =	-m_MatrixArray[0] * m_MatrixArray[5] * m_MatrixArray[11] + 
-			m_MatrixArray[0] * m_MatrixArray[7] * m_MatrixArray[9] + 
-			m_MatrixArray[4] * m_MatrixArray[1] * m_MatrixArray[11] - 
-			m_MatrixArray[4] * m_MatrixArray[3] * m_MatrixArray[9] - 
-			m_MatrixArray[8] * m_MatrixArray[1] * m_MatrixArray[7] + 
-			m_MatrixArray[8] * m_MatrixArray[3] * m_MatrixArray[5];
-
-		invMatrix.m_MatrixArray[12] =	-m_MatrixArray[4]  * m_MatrixArray[9] * m_MatrixArray[14] + 
-			m_MatrixArray[4]  * m_MatrixArray[10] * m_MatrixArray[13] +
-			m_MatrixArray[8]  * m_MatrixArray[5] * m_MatrixArray[14] - 
-			m_MatrixArray[8]  * m_MatrixArray[6] * m_MatrixArray[13] - 
-			m_MatrixArray[12] * m_MatrixArray[5] * m_MatrixArray[10] + 
-			m_MatrixArray[12] * m_MatrixArray[6] * m_MatrixArray[9];
-
-		invMatrix.m_MatrixArray[13] =	 m_MatrixArray[0]  * m_MatrixArray[9] * m_MatrixArray[14] - 
-			m_MatrixArray[0]  * m_MatrixArray[10] * m_MatrixArray[13] - 
-			m_MatrixArray[8]  * m_MatrixArray[1] * m_MatrixArray[14] + 
-			m_MatrixArray[8]  * m_MatrixArray[2] * m_MatrixArray[13] + 
-			m_MatrixArray[12] * m_MatrixArray[1] * m_MatrixArray[10] - 
-			m_MatrixArray[12] * m_MatrixArray[2] * m_MatrixArray[9];
-
-		invMatrix.m_MatrixArray[14] =	-m_MatrixArray[0]  * m_MatrixArray[5] * m_MatrixArray[14] + 
-			m_MatrixArray[0]  * m_MatrixArray[6] * m_MatrixArray[13] + 
-			m_MatrixArray[4]  * m_MatrixArray[1] * m_MatrixArray[14] - 
-			m_MatrixArray[4]  * m_MatrixArray[2] * m_MatrixArray[13] - 
-			m_MatrixArray[12] * m_MatrixArray[1] * m_MatrixArray[6] + 
-			m_MatrixArray[12] * m_MatrixArray[2] * m_MatrixArray[5];
-
-		invMatrix.m_MatrixArray[15] =	 m_MatrixArray[0] * m_MatrixArray[5] * m_MatrixArray[10] - 
-			m_MatrixArray[0] * m_MatrixArray[6] * m_MatrixArray[9] - 
-			m_MatrixArray[4] * m_MatrixArray[1] * m_MatrixArray[10] + 
-			m_MatrixArray[4] * m_MatrixArray[2] * m_MatrixArray[9] + 
-			m_MatrixArray[8] * m_MatrixArray[1] * m_MatrixArray[6] - 
-			m_MatrixArray[8] * m_MatrixArray[2] * m_MatrixArray[5];
-
-		for(int i = 0; i < 16; i++){
-			invMatrix.m_MatrixArray[i] = invMatrix.m_MatrixArray[i]/tmpDet; 
-		}
-
-		return invMatrix;
+		return invMat;
 	}
 	/*********************************************************************************/
 	Matrix4 Matrix4::transpose() const
 	{
-		Matrix4 transMatrix;
-		for(int i = 0; i < 4; i++)
-		{
-			for(int j = 0; j < 4; j++)
-			{
-				transMatrix.m_MatrixArray[i*4+j] = m_MatrixArray[j*4+i];
-			}
-		}
-		
-		return transMatrix;
+    Matrix4 transMat;
+    glm::mat4 mat;
+    memcpy(&mat, m_MatrixArray, sizeof(Matrix4));
+
+    mat = glm::transpose(mat);
+		memcpy(&transMat, &mat, sizeof(Matrix4));
+
+		return transMat;
 	}
 	/*********************************************************************************/
 	bool Matrix4::isIdentity() const
@@ -290,73 +173,25 @@ namespace K15_Engine { namespace Math {
 /*********************************************************************************/
 	const Matrix4& Matrix4::operator*=(const Matrix4& p_Matrix)
 	{
-		#if defined K15_SIMD_SUPPORT
-			//http://drrobsjournal.blogspot.de/2012/10/fast-simd-4x4-matrix-multiplication.html
+		glm::mat4 mat;
+    glm::mat4 mat2;
 
-			const __m128 a = p_Matrix.m_MatrixSIMD[0];
-			const __m128 b = p_Matrix.m_MatrixSIMD[1];
-			const __m128 c = p_Matrix.m_MatrixSIMD[2];
-			const __m128 d = p_Matrix.m_MatrixSIMD[3];
+    memcpy(&mat, m_MatrixArray, sizeof(Matrix4));
+    memcpy(&mat2, &p_Matrix, sizeof(Matrix4));
 
-			__m128 t1, t2;
+    mat *= mat2;
 
-			t1 = _mm_set1_ps(_1_1);
-			t2 = _mm_mul_ps(a, t1);
-			t1 =_mm_set1_ps(_1_2);
-			t2 = _mm_add_ps(_mm_mul_ps(b, t1), t2);
-			t1 =_mm_set1_ps(_1_3);
-			t2 = _mm_add_ps(_mm_mul_ps(c, t1), t2);
-			t1 =_mm_set1_ps(_1_4);
-			t2 = _mm_add_ps(_mm_mul_ps(d, t1), t2);
+    memcpy(m_MatrixArray, &mat, sizeof(Matrix4));
 
-			_mm_store_ps(&m_MatrixArray[0], t2);
-
-			t1 = _mm_set1_ps(_2_1);
-			t2 = _mm_mul_ps(a, t1);
-			t1 =_mm_set1_ps(_2_2);
-			t2 = _mm_add_ps(_mm_mul_ps(b, t1), t2);
-			t1 =_mm_set1_ps(_2_3);
-			t2 = _mm_add_ps(_mm_mul_ps(c, t1), t2);
-			t1 =_mm_set1_ps(_2_4);
-			t2 = _mm_add_ps(_mm_mul_ps(d, t1), t2);
-
-			_mm_store_ps(&m_MatrixArray[4], t2);
-
-			t1 = _mm_set1_ps(_3_1);
-			t2 = _mm_mul_ps(a, t1);
-			t1 =_mm_set1_ps(_3_2);
-			t2 = _mm_add_ps(_mm_mul_ps(b, t1), t2);
-			t1 =_mm_set1_ps(_3_3);
-			t2 = _mm_add_ps(_mm_mul_ps(c, t1), t2);
-			t1 =_mm_set1_ps(_3_4);
-			t2 = _mm_add_ps(_mm_mul_ps(d, t1), t2);
-
-			_mm_store_ps(&m_MatrixArray[8], t2);
-
-			t1 = _mm_set1_ps(_4_1);
-			t2 = _mm_mul_ps(a, t1);
-			t1 =_mm_set1_ps(_4_2);
-			t2 = _mm_add_ps(_mm_mul_ps(b, t1), t2);
-			t1 =_mm_set1_ps(_4_3);
-			t2 = _mm_add_ps(_mm_mul_ps(c, t1), t2);
-			t1 =_mm_set1_ps(_4_4);
-			t2 = _mm_add_ps(_mm_mul_ps(d, t1), t2);
-
-			_mm_store_ps(&m_MatrixArray[12], t2);
-		#endif //K15_SIMD_SUPPORT
 		return *this;
 	}
 	/*********************************************************************************/
 	const Matrix4& Matrix4::operator*=(float p_Scalar)
 	{
-		#if defined K15_SIMD_SUPPORT
-		__m128 temp = _mm_set_ps(p_Scalar,p_Scalar,p_Scalar,p_Scalar);
-
-		for(int i = 0;i < 4;++i)
-		{
-			m_MatrixSIMD[i] = _mm_mul_ps(m_MatrixSIMD[i],temp);
-		}
-		#endif //K15_SIMD_SUPPORT
+		for(int i = 0; i < 16; ++i)
+    {
+      m_MatrixArray[i] *= p_Scalar;
+    }
 
 		return *this;
 	}
@@ -381,30 +216,26 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Matrix4& Matrix4::operator=(const Matrix4& p_Matrix)
 	{
-		memcpy(m_MatrixArray,p_Matrix.m_MatrixArray,sizeof(m_MatrixArray));
+		memcpy(m_MatrixArray,p_Matrix.m_MatrixArray,sizeof(Matrix4));
 
 		return *this;
 	}
 	/*********************************************************************************/
 	const Matrix4& Matrix4::operator+=(const Matrix4& p_Matrix)
 	{
-		#if defined K15_SIMD_SUPPORT
-			for(int i = 0; i < 4; i++)
-			{
-				m_MatrixSIMD[i] = _mm_add_ps(m_MatrixSIMD[i],p_Matrix.m_MatrixSIMD[i]);
-			}
-		#endif //K15_SIMD_SUPPORT
+		for(int i = 0; i < 16; ++i)
+    {
+      m_MatrixArray[i] += p_Matrix[i];
+    }
 		return *this;
 	}
 	/*********************************************************************************/
 	const Matrix4& Matrix4::operator-=(const Matrix4& p_Matrix)
 	{
-		#if defined K15_SIMD_SUPPORT
-			for(int i = 0; i < 4; i++)
-			{
-				m_MatrixSIMD[i] = _mm_sub_ps(m_MatrixSIMD[i],p_Matrix.m_MatrixSIMD[i]);
-			}
-		#endif //K15_SIMD_SUPPORT
+		for(int i = 0; i < 16; ++i)
+    {
+      m_MatrixArray[i] -= p_Matrix[i];
+    }
 		return *this;
 	}
 	/*********************************************************************************/
@@ -424,5 +255,13 @@ namespace K15_Engine { namespace Math {
 	{
 		return !this->operator==(p_Matrix);
 	}
-	/*********************************************************************************/
+  /*********************************************************************************/
+  float Matrix4::operator[](int p_Index) const
+  {
+    if(p_Index < 0)   p_Index = 0;
+    if(p_Index > 15)  p_Index = 15;
+
+    return m_MatrixArray[p_Index];
+  }
+  /*********************************************************************************/
 }}//end of K15_Engine::Math namespace

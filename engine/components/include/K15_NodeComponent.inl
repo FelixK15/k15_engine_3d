@@ -18,13 +18,6 @@
  */
 
 /*********************************************************************************/
-void NodeComponent::lookAt(const Vector3& p_Position)
-{
-	m_Orientation = glm::lookAt(m_Position,p_Position,Vector3(0.0f,1.0f,0.0f));
-	m_NeedUpdate = true;
-	_calcLookAt();
-}
-/*********************************************************************************/
 void NodeComponent::setPosition(const Vector3& p_Position)
 {
 	m_Position = p_Position;
@@ -80,7 +73,7 @@ void NodeComponent::scale(float x, float y, float z)
 /*********************************************************************************/
 void NodeComponent::rotate(const Vector3& p_Axis, float p_Radians)
 {
-	m_Orientation *= glm::rotate(glm::mat4(1.0f),p_Radians,p_Axis);
+	m_Orientation *= MatrixUtil::rotate(p_Axis, p_Radians);
 	_calcLookAt();
 	m_NeedUpdate = true;
 }

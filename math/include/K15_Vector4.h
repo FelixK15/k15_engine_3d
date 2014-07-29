@@ -53,8 +53,9 @@ namespace K15_Engine { namespace Math {
 		bool isNull() const;
 		bool isUnit() const;
 
-		
 		float operator*(const Vector4& p_Vector) const;
+    float operator[](int p_Index) const;
+
 		Vector4 operator/(float p_Scalar) const;
 		Vector4 operator*(float p_Scalar) const;
 		Vector4 operator+(const Vector4& p_Vector) const;
@@ -82,9 +83,6 @@ namespace K15_Engine { namespace Math {
 				float x,y,z,w;
 			};//struct
 			float m_VectorArray[4];
-			#if defined K15_SIMD_SUPPORT
-				__m128 m_VectorSIMD;
-			#endif //K15_SIMD_SUPPORT
 		};//union
 	};// end of Vector4 class declaration
 }}// end of K15_Engine::Math namespace

@@ -26,6 +26,8 @@
 
 #include "K15_Prerequisites.h"
 
+#include "K15_Vector3.h"
+
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API Frustum
 	{

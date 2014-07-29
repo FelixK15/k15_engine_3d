@@ -31,7 +31,12 @@ namespace K15_Engine { namespace Math {
 	class MatrixUtil
 	{
 	public:
-		static 
+		static Matrix4 createPerspectiveMatrix(float p_FOV, float p_AspectRatio, float p_NearPlane, float p_FarPlane);
+    static Matrix4 createOrthographicMatrix(float p_Left, float p_Right, float p_Top, float p_Bottom, float p_NearPlane, float p_FarPlane);
+    static Matrix4 translate(const Vector3& p_Translate);
+    static Matrix4 scale(const Vector3& p_Scale);
+    static Matrix4 rotate(const Vector3& p_Axis, float p_AngleInRadian);
+    static Matrix4 lookAt(const Vector3& p_EyePos, const Vector3& p_LookAt, const Vector3& p_Up);
 	};// end of MatrixUtil class declaration
 }}//end of K15_Engine::Math namespace
 

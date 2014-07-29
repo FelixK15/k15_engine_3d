@@ -24,6 +24,9 @@
 #include "K15_Matrix3.h"
 #include "K15_MathUtil.h"
 
+//glm include
+#include "glm/matrix.hpp"
+
 namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Matrix3 Matrix3::Identity;
@@ -68,43 +71,32 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	float Matrix3::determinant() const
 	{
-		return m_MatrixArray[0]*m_MatrixArray[4]*m_MatrixArray[8] + m_MatrixArray[1]*m_MatrixArray[5]*m_MatrixArray[6] + 
-			m_MatrixArray[2]*m_MatrixArray[3]*m_MatrixArray[7] - m_MatrixArray[0]*m_MatrixArray[5]*m_MatrixArray[7] -
-			m_MatrixArray[1]*m_MatrixArray[3]*m_MatrixArray[8] - m_MatrixArray[2]*m_MatrixArray[4]*m_MatrixArray[6];
-
+    glm::mat3 mat;
+    memcpy(&mat, m_MatrixArray, sizeof(m_MatrixArray));
+    return glm::determinant(mat);
 	}
 	/*********************************************************************************/
 	Matrix3 Matrix3::inverse() const
 	{
-		float tmpDet = determinant();
-		assert(tmpDet != 0);
+    Matrix3 invMat;
+    glm::mat3 mat;
+    memcpy(&mat, m_MatrixArray, sizeof(mat));
 
-		Matrix3 invMatrix;
-		invMatrix._1_1 = (m_MatrixArray[4]*m_MatrixArray[8] - m_MatrixArray[5]*m_MatrixArray[7])/tmpDet;
-		invMatrix._2_1 = (m_MatrixArray[2]*m_MatrixArray[7] - m_MatrixArray[1]*m_MatrixArray[8])/tmpDet;
-		invMatrix._3_1 = (m_MatrixArray[1]*m_MatrixArray[5] - m_MatrixArray[2]*m_MatrixArray[4])/tmpDet;
-		invMatrix._1_2 = (m_MatrixArray[5]*m_MatrixArray[6] - m_MatrixArray[3]*m_MatrixArray[8])/tmpDet;
-		invMatrix._2_2 = (m_MatrixArray[0]*m_MatrixArray[8] - m_MatrixArray[2]*m_MatrixArray[6])/tmpDet;
-		invMatrix._3_2 = (m_MatrixArray[2]*m_MatrixArray[3] - m_MatrixArray[0]*m_MatrixArray[5])/tmpDet;
-		invMatrix._1_3 = (m_MatrixArray[3]*m_MatrixArray[7] - m_MatrixArray[4]*m_MatrixArray[6])/tmpDet;
-		invMatrix._2_3 = (m_MatrixArray[1]*m_MatrixArray[6] - m_MatrixArray[0]*m_MatrixArray[7])/tmpDet;
-		invMatrix._3_3 = (m_MatrixArray[0]*m_MatrixArray[4] - m_MatrixArray[1]*m_MatrixArray[3])/tmpDet;
-
-		return invMatrix;
+    mat = glm::inverse(mat);
+    memcpy(&invMat, &mat, sizeof(mat));
+		
+		return invMat;
 	}
 	/*********************************************************************************/
 	Matrix3 Matrix3::transpose() const
 	{
-		Matrix3 transMatrix;
-		for(int i = 0; i < 3; i++)
-		{
-			for(int j = 0; j < 3; j++)
-			{
-				transMatrix.m_MatrixArray[i*3+j] = m_MatrixArray[j*3+i];
-			}
-		}
-		
-		return transMatrix;
+		Matrix3 transMat;
+    glm::mat3 mat;
+    memcpy(&mat, m_MatrixArray, sizeof(mat));
+
+    mat = glm::transpose(mat);
+    memcpy(&transMat, &mat, sizeof(mat));
+		return transMat;
 	}
 	/*********************************************************************************/
 	bool Matrix3::isIdentity() const
@@ -187,18 +179,13 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Matrix3& Matrix3::operator*=(const Matrix3& p_Matrix)
 	{
-		float matrix[9];
-		for(int i = 0; i < 3; i++)
-		{
-			for(int j = 0; j < 3; j++)
-			{
-				matrix[i*3+j] = m_MatrixArray[i*3]*p_Matrix.m_MatrixArray[j] + 
-								m_MatrixArray[i*3+1]*p_Matrix.m_MatrixArray[j+3] +
-								m_MatrixArray[i*3+2]*p_Matrix.m_MatrixArray[j+6];		
-			}
-		}
+		glm::mat3 mat, mat2;
+    memcpy(&mat, m_MatrixArray, sizeof(mat));
+    memcpy(&mat2, &p_Matrix, sizeof(mat2));
 		
-		memcpy(m_MatrixArray,matrix,288);
+    mat *= mat2;
+
+		memcpy(m_MatrixArray,&mat,sizeof(mat));
 
 		return *this; 
 	}
@@ -215,7 +202,7 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Matrix3& Matrix3::operator=(const Matrix3& p_Matrix)
 	{
-		memcpy(m_MatrixArray,p_Matrix.m_MatrixArray,288);
+		memcpy(m_MatrixArray, p_Matrix.m_MatrixArray, sizeof(Matrix3));
 
 		return *this;
 	}
@@ -257,4 +244,11 @@ namespace K15_Engine { namespace Math {
 		return !this->operator==(p_Matrix);
 	}
 	/*********************************************************************************/
+  float Matrix3::operator[](int p_Index) const
+  {
+    if(p_Index < 0) p_Index = 0;
+    if(p_Index > 8) p_Index = 8;
+
+    return m_MatrixArray[p_Index];
+  }
 }}//end of K15_Engine::Math namespace

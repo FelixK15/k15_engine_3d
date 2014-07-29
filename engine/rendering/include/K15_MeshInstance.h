@@ -47,15 +47,13 @@ namespace K15_Engine { namespace Rendering {
 
     INLINE const AABB& getAABB() const;
 
-  private:
-    void _calculateAABB();
-
 	private:
     AABB m_AABB;
 		Mesh* m_Mesh;
 		SubMeshInstanceArray m_SubModelInstances;
 		//Animations
 	}; // end of ModelInstance class declaration
+//  #include "K15_MeshInstance.inl"
 }} //end of K15_Engine::Rendering namespace
 
 #endif //_K15Engine_Renderer_MeshInstance_h_

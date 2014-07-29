@@ -63,14 +63,14 @@ namespace K15_Engine { namespace Rendering {
 			//update projection matrix 
 			if(m_ProjectionType == PT_PERSPECTIVE)
 			{
-				m_ProjectionMatrix = glm::perspective(glm::radians(m_Fov),aspect,m_NearClipDistance,m_FarClipDistance);/*MatrixUtil::createPerspectiveProjectionMatrix(m_Fov,m_NearClipDistance,m_FarClipDistance);*/
+				m_ProjectionMatrix = MatrixUtil::createPerspectiveMatrix(m_Fov,m_NearClipDistance,m_FarClipDistance);
 			}
 			else
 			{
 				float left = -aspect / m_Zoom;
 				float right = aspect / m_Zoom;
 				float top_bottom = 1.0f / m_Zoom;
-				m_ProjectionMatrix = glm::ortho(left,right,-top_bottom,top_bottom,m_NearClipDistance,m_FarClipDistance);//MatrixUtil::createOrthographicProjectionMatrix(m_NearClipDistance,m_FarClipDistance);
+				m_ProjectionMatrix = MatrixUtil::createOrthographicMatrix(left,right,-top_bottom,top_bottom,m_NearClipDistance,m_FarClipDistance);
 			}
 
 			_calculateFrustum();
@@ -86,7 +86,7 @@ namespace K15_Engine { namespace Rendering {
  		{
 			//update view matrix
 			m_ViewMatrix = m_GameObject->getTransformation();
-			m_ViewMatrix = glm::inverse(m_ViewMatrix);
+			m_ViewMatrix.inverse();
 			_calculateFrustum();
 			m_ViewMatrixDirty = false;
 		}
@@ -142,7 +142,7 @@ namespace K15_Engine { namespace Rendering {
 
 		for(int i = 0; i < Frustum::FP_COUNT; ++i)
 		{
-			FrustumPointsHomogenous[i] = FrustumPointsHomogenous[i] * viewProjectionMatrix;
+			FrustumPointsHomogenous[i] = viewProjectionMatrix * FrustumPointsHomogenous[i];
 			m_Frustum.setCorner(Vector3(FrustumPointsHomogenous[i].x, FrustumPointsHomogenous[i].y, FrustumPointsHomogenous[i].z),i);
 		}
 

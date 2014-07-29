@@ -10,7 +10,7 @@ include_directories(../engine/rendering/include)
 include_directories(../engine/resource_system/include)
 include_directories(../engine/serialization/include)
 include_directories(../dependencies/glew/include/)
-include_directories(../dependencies/glm/include/)
+include_directories(../math/include)
 include_directories(./include/)
 
 include(renderer_opengl_compiler_settings)
@@ -29,8 +29,6 @@ source_group("src" FILES ${OGL_SRC})
 source_group("src\\GLX" FILES ${OGL_GLX_SRC})
 source_group("src\\WGL" FILES ${OGL_WGL_SRC})
 source_group("src\\GLES2" FILES ${OGL_GLES2_SRC})
-
-message(STATUS "CXX_FLAGS for renderer_opengl: ${CMAKE_CXX_FLAGS}")
 
 add_library(renderer_opengl SHARED ${RENDERER_OGL_SRC})
 target_link_libraries(renderer_opengl ${OGL_DEPENDENCIES})

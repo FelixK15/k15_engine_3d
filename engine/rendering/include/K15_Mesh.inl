@@ -33,3 +33,8 @@ SubMesh* Mesh::getSubMesh(uint32 p_Index) const
 	return m_SubMeshes.at(p_Index);
 }
 /*********************************************************************************/
+const AABB& Mesh::getAABB() const
+{
+  return m_AABB;
+}
+/*********************************************************************************/

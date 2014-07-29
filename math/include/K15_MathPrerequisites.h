@@ -29,6 +29,9 @@
 #include <cassert>
 #include <cstdlib>
 
+#define K15_EPSILON 1e-5
+#define GLM_FORCE_RADIANS
+
 //we won't use SIMD for android.
 #ifndef __ANDROID__
 	#define K15_SIMD_SUPPORT

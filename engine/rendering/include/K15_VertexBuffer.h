@@ -45,6 +45,7 @@ namespace K15_Engine { namespace Rendering {
 
 		uint32 getVertexCount() const;
 		uint32 getVertexSize() const;
+
 	private:
 		IndexVertexMap m_VertexCache;
 		VertexDeclaration* m_Declaration;

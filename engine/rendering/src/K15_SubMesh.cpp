@@ -23,20 +23,17 @@
 #include "K15_Mesh.h"
 #include "K15_RenderOperation.h"
 #include "K15_VertexBuffer.h"
+#include "K15_VertexData.h"
 #include "K15_Vertex.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	SubMesh::SubMesh(Mesh* p_Mesh)
-		: m_Material(0),
-		m_IndexBuffer(0),
-		m_VertexBuffer(0),
-		m_Mesh(p_Mesh),
-		m_Dirty(true)
+		: m_IndexData(0),
+		m_VertexData(0),
+		m_Mesh(p_Mesh)
 	{
 		m_Mesh->addSubMesh(this);
-
-		_calculateAABB();
 	}
 	/*********************************************************************************/
 	SubMesh::~SubMesh()
@@ -44,30 +41,22 @@ namespace K15_Engine { namespace Rendering {
 		
 	}
 	/*********************************************************************************/
-	RenderOperation* SubMesh::createRenderOperation()
-	{
-		static RenderOperation rop;
-
-		rop.indexBuffer = m_IndexBuffer;
-		rop.vertexBuffer = m_VertexBuffer;
-		rop.subMesh = this;
-		rop.topology = RenderOperation::T_TRIANGLE;
-		rop.material = m_Material;
-		
-		return &rop;
-	}
-	/*********************************************************************************/
-	void SubMesh::_calculateAABB()
+	void SubMesh::calculateAABB()
 	{
 		float x_max = 0.0f,y_max = 0.0f,z_max = 0.0f;
 		float x_min = 0.0f,y_min = 0.0f,z_min = 0.0f;
 		Vertex* vertex = 0;
+    VertexBuffer* vertexBuffer = 0;
 		Vector4 pos;
-		if(m_VertexBuffer)
+    uint32 vertexIndex = 0;
+
+		if(m_VertexData)
 		{
-			for(uint32 i = 0;i < m_VertexBuffer->getVertexCount();++i)
+			for(uint32 i = 0;i < m_VertexData->vertexCount;++i)
 			{
-				vertex = m_VertexBuffer->getVertex(i);
+        vertexIndex = i + m_VertexData->vertexOffset;
+        vertexBuffer = m_VertexData->vertexBuffer;
+				vertex = vertexBuffer->getVertex(vertexIndex);
 				pos = vertex->getPosition();
 
 				if(pos.x > x_max)		x_max = pos.x;
@@ -90,17 +79,6 @@ namespace K15_Engine { namespace Rendering {
 		m_AABB.setCorner(Vector3(x_max,y_min,z_max),AABB::CT_NEAR_RIGHT_BOTTOM);
 		m_AABB.setCorner(Vector3(x_min,y_max,z_max),AABB::CT_NEAR_LEFT_TOP);
 		m_AABB.setCorner(Vector3(x_max,y_max,z_max),AABB::CT_NEAR_LEFT_TOP);
-	}
-	/*********************************************************************************/
-	const AABB& SubMesh::getAABB()
-	{
-		if(m_VertexBuffer && m_VertexBuffer->isDirty())
-		{
-			_calculateAABB();
-			m_Dirty = true;
-		}
-
-		return m_AABB;
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

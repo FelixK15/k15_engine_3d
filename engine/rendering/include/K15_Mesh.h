@@ -27,10 +27,9 @@
 #include "K15_Prerequisites.h"
 #include "K15_AllocatedObject.h"
 #include "K15_AABB.h"
-#include "K15_ResourceBase.h"
 
 namespace K15_Engine { namespace Rendering {
-	class K15_CORE_API Mesh : public ResourceBase, public RenderingAllocatedObject
+	class K15_CORE_API Mesh : public RenderingAllocatedObject
 	{
 	public:
 		/*********************************************************************************/
@@ -38,7 +37,6 @@ namespace K15_Engine { namespace Rendering {
 		/*********************************************************************************/
 	public:
 		Mesh();
-		Mesh(const ObjectName& p_Name);
 		~Mesh();
 
 		INLINE const AABB& getAABB();
@@ -47,8 +45,7 @@ namespace K15_Engine { namespace Rendering {
 		INLINE void addSubMesh(SubMesh* p_SubMesh);
 		INLINE SubMesh* getSubMesh(uint32 p_Index) const;
 
-	private:
-		void calculateAABB();
+    void calculateAABB();
 
 	private:
 		SubMeshArray m_SubMeshes;

@@ -23,6 +23,7 @@
 
 #include "K15_Vector4.h"
 #include "K15_MathUtil.h"
+#include "K15_Vector3.h"
 
 namespace K15_Engine { namespace Math { 
 	/*********************************************************************************/
@@ -45,15 +46,12 @@ namespace K15_Engine { namespace Math {
 	}
 	/*********************************************************************************/
 	Vector4::Vector4(float x,float y, float z, float w)
+    : x(x),
+    y(y),
+    z(z),
+    w(w)
 	{
-		#if defined K15_SIMD_SUPPORT
-			m_VectorSIMD = _mm_set_ps(w,z,y,x);
-		#else
-			this->x = x;
-			this->y = y;
-			this->z = z;
-			this->w = w;
-		#endif //K15_SIMD_SUPPORT
+
 	}
 	/*********************************************************************************/
 	Vector4::Vector4(const Vector4& p_Vector)
@@ -69,26 +67,15 @@ namespace K15_Engine { namespace Math {
 	void Vector4::normalize()
 	{
 		float len = length();
-		#if defined K15_SIMD_SUPPORT
-			__m128 length = _mm_set_ps(len,len,len,len);
-			m_VectorSIMD = _mm_div_ps(m_VectorSIMD,length);
-		#else 
-			x /= len;
-			y /= len;
-			z /= len;
-			w /= len;
-		#endif //K15_SIMD_SUPPORT
+    x /= len;
+    y /= len;
+    z /= len;
+    w /= len;
 	}
 	/*********************************************************************************/
 	float Vector4::length() const
 	{
-		#if defined K15_SIMD_SUPPORT
-			__m128 temp = _mm_mul_ps(m_VectorSIMD,m_VectorSIMD);
-
-			return MathUtil::sqrt(temp.m128_f32[0] + temp.m128_f32[1] + temp.m128_f32[2] + temp.m128_f32[3]);
-		#else 
-			return MathUtil::sqrt(x*x + y*y + z*z + w*w);
-		#endif //K15_SIMD_SUPPRT
+		return MathUtil::sqrt(x*x + y*y + z*z + w*w);
 	}
 	/*********************************************************************************/
 	void Vector4::invert()
@@ -111,29 +98,23 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	float Vector4::dot(const Vector4& p_Vector) const
 	{
-		#if defined K15_SIMD_SUPPORT
-			__m128 multiplied = _mm_mul_ps(m_VectorSIMD,p_Vector.m_VectorSIMD);
-			return multiplied.m128_f32[0] + multiplied.m128_f32[1] + multiplied.m128_f32[2] + multiplied.m128_f32[3];
-		#else
-			return x*p_Vector.x + y*p_Vector.y + z*p_Vector.z + w*p_Vector.w;
-		#endif //K15_SIMD_SUPPORT
+		return x*p_Vector.x + y*p_Vector.y + z*p_Vector.z + w*p_Vector.w;
 	}
 	/*********************************************************************************/
 	Vector4 Vector4::cross(const Vector4& p_Vector) const
 	{
-		float Pxy = x * p_Vector.y - p_Vector.x * y;
-		float Pxz = x * p_Vector.z - p_Vector.x * z;
-		float Pxw = x * p_Vector.w - p_Vector.x * w;
-		float Pyz = y * p_Vector.z - p_Vector.y * z;
-		float Pyw = y * p_Vector.w - p_Vector.y * w;
-		float Pzw = z * p_Vector.w - p_Vector.z * w;
+		Vector3 vec, vec2, vec3;
+    Vector4 crossVec;
 
-		return Vector4(
-			y*Pzw - z*Pyw + w*Pyz,    
-			z*Pxw - x*Pzw - w*Pxz,    
-			x*Pyw - y*Pxw + w*Pxy,
-			y*Pxz - x*Pyz - z*Pxy
-			);
+    memcpy(&vec, m_VectorArray, sizeof(Vector3));
+    memcpy(&vec2, &p_Vector, sizeof(Vector3));
+
+    vec3 = vec.cross(vec2);
+
+    memcpy(&crossVec, &vec3, sizeof(Vector3));
+    crossVec.w = 1.f;
+
+    return crossVec;
 	}
 	/*********************************************************************************/
 	const Vector4& Vector4::operator=(const Vector4& p_Vector)
@@ -154,15 +135,10 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Vector4& Vector4::operator*=(float p_Scale)
 	{
-		#if defined K15_SIMD_SUPPORT
-			__m128 temp = _mm_set_ps(p_Scale,p_Scale,p_Scale,p_Scale);
-			m_VectorSIMD = _mm_mul_ps(m_VectorSIMD,temp);
-		#else
-			x *= p_Scale;
-			y *= p_Scale;
-			z *= p_Scale;
-			w *= p_Scale;
-		#endif //K15_SIMD_SUPPORT
+    x *= p_Scale;
+    y *= p_Scale;
+    z *= p_Scale;
+    w *= p_Scale;
 
 		return *this;
 	}
@@ -184,43 +160,30 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Vector4& Vector4::operator+=(const Vector4& p_Vector)
 	{
-		#if defined K15_SIMD_SUPPORT
-			m_VectorSIMD = _mm_add_ps(m_VectorSIMD,p_Vector.m_VectorSIMD);
-		#else
-			x += p_Vector.x;
-			y += p_Vector.y;
-			z += p_Vector.z;
-			w += p_Vector.w;
-		#endif //K15_SIMD_SUPPORT
+    x += p_Vector.x;
+    y += p_Vector.y;
+    z += p_Vector.z;
+    w += p_Vector.w;
 
 		return *this;
 	}
 	/*********************************************************************************/
 	const Vector4& Vector4::operator-=(const Vector4& p_Vector)
 	{
-		#if defined K15_SIMD_SUPPORT
-			m_VectorSIMD = _mm_sub_ps(m_VectorSIMD,p_Vector.m_VectorSIMD);
-		#else
-			x -= p_Vector.x;
-			y -= p_Vector.y;
-			z -= p_Vector.z;
-			w -= p_Vector.w;
-		#endif //K15_SIMD_SUPPORT
+    x -= p_Vector.x;
+    y -= p_Vector.y;
+    z -= p_Vector.z;
+    w -= p_Vector.w;
 
 		return *this;
 	}
 	/*********************************************************************************/
 	const Vector4& Vector4::operator/=(float p_Scalar)
 	{
-		#if defined K15_SIMD_SUPPORT
-			__m128 t = _mm_set_ps(p_Scalar,p_Scalar,p_Scalar,p_Scalar);
-			m_VectorSIMD = _mm_div_ps(m_VectorSIMD,t);
-		#else
-			x /= p_Scalar;
-			y /= p_Scalar;
-			z /= p_Scalar;
-			w /= p_Scalar;
-		#endif //K15_SIMD_SUPPORT
+    x /= p_Scalar;
+    y /= p_Scalar;
+    z /= p_Scalar;
+    w /= p_Scalar;
 
 		return *this;
 	}
@@ -263,11 +226,14 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	bool Vector4::operator==(const Vector4& p_Vector) const
 	{
-		if(length() == p_Vector.length())
-		{
-			return true;
-		}
-		return false;
+		for(int i = 0; i < 4; ++i)
+    {
+      if(m_VectorArray[i] != p_Vector[i])
+      {
+        return false;
+      }
+    }
+		return true;
 	}
 	/*********************************************************************************/
 	bool Vector4::operator!=(const Vector4& p_Vector) const
@@ -278,5 +244,13 @@ namespace K15_Engine { namespace Math {
 		}
 		return true;
 	}
-	/*********************************************************************************/
+  /*********************************************************************************/
+  float Vector4::operator[](int p_Index) const
+  {
+    if(p_Index < 0) p_Index = 0;
+    if(p_Index > 3) p_Index = 3;
+
+    return m_VectorArray[p_Index];
+  }
+  /*********************************************************************************/
 }}//end of K15_Engine::Math namespace

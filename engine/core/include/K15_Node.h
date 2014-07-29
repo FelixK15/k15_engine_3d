@@ -27,8 +27,9 @@
 #include "K15_Prerequisites.h"
 #include "K15_Object.h"
 
-// #include "K15_Quaternion.h"
-// #include "K15_Matrix4.h"
+#include "K15_Quaternion.h"
+#include "K15_Matrix4.h"
+#include "K15_MatrixUtil.h"
 
 namespace K15_Engine { namespace Core { 
 	class K15_CORE_API Node : public Object, public GeneralAllocatedObject
@@ -42,7 +43,7 @@ namespace K15_Engine { namespace Core {
 		Node(const ObjectName& p_Name = ObjectName::BLANK,Node* p_Parent = 0);
 		~Node();
 
-		INLINE void lookAt(const Vector3& p_Position);
+		void lookAt(const Vector3& p_Position);
 
 		INLINE void setPosition(const Vector3& p_Position);
 		INLINE void setOrientation(const Quaternion& p_Orientation);

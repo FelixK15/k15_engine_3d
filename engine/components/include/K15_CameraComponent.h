@@ -28,7 +28,7 @@
 #include "K15_Object.h"
 #include "K15_GameObjectComponentBase.h"
 #include "K15_Frustum.h"
-// #include "K15_Matrix4.h"
+#include "K15_Matrix4.h"
 
 namespace K15_Engine { namespace Rendering {
 	class K15_CORE_API CameraComponent : public GameObjectComponentBase

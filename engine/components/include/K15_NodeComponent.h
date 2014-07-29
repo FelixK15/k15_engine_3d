@@ -27,6 +27,11 @@
 #include "K15_Prerequisites.h"
 #include "K15_GameObjectComponentBase.h"
 
+#include "K15_Matrix4.h"
+#include "K15_Vector3.h"
+#include "K15_Vector4.h"
+#include "K15_MatrixUtil.h"
+
 namespace K15_Engine { namespace Core { 
 	class K15_CORE_API NodeComponent : public GameObjectComponentBase
 	{
@@ -39,7 +44,7 @@ namespace K15_Engine { namespace Core {
 		NodeComponent(GameObject* p_Parent);
 		~NodeComponent();
 
-		INLINE void lookAt(const Vector3& p_Position);
+		void lookAt(const Vector3& p_Position);
 
 		INLINE void setPosition(const Vector3& p_Position);
 		//INLINE void setOrientation(const Quaternion& p_Orientation);

@@ -20,6 +20,8 @@
 #include "K15_Quaternion.h"
 #include "K15_MathUtil.h"
 
+#include "glm/gtx/quaternion.hpp"
+
 namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Quaternion Quaternion::Identity;
@@ -31,32 +33,26 @@ namespace K15_Engine { namespace Math {
 	}
 	/*********************************************************************************/
 	Quaternion::Quaternion(float w, float x, float y, float z)
+    : w(w),
+    x(x),
+    y(y),
+    z(z)
 	{
-		#if defined K15_SIMD_SUPPORT
-			m_QuaternionSIMD = _mm_set_ps(z,y,x,w);
-		#else
-			this->w = w;
-			this->x = x;
-			this->y = y;
-			this->z = z;
-		#endif //K15_SIMD_SUPPORT
+
 	}
 	/*********************************************************************************/
 	Quaternion::Quaternion(float p_Angle, const Vector3& p_Vector)
+    : w(p_Angle),
+    x(p_Vector.x),
+    y(p_Vector.y),
+    z(p_Vector.z)
 	{
-		#if defined K15_SIMD_SUPPORT
-			m_QuaternionSIMD = _mm_set_ps(p_Vector.z,p_Vector.y,p_Vector.x,p_Angle);
-		#else
-			x = p_Vector.x;
-			y = p_Vector.y;
-			z = p_Vector.z;
-			w = p_Angle;
-		#endif //K15_SIMD_SUPPORT
+
 	}
 	/*********************************************************************************/
 	Quaternion::Quaternion(const Quaternion& p_Quaternion)
 	{
-		memcpy(m_QuaternionArray,p_Quaternion.m_QuaternionArray,sizeof(m_QuaternionArray));
+		memcpy(m_QuaternionArray,p_Quaternion.m_QuaternionArray,sizeof(Quaternion));
 	}
 	/*********************************************************************************/
 	Quaternion::~Quaternion()
@@ -66,27 +62,17 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	float Quaternion::length() const
 	{
-		#if defined K15_SIMD_SUPPORT
-			__m128 t = _mm_mul_ps(m_QuaternionSIMD,m_QuaternionSIMD);
-			return MathUtil::sqrt(t.m128_f32[0] + t.m128_f32[1] + t.m128_f32[2] + t.m128_f32[3]);
-		#else
 			return MathUtil::sqrt(x*x + y*y + z*z + w*w);
-		#endif //K15_SIMD_SUPPORT
 	}
 	/*********************************************************************************/
 	void Quaternion::normalize()
 	{
 		float magnitude = length();
 
-		#if defined K15_SIMD_SUPPORT
-			__m128 t = _mm_set_ps(magnitude,magnitude,magnitude,magnitude);
-			m_QuaternionSIMD = _mm_div_ps(m_QuaternionSIMD,t);
-		#else
-			x /= magnitude;
-			y /= magnitude;
-			z /= magnitude;
-			w /= magnitude;
-		#endif //K15_SIMD_SUPPORT
+    x /= magnitude;
+    y /= magnitude;
+    z /= magnitude;
+    w /= magnitude;
 	}
 	/*********************************************************************************/
 	void Quaternion::conjugate()
@@ -149,7 +135,8 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	Quaternion Quaternion::operator/(float p_Scalar) const
 	{
-		assert(p_Scalar != 0);
+		if(p_Scalar == 0.f) p_Scalar = 1.f;
+
 		Quaternion quaternion(*this);
 
 		quaternion /= p_Scalar;
@@ -165,57 +152,35 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Quaternion& Quaternion::operator+=(const Quaternion& p_Quaternion)
 	{
-		#if defined K15_SIMD_SUPPORT
-			m_QuaternionSIMD = _mm_add_ps(m_QuaternionSIMD,p_Quaternion.m_QuaternionSIMD);
-		#else
-			x += p_Quaternion.x;
-			y += p_Quaternion.y;
-			z += p_Quaternion.z;
-			w += p_Quaternion.w;
-		#endif //K15_SIMD_SUPPORT
+    x += p_Quaternion.x;
+    y += p_Quaternion.y;
+    z += p_Quaternion.z;
+    w += p_Quaternion.w;
+
 		return *this;
 	}
 	/*********************************************************************************/
 	const Quaternion& Quaternion::operator-=(const Quaternion& p_Quaternion)
 	{
-		#if defined K15_SIMD_SUPPORT
-			m_QuaternionSIMD = _mm_sub_ps(m_QuaternionSIMD,p_Quaternion.m_QuaternionSIMD);
-		#else
-			x *= p_Quaternion.x;
-			y *= p_Quaternion.y;
-			z *= p_Quaternion.z;
-			w *= p_Quaternion.w;
-		#endif //K15_SIMD_SUPPORT
+    x *= p_Quaternion.x;
+    y *= p_Quaternion.y;
+    z *= p_Quaternion.z;
+    w *= p_Quaternion.w;
+
 		return *this;
 	}
 	/*********************************************************************************/
 	const Quaternion& Quaternion::operator*=(const Quaternion& p_Quaternion)
 	{
-		//https://bitbucket.org/sinbad/ogre/src/569ec69ce2c31a66b32d741a455a1d91428079cc/OgreMain/src/OgreQuaternion.cpp?at=default
-		#if defined K15_SIMD_SUPPORT
-			__m128 t_1_me = _mm_set_ps(w,y,z,x);
-			__m128 t_2_me = _mm_set_ps(w,z,x,y);
+    glm::quat quat, quat2;
 
-			__m128 t_1_other = _mm_set_ps(p_Quaternion.x,p_Quaternion.w,p_Quaternion.z,p_Quaternion.y);
-			__m128 t_2_other = _mm_set_ps(p_Quaternion.y,p_Quaternion.w,p_Quaternion.x,p_Quaternion.z);
-			__m128 t_3_other = _mm_set_ps(p_Quaternion.y,p_Quaternion.w,p_Quaternion.y,p_Quaternion.x);
+    memcpy(&quat, m_QuaternionArray, sizeof(Quaternion));
+    memcpy(&quat2, &p_Quaternion, sizeof(Quaternion));
 
-			__m128 t_w = _mm_mul_ps(m_QuaternionSIMD,p_Quaternion.m_QuaternionSIMD);
-			__m128 t_x = _mm_mul_ps(m_QuaternionSIMD,t_1_other);
-			__m128 t_y = _mm_mul_ps(t_1_me,t_2_other);
-			__m128 t_z = _mm_mul_ps(t_2_me,t_3_other);
+    quat *= quat2;
 
-			w =	t_w.m128_f32[0] - t_w.m128_f32[1] - t_w.m128_f32[2] - t_w.m128_f32[3];
-			x =	t_x.m128_f32[0] - t_x.m128_f32[1] - t_x.m128_f32[2] - t_x.m128_f32[3];
-			y =	t_y.m128_f32[0] - t_y.m128_f32[1] - t_y.m128_f32[2] - t_y.m128_f32[3];
-			z =	t_z.m128_f32[0] - t_z.m128_f32[1] - t_z.m128_f32[2] - t_z.m128_f32[3];
-		#else
-			float t_w = w * p_Quaternion.w - x * p_Quaternion.x - y * p_Quaternion.y - z * p_Quaternion.z;
-			float t_x = w * p_Quaternion.x + x * p_Quaternion.w + y * p_Quaternion.z - z * p_Quaternion.y;
-			float t_y = w * p_Quaternion.y + y * p_Quaternion.w + z * p_Quaternion.x - x * p_Quaternion.z;
-			float t_z = w * p_Quaternion.z + z * p_Quaternion.w + x * p_Quaternion.y - y * p_Quaternion.x;
-		#endif //K15_SIMD_SUPPORT
-		
+    memcpy(m_QuaternionArray, &quat, sizeof(Quaternion));
+
 		return *this;
 	}
 	/*********************************************************************************/
@@ -229,30 +194,22 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Quaternion& Quaternion::operator*=(float p_Scalar)
 	{
-		#if defined K15_SIMD_SUPPORT
-			__m128 t = _mm_set_ps(p_Scalar,p_Scalar,p_Scalar,p_Scalar);
-			m_QuaternionSIMD = _mm_mul_ps(m_QuaternionSIMD,t);
-		#else
-			x *= p_Scalar;
-			y *= p_Scalar;
-			z *= p_Scalar;
-			w *= p_Scalar;
-		#endif //K15_SIMD_SUPPORT
+    x *= p_Scalar;
+    y *= p_Scalar;
+    z *= p_Scalar;
+    w *= p_Scalar;
 		
 		return *this;
 	}
 	/*********************************************************************************/
 	const Quaternion& Quaternion::operator/=(float p_Scalar)
 	{
-		#if defined K15_SIMD_SUPPORT
-			__m128 t = _mm_set_ps(p_Scalar,p_Scalar,p_Scalar,p_Scalar);
-			m_QuaternionSIMD = _mm_div_ps(m_QuaternionSIMD,t);
-		#else
-			x /= p_Scalar;
-			y /= p_Scalar;
-			z /= p_Scalar;
-			w /= p_Scalar;
-		#endif //K15_SIMD_SUPPORT
+    if(p_Scalar == 0.f) p_Scalar = 1.f;
+
+    x /= p_Scalar;
+    y /= p_Scalar;
+    z /= p_Scalar;
+    w /= p_Scalar;
 		
 		return *this;
 	}
@@ -269,32 +226,39 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	Vector3 Quaternion::operator*(const Vector3& p_Vector) const
 	{
-		Vector3 vTmp1, vTmp2, vTmp3;
+		Vector3 vec;
+    glm::quat quat;
+    glm::vec3 vec3, vec3_2;
 
-		vTmp3.x = x;
-		vTmp3.y = y;
-		vTmp3.z = z;
+    memcpy(&quat, m_QuaternionArray, sizeof(Quaternion));
+    memcpy(&vec3, &p_Vector, sizeof(Vector3));
 
-		vTmp1 = vTmp3.cross(p_Vector);
-		vTmp2 = vTmp3.cross(vTmp1);
-		vTmp1 *= (2 * w);
-		vTmp2 *= 2;
-		return p_Vector + vTmp1 + vTmp2;
+    vec3_2 = vec3 * quat;
+
+    memcpy(&vec, &vec3_2, sizeof(Vector3));
+
+    return vec;
 	}
 	/*********************************************************************************/
 	float Quaternion::getRoll() const
 	{
-		 return MathUtil::atan2(2*(x*y + w*z), w*w + x*x - y*y - z*z);
+    glm::quat quat;
+    memcpy(&quat, m_QuaternionArray, sizeof(Quaternion));
+    return glm::roll(quat);
 	}
 	/*********************************************************************************/
 	float Quaternion::getPitch() const
 	{
-		return MathUtil::atan2(2*(y*z + w*x), w*w - x*x - y*y + z*z);
+    glm::quat quat;
+    memcpy(&quat, m_QuaternionArray, sizeof(Quaternion));
+    return glm::pitch(quat);
 	}
 	/*********************************************************************************/
 	float Quaternion::getYaw() const
 	{
-		return MathUtil::asin(-2*(x*z - w*y));
+    glm::quat quat;
+    memcpy(&quat, m_QuaternionArray, sizeof(Quaternion));
+    return glm::yaw(quat);
 	}
 	/*********************************************************************************/
 	bool Quaternion::isIdentity() const
@@ -304,100 +268,39 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	float Quaternion::dot(const Quaternion& p_Quaternion) const
 	{
-		#if defined K15_SIMD_SUPPORT
-			__m128 dot = _mm_mul_ps(m_QuaternionSIMD,p_Quaternion.m_QuaternionSIMD);
-			return dot.m128_f32[0] + dot.m128_f32[1] + dot.m128_f32[2] + dot.m128_f32[3];
-		#else
-			return x*p_Quaternion.x + y*p_Quaternion.y + z*p_Quaternion.z * w*p_Quaternion.w;
-		#endif //K15_SIMD_SUPPORT
+    glm::quat quat, quat2;
+
+    memcpy(&quat, m_QuaternionArray, sizeof(Quaternion));
+    memcpy(&quat2, &p_Quaternion, sizeof(Quaternion));
+
+    return glm::dot(quat, quat2);
 	}
 	/*********************************************************************************/
 	Matrix3 Quaternion::toRotationMatrix() const
 	{
-		//https://bitbucket.org/sinbad/ogre/src/569ec69ce2c31a66b32d741a455a1d91428079cc/OgreMain/src/OgreQuaternion.cpp?at=default
-		Matrix3 matrix;
+		Matrix3 rotMatrix;
+    glm::mat3 mat;
+    glm::quat quat;
 
-		float fTx  = x+x;
-		float fTy  = y+y;
-		float fTz  = z+z;
-		float fTwx = fTx*w;
-		float fTwy = fTy*w;
-		float fTwz = fTz*w;
-		float fTxx = fTx*x;
-		float fTxy = fTy*x;
-		float fTxz = fTz*x;
-		float fTyy = fTy*y;
-		float fTyz = fTz*y;
-		float fTzz = fTz*z;
+    memcpy(&quat, m_QuaternionArray, sizeof(Quaternion));
 
-		matrix._1_1 = 1.0f-(fTyy+fTzz);
-		matrix._1_1 = fTxy-fTwz;
-		matrix._1_1 = fTxz+fTwy;
+    mat = glm::toMat3(quat);
 
-		matrix._1_1 =  fTxy+fTwz;
-		matrix._1_1 = 1.0f-(fTxx+fTzz);
-		matrix._1_1 = fTyz-fTwx;
+    memcpy(&rotMatrix, &mat, sizeof(Matrix3));
 
-		matrix._1_1 = fTxz-fTwy;
-		matrix._1_1 = fTyz+fTwx;
-		matrix._1_1 = 1.0f-(fTxx+fTyy);
-
-		return matrix;
+    return rotMatrix;
 	}
 	/*********************************************************************************/
 	void Quaternion::fromRotationMatrix(const Matrix3& p_Matrix)
 	{
-		// Algorithm in Ken Shoemake's article in 1987 SIGGRAPH course notes
-		// article "Quaternion Calculus and Fast Animation".
+    glm::mat3 mat;
+    glm::quat quat;
 
-		float fTrace = p_Matrix._1_1 + p_Matrix._2_2 + p_Matrix._3_3;
-		float fRoot;
+    memcpy(&mat, &p_Matrix, sizeof(Matrix3));
 
-		if(fTrace > 0.0f)
-		{
-			// |w| > 1/2, may as well choose w > 1/2
-			fRoot = MathUtil::sqrt(fTrace + 1.0f);  // 2w
-			w = 0.5f*fRoot;
-			fRoot = 0.5f/fRoot;  // 1/(4w)
-			x = (p_Matrix._3_2 - p_Matrix._2_3) * fRoot;
-			y = (p_Matrix._1_3 - p_Matrix._3_1) * fRoot;
-			z = (p_Matrix._2_1 - p_Matrix._1_2) * fRoot;
-		}
-		else
-		{
-			// |w| <= 1/2
-			static size_t s_iNext[3] = { 1, 2, 0 };
-			size_t i = 0;
-			if(p_Matrix._2_2 > p_Matrix._1_1)
-				i = 1;
-			if(p_Matrix._3_3 > p_Matrix.m_MatrixArray[i * 3 + i])
-				i = 2;
-			size_t j = s_iNext[i];
-			size_t k = s_iNext[j];
+    quat = glm::toQuat(mat);
 
-			//To test if this even works
-			//__debugbreak();
-
-			fRoot = MathUtil::sqrt(p_Matrix.m_MatrixArray[i * 3 + i] - p_Matrix.m_MatrixArray[j * 3 + j] - p_Matrix.m_MatrixArray[k * 3 + k] + 1.0f);
-			float* apkQuat[3] = { &x, &y, &z };
-			*apkQuat[i] = 0.5f*fRoot;
-			fRoot = 0.5f/fRoot;
-			w = (p_Matrix.m_MatrixArray[k * 3 + j] - p_Matrix.m_MatrixArray[j * 3 + k]) * fRoot;
-			*apkQuat[j] = (p_Matrix.m_MatrixArray[j * 3 + i] + p_Matrix.m_MatrixArray[i * 3 + j]) * fRoot;
-			*apkQuat[k] = (p_Matrix.m_MatrixArray[k * 3 + i] + p_Matrix.m_MatrixArray[i * 3 + k]) * fRoot;
-		}
-	}
-	/*********************************************************************************/
-	void Quaternion::fromAngleAxis(float p_Angle, const Vector3& p_Vector)
-	{
-		//https://bitbucket.org/sinbad/ogre/src/569ec69ce2c31a66b32d741a455a1d91428079cc/OgreMain/src/OgreQuaternion.cpp?at=default
-
-		float fHalfAngle ( 0.5f*p_Angle );
-		float fSin = MathUtil::sin(fHalfAngle);
-		w = MathUtil::cos(fHalfAngle);
-		x = fSin*p_Vector.x;
-		y = fSin*p_Vector.y;
-		z = fSin*p_Vector.z;
-	}
+    memcpy(&quat, m_QuaternionArray, sizeof(Quaternion));
+  }
 	/*********************************************************************************/
 }}//end of K15_Engine::Math namespace

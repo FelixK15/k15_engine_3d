@@ -59,4 +59,5 @@ set(ENGINE_LIBS "${ENGINE_LIBS}"
 "${MINIZIP_LIB}"
 "${OBJLOADER_LIB}"
 "${ZLIB_LIB}"
+"k15math"
 )

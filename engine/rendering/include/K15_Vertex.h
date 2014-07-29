@@ -30,6 +30,9 @@
 #include "K15_VertexBuffer.h"
 #include "K15_VertexDeclaration.h"
 
+#include "K15_Vector4.h"
+#include "K15_Vector2.h"
+
 namespace K15_Engine { namespace Rendering {
 	class K15_CORE_API Vertex : public AllocatedObject<BaseAllocatedObject::AC_VERTEX_POOL>
 	{

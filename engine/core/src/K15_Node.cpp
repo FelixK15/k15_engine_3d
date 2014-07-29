@@ -20,6 +20,8 @@
 #include "K15_PrecompiledHeader.h"
 #include "K15_Node.h"
 
+#include "K15_MatrixUtil.h"
+
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	K15_IMPLEMENT_RTTI_BASE(Core,Node,Core::Object);
@@ -31,9 +33,9 @@ namespace K15_Engine { namespace Core {
 		  m_OriginOrientation(),
 		  m_OriginPosition(),
 		  m_Position(),
-		  m_Scale(1.0f,1.0f,1.0f),
+		  m_Scale(1.0f, 1.0f, 1.0f),
 		  m_Orientation(),
-		  m_OriginScale(1.0f,1.0f,1.0f),
+		  m_OriginScale(1.0f, 1.0f, 1.0f),
 		  m_Transformation()
 	{
 
@@ -82,8 +84,8 @@ namespace K15_Engine { namespace Core {
 // 			m_Transformation *= m_Orientation;
 // 			m_Transformation *= glm::translate(glm::mat4(1.0f),m_Position);
 
-			m_Transformation = glm::scale(glm::mat4(1.0f),m_Scale);
-			m_Transformation *= glm::translate(glm::mat4(1.0f),m_Position);
+			m_Transformation = MatrixUtil::scale(m_Scale);
+			m_Transformation *= MatrixUtil::translate(m_Position);
 			m_Transformation *= m_Orientation;
 
 // 			m_Transformation._1_1 = m_Scale.x * rotation._1_1; 
@@ -115,10 +117,17 @@ namespace K15_Engine { namespace Core {
 	{
 		static Vector4 viewNormal(0.0f,0.0f,-1.0f,0.0f);
 		viewNormal = m_Orientation * viewNormal;
-		viewNormal = glm::normalize(viewNormal);
+		viewNormal.normalize();
 		m_LookAt.x = viewNormal.x;
 		m_LookAt.y = viewNormal.y;
 		m_LookAt.z = viewNormal.z;
 	}
+  /*********************************************************************************/
+  void Node::lookAt(const Vector3& p_Position)
+  {
+    m_Orientation = MatrixUtil::lookAt(m_Position,p_Position,Vector3(0.0f,1.0f,0.0f));
+    m_NeedUpdate = true;
+    _calcLookAt();
+  }
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

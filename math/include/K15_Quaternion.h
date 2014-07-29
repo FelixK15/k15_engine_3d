@@ -78,7 +78,6 @@ namespace K15_Engine { namespace Math {
 		
 		Matrix3 toRotationMatrix() const;
 		void fromRotationMatrix(const Matrix3& p_Matrix);
-		void fromAngleAxis(float p_Angle, const Vector3& p_Vector);
 
 // 		static Quaternion Lerp(const Quaternion &qQuat1, const Quaternion &qQuat2, float fValue);
 // 		static Quaternion Slerp(const Quaternion &qQuat1, const Quaternion &qQuat2, float fValue);
@@ -97,9 +96,6 @@ namespace K15_Engine { namespace Math {
 				float w, x, y, z;
 			};//struct
 			float m_QuaternionArray[4];
-			#if defined K15_SIMD_SUPPORT
-				__m128 m_QuaternionSIMD;
-			#endif //K15_SIMD_SUPPORT
 		};//union
 	};// end of Quaternion class declaration
 }} //end of K15_Engine::Math namespace

@@ -18,13 +18,6 @@
  */
 
 /*********************************************************************************/
-void Node::lookAt(const Vector3& p_Position)
-{
-	m_Orientation = glm::lookAt(m_Position,p_Position,Vector3(0.0f,1.0f,0.0f));
-	m_NeedUpdate = true;
-	_calcLookAt();
-}
-/*********************************************************************************/
 void Node::setPosition(const Vector3& p_Position)
 {
 	m_Position = p_Position;
@@ -50,7 +43,7 @@ void Node::translate(const Vector3& p_Translation)
 /*********************************************************************************/
 void Node::translate(const Vector4& p_Translation)
 {
-	translate(p_Translation.x,p_Translation.y,p_Translation.z);
+	translate(p_Translation.x, p_Translation.y, p_Translation.z);
 }
 /*********************************************************************************/
 void Node::translate(float x, float y, float z)
@@ -78,7 +71,7 @@ void Node::scale(float x, float y, float z)
 /*********************************************************************************/
 void Node::rotate(const Vector3& p_Axis, float p_Radians)
 {
-	m_Orientation *= glm::rotate(glm::mat4(1.0f),p_Radians,p_Axis);
+	m_Orientation *= MatrixUtil::rotate(p_Axis, p_Radians);
 	m_NeedUpdate = true;
 }
 /*********************************************************************************/

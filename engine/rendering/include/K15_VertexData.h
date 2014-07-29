@@ -1,8 +1,8 @@
 /**
- * @file K15_matrixUtil.h
+ * @file K15_VertexData.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2012/08/07
+ * @date 2013/11/29
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,20 +21,20 @@
  * 
  */
 
-
-#ifndef _K15Engine_Core_MatrixUtil_h_
-#define _K15Engine_Core_MatrixUtil_h_
+#ifndef _K15Engine_Rendering_VertexData_h_
+#define _K15Engine_Rendering_VertexData_h_
 
 #include "K15_Prerequisites.h"
-/*#include "K15_Matrix4.h"*/
 
-namespace K15_Engine { namespace Core {
-  class K15_CORE_API MatrixUtil
+namespace K15_Engine { namespace Rendering { 
+  struct K15_CORE_API VertexData
   {
-  public:
-    static const Matrix4& createPerspectiveProjectionMatrix(float p_Fov, float p_NearClip, float p_FarClip);
-    static const Matrix4& createOrthographicProjectionMatrix(float p_NearClip, float p_FarClip);
-  };
-}} //end of K15_Engine::Core namespace
+    VertexDeclaration* vertexDeclaration;
+    VertexBuffer* vertexBuffer;
+    uint32 bufferOffset;
+    uint32 vertexOffset;
+    uint32 vertexCount;
+  }; //end of VertexData struct declaration
+}} //end of K15_Engine::Rendering
 
-#endif //_K15Engine_Core_MatrixUtil_h_
+#endif //_K15Engine_Rendering_VertexData_h_

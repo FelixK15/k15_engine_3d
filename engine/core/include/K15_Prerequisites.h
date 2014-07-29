@@ -175,6 +175,7 @@ namespace K15_Engine
 		class Material;
 		class SubMesh;
 		class Mesh;
+    class IndexData;
 		class AABB;
 		class VertexDeclaration;
 		class VertexDeclarationImplBase;
@@ -184,6 +185,7 @@ namespace K15_Engine
 		class AlphaState;
 		class DepthState;
 		class VertexBuffer;
+    class VertexData;
 		class Vertex;
 		class RendererBase;
 		struct RenderOperation;
@@ -277,17 +279,19 @@ namespace K15_Engine
 			unsigned int dwReserved2[3];
 		};
 	} //end of K15_Engine::Rendering namespace
-// 	/*********************************************************************************/
-// 	namespace Math
-// 	{
-// 		class Vector2;
-// 		class Vector3;
-// 		class Vector4;
-// 		class Matrix3;
-// 		class Matrix4;
-// 		class Quaternion;
-// 	} //end of K15_Engine::Math namespace
-// 	/*********************************************************************************/
+	/*********************************************************************************/
+	namespace Math
+	{
+		class Vector2;
+		class Vector3;
+		class Vector4;
+		class Matrix3;
+		class Matrix4;
+		class Quaternion;
+    class MatrixUtil;
+    class MathUtil;
+	} //end of K15_Engine::Math namespace
+	/*********************************************************************************/
  }
 
  /*********************************************************************************/
@@ -312,7 +316,7 @@ namespace K15_Engine
 {
 	using namespace Core;
 	using namespace Rendering;
-	/*using namespace Math;*/
+	using namespace Math;
 }// end of K15_Engine namespace
 
 #ifdef __GNUC__
@@ -366,6 +370,8 @@ namespace K15_Engine
     typedef std::lock_guard<Mutex> LockGuard;
 #endif //K15_DONT_USE_STL || (!defined K15_DONT_USE_STL && !defined K15_CPP11_SUPPORT)
 
+#define NOMINMAX
+
 //std libs
 #include <fstream>
 #include <sstream>
@@ -378,6 +384,7 @@ namespace K15_Engine
 #include <set>
 #include <array>
 #include <memory>
+#include <climits>
 #include <algorithm>
 #include <sys/stat.h>
 #include <cstdarg>
@@ -405,9 +412,9 @@ typedef std::ofstream		WriteFileStream;
 typedef std::ifstream		ReadFileStream;
 typedef std::stringstream	StringStream;
 
-
 #if defined K15_OS_WINDOWS
 	#define _WINSOCKAPI_    // stops windows.h including winsock.h
+  #define WIN32_LEAN_AND_MEAN
 	#include "windows.h"
 	#include "windowsx.h"
 	#include "winnt.h"
@@ -417,8 +424,6 @@ typedef std::stringstream	StringStream;
 		#define K15_CORE_API __declspec(dllimport)
 	#endif //K15_BUILD
 
-	#define NOMINMAX
-	#define WIN32_LEAN_AND_MEAN
 	#define K15_DEBUG_MESSAGEBOX(msg,title) MessageBox(0,msg,title,MB_ABORTRETRYIGNORE | MB_ICONERROR | MB_TASKMODAL)
 	#define K15_ID_ABORT IDABORT
 	#define K15_ID_RETRY IDRETRY
@@ -503,21 +508,6 @@ typedef std::stringstream	StringStream;
 	typedef unsigned	long long	uint64;
 
 #endif //K15_OS_WINDOWS
-
-
-#define GLM_FORCE_RADIANS
-//include glm math
-#include "glm.hpp"
-#include "gtc/matrix_transform.hpp"
-#include "gtc/quaternion.hpp"
-
-typedef glm::fmat3 Matrix3;
-typedef glm::fmat4 Matrix4;
-typedef glm::fvec2 Vector2;
-typedef glm::fvec3 Vector3;
-typedef glm::fvec4 Vector4;
-typedef glm::fquat Quaternion;
-
  
 #if defined K15_DEBUG
 #	define K15_NEW	  new(__FILE__,__LINE__,__FUNCTION__) 
