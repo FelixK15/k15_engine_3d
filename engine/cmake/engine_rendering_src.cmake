@@ -24,6 +24,7 @@ set(RENDERING_SRC "./rendering/src/K15_AlphaState.cpp"
 "./rendering/src/K15_Vertex.cpp"
 "./rendering/src/K15_VertexBuffer.cpp"
 "./rendering/src/K15_VertexBufferCache.cpp"
+"./rendering/src/K15_VertexData.cpp"
 "./rendering/src/K15_VertexDeclaration.cpp")
 
 set(RENDERING_INC "./rendering/include/K15_AlphaState.h"
@@ -75,5 +76,6 @@ set(RENDERING_INC "./rendering/include/K15_AlphaState.h"
 "./rendering/include/K15_VertexBuffer.inl"
 "./rendering/include/K15_VertexBufferCache.h"
 "./rendering/include/K15_VertexData.h"
+"./rendering/include/K15_VertexData.inl"
 "./rendering/include/K15_VertexDeclaration.h"
 "./rendering/include/K15_VertexDeclaration.inl")

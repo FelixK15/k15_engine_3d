@@ -32,8 +32,8 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	VertexData VertexBufferCache::allocateVertexData(const ObjectName& p_VertexDeclaration, uint32 p_VertexCount)
 	{
-		VertexData data;
 		VertexBuffer* vertexBuffer = 0;
+    VertexDeclaration* vertexDeclaration = 0;
 		uint32 vertexDataSize = 0;
 		uint32 offset = 0;
 
@@ -51,10 +51,11 @@ namespace K15_Engine { namespace Rendering {
 				{
 					vertexBuffer = entry.vertexBuffer;
 					offset = vertexBuffer->getUsedSize();
-					vertexBuffer->allocate()
 				}
 			}
 		}
+
+    return VertexData(vertexDeclaration, vertexBuffer, offset, p_VertexCount);
 	}
 	/*********************************************************************************/
 }} // end of K15_Engine::Rendering namespace
