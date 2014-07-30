@@ -27,12 +27,23 @@
 #include "K15_Prerequisites.h"
 
 namespace K15_Engine { namespace Rendering { 
-  struct K15_CORE_API IndexData
+  class K15_CORE_API IndexData
   {
-    IndexBuffer* indexBuffer;
-    uint32 offset;
-    uint32 indexCount;
+  public:
+    IndexData(IndexBuffer* p_IndexBuffer, uint32 p_IndexCount, uint32 p_OffsetInBytes);
+    ~IndexData();
+
+  public:
+    INLINE IndexBuffer* getIndexBuffer() const;
+    INLINE uint32 getOffsetInBytes() const;
+    INLINE uint32 getIndexCount() const;
+
+  private:
+    IndexBuffer* m_IndexBuffer;
+    uint32 m_Offset;
+    uint32 m_IndexCount;
   }; //end of VertexData struct declaration
+  #include "K15_IndexData.inl"
 }} //end of K15_Engine::Rendering
 
 #endif //_K15Engine_Rendering_IndexData_h_

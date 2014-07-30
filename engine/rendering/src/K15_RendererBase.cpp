@@ -30,6 +30,8 @@
 #include "K15_GpuBuffer.h"
 
 #include "K15_Vertex.h"
+#include "K15_VertexData.h"
+#include "K15_IndexData.h"
 #include "K15_VertexBuffer.h"
 #include "K15_IndexBuffer.h"
 #include "K15_VertexDeclaration.h"
@@ -415,7 +417,7 @@ namespace K15_Engine { namespace Rendering {
 	bool RendererBase::draw(RenderOperation* p_Rop)
 	{
 		K15_ASSERT(p_Rop,"RenderOperation is NULL.");
-		K15_ASSERT(p_Rop->vertexBuffer,"RenderOperation has no vertex buffer.");
+		K15_ASSERT(p_Rop->vertexData,"RenderOperation has no vertex data.");
 		
 		m_GpuParameterUpdateMask |= GpuProgramParameter::UF_PER_OBJECT;
 
@@ -428,8 +430,8 @@ namespace K15_Engine { namespace Rendering {
 			}
 		}
 
-		if(!bindBuffer(p_Rop->vertexBuffer,GpuBuffer::BT_VERTEX_BUFFER) ||
-		   !bindBuffer(p_Rop->indexBuffer,GpuBuffer::BT_INDEX_BUFFER) ||
+		if(!bindBuffer(p_Rop->vertexData->getVertexBuffer(), GpuBuffer::BT_VERTEX_BUFFER) ||
+		   !bindBuffer(p_Rop->indexData->getIndexBuffer(), GpuBuffer::BT_INDEX_BUFFER) ||
 		   !bindMaterial(p_Rop->material) || !setTopology(p_Rop->topology))
 		{
 			return false;
@@ -482,20 +484,22 @@ namespace K15_Engine { namespace Rendering {
 					}
 				}
 
-				if(!setVertexDeclaration(p_Rop->vertexBuffer->getVertexDeclaration()))
+				if(!setVertexDeclaration(p_Rop->vertexData->getVertexDeclaration()))
 				{
 					continue;
 				}
 
 				updateGpuProgramParameter(p_Rop);
 
-				if(p_Rop->indexBuffer != 0)
+				if(p_Rop->indexData != 0)
 				{
-					_drawIndexed();
+					_drawIndexed(p_Rop->indexData->getIndexCount(), 
+            p_Rop->indexData->getOffsetInBytes());
 				}
 				else
 				{
-					_drawDirect();
+					_drawDirect(p_Rop->vertexData->getVertexCount(),
+            p_Rop->vertexData->getOffsetInBytes());
 				}
 
 				if(errorOccured())

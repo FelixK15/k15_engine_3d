@@ -52,11 +52,11 @@ namespace K15_Engine { namespace Rendering {
 
 		if(m_VertexData)
 		{
-			for(uint32 i = 0;i < m_VertexData->vertexCount;++i)
+			for(uint32 i = 0;i < m_VertexData->getVertexCount();++i)
 			{
-        vertexIndex = i + m_VertexData->vertexOffset;
-        vertexBuffer = m_VertexData->vertexBuffer;
-				vertex = vertexBuffer->getVertex(vertexIndex);
+        vertexIndex = i + m_VertexData->getOffsetInBytes();
+        vertexBuffer = m_VertexData->getVertexBuffer();
+				vertex = m_VertexData->getVertex(vertexIndex);
 				pos = vertex->getPosition();
 
 				if(pos.x > x_max)		x_max = pos.x;

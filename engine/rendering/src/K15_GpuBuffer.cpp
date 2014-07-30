@@ -23,7 +23,6 @@
 #include "K15_LogManager.h"
 #include "K15_IndexBuffer.h"
 #include "K15_StringUtil.h"
-#include "K15_EnumStrings.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
@@ -33,7 +32,6 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	GpuBuffer::CreationOptions::CreationOptions()
 		: BufferType(GpuBuffer::BT_VERTEX_BUFFER),
-		LockOption(GpuBuffer::LO_NORMAL),
 		UsageOption(GpuBuffer::UO_DYNAMIC),
 		AccessOption(GpuBuffer::BA_READ_WRITE),
 		IndexType(IndexBuffer::IT_UINT16),
@@ -78,7 +76,6 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	GpuBuffer::GpuBuffer(const CreationOptions& p_Options)
 		: m_Locked(false),
-		m_LockOption(p_Options.LockOption),
 		m_ShadowCopy(0),
 		m_Dirty(false),
 		m_UsageOption(p_Options.UsageOption),
@@ -90,7 +87,6 @@ namespace K15_Engine { namespace Rendering {
 		K15_ASSERT(m_UsageOption >= 0 && m_UsageOption < UO_COUNT,"Invalid usage option.");
 		K15_ASSERT(m_AccessOption >= 0 && m_AccessOption < BA_COUNT,"Invalid access option.");
 		K15_ASSERT(m_BufferType >= 0 && m_BufferType < BT_COUNT,"Invalid buffer type.");
-		K15_ASSERT(m_LockOption >= 0 && m_LockOption < LO_COUNT,"Invalid lock option.");
 
  		m_Impl = g_Application->getRenderer()->createGpuBufferImpl();
 		m_Impl->setBuffer(this);
@@ -227,9 +223,9 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	void GpuBuffer::_createBufferStorage(const CreationOptions& p_Options)
 	{
-		K15_ASSERT(p_Options.InitialData.data || p_Options.Size > 0, 
-			StringUtil::format("Can't create a GPU Buffer of type \"%s\" with no initial data or size of 0.",
-								eBufferTypeStr[p_Options.BufferType]));
+// 		K15_ASSERT(p_Options.InitialData.data || p_Options.Size > 0, 
+// 			StringUtil::format("Can't create a GPU Buffer of type \"%s\" with no initial data or size of 0.",
+// 								eBufferTypeStr[p_Options.BufferType]));
 
 		uint32 size = p_Options.InitialData.size > 0 ? p_Options.InitialData.size :
 													   p_Options.Size;
@@ -245,11 +241,6 @@ namespace K15_Engine { namespace Rendering {
 			writeData(p_Options.InitialData.size, p_Options.InitialData.data);
 			uploadShadowBufferToGpu();
 		}
-	}
-	/*********************************************************************************/
-	void GpuBuffer::forceBufferUpdate()
-	{
-		uploadShadowBufferToGpu();
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace

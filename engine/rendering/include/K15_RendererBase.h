@@ -248,8 +248,8 @@ namespace K15_Engine { namespace Rendering {
 		virtual void _bindProgramBatch(GpuProgramBatch* p_ProgramBatch){}
 		virtual void _bindTexture(Texture* p_Texture, Enum p_Type){}
 		virtual void _bindTextureSampler(TextureSampler* p_Sampler, Enum p_Slot){}
-		virtual void _drawIndexed(uint32 p_Offset = 0){}
-		virtual void _drawDirect(uint32 p_Offset = 0){}
+		virtual void _drawIndexed(uint32 p_IndexCount, uint32 p_Offset = 0){}
+		virtual void _drawDirect(uint32 p_VertexCount, uint32 p_Offset = 0){}
 
 	protected:
 		ColorRGBA m_ClearColor;

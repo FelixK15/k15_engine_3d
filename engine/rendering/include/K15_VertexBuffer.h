@@ -37,18 +37,6 @@ namespace K15_Engine { namespace Rendering {
 	public:
 		VertexBuffer(const CreationOptions& p_Options = DefaultOptions);
 		virtual ~VertexBuffer();
-
-		Vertex* getVertex(uint32 p_Index);
-
-		INLINE void setVertexDeclaration(VertexDeclaration* p_Declaration);
-		INLINE VertexDeclaration* getVertexDeclaration() const;
-
-		uint32 getVertexCount() const;
-		uint32 getVertexSize() const;
-
-	private:
-		IndexVertexMap m_VertexCache;
-		VertexDeclaration* m_Declaration;
 	};// end of VertexBuffer class declaration
 #include "K15_VertexBuffer.inl"
 }}// end of K15_Engine::Core namespace

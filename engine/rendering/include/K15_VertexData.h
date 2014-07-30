@@ -27,14 +27,30 @@
 #include "K15_Prerequisites.h"
 
 namespace K15_Engine { namespace Rendering { 
-  struct K15_CORE_API VertexData
+  class K15_CORE_API VertexData
   {
-    VertexDeclaration* vertexDeclaration;
-    VertexBuffer* vertexBuffer;
-    uint32 bufferOffset;
-    uint32 vertexOffset;
-    uint32 vertexCount;
+  public:
+    typedef DynamicArray(Vertex*) VertexCache;
+
+  public:
+    VertexData(VertexDeclaration* p_VertexDeclaration, VertexBuffer* p_VertexBuffer, uint32 p_Offset, uint32 p_VertexCount);
+    ~VertexData();
+
+    INLINE VertexDeclaration* VertexData::getVertexDeclaration() const;
+    INLINE VertexBuffer* VertexData::getVertexBuffer() const;
+    INLINE uint32 getOffsetInBytes() const;
+    INLINE uint32 getVertexCount() const;
+
+    Vertex* getVertex(uint32 p_Index);
+
+  private:
+    VertexCache m_VertexCache;
+    VertexDeclaration* m_VertexDeclaration;
+    VertexBuffer* m_VertexBuffer;
+    uint32 m_Offset;
+    uint32 m_VertexCount;
   }; //end of VertexData struct declaration
+  #include "K15_VertexData.inl"
 }} //end of K15_Engine::Rendering
 
 #endif //_K15Engine_Rendering_VertexData_h_

@@ -23,7 +23,7 @@ Mesh* MeshInstance::getMesh() const
     return m_Mesh;
 }
 /*********************************************************************************/
-SubMeshInstance* MeshInstance::getSubMeshInstance(int32 p_Index) const
+SubMeshInstance* MeshInstance::getSubMeshInstance(uint32 p_Index) const
 {
     K15_ASSERT(p_Index < m_SubModelInstances.size() && p_Index >= 0, "Access out of bounds.");
 
@@ -35,7 +35,7 @@ const MeshInstance::SubMeshInstanceArray& MeshInstance::getSubMeshInstances() co
     return m_SubModelInstances;
 }
 /*********************************************************************************/
-int32 MeshInstance::getSubMeshInstanceCount() const
+uint32 MeshInstance::getSubMeshInstanceCount() const
 {
     return m_SubModelInstances.size();
 }

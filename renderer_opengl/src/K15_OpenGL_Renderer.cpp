@@ -409,26 +409,29 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		}
 	}
 	/*********************************************************************************/
-	void Renderer::_drawIndexed(uint32 p_Offset)
+	void Renderer::_drawIndexed(uint32 p_IndexCount, uint32 p_Offset)
 	{
 		IndexBuffer* indexBuffer = (IndexBuffer*)m_GpuBuffers[GpuBuffer::BT_INDEX_BUFFER];
 
 		if(p_Offset != 0)
 		{
-			glDrawElementsBaseVertex(GLTopologyConverter[m_Topology],indexBuffer->getIndexCount(),
-			GpuBufferImpl::GLIndexBufferTypeConverter[indexBuffer->getIndexType()],0,p_Offset);
+			glDrawElementsBaseVertex(GLTopologyConverter[m_Topology], p_IndexCount,
+			                         GpuBufferImpl::GLIndexBufferTypeConverter[indexBuffer->getIndexType()],
+                               0, p_Offset);
 		}
 		else
 		{
 			glDrawElements(GLTopologyConverter[m_Topology],
-			indexBuffer->getIndexCount(),GpuBufferImpl::GLIndexBufferTypeConverter[indexBuffer->getIndexType()],0);
+			               p_IndexCount, 
+                     GpuBufferImpl::GLIndexBufferTypeConverter[indexBuffer->getIndexType()],
+                     0);
 		}
 	}
 	/*********************************************************************************/
-	void Renderer::_drawDirect(uint32 p_Offset)
+	void Renderer::_drawDirect(uint32 p_VertexCount ,uint32 p_Offset)
 	{
 		VertexBuffer* vertexBuffer = (VertexBuffer*)m_GpuBuffers[GpuBuffer::BT_VERTEX_BUFFER];
-		glDrawArrays(GLTopologyConverter[m_Topology],p_Offset,vertexBuffer->getVertexCount());
+		glDrawArrays(GLTopologyConverter[m_Topology], p_Offset, p_VertexCount);
 	}
 	/*********************************************************************************/
 	void Renderer::_setVertexDeclaration(VertexDeclaration* p_Declaration)

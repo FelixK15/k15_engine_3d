@@ -25,8 +25,9 @@
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
-	Vertex::Vertex(VertexBuffer* p_Buffer, uint32 p_Index)
+	Vertex::Vertex(VertexBuffer* p_Buffer, VertexDeclaration* p_Declaration, uint32 p_Index)
 		: m_Buffer(p_Buffer),
+    m_Declaration(p_Declaration),
 		m_Index(p_Index)
 	{
 

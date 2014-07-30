@@ -1,8 +1,8 @@
 /**
- * @file K15_VertexBuffer.inl
+ * @file K15_IndexData.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/12/09
+ * @date 2013/11/29
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -16,3 +16,20 @@
  * General Public License for more details at
  * http://www.gnu.org/copyleft/gpl.html
  */
+
+/*********************************************************************************/
+IndexBuffer* IndexData::getIndexBuffer() const
+{
+  return m_IndexBuffer;
+}
+/*********************************************************************************/
+uint32 IndexData::getOffsetInBytes() const
+{
+  return m_Offset;
+}
+/*********************************************************************************/
+uint32 IndexData::getIndexCount() const
+{
+  return m_IndexCount;
+}
+/*********************************************************************************/

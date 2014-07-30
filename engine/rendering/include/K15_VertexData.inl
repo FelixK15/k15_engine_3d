@@ -28,12 +28,12 @@ VertexBuffer* VertexData::getVertexBuffer() const
   return m_VertexBuffer;
 }
 /*********************************************************************************/
-uint32 getOffsetInBytes() const
+uint32 VertexData::getOffsetInBytes() const
 {
   return m_Offset;
 }
 /*********************************************************************************/
-uint32 getVertexCount() const
+uint32 VertexData::getVertexCount() const
 {
   return m_VertexCount;
 }

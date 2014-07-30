@@ -78,8 +78,8 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		virtual void _bindProgram(GpuProgram* p_Program, Enum p_ProgramType) OVERRIDE;
 		virtual void _bindProgramBatch(GpuProgramBatch* p_ProgramBatch) OVERRIDE;
 		virtual void _bindTexture(Texture* p_Texture, Enum p_Type) OVERRIDE;
-		virtual void _drawIndexed(uint32 p_Offset) OVERRIDE;
-		virtual void _drawDirect(uint32 p_Offset) OVERRIDE;
+		virtual void _drawIndexed(uint32 p_IndexCount, uint32 p_Offset) OVERRIDE;
+		virtual void _drawDirect(uint32 p_VertexCount,uint32 p_Offset) OVERRIDE;
 
 	private:
 		ExtensionArray _getExtensions();

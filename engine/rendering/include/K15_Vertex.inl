@@ -34,7 +34,7 @@ Type K15_Engine::Rendering::Vertex::get(Enum p_Semantic) const
 // 				StringUtil::format("Size of semantic is unequal to size of object. Semantic size:%u bytes. Type size:%u bytes.",
 // 				element.size,typeSize));
 			
-			uint32 offset = element.offset + (m_Index * m_Buffer->getVertexSize());
+			uint32 offset = element.offset + (m_Index * m_Declaration->getVertexSize());
 			uint32 bytesRead = m_Buffer->readData(typeSize,(byte*)&returnVal,offset);
 // 			K15_ASSERT(bytesRead == typeSize,
 // 				StringUtil::format("Read less data from vertexbuffer than what was needed. Read:%ubytes, needed:%ubytes",
@@ -61,7 +61,7 @@ void Vertex::set(const Type& p_Value,Enum p_Semantic)
 // 				StringUtil::format("Size of semantic is unequal to size of object. Semantic size:%u bytes. Type size:%u bytes.",
 // 				element.size,typeSize));
 
-			uint32 offset = element.offset + (m_Index * m_Buffer->getVertexSize());
+			uint32 offset = element.offset + (m_Index * m_Declaration->getVertexSize());
 			uint32 bytesWritten = m_Buffer->writeData(typeSize,(byte*)&p_Value,offset);
 
 // 			K15_ASSERT(bytesWritten == typeSize,
@@ -77,7 +77,7 @@ void Vertex::set(const Type& p_Value,Enum p_Semantic)
 /*********************************************************************************/
 VertexDeclaration* Vertex::getDeclaration() const
 {
-	return m_Buffer->getVertexDeclaration();
+	return m_Declaration;
 }
 /*********************************************************************************/
 VertexBuffer* Vertex::getBuffer() const

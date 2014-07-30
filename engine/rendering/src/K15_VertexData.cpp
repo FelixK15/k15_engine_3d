@@ -28,34 +28,41 @@ namespace K15_Engine { namespace Rendering {
     : m_VertexDeclaration(p_VertexDeclaration),
     m_VertexBuffer(p_VertexBuffer),
     m_Offset(p_Offset),
-    m_VertexCount(p_VertexCount)
+    m_VertexCount(p_VertexCount),
+    m_VertexCache()
   {
 
   }
   /*********************************************************************************/
   VertexData::~VertexData()
   {
+    for(uint32 i = 0; i < m_VertexCache.size(); ++i)
+    {
+      delete m_VertexCache[i];
+    }
+
     m_VertexCache.clear();
   }
   /*********************************************************************************/
-  const Vertex& VertexData::getVertex(uint32 p_Index)
+  Vertex* VertexData::getVertex(uint32 p_Index)
   {
-    for(VertexArray::iterator iter = m_VertexCache.begin();
-        iter != m_VertexCache.end(); ++iter)
-    {
-      const Vertex& vertex = (*iter);
+    Vertex* vertex = 0;
 
-      if(vertex.getIndex() == p_Index)
+    for(uint32 i = 0; i < m_VertexCache.size(); ++i)
+    {
+      vertex = m_VertexCache[i];
+
+      if(vertex->getIndex() == p_Index)
       {
         return vertex;
       }
     }
 
-    Vertex vertex(m_VertexBuffer, m_VertexDeclaration, p_Index, m_Offset);
+    vertex = K15_NEW Vertex(m_VertexBuffer, m_VertexDeclaration, p_Index);
 
     m_VertexCache.push_back(vertex);
 
-    return m_VertexCache.back();
+    return vertex;
   }
   /*********************************************************************************/
 }}// end of K15_Engine::Rendering namespace

@@ -62,7 +62,6 @@ namespace K15_Engine { namespace Rendering {
 		struct K15_CORE_API CreationOptions
 		{
 			Enum BufferType;
-			Enum LockOption;
 			Enum UsageOption;
 			Enum AccessOption;
 			Enum IndexType;
@@ -90,14 +89,6 @@ namespace K15_Engine { namespace Rendering {
 			
 			UO_COUNT
 		};// UsageOptions
-		/*********************************************************************************/
-		enum eLockOptions
-		{
-			LO_NORMAL = 0,	//<! Allows read/wrote 
-			LO_DISCARD,		//<! Discard the content of the buffer as soon as it gets locked
-
-			LO_COUNT
-		};// LockOptions
 		/*********************************************************************************/
 		enum eBufferType
 		{
@@ -127,12 +118,10 @@ namespace K15_Engine { namespace Rendering {
 		virtual ~GpuBuffer();
 
 		INLINE void setType(Enum p_BufferType);
-		INLINE void setLockOption(Enum p_LockOption);
 		INLINE void setUsageOption(Enum p_UsageOption);
 		INLINE void setAccessOption(Enum p_AccessOption);
 
 		INLINE Enum getType() const;
-		INLINE Enum getLockOption() const;
 		INLINE Enum getUsageOption() const;
 		INLINE Enum getAccessOption() const;
 

@@ -1,8 +1,8 @@
 /**
- * @file K15_VertexBuffer.cpp
+ * @file K15_IndexData.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2013/12/09
+ * @date 2013/11/29
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -19,21 +19,21 @@
 
 #include "K15_PrecompiledHeader.h"
 
-#include "K15_Vertex.h"
-#include "K15_VertexBuffer.h"
-#include "K15_VertexDeclaration.h"
+#include "K15_IndexData.h"
 
 namespace K15_Engine { namespace Rendering {
-	/*********************************************************************************/
-	VertexBuffer::VertexBuffer(const CreationOptions& p_Options)
-		: GpuBuffer(p_Options)
-	{
-		setType(GpuBuffer::BT_VERTEX_BUFFER);	
-	}
-	/*********************************************************************************/
-	VertexBuffer::~VertexBuffer()
-	{
-
-	}
   /*********************************************************************************/
-}}// end of K15_Engine::Core namespace
+  IndexData::IndexData(IndexBuffer* p_IndexBuffer, uint32 p_IndexCount, uint32 p_OffsetInBytes)
+    : m_IndexBuffer(p_IndexBuffer),
+    m_Offset(p_OffsetInBytes),
+    m_IndexCount(p_IndexCount)
+  {
+
+  }
+  /*********************************************************************************/
+  IndexData::~IndexData()
+  {
+
+  }
+  /*********************************************************************************/
+}} // end of K15_Engine::Rendering namespace

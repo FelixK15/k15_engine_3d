@@ -37,7 +37,7 @@ namespace K15_Engine { namespace Rendering {
 	class K15_CORE_API Vertex : public AllocatedObject<BaseAllocatedObject::AC_VERTEX_POOL>
 	{
 	public:
-		Vertex(VertexBuffer* p_Buffer, uint32 p_Index);
+		Vertex(VertexBuffer* p_Buffer, VertexDeclaration* p_Declaration, uint32 p_Index);
 		~Vertex();
 
 		template<class Type>
@@ -62,6 +62,7 @@ namespace K15_Engine { namespace Rendering {
 	private:
 		uint32 m_Index;
 		VertexBuffer* m_Buffer;
+    VertexDeclaration* m_Declaration;
 	};// end of Vertex class declaration
 #	include "K15_Vertex.inl"
 }}// end of K15_Engine::Rendering namespace

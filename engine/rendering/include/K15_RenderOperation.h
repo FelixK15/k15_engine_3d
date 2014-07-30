@@ -44,8 +44,8 @@ namespace K15_Engine { namespace Rendering {
 		/*********************************************************************************/
 
     GameObject* gameobject;
-		IndexBuffer* indexBuffer;
-		VertexBuffer* vertexBuffer;
+		IndexData* indexData;
+		VertexData* vertexData;
 		Material* material;
 		SubMesh* subMesh;
 		AlphaState* alphaState;
