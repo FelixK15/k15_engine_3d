@@ -51,7 +51,7 @@ namespace K15_Engine { namespace Core {
         m_FileName = "lib" + m_FileName;
 		String path = g_Application->getGameRootDir() + m_FileName;
 		K15_LOG_NORMAL("Trying to load \"%s\".",path.c_str());
-		m_Module = dlopen(path.c_str(),RTLD_NOW);
+        m_Module = dlopen(path.c_str(), RTLD_LAZY);
 
 		if(!m_Module)
 		{

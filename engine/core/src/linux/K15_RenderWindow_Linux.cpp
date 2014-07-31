@@ -53,10 +53,33 @@ namespace K15_Engine { namespace Core {
             uint32 width = RenderWindow::getWidth() == 0 ? 800 : RenderWindow::getWidth();
             uint32 height = RenderWindow::getHeight() == 0 ? 600 : RenderWindow::getHeight();
 
-            ms_Window = XCreateSimpleWindow(ms_Display, rootwin, 0, 0,
-                                            width, height, 0,
-                                            XBlackPixel(ms_Display, screen),
-                                            XBlackPixel(ms_Display, screen));
+            XVisualInfo* vi = 0;
+            XSetWindowAttributes windowAttribs;
+            int attribList[X_ATTRIB_ARRAY_SIZE] = {0};
+
+            //Get VisualInfo struct for our attributes
+            int size = getXAttributes(attribList, X_ATTRIB_ARRAY_SIZE, false);
+            vi = glXChooseVisual(ms_Display, screen, attribList);
+
+            //we just need the visual and depth. Free VisualInfo afterwards
+            Visual* visual = vi->visual;
+            int depth = vi->depth;
+            XFree(vi); vi = 0;
+
+            if(visual->c_class == DirectColor)
+            {
+                printf("directcolor");
+            }
+
+            windowAttribs.override_redirect = False;
+            windowAttribs.background_pixmap = None;
+            windowAttribs.border_pixel = 0;
+            windowAttribs.colormap = XCreateColormap(ms_Display, rootwin, visual, AllocNone);
+
+            ms_Window = XCreateWindow(ms_Display, rootwin, 0, 0, width, height, 0,
+                                      depth, InputOutput, visual,
+                                      CWOverrideRedirect | CWBackPixmap |
+                                      CWBorderPixel | CWColormap, &windowAttribs);
 
             XSelectInput(ms_Display, ms_Window, ms_NotifyFlags);
 
@@ -76,6 +99,7 @@ namespace K15_Engine { namespace Core {
             return false;
         }
 
+        XFlush(ms_Display);
         K15_LOG_SUCCESS("Succesfully created X11 window.");
 
         return true;
@@ -106,6 +130,56 @@ namespace K15_Engine { namespace Core {
     void RenderWindow_Linux::setIsFullscreen(bool p_Fullscreen)
     {
 
+    }
+    /*********************************************************************************/
+    int RenderWindow_Linux::getXAttributes(int* p_AttribArray, int p_AttribArraySize, bool p_FBConfig)
+    {
+        K15_ASSERT(p_AttribArraySize >= X_ATTRIB_ARRAY_SIZE,
+          StringUtil::format("Array size for RenderWindow::getXAttributs of %d is insufficient. %d is required.",
+          p_AttribArraySize, X_ATTRIB_ARRAY_SIZE));
+
+        int i = 0;
+        int colorComponentSize = 8; //TODO: get size from config
+        int depthSize = 24;
+        int stencilSize = 8;
+        if(p_FBConfig)
+        {
+            p_AttribArray[i++] = GLX_RENDER_TYPE;
+            p_AttribArray[i++] = GLX_RGBA_BIT;
+        }
+        else
+        {
+            p_AttribArray[i++] = GLX_RGBA;
+        }
+
+        p_AttribArray[i++] = GLX_RED_SIZE;
+        p_AttribArray[i++] = colorComponentSize;
+
+        p_AttribArray[i++] = GLX_GREEN_SIZE;
+        p_AttribArray[i++] = colorComponentSize;
+
+        p_AttribArray[i++] = GLX_BLUE_SIZE;
+        p_AttribArray[i++] = colorComponentSize;
+
+        p_AttribArray[i++] = GLX_ALPHA_SIZE;
+        p_AttribArray[i++] = colorComponentSize;
+
+        p_AttribArray[i++] = GLX_DOUBLEBUFFER;
+
+        if(p_FBConfig)
+        {
+            p_AttribArray[i++] = True;
+        }
+
+        p_AttribArray[i++] = GLX_DEPTH_SIZE;
+        p_AttribArray[i++] = depthSize;
+
+        p_AttribArray[i++] = GLX_STENCIL_SIZE;
+        p_AttribArray[i++] = stencilSize;
+
+        p_AttribArray[i] = None;
+
+        return i;
     }
     /*********************************************************************************/
 }} //end of K15_Engine::Core namespace

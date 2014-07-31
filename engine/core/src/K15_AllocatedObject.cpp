@@ -39,7 +39,7 @@ namespace K15_Engine { namespace Core {
   uint32 BaseAllocatedObject::CoreAllocatorSizes::ProfilingAllocatorSize = size_megabyte(9);
   uint32 BaseAllocatedObject::CoreAllocatorSizes::ProfilingNodePoolCount = 128;
 #endif //K15_DEBUG
-  uint32 BaseAllocatedObject::CoreAllocatorSizes::RenderAllocatorSize = size_megabyte(10);
+  uint32 BaseAllocatedObject::CoreAllocatorSizes::RenderAllocatorSize = size_megabyte(15);
   uint32 BaseAllocatedObject::CoreAllocatorSizes::GameEventAllocatorSize = size_megabyte(1);
   uint32 BaseAllocatedObject::CoreAllocatorSizes::ThreadingAllocatorSize = size_megabyte(1);
   uint32 BaseAllocatedObject::CoreAllocatorSizes::TaskAllocatorSize = size_megabyte(1);

@@ -174,7 +174,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 			m_Extensions = _getExtensions();
 			_loadExtensions();
 
-			kglGenProgramPipelines(1,&m_ProgramPipeline);
+            kglGenProgramPipelines(1,&m_ProgramPipeline);
 			kglBindProgramPipeline(m_ProgramPipeline);
 
 			kglGenVertexArrays(1,&m_VertexArray);
@@ -462,7 +462,11 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 			if((index = glGetAttribLocation(program,semanticname)) != -1)
 			{
 				glEnableVertexAttribArray(index);
-				glVertexAttribPointer(index,element.size,VertexDeclarationImpl::GLVertexElementTypeConverter[element.type],GL_FALSE,p_Declaration->getVertexSize(),(void*)element.offset);
+                glVertexAttribPointer(index,
+                                      element.size,
+                                      VertexDeclarationImpl::GLVertexElementTypeConverter[element.type],
+                                      GL_FALSE,p_Declaration->getVertexSize(),
+                                      (const GLvoid*)element.offset);
 			}
 			else
 			{
@@ -629,9 +633,114 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		{
 			kglGenProgramPipelines = glGenProgramPipelines;
 			kglBindProgramPipeline = glBindProgramPipeline;
+            kglValidateProgramPipeline = glValidateProgramPipeline;
+            kglGetProgramPipelineInfoLog = glGetProgramPipelineInfoLog;
+            //glProgramUniform*i
+            kglProgramUniform1i = glProgramUniform1i;
+            kglProgramUniform2i = glProgramUniform2i;
+            kglProgramUniform3i = glProgramUniform3i;
+            kglProgramUniform4i = glProgramUniform4i;
+            //glProgramUniform*ui
+            kglProgramUniform1ui = glProgramUniform1ui;
+            kglProgramUniform2ui = glProgramUniform2ui;
+            kglProgramUniform3ui = glProgramUniform3ui;
+            kglProgramUniform4ui = glProgramUniform4ui;
+            //glProgramUniform*d
+            kglProgramUniform1d = glProgramUniform1d;
+            kglProgramUniform2d = glProgramUniform2d;
+            kglProgramUniform3d = glProgramUniform3d;
+            kglProgramUniform4d = glProgramUniform4d;
+            //glProgramUniform*f
+            kglProgramUniform1f = glProgramUniform1f;
+            kglProgramUniform2f = glProgramUniform2f;
+            kglProgramUniform3f = glProgramUniform3f;
+            kglProgramUniform4f = glProgramUniform4f;
+            //glProgramUniform*iv
+            kglProgramUniform1iv = glProgramUniform1iv;
+            kglProgramUniform2iv = glProgramUniform2iv;
+            kglProgramUniform3iv = glProgramUniform3iv;
+            kglProgramUniform4iv = glProgramUniform4iv;
+            //glProgramUniform*uiv
+            kglProgramUniform1uiv = glProgramUniform1uiv;
+            kglProgramUniform2uiv = glProgramUniform2uiv;
+            kglProgramUniform3uiv = glProgramUniform3uiv;
+            kglProgramUniform4uiv = glProgramUniform4uiv;
+            //glProgramUniform*fv
+            kglProgramUniform1fv = glProgramUniform1fv;
+            kglProgramUniform2fv = glProgramUniform2fv;
+            kglProgramUniform3fv = glProgramUniform3fv;
+            kglProgramUniform4fv = glProgramUniform4fv;
+            //glProgramUniform*dv
+            kglProgramUniform1dv = glProgramUniform1dv;
+            kglProgramUniform2dv = glProgramUniform2dv;
+            kglProgramUniform3dv = glProgramUniform3dv;
+            kglProgramUniform4dv = glProgramUniform4dv;
+            //glProgramUniformMatrix*fv
+            kglProgramUniformMatrix2fv = glProgramUniformMatrix2fv;
+            kglProgramUniformMatrix3fv = glProgramUniformMatrix3fv;
+            kglProgramUniformMatrix4fv = glProgramUniformMatrix4fv;
+            //glProgramUniformMatrix*dv
+            kglProgramUniformMatrix2dv = glProgramUniformMatrix2dv;
+            kglProgramUniformMatrix3dv = glProgramUniformMatrix3dv;
+            kglProgramUniformMatrix4dv = glProgramUniformMatrix4dv;
 		}
+        else
+        {
 	#endif //!K15_GL_FORCE_EMULATED_EXTENSIONS
-		//TODO Emulation
+            K15_LOG_WARNING("Emulating \"GL_ARB_separate_shader_objects\"...");
+            kglGenProgramPipelines = _kglGenProgramPipelines;
+            kglBindProgramPipeline = _kglBindProgramPipeline;
+            kglValidateProgramPipeline = _kglValidateProgramPipeline;
+            kglGetProgramPipelineInfoLog = _kglGetProgramPipelineInfoLog;
+            //glProgramUniform*i
+            /*kglProgramUniform1i = _kglProgramUniform1i;
+            kglProgramUniform2i = _kglProgramUniform2i;
+            kglProgramUniform3i = _kglProgramUniform3i;
+            kglProgramUniform4i = _kglProgramUniform4i;
+            //glProgramUniform*ui
+            kglProgramUniform1ui = _kglProgramUniform1ui;
+            kglProgramUniform2ui = _kglProgramUniform2ui;
+            kglProgramUniform3ui = _kglProgramUniform3ui;
+            kglProgramUniform4ui = _kglProgramUniform4ui;
+            //glProgramUniform*d
+            kglProgramUniform1d = _kglProgramUniform1d;
+            kglProgramUniform2d = _kglProgramUniform2d;
+            kglProgramUniform3d = _kglProgramUniform3d;
+            kglProgramUniform4d = _kglProgramUniform4d;
+            //glProgramUniform*f
+            kglProgramUniform1f = _kglProgramUniform1f;
+            kglProgramUniform2f = _kglProgramUniform2f;
+            kglProgramUniform3f = _kglProgramUniform3f;
+            kglProgramUniform4f = _kglProgramUniform4f;
+            //glProgramUniform*iv
+            kglProgramUniform1iv = _kglProgramUniform1iv;
+            kglProgramUniform2iv = _kglProgramUniform2iv;
+            kglProgramUniform3iv = _kglProgramUniform3iv;
+            kglProgramUniform4iv = _kglProgramUniform4iv;
+            //glProgramUniform*uiv
+            kglProgramUniform1uiv = _kglProgramUniform1uiv;
+            kglProgramUniform2uiv = _kglProgramUniform2uiv;
+            kglProgramUniform3uiv = _kglProgramUniform3uiv;
+            kglProgramUniform4uiv = _kglProgramUniform4uiv;
+            //glProgramUniform*fv
+            kglProgramUniform1fv = _kglProgramUniform1fv;
+            kglProgramUniform2fv = _kglProgramUniform2fv;
+            kglProgramUniform3fv = _kglProgramUniform3fv;
+            kglProgramUniform4fv = _kglProgramUniform4fv;
+            //glProgramUniform*dv
+            kglProgramUniform1dv = _kglProgramUniform1dv;
+            kglProgramUniform2dv = _kglProgramUniform2dv;
+            kglProgramUniform3dv = _kglProgramUniform3dv;
+            kglProgramUniform4dv = _kglProgramUniform4dv;
+            //glProgramUniformMatrix*fv
+            kglProgramUniformMatrix2fv = _kglProgramUniformMatrix2fv;
+            kglProgramUniformMatrix3fv = _kglProgramUniformMatrix3fv;
+            kglProgramUniformMatrix4fv = _kglProgramUniformMatrix4fv;
+            //glProgramUniformMatrix*dv
+            kglProgramUniformMatrix2dv = _kglProgramUniformMatrix2dv;
+            kglProgramUniformMatrix3dv = _kglProgramUniformMatrix3dv;
+            kglProgramUniformMatrix4dv = _kglProgramUniformMatrix4dv;*/
+        }
 
 	#ifndef K15_GL_FORCE_EMULATED_EXTENSIONS
 		if(_isExtensionSupported("GL_ARB_sampler_objects"))

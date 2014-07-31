@@ -36,8 +36,8 @@ namespace K15_Engine { namespace Rendering {
     VertexData(VertexDeclaration* p_VertexDeclaration, VertexBuffer* p_VertexBuffer, uint32 p_Offset, uint32 p_VertexCount);
     ~VertexData();
 
-    INLINE VertexDeclaration* VertexData::getVertexDeclaration() const;
-    INLINE VertexBuffer* VertexData::getVertexBuffer() const;
+    INLINE VertexDeclaration* getVertexDeclaration() const;
+    INLINE VertexBuffer* getVertexBuffer() const;
     INLINE uint32 getOffsetInBytes() const;
     INLINE uint32 getVertexCount() const;
 

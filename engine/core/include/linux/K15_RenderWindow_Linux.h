@@ -40,11 +40,13 @@ namespace K15_Engine { namespace Core {
         static void setResolution(const Resolution& p_Resolution);
         static void setIsFullscreen(bool p_Fullscreen);
 
+        static int getXAttributes(int* p_AttribArray, int p_AttribArraySize, bool p_FBConfig);
     public:
         static Display* ms_Display;
         static Window ms_Window;
         static GLXWindow ms_GLXWindow;
         static uint32 ms_NotifyFlags;
+        static const int X_ATTRIB_ARRAY_SIZE = 17;
         static Atom ms_DeleteWindowID;
     };
 }} //end of K15_Engine::Core namespace

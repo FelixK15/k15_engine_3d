@@ -31,22 +31,25 @@
 	#include "WGL/K15_OpenGL_WGL.h"
     #define K15_RENDERER_API __declspec(dllexport)
 	#define K15_DESKTOP_GL
-	#define K15_MIN_GL_VERSION_MAJOR 3
-	#define K15_MIN_GL_VERSION_MINOR 0
 #elif defined K15_OS_LINUX
 	#include "GLX/K15_OpenGL_GLX.h"
     #define K15_RENDERER_API
 	#define K15_DESKTOP_GL
-	#define K15_MIN_GL_VERSION_MAJOR 3
-	#define K15_MIN_GL_VERSION_MINOR 0
 #elif defined K15_OS_ANDROID || defined K15_OS_IOS
 	#include "GLES2/K15_OpenGL_GLES2.h"
     #define K15_RENDERER_API
 	#define K15_EMBEDDED_GL
-	#define K15_MIN_GL_VERSION_MAJOR 2
-	#define K15_MIN_GL_VERSION_MINOR 0
 #endif //K15_OS_WINDOWS
 
+#ifdef K15_DESKTOP_GL
+    #define K15_MIN_GL_VERSION_MAJOR 3
+    #define K15_MIN_GL_VERSION_MINOR 0
+    #define K15_MAX_GL_VERSION_MAJOR 4
+    #define K15_MAX_GL_VERSION_MINOR 4
+#elif defined K15_EMBEDDED_GL
+    #define K15_MIN_GL_VERSION_MAJOR 2
+    #define K15_MIN_GL_VERSION_MINOR 0
+#endif
 #include "K15_OpenGL_Extensions.h"
 
 

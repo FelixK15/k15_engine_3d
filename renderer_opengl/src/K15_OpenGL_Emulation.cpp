@@ -20,6 +20,15 @@
 #include "K15_OpenGL_Emulation.h"
 
 namespace K15_Engine { namespace Rendering { namespace OpenGL {
+    /*********************************************************************************/
+    /*struct internal
+    {
+        //GL_ARB_separate_shader_objects
+        static uint32 shader_pipelines;
+        static uint32 active_pipeline;
+    };*/
+    /*********************************************************************************/
+
 	/*********************************************************************************/
 	void GLAPIENTRY _kglTextureImage1DEXT(GLuint texture, GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const GLvoid *pixels)
 	{
@@ -83,4 +92,96 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		return unmapSuccessfully;
 	}
 	/*********************************************************************************/
+
+    //GL_ARB_separate_shader_objects
+    /*********************************************************************************/
+    void GLAPIENTRY _kglGenProgramPipelines(GLsizei n, GLuint* pipelines)
+    {
+        for(int i = 0; i < n; ++i)
+        {
+            //pipelines[i] = internal::shader_pipelines++;
+        }
+    }
+    /*********************************************************************************/
+    void GLAPIENTRY _kglBindProgramPipeline(GLuint pipeline)
+    {
+        //internal::active_pipeline = pipeline;
+    }
+    /*********************************************************************************/
+    void GLAPIENTRY _kglDeleteProgramPipelines(GLsizei n, const GLuint* pipelines)
+    {
+
+    }
+    /*********************************************************************************/
+    void GLAPIENTRY _kglUseProgramStages(GLuint pipeline, GLbitfield stages, GLuint program)
+    {
+
+    }
+    /*********************************************************************************/
+    void GLAPIENTRY _kglActiveShaderProgram(GLuint pipeline, GLuint program)
+    {
+
+    }
+    /*********************************************************************************/
+    GLuint GLAPIENTRY _kglCreateShaderProgramv(GLenum type, GLsizei count, const GLchar ** strings)
+    {
+        return 0;
+    }
+    /*********************************************************************************/
+    void GLAPIENTRY _kglProgramParemteri(GLuint program, GLenum pname, GLint value)
+    {
+
+    }
+    /*********************************************************************************/
+    void GLAPIENTRY _kglProgramUniform1i(GLuint program, GLint location, GLint x)
+    {
+
+    }
+    /*********************************************************************************/
+    void GLAPIENTRY _kglProgramUniform2i(GLuint program, GLint location, GLint x, GLint y)
+    {
+
+    }
+    /*********************************************************************************/
+    void GLAPIENTRY _kglProgramUniform3i(GLuint program, GLint location, GLint x, GLint y, GLint z)
+    {
+
+    }
+    /*********************************************************************************/
+    void GLAPIENTRY _kglProgramUniform4i(GLuint program, GLint location, GLint x, GLint y, GLint z, GLint w)
+    {
+
+    }
+    /*********************************************************************************/
+    void GLAPIENTRY _kglProgramUniform1ui(GLuint program, GLint location, GLuint x)
+    {
+
+    }
+    /*********************************************************************************/
+    void GLAPIENTRY _kglProgramUniform2ui(GLuint program, GLint location, GLuint x, GLuint y)
+    {
+
+    }
+    /*********************************************************************************/
+    void GLAPIENTRY _kglProgramUniform3ui(GLuint program, GLint location, GLuint x, GLuint y, GLuint z)
+    {
+
+    }
+    /*********************************************************************************/
+    void GLAPIENTRY _kglProgramUniform4ui(GLuint program, GLint location, GLuint x, GLuint y, GLuint z, GLuint w)
+    {
+
+    }
+    /*********************************************************************************/
+    void GLAPIENTRY _kglValidateProgramPipeline(GLuint pipeline)
+    {
+
+    }
+    /*********************************************************************************/
+    void GLAPIENTRY _kglGetProgramPipelineInfoLog(GLuint pipeline, GLsizei bufSize, GLsizei* length, GLchar *infoLog)
+    {
+
+    }
+    /*********************************************************************************/
+
 }}} //end of K15_Engine::Rendering::OpenGL namespace
