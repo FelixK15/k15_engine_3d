@@ -34,25 +34,16 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	/*********************************************************************************/
 	GpuProgramImpl::GpuProgramImpl()
 		: GpuProgramImplBase(),
-		m_Program(0),
-		m_Shader(0)
-
+        m_Program(GL_NONE),
+        m_Shader(GL_NONE)
 	{
 	
 	}
 	/*********************************************************************************/
 	GpuProgramImpl::~GpuProgramImpl()
 	{
-		if(m_Shader > 0)
-		{
-			glDetachShader(m_Program,m_Shader);
-			glDeleteShader(m_Shader);
-		}
-
-		if(m_Program > 0)
-		{
-			glDeleteProgram(m_Program);
-		}
+        _deleteShaderGL();
+        _deleteProgramGL();
 	}
 	/*********************************************************************************/
 	void GpuProgramImpl::reflect()
@@ -187,6 +178,8 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 							g_Application->getRenderer()->setLastError(errorMsg);
 						}
 					}
+
+                    glDetachShader(m_Program, m_Shader);
 				}
 			}
 		}
@@ -228,6 +221,23 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	{
 		return m_Program;
 	}
+    /*********************************************************************************/
+    GLuint GpuProgramImpl::getShaderGL() const
+    {
+        return m_Shader;
+    }
+    /*********************************************************************************/
+    void GpuProgramImpl::setProgramGL(const GLuint p_ProgramGL)
+    {
+        _deleteProgramGL();
+        m_Program = p_ProgramGL;
+    }
+    /*********************************************************************************/
+    void GpuProgramImpl::setShaderGL(const GLuint p_ShaderGL)
+    {
+        _deleteShaderGL();
+        m_Shader = p_ShaderGL;
+    }
 	/*********************************************************************************/
 	Enum GpuProgramImpl::_getParameterType(GLenum p_GLType)
 	{
@@ -278,6 +288,24 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 
 		return GpuProgramParameter::VT_UNKNOW;
 	}
+    /*********************************************************************************/
+    void GpuProgramImpl::_deleteProgramGL()
+    {
+        if(m_Shader > 0)
+        {
+            glDeleteShader(m_Shader);
+            m_Shader = GL_NONE;
+        }
+    }
+    /*********************************************************************************/
+    void GpuProgramImpl::_deleteShaderGL()
+    {
+        if(m_Program > GL_NONE)
+        {
+            glDeleteProgram(m_Program);
+            m_Program = GL_NONE;
+        }
+    }
 	/*********************************************************************************/
 	String GpuProgramImpl::getShaderExtension(Enum p_ProgramStage)
 	{

@@ -50,9 +50,14 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		virtual String getShaderExtension(Enum p_ProgramStage) OVERRIDE;
 
 		GLuint getProgramGL() const;
+        GLuint getShaderGL() const;
 
+        void setProgramGL(const GLuint p_ProgramGL);
+        void setShaderGL(const GLuint p_ShaderGL);
 	private:
 		Enum _getParameterType(GLenum p_GLType);
+        void _deleteShaderGL();
+        void _deleteProgramGL();
 
 	private:
 		GLuint m_Program;

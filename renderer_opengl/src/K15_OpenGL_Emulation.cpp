@@ -18,15 +18,24 @@
  */
 
 #include "K15_OpenGL_Emulation.h"
+#include "K15_OpenGL_GpuProgramBatchImpl.h"
+#include "K15_OpenGL_GpuProgramImpl.h"
+
+#include "K15_Application.h"
+#include "K15_OpenGL_Renderer.h"
 
 namespace K15_Engine { namespace Rendering { namespace OpenGL {
     /*********************************************************************************/
-    /*struct internal
+    struct internal
     {
-        //GL_ARB_separate_shader_objects
-        static uint32 shader_pipelines;
-        static uint32 active_pipeline;
-    };*/
+        struct ARB_separate_shader_objects
+        {
+            static uint32 MAX_PIPELINE_PROGRAMS = 32;
+            static GpuProgramBatch* pipelinePrograms[MAX_PIPELINE_PROGRAMS] = {0};
+            static uint32 shader_pipelines = 0;
+            static uint32 active_pipeline = 0;
+        };
+    };
     /*********************************************************************************/
 
 	/*********************************************************************************/
@@ -60,34 +69,50 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	/*********************************************************************************/
 	void GLAPIENTRY _kglNamedBufferDataEXT(GLuint buffer, GLsizeiptr size, const GLvoid *data, GLenum usage)
 	{
-		//it doesn't care where we bind the buffer to (http://www.opengl.org/wiki/Buffer_Object)
-		glBindBuffer(GL_COPY_WRITE_BUFFER, buffer);
-		glBufferData(GL_COPY_WRITE_BUFFER, size, data, usage);
-		glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
+        //doesn't care where we bind the buffer to (http://www.opengl.org/wiki/Buffer_Object)
+        Renderer* renderer = static_cast<Renderer*>(g_Application->getRenderer());
+        GLuint previousBoundBuffer = renderer ? renderer->getBoundGLBuffer(GpuBuffer::BT_VERTEX_BUFFER) :
+                                                GL_NONE;
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        glBufferData(GL_ARRAY_BUFFER, size, data, usage);
+        glBindBuffer(GL_ARRAY_BUFFER, previousBoundBuffer);
 	}
 	/*********************************************************************************/
 	void GLAPIENTRY _kglNamedBufferSubDataEXT(GLuint buffer, GLintptr offset, GLsizeiptr size, const GLvoid *data)
 	{
-		glBindBuffer(GL_COPY_WRITE_BUFFER, buffer);
-		glBufferSubData(GL_COPY_WRITE_BUFFER, offset, size, data);
-		glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
-	}
+        //doesn't care where we bind the buffer to (http://www.opengl.org/wiki/Buffer_Object)
+        Renderer* renderer = static_cast<Renderer*>(g_Application->getRenderer());
+        GLuint previousBoundBuffer = renderer ? renderer->getBoundGLBuffer(GpuBuffer::BT_VERTEX_BUFFER) :
+                                                GL_NONE;
+
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
+        glBindBuffer(GL_ARRAY_BUFFER, previousBoundBuffer);
+    }
 	/*********************************************************************************/
 	void* GLAPIENTRY _kglMapNamedBufferEXT(GLuint buffer, GLenum access)
 	{
-		// we can undbind buffer after mapping it. (http://www.opengl.org/wiki/Buffer_Object#Mapping)
+        Renderer* renderer = static_cast<Renderer*>(g_Application->getRenderer());
+        GLuint previousBoundBuffer = renderer ? renderer->getBoundGLBuffer(GpuBuffer::BT_VERTEX_BUFFER) :
+                                                GL_NONE;
+
+        // we can undbind the buffer after mapping it. (http://www.opengl.org/wiki/Buffer_Object#Mapping)
 		void* bufferData = 0;
-		glBindBuffer(GL_COPY_WRITE_BUFFER, buffer);
-		bufferData = glMapBuffer(GL_COPY_WRITE_BUFFER, access);
-		glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        bufferData = glMapBuffer(GL_ARRAY_BUFFER, access);
+        glBindBuffer(GL_ARRAY_BUFFER, previousBoundBuffer);
 		return bufferData;
 	}
 	/*********************************************************************************/
 	GLboolean GLAPIENTRY _kglUnmapNamedBufferEXT(GLuint buffer)
-	{
-		glBindBuffer(GL_COPY_WRITE_BUFFER, buffer);
-		GLboolean unmapSuccessfully = glUnmapBuffer(GL_COPY_WRITE_BUFFER);
-		glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
+    {
+        Renderer* renderer = static_cast<Renderer*>(g_Application->getRenderer());
+        GLuint previousBoundBuffer = renderer ? renderer->getBoundGLBuffer(GpuBuffer::BT_VERTEX_BUFFER) :
+                                                GL_NONE;
+
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        GLboolean unmapSuccessfully = glUnmapBuffer(GL_ARRAY_BUFFER);
+        glBindBuffer(GL_ARRAY_BUFFER, previousBoundBuffer);
 
 		return unmapSuccessfully;
 	}
@@ -97,25 +122,94 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
     /*********************************************************************************/
     void GLAPIENTRY _kglGenProgramPipelines(GLsizei n, GLuint* pipelines)
     {
+        K15_ASSERT(n + internal::ARB_separate_shader_objects::shader_pipelines
+                   <= internal::ARB_separate_shader_objects::MAX_PIPELINE_PROGRAMS,
+                   "Max pipeline programs reached.");
+
         for(int i = 0; i < n; ++i)
         {
-            //pipelines[i] = internal::shader_pipelines++;
+            for(uint32 j = internal::ARB_separate_shader_objects::shader_pipelines;
+                j < internal::ARB_separate_shader_objects::MAX_PIPELINE_PROGRAMS; ++j)
+            {
+                if(!internal::ARB_separate_shader_objects::pipelinePrograms[j])
+                {
+                    internal::ARB_separate_shader_objects::pipelinePrograms[j] =
+                            K15_NEW GpuProgramBatch();
+
+                    pipelines[i] = j;
+                }
+            }
         }
     }
     /*********************************************************************************/
     void GLAPIENTRY _kglBindProgramPipeline(GLuint pipeline)
     {
-        //internal::active_pipeline = pipeline;
+        K15_ASSERT(pipeline < internal::ARB_separate_shader_objects::MAX_PIPELINE_PROGRAMS,
+                   "passes pipeline object out of bounds.");
+
+        GpuProgramBatch* pipelineProgram =
+                internal::ARB_separate_shader_objects::pipelinePrograms[pipeline];
+
+        RendererBase* renderer = g_Application->getRenderer();
+        renderer->bindGpuProgramBatch(pipelineProgram);
     }
     /*********************************************************************************/
     void GLAPIENTRY _kglDeleteProgramPipelines(GLsizei n, const GLuint* pipelines)
     {
+        GpuProgramBatch* pipelineProgram = 0;
+        for(int i = 0; i < n; ++i)
+        {
+            K15_ASSERT(pipelines[i] <= internal::ARB_separate_shader_objects::MAX_PIPELINE_PROGRAMS,
+                       StringUtil::format("pipelines index %d out of bounds.", i));
 
+            pipelineProgram = internal::ARB_separate_shader_objects::pipelinePrograms[pipelines[i]];
+            K15_DELETE pipelineProgram;
+            internal::ARB_separate_shader_objects::pipelinePrograms[pipelines[i]] = 0;
+        }
     }
     /*********************************************************************************/
     void GLAPIENTRY _kglUseProgramStages(GLuint pipeline, GLbitfield stages, GLuint program)
     {
+        K15_ASSERT(pipeline <= internal::ARB_separate_shader_objects::MAX_PIPELINE_PROGRAMS,
+                   StringUtil::format("pipeline index %d out of bounds", pipeline));
 
+        GpuProgramBatch* pipeline = internal::ARB_separate_shader_objects::pipelinePrograms[pipeline];
+
+        K15_ASSERT(pipeline, StringUtil::format("pipeline index %d is invalid.", pipeline));
+
+        Enum shaderType = 0xFFFFFFFF;
+
+        if(stages == GL_VERTEX_SHADER_BIT)
+        {
+            shaderType = GpuProgram::PS_VERTEX;
+        }
+        else if(stages == GL_FRAGMENT_SHADER_BIT)
+        {
+            shaderTy[e = GpuProgram::PS_FRAGMENT;
+        }
+
+        K15_ASSERT(shaderType < 0xFFFFFFFF, StringUtil::format("invalid shader stage %d", stages));
+
+
+        //stages will only contain one shader stage in the case of the k15 engine
+        Renderer* renderer = static_cast<Renderer*>(g_Application->getRenderer());
+        GpuProgram* shaderProgram = g_Application->getRenderer()->getBoundGpuProgram(shaderType);
+        GpuProgramImpl* programImpl = static_cast<GpuProgramImpl*>(shaderProgram->getImpl());
+
+        GLuint glShader = programImpl->getShaderGL();
+
+        //delete old program and attach new program with new gl shader
+        if(GpuProgram* previousProgram = pipeline->getGpuProgramByStage(shaderType))
+        {
+            pipeline->removeGpuProgram(shaderType);
+            K15_DELETE previousProgram;
+        }
+
+        GpuProgram* newProgram = K15_NEW GpuProgram(shaderProgram->getName(), shaderType);
+        GpuProgramImpl* newProgramImpl = static_cast<GpuProgramImpl*>(newProgram->getImpl());
+
+        newProgramImpl->setShaderGL(glShader);
+        pipeline->addGpuProgram(newProgram, true);
     }
     /*********************************************************************************/
     void GLAPIENTRY _kglActiveShaderProgram(GLuint pipeline, GLuint program)
@@ -125,6 +219,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
     /*********************************************************************************/
     GLuint GLAPIENTRY _kglCreateShaderProgramv(GLenum type, GLsizei count, const GLchar ** strings)
     {
+
         return 0;
     }
     /*********************************************************************************/

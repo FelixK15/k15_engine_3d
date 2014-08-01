@@ -43,6 +43,13 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		static const GLenum GLBlendOperationConverter[AlphaState::BO_COUNT];
 		static const GLenum GLBlendFunctionConverter[AlphaState::BF_COUNT];
 		/*********************************************************************************/
+
+    public:
+        /*********************************************************************************/
+        GLuint getBoundGLBuffer(GLenum p_Target);
+        GLuint getBoundGLShader(GLenum p_ShaderType);
+        /*********************************************************************************/
+
 	public:
 		Renderer();
 		virtual ~Renderer();

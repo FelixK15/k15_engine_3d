@@ -127,8 +127,38 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	}
 	/*********************************************************************************/
 
-	/*********************************************************************************/
-	Renderer::Renderer()
+    /*********************************************************************************/
+    GLuint Renderer::getBoundGLBuffer(Enum p_BufferType)
+    {
+        GLuint glBuffer = GL_NONE;
+        GpuBuffer* boundBuffer = getBoundBuffer(p_BufferType);
+
+        if(boundBuffer)
+        {
+            GpuBufferImpl* buffer = static_cast<GpuBufferImpl*>(boundBuffer->getImpl());
+            glBuffer = buffer->getBufferGL();
+        }
+
+        return glBuffer;
+    }
+    /*********************************************************************************/
+    GLuint Renderer::getBoundGLShader(Enum p_ShaderType)
+    {
+        GLuint glShader = GL_NONE;
+        GpuProgram* boundProgram = getBoundGpuProgram(p_ShaderType);
+
+        if(boundProgram)
+        {
+            GpuProgramImpl* program = static_cast<GpuProgramImpl*>(boundProgram->getImpl());
+            glShader = program->getProgramGL();
+        }
+
+        return glShader;
+    }
+    /*********************************************************************************/
+
+    /*********************************************************************************/
+    Renderer::Renderer()
 		: RendererBase(),
 		  m_ProgramPipeline(0),
 		  m_VertexArray(0)
