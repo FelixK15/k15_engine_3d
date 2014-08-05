@@ -1,9 +1,9 @@
 # README #
 
 The K15 Engine 3D is a 3D Game Engine which is currently in heavy development.
-It is the successor to my 2D Game Engine the K15 Engine.
+It is the successor to my 2D Game Engine the [K15 Engine](https://bitbucket.org/FelixK15/k15-engine).
 
-The engine is in development since late 2002 and has been refactored several times since then as this is a project I work on in my spare time to test various techniques related with game and engine design.
+The engine is in development since late 2012 and has been refactored several times since then as this is a project I work on in my spare time to test various techniques related with game and engine design.
 
 ### Features ###
 
@@ -20,7 +20,7 @@ Currently the engine supports the following features:
 * Custom RTTI system
 * Custom memory management system
 * Allows for multithreaded applications through threadworker/threadpool system
-* Comes with several tools e.g. for enum name creation or automatic code generation
+* Comes with several tools e.g. for [enum name creation](https://bitbucket.org/FelixK15/enumparser) or automatic code generation
 * Light core, doesn't depend on 'big' libraries like SDL or Qt for multiplatform features
 * CMake compatible
 
@@ -55,7 +55,7 @@ There are more libraries in the /dependencies/ folder but they are either obsole
 
 As the engine is in ongoing development there are still some major features missing I definitely want to implement for 1.0 release. The following features are currently only existing on my ToDo List:
 
-* Physics using Bullet
+* Physics using Bullet (via plugin to keep the core light)
 * Network communication via enet
 * Sophisticated debugging tools (memory/performance)
 * Support for Mac, iOS and Ouya.
