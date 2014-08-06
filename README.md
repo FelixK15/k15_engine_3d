@@ -65,4 +65,4 @@ As the engine is in ongoing development there are still some major features miss
 ### Work In Progress ###
 
 At the moment I'm working on the implementation of the OpenGL renderer for versions >= 3.3.
-For 1.0 only the OpenGL renderer will be released albeit for OpenGL >= 3.3 and <= 4.0 (this will probably end up in 2 separate renderers).
+For 1.0 only the OpenGL renderer will be released albeit for OpenGL <= 3.3 and <= 4.0 (this will probably end up in 2 separate renderers).
