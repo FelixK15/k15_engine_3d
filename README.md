@@ -22,7 +22,7 @@ Currently the engine supports the following features:
 * Allows for multithreaded applications through threadworker/threadpool system
 * Comes with several tools e.g. for [enum name creation](https://bitbucket.org/FelixK15/enumparser) or automatic code generation
 * Light core, doesn't depend on 'big' libraries like SDL or Qt for multiplatform features
-* CMake compatible
+* CMake build files
 
 ## Content ###
 
