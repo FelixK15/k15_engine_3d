@@ -198,16 +198,18 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 
         GLuint glShader = programImpl->getShaderGL();
 
-        //delete old program and attach new program with new gl shader
+        //delete old program
         if(GpuProgram* previousProgram = pipeline->getGpuProgramByStage(shaderType))
         {
             pipeline->removeGpuProgram(shaderType);
             K15_DELETE previousProgram;
         }
 
+        //create new program
         GpuProgram* newProgram = K15_NEW GpuProgram(shaderProgram->getName(), shaderType);
         GpuProgramImpl* newProgramImpl = static_cast<GpuProgramImpl*>(newProgram->getImpl());
 
+        //attach gl shader from old (previously deleted) program
         newProgramImpl->setShaderGL(glShader);
         pipeline->addGpuProgram(newProgram, true);
     }
@@ -230,7 +232,8 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
     /*********************************************************************************/
     void GLAPIENTRY _kglProgramUniform1i(GLuint program, GLint location, GLint x)
     {
-
+        glUseProgram(program);
+        glUniform1i(location, x);
     }
     /*********************************************************************************/
     void GLAPIENTRY _kglProgramUniform2i(GLuint program, GLint location, GLint x, GLint y)

@@ -8,6 +8,7 @@ include(engine_resource_system_src)
 include(engine_components_src)
 include(engine_serialization_src)
 include(engine_core_libraries)
+include(engine_shader_src)
 
 set(ENGINE_SRC "${CORE_SRC}"
 "${CORE_WIN32_SRC}"
@@ -26,7 +27,9 @@ set(ENGINE_SRC "${CORE_SRC}"
 "${COMPONENTS_SRC}"
 "${COMPONENTS_INC}"
 "${SERIALIZATION_SRC}"
-"${SERIALIZATION_INC}")
+"${SERIALIZATION_INC}"
+"${VERTEX_SHADER_SRC}"
+"${FRAGMENT_SHADER_SRC}")
 
 #Define Include Directories
 include_directories(./core/include/)
@@ -94,6 +97,9 @@ source_group("components\\src" FILES ${COMPONENTS_SRC})
 
 source_group("serialization\\include" FILES ${SERIALIZATION_INC})
 source_group("serialization\\src" FILES ${SERIALIZATION_SRC})
+
+source_group("shaders\\fragment" FILES ${FRAGMENT_SHADER_SRC})
+source_group("shaders\\vertex" FILES ${VERTEX_SHADER_SRC})
 
 message(STATUS "CXX_FLAGS for k15core: ${CMAKE_CXX_FLAGS}")
 
