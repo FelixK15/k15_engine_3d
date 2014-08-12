@@ -15,8 +15,8 @@ Currently the engine supports the following features:
 * Plugin based architecture to keep the engine core as light as possible
 * Component based game object system
 * Easy to use code reflection system (WIP)
-* Serialization (works together with the reflection system)
-* Data driven trough serialization
+* Serialization through code reflection
+* Data driven through serialization
 * Custom RTTI system
 * Custom memory management system
 * Allows for multithreaded applications through threadworker/threadpool system
