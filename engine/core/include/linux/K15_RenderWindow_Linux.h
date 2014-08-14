@@ -36,6 +36,9 @@ namespace K15_Engine { namespace Core {
         static bool initialize();
         static void shutdown();
 
+        static uint32 getWidth();
+        static uint32 getHeight();
+
         static void setWindowTitle(const String& p_WindowTitle);
         static void setResolution(const Resolution& p_Resolution);
         static void setIsFullscreen(bool p_Fullscreen);
@@ -46,6 +49,8 @@ namespace K15_Engine { namespace Core {
         static Window ms_Window;
         static GLXWindow ms_GLXWindow;
         static uint32 ms_NotifyFlags;
+        static uint32 ms_Width;
+        static uint32 ms_Height;
         static const int X_ATTRIB_ARRAY_SIZE = 17;
         static Atom ms_DeleteWindowID;
     };

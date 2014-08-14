@@ -48,6 +48,9 @@ namespace K15_Engine { namespace Core {
 		if(ms_IsInitialized = RenderWindowImpl::initialize())
 		{
 			g_EventManager->triggerEvent(K15_NEW GameEvent(EventInitialized));
+
+            ms_CurrentResolution.width = RenderWindowImpl::getWidth();
+            ms_CurrentResolution.height = RenderWindowImpl::getHeight();
 		}
 
 		return ms_IsInitialized;

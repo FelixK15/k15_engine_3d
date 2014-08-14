@@ -75,12 +75,14 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		/*********************************************************************************/
 		enum eButton
 		{
-			BTN_LEFT = 0,		//<! Left Mouse Button
+            BTN_LEFT = 0,   //<! Left Mouse Button
 			BTN_RIGHT,		//<! Right Mouse Button
 			BTN_MIDDLE,		//<! Middle Mouse Button
 
 			BTN_SPECIAL1,	//<! Special Mouse Button 1 (To support mice with more than 3 buttons)
 			BTN_SPECIAL2,	//<! Special Mouse Button 2 (To support mice with more than 3 buttons)
+
+            BTN_NONE        //<! No button has been pressed
 		};//Button
 		/*********************************************************************************/
 		enum eMouseAxis

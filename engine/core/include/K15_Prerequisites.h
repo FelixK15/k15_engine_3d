@@ -147,7 +147,8 @@ namespace K15_Engine
 		struct MemoryHeader;
 		struct MemoryBlock;
 		struct ApplicationModuleDescription;
-		struct MouseActionArguments;
+        struct MouseEventArguments;
+        struct KeyboardEventArguments;
 		struct Resolution;
 		struct EventHandlerArrayEntry;
 	} // end of K15_Engine::Core namespace
@@ -640,6 +641,8 @@ typedef K15_Engine::Core::HashedString ResourceName;
 #define size_gigabyte(s) (uint32)(s*GIGABYTE)
 #define size_megabyte(s) (uint32)(s*MEGABYTE)
 #define size_kilobyte(s) (uint32)(s*KILOBYTE)
+
+#define K15_PX_TO_NDC(px_pos, dimension_max) ((((float)px_pos / (float)dimension_max) - 0.5f) * 2.f)
 
 #define K15_PTR(T)		 typedef std::shared_ptr<T> T##Ptr;
 #define K15_WEAKPTR(T)	 typedef std::weak_ptr<T>	T##WeakPtr;

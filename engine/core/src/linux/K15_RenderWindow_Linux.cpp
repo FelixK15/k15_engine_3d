@@ -36,10 +36,12 @@ namespace K15_Engine { namespace Core {
     Window RenderWindow_Linux::ms_Window = 0;
     GLXWindow RenderWindow_Linux::ms_GLXWindow = 0;
     Atom RenderWindow_Linux::ms_DeleteWindowID = 0;
+    uint32 RenderWindow_Linux::ms_Width = 0;
+    uint32 RenderWindow_Linux::ms_Height = 0;
     uint32 RenderWindow_Linux::ms_NotifyFlags = ButtonPressMask | ButtonReleaseMask
                                                 | KeyPressMask  | KeyReleaseMask
                                                 | ExposureMask  | ResizeRedirectMask
-                                                | FocusChangeMask;
+                                                | FocusChangeMask | PointerMotionMask;
     /*********************************************************************************/
 
     /*********************************************************************************/
@@ -50,8 +52,8 @@ namespace K15_Engine { namespace Core {
             int screen = XDefaultScreen(ms_Display);
             Window rootwin = XRootWindow(ms_Display, screen);
 
-            uint32 width = RenderWindow::getWidth() == 0 ? 800 : RenderWindow::getWidth();
-            uint32 height = RenderWindow::getHeight() == 0 ? 600 : RenderWindow::getHeight();
+            ms_Width = RenderWindow::getWidth() == 0 ? 800 : RenderWindow::getWidth();
+            ms_Height = RenderWindow::getHeight() == 0 ? 600 : RenderWindow::getHeight();
 
             XVisualInfo* vi = 0;
             XSetWindowAttributes windowAttribs;
@@ -76,7 +78,7 @@ namespace K15_Engine { namespace Core {
             windowAttribs.border_pixel = 0;
             windowAttribs.colormap = XCreateColormap(ms_Display, rootwin, visual, AllocNone);
 
-            ms_Window = XCreateWindow(ms_Display, rootwin, 0, 0, width, height, 0,
+            ms_Window = XCreateWindow(ms_Display, rootwin, 0, 0, ms_Width, ms_Height, 0,
                                       depth, InputOutput, visual,
                                       CWOverrideRedirect | CWBackPixmap |
                                       CWBorderPixel | CWColormap, &windowAttribs);
@@ -115,6 +117,16 @@ namespace K15_Engine { namespace Core {
         ms_Window = 0;
         ms_GLXWindow = 0;
         ms_DeleteWindowID = 0;
+    }
+    /*********************************************************************************/
+    uint32 RenderWindow_Linux::getWidth()
+    {
+        return ms_Width;
+    }
+    /*********************************************************************************/
+    uint32 RenderWindow_Linux::getHeight()
+    {
+        return ms_Height;
     }
     /*********************************************************************************/
     void RenderWindow_Linux::setWindowTitle(const String& p_WindowTitle)

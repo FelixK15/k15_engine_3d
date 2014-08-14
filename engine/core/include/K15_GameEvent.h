@@ -27,16 +27,36 @@
 #include "K15_EventManager.h"
 
 namespace K15_Engine { namespace Core { 
+    /*********************************************************************************/
+    struct K15_CORE_API ResizeEventArguments
+    {
+        uint32 oldWidth;   //<! Old resolution (width)
+        uint32 oldHeight;  //<! Old resolution (height)
+
+        uint32 newWidth;    //<! New resolution (width)
+        uint32 newHeight;   //<! New resolution (height)
+    };
+    /*********************************************************************************/
+    struct K15_CORE_API KeyboardEventArguments
+    {
+        Enum key;       //<! Check InputDevices::Keyboard::eKey
+
+        bool pressed;   //<! Is the key pressed or not?
+    };
 	/*********************************************************************************/
-	struct K15_CORE_API MouseActionArguments
+    struct K15_CORE_API MouseEventArguments
 	{
-		Enum button;
+        Enum button;    //<! Check InputDevices::Mouse::eButton
 
-		uint32 xPx;	//Pixel coordinates
-		uint32 yPx; //Pixel coordinates
+        uint32 xPx;     //<! Pixel coordinates of the mouse cursor
+        uint32 yPx;     //<! Pixel coordinates of the mouse cursor
 
-		float xNDC; //Normal Device Coordinates ([-1|+1])
-		float yNDC; //Normal Device Coordinates ([-1|+1])
+        float wheelDelta;   //<! Mousewheel delta value
+
+        float xNDC;     //<! Normal Device Coordinates ([-1|+1]) of the mouse cursor
+        float yNDC;     //<! Normal Device Coordinates ([-1|+1]) of the mouse cursor
+
+        bool pressed;   //<! Is the button pressed or not?
 	};
 	/*********************************************************************************/
 	class K15_CORE_API GameEvent : public GameEventAllocatedObject
