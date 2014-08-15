@@ -204,7 +204,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 			m_Extensions = _getExtensions();
 			_loadExtensions();
 
-            kglGenProgramPipelines(1,&m_ProgramPipeline);
+      kglGenProgramPipelines(1,&m_ProgramPipeline);
 			kglBindProgramPipeline(m_ProgramPipeline);
 
 			kglGenVertexArrays(1,&m_VertexArray);
@@ -617,7 +617,24 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		ExtensionArray extensions;
 
 		String extension;
-		String extensionString = (char*)glGetString(GL_EXTENSIONS);
+    String extensionString;
+
+    if(PFNGLGETSTRINGIPROC kglGetStringi = (PFNGLGETSTRINGIPROC)kglGetProcAddress("glGetStringi"))
+    {
+      GLint numExtensions = 0;
+      glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+
+      for(int i = 0; i < numExtensions; ++i)
+      {
+        String extensionName = (char*)kglGetStringi(GL_EXTENSIONS, i);
+        extensions.push_back(extensionName);
+      }
+
+      return extensions;
+    }
+
+    extensionString = (char*)glGetString(GL_EXTENSIONS);
+
 		String::size_type pos = String::npos;
 		do 
 		{
