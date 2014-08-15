@@ -47,8 +47,8 @@ namespace K15_Engine { namespace Core {
 		if(!m_First) // first block allocation
 		{
 			p_Size += sizeof(MemoryBlock);
-			m_First = (MemoryBlock*)m_Memory + m_UsedMemory;
-			m_First->Memory = ((byte*)m_First + sizeof(MemoryBlock));
+            m_First = (MemoryBlock*)m_Memory;
+            m_First->Memory = m_Memory + sizeof(MemoryBlock);
 			m_First->Used = true;
 			m_First->Size = p_Size -= sizeof(MemoryBlock);
 			m_First->Next = 0;
@@ -58,7 +58,7 @@ namespace K15_Engine { namespace Core {
 			return m_First->Memory;
 		}
   
-		MemoryBlock* block = findBlock_R(m_Current,p_Size);
+        MemoryBlock* block = findBlock_R(m_Current, p_Size);
 
 		if(!block)
 		{

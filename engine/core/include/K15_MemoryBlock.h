@@ -33,10 +33,10 @@ namespace K15_Engine { namespace Core {
 		MemoryBlock();
 		~MemoryBlock();
 
-		bool Used;
-		byte* Memory;
-		size_t Size;
-		MemoryBlock* Next;
+        bool Used;          // Is the memory of this block still in use?
+        byte* Memory;       // Pointer to the memory this block manages
+        size_t Size;        // Size of the memory this block manages
+        MemoryBlock* Next;  // Pointer to the next block or NULL if last block
 	};
 }}//end of K15_Engine::Core namespace
 

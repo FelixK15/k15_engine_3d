@@ -30,12 +30,16 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
     {
         struct ARB_separate_shader_objects
         {
-            static uint32 MAX_PIPELINE_PROGRAMS = 32;
-            static GpuProgramBatch* pipelinePrograms[MAX_PIPELINE_PROGRAMS] = {0};
-            static uint32 shader_pipelines = 0;
-            static uint32 active_pipeline = 0;
+            static uint32 const MAX_PIPELINE_PROGRAMS = 32;
+            static GpuProgramBatch* pipelinePrograms[MAX_PIPELINE_PROGRAMS];
+            static uint32 shader_pipelines;
+            static uint32 active_pipeline;
         };
     };
+    /*********************************************************************************/
+    GpuProgramBatch* internal::ARB_separate_shader_objects::pipelinePrograms[internal::ARB_separate_shader_objects::MAX_PIPELINE_PROGRAMS] = {0};
+    uint32           internal::ARB_separate_shader_objects::shader_pipelines = 0;
+    uint32           internal::ARB_separate_shader_objects::active_pipeline  = 0;
     /*********************************************************************************/
 
 	/*********************************************************************************/
@@ -173,19 +177,21 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
         K15_ASSERT(pipeline <= internal::ARB_separate_shader_objects::MAX_PIPELINE_PROGRAMS,
                    StringUtil::format("pipeline index %d out of bounds", pipeline));
 
-        GpuProgramBatch* pipeline = internal::ARB_separate_shader_objects::pipelinePrograms[pipeline];
+        //get program batch associated with the given pipeline index
+        GpuProgramBatch* pipelineBatch = internal::ARB_separate_shader_objects::pipelinePrograms[pipeline];
 
-        K15_ASSERT(pipeline, StringUtil::format("pipeline index %d is invalid.", pipeline));
+        K15_ASSERT(pipelineBatch, StringUtil::format("pipeline index %d is invalid.", pipeline));
 
         Enum shaderType = 0xFFFFFFFF;
 
+        //only vertex and fragment shaders supported so far
         if(stages == GL_VERTEX_SHADER_BIT)
         {
             shaderType = GpuProgram::PS_VERTEX;
         }
         else if(stages == GL_FRAGMENT_SHADER_BIT)
         {
-            shaderTy[e = GpuProgram::PS_FRAGMENT;
+            shaderType = GpuProgram::PS_FRAGMENT;
         }
 
         K15_ASSERT(shaderType < 0xFFFFFFFF, StringUtil::format("invalid shader stage %d", stages));
@@ -199,19 +205,19 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
         GLuint glShader = programImpl->getShaderGL();
 
         //delete old program
-        if(GpuProgram* previousProgram = pipeline->getGpuProgramByStage(shaderType))
+        if(GpuProgram* previousProgram = pipelineBatch->getGpuProgramByStage(shaderType))
         {
-            pipeline->removeGpuProgram(shaderType);
+            pipelineBatch->removeGpuProgram(shaderType);
             K15_DELETE previousProgram;
         }
 
         //create new program
-        GpuProgram* newProgram = K15_NEW GpuProgram(shaderProgram->getName(), shaderType);
+        GpuProgram* newProgram = K15_NEW GpuProgram(shaderProgram->getName().toString(), shaderType);
         GpuProgramImpl* newProgramImpl = static_cast<GpuProgramImpl*>(newProgram->getImpl());
 
         //attach gl shader from old (previously deleted) program
         newProgramImpl->setShaderGL(glShader);
-        pipeline->addGpuProgram(newProgram, true);
+        pipelineBatch->addGpuProgram(newProgram, true);
     }
     /*********************************************************************************/
     void GLAPIENTRY _kglActiveShaderProgram(GLuint pipeline, GLuint program)

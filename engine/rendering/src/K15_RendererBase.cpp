@@ -816,12 +816,11 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	bool RendererBase::onEventResolutionChanged(GameEvent* p_Event)
 	{
-		if(p_Event->getArgumentSize() == sizeof(Resolution))
-		{
-			Resolution* resolution = static_cast<Resolution*>(p_Event->getArgument());
-
-			_resolutionChanged(*resolution);
-		}
+        ResizeEventArguments* args = static_cast<ResizeEventArguments*>(p_Event->getArgument());
+        Resolution newResolution;
+        newResolution.height = args->newHeight;
+        newResolution.width = args->newWidth;
+        _resolutionChanged(newResolution);
 
 		return true;
 	}

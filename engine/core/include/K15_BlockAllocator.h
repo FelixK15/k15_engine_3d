@@ -18,7 +18,19 @@
  *
  * @section DESCRIPTION
  *
- * 
+ * The BlockAllocator is a variation of the FreeList (http://en.wikipedia.org/wiki/Free_list)
+ * data structure. The allocator typically works on a larger block of memory and
+ * divides the block into smaller blocks with each memory allocation.
+ *
+ * Upon freeing previously allocated memory, the allocator will simply mark the
+ * previously allocated block as "unused". Once the allocator runs out of memory
+ * it will try to defragment the memoryblock it used by merging contigiuous unused
+ * memory blocks.
+ *
+ * For each allocation the allocator will allocate and addition of sizeof(MemoryBlock) bytes
+ * to store block information per allocation. These information will be stored at the
+ * beginning of each allocation (however only the memory the user can actually work
+ * with will be returned by alloc).
  */
 
 #ifndef _K15Engine_Core_BlockAllocator_h_
