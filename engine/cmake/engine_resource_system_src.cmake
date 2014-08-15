@@ -1,4 +1,5 @@
 set(RESOURCE_SRC "./resource_system/src/K15_ResourceArchiveBase.cpp"
+"./resource_system/src/K15_ResourceArchiveFileSystem.cpp"
 "./resource_system/src/K15_ResourceArchiveZip.cpp"
 "./resource_system/src/K15_ResourceBase.cpp"
 "./resource_system/src/K15_ResourceImporterBase.cpp"
@@ -12,6 +13,7 @@ set(RESOURCE_SRC "./resource_system/src/K15_ResourceArchiveBase.cpp"
 set(RESOURCE_ANDROID_SRC "./resource_system/src/android/K15_ResourceArchive_Android.cpp")
 
 set(RESOURCE_INC "./resource_system/include/K15_ResourceArchiveBase.h"
+"./resource_system/include/K15_ResourceArchiveFileSystem.h"
 "./resource_system/include/K15_ResourceArchiveBase.inl"
 "./resource_system/include/K15_ResourceArchiveZip.h"
 "./resource_system/include/K15_ResourceBase.h"

@@ -217,6 +217,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 			glEnable(GL_BLEND);
 
 			glEnable(GL_POLYGON_OFFSET_FILL); //enable glPolygonOffset for filled polys
+
 			return m_LastError.empty();
 		}
 
@@ -613,12 +614,11 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	/*********************************************************************************/
 	Renderer::ExtensionArray Renderer::_getExtensions()
 	{
-		static const char EXTENSION_SEPARATOR = ' ';
 		ExtensionArray extensions;
 
 		String extension;
-    String extensionString;
 
+    //try to get extensions via glGetStringi...
     if(PFNGLGETSTRINGIPROC kglGetStringi = (PFNGLGETSTRINGIPROC)kglGetProcAddress("glGetStringi"))
     {
       GLint numExtensions = 0;
@@ -626,12 +626,16 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 
       for(int i = 0; i < numExtensions; ++i)
       {
-        String extensionName = (char*)kglGetStringi(GL_EXTENSIONS, i);
-        extensions.push_back(extensionName);
+        String extension = (char*)kglGetStringi(GL_EXTENSIONS, i);
+        extensions.push_back(extension);
       }
 
       return extensions;
     }
+
+    // ... didn't work...get extensions via glGetString
+    static const char EXTENSION_SEPARATOR = ' ';
+    String extensionString;
 
     extensionString = (char*)glGetString(GL_EXTENSIONS);
 

@@ -1,8 +1,8 @@
 /**
- * @file K15_IOUtil.h
+ * @file K15_ResourceArchiveFileSystem.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2014/02/08
+ * @date 2014/04/15
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,23 +21,32 @@
  * 
  */
 
-#ifndef _K15Engine_Core_IOUtil_h_
-#define _K15Engine_Core_IOUtil_h_
+#ifndef _K15Engine_Core_FileSystemSourceArchive_h_
+#define _K15Engine_Core_FileSystemSourceArchive_h_
 
 #include "K15_Prerequisites.h"
+#include "K15_ResourceArchiveBase.h"
+#include "K15_AllocatedObject.h"
 
 namespace K15_Engine { namespace Core {
-	class K15_CORE_API IOUtil
+	class K15_CORE_API ResourceArchiveFileSystem : public ResourceArchiveBase, public ResourceAllocatedObject
 	{
+		K15_DECLARE_RTTI;
+
 	public:
-    static String convertToUnixFilePath(const String& p_WindowsFilePath);
+		ResourceArchiveFileSystem(const String& p_RootDirectory);
+		~ResourceArchiveFileSystem();
 
-		static String readWholeFile(const String& p_FileName);
+		virtual bool getResource(const String& p_ResourceName, RawData* p_Data);
+		virtual bool hasResource(const String& p_ResourceName);
 
-		static uint32 getFileSize(const String& p_FileName);
+	protected:
+		virtual bool _open();
+		virtual bool _close(); 
 
-		static bool fileExists(const String& p_FileName);
-	};// end of IOUtil class declaration
+	private:
+		String m_RootDirectory;
+	};// end of ResourceArchiveFileSystem class declaration
 }}// end of K15_Engine::Core namespace
 
-#endif //_K15Engine_Core_IOUtil_h_
+#endif //_K15Engine_Core_FileSystemSourceArchive_h_

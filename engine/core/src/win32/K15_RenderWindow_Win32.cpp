@@ -47,9 +47,12 @@ namespace K15_Engine { namespace Core {
          return false;
       }
 
+      int width  = RenderWindow::getWidth() == 0 ? CW_USEDEFAULT : RenderWindow::getWidth();
+      int height = RenderWindow::getHeight() == 0 ? CW_USEDEFAULT : RenderWindow::getHeight();
+
       if((ms_HandleWindow = CreateWindow("K15_RenderWindowClass",
-                                         "",WS_OVERLAPPEDWINDOW,
-                                         CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,
+                                         "", WS_OVERLAPPEDWINDOW,
+                                         CW_USEDEFAULT,CW_USEDEFAULT, width, height,
                                          0,0,ms_Instance,0)) == INVALID_HANDLE_VALUE) {
          K15_LOG_ERROR("Could not create window. Error:%s", OSLayer::getError().c_str());
          return false;
@@ -59,6 +62,7 @@ namespace K15_Engine { namespace Core {
       GetWindowRect(ms_HandleWindow,&windowrect);
 
       RenderWindow::setResolution(windowrect.right - windowrect.left, windowrect.bottom - windowrect.top);
+      setWindowTitle(RenderWindow::getWindowTitle());
 
       ms_DeviceContext = GetDC(ms_HandleWindow);
 
@@ -75,12 +79,20 @@ namespace K15_Engine { namespace Core {
    /*********************************************************************************/
    void RenderWindow_Win32::setWindowTitle(const String& p_WindowTitle)
    {
-      SetWindowText(ms_HandleWindow,p_WindowTitle.c_str());
+      SetWindowText(ms_HandleWindow, p_WindowTitle.c_str());
    }
    /*********************************************************************************/
    void RenderWindow_Win32::setResolution(const Resolution& p_Resolution)
    {
+     RECT screenRect = {0};
+     screenRect.bottom = p_Resolution.height;
+     screenRect.right = p_Resolution.width;
+     AdjustWindowRect(&screenRect, WS_OVERLAPPEDWINDOW, FALSE);
 
+     SetWindowPos(ms_HandleWindow, HWND_TOP, 0, 0,
+                  screenRect.right - screenRect.left,
+                  screenRect.bottom - screenRect.top,
+                  SWP_NOSENDCHANGING |SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOMOVE);
    }
    /*********************************************************************************/
    void RenderWindow_Win32::setIsFullscreen(bool p_Fullscreen)
@@ -88,35 +100,38 @@ namespace K15_Engine { namespace Core {
       const Resolution& currentResolution = RenderWindow::getResolution();
 
       if(p_Fullscreen) {
-         DEVMODE dm = {0};
-         dm.dmSize = sizeof(dm);
-         //dm.dmBitsPerPel = g_Application->getRenderTask()->getRenderer() ? RendererBase::PixelFormatSize[g_Application->getRenderTask()->getRenderer()->getFrameBufferPixelFormat()] : 32;
-         dm.dmPelsHeight = currentResolution.height;
-         dm.dmPelsWidth = currentResolution.width;
-         dm.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
-         DWORD flags = CDS_RESET | CDS_FULLSCREEN;
-         DWORD result = 0;
+//          DEVMODE dm = {0};
+//          dm.dmSize = sizeof(dm);
+//          //dm.dmBitsPerPel = g_Application->getRenderTask()->getRenderer() ? RendererBase::PixelFormatSize[g_Application->getRenderTask()->getRenderer()->getFrameBufferPixelFormat()] : 32;
+//          dm.dmPelsHeight = currentResolution.height;
+//          dm.dmPelsWidth = currentResolution.width;
+//          dm.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
+//          DWORD flags = CDS_RESET | CDS_FULLSCREEN;
+//          DWORD result = 0;
+// 
+//          if((result = ChangeDisplaySettings(&dm,flags)) != DISP_CHANGE_SUCCESSFUL) {
+//             char* error = 0;
+//             if(result == DISP_CHANGE_BADMODE) {
+//                error = "Graphics mode not supported";
+//             } else if(result == DISP_CHANGE_FAILED) {
+//                error = "The display driver failed the specified graphics mode.";
+//             } else if(result == DISP_CHANGE_NOTUPDATED) {
+//                error = "Unable to write settings to registry";
+//             } else if(result == DISP_CHANGE_BADFLAGS) {
+//                error = "An invalid set of flags was passed in";
+//             }
+// 
+//             K15_LOG_ERROR("Could not change fullscreen resolution to \"%ix%i\" Error:%s",currentResolution.width, currentResolution.height,error);
+//             return;
+//          }
 
-         if((result = ChangeDisplaySettings(&dm,flags)) != DISP_CHANGE_SUCCESSFUL) {
-            char* error = 0;
-            if(result == DISP_CHANGE_BADMODE) {
-               error = "Graphics mode not supported";
-            } else if(result == DISP_CHANGE_FAILED) {
-               error = "The display driver failed the specified graphics mode.";
-            } else if(result == DISP_CHANGE_NOTUPDATED) {
-               error = "Unable to write settings to registry";
-            } else if(result == DISP_CHANGE_BADFLAGS) {
-               error = "An invalid set of flags was passed in";
-            }
-
-            K15_LOG_ERROR("Could not change fullscreen resolution to \"%ix%i\" Error:%s",currentResolution.width, currentResolution.height,error);
-            return;
-         }
-      } else {
-         if(SetWindowPos(ms_HandleWindow,HWND_TOP,0,0,currentResolution.width, currentResolution.height,
-                         SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOZORDER | SWP_NOSENDCHANGING) == FALSE) {
-            K15_LOG_ERROR("Could not change resolution to \"%ix%i\" Error:%s",currentResolution.width, currentResolution.height, OSLayer::getError().c_str());
-            return;
+        if(SetWindowPos(ms_HandleWindow,HWND_TOP,0,0,currentResolution.width, currentResolution.height,
+          SWP_DRAWFRAME) == FALSE) {
+             K15_LOG_ERROR("Could not change resolution to \"%ix%i\" Error:%s",
+               currentResolution.width, 
+               currentResolution.height, 
+               OSLayer::getError().c_str());
+             return;
          }
       }
    }

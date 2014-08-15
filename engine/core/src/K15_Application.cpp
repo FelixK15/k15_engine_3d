@@ -722,6 +722,13 @@ namespace K15_Engine { namespace Core {
 					}
 				}
 			}
+
+      if(currentParam.Name == "Fullscreen")
+      {
+        bool value = StringUtil::toBool(currentParam.Value);
+
+        RenderWindow::setIsFullscreen(value);
+      }
 		}
 	}
 	/*********************************************************************************/

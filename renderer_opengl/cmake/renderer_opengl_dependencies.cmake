@@ -8,4 +8,5 @@ set(OGL_DEPENDENCIES ${GLEW_LIB} "k15core")
 
 if(WIN32)
 	set(OGL_DEPENDENCIES ${OGL_DEPENDENCIES} "opengl32.dll")
+	set(OGL_DEPENDENCIES ${OGL_DEPENDENCIES} "k15math")
 endif()

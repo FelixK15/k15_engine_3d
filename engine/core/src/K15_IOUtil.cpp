@@ -52,5 +52,25 @@ namespace K15_Engine { namespace Core {
 		 
 		return exists;
 	}
-/*********************************************************************************/
+  /*********************************************************************************/
+  String IOUtil::convertToUnixFilePath(const String& p_WindowsFilePath)
+  {
+    String unixFilePath;
+
+    unixFilePath.reserve(p_WindowsFilePath.size());
+    for(int i = 0; i < p_WindowsFilePath.size(); ++i)
+    {
+      if(p_WindowsFilePath[i] == '\\')
+      {
+        unixFilePath[i] = '/';
+      }
+      else
+      {
+        unixFilePath[i] = p_WindowsFilePath[i];
+      }
+    }
+
+    return unixFilePath;
+  }
+  /*********************************************************************************/
 }}// end of K15_Engine::Core namespace
