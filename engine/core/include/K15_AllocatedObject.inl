@@ -24,7 +24,6 @@ void BaseAllocatedObject::addAllocator(const String& p_AllocatorName,uint32 p_Si
 //   K15_ASSERT(AllocatorCount + 1<= MaxAllocators,
 //     StringUtil::format("Can't add allocator \"%s\". Would exceed allocator limit (%u allocators).",
 //     p_AllocatorName.c_str(),MaxAllocators));
-    printf("p_ParentAllocator is \"%p\"\n", p_ParentAllocator);
     Allocators[AllocatorCount++] = K15_NEW_T(p_ParentAllocator,AllocatorType) AllocatorType(p_Size,p_AllocatorName,p_ParentAllocator);
 }
 /*********************************************************************************/

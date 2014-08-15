@@ -44,21 +44,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void* BlockAllocator::alloc(size_t p_Size)
 	{
-		if(!m_First) // first block allocation
-		{
-			p_Size += sizeof(MemoryBlock);
-            m_First = (MemoryBlock*)m_Memory;
-            m_First->Memory = m_Memory + sizeof(MemoryBlock);
-			m_First->Used = true;
-			m_First->Size = p_Size -= sizeof(MemoryBlock);
-			m_First->Next = 0;
-
-			m_Current = m_First;
-
-			return m_First->Memory;
-		}
-  
-        MemoryBlock* block = findBlock_R(m_Current, p_Size);
+    MemoryBlock* block = findBlock_R(m_Current, p_Size);
 
 		if(!block)
 		{
@@ -80,27 +66,58 @@ namespace K15_Engine { namespace Core {
   /*********************************************************************************/
   MemoryBlock* BlockAllocator::findBlock_R(MemoryBlock* p_Block,size_t p_Size)
   {
-	if(!p_Block->Next)
-	{
-		if(m_MemorySize - m_UsedMemory >= p_Size+sizeof(MemoryBlock))
-		{
-			p_Block->Next = (MemoryBlock*)(p_Block->Memory+p_Block->Size);
-			p_Block->Next->Memory = p_Block->Memory + (p_Block->Size + sizeof(MemoryBlock));
-			p_Block->Next->Size = p_Size;
-			p_Block->Next->Used = true;
+    MemoryBlock* newBlock = 0;
 
-			return p_Block->Next;
-		}
-
-		return 0; //not enough free space left
-	}
-    else if(!p_Block->Used && p_Size <= p_Block->Size)
+    //is there enough memory left to satisfy allocation?
+    if(m_MemorySize - m_UsedMemory < p_Size + sizeof(MemoryBlock))
     {
-		p_Block->Used = true;
-		return p_Block; //current block is not used and has enough size
+      return 0; // nope, try defragmentation
     }
 
-		return findBlock_R(p_Block->Next,p_Size);
+    //can the passed block maybe satisfy the allocation?
+    if(p_Block && !p_Block->Used && p_Block->Size >= p_Size)
+    {
+      //yep, mark block as used and return it.
+      p_Block->Used = true;
+      return p_Block;
+    }
+
+    //if current block can not satisfy allocation,
+    //maybe its neighbor can?
+    if(p_Block && p_Block->Next)
+    {
+      return findBlock_R(p_Block->Next, p_Size);
+    }
+
+    // if no block has been passed in or the block has no neighbor,
+    // create new block
+    if(!p_Block)
+    {
+      newBlock = (MemoryBlock*)m_Memory;
+    }
+    else if(!p_Block->Next)
+    {
+      newBlock = (MemoryBlock*)(p_Block->Memory + p_Block->Size);
+      p_Block->Next = newBlock;
+    }
+
+    newBlock->Memory = (byte*)newBlock;
+    newBlock->Memory += sizeof(MemoryBlock);
+    newBlock->Size = p_Size;
+    newBlock->Next = 0;
+    newBlock->Used = true;
+
+    // is this the first allocation?
+    if(!m_First)
+    {
+      m_First = newBlock;
+    }
+
+    // add size of memory block to used memory size as 
+    // we use that much memory additionally per allocation
+    m_UsedMemory += sizeof(MemoryBlock);
+
+    return newBlock;
 	}
 	/*********************************************************************************/
 	void BlockAllocator::dealloc(void* p_Pointer,size_t p_Size)
@@ -119,6 +136,9 @@ namespace K15_Engine { namespace Core {
 
 				p_Block->Size += p_Block->Next->Size + sizeof(MemoryBlock); //memblock is part of memory so we add the size of the block to get the 'real' size.
 				p_Block->Next = p_Block->Next->Next;
+
+        // keep track of how much memory is used
+        m_UsedMemory -= sizeof(MemoryBlock) + p_Block->Size;
 			}
 
 			p_Block = p_Block->Next;

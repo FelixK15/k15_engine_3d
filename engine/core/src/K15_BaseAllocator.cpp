@@ -105,7 +105,10 @@ namespace K15_Engine { namespace Core {
 	{
 		K15_ASSERT(p_Size + m_UsedMemory <= m_MemorySize,StringUtil::format("Cannot satisfy memory request. Allocator:%s",m_Name.c_str()));
 		byte* memory = (byte*)alloc(p_Size);
-		memset(memory,0,p_Size);
+
+    K15_ASSERT(memory, StringUtil::format("Allocator \"%s\" is out of memory.", m_Name.c_str()));
+
+		memset(memory, 0, p_Size);
 
 		//memory header will always get created on the heap
         MemoryHeader* header = (MemoryHeader*)K15_MALLOC(sizeof(MemoryHeader));
@@ -127,7 +130,7 @@ namespace K15_Engine { namespace Core {
 	void BaseAllocator::deallocateDebug(void* p_Pointer,size_t p_Size,const char* p_File,int p_Line,bool p_Array,const char* p_Function)
 	{
 		K15_ASSERT((ptrdiff_t)p_Pointer >= (ptrdiff_t)m_Memory && (ptrdiff_t)p_Pointer < (ptrdiff_t)m_MemoryEndAddress,
-		  StringUtil::format("Pointer %p is not part of Allocator:%s",m_Name.c_str()));
+		  StringUtil::format("Pointer %p is not part of Allocator:%s", p_Pointer, m_Name.c_str()));
 
 		K15_ASSERT((m_UsedMemory - p_Size) >= 0,StringUtil::format("Trying to release more memory than there is available. Allocator:%s",m_Name.c_str()));
     
