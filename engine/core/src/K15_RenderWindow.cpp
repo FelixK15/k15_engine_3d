@@ -24,91 +24,90 @@
 #include "K15_GameEvent.h"
 
 #ifdef K15_OS_WINDOWS
-	#include "win32\K15_RenderWindow_Win32.h"
+#include "win32\K15_RenderWindow_Win32.h"
 #endif //K15_OS_WINDOWS
 
-namespace K15_Engine { namespace Core {
-	/*********************************************************************************/
-	EventName   RenderWindow::EventFocusLost			= _EN(EventFocusLost);
-	EventName   RenderWindow::EventFocusReceived		= _EN(EventFocusReceived);
-	EventName   RenderWindow::EventResolutionChanged	= _EN(EventResolutionChanged);
-	EventName   RenderWindow::EventInitialized			= _EN(EventRenderWindowInitialized);
-	bool	    RenderWindow::ms_HasFocus			    = false;
-	bool        RenderWindow::ms_IsFullscreen		    = false;
-	bool        RenderWindow::ms_IsInitialized			= false;
-	String	    RenderWindow::ms_WindowTitle;
-	Resolution  RenderWindow::ms_CurrentResolution;
-	/*********************************************************************************/
+namespace K15_Engine {
+namespace Core {
+/*********************************************************************************/
+EventName   RenderWindow::EventFocusLost			= _EN(EventFocusLost);
+EventName   RenderWindow::EventFocusReceived		= _EN(EventFocusReceived);
+EventName   RenderWindow::EventResolutionChanged	= _EN(EventResolutionChanged);
+EventName   RenderWindow::EventInitialized			= _EN(EventRenderWindowInitialized);
+bool	    RenderWindow::ms_HasFocus			    = false;
+bool        RenderWindow::ms_IsFullscreen		    = false;
+bool        RenderWindow::ms_IsInitialized			= false;
+String	    RenderWindow::ms_WindowTitle;
+Resolution  RenderWindow::ms_CurrentResolution;
+/*********************************************************************************/
 
-	/*********************************************************************************/
-	bool RenderWindow::initialize()
-	{
-		K15_ASSERT(!ms_IsInitialized, "Render window is already initialized!");
+/*********************************************************************************/
+bool RenderWindow::initialize()
+{
+   K15_ASSERT(!ms_IsInitialized, "Render window is already initialized!");
 
-		if(ms_IsInitialized = RenderWindowImpl::initialize())
-		{
-			g_EventManager->triggerEvent(K15_NEW GameEvent(EventInitialized));
+   if(ms_IsInitialized = RenderWindowImpl::initialize()) {
+      g_EventManager->triggerEvent(K15_NEW GameEvent(EventInitialized));
 
-            ms_CurrentResolution.width = RenderWindowImpl::getWidth();
-            ms_CurrentResolution.height = RenderWindowImpl::getHeight();
-		}
+      ms_CurrentResolution.width  = RenderWindowImpl::getWidth();
+      ms_CurrentResolution.height = RenderWindowImpl::getHeight();
+   }
 
-		return ms_IsInitialized;
-	}
-	/*********************************************************************************/
-	void RenderWindow::shutdown()
-	{
-		RenderWindowImpl::shutdown();
-		ms_IsInitialized = false;
-	}
-	/*********************************************************************************/
-	void RenderWindow::setWindowTitle(const String& p_WindowTitle)
-	{
-		if(ms_IsInitialized)
-		{
-			ms_WindowTitle = p_WindowTitle;
-			RenderWindowImpl::setWindowTitle(p_WindowTitle);
-		}
-	}
-	/*********************************************************************************/
-	void RenderWindow::setResolution(const Resolution& p_Resolution)
-	{
-		if(ms_IsInitialized && (ms_CurrentResolution.width == p_Resolution.width || ms_CurrentResolution.height == p_Resolution.height))
-		{
-			ms_CurrentResolution = p_Resolution;
-			EventManager::getInstance()->triggerEvent(K15_NEW GameEvent(EventResolutionChanged,(void*)&p_Resolution,K15_PTR_SIZE));
-			RenderWindowImpl::setResolution(p_Resolution);
-		}
-	}
-	/*********************************************************************************/
-	void RenderWindow::setIsFullscreen(bool p_Fullscreen)
-	{
-		if(ms_IsInitialized)
-		{
-			ms_IsFullscreen = p_Fullscreen;
-			RenderWindowImpl::setIsFullscreen(p_Fullscreen);
-		}
-	}
-	/*********************************************************************************/
-	void RenderWindow::setHasFocus(bool p_HasFocus)
-	{
-		if(!ms_IsInitialized) return;
-		if(ms_HasFocus == p_HasFocus) return;
+   return ms_IsInitialized;
+}
+/*********************************************************************************/
+void RenderWindow::shutdown()
+{
+   RenderWindowImpl::shutdown();
+   ms_IsInitialized = false;
+}
+/*********************************************************************************/
+void RenderWindow::setWindowTitle(const String& p_WindowTitle)
+{
+   if(ms_IsInitialized) {
+      ms_WindowTitle = p_WindowTitle;
+      RenderWindowImpl::setWindowTitle(p_WindowTitle);
+   }
+}
+/*********************************************************************************/
+void RenderWindow::setResolution(const Resolution& p_Resolution)
+{
+   if(ms_IsInitialized && (ms_CurrentResolution.width == p_Resolution.width || ms_CurrentResolution.height == p_Resolution.height)) {
+      ms_CurrentResolution = p_Resolution;
+      EventManager::getInstance()->triggerEvent(K15_NEW GameEvent(EventResolutionChanged,(void*)&p_Resolution,K15_PTR_SIZE));
+      RenderWindowImpl::setResolution(p_Resolution);
+   }
+}
+/*********************************************************************************/
+void RenderWindow::setIsFullscreen(bool p_Fullscreen)
+{
+   if(ms_IsInitialized) {
+      ms_IsFullscreen = p_Fullscreen;
+      RenderWindowImpl::setIsFullscreen(p_Fullscreen);
+   }
+}
+/*********************************************************************************/
+void RenderWindow::setHasFocus(bool p_HasFocus)
+{
+   if(!ms_IsInitialized) {
+      return;
+   }
+   if(ms_HasFocus == p_HasFocus) {
+      return;
+   }
 
-		GameEvent *focusEvent = 0;
+   GameEvent* focusEvent = 0;
 
-		if(p_HasFocus)
-		{
-			focusEvent = K15_NEW GameEvent(EventFocusReceived);
-		}
-		else
-		{
-			focusEvent = K15_NEW GameEvent(EventFocusLost);
-		}
+   if(p_HasFocus) {
+      focusEvent = K15_NEW GameEvent(EventFocusReceived);
+   } else {
+      focusEvent = K15_NEW GameEvent(EventFocusLost);
+   }
 
-		ms_HasFocus = p_HasFocus;
+   ms_HasFocus = p_HasFocus;
 
-		g_EventManager->triggerEvent(focusEvent);
-	}
-	/*********************************************************************************/
-}}//end of K15_Engine::Core namespace
+   g_EventManager->triggerEvent(focusEvent);
+}
+/*********************************************************************************/
+}
+}//end of K15_Engine::Core namespace
