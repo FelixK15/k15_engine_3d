@@ -29,7 +29,8 @@ namespace K15_Engine { namespace Core {
 	class K15_CORE_API SortUtil
 	{
 	public:
-		static bool sortComponentsByType(const GameObjectComponentBase* p_Comp1, const GameObjectComponentBase* p_Comp2);
+		static bool sortComponentsByType(GameObjectComponentBase* const p_Comp1, GameObjectComponentBase* const p_Comp2);
+    static bool sortRenderoperationsByMaterial(RenderOperation* const p_Rop1, RenderOperation* const p_Rop2);
 	}; //end of SortUtil class declaration
 }} //end of K15_Engine::Core namespace
 

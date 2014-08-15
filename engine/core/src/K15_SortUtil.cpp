@@ -22,12 +22,18 @@
 #include "K15_SortUtil.h"
 
 #include "K15_GameObjectComponentBase.h"
+#include "K15_RenderOperation.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	bool SortUtil::sortComponentsByType(const GameObjectComponentBase* p_Comp1, const GameObjectComponentBase* p_Comp2)
+	bool SortUtil::sortComponentsByType(GameObjectComponentBase* const p_Comp1, GameObjectComponentBase* const p_Comp2)
 	{
 		return p_Comp1->getType().getName() < p_Comp2->getType().getName();
 	}
-	/*********************************************************************************/
+  /*********************************************************************************/
+  bool SortUtil::sortRenderoperationsByMaterial(RenderOperation* const p_Rop1, RenderOperation* const p_Rop2)
+  {
+    return (size_t)p_Rop1->material < (size_t)p_Rop2->material;
+  }
+  /*********************************************************************************/
 }} //end of K15_Engine::Core namespace

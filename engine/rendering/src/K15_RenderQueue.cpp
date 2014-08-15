@@ -19,6 +19,7 @@
 
 #include "K15_PrecompiledHeader.h"
 
+#include "K15_SortUtil.h"
 #include "K15_RenderQueue.h"
 #include "K15_RenderOperation.h"
 
@@ -44,10 +45,7 @@ namespace K15_Engine { namespace Rendering {
 	  {
 		  if(m_SortMode == SP_SORT_BY_MATERIAL)
 		  {
-			  Sort(m_RenderOperations.begin(),m_RenderOperations.end(),[](RenderOperation* rop1, RenderOperation* rop2)->bool
-			  {
-				  return (size_t)rop1->material < (size_t)rop2->material;
-			  });
+			  Sort(m_RenderOperations.begin(), m_RenderOperations.end(), SortUtil::sortRenderoperationsByMaterial);
 		  }
 
 		  m_Dirty = false;
