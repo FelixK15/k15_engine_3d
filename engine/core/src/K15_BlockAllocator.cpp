@@ -50,7 +50,7 @@ namespace K15_Engine { namespace Core {
 		{
 			//no block has been found, that either means we are out of memory or there are no blocks
 			//with enough size...Maybe if we defragment the block we'll have enough size...?
-			defragment_R(m_First);
+			defragment_R(m_First, p_Size);
 
 			if((block = findBlock_R(m_First,p_Size)) == 0)
 			{
@@ -97,6 +97,16 @@ namespace K15_Engine { namespace Core {
     }
     else if(!p_Block->Next)
     {
+      //Check if we're at the memory boundary
+      ptrdiff_t newBlockEndPos = (ptrdiff_t)(p_Block->Memory + p_Size + sizeof(MemoryBlock));
+      ptrdiff_t memoryEndPos = (ptrdiff_t)m_MemoryEndAddress;
+
+      if(newBlockEndPos >= memoryEndPos)
+      {
+        //yep, we are at the memory boundary - try defragmentation
+        return 0;
+      }
+
       newBlock = (MemoryBlock*)(p_Block->Memory + p_Block->Size);
       p_Block->Next = newBlock;
     }
@@ -125,20 +135,24 @@ namespace K15_Engine { namespace Core {
 		dealloc_R(m_First,p_Pointer,p_Size);
 	}
 	/*********************************************************************************/
-	void BlockAllocator::defragment_R(MemoryBlock* p_Block)
+	void BlockAllocator::defragment_R(MemoryBlock* p_Block, size_t p_Size)
 	{
 		while(p_Block && p_Block->Next)
 		{
 			if(!p_Block->Used && !p_Block->Next->Used)
 			{
-				K15_LOG_DEBUG("Merging block %p(size %u) and block %p(size %u) from BlockAllocator \"%s\"...",
-					p_Block,p_Block->Size,p_Block->Next,p_Block->Next->Size,m_Name.c_str());
+        if((p_Block->Size + p_Block->Next->Size) >= p_Size)
+        {
+				  K15_LOG_DEBUG("Merging block %p(size %u) and block %p(size %u) from BlockAllocator \"%s\"...",
+					  p_Block,p_Block->Size,p_Block->Next,p_Block->Next->Size,m_Name.c_str());
 
-				p_Block->Size += p_Block->Next->Size + sizeof(MemoryBlock); //memblock is part of memory so we add the size of the block to get the 'real' size.
-				p_Block->Next = p_Block->Next->Next;
+				  p_Block->Size += p_Block->Next->Size + sizeof(MemoryBlock); //memblock is part of memory so we add the size of the block to get the 'real' size.
+				  p_Block->Next = p_Block->Next->Next;
 
-        // keep track of how much memory is used
-        m_UsedMemory -= sizeof(MemoryBlock) + p_Block->Size;
+          // keep track of how much memory is used
+          m_UsedMemory -= sizeof(MemoryBlock);
+          break;
+        }
 			}
 
 			p_Block = p_Block->Next;

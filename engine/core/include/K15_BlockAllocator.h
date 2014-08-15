@@ -53,8 +53,8 @@ namespace K15_Engine { namespace Core {
 		virtual void dealloc(void* p_Pointer,size_t p_Size) OVERRIDE;
 
 	private:
-		void defragment_R(MemoryBlock* p_Block);
-		void dealloc_R(MemoryBlock* p_Block,void* p_Pointer,size_t p_Size);
+		void defragment_R(MemoryBlock* p_Block, size_t p_Size);
+		void dealloc_R(MemoryBlock* p_Block, void* p_Pointer, size_t p_Size);
 		MemoryBlock* findBlock_R(MemoryBlock* p_Block,size_t p_Size);
 
 	private:
