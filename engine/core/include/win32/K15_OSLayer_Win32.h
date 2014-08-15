@@ -107,6 +107,25 @@ namespace K15_Engine { namespace Core {
 		*/
 		static void onPostTick();
 
+    /**
+		* callback window proc
+		*/
+    static LRESULT CALLBACK windowProc(HWND p_HandleWindow, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam);
+
+  private:
+    static void _getMouseArgs(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam, MouseEventArguments* const p_MouseArgs);
+    static void _getKeyArgs(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam, KeyboardEventArguments* const p_KeyArgs);
+    static void _onWindowCreated(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam);
+    static void _onWindowClosed(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam);
+    static void _onWindowActivated(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam);
+    static void _onMousePress(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam);
+    static void _onMouseRelease(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam);
+    static void _onMouseMove(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam);
+    static void _onMouseWheel(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam);
+    static void _onKeyPress(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam);
+    static void _onKeyRelease(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam);
+    static void _onResize(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam);
+    
 	private:
 		static LARGE_INTEGER ms_PCF; //Perforamnce Counter Frequency
 		static float ms_Frequency;
