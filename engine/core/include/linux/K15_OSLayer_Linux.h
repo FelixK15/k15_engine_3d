@@ -109,14 +109,6 @@ namespace K15_Engine { namespace Core {
 
     private:
         // Event processing
-        static void _getKeyArgs(const XEvent& p_Event, KeyboardEventArguments* const p_KeyArgs);
-        static void _getMouseArgs(const XEvent& p_Event, MouseEventArguments* const p_MouseArgs);
-        static void _onMousePress(const XEvent& p_Event);
-        static void _onMouseRelease(const XEvent& p_Event);
-        static void _onMouseMove(const XEvent& p_Event);
-        static void _onMouseWheel(const XEvent& p_Event);
-        static void _onKeyPress(const XEvent& p_Event);
-        static void _onKeyRelease(const XEvent& p_Event);
         static void _onResize(const XEvent& p_Event);
 
     }; // OSLayer_Linux class declaration

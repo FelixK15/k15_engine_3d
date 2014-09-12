@@ -58,7 +58,7 @@ namespace K15_Engine { namespace Core {
     String unixFilePath;
 
     unixFilePath.reserve(p_WindowsFilePath.size());
-    for(int i = 0; i < p_WindowsFilePath.size(); ++i)
+    for(uint32 i = 0; i < p_WindowsFilePath.size(); ++i)
     {
       if(p_WindowsFilePath[i] == '\\')
       {

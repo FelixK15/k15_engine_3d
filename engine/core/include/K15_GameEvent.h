@@ -40,7 +40,7 @@ namespace K15_Engine { namespace Core {
     struct K15_CORE_API KeyboardEventArguments
     {
         Enum key;       //<! Check InputDevices::Keyboard::eKey
-
+		uint32 text;
         bool pressed;   //<! Is the key pressed or not?
     };
 	/*********************************************************************************/

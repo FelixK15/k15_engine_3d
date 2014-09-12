@@ -93,7 +93,7 @@ namespace K15_Engine
 		class EventListener;
 		class GameEvent;
 		class InputManager;
-		class InputBindingBase;
+		class InputEvent;
 		class LogManager;
 		class LogBase;
 		class NetworkManager;
@@ -120,6 +120,7 @@ namespace K15_Engine
 		class GameObject;
 		class GameObjectComponentBase;
 		class GameStateBase;
+		class GameStateManager;
 		class EventManager;
 		class MemoryProfiler;
 		class MemoryProfilingTask;
@@ -295,6 +296,7 @@ namespace K15_Engine
 	/*********************************************************************************/
  }
 
+ //jsoncpp forward declaration
  /*********************************************************************************/
  namespace Json 
  {
@@ -604,6 +606,7 @@ typedef std::set<String> StringSet;
 #define g_ThreadWorker K15_Engine::Core::ThreadWorker::getInstance()
 #define g_MaterialManager K15_Engine::Rendering::MaterialManager::getInstance()
 #define g_ResourceManager K15_Engine::Core::ResourceManager::getInstance()
+#define g_GameStateManager K15_Engine::Core::GameStateManager::getInstance()
 
 typedef unsigned char byte;
 typedef unsigned int Enum;
@@ -630,6 +633,8 @@ typedef K15_Engine::Core::HashedString ResourceName;
 
 #define K15_INVALID_RESOURCE_ID -1
 
+#define K15_EPSILON 1e-5
+
 // #if defined _MSC_VER || K15_GCC_VERSION
 // #	define K15_USE_PRECOMPILED_HEADERS
 // #endif //_MSC_VER || K15_GCC_VERSION
@@ -653,20 +658,24 @@ typedef K15_Engine::Core::HashedString ResourceName;
 #define K15_EXECUTE_CRITICAL_FUNCTION(obj,func) {obj.lockMutex();obj.func;obj.unlockMutex();}
 #define K15_EXECUTE_CRITICAL_FUNCTION_PTR(obj,func) {obj->lockMutex();obj->func;obj->unlockMutex();}
 
+#ifdef K15_OS_ANDROID
+	#define K15_PLATFORM_MOBILE
+#endif //K15_OS_ANDROID
+
 #if defined (K15_CPP11_SUPPORT)
-#	define OVERRIDE override
+	#define OVERRIDE override
 #else
-#	define OVERRIDE
+	#define OVERRIDE
 #endif //K15_CPP11_SUPPORT
 
 #if defined (K15_NO_INLINE)
-#	define INLINE
+	#define INLINE
 #else
-#	if defined (K15_FORCE_INLINE)
-#		define INLINE __forceinline
-#	else
-#		define INLINE inline
-#	endif //K15_FORCE_INLINE
+	#if defined (K15_FORCE_INLINE)
+		#define INLINE __forceinline
+	#else
+		#define INLINE inline
+	#endif //K15_FORCE_INLINE
 #endif //K15_NO_INLINE
 
 #endif //_K15Engine_Prerequisites_h_

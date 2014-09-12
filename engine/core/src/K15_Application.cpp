@@ -27,6 +27,7 @@
 #include "K15_StringUtil.h"
 #include "K15_RenderTask.h"
 #include "K15_ResourceManager.h"
+#include "K15_GameStateManager.h"
 #include "K15_IniFileParser.h"
 #include "K15_Texture.h"
 #include "K15_Functor.h"
@@ -82,7 +83,7 @@ namespace K15_Engine { namespace Core {
 		m_MaxFPS(30),
 		m_AvgFrameTime(0.033f),
 		m_FrameAllocator(0),
-		m_GameState(0)
+		m_GameStateManager(0)
 	{
 		memset(m_FrameStatistics,0,sizeof(FrameStatistic) * FrameStatisticCount);
 
@@ -247,6 +248,9 @@ namespace K15_Engine { namespace Core {
 		K15_LOG_NORMAL("Initializing ResourceManager...");
 		m_ResourceManager = K15_NEW ResourceManager();
 
+		K15_LOG_NORMAL("Initializing GameStateManager...");
+		m_GameStateManager = K15_NEW GameStateManager();
+
 		K15_LOG_NORMAL("Tasks will get created and added to the task manager.");
 		K15_LOG_NORMAL("Creating and adding event task...");
 		m_EventTask = K15_NEW EventTask();
@@ -265,14 +269,14 @@ namespace K15_Engine { namespace Core {
 		m_MemoryProfilingTask = K15_NEW MemoryProfilingTask();
 		m_TaskManager->addTask(m_MemoryProfilingTask);
 #		endif
-  
+
+		//load input file
+		g_InputManager->parseInputConfig();
+
         K15_ASSERT(RenderWindow::initialize(), "Could not initialize RenderWindow!");
 	
 		//process settings
 		processSettings();
-
-		//load input file
-		loadInputFile();
 
 		//Load plugins
 		loadPluginsFile();
@@ -331,21 +335,23 @@ namespace K15_Engine { namespace Core {
 		startFrameTime = getTime();
 
 		K15_PROFILE_BLOCK("Application::onPreTick",
-				onPreTick();
+			onPreTick();
 		);
+
+		//capture input
+		g_InputManager->captureInput();
 
 		K15_PROFILE_BLOCK("TaskManager::update",
-		  m_TaskManager->update(m_GameTime);
+			m_TaskManager->update(m_GameTime);
 		);
 
-
-		if(m_GameState)
-		{
-			m_GameState->update(m_GameTime);
-		}
+		//update current GameState
+		K15_PROFILE_BLOCK("GameStateManager::update",
+			m_GameStateManager->update(m_GameTime);
+		);
 	
 		K15_PROFILE_BLOCK("Application::onPostTick",
-		  onPostTick();
+			onPostTick();
 		);
 
 		endFrameTime = getTime();
@@ -426,106 +432,6 @@ namespace K15_Engine { namespace Core {
 		for(ApplicationModuleList::iterator iter = m_LoadedModules.begin();iter != m_LoadedModules.end();++iter)
 		{
 			(*iter)->onPostTick();
-		}
-	}
-	/*********************************************************************************/
-	void Application::loadInputFile()
-	{
-		K15_LOG_NORMAL("Trying to open input file \"%s\".",InputFileName.c_str());
-
-		static ObjectName actionName;
-		static String bindingComplete;
-		static String binding;
-		static String device;
-		static String deviceInput;
-		static String inputFileName;
-		inputFileName = m_GameRootDir + InputFileName;
-
-		IniFileParser inputFile(inputFileName);
-
-		if(inputFile.isValid())
-		{
-			IniFileGroup group;
-			if(inputFile.getGroupEntries("",&group))
-			{
-				for(IniFileGroup::IniEntryList::iterator iter = group.entries.begin();iter != group.entries.end();++iter)
-				{
-					actionName = (*iter).key;
-					bindingComplete = (*iter).value;
-					String::size_type pos = 0;
-					do 
-					{
-						pos = bindingComplete.find_first_of(',');
-						binding = bindingComplete.substr(0,pos == String::npos ? bindingComplete.size() : pos);
-						if(pos != String::npos)
-						{
-							bindingComplete = bindingComplete.substr(pos+1);
-						}
-						else
-						{
-							bindingComplete.clear();
-						}
-						
-						if(!binding.empty())
-						{
-							pos = binding.find_first_of('.');
-							if(pos != String::npos)
-							{
-								device = StringUtil::toLowerString(binding.substr(0,pos));
-								deviceInput = binding.substr(pos+1);
-								
-								if(device == "keyboard")
-								{
-									InputDevices::Keyboard::InputStringToEnumMap::iterator input_iter = 
-										InputDevices::Keyboard::InputStringToEnum.find(ObjectName(deviceInput));
-
-									if(input_iter != InputDevices::Keyboard::InputStringToEnum.end())
-									{
-										g_InputManager->addInputBinding(actionName,
-											K15_NEW InputDevices::Keyboard::InputTrigger(input_iter->second));
-									}
-									else
-									{
-										K15_LOG_ERROR("Could not find input \"%s\".",binding.c_str());
-									}
-									
-								}
-								else if(device == "gamepad")
-								{
-
-								}
-								else if(device == "mouse")
-								{
-									InputDevices::Mouse::InputStringToEnumMap::iterator input_iter = 
-										InputDevices::Mouse::InputStringToEnum.find(ObjectName(deviceInput));
-
-									if(input_iter != InputDevices::Mouse::InputStringToEnum.end())
-									{
-										g_InputManager->addInputBinding(actionName,
-											K15_NEW InputDevices::Mouse::InputTrigger(input_iter->second));
-									}
-									else
-									{
-										K15_LOG_ERROR("Could not find input \"%s\".",binding.c_str());
-									}
-								}
-								else
-								{
-									K15_LOG_ERROR("Invalid input device \"%s\"",device.c_str());
-								}
-							}
-							else
-							{
-								K15_LOG_ERROR("invalid binding \"%s\"",bindingComplete.c_str());
-							}
-						}
-					} while(!bindingComplete.empty());
-				}
-			}
-		}
-		else
-		{
-			K15_LOG_ERROR("Could not open input file.");
 		}
 	}
 	/*********************************************************************************/
@@ -633,9 +539,14 @@ namespace K15_Engine { namespace Core {
 			(*iter)->onShutdown();
 		}
 
+		g_InputManager->shutdown();
+
 		RenderWindow::shutdown();
 		OSLayer::shutdown();
 		m_ProfileManager->clear();
+
+		K15_LOG_NORMAL("Destroying GameStateManager...");
+		K15_DELETE m_GameStateManager;
 
 		K15_LOG_NORMAL("Destroying ResourceManager...");
 		K15_DELETE m_ResourceManager;
@@ -746,18 +657,6 @@ namespace K15_Engine { namespace Core {
 				}
 			}
 		}
-	}
-	/*********************************************************************************/
-	void Application::setGameState(GameStateBase* p_GameState)
-	{
-		p_GameState->initialize(m_GameState);
-
-		if(m_GameState)
-		{
-			m_GameState->shutdown();		
-		}
-
-		m_GameState = p_GameState;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Core namespace

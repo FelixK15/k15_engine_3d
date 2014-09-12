@@ -102,172 +102,25 @@ namespace K15_Engine { namespace Core {
         while(XPending(RenderWindowImpl::ms_Display))
         {
             XNextEvent(RenderWindowImpl::ms_Display, &event);
-            if(event.type == ButtonPress)
-            {
-                if(event.xbutton.button != Button5 && event.xbutton.button != Button4)
-                {
-                    _onMousePress(event);
-                }
-                else
-                {
-                    _onMouseWheel(event);
-                }
-            }
-            else if(event.type == MotionNotify)
-            {
-                _onMouseMove(event);
-            }
-            else if(event.type == ButtonRelease)
-            {
-                _onMouseRelease(event);
-            }
-            else if(event.type == KeyPress)
-            {
-                _onKeyPress(event);
-            }
-            else if(event.type == KeyRelease)
-            {
-                _onKeyRelease(event);
-            }
-            else if(event.type == ResizeRequest)
-            {
-                _onResize(event);
-            }
-            else if(event.type == ClientMessage)
-            {
-                if(event.xclient.data.l[0] == RenderWindowImpl::ms_DeleteWindowID)
-                {
-                    g_Application->setRunning(false);
-                }
-            }
+			switch(event.type)
+			{
+			case ResizeRequest:
+				_onResize(event);
+				break;
+
+			case ClientMessage
+				if(event.xclient.data.l[0] == RenderWindowImpl::ms_DeleteWindowID)
+				{
+					g_Application->setRunning(false);
+				}
+				break;
+			}
         }
     }
     /*********************************************************************************/
     void OSLayer_Linux::onPostTick()
     {
 
-    }
-    /*********************************************************************************/
-    void OSLayer_Linux::_getKeyArgs(const XEvent &p_Event, KeyboardEventArguments * const p_KeyArgs)
-    {
-
-    }
-    /*********************************************************************************/
-    void OSLayer_Linux::_getMouseArgs(const XEvent& p_Event, MouseEventArguments* const p_MouseArgs)
-    {
-        p_MouseArgs->pressed = p_Event.type == ButtonPress ? true : false;
-        p_MouseArgs->wheelDelta = 0.f;
-
-        if(p_Event.type == MotionNotify)
-        {
-            p_MouseArgs->xPx = p_Event.xmotion.x;
-            p_MouseArgs->yPx = p_Event.xmotion.y;
-            p_MouseArgs->xNDC = K15_PX_TO_NDC(p_MouseArgs->xPx, RenderWindow::getWidth());
-            p_MouseArgs->yNDC = K15_PX_TO_NDC(p_MouseArgs->yPx, RenderWindow::getHeight());
-            p_MouseArgs->button = InputDevices::Mouse::BTN_NONE;
-        }
-        else
-        {
-            p_MouseArgs->xPx = p_Event.xbutton.x;
-            p_MouseArgs->yPx = p_Event.xbutton.y;
-            p_MouseArgs->xNDC = K15_PX_TO_NDC(p_MouseArgs->xPx, RenderWindow::getWidth());
-            p_MouseArgs->yNDC = K15_PX_TO_NDC(p_MouseArgs->yPx, RenderWindow::getHeight());
-
-            if(p_Event.xbutton.button == Button1)
-            {
-                p_MouseArgs->button = InputDevices::Mouse::BTN_LEFT;
-            }
-            else if(p_Event.xbutton.button == Button2)
-            {
-                p_MouseArgs->button = InputDevices::Mouse::BTN_RIGHT;
-            }
-            else if(p_Event.xbutton.button == Button3)
-            {
-                p_MouseArgs->button = InputDevices::Mouse::BTN_MIDDLE;
-            }
-            else
-            {
-                p_MouseArgs->button = InputDevices::Mouse::BTN_NONE;
-
-                // Button4 and Button5 are for mouse wheel events and will generate events twice
-                // for ButtonPress and ButtonRelease. Proper way seems to be to ignore ButtonRelease
-                // http://stackoverflow.com/questions/15510472/scrollwheel-event-in-x11
-                if(p_Event.xbutton.button == Button4)
-                {
-                    p_MouseArgs->wheelDelta = p_Event.type == ButtonPress ? 1.f : 0.f;
-                }
-                else if(p_Event.xbutton.button == Button5)
-                {
-                    p_MouseArgs->wheelDelta = (p_Event.type == ButtonPress) ? -1.f : 0.f;
-                }
-            }
-        }
-    }
-    /*********************************************************************************/
-    void OSLayer_Linux::_onMousePress(const XEvent& p_Event)
-    {
-        MouseEventArguments args;
-        _getMouseArgs(p_Event, &args);
-
-        GameEvent* mousePressEvent = K15_NEW GameEvent(InputDevices::Mouse::EventMousePressed,
-                                                      (void*)&args, sizeof(MouseEventArguments));
-
-        g_EventManager->addEventToQueue(mousePressEvent);
-    }
-    /*********************************************************************************/
-    void OSLayer_Linux::_onMouseRelease(const XEvent& p_Event)
-    {
-        MouseEventArguments args;
-        _getMouseArgs(p_Event, &args);
-
-        GameEvent* mouseReleaseEvent = K15_NEW GameEvent(InputDevices::Mouse::EventMouseReleased,
-                                                      (void*)&args, sizeof(MouseEventArguments));
-
-        g_EventManager->addEventToQueue(mouseReleaseEvent);
-    }
-    /*********************************************************************************/
-    void OSLayer_Linux::_onMouseMove(const XEvent& p_Event)
-    {
-        MouseEventArguments args;
-        _getMouseArgs(p_Event, &args);
-
-        GameEvent* mouseMoveEvent = K15_NEW GameEvent(InputDevices::Mouse::EventMouseMoved,
-                                                      (void*)&args, sizeof(MouseEventArguments));
-
-        g_EventManager->addEventToQueue(mouseMoveEvent);
-    }
-    /*********************************************************************************/
-    void OSLayer_Linux::_onMouseWheel(const XEvent& p_Event)
-    {
-        MouseEventArguments args;
-        _getMouseArgs(p_Event, &args);
-
-        GameEvent* mouseMoveEvent = K15_NEW GameEvent(InputDevices::Mouse::EventMouseMoved,
-                                                      (void*)&args, sizeof(MouseEventArguments));
-
-        g_EventManager->addEventToQueue(mouseMoveEvent);
-    }
-    /*********************************************************************************/
-    void OSLayer_Linux::_onKeyPress(const XEvent& p_Event)
-    {
-        KeyboardEventArguments args;
-        _getKeyArgs(p_Event, &args);
-
-        GameEvent* keyPressEvent = K15_NEW GameEvent(InputDevices::Keyboard::EventKeyPress,
-                                                     (void*)&args, sizeof(KeyboardEventArguments));
-
-        g_EventManager->addEventToQueue(keyPressEvent);
-    }
-    /*********************************************************************************/
-    void OSLayer_Linux::_onKeyRelease(const XEvent& p_Event)
-    {
-        KeyboardEventArguments args;
-        _getKeyArgs(p_Event, &args);
-
-        GameEvent* keyReleaseEvent = K15_NEW GameEvent(InputDevices::Keyboard::EventKeyRelease,
-                                                       (void*)&args, sizeof(KeyboardEventArguments));
-
-        g_EventManager->addEventToQueue(keyReleaseEvent);
     }
     /*********************************************************************************/
     void OSLayer_Linux::_onResize(const XEvent& p_Event)

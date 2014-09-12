@@ -33,7 +33,6 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 	int g_LastMousePos_y = 0;
 	float g_MouseWheelDelta = 0.0f;
 	Mouse::InputStringToEnumMap Mouse::InputStringToEnum = Mouse::createButtonToEnumMap();
-	Mouse::AxisStringToEnumMap Mouse::AxisStringToEnum = Mouse::createAxisToEnumMap();
 	EventName Mouse::EventDoubleClicked = _EN(EventDoubleClicked);
 	EventName Mouse::EventMouseMoved	= _EN(EventMouseMoved);
 	EventName Mouse::EventMousePressed	= _EN(EventMousePressed);
@@ -68,17 +67,6 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		getMousePosDelta(&x_delta, &y_delta);
 		x_deltaNDC = (float)x_delta / (float)RenderWindow::getWidth();
 		y_deltaNDC = (float)y_delta / (float)RenderWindow::getHeight();
-
-		if((m_Axis == MA_VERTICAL_POSITIVE && y_deltaNDC > 0.0f) ||
-		   (m_Axis == MA_VERTICAL_NEGATIVE && y_deltaNDC < 0.0f))
-		{
-			return y_deltaNDC;
-		}
-		else if((m_Axis == MA_HORIZONTAL_POSITIVE && x_deltaNDC > 0.0f) ||
-			    (m_Axis == MA_HORIZONTAL_NEGATIVE && x_deltaNDC < 0.0f))
-		{
-			return x_deltaNDC;
-		}
 
 		return 0.0f;
 	}
@@ -147,18 +135,8 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		map.insert(Pair(ObjectName,Enum)(_ON(MiddleButton), BTN_MIDDLE));
 		map.insert(Pair(ObjectName,Enum)(_ON(SpecialButton1), BTN_SPECIAL1));
 		map.insert(Pair(ObjectName,Enum)(_ON(SpecialButton2), BTN_SPECIAL2));
-
-		return map;
-	}
-	/*********************************************************************************/
-	const Mouse::AxisStringToEnumMap& Mouse::createAxisToEnumMap()
-	{
-		static AxisStringToEnumMap map;
-
-		map.insert(Pair(ObjectName,Enum)(_ON(Horizontal+), MA_HORIZONTAL_POSITIVE));
-		map.insert(Pair(ObjectName,Enum)(_ON(Horizontal-), MA_HORIZONTAL_NEGATIVE));
-		map.insert(Pair(ObjectName,Enum)(_ON(Vertical+), MA_VERTICAL_POSITIVE));
-		map.insert(Pair(ObjectName,Enum)(_ON(Vertical-), MA_VERTICAL_NEGATIVE));
+		map.insert(Pair(ObjectName,Enum)(_ON(Horizontal), MA_HORIZONTAL));
+		map.insert(Pair(ObjectName,Enum)(_ON(Vertical), MA_VERTICAL));
 
 		return map;
 	}

@@ -33,9 +33,7 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 	public:
 		/*********************************************************************************/
 		typedef HashMap(ObjectName,Enum) InputStringToEnumMap;
-		typedef HashMap(ObjectName,Enum) AxisStringToEnumMap;
 		static InputStringToEnumMap InputStringToEnum;
-		static AxisStringToEnumMap AxisStringToEnum;
 		/*********************************************************************************/
 
 		/*********************************************************************************/
@@ -82,17 +80,13 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 			BTN_SPECIAL1,	//<! Special Mouse Button 1 (To support mice with more than 3 buttons)
 			BTN_SPECIAL2,	//<! Special Mouse Button 2 (To support mice with more than 3 buttons)
 
+			MA_HORIZONTAL,
+			MA_VERTICAL,
+
             BTN_NONE        //<! No button has been pressed
 		};//Button
 		/*********************************************************************************/
-		enum eMouseAxis
-		{
-			MA_HORIZONTAL_POSITIVE = 0,
-			MA_HORIZONTAL_NEGATIVE,
-			MA_VERTICAL_POSITIVE,
-			MA_VERTICAL_NEGATIVE
-		};
-		/*********************************************************************************/
+
 	public:
 		static void hideMouse();
 		static void showMouse();
@@ -112,7 +106,6 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 
 	private:
 		static const InputStringToEnumMap& createButtonToEnumMap();
-		static const AxisStringToEnumMap&  createAxisToEnumMap();
 	};// end of Mouse class declaration
 }}}// end of K15_Engine::Core::InputDevice namespace
 

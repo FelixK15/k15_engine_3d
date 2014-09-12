@@ -169,86 +169,12 @@ namespace K15_Engine { namespace Core {
          _onWindowActivated(p_HandleWindow, p_MSG, p_wParam, p_lParam);
          break;
 
-      case WM_MBUTTONDOWN:
-      case WM_LBUTTONDOWN:
-      case WM_RBUTTONDOWN:
-         _onMousePress(p_HandleWindow, p_MSG, p_wParam, p_lParam);
-         break;
-
-      case WM_MBUTTONUP:
-      case WM_LBUTTONUP:
-      case WM_RBUTTONUP:
-         _onMouseRelease(p_HandleWindow, p_MSG, p_wParam, p_lParam);
-         break;
-
-      case WM_MOUSEWHEEL:
-         _onMouseWheel(p_HandleWindow, p_MSG, p_wParam, p_lParam);
-         break;
-
-      case WM_MOUSEMOVE:
-         _onMouseMove(p_HandleWindow, p_MSG, p_wParam, p_lParam);
-         break;
-
-      case WM_KEYDOWN:
-         _onKeyPress(p_HandleWindow, p_MSG, p_wParam, p_lParam);
-         break;
-
-      case WM_KEYUP:
-         _onKeyRelease(p_HandleWindow, p_MSG, p_wParam, p_lParam);
-         break;
-
       case WM_SIZE:
          _onResize(p_HandleWindow, p_MSG, p_wParam, p_lParam);
          break;
       }
 
       return DefWindowProc(p_HandleWindow, p_MSG, p_wParam, p_lParam);
-   }
-   /*********************************************************************************/
-   void OSLayer_Win32::_getMouseArgs(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam, MouseEventArguments* const p_MouseArgs)
-   {
-      if(p_wParam & MK_LBUTTON) {
-         p_MouseArgs->button = InputDevices::Mouse::BTN_LEFT;
-      } else if(p_wParam & MK_RBUTTON) {
-         p_MouseArgs->button = InputDevices::Mouse::BTN_RIGHT;
-      } else if(p_wParam & MK_MBUTTON) {
-         p_MouseArgs->button = InputDevices::Mouse::BTN_MIDDLE;
-      } else if(p_wParam & MK_XBUTTON1) {
-         p_MouseArgs->button = InputDevices::Mouse::BTN_SPECIAL1;
-      } else if(p_wParam & MK_XBUTTON2) {
-         p_MouseArgs->button = InputDevices::Mouse::BTN_SPECIAL2;
-      }
-
-      int x,y;
-      y = GET_Y_LPARAM(p_lParam);
-      x = GET_X_LPARAM(p_lParam);
-
-      p_MouseArgs->xPx = x;
-      p_MouseArgs->yPx = y;
-      p_MouseArgs->xNDC = K15_PX_TO_NDC(x, RenderWindow::getWidth());
-      p_MouseArgs->yNDC = K15_PX_TO_NDC(y, RenderWindow::getHeight());
-      p_MouseArgs->pressed = false;
-      p_MouseArgs->wheelDelta = 0.f;
-
-      if(p_MSG == WM_LBUTTONDOWN || p_MSG == WM_RBUTTONDOWN || p_MSG == WM_MBUTTONDOWN || p_MSG == WM_XBUTTONDOWN) {
-         p_MouseArgs->pressed = true;
-      }
-
-      if(p_MSG == WM_MOUSEWHEEL) {
-         int wheelDelta = GET_WHEEL_DELTA_WPARAM(p_wParam);
-         p_MouseArgs->wheelDelta = ((float)wheelDelta / (float)WHEEL_DELTA);
-      }
-   }
-   /*********************************************************************************/
-   void OSLayer_Win32::_getKeyArgs(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam, KeyboardEventArguments* const p_KeyArgs)
-   {
-      p_KeyArgs->pressed = false;
-
-      if(p_MSG == WM_KEYDOWN) {
-         p_KeyArgs->pressed = true;
-      }
-
-      p_KeyArgs->key = p_wParam;
    }
    /*********************************************************************************/
    void OSLayer_Win32::_onWindowCreated(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam)
@@ -286,72 +212,6 @@ namespace K15_Engine { namespace Core {
       GameEvent* focusEvent = K15_NEW GameEvent(activated ? RenderWindow::EventFocusReceived : RenderWindow::EventFocusLost);
 
       g_EventManager->addEventToQueue(focusEvent);
-   }
-   /*********************************************************************************/
-   void OSLayer_Win32::_onMousePress(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam)
-   {
-      MouseEventArguments args;
-      _getMouseArgs(p_Window, p_MSG, p_wParam, p_lParam, &args);
-
-      GameEvent* mousePress = K15_NEW GameEvent(InputDevices::Mouse::EventMousePressed,
-                              (void*)&args, sizeof(MouseEventArguments));
-
-      g_EventManager->addEventToQueue(mousePress);
-   }
-   /*********************************************************************************/
-   void OSLayer_Win32::_onMouseRelease(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam)
-   {
-      MouseEventArguments args;
-      _getMouseArgs(p_Window, p_MSG, p_wParam, p_lParam, &args);
-
-      GameEvent* mouseRelease = K15_NEW GameEvent(InputDevices::Mouse::EventMouseReleased,
-                                (void*)&args, sizeof(MouseEventArguments));
-
-      g_EventManager->addEventToQueue(mouseRelease);
-   }
-   /*********************************************************************************/
-   void OSLayer_Win32::_onMouseMove(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam)
-   {
-      MouseEventArguments args;
-      _getMouseArgs(p_Window, p_MSG, p_wParam, p_lParam, &args);
-
-      GameEvent* mouseMove = K15_NEW GameEvent(InputDevices::Mouse::EventMouseMoved,
-                             (void*)&args, sizeof(MouseEventArguments));
-
-      g_EventManager->addEventToQueue(mouseMove);
-   }
-   /*********************************************************************************/
-   void OSLayer_Win32::_onMouseWheel(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam)
-   {
-      MouseEventArguments args;
-      _getMouseArgs(p_Window, p_MSG, p_wParam, p_lParam, &args);
-
-      GameEvent* mouseWheel = K15_NEW GameEvent(InputDevices::Mouse::EventMouseWheel,
-                              (void*)&args, sizeof(MouseEventArguments));
-
-      g_EventManager->addEventToQueue(mouseWheel);
-   }
-   /*********************************************************************************/
-   void OSLayer_Win32::_onKeyPress(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam)
-   {
-      KeyboardEventArguments args;
-      _getKeyArgs(p_Window, p_MSG, p_wParam, p_lParam, &args);
-
-      GameEvent* keyPress = K15_NEW GameEvent(InputDevices::Keyboard::EventKeyPress,
-                                              (void*)&args, sizeof(KeyboardEventArguments));
-
-      g_EventManager->addEventToQueue(keyPress);
-   }
-   /*********************************************************************************/
-   void OSLayer_Win32::_onKeyRelease(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam)
-   {
-      KeyboardEventArguments args;
-      _getKeyArgs(p_Window, p_MSG, p_wParam, p_lParam, &args);
-
-      GameEvent* keyRelease = K15_NEW GameEvent(InputDevices::Keyboard::EventKeyRelease,
-                              (void*)&args, sizeof(KeyboardEventArguments));
-
-      g_EventManager->addEventToQueue(keyRelease);
    }
    /*********************************************************************************/
    void OSLayer_Win32::_onResize(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam)

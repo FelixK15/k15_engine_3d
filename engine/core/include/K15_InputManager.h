@@ -30,53 +30,116 @@
 #include "K15_AllocatedObject.h"
 #include "K15_InputTriggerBase.h"
 
+#define K15_InputHandler(c,f,o) K15_Engine::Core::InputHandler::create<c, &c::f>(o)
+
 namespace K15_Engine { namespace Core {
+	/*********************************************************************************/
+	class K15_CORE_API InputEvent
+	{
+	public:
+		InputEvent(Enum p_InputSource, float p_Value);
+		~InputEvent();
+
+		INLINE float getValue() const;
+		INLINE Enum getInputSource() const;
+
+	private:
+		float m_Value;
+		Enum m_InputSource;
+	}; // end of InputEvent class declaration
+	/*********************************************************************************/
+
+
+	/*********************************************************************************/
+	class K15_CORE_API InputHandler
+	{
+	public:
+		typedef bool (*HandlerFunction)(void*, InputEvent*);
+
+	public:
+		InputHandler();
+		InputHandler(const InputHandler& p_InputHandler);
+
+		~InputHandler();
+
+		template<class T, bool (T::*MemberFunction)(InputEvent*)>
+		static InputHandler create(const T* p_Object);
+
+		INLINE bool operator()(InputEvent* p_Arg) const;
+		INLINE bool operator==(const InputHandler& p_Rhs) const;
+
+	private:
+		template<class T, bool (T::*MemberFunction)(InputEvent*)>
+		static bool getHandlerFunction(void* p_Object, InputEvent* p_Args);
+
+	private:
+		void* m_Object;
+		HandlerFunction m_Handler;
+	}; // end of InputHandler class declaration
+	/*********************************************************************************/
+
+
+
+	/*********************************************************************************/
+	struct K15_CORE_API InputMapping
+	{
+		InputHandler Handler;
+		ObjectName Device;
+		ObjectName Action;
+		Enum Key;
+	};
+	/*********************************************************************************/
+
+
+
+	/*********************************************************************************/
+	struct TriggeredInput
+	{
+		ObjectName Device;
+		Enum Key;
+		float Value;
+	};
+	/*********************************************************************************/
+
+
+
+	/*********************************************************************************/
 	class K15_CORE_API InputManager : public CoreAllocatedObject,
 									  public Singleton<InputManager>
 	{
 	public:
 		/*********************************************************************************/
 		static const uint8 MaxMapCount = 2;
-		typedef HashMap(ObjectName,InputTriggerBase*) InputMapping;
+		typedef DynamicArray(InputMapping) InputMappingArray;
+		typedef DynamicArray(TriggeredInput) TriggeredInputArray;
 		/*********************************************************************************/
 
-		/*********************************************************************************/
-		enum eControllerButton
-		{
-			BUTTON_A,
-			BUTTON_B,
-			BUTTON_X,
-			BUTTON_Y,
-
-			BUTTON_START,
-			BUTTON_BACK,
-
-			BUTTON_LEFT_TRIGGER,
-			BUTTON_RIGHT_TRIGGER,
-
-			BUTTON_LEFT_STICK,
-			BUTTON_RIGHT_STICK,
-
-			BUTTON_DPAD_UP,
-			BUTTON_DPAD_DOWN,
-			BUTTON_DPAD_LEFT,
-			BUTTON_DPAD_RIGHT
-		};//ControllerButton
-		/*********************************************************************************/
 	public:
 		InputManager();
 		virtual ~InputManager();
 
-		void addInputBinding(const ObjectName& p_ActonName,InputTriggerBase* p_Trigger);
-		//void addInputBinding(const ObjectName& p_ActonName,InputTriggerBase** p_Triggers,uint8 p_TriggerCount);
+		bool init();
+		void shutdown();
+
+		void parseInputConfig();
+
+		void captureInput();
+
+		void addInputBinding(const ObjectName& p_ActionName, const InputHandler& p_InputHandler);
 
 		void removeInputBinding(const ObjectName& p_ActionName);
 		
 		float getValue(const ObjectName& p_ActionName);
+
 	private:
-		InputMapping m_InputMap;
+		bool onRenderWindowInitialized(GameEvent* p_Args);
+
+	private:
+		InputMappingArray m_InputMapping;
+		TriggeredInputArray m_TriggeredInput;
 	};
 	/*********************************************************************************/
+	#include "K15_InputManager.inl"
 }}//end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_InputManager_h_

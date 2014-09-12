@@ -128,7 +128,9 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 			KEY_UP = 0x26,
 			KEY_DOWN = 0x28,
 			KEY_LEFT = 0x25,
-			KEY_RIGHT = 0x27
+			KEY_RIGHT = 0x27,
+
+			KEY_NONE = 0xFF
 		};//KeyboardKeys
 		/*********************************************************************************/
 	public:
