@@ -46,6 +46,7 @@ include_directories(../dependencies/libtiff/include)
 include_directories(../dependencies/minizip/include)
 include_directories(../dependencies/zlib/include)
 include_directories(../dependencies/tinyobjloader/include)
+include_directories(../dependencies/ois/include)
 
 #If we're building a shared library, we need to link all the libraries.
 if(NOT BUILD_STATIC_CORE)

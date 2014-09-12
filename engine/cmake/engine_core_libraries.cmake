@@ -8,6 +8,7 @@ find_library(TIFF_LIB NAMES libtiff)
 find_library(MINIZIP_LIB NAMES minizip libminizip)
 find_library(OBJLOADER_LIB NAMES tinyobjloader libtinyonjloader)
 find_library(ZLIB_LIB NAMES zlib libzlib)
+find_library(OIS_LIB NAMES ois libois)
 
 if("${ENET_LIB}" STREQUAL "ENET_LIB-NOTFOUND")
         message(SEND_ERROR "Could not found library 'enet' ... Wrong DEPENDENCY_PATH?")
@@ -51,6 +52,13 @@ else()
 	message(STATUS "Successfully found library 'zlib' (${ZLIB_LIB}).")
 endif()
 
+if("${OIS_LIB}" STREQUAL "OIS_LIB-NOTFOUND")
+	message(SEND_ERROR "Could not found library 'ois' ... Wrong DEPENDENCY_PATH?")
+else()
+	message(STATUS "Successfully found library 'ois' (${OIS_LIB}).")
+endif()
+
+
 set(ENGINE_LIBS "${ENGINE_LIBS}"
 "${ENET_LIB}"
 "${DETOUR_LIB}"
@@ -59,5 +67,6 @@ set(ENGINE_LIBS "${ENGINE_LIBS}"
 "${MINIZIP_LIB}"
 "${OBJLOADER_LIB}"
 "${ZLIB_LIB}"
+"${OIS_LIB}"
 "k15math"
 )
