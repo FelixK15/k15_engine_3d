@@ -1,8 +1,8 @@
 /**
- * @file K15_GameState.cpp
+ * @file K15_GameStateManager.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2014/05/03
+ * @date 2013/09/10
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -17,22 +17,16 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_PrecompiledHeader.h"
+/*********************************************************************************/
+GameStateBase* GameStateManager::getCurrentGameState() const
+{
+	if(m_CurrentGameStateIndex < 0) return 0;
 
-#include "K15_GameStateBase.h"
-
-namespace K15_Engine { namespace Core {
-	/*********************************************************************************/
-	GameStateBase::GameStateBase(const ObjectName& p_Name)
-		: Object(p_Name),
-		m_UpdateNextGameState(false)
-	{
-
-	}
-	/*********************************************************************************/
-	GameStateBase::~GameStateBase()
-	{
-
-	}
-	/*********************************************************************************/
-}}// end of K15_Engine::Core namespace
+	return m_GameStates[m_CurrentGameStateIndex];
+}
+/*********************************************************************************/
+void GameStateManager::update(const GameTime& p_GameTime)
+{
+	update_R(p_GameTime, m_CurrentGameStateIndex - 1);
+}
+/*********************************************************************************/

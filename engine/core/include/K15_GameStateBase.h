@@ -31,14 +31,22 @@ namespace K15_Engine { namespace Core {
 	class K15_CORE_API GameStateBase : public Object
 	{
 	public:
+		virtual ~GameStateBase();
+
 		virtual void initialize(GameStateBase* p_PrevGameState) = 0;
 		virtual void shutdown() = 0;
 		virtual void update(const GameTime& p_GameTime) = 0;
+
+		INLINE bool getUpdateNextGameState() const;
+		INLINE void setUpdateNextGameState(bool p_UpdateNextGameState);
 	protected:
 		GameStateBase(const ObjectName& p_Name);
-		virtual ~GameStateBase();
+
+	private:
+		bool m_UpdateNextGameState;
 
 	};// end of GameStateBase class declaration
+	#include "K15_GameStateBase.inl"
 }}// end of K15_Engine::Core namespace
 
 #endif //_K15Engine_Core_GameState_h_

@@ -1,5 +1,5 @@
 /**
- * @file K15_GameState.cpp
+ * @file K15_GameState.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2014/05/03
@@ -17,22 +17,14 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_PrecompiledHeader.h"
-
-#include "K15_GameStateBase.h"
-
-namespace K15_Engine { namespace Core {
-	/*********************************************************************************/
-	GameStateBase::GameStateBase(const ObjectName& p_Name)
-		: Object(p_Name),
-		m_UpdateNextGameState(false)
-	{
-
-	}
-	/*********************************************************************************/
-	GameStateBase::~GameStateBase()
-	{
-
-	}
-	/*********************************************************************************/
-}}// end of K15_Engine::Core namespace
+/*********************************************************************************/
+bool GameStateBase::getUpdateNextGameState() const
+{
+	return m_UpdateNextGameState;
+}
+/*********************************************************************************/
+void GameStateBase::setUpdateNextGameState(bool p_UpdateNextGameState)
+{
+	m_UpdateNextGameState = p_UpdateNextGameState;
+}
+/*********************************************************************************/
