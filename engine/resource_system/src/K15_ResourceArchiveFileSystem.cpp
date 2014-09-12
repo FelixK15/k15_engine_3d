@@ -24,52 +24,71 @@
 #include "K15_IOUtil.h"
 
 namespace K15_Engine { namespace Core {
-  /*********************************************************************************/
-  ResourceArchiveFileSystem::ResourceArchiveFileSystem(const String& p_RootDirectory)
-    : ResourceArchiveBase(p_RootDirectory),
-    m_RootDirectory(IOUtil::convertToUnixFilePath(p_RootDirectory))
-  {
-    if(m_RootDirectory.back() != '/')
-    {
-      m_RootDirectory += '/';
-    }
-  }
-  /*********************************************************************************/
-  ResourceArchiveFileSystem::~ResourceArchiveFileSystem()
-  {
+	/*********************************************************************************/
+	K15_IMPLEMENT_RTTI_BASE(Core, ResourceArchiveFileSystem, ResourceArchiveBase);
+	/*********************************************************************************/
 
-  }
-  /*********************************************************************************/
-  bool ResourceArchiveFileSystem::getResource(const String& p_ResourceName, RawData* p_Data)
-  {
-    String resourcePath = m_RootDirectory += (p_ResourceName.front() == '/' ? p_ResourceName.substr(1) : p_ResourceName);
-    FILE* resourceFile = fopen(resourcePath.c_str(), "r");
+	/*********************************************************************************/
+	ResourceArchiveFileSystem::ResourceArchiveFileSystem(const String& p_RootDirectory)
+	: ResourceArchiveBase(p_RootDirectory),
+	m_RootDirectory(IOUtil::convertToUnixFilePath(p_RootDirectory))
+	{
+		if(m_RootDirectory.back() != '/')
+		{
+			m_RootDirectory += '/';
+		}
+	}
+	/*********************************************************************************/
+	ResourceArchiveFileSystem::~ResourceArchiveFileSystem()
+	{
 
-    if(!resourceFile)
-    {
-      setError(strerror(errno));
-      return false;
-    }
+	}
+	/*********************************************************************************/
+	bool ResourceArchiveFileSystem::getResource(const String& p_ResourceName, RawData* p_Data)
+	{
+		String resourcePath = m_RootDirectory += (p_ResourceName.front() == '/' ? p_ResourceName.substr(1) : p_ResourceName);
+		FILE* resourceFile = fopen(resourcePath.c_str(), "r");
 
-    uint32 fileSize = IOUtil::getFileSize(resourcePath);
-    p_Data->data = K15_NEW_SIZE(BaseAllocatedObject::Allocators[BaseAllocatedObject::AC_RESOURCE], fileSize) byte;
-    p_Data->size = fileSize;
+		if(!resourceFile)
+		{
+			setError(strerror(errno));
+			return false;
+		}
 
-    fread(p_Data->data, fileSize, 1, resourceFile);
+		uint32 fileSize = IOUtil::getFileSize(resourcePath);
+		p_Data->data = K15_NEW_SIZE(BaseAllocatedObject::Allocators[BaseAllocatedObject::AC_RESOURCE], fileSize) byte;
+		p_Data->size = fileSize;
 
-    fclose(resourceFile);
+		fread(p_Data->data, fileSize, 1, resourceFile);
 
-    return true;
-  }
-  /*********************************************************************************/
-  bool ResourceArchiveFileSystem::_open()
-  {
-    return true;
-  }
-  /*********************************************************************************/
-  bool ResourceArchiveFileSystem::_close()
-  {
-    return true;
-  }
-  /*********************************************************************************/
+		fclose(resourceFile);
+
+		return true;
+	}
+	/*********************************************************************************/
+	bool ResourceArchiveFileSystem::hasResource(const String& p_ResourceName)
+	{
+		String resourcePath = m_RootDirectory += (p_ResourceName.front() == '/' ? p_ResourceName.substr(1) : p_ResourceName);
+		FILE* resourceFile = fopen(resourcePath.c_str(), "r");
+
+		if(!resourceFile)
+		{
+			return false;
+		}
+
+		fclose(resourceFile);
+
+		return true;
+	}
+	/*********************************************************************************/
+	bool ResourceArchiveFileSystem::_open()
+	{
+		return true;
+	}
+	/*********************************************************************************/
+	bool ResourceArchiveFileSystem::_close()
+	{
+		return true;
+	}
+/*********************************************************************************/
 }}// end of K15_Engine::Core namespace
