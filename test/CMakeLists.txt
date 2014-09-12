@@ -1,6 +1,7 @@
 #src files
 link_directories("${DEPENDENCY_PATH}")
 
+include_directories(./include)
 include_directories(../engine/core/include)
 include_directories(../engine/rendering/include)
 include_directories(../engine/resource_system/include)
