@@ -53,13 +53,11 @@ namespace K15_Engine { namespace Test {
 	/*********************************************************************************/
 	bool TestGameState::onMouseMoveX(InputEvent* p_InputEvent)
 	{
-		printf("x : %.3f\n" , p_InputEvent->getValue());
 		return true;
 	}
 	/*********************************************************************************/
 	bool TestGameState::onMouseMoveY(InputEvent* p_InputEvent)
 	{
-		printf("y : %.3f\n" , p_InputEvent->getValue());
 		return true;
 	}
 	/*********************************************************************************/

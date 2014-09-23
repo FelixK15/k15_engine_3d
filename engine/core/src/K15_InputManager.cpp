@@ -198,8 +198,17 @@ namespace K15_Engine { namespace Core {
 		p_Args->xNDC = (float)p_Args->xPx / (float)RenderWindow::getWidth();
 		p_Args->yNDC = (float)p_Args->yPx / (float)RenderWindow::getHeight();
 
+		if(p_Args->xPx > RenderWindow::getWidth()) p_Args->xPx = RenderWindow::getWidth();
+		if(p_Args->yPx > RenderWindow::getHeight()) p_Args->yPx = RenderWindow::getHeight();
+
 		p_Args->xNDC -= 0.5f; p_Args->yNDC -= 0.5f;
 		p_Args->xNDC *= 2.f; p_Args->yNDC *= 2.f;
+
+		if(p_Args->xNDC > 1.f) p_Args->xNDC = 1.f;
+		if(p_Args->xNDC < -1.f) p_Args->xNDC = -1.f;
+
+		if(p_Args->yNDC > 1.f) p_Args->yNDC = 1.f;
+		if(p_Args->yNDC < -1.f) p_Args->yNDC = -1.f;
 	}
 	/*********************************************************************************/
 	void getKeyboardEventArgs(KeyboardEventArguments* p_Args, const OIS::KeyEvent& p_Event)
@@ -299,7 +308,10 @@ namespace K15_Engine { namespace Core {
 
 			m_Initialized = true;
 
-			
+			//set window region
+			const OIS::MouseState& ms = m_Mouse->getMouseState();
+			ms.width = RenderWindow::getWidth();
+			ms.height = RenderWindow::getHeight();
 
 			return true;
 		}
@@ -424,8 +436,6 @@ namespace K15_Engine { namespace Core {
 			lastNDC_x = args.xNDC;
 			lastNDC_y = args.yNDC;
 
-			printf("lastNDC_x : %.3f, lastNDC_y : %.3f\n", lastNDC_x, lastNDC_y);
-
 			if(fabs(deltaNDC_x) > K15_EPSILON)
 			{
 				input.Key = InputDevices::Mouse::MA_HORIZONTAL;
@@ -497,12 +507,17 @@ namespace K15_Engine { namespace Core {
 		/*********************************************************************************/
 		bool onWindowResize(GameEvent* p_Event)
 		{
-			const OIS::MouseState& ms = m_Mouse->getMouseState();
-			ResizeEventArguments* args = static_cast<ResizeEventArguments*>(p_Event->getArgument());
-			ms.width = args->newWidth;
-			ms.height = args->newHeight;
+			if(m_Mouse)
+			{
+				const OIS::MouseState& ms = m_Mouse->getMouseState();
+				ResizeEventArguments* args = static_cast<ResizeEventArguments*>(p_Event->getArgument());
+				ms.width = args->newWidth;
+				ms.height = args->newHeight;
 
-			return true;
+				return true;
+			}
+
+			return false;
 		}
 		/*********************************************************************************/
 		#endif //K15_PLATFORM_MOBILE

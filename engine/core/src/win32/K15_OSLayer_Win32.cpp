@@ -211,7 +211,7 @@ namespace K15_Engine { namespace Core {
 
       GameEvent* focusEvent = K15_NEW GameEvent(activated ? RenderWindow::EventFocusReceived : RenderWindow::EventFocusLost);
 
-      g_EventManager->addEventToQueue(focusEvent);
+      g_EventManager->triggerEvent(focusEvent);
    }
    /*********************************************************************************/
    void OSLayer_Win32::_onResize(HWND p_Window, UINT p_MSG, WPARAM p_wParam, LPARAM p_lParam)
@@ -236,7 +236,7 @@ namespace K15_Engine { namespace Core {
       GameEvent* resize = K15_NEW GameEvent(RenderWindow::EventResolutionChanged,
                                             (void*)&args, sizeof(ResizeEventArguments));
 
-      g_EventManager->addEventToQueue(resize);
+      g_EventManager->triggerEvent(resize);
    }
    /*********************************************************************************/
 }}//end of K15_Engine::Core namespace

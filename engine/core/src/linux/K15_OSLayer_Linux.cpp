@@ -139,7 +139,7 @@ namespace K15_Engine { namespace Core {
         GameEvent* resolutionChangedEvent = K15_NEW GameEvent(RenderWindow::EventResolutionChanged,
                                                               (void*)&args, sizeof(ResizeEventArguments));
 
-        g_EventManager->addEventToQueue(resolutionChangedEvent);
+        g_EventManager->triggerEvent(resolutionChangedEvent);
     }
     /*********************************************************************************/
 }} //end of K15_Engine::Core namespace
