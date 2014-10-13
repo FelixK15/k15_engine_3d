@@ -33,6 +33,9 @@ namespace K15_Engine { namespace Test {
 	class TestGameState : public GameStateBase,
 						  public GeneralAllocatedObject
 	{
+		/*********************************************************************************/
+		typedef FixedArray(GameObject*, 8) ObjectArray;
+		/*********************************************************************************/
 	public:
 		TestGameState();
 		virtual ~TestGameState();
@@ -41,8 +44,15 @@ namespace K15_Engine { namespace Test {
 		virtual void shutdown();
 		virtual void update(const GameTime& p_GameTime);
 
-		bool onMouseMoveX(InputEvent* p_InputEvent);
-		bool onMouseMoveY(InputEvent* p_InputEvent);
+	private:
+		void _addLights();
+
+	private:
+		GameObject* m_Camera;
+		GameObject* m_Light1;
+		GameObject* m_Light2;
+		GameObject* m_Light3;
+		GameObject* m_Bunny;
 	}; // end of TestModule class declaration
 }} // end of K15_Engine::Test namespace
 
