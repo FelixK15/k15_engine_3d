@@ -39,7 +39,7 @@ namespace K15_Engine { namespace Math {
 	Matrix4::Matrix4()
 	{
 		memset(&m_MatrixArray,0,sizeof(Matrix4));
-		m_MatrixArray[3] = m_MatrixArray[6] = m_MatrixArray[9] = m_MatrixArray[12] = 1.0f;
+		m_MatrixArray[0] = m_MatrixArray[5] = m_MatrixArray[10] = m_MatrixArray[15] = 1.0f;
 	}
 	/*********************************************************************************/
 	Matrix4::Matrix4(float p_Values[16])
@@ -52,10 +52,10 @@ namespace K15_Engine { namespace Math {
 		float _3_1,float _3_2,float _3_3,float _3_4,
 		float _4_1,float _4_2,float _4_3,float _4_4)
 	{
-    this->_1_1 = _1_1; this->_1_2 = _1_2; this->_1_3 = _1_3; this->_1_4 = _1_4;
-    this->_2_1 = _2_1; this->_2_2 = _2_2; this->_2_3 = _2_3; this->_2_4 = _2_4;
-    this->_3_1 = _3_1; this->_3_2 = _3_2; this->_3_3 = _3_3; this->_3_4 = _3_4;
-    this->_4_1 = _4_1; this->_4_2 = _4_2; this->_4_3 = _4_3; this->_4_4 = _4_4;
+		this->_1_1 = _1_1; this->_1_2 = _1_2; this->_1_3 = _1_3; this->_1_4 = _1_4;
+		this->_2_1 = _2_1; this->_2_2 = _2_2; this->_2_3 = _2_3; this->_2_4 = _2_4;
+		this->_3_1 = _3_1; this->_3_2 = _3_2; this->_3_3 = _3_3; this->_3_4 = _3_4;
+		this->_4_1 = _4_1; this->_4_2 = _4_2; this->_4_3 = _4_3; this->_4_4 = _4_4;
 	}
 	/*********************************************************************************/
 	Matrix4::Matrix4(const Matrix4& p_Matrix)
@@ -71,30 +71,30 @@ namespace K15_Engine { namespace Math {
 	float Matrix4::determinant() const
 	{
 		glm::mat4 mat;
-    memcpy(&mat, m_MatrixArray, sizeof(Matrix4));
+		memcpy(&mat, m_MatrixArray, sizeof(Matrix4));
 
-    return glm::determinant(mat);
+		return glm::determinant(mat);
 	}
 	/*********************************************************************************/
 	Matrix4 Matrix4::inverse() const
 	{
  		Matrix4 invMat;
-    glm::mat4 mat;
-    memcpy(&mat, m_MatrixArray, sizeof(Matrix4));
+		glm::mat4 mat;
+		memcpy(&mat, m_MatrixArray, sizeof(Matrix4));
 
-    mat = glm::inverse(mat);
-    memcpy(&invMat, &mat, sizeof(Matrix4));
+		mat = glm::inverse(mat);
+		memcpy(&invMat, &mat, sizeof(Matrix4));
 
 		return invMat;
 	}
 	/*********************************************************************************/
 	Matrix4 Matrix4::transpose() const
 	{
-    Matrix4 transMat;
-    glm::mat4 mat;
-    memcpy(&mat, m_MatrixArray, sizeof(Matrix4));
+		Matrix4 transMat;
+		glm::mat4 mat;
+		memcpy(&mat, m_MatrixArray, sizeof(Matrix4));
 
-    mat = glm::transpose(mat);
+		mat = glm::transpose(mat);
 		memcpy(&transMat, &mat, sizeof(Matrix4));
 
 		return transMat;
@@ -143,23 +143,36 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	Vector3 Matrix4::operator*(const Vector3& p_Vector) const
 	{
-		Vector3 vec(p_Vector);
-		vec.x = m_MatrixArray[0]*p_Vector.x + m_MatrixArray[1]*p_Vector.y + m_MatrixArray[2]*p_Vector.z;
-		vec.y = m_MatrixArray[4]*p_Vector.x + m_MatrixArray[5]*p_Vector.y + m_MatrixArray[6]*p_Vector.z;
-		vec.z = m_MatrixArray[8]*p_Vector.x + m_MatrixArray[9]*p_Vector.y + m_MatrixArray[10]*p_Vector.z;
-		return vec;
+		Vector3 transformedVec;
+		glm::vec4 vec;
+		glm::mat4 mat;
+
+		memcpy(&mat, m_MatrixArray, sizeof(Matrix4));
+		memcpy(&vec, &p_Vector, sizeof(Vector3));
+		vec.w = 1.f;
+		vec = mat * vec;
+
+		transformedVec.x = vec.x;
+		transformedVec.y = vec.y;
+		transformedVec.z = vec.z;
+
+		return transformedVec;
 	}
 	/*********************************************************************************/
 	Vector4 Matrix4::operator*(const Vector4& p_Vector) const
 	{
-		Vector4 vec(p_Vector);
-		vec.x = m_MatrixArray[0]*p_Vector.x + m_MatrixArray[1]*p_Vector.y + m_MatrixArray[2]*p_Vector.z + m_MatrixArray[3]*p_Vector.w;
-		vec.y = m_MatrixArray[4]*p_Vector.x + m_MatrixArray[5]*p_Vector.y + m_MatrixArray[6]*p_Vector.z + m_MatrixArray[7]*p_Vector.w;
-		vec.z = m_MatrixArray[8]*p_Vector.x + m_MatrixArray[9]*p_Vector.y + m_MatrixArray[10]*p_Vector.z + m_MatrixArray[11]*p_Vector.w;
-		vec.w = m_MatrixArray[12]*p_Vector.x + m_MatrixArray[13]*p_Vector.y + m_MatrixArray[14]*p_Vector.z + m_MatrixArray[15]*p_Vector.w;
+		Vector4 transformedVec;
+		glm::vec4 vec;
+		glm::mat4 mat;
 
-		vec /= vec.w;
-		return vec;
+		memcpy(&mat, m_MatrixArray, sizeof(Matrix4));
+		memcpy(&vec, &p_Vector, sizeof(Vector4));
+
+		vec = mat * vec;
+
+		memcpy(&transformedVec, &vec, sizeof(Vector4));
+
+		return transformedVec;
 	}
 	/*********************************************************************************/
 	Matrix4 Matrix4::operator*(float p_Scalar) const
@@ -174,14 +187,14 @@ namespace K15_Engine { namespace Math {
 	const Matrix4& Matrix4::operator*=(const Matrix4& p_Matrix)
 	{
 		glm::mat4 mat;
-    glm::mat4 mat2;
+		glm::mat4 mat2;
 
-    memcpy(&mat, m_MatrixArray, sizeof(Matrix4));
-    memcpy(&mat2, &p_Matrix, sizeof(Matrix4));
+		memcpy(&mat, m_MatrixArray, sizeof(Matrix4));
+		memcpy(&mat2, &p_Matrix, sizeof(Matrix4));
 
-    mat *= mat2;
+		mat *= mat2;
 
-    memcpy(m_MatrixArray, &mat, sizeof(Matrix4));
+		memcpy(m_MatrixArray, &mat, sizeof(Matrix4));
 
 		return *this;
 	}
@@ -189,9 +202,9 @@ namespace K15_Engine { namespace Math {
 	const Matrix4& Matrix4::operator*=(float p_Scalar)
 	{
 		for(int i = 0; i < 16; ++i)
-    {
-      m_MatrixArray[i] *= p_Scalar;
-    }
+		{
+			m_MatrixArray[i] *= p_Scalar;
+		}
 
 		return *this;
 	}
@@ -224,18 +237,18 @@ namespace K15_Engine { namespace Math {
 	const Matrix4& Matrix4::operator+=(const Matrix4& p_Matrix)
 	{
 		for(int i = 0; i < 16; ++i)
-    {
-      m_MatrixArray[i] += p_Matrix[i];
-    }
+		{
+			m_MatrixArray[i] += p_Matrix[i];
+		}
 		return *this;
 	}
 	/*********************************************************************************/
 	const Matrix4& Matrix4::operator-=(const Matrix4& p_Matrix)
 	{
 		for(int i = 0; i < 16; ++i)
-    {
-      m_MatrixArray[i] -= p_Matrix[i];
-    }
+		{
+		  m_MatrixArray[i] -= p_Matrix[i];
+		}
 		return *this;
 	}
 	/*********************************************************************************/
@@ -255,13 +268,13 @@ namespace K15_Engine { namespace Math {
 	{
 		return !this->operator==(p_Matrix);
 	}
-  /*********************************************************************************/
-  float Matrix4::operator[](int p_Index) const
-  {
-    if(p_Index < 0)   p_Index = 0;
-    if(p_Index > 15)  p_Index = 15;
+	/*********************************************************************************/
+	float Matrix4::operator[](int p_Index) const
+	{
+		if(p_Index < 0)   p_Index = 0;
+		if(p_Index > 15)  p_Index = 15;
 
-    return m_MatrixArray[p_Index];
-  }
-  /*********************************************************************************/
+		return m_MatrixArray[p_Index];
+	}
+	/*********************************************************************************/
 }}//end of K15_Engine::Math namespace

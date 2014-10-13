@@ -23,12 +23,13 @@
 
 #include "K15_Vector3.h"
 #include "K15_MathUtil.h"
+#include "K15_Quaternion.h"
 
 namespace K15_Engine { namespace Math { 
 	/*********************************************************************************/
 	const Vector3 Vector3::Up = Vector3(0.f,1.f,0.f);
 	const Vector3 Vector3::Right = Vector3(1.f,0.f,0.f);
-	const Vector3 Vector3::Forward = Vector3(0.f,0.f,1.f);
+	const Vector3 Vector3::Forward = Vector3(0.f,0.f,-1.f);
 	const Vector3 Vector3::Zero = Vector3(0.f,0.f,0.f);
 	/*********************************************************************************/
 	
@@ -136,6 +137,15 @@ namespace K15_Engine { namespace Math {
 		return vector;
 	}
 	/*********************************************************************************/
+	Vector3 Vector3::operator*(const Quaternion& p_Quaternion) const
+	{
+		Vector3 vector(*this);
+
+		vector *= p_Quaternion;
+
+		return vector;
+	}
+	/*********************************************************************************/
 	Vector3 Vector3::operator/(float p_Scalar) const
 	{
 		Vector3 vector(*this);
@@ -159,6 +169,20 @@ namespace K15_Engine { namespace Math {
 		x *= p_Vector.x;
 		y *= p_Vector.y;
 		z *= p_Vector.z;
+
+		return *this;
+	}
+	/*********************************************************************************/
+	const Vector3& Vector3::operator*=( const Quaternion& p_Quaternion )
+	{
+		Quaternion vecQuat(0.f, x, y, z);
+		Quaternion conj = p_Quaternion;
+		conj.conjugate();
+		Quaternion outVec = p_Quaternion * vecQuat * conj;
+
+		x = outVec.x;
+		y = outVec.y;
+		z = outVec.z;
 
 		return *this;
 	}
@@ -261,17 +285,27 @@ namespace K15_Engine { namespace Math {
   /*********************************************************************************/
   float Vector3::Dot(const Vector3& p_Vector, const Vector3& p_Vector2)
   {
-    return p_Vector.dot(p_Vector2);
+		return p_Vector.dot(p_Vector2);
   } 
   /*********************************************************************************/
   float Vector3::Length(const Vector3& p_Vector)
   {
-    return p_Vector.length();
+		return p_Vector.length();
   }
   /*********************************************************************************/
   Vector3 Vector3::Cross(const Vector3& p_Vector, const Vector3& p_Vector2)
   {
-    return p_Vector.cross(p_Vector2);
+		return p_Vector.cross(p_Vector2);
+  }
+  /*********************************************************************************/
+  Vector3 Vector3::operator-() const
+  {
+	  Vector3 v;
+	  v.x = -x;
+	  v.y = -y;
+	  v.z = -z;
+
+	  return v;
   }
   /*********************************************************************************/
 }}//end of K15_Engine::Math namespace

@@ -53,16 +53,19 @@ namespace K15_Engine { namespace Math {
 		bool isNull() const;
 		bool isUnit() const;
 
+		Vector3 operator-() const;
 		Vector3 operator/(float p_Scalar) const;
 		Vector3 operator*(float p_Scalar) const;
 		Vector3 operator+(const Vector3& p_Vector) const;
 		Vector3 operator-(const Vector3& p_Vector) const;
 		Vector3 operator*(const Vector3& p_Vector) const;
+		Vector3 operator*(const Quaternion& p_Quaternion) const;
 
 		const Vector3& operator=(const Vector3& p_Vector);
 		const Vector3& operator+=(const Vector3& p_Vector);
 		const Vector3& operator-=(const Vector3& p_Vector);
 		const Vector3& operator*=(const Vector3& p_Vector);
+		const Vector3& operator*=(const Quaternion& p_Quaternion);
 		const Vector3& operator*=(float p_Scalar);
 		const Vector3& operator/=(float p_Scalar);
 
@@ -76,9 +79,9 @@ namespace K15_Engine { namespace Math {
 		bool operator!=(const Vector3& p_Vector) const;
 
   public:
-    static float Dot(const Vector3& p_Vector, const Vector3& p_Vector2);
-    static float Length(const Vector3& p_Vector);
-    static Vector3 Cross(const Vector3& p_Vector, const Vector3& p_Vector2);
+		static float Dot(const Vector3& p_Vector, const Vector3& p_Vector2);
+		static float Length(const Vector3& p_Vector);
+		static Vector3 Cross(const Vector3& p_Vector, const Vector3& p_Vector2);
 
 	public:
 		union{

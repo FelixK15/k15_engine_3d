@@ -6,6 +6,7 @@ set(MATH_INC
 "./include/K15_Matrix4.h"
 "./include/K15_MatrixUtil.h"
 "./include/K15_Quaternion.h"
+"./include/K15_QuaternionUtil.h"
 "./include/K15_Vector2.h"
 "./include/K15_Vector3.h"
 "./include/K15_Vector4.h")
@@ -16,6 +17,7 @@ set(MATH_SRC
 "./src/K15_Matrix4.cpp"
 "./src/K15_MatrixUtil.cpp"
 "./src/K15_Quaternion.cpp"
+"./src/K15_QuaternionUtil.cpp"
 "./src/K15_Vector2.cpp"
 "./src/K15_Vector3.cpp"
 "./src/K15_Vector4.cpp")

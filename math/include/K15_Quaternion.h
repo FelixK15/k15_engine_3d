@@ -25,7 +25,7 @@
 #define _K15Engine_Math_Quaternion_h_
 
 #include "K15_MathPrerequisites.h"
-#include "K15_Matrix3.h"
+#include "K15_Matrix4.h"
 
 namespace K15_Engine { namespace Math {
 	class Quaternion
@@ -38,8 +38,6 @@ namespace K15_Engine { namespace Math {
 	public:
 		Quaternion();
 		Quaternion(float w, float x, float y, float z);
-		Quaternion(float p_Angle, const Vector3& p_Vector);
-		Quaternion(const Matrix3& p_Matrix);
 		Quaternion(const Quaternion &qQuat);
 		~Quaternion();
 
@@ -65,8 +63,6 @@ namespace K15_Engine { namespace Math {
 		
 		bool operator==(const Quaternion &qQuat) const;
 		bool operator!=(const Quaternion &qQuat) const;
-
-		Vector3 operator*(const Vector3& p_Vector) const;
 		
 		float getRoll() const;
 		float getPitch() const;
@@ -76,8 +72,7 @@ namespace K15_Engine { namespace Math {
 		
 		float dot(const Quaternion& p_Quaternion) const;
 		
-		Matrix3 toRotationMatrix() const;
-		void fromRotationMatrix(const Matrix3& p_Matrix);
+		Matrix4 toRotationMatrix() const;
 
 // 		static Quaternion Lerp(const Quaternion &qQuat1, const Quaternion &qQuat2, float fValue);
 // 		static Quaternion Slerp(const Quaternion &qQuat1, const Quaternion &qQuat2, float fValue);
@@ -85,12 +80,6 @@ namespace K15_Engine { namespace Math {
 	public:
 		union
 		{
-// 			struct 
-// 			{
-// 				float m_Angle;
-// 				Vector3 v;
-// 			};//struct
-
 			struct  
 			{
 				float w, x, y, z;

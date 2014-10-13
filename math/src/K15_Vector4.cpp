@@ -54,6 +54,15 @@ namespace K15_Engine { namespace Math {
 
 	}
 	/*********************************************************************************/
+	Vector4::Vector4(const Vector3& p_Vector, float w)
+	{
+		x = p_Vector.x;
+		y = p_Vector.y;
+		z = p_Vector.z;
+		
+		this->w = w;
+	}
+	/*********************************************************************************/
 	Vector4::Vector4(const Vector4& p_Vector)
 	{
 		memcpy(m_VectorArray,p_Vector.m_VectorArray,sizeof(m_VectorArray));

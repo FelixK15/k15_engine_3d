@@ -23,6 +23,7 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Real MathUtil::Pi = 4.0f*atan(1.0f);
 	const Real MathUtil::HalfPi = Pi * 0.5f;
+	const Real MathUtil::QuarterPi = Pi * 0.25f;
 	const Real MathUtil::TwoPi = Pi + Pi;
 	const Real MathUtil::DegreeToRadian = Pi / 180.f;
 	const Real MathUtil::RadianToDegree = 180.f / Pi;

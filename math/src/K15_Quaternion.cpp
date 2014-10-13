@@ -30,22 +30,14 @@ namespace K15_Engine { namespace Math {
 	Quaternion::Quaternion()
 	{
 		memset(m_QuaternionArray,0,sizeof(m_QuaternionArray));
+		w = 1.f;
 	}
 	/*********************************************************************************/
 	Quaternion::Quaternion(float w, float x, float y, float z)
-    : w(w),
-    x(x),
-    y(y),
-    z(z)
-	{
-
-	}
-	/*********************************************************************************/
-	Quaternion::Quaternion(float p_Angle, const Vector3& p_Vector)
-    : w(p_Angle),
-    x(p_Vector.x),
-    y(p_Vector.y),
-    z(p_Vector.z)
+		: w(w),
+		x(x),
+		y(y),
+		z(z)
 	{
 
 	}
@@ -62,17 +54,17 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	float Quaternion::length() const
 	{
-			return MathUtil::sqrt(x*x + y*y + z*z + w*w);
+		return MathUtil::sqrt(x*x + y*y + z*z + w*w);
 	}
 	/*********************************************************************************/
 	void Quaternion::normalize()
 	{
 		float magnitude = length();
 
-    x /= magnitude;
-    y /= magnitude;
-    z /= magnitude;
-    w /= magnitude;
+		x /= magnitude;
+		y /= magnitude;
+		z /= magnitude;
+		w /= magnitude;
 	}
 	/*********************************************************************************/
 	void Quaternion::conjugate()
@@ -146,40 +138,45 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Quaternion& Quaternion::operator=(const Quaternion& p_Quaternion)
 	{
-		memcpy((void*)p_Quaternion.m_QuaternionArray,m_QuaternionArray,sizeof(m_QuaternionArray));
+		memcpy(m_QuaternionArray, p_Quaternion.m_QuaternionArray, sizeof(m_QuaternionArray));
 		return *this;
 	}
 	/*********************************************************************************/
 	const Quaternion& Quaternion::operator+=(const Quaternion& p_Quaternion)
 	{
-    x += p_Quaternion.x;
-    y += p_Quaternion.y;
-    z += p_Quaternion.z;
-    w += p_Quaternion.w;
+		x += p_Quaternion.x;
+		y += p_Quaternion.y;
+		z += p_Quaternion.z;
+		w += p_Quaternion.w;
 
 		return *this;
 	}
 	/*********************************************************************************/
 	const Quaternion& Quaternion::operator-=(const Quaternion& p_Quaternion)
 	{
-    x *= p_Quaternion.x;
-    y *= p_Quaternion.y;
-    z *= p_Quaternion.z;
-    w *= p_Quaternion.w;
+		x *= p_Quaternion.x;
+		y *= p_Quaternion.y;
+		z *= p_Quaternion.z;
+		w *= p_Quaternion.w;
 
 		return *this;
 	}
 	/*********************************************************************************/
 	const Quaternion& Quaternion::operator*=(const Quaternion& p_Quaternion)
 	{
-    glm::quat quat, quat2;
+		glm::quat quat, quat2;
 
-    memcpy(&quat, m_QuaternionArray, sizeof(Quaternion));
-    memcpy(&quat2, &p_Quaternion, sizeof(Quaternion));
+		quat.x = x; quat2.x = p_Quaternion.x;
+		quat.y = y; quat2.y = p_Quaternion.y;
+		quat.z = z; quat2.z = p_Quaternion.z;
+		quat.w = w; quat2.w = p_Quaternion.w;
 
-    quat *= quat2;
+		quat *= quat2;
 
-    memcpy(m_QuaternionArray, &quat, sizeof(Quaternion));
+		w = quat.w;
+		x = quat.x;
+		y = quat.y;
+		z = quat.z;
 
 		return *this;
 	}
@@ -194,22 +191,22 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Quaternion& Quaternion::operator*=(float p_Scalar)
 	{
-    x *= p_Scalar;
-    y *= p_Scalar;
-    z *= p_Scalar;
-    w *= p_Scalar;
+		x *= p_Scalar;
+		y *= p_Scalar;
+		z *= p_Scalar;
+		w *= p_Scalar;
 		
 		return *this;
 	}
 	/*********************************************************************************/
 	const Quaternion& Quaternion::operator/=(float p_Scalar)
 	{
-    if(p_Scalar == 0.f) p_Scalar = 1.f;
+		if(p_Scalar == 0.f) p_Scalar = 1.f;
 
-    x /= p_Scalar;
-    y /= p_Scalar;
-    z /= p_Scalar;
-    w /= p_Scalar;
+		x /= p_Scalar;
+		y /= p_Scalar;
+		z /= p_Scalar;
+		w /= p_Scalar;
 		
 		return *this;
 	}
@@ -224,41 +221,40 @@ namespace K15_Engine { namespace Math {
 		return !this->operator==(p_Quaternion);
 	}
 	/*********************************************************************************/
-	Vector3 Quaternion::operator*(const Vector3& p_Vector) const
-	{
-		Vector3 vec;
-    glm::quat quat;
-    glm::vec3 vec3, vec3_2;
-
-    memcpy(&quat, m_QuaternionArray, sizeof(Quaternion));
-    memcpy(&vec3, &p_Vector, sizeof(Vector3));
-
-    vec3_2 = vec3 * quat;
-
-    memcpy(&vec, &vec3_2, sizeof(Vector3));
-
-    return vec;
-	}
-	/*********************************************************************************/
 	float Quaternion::getRoll() const
 	{
-    glm::quat quat;
-    memcpy(&quat, m_QuaternionArray, sizeof(Quaternion));
-    return glm::roll(quat);
+		glm::quat quat;
+		
+		quat.x = x;
+		quat.y = y;
+		quat.z = z;
+		quat.w = w;
+
+		return glm::roll(quat);
 	}
 	/*********************************************************************************/
 	float Quaternion::getPitch() const
 	{
-    glm::quat quat;
-    memcpy(&quat, m_QuaternionArray, sizeof(Quaternion));
-    return glm::pitch(quat);
+		glm::quat quat;
+		
+		quat.x = x;
+		quat.y = y;
+		quat.z = z;
+		quat.w = w;
+
+		return glm::pitch(quat);
 	}
 	/*********************************************************************************/
 	float Quaternion::getYaw() const
 	{
-    glm::quat quat;
-    memcpy(&quat, m_QuaternionArray, sizeof(Quaternion));
-    return glm::yaw(quat);
+		glm::quat quat;
+		
+		quat.x = x;
+		quat.y = y;
+		quat.z = z;
+		quat.w = w;
+
+		return glm::yaw(quat);
 	}
 	/*********************************************************************************/
 	bool Quaternion::isIdentity() const
@@ -268,39 +264,32 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	float Quaternion::dot(const Quaternion& p_Quaternion) const
 	{
-    glm::quat quat, quat2;
+		glm::quat quat, quat2;
 
-    memcpy(&quat, m_QuaternionArray, sizeof(Quaternion));
-    memcpy(&quat2, &p_Quaternion, sizeof(Quaternion));
+		quat.x = x;	quat2.x = p_Quaternion.x;
+		quat.y = y; quat2.y = p_Quaternion.y;
+		quat.z = z; quat2.z = p_Quaternion.z;
+		quat.w = w; quat2.w = p_Quaternion.w;
 
-    return glm::dot(quat, quat2);
+		return glm::dot(quat, quat2);
 	}
 	/*********************************************************************************/
-	Matrix3 Quaternion::toRotationMatrix() const
+	Matrix4 Quaternion::toRotationMatrix() const
 	{
-		Matrix3 rotMatrix;
-    glm::mat3 mat;
-    glm::quat quat;
+		Matrix4 rotMatrix;
+		glm::mat4 mat;
+		glm::quat quat;
 
-    memcpy(&quat, m_QuaternionArray, sizeof(Quaternion));
+		quat.x = x;
+		quat.y = y;
+		quat.z = z;
+		quat.w = w;
 
-    mat = glm::toMat3(quat);
+		mat = glm::toMat4(quat);
 
-    memcpy(&rotMatrix, &mat, sizeof(Matrix3));
+		memcpy(&rotMatrix, &mat, sizeof(Matrix4));
 
-    return rotMatrix;
+		return rotMatrix;
 	}
-	/*********************************************************************************/
-	void Quaternion::fromRotationMatrix(const Matrix3& p_Matrix)
-	{
-    glm::mat3 mat;
-    glm::quat quat;
-
-    memcpy(&mat, &p_Matrix, sizeof(Matrix3));
-
-    quat = glm::toQuat(mat);
-
-    memcpy(&quat, m_QuaternionArray, sizeof(Quaternion));
-  }
 	/*********************************************************************************/
 }}//end of K15_Engine::Math namespace

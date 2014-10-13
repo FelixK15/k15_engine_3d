@@ -24,6 +24,7 @@
 #ifndef _K15Engine_Math_Prerequisites_h_
 #define _K15Engine_Math_Prerequisites_h_
 
+#include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <cassert>
@@ -31,6 +32,15 @@
 
 #define K15_EPSILON 1e-5
 #define GLM_FORCE_RADIANS
+
+namespace K15_Engine { namespace Math {
+	class Vector2;
+	class Vector3;
+	class Vector4;
+	class Matrix3;
+	class Matrix4;
+	class Quaternion;
+}}
 
 //we won't use SIMD for android.
 #ifndef __ANDROID__

@@ -33,6 +33,7 @@ namespace K15_Engine { namespace Math {
 		/*********************************************************************************/
 		static const Real Pi;
 		static const Real HalfPi;
+		static const Real QuarterPi;
 		static const Real TwoPi;
 		static const Real DegreeToRadian;
 		static const Real RadianToDegree;
@@ -53,6 +54,7 @@ namespace K15_Engine { namespace Math {
 		inline static Real fabs(Real p_Value);
 		inline static Real log(Real p_Value);
 		inline static Real log10(Real p_Value);
+		inline static Real sign(Real p_Valie);
 		/*********************************************************************************/
 	};// end of MathUtil class declaration
 #	include "K15_MathUtil.inl"

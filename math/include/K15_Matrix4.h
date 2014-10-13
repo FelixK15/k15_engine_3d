@@ -56,7 +56,7 @@ namespace K15_Engine { namespace Math {
 		bool isIdentity() const;
 		bool isZero() const;
 
-    float operator[](int p_Index) const;
+		float operator[](int p_Index) const;
 		
 		Vector3 operator*(const Vector3& p_Vector) const;
 		Vector4 operator*(const Vector4& p_Vector) const;
