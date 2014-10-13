@@ -34,6 +34,9 @@ namespace K15_Engine { namespace Math {
 		static const Vector4 Up;
 		static const Vector4 Right;
 		static const Vector4 Forward;
+    static const Vector4 X_Axis;
+    static const Vector4 Y_Axis;
+    static const Vector4 Z_Axis;
 		static const Vector4 Zero;
 		/*********************************************************************************/
 	public:

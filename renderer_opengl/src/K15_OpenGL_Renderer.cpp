@@ -123,7 +123,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 
 		if(renderer)
 		{
-			renderer->setLastError(msg);
+			//renderer->setLastError(msg);
 		}
 	}
 	/*********************************************************************************/

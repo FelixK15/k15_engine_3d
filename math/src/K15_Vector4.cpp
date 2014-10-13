@@ -30,6 +30,9 @@ namespace K15_Engine { namespace Math {
 	const Vector4 Vector4::Up = Vector4(0.0f,1.0f,0.0f,1.0f);
 	const Vector4 Vector4::Right = Vector4(1.0f,0.f,0.0f,1.0f);
 	const Vector4 Vector4::Forward = Vector4(0.0f,0.0f,1.0f,1.0f);
+  const Vector4 Vector4::X_Axis = Vector4::Right;
+  const Vector4 Vector4::Y_Axis = Vector4::Up;
+  const Vector4 Vector4::Z_Axis = Vector4::Forward;
 	const Vector4 Vector4::Zero = Vector4(0.0f,0.0f,0.0f,0.0f);
 	/*********************************************************************************/
 	

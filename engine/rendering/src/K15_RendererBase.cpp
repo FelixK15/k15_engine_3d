@@ -381,11 +381,6 @@ namespace K15_Engine { namespace Rendering {
 
 		if(p_Buffer)
 		{
-			if(p_Buffer->isDirty())
-			{
-				p_Buffer->uploadShadowBufferToGpu();
-			}
-
 			if(m_GpuBuffers[p_BufferType] != p_Buffer)
 			{
 				//undbind old buffer
@@ -394,6 +389,11 @@ namespace K15_Engine { namespace Rendering {
 				m_GpuBuffers[p_BufferType] = p_Buffer;
 				_bindBuffer(p_Buffer,p_BufferType);
 				p_Buffer->setIsBound(true);
+
+        if(p_Buffer->isDirty())
+        {
+          p_Buffer->uploadShadowBufferToGpu();
+        }
 
 				if(errorOccured())
 				{

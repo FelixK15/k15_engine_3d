@@ -34,6 +34,9 @@ namespace K15_Engine { namespace Math {
 		static const Vector3 Up;
 		static const Vector3 Right;
 		static const Vector3 Forward;
+    static const Vector3 X_Axis;
+    static const Vector3 Y_Axis;
+    static const Vector3 Z_Axis;
 		static const Vector3 Zero;
 		/*********************************************************************************/
 	public:
@@ -82,6 +85,7 @@ namespace K15_Engine { namespace Math {
 		static float Dot(const Vector3& p_Vector, const Vector3& p_Vector2);
 		static float Length(const Vector3& p_Vector);
 		static Vector3 Cross(const Vector3& p_Vector, const Vector3& p_Vector2);
+    static Vector3 Normalize(const Vector3& p_Vector);
 
 	public:
 		union{

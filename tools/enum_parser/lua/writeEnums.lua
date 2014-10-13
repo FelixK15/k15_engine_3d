@@ -14,7 +14,13 @@ function writeEnum(file, enumName, enumTable)
     file:write(stringType .. " " .. enumName .. "Str[] = {\n");
     
     for i, k in ipairs(enumTable) do
-        file:write("\t\"" .. k .. "\"\n");
+        if i ~= 1 then
+            file:write("\t,\"" .. k .. "\"\n");
+        else
+            file:write("\t\"" .. k .. "\"\n");
+        end
+
+        
     end
     
     file:write("}; //Strings for " .. enumName .. " enumeration.\n\n")

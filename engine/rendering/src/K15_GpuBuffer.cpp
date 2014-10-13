@@ -230,7 +230,9 @@ namespace K15_Engine { namespace Rendering {
 		uint32 size = p_Options.InitialData.size > 0 ? p_Options.InitialData.size :
 													   p_Options.Size;
 
-		K15_ASSERT(m_Impl->allocate(size), 
+    bool allocated = m_Impl->allocate(size);
+
+		K15_ASSERT(allocated, 
 			StringUtil::format("Could not allocate %.2f kilobyte for GPU Buffer.", size / 1024.f));
 
 		m_Size = size;

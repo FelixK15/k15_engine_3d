@@ -31,6 +31,9 @@ namespace K15_Engine { namespace Math {
 	const Vector3 Vector3::Right = Vector3(1.f,0.f,0.f);
 	const Vector3 Vector3::Forward = Vector3(0.f,0.f,-1.f);
 	const Vector3 Vector3::Zero = Vector3(0.f,0.f,0.f);
+  const Vector3 Vector3::X_Axis = Vector3::Right;
+  const Vector3 Vector3::Y_Axis = Vector3::Up;
+  const Vector3 Vector3::Z_Axis = Vector3::Forward;
 	/*********************************************************************************/
 	
 	/*********************************************************************************/
@@ -204,6 +207,16 @@ namespace K15_Engine { namespace Math {
 
 		return vector;
 	}
+  /*********************************************************************************/
+  Vector3 Vector3::operator-() const
+  {
+    Vector3 v;
+    v.x = -x;
+    v.y = -y;
+    v.z = -z;
+
+    return v;
+  }
 	/*********************************************************************************/
 	const Vector3& Vector3::operator+=(const Vector3& p_Vector)
 	{
@@ -298,14 +311,11 @@ namespace K15_Engine { namespace Math {
 		return p_Vector.cross(p_Vector2);
   }
   /*********************************************************************************/
-  Vector3 Vector3::operator-() const
+  Vector3 Vector3::Normalize(const Vector3& p_Vector)
   {
-	  Vector3 v;
-	  v.x = -x;
-	  v.y = -y;
-	  v.z = -z;
-
-	  return v;
+    Vector3 vec = p_Vector;
+    vec.normalize();
+    return vec;
   }
   /*********************************************************************************/
 }}//end of K15_Engine::Math namespace

@@ -80,7 +80,7 @@ namespace K15_Engine { namespace Test {
 
 		m_Bunny = K15_NEW GameObject("Bunny");
 		m_Bunny->addComponent(K15_NEW NodeComponent());
-		m_Bunny->addComponent(K15_NEW ModelComponent("bunny.obj"));
+		//m_Bunny->addComponent(K15_NEW ModelComponent("bunny.obj"));
 		m_Bunny->setPosition(0.f, 0.f, 0.f);
 		SceneGraph::getDefault()->addGameObject(m_Bunny);
 
@@ -101,6 +101,8 @@ namespace K15_Engine { namespace Test {
 		m_Bunny->yaw(0.01f);
 		m_Camera->update(p_GameTime);
 		m_Bunny->update(p_GameTime);
+
+    g_DebugRenderer->drawArrow(Vector3::Zero, (Vector3::Forward + Vector3::Right + Vector3::Up) * 4, ColorRGBA::Red);
 	}
 	/*********************************************************************************/
 	void TestGameState::_addLights()
