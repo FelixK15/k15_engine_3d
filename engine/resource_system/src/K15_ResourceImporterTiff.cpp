@@ -27,8 +27,9 @@
 
 #include "K15_Image.h"
 
-#include "tiffio.h"
-#include "tiffio.hxx"
+#define STB_IMAGE_IMPLEMENTATION
+
+#include "stb_image.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
@@ -52,6 +53,7 @@ namespace K15_Engine { namespace Core {
 		p_ExtensionSet.insert(".tiff");
 		p_ExtensionSet.insert(".TIFF");
 		p_ExtensionSet.insert(".tif");
+		p_ExtensionSet.insert(".tga");
 	}
 	/*********************************************************************************/
 	void ResourceImporterTiff::getMagicNumber(MagicNumberSet& p_MagicNumber)
@@ -66,43 +68,35 @@ namespace K15_Engine { namespace Core {
 	ResourceBase* ResourceImporterTiff::_load(const RawData& p_ResourceData, const Rtti& p_ResourceType)
 	{
 		StackAllocator* frameAllocator = g_Application->getFrameAllocator();
+		int width = 0;
+		int height = 0;
+		int components = 0;
 
- 		//set data to stream
-		StringStream dataStream;
-		dataStream.write((const char*)p_ResourceData.data,p_ResourceData.size);
-		
-		TIFF* tiffImg = 0;//TIFFStreamOpen("tiff_image",(std::istream*)&dataStream);
+		byte* pixelData = stbi_load_from_memory(p_ResourceData.data, p_ResourceData.size, &width, &height, &components, 0);
 
-		if(!tiffImg)
+		if(!pixelData)
 		{
-			setError("Invalid memory stream.");
+			K15_LOG_ERROR("Could not load image. Error: %s", stbi_failure_reason());
 			return 0;
 		}
-		uint32 width = 0;
-		uint32 height = 0;
-		TIFFGetField(tiffImg,TIFFTAG_IMAGEWIDTH,&width);
-		TIFFGetField(tiffImg,TIFFTAG_IMAGELENGTH,&height);
 
 		uint32 pixelCount = width*height;
-		uint32 pixelBufferSize = pixelCount * sizeof(uint32);
+		uint32 pixelBufferSize = pixelCount * components;
 		uint32* pixelBuffer = (uint32*)K15_NEW_SIZE(Allocators[AC_GENERAL],pixelBufferSize) uint32; //pixels are packed into 32 bit. 8bit per component
 
-		if(!TIFFReadRGBAImage(tiffImg,width,height,pixelBuffer,0))
-		{
-			setError("Could not retrieve pixels.");
-			TIFFClose(tiffImg);
-			return 0;
-		}
-		
+		memcpy(pixelBuffer, pixelData, pixelBufferSize);
+
+		stbi_image_free(pixelData);
+
 		ResourceBase* resource = 0;
 
 		if(p_ResourceType.isInstanceOf(Texture::TYPE))
 		{
-			resource = _loadTexture(width,height,pixelBuffer);
+			resource = _loadTexture(width, height, components, pixelBuffer);
 		}
 		else if(p_ResourceType.isInstanceOf(Image::TYPE))
 		{
-			resource = _loadImage(width,height,pixelBuffer);
+			resource = _loadImage(width, height, components, pixelBuffer);
 		}
 
 		K15_DELETE_SIZE(Allocators[AC_GENERAL],pixelBuffer,pixelBufferSize);
@@ -110,19 +104,28 @@ namespace K15_Engine { namespace Core {
 		return resource;
 	}
 	/*********************************************************************************/
-	Texture* ResourceImporterTiff::_loadTexture(uint32 p_Width, uint32 p_Height, uint32* p_PixelBuffer)
+	Texture* ResourceImporterTiff::_loadTexture(uint32 p_Width, uint32 p_Height, uint32 p_Components, uint32* p_PixelBuffer)
 	{
 		Texture::CreationOptions opts;
 		opts.createMipMaps = true;
 		opts.height = p_Height;
 		opts.width = p_Width;
-		opts.pixelFormat = RendererBase::PF_RGBA_8_U;
+
+		if(p_Components == 3)
+		{
+			opts.pixelFormat = RendererBase::PF_RGB_8_U;
+		}
+		else if(p_Components == 4)
+		{
+			opts.pixelFormat = RendererBase::PF_RGBA_8_U;
+		}
+
 		opts.pixels.data = (byte*)p_PixelBuffer;
-		opts.pixels.size = (p_Width * p_Height) * sizeof(uint32);
+		opts.pixels.size = (p_Width * p_Height) * p_Components;
 		return K15_NEW Texture(opts);
 	}
 	/*********************************************************************************/
-	Image* ResourceImporterTiff::_loadImage(uint32 p_Width, uint32 p_Height, uint32* p_PixelBuffer)
+	Image* ResourceImporterTiff::_loadImage(uint32 p_Width, uint32 p_Height, uint32 p_Components, uint32* p_PixelBuffer)
 	{
 		return K15_NEW Image(p_Width,p_Height,(ColorRGBA*)p_PixelBuffer);
 	}
