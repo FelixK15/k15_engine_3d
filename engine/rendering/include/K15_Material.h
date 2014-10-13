@@ -57,8 +57,11 @@ namespace K15_Engine { namespace Rendering {
 		INLINE float getShininess() const;
 
 		INLINE Texture* getDiffuseMap() const;
+		INLINE Texture* getNormalMap() const;
+
 		INLINE TextureSampler* getDiffuseSampler() const;
-		
+		INLINE TextureSampler* getNormalSampler() const;
+
 		INLINE void setSpecular(const ColorRGBA& p_Specular);
 		INLINE void setDiffuse(const ColorRGBA& p_Diffuse);
 		INLINE void setAmbient(const ColorRGBA& p_Ambient);
@@ -68,7 +71,10 @@ namespace K15_Engine { namespace Rendering {
 		INLINE Enum getFillMode() const;
 
 		INLINE void setDiffuseMap(Texture* p_DiffuseMap);
+		INLINE void setNormalMap(Texture* p_NormalMap);
+
 		INLINE void setDiffuseSampler(TextureSampler* p_DiffuseSampler);
+		INLINE void setNormalSampler(TextureSampler* p_NormalSampler);
 
 		INLINE bool isTransparent() const;
 		INLINE void setTransparent(bool p_Transparent);
@@ -95,7 +101,9 @@ namespace K15_Engine { namespace Rendering {
 		expose GpuProgramArray m_Programs; 
 		expose GpuProgramBatch* m_ProgramBatch;
 		expose Texture* m_DiffuseMap;
+		expose Texture* m_NormalMap;
 		expose TextureSampler* m_DiffuseSampler;
+		expose TextureSampler* m_NormalSampler;
 		expose AlphaState m_AlphaState;
 		expose DepthState m_DepthState;
 

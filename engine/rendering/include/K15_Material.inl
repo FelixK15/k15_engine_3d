@@ -93,9 +93,19 @@ Texture* MaterialPass::getDiffuseMap() const
 	return m_DiffuseMap;
 }
 /*********************************************************************************/
+Texture* MaterialPass::getNormalMap() const
+{
+	return m_NormalMap;
+}
+/*********************************************************************************/
 TextureSampler* MaterialPass::getDiffuseSampler() const
 {
 	return m_DiffuseSampler;
+}
+/*********************************************************************************/
+TextureSampler* MaterialPass::getNormalSampler() const
+{
+	return m_NormalSampler;
 }
 /*********************************************************************************/
 void MaterialPass::setDiffuseMap(Texture* p_DiffuseMap)
@@ -103,9 +113,19 @@ void MaterialPass::setDiffuseMap(Texture* p_DiffuseMap)
 	m_DiffuseMap = p_DiffuseMap;
 }
 /*********************************************************************************/
+void MaterialPass::setNormalMap(Texture* p_NormalMap)
+{
+	m_NormalMap = p_NormalMap;
+}
+/*********************************************************************************/
 void MaterialPass::setDiffuseSampler(TextureSampler* p_DiffuseSampler)
 {
 	m_DiffuseSampler = p_DiffuseSampler;
+}
+/*********************************************************************************/
+void MaterialPass::setNormalSampler(TextureSampler* p_NormalSampler)
+{
+	m_NormalSampler = p_NormalSampler;
 }
 /*********************************************************************************/
 bool MaterialPass::isTransparent() const

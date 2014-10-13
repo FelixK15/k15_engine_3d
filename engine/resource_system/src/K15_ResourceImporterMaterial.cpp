@@ -75,14 +75,40 @@ namespace K15_Engine { namespace Core {
 				
 				MaterialPass* materialPass = material->getPass(passCounter,true);
 
-				materialPass->setDiffuseMap(g_ResourceManager->getResource<Texture>(pass["DiffuseMap"].asString()));
+				String diffuseMapFile = pass.get("DiffuseMap", "").asString();
+				String normalMapFile = pass.get("NormalMap", "").asString();
+
+				if(!diffuseMapFile.empty())
+				{
+					materialPass->setDiffuseMap(g_ResourceManager->getResource<Texture>(diffuseMapFile));
+				}
 				
+				if(!normalMapFile.empty())
+				{
+					materialPass->setNormalMap(g_ResourceManager->getResource<Texture>(normalMapFile));
+				}
+				
+
 				String gpuProgramBatchName = pass.get("ShaderBatch","").asString();
+				String vertexProgramName = pass.get("VertexShader","").asString();
+				String fragmentProgramName = pass.get("FragmentShader", "").asString();
+
+				K15_ASSERT(!(gpuProgramBatchName.empty() && 
+					vertexProgramName.empty() && fragmentProgramName.empty()),
+					StringUtil::format("No shader defined for material \"%s\".", getName().c_str()));
 
 				if(!gpuProgramBatchName.empty())
 				{
 					GpuProgramBatch* batch = GpuProgramCatalog::getGpuProgramBatch(gpuProgramBatchName);
 					materialPass->setProgramBatch(batch);
+				}
+				else
+				{
+					GpuProgram* vertexShader = GpuProgramCatalog::getGpuProgram(vertexProgramName, GpuProgram::PS_VERTEX);
+					GpuProgram* fragmentShader = GpuProgramCatalog::getGpuProgram(fragmentProgramName, GpuProgram::PS_FRAGMENT);
+
+					materialPass->setProgram(vertexShader, vertexShader->getStage());
+					materialPass->setProgram(fragmentShader, fragmentShader->getStage());
 				}
 
 				///cullingmode
