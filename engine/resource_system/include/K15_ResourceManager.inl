@@ -36,6 +36,7 @@ ResourceType* ResourceManager::getResource(const String& p_ResourceName,Enum p_P
 		else
 		{
 			K15_LOG_ERROR("Could not load resource \"%s\".",p_ResourceName.c_str());
+			return 0;
 		}
 	}
 	resource = (ResourceType*)iter->second;

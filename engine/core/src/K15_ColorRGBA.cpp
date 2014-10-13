@@ -19,6 +19,7 @@
 
 #include "K15_PrecompiledHeader.h"
 #include "K15_ColorRGBA.h"
+#include "K15_Vector4.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
@@ -223,6 +224,14 @@ namespace K15_Engine { namespace Rendering {
 		color /= p_Value;
 
 		return color;
+	}
+	/*********************************************************************************/
+	void ColorRGBA::toColorVector(Vector4& p_Vector) const
+	{
+		p_Vector.x = (float)R / 255.f;
+		p_Vector.y = (float)G / 255.f;
+		p_Vector.z = (float)B / 255.f;
+		p_Vector.w = (float)A / 255.f;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Rendering namespace

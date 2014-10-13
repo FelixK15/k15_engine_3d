@@ -103,7 +103,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 			return true;
 		}
 
-# if defined K15_WGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
+# if defined K15_GL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 		return false;
 # else
 
@@ -179,7 +179,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		}
 		GLenum target = GLBufferTypeConverter[m_Buffer->getType()];
 
-#if defined K15_WGL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
+#if defined K15_GL_EXPERIMENT_BUFFERSUBDATA_INSTEAD_OF_MAPBUFFERRANGE
 		kglNamedBufferSubDataEXT(m_BufferHandle,p_Offset,p_Size,p_Source);
 #else
 		memcpy(m_MappedBufferRange,p_Source,p_Size);

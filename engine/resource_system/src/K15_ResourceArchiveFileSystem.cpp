@@ -29,14 +29,17 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	ResourceArchiveFileSystem::ResourceArchiveFileSystem(const String& p_RootDirectory)
-	: ResourceArchiveBase(p_RootDirectory),
-	m_RootDirectory(IOUtil::convertToUnixFilePath(p_RootDirectory))
+	ResourceArchiveFileSystem::ResourceArchiveFileSystem(const String& p_AbsoluteRootDirectory)
+	: ResourceArchiveBase(p_AbsoluteRootDirectory),
+	m_RootDirectory(IOUtil::convertToUnixFilePath(p_AbsoluteRootDirectory))
 	{
 		if(m_RootDirectory.back() != '/')
 		{
 			m_RootDirectory += '/';
 		}
+
+		K15_ASSERT(IOUtil::folderExists(m_RootDirectory), 
+				   StringUtil::format("Directory \"%s\" does not exists.", m_RootDirectory.c_str()));
 	}
 	/*********************************************************************************/
 	ResourceArchiveFileSystem::~ResourceArchiveFileSystem()
@@ -46,7 +49,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	bool ResourceArchiveFileSystem::getResource(const String& p_ResourceName, RawData* p_Data)
 	{
-		String resourcePath = m_RootDirectory += (p_ResourceName.front() == '/' ? p_ResourceName.substr(1) : p_ResourceName);
+		String resourcePath = m_RootDirectory + (p_ResourceName.front() == '/' ? p_ResourceName.substr(1) : p_ResourceName);
 		FILE* resourceFile = fopen(resourcePath.c_str(), "r");
 
 		if(!resourceFile)
@@ -68,7 +71,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	bool ResourceArchiveFileSystem::hasResource(const String& p_ResourceName)
 	{
-		String resourcePath = m_RootDirectory += (p_ResourceName.front() == '/' ? p_ResourceName.substr(1) : p_ResourceName);
+		String resourcePath = m_RootDirectory + (p_ResourceName.front() == '/' ? p_ResourceName.substr(1) : p_ResourceName);
 		FILE* resourceFile = fopen(resourcePath.c_str(), "r");
 
 		if(!resourceFile)

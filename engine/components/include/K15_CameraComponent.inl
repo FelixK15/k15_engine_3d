@@ -74,6 +74,7 @@ void CameraComponent::setProjectionType(Enum p_ProjectionType)
 {
 	m_ProjectionType = p_ProjectionType;
 	m_ProjMatrixDirty = true;
+	getProjectionMatrix();
 }
 /*********************************************************************************/
 void CameraComponent::setProjectionMatrixDirty(bool p_Dirty)
@@ -89,10 +90,5 @@ void CameraComponent::setViewMatrixDirty(bool p_Dirty)
 bool CameraComponent::isProjectionMatrixDirty() const
 {
 	return m_ProjMatrixDirty;
-}
-/*********************************************************************************/
-bool CameraComponent::isViewMatrixDirty() const
-{
-	return m_ViewMatrixDirty;
 }
 /*********************************************************************************/

@@ -24,6 +24,8 @@
 #include "K15_AABB.h"
 
 #include "K15_CameraComponent.h"
+#include "K15_ModelComponent.h"
+#include "K15_LightComponent.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
@@ -104,6 +106,14 @@ namespace K15_Engine { namespace Core {
 		{
 			m_CameraComponent = static_cast<CameraComponent*>(p_Component);
 		}
+		else if(p_Component->getType().isInstanceOf(ModelComponent::TYPE))
+		{
+			m_ModelComponent = static_cast<ModelComponent*>(p_Component);
+		}
+		else if(p_Component->getType().isInstanceOf(LightComponent::TYPE))
+		{
+			m_LightComponent = static_cast<LightComponent*>(p_Component);
+		}
 		return;
 	}
 	/*********************************************************************************/
@@ -139,116 +149,66 @@ namespace K15_Engine { namespace Core {
 	void GameObject::lookAt(const Vector3& p_Position)
 	{
 		m_NodeComponent->lookAt(p_Position);
-
-		if(m_CameraComponent)
-		{
-			m_CameraComponent->setViewMatrixDirty(true);
-		}
+	}
+	/*********************************************************************************/
+	void GameObject::setPosition( float p_PosX, float p_PosY, float p_PosZ )
+	{
+		setPosition(Vector3(p_PosX, p_PosY, p_PosZ));
 	}
 	/*********************************************************************************/
 	void GameObject::setPosition(const Vector3& p_Position)
 	{
-		m_NodeComponent->lookAt(p_Position);
-
-		if(m_CameraComponent)
-		{
-			m_CameraComponent->setViewMatrixDirty(true);
-		}
+		m_NodeComponent->setPosition(p_Position);
 	}
 	/*********************************************************************************/
-// 	void GameObject::setOrientation(const Quaternion& p_Orientation)
-// 	{		
-// 		m_NodeComponent->setOrientation(p_Orientation);
-// 	}
+	void GameObject::setOrientation(const Quaternion& p_Orientation)
+	{		
+		m_NodeComponent->setOrientation(p_Orientation);
+	}
 	/*********************************************************************************/
 	void GameObject::setScale(const Vector3& p_Scale)
 	{
 		m_NodeComponent->setScale(p_Scale);
-
-		if(m_CameraComponent)
-		{
-			m_CameraComponent->setViewMatrixDirty(true);
-		}
 	}
 	/*********************************************************************************/
 	void GameObject::translate(const Vector3& p_Translation)
 	{
 		m_NodeComponent->translate(p_Translation);
-
-		if(m_CameraComponent)
-		{
-			m_CameraComponent->setViewMatrixDirty(true);
-		}
 	}
 	/*********************************************************************************/
 	void GameObject::translate(float x, float y, float z)
 	{
 		m_NodeComponent->translate(x, y, z);
-
-		if(m_CameraComponent)
-		{
-			m_CameraComponent->setViewMatrixDirty(true);
-		}
 	}
 	/*********************************************************************************/
 	void GameObject::scale(const Vector3& p_Scale)
 	{
 		m_NodeComponent->scale(p_Scale);
-
-		if(m_CameraComponent)
-		{
-			m_CameraComponent->setViewMatrixDirty(true);
-		}
 	}
 	/*********************************************************************************/
 	void GameObject::scale(float x, float y, float z)
 	{
 		m_NodeComponent->scale(x, y, z);
-
-		if(m_CameraComponent)
-		{
-			m_CameraComponent->setViewMatrixDirty(true);
-		}
 	}
 	/*********************************************************************************/
 	void GameObject::rotate(const Vector3& p_Axis, float p_Radians)
 	{
 		m_NodeComponent->rotate(p_Axis, p_Radians);
-
-		if(m_CameraComponent)
-		{
-			m_CameraComponent->setViewMatrixDirty(true);
-		}
 	}
 	/*********************************************************************************/
 	void GameObject::roll(float p_Radians)
 	{
 		m_NodeComponent->roll(p_Radians);
-
-		if(m_CameraComponent)
-		{
-			m_CameraComponent->setViewMatrixDirty(true);
-		}
 	}
 	/*********************************************************************************/
 	void GameObject::pitch(float p_Radians)
 	{
 		m_NodeComponent->pitch(p_Radians);
-
-		if(m_CameraComponent)
-		{
-			m_CameraComponent->setViewMatrixDirty(true);
-		}
 	}
 	/*********************************************************************************/
 	void GameObject::yaw(float p_Radians)
 	{
 		m_NodeComponent->yaw(p_Radians);
-
-		if(m_CameraComponent)
-		{
-			m_CameraComponent->setViewMatrixDirty(true);
-		}
 	}
 	/*********************************************************************************/
 	const Vector3& GameObject::getPosition() const
@@ -261,7 +221,7 @@ namespace K15_Engine { namespace Core {
 		return m_NodeComponent->getScale();
 	}
 	/*********************************************************************************/
-	const Matrix4& GameObject::getOrientation() const
+	const Quaternion& GameObject::getOrientation() const
 	{
 		return m_NodeComponent->getOrientation();
 	}

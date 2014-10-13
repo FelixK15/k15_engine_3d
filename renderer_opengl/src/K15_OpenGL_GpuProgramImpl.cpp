@@ -87,6 +87,8 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 				currentAttrib.setName(buffer);
 				currentAttrib.setSize(attribSize);
 				currentAttrib.setType(_getParameterType(attribType));
+
+				memset(buffer, 0, attribBufferSize);
 			}
 
 			buffer = (char*)alloca(uniformBufferSize);
@@ -101,6 +103,8 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 				currentUniform.setName(buffer);
 				currentUniform.setSize(uniformSize);
 				currentUniform.setType(_getParameterType(uniformType));
+
+				memset(buffer, 0, uniformBufferSize);
 			}
 		}
 	}
@@ -241,7 +245,11 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	/*********************************************************************************/
 	Enum GpuProgramImpl::_getParameterType(GLenum p_GLType)
 	{
-		if(p_GLType == GL_FLOAT)
+		if(p_GLType == GL_INT)
+		{
+			return GpuProgramParameter::VT_INT;
+		}
+		else if(p_GLType == GL_FLOAT)
 		{
 			return GpuProgramParameter::VT_FLOAT;
 		}

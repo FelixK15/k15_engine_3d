@@ -86,6 +86,8 @@ namespace K15_Engine { namespace Rendering {
 		ColorRGBA operator/(const ColorRGBA& p_Color);
 		ColorRGBA operator/(byte p_Value);
 
+		void toColorVector(Vector4& p_Vector) const;
+
 		byte R;
 		byte G;
 		byte B;

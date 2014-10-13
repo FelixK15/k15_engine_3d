@@ -24,9 +24,7 @@
 #include "K15_GameObject.h"
 #include "K15_CameraComponent.h"
 #include "K15_MatrixUtil.h"
-// #include "K15_MathUtil.h"
-// #include "K15_Vector3.h"
-// #include "K15_Vector2.h"
+#include "K15_MathUtil.h"
 #include "K15_AABB.h"
 
 namespace K15_Engine { namespace Rendering {
@@ -37,13 +35,14 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	CameraComponent::CameraComponent()
 		: GameObjectComponentBase(_ON(CameraComponent)),
-		m_Fov(65),
+		m_Fov(MathUtil::HalfPi),
 		m_ProjectionType(PT_PERSPECTIVE),
 		m_ViewMatrixDirty(true),
 		m_ProjMatrixDirty(true),
 		m_NearClipDistance(1.0f),
 		m_FarClipDistance(200.0f),
-		m_Zoom(1.0f)
+		m_Zoom(1.0f),
+		m_Active(true)
 	{
 		setProjectionType(PT_PERSPECTIVE);
 	}
@@ -58,8 +57,6 @@ namespace K15_Engine { namespace Rendering {
 		if(m_ProjMatrixDirty)
 		{
 			float aspect = RenderWindow::getAspectRatio();
-			float width = (float)RenderWindow::getWidth();
-			float height = (float)RenderWindow::getHeight();
 			//update projection matrix 
 			if(m_ProjectionType == PT_PERSPECTIVE)
 			{
@@ -93,12 +90,25 @@ namespace K15_Engine { namespace Rendering {
  		{
 			//update view matrix
 			m_ViewMatrix = m_GameObject->getTransformation();
-			m_ViewMatrix.inverse();
+			m_ViewMatrix = m_ViewMatrix.inverse();
 			_calculateFrustum();
 			m_ViewMatrixDirty = false;
 		}
 
 		return m_ViewMatrix;
+	}
+	/*********************************************************************************/
+	bool CameraComponent::isViewMatrixDirty() const
+	{
+		NodeComponent* node = 0;
+		bool needUpdate = false;
+
+		if(node = getGameObject()->getComponentByType<NodeComponent>())
+		{
+			needUpdate = node->needUpdate();
+		}
+
+		return m_ViewMatrixDirty || needUpdate;
 	}
 	/*********************************************************************************/
 	void CameraComponent::setActive(bool p_Active)
@@ -113,47 +123,39 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	bool CameraComponent::isVisible(const AABB& p_AABB)
 	{
-    for(int i = 0; i < AABB::CT_COUNT; ++i)
-    {
-      if(m_Frustum.isInside(p_AABB.getCorner(i)))
-      {
-        return true;
-      }
-    }
+		/*AABB::CornerArray corners = p_AABB.getCorners();
+		Matrix4 ViewProj = m_ProjectionMatrix * m_ViewMatrix;
+		Vector3 projectedPos;
+		for(int i = 0; i < 2; ++i)
+		{
+			if(i == 0)
+			{
+				projectedPos = ViewProj * p_AABB.getMin();
+			}
+			else
+			{
+				projectedPos = ViewProj * p_AABB.getMax();
+			}
+			
+			
 
-		return false;
+			if(projectedPos.x <= 1.f && projectedPos.x >= 0.f ||
+			   projectedPos.y <= 1.f && projectedPos.y >= 0.f ||
+			   projectedPos.z <= 1.f && projectedPos.z >= 0.f)
+			{
+				return true;
+			}
+		}
+
+		return false;*/
+
+		return true;
 	}
 	/*********************************************************************************/
 	void CameraComponent::_calculateFrustum()
 	{
-		static FixedArray(Vector4, Frustum::FP_COUNT) FrustumPointsHomogenous;
-
-		float left	 = -1.0f;
-		float right	 =  1.0f;
-		float top	 = -1.0f;
-		float bottom =  1.0f;
-		float f		 = -1.0f;
-		float n		 =  1.0f;
-
-		Matrix4 viewProjectionMatrix = m_ViewMatrix * m_ProjectionMatrix;
-
-		FrustumPointsHomogenous[Frustum::FP_FAR_LEFT_BOTTOM]	= Vector4(left,bottom,f,1.0f);
-		FrustumPointsHomogenous[Frustum::FP_FAR_RIGHT_BOTTOM] = Vector4(right,bottom,f,1.0f);
-		FrustumPointsHomogenous[Frustum::FP_FAR_LEFT_TOP]	    = Vector4(left,top,f,1.0f);
-		FrustumPointsHomogenous[Frustum::FP_FAR_RIGHT_TOP]	  = Vector4(right,top,f,1.0f);
-
-		FrustumPointsHomogenous[Frustum::FP_NEAR_LEFT_BOTTOM]   = Vector4(left,bottom,n,1.0f);
-		FrustumPointsHomogenous[Frustum::FP_NEAR_RIGHT_BOTTOM]  = Vector4(right,bottom,n,1.0f);
-		FrustumPointsHomogenous[Frustum::FP_NEAR_LEFT_TOP]	    = Vector4(left,top,n,1.0f);
-		FrustumPointsHomogenous[Frustum::FP_NEAR_RIGHT_TOP]     = Vector4(right,top,n,1.0f);
-
-		for(int i = 0; i < Frustum::FP_COUNT; ++i)
-		{
-			FrustumPointsHomogenous[i] = viewProjectionMatrix * FrustumPointsHomogenous[i];
-			m_Frustum.setCorner(Vector3(FrustumPointsHomogenous[i].x, FrustumPointsHomogenous[i].y, FrustumPointsHomogenous[i].z),i);
-		}
-
-		m_Frustum.calculatePlanes();
+		m_Frustum.setFarPlaneDistance(m_FarClipDistance);
+		m_Frustum.setNearPlaneDistance(m_NearClipDistance);
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Rendering namespace

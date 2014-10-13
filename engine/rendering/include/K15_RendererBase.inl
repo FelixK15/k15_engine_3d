@@ -53,6 +53,11 @@ Enum RendererBase::getFillMode() const
   return m_FillMode;
 }
 /*********************************************************************************/
+const ColorRGBA& RendererBase::getAmbientColor() const
+{
+	return m_AmbientColor;
+}
+/*********************************************************************************/
 bool RendererBase::getBackFaceCullingEnabled() const
 {
 	return m_BackFaceCullingEnabled;
@@ -78,9 +83,19 @@ Enum RendererBase::getStencilBufferFormat() const
 	return m_StencilBufferFormat;
 }
 /*********************************************************************************/
+void RendererBase::setLightArray(const LightArray& p_Lights)
+{
+	m_LightArray = p_Lights;
+}
+/*********************************************************************************/
 void RendererBase::setLightningEnabled(bool p_Enabled)
 {
 	m_LightningEnabled = p_Enabled;
+}
+/*********************************************************************************/
+void RendererBase::setAmbientColor(const ColorRGBA& p_AmbientColor)
+{
+	m_AmbientColor = p_AmbientColor;
 }
 /*********************************************************************************/
 bool RendererBase::getLightningEnabled() const

@@ -27,6 +27,7 @@
 #include "K15_Prerequisites.h"
 #include "K15_GameObjectComponentBase.h"
 
+#include "K15_Quaternion.h"
 #include "K15_Matrix4.h"
 #include "K15_Vector3.h"
 #include "K15_Vector4.h"
@@ -41,14 +42,15 @@ namespace K15_Engine { namespace Core {
 		typedef DynamicArray(GameObject*) ChildObjects;
 		/*********************************************************************************/
 	public:
-		NodeComponent(GameObject* p_Parent);
+		NodeComponent(GameObject* p_Parent = 0);
 		~NodeComponent();
 
 		void lookAt(const Vector3& p_Position);
 
 		INLINE void setPosition(const Vector3& p_Position);
-		//INLINE void setOrientation(const Quaternion& p_Orientation);
+		INLINE void setOrientation(const Quaternion& p_Orientation);
 		INLINE void setScale(const Vector3& p_Scale);
+		void setTransformation(const Matrix4& p_Transformation);
 
 		INLINE void translate(const Vector3& p_Translation);
 		INLINE void translate(const Vector4& p_Translation);
@@ -57,9 +59,10 @@ namespace K15_Engine { namespace Core {
 		INLINE void scale(const Vector3& p_Scale);
 		INLINE void scale(float x, float y, float z);
 
-/*		INLINE void rotate(const Quaternion& p_Rotation);*/
-		INLINE void rotate(const Vector3& p_Axis, float p_Radians);
+		INLINE void rotate(const Quaternion& p_Rotation);
+		void rotate(const Vector3& p_Axis, float p_Radians);
 
+		//Axis must also be rotated!
 		INLINE void roll(float p_Radians);
 		INLINE void pitch(float p_Radians);
 		INLINE void yaw(float p_Radians);
@@ -67,8 +70,8 @@ namespace K15_Engine { namespace Core {
 		INLINE const Vector3& getPosition() const;
 		INLINE const Vector3& getScale() const;
 
-		INLINE const Matrix4& getOrientation() const;
-		INLINE const Vector3& getLookAt() const;
+		INLINE const Quaternion& getOrientation() const;
+		INLINE Vector3 getLookAt() const;
 		
 		const Matrix4& getTransformation();
 
@@ -82,19 +85,18 @@ namespace K15_Engine { namespace Core {
 		void setParent(NodeComponent* p_Parent);
 		INLINE GameObject* getParent() const;
 
-	private:
-		void _calcLookAt();
+		virtual AABB _calculateAABB();
 
 	protected:
 		GameObject* m_Parent;
 		ChildObjects m_Children;
 		Matrix4 m_Transformation;
-		Matrix4 m_Orientation, m_OriginOrientation;
+		Quaternion m_Orientation, m_OriginOrientation;
+		//Matrix4 m_Orientation, m_OriginOrientation;
 /*		Vector4 m_Orientation, m_OriginOrientation;*/
 		/*Quaternion m_Orientation, m_OriginOrientation;*/
 		Vector3 m_Position, m_OriginPosition;
 		Vector3 m_Scale, m_OriginScale;
-		Vector3 m_LookAt;
 		bool m_NeedUpdate;
 	};// end of Node class declaration
 #	include "K15_NodeComponent.inl"

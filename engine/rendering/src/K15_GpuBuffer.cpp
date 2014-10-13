@@ -132,7 +132,7 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	uint32 GpuBuffer::writeData(uint32 p_Size, byte* p_Source, uint32 p_Offset)
 	{
-		K15_ASSERT((p_Offset + p_Size) > m_Size, "Buffer is not big enough.");
+		K15_ASSERT((p_Offset + p_Size) <= m_Size, "Buffer is not big enough.");
 
 		m_Dirty = true;
 

@@ -37,6 +37,8 @@ namespace K15_Engine { namespace Core {
 		static uint32 getFileSize(const String& p_FileName);
 
 		static bool fileExists(const String& p_FileName);
+		static bool folderExists(const String& p_Path);
+		static bool directoryExists(const String& p_Directory);
 	};// end of IOUtil class declaration
 }}// end of K15_Engine::Core namespace
 

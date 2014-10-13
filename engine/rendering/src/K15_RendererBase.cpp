@@ -48,6 +48,9 @@
 #include "K15_Material.h"
 
 #include "K15_RenderOperation.h"
+#include "K15_RenderQueue.h"
+
+#include "K15_LightComponent.h"
 
 namespace K15_Engine { namespace Rendering { 
 	/*********************************************************************************/
@@ -103,7 +106,8 @@ namespace K15_Engine { namespace Rendering {
 		m_GpuPrograms(),
 		m_StencilBufferFormat(SBF_COMPONENT_8_I),
 		m_Topology(RenderOperation::T_TRIANGLE),
-		m_GpuParameterUpdateMask(0)
+		m_GpuParameterUpdateMask(0),
+		m_AmbientColor(ColorRGBA::Black)
 	{
 		for(int i = 0;i < GpuBuffer::BT_COUNT;++i)
 		{
@@ -414,11 +418,25 @@ namespace K15_Engine { namespace Rendering {
 		
 	}
 	/*********************************************************************************/
+	bool RendererBase::draw(RenderQueue* p_RenderQueue)
+	{
+		for(uint32 i = 0; i < p_RenderQueue->size(); ++i)
+		{
+			if(!draw(p_RenderQueue->getRenderOperation(i)))
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+	/*********************************************************************************/
 	bool RendererBase::draw(RenderOperation* p_Rop)
 	{
-		K15_ASSERT(p_Rop,"RenderOperation is NULL.");
-		K15_ASSERT(p_Rop->vertexData,"RenderOperation has no vertex data.");
-		
+		K15_ASSERT(p_Rop, "RenderOperation is NULL.");
+		K15_ASSERT(p_Rop->vertexData, "RenderOperation has no vertex data.");
+//		K15_ASSERT(p_Rop->indexData, "RenderOperation has no index data.");
+
 		m_GpuParameterUpdateMask |= GpuProgramParameter::UF_PER_OBJECT;
 
 		if(m_ActiveCamera)
@@ -431,10 +449,17 @@ namespace K15_Engine { namespace Rendering {
 		}
 
 		if(!bindBuffer(p_Rop->vertexData->getVertexBuffer(), GpuBuffer::BT_VERTEX_BUFFER) ||
-		   !bindBuffer(p_Rop->indexData->getIndexBuffer(), GpuBuffer::BT_INDEX_BUFFER) ||
 		   !bindMaterial(p_Rop->material) || !setTopology(p_Rop->topology))
 		{
 			return false;
+		}
+
+		if(p_Rop->indexData)
+		{
+			if(!bindBuffer(p_Rop->indexData->getIndexBuffer(), GpuBuffer::BT_INDEX_BUFFER))
+			{
+				return false;
+			}
 		}
 		
 		MaterialPass* pass = 0;
@@ -494,12 +519,12 @@ namespace K15_Engine { namespace Rendering {
 				if(p_Rop->indexData != 0)
 				{
 					_drawIndexed(p_Rop->indexData->getIndexCount(), 
-            p_Rop->indexData->getOffsetInBytes());
+					p_Rop->indexData->getOffsetInBytes());
 				}
 				else
 				{
 					_drawDirect(p_Rop->vertexData->getVertexCount(),
-            p_Rop->vertexData->getOffsetInBytes());
+					p_Rop->vertexData->getOffsetInBytes());
 				}
 
 				if(errorOccured())
@@ -579,7 +604,7 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	bool RendererBase::setVertexDeclaration(VertexDeclaration* p_Declaration)
 	{
-		K15_ASSERT(p_Declaration,"VertexDeclaration is NULL!");
+		K15_ASSERT(p_Declaration, "VertexDeclaration is NULL!");
 
 		if(m_VertexDeclaration != p_Declaration)
 		{
@@ -622,11 +647,11 @@ namespace K15_Engine { namespace Rendering {
 
 			_bindTexture(p_Texture,p_Type);
 
-			p_Texture->setIsBound(true);
-
-			if(p_Texture && p_Texture->getTextureSamplerSlot() != Texture::TS_NO_SLOT)
+			if(p_Texture)
 			{
-				if(p_Texture && !m_BoundSamplers[p_Texture->getTextureSamplerSlot()])
+				p_Texture->setIsBound(true);
+
+				if(p_Texture->getTextureSamplerSlot() != Texture::TS_NO_SLOT)
 				{
 					K15_LOG_WARNING("Texture uses sampler in slot %u, but theres currently no sampler bounds to this slot.",
 						p_Slot);
@@ -666,7 +691,11 @@ namespace K15_Engine { namespace Rendering {
 			}
 
 			_bindTextureSampler(p_Sampler,p_Slot);
-			p_Sampler->setIsBound(true);
+			
+			if(p_Sampler)
+			{
+				p_Sampler->setIsBound(true);
+			}
 
 			if(errorOccured())
 			{
@@ -728,7 +757,6 @@ namespace K15_Engine { namespace Rendering {
 					{
 						if((m_GpuParameterUpdateMask & param.getUpdateFrequency()) != 0)
 						{
-			
 							if(param.getIdentifier() == GpuProgramParameter::PI_VIEW_MATRIX ||
 								param.getIdentifier() == GpuProgramParameter::PI_PROJECTION_MATRIX ||
 								param.getIdentifier() == GpuProgramParameter::PI_VIEW_PROJECTION_MATRIX)
@@ -757,6 +785,29 @@ namespace K15_Engine { namespace Rendering {
 
 								param.setData((void*)&mat); 
 							}
+							else if(param.getIdentifier() == GpuProgramParameter::PI_NORMAL_MATRIX && p_Rop)
+							{
+								CameraComponent* p_Camera = getActiveCamera();
+
+								K15_ASSERT(p_Camera,
+									StringUtil::format("Trying to set normal matrix in shader \"%s\", but there's no active camera to get it from.",
+									program->getName().c_str()));
+
+								Matrix4 modelMat;
+								Matrix4 viewMat = p_Camera->getViewMatrix();
+
+								GameObject* gameObject = 0;
+								if((gameObject = p_Rop->gameobject) != 0)
+								{
+									modelMat = gameObject->getTransformation();	
+								}
+
+								Matrix4 modelViewMat = viewMat * modelMat;
+								modelViewMat = modelViewMat.inverse();
+								modelViewMat = modelViewMat.transpose();
+
+								param.setData((void*)&modelViewMat);
+							}
 							else if(param.getIdentifier() == GpuProgramParameter::PI_MODEL_MATRIX && p_Rop)
 							{
 								GameObject* gameObject = 0;
@@ -767,7 +818,7 @@ namespace K15_Engine { namespace Rendering {
 									param.setData((void*)&modelMat);
 								}
 							}
-							else if(param.getIdentifier() >= GpuProgramParameter::PI_TEXTURE_1 || param.getIdentifier() <= GpuProgramParameter::PI_TEXTURE_8)
+							else if(param.getIdentifier() >= GpuProgramParameter::PI_TEXTURE_1 && param.getIdentifier() <= GpuProgramParameter::PI_TEXTURE_8)
 							{
 								int actualTexSlot = param.getIdentifier() - GpuProgramParameter::PI_TEXTURE_1;
 
@@ -778,6 +829,94 @@ namespace K15_Engine { namespace Rendering {
 								StringUtil::format("Texture on slot %d is trying to access NULL texture sampler on slot %d.",m_BoundTextures[actualTexSlot]->getTextureSamplerSlot()));
 
 								param.setData((void*)&actualTexSlot);
+							}
+							else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_COUNT)
+							{
+								int lightCounter = 0;
+
+								for(uint32 i = 0; i < m_LightArray.size(); ++i)
+								{
+									if(m_LightArray.at(i) != 0)
+									{
+										++lightCounter;
+									}
+								}
+
+								param.setData((void*)&lightCounter);
+							}
+							else if(param.getIdentifier() == GpuProgramParameter::PI_AMBIENT_COLOR)
+							{
+								Vector4 ambientColor;
+								m_AmbientColor.toColorVector(ambientColor);
+
+								param.setData((void*)&ambientColor);
+							}
+							else if(param.getIdentifier() >= GpuProgramParameter::PI_LIGHT_TYPE && param.getIdentifier() <= GpuProgramParameter::PI_LIGHT_SPOT_EXPONENT)
+							{
+								if(LightComponent* light = m_LightArray.at(param.getArrayIndex()))
+								{
+									if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_TYPE)
+									{
+										int type = light->getLightType();
+										param.setData((void*)&type);
+									}
+									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_RADIUS)
+									{
+										float radius = light->getRadius();
+										param.setData((void*)&radius);
+									}
+									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_POSITION)
+									{
+										Vector4 position = Vector4(light->getGameObject()->getPosition(), 1.f);
+										position = getActiveCamera()->getViewMatrix() * position;
+
+										param.setData((void*)&position);
+									}
+									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_DIRECTION)
+									{
+										Vector3 direction = light->getDirection();
+										param.setData((void*)&direction);
+									}
+									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_DIFFUSE)
+									{
+										Vector4 colorVec;
+										ColorRGBA diffuseColor = light->getDiffuseColor();
+										diffuseColor.toColorVector(colorVec);
+										param.setData((void*)&colorVec);
+									}
+									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_SPECULAR)
+									{
+										Vector4 colorVec;
+										ColorRGBA specularColor = light->getSpecularColor();
+										specularColor.toColorVector(colorVec);
+										param.setData((void*)&colorVec);
+									}
+									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_CONE_ANGLE)
+									{
+										float coneAngle = light->getConeAngle();
+										param.setData((void*)&coneAngle);
+									}
+									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_CONSTANT_ATTENUATION)
+									{
+										float constantAttenuation = light->getConstantAttenuation();
+										param.setData((void*)&constantAttenuation);
+									}
+									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_LINEAR_ATTENUATION)
+									{
+										float linearAttenuation = light->getLinearAttenuation();
+										param.setData((void*)&linearAttenuation);
+									}
+									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_QUADRIC_ATTENUATION)
+									{
+										float quadricAttenuation = light->getQuadricAttenuation();
+										param.setData((void*)&quadricAttenuation);
+									}
+									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_SPOT_EXPONENT)
+									{
+										float spotExponent = light->getSpotExponent();
+										param.setData((void*)&spotExponent);
+									}
+								}
 							}
 
 							//if data has been set, upload them to the gpu

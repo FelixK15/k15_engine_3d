@@ -26,7 +26,42 @@ Enum LightComponent::getLightType() const
 float LightComponent::getRadius() const
 {
 	return m_Range;
-}	
+}
+/*********************************************************************************/
+float LightComponent::getConeAngle() const
+{
+	return m_ConeAngle;
+}
+/*********************************************************************************/
+float LightComponent::getConstantAttenuation() const
+{
+	return m_Attenuation.x;
+}
+/*********************************************************************************/
+float LightComponent::getLinearAttenuation() const
+{
+	return m_Attenuation.y;
+}
+/*********************************************************************************/
+float LightComponent::getQuadricAttenuation() const
+{
+	return m_Attenuation.z;
+}
+/*********************************************************************************/
+float LightComponent::getSpotExponent() const
+{
+	return m_SpotExponent;
+}
+/*********************************************************************************/
+const Vector3& LightComponent::getDirection() const
+{
+	return m_Direction;
+}
+/*********************************************************************************/
+const Vector3& LightComponent::getAttenuation() const
+{
+	return m_Attenuation;
+}
 /*********************************************************************************/
 const ColorRGBA& LightComponent::getDiffuseColor() const
 {
@@ -45,13 +80,38 @@ bool LightComponent::isActive() const
 /*********************************************************************************/
 void LightComponent::setLightType(Enum p_LightType)
 {
-	K15_ASSERT(p_LightType >= LT_COUNT,"Invalid light type. (value:%i)");
+	K15_ASSERT(p_LightType < LT_COUNT,"Invalid light type.");
 	m_LightType = p_LightType;
 }
 /*********************************************************************************/
 void LightComponent::setRadius(float p_Radius)
 {
 	m_Range = p_Radius;
+}
+/*********************************************************************************/
+void LightComponent::setConstantAttenuation(float p_ConstAttenuation)
+{
+	m_Attenuation.x = p_ConstAttenuation;
+}
+/*********************************************************************************/
+void LightComponent::setLinearAttenuation(float p_LinearAttenuation)
+{
+	m_Attenuation.y = p_LinearAttenuation;
+}
+/*********************************************************************************/
+void LightComponent::setQuadricAttenuation(float p_QuadricAttenuation)
+{
+	m_Attenuation.z = p_QuadricAttenuation;
+}
+/*********************************************************************************/
+void LightComponent::setConeAngle(float p_ConeAngle)
+{
+	m_ConeAngle = p_ConeAngle;
+}
+/*********************************************************************************/
+void LightComponent::setSpotExponent(float p_SpotExponent)
+{
+	m_SpotExponent = p_SpotExponent;
 }
 /*********************************************************************************/
 void LightComponent::setActive(bool p_Active)
@@ -67,5 +127,10 @@ void LightComponent::setDiffuseColor(const ColorRGBA& p_DiffuseColor)
 void LightComponent::setSpecularColor(const ColorRGBA& p_SpecularColor)
 {
   m_SpecularColor = p_SpecularColor;
+}
+/*********************************************************************************/
+void LightComponent::setDirection(const Vector3& p_Direction)
+{
+	m_Direction = p_Direction;
 }
 /*********************************************************************************/

@@ -46,8 +46,10 @@ namespace K15_Engine { namespace Core {
 		void addComponent(GameObjectComponentBase* p_Component);
 		void onAddedToRenderQueue(RenderQueue* p_RenderQueue);
 	
-		INLINE NodeComponent* getNodeComponent();
-		INLINE CameraComponent* getCameraComponent();
+		INLINE NodeComponent* getNodeComponent() const;
+		INLINE CameraComponent* getCameraComponent() const;
+		INLINE ModelComponent* getModelComponent() const;
+		INLINE LightComponent* getLightComponent() const;
 
 		GameObjectComponentBase* getComponentByName(const ObjectName& p_TypeName) const;
 	
@@ -60,8 +62,9 @@ namespace K15_Engine { namespace Core {
 
 		void lookAt(const Vector3& p_Position);
 
+		void setPosition(float p_PosX, float p_PosY, float p_PosZ);
 		void setPosition(const Vector3& p_Position);
-		//void setOrientation(const Quaternion& p_Orientation);
+		void setOrientation(const Quaternion& p_Orientation);
 		void setScale(const Vector3& p_Scale);
 
 		void translate(const Vector3& p_Translation);
@@ -79,7 +82,7 @@ namespace K15_Engine { namespace Core {
 		const Vector3& getPosition() const;
 		const Vector3& getScale() const;
 
-		const Matrix4& getOrientation() const;
+		const Quaternion& getOrientation() const;
 		const Vector3& getLookAt() const;
 
 		const Matrix4& getTransformation();
@@ -88,6 +91,8 @@ namespace K15_Engine { namespace Core {
 		ComponentArray m_Components;
 		NodeComponent* m_NodeComponent;
 		CameraComponent* m_CameraComponent;
+		ModelComponent* m_ModelComponent;
+		LightComponent* m_LightComponent;
 
 	};// end of GameObject class declaration
 #include "K15_GameObject.inl"

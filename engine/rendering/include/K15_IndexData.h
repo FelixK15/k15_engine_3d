@@ -25,9 +25,10 @@
 #define _K15Engine_Rendering_IndexData_h_
 
 #include "K15_Prerequisites.h"
+#include "K15_AllocatedObject.h"
 
 namespace K15_Engine { namespace Rendering { 
-  class K15_CORE_API IndexData
+  class K15_CORE_API IndexData : public RenderingAllocatedObject
   {
   public:
     IndexData(IndexBuffer* p_IndexBuffer, uint32 p_IndexCount, uint32 p_OffsetInBytes);

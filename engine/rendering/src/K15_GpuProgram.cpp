@@ -25,7 +25,7 @@
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
-	const uint32 GpuProgram::MaxParameter = 32;
+	const uint32 GpuProgram::MaxParameter = 128;
 	/*********************************************************************************/
 
 	/*********************************************************************************/
@@ -94,6 +94,7 @@ namespace K15_Engine { namespace Rendering {
 			}
 			else
 			{
+				_resolveIncludes();
 				if(!m_Impl->compileShaderCode())
 				{
 					m_Error = getRenderer()->getLastError();
@@ -149,7 +150,7 @@ namespace K15_Engine { namespace Rendering {
 		return m_Attributes[p_Index];
 	}
 	/*********************************************************************************/
-	const String& GpuProgram::_resolveIncludes(const char* p_ShaderCode)
+	void GpuProgram::_resolveIncludes()
 	{
 		static String shaderCode;
 		static String includeLine;
@@ -157,43 +158,40 @@ namespace K15_Engine { namespace Rendering {
 		static String foreignShaderCode;
 		FileStream stream;
 
-		shaderCode = p_ShaderCode;
+		shaderCode = m_ShaderCode;
 
 		String::size_type pos = 0;
 		String::size_type eol = 0;
+		String::size_type startInclude = 0;
+		String::size_type endInclude = 0;
+
+		uint32 length = 0;
 
 		while((pos = shaderCode.find("#include"),pos) != String::npos)
 		{
 			eol = shaderCode.find_first_of('\n',pos);
 			includeLine = StringUtil::removeWhitespaces(shaderCode.substr(pos,eol - pos));
-			includeFile = includeLine.substr(includeLine.find_first_of('"'),includeLine.find_last_of('"'));
+			startInclude = includeLine.find_first_of('\"') + 1;
+			endInclude = includeLine.find_last_of('\"');
+			length = endInclude - startInclude;
+			
+			includeFile = includeLine.substr(startInclude, length);
 
 			if(includeFile.empty())
 			{
 				K15_LOG_ERROR("Invalid line in GpuProgram. Line: %s, Program: \"%s\"",includeLine.c_str(),m_Name.c_str());
-				continue;
+				break;
 			}
 
-			stream.open(includeFile);
+			includeFile = g_Application->getGameRootDir() + includeFile;    
+			foreignShaderCode = IOUtil::readWholeFile(includeFile);
 
-			if(!stream.is_open())
-			{
-				K15_LOG_ERROR("Could not open GpuProgram include \"%s\".",includeFile.c_str());
-				continue;
-			}
-      
-			stream.seekg(0, FileStream::end); //move cursor to end
-			foreignShaderCode.resize((size_t)stream.tellg()); //stream.tellg = where are we?
-			stream.seekg(0, FileStream::beg); //move cursor to begin
-			stream.read(&foreignShaderCode[0], foreignShaderCode.size());
-			stream.close();
-
-			shaderCode.replace(pos,shaderCode.size(),foreignShaderCode);
+			shaderCode.replace(pos, includeLine.size() + 1, foreignShaderCode);
       
 			pos = 0;
 		}
 
-		return shaderCode;
+		m_ShaderCode = shaderCode;
 	}
 	/*********************************************************************************/
 	bool GpuProgram::reflect()
@@ -211,6 +209,23 @@ namespace K15_Engine { namespace Rendering {
 			for(uint32 i = 0;i < m_UsedUniforms;++i)
 			{
 				m_Uniforms[i].setGpuProgram(this);
+
+				const String& uniformName = m_Uniforms[i].getName();
+
+				//check if the uniform is an array
+				uint32 indexStart = uniformName.find_first_of('[') + 1;
+				uint32 indexEnd = uniformName.find_first_of(']');
+				int32 arrayIndex = -1;
+				if(indexStart != String::npos && indexEnd != String::npos)
+				{
+					String newUniformName = uniformName.substr(0, indexStart);
+					newUniformName += uniformName.substr(indexStart + 1);
+
+					arrayIndex = StringUtil::toInt(uniformName.substr(indexStart, 1));
+
+					m_Uniforms[i].setArrayIndex(arrayIndex);
+					m_Uniforms[i].setName(newUniformName);
+				}
 				
 				for(int j = 0;j < GpuProgramParameter::PI_COUNT;++j)
 				{

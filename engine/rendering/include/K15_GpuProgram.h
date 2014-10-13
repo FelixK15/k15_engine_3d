@@ -95,7 +95,7 @@ namespace K15_Engine { namespace Rendering {
 		INLINE GpuProgramImplBase* getImpl();
 
 	private:
-		const String& _resolveIncludes(const char* p_ShaderCode);
+		void _resolveIncludes();
 
 	protected:
 		GpuProgramImplBase* m_Impl;

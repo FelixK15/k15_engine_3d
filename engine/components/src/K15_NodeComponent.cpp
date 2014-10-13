@@ -21,7 +21,10 @@
 #include "K15_NodeComponent.h"
 #include "K15_GameObject.h"
 
+#include "K15_ModelComponent.h"
 #include "K15_MatrixUtil.h"
+#include "K15_MathUtil.h"
+#include "K15_QuaternionUtil.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
@@ -76,38 +79,9 @@ namespace K15_Engine { namespace Core {
 // 				m_Position = m_OriginPosition;
 			}
 
-			// Ordering:
-			//    1. Scale
-			//    2. Rotate
-			//    3. Translate
-
-			// Set up final matrix with scale, rotation and translation
-// 			m_Transformation = glm::scale(glm::mat4(1.0f),m_Scale);
-// 			m_Transformation *= m_Orientation;
-// 			m_Transformation *= glm::translate(glm::mat4(1.0f),m_Position);
-
 			m_Transformation = MatrixUtil::scale(m_Scale);
+			m_Transformation *= m_Orientation.toRotationMatrix();
 			m_Transformation *= MatrixUtil::translate(m_Position);
-			m_Transformation *= m_Orientation;
-
-// 			m_Transformation._1_1 = m_Scale.x * rotation._1_1; 
-// 			m_Transformation._1_2 = m_Scale.y * rotation._1_2; 
-// 			m_Transformation._1_3 = m_Scale.z * rotation._1_3;
-// 			m_Transformation._1_4 = m_Position.x;
-// 
-// 			m_Transformation._2_1 = m_Scale.x * rotation._2_1; 
-// 			m_Transformation._2_2 = m_Scale.y * rotation._2_2; 
-// 			m_Transformation._2_3 = m_Scale.z * rotation._2_3;
-// 			m_Transformation._2_4 = m_Position.y;
-// 
-// 			m_Transformation._3_1 = m_Scale.x * rotation._3_1; 
-// 			m_Transformation._3_2 = m_Scale.y * rotation._3_2; 
-// 			m_Transformation._3_3 = m_Scale.z * rotation._3_3;
-// 			m_Transformation._3_4 = m_Position.z;
-// 
-// 			// No projection term
-// 			m_Transformation._4_1 = m_Transformation._4_2 = m_Transformation._4_3 = 0.0f;
-// 			m_Transformation._4_4 = 1.0f;
 
 			m_NeedUpdate = false;
 		}
@@ -115,21 +89,62 @@ namespace K15_Engine { namespace Core {
 		return m_Transformation;
 	}
 	/*********************************************************************************/
-	void NodeComponent::_calcLookAt()
+	void NodeComponent::rotate(const Vector3& p_Axis, float p_Radians)
 	{
-		Vector4 viewNormal(0.0f,0.0f,-1.0f,0.0f);
-		viewNormal = m_Orientation * viewNormal;
-		viewNormal.normalize();
-		m_LookAt.x = viewNormal.x;
-		m_LookAt.y = viewNormal.y;
-		m_LookAt.z = viewNormal.z;
+		Quaternion rotation = QuaternionUtil::fromAxisAngles(p_Axis, p_Radians);
+
+		rotation.normalize();
+		m_Orientation *= rotation;
+
+		m_NeedUpdate = true;
 	}
-  /*********************************************************************************/
-  void NodeComponent::lookAt(const Vector3& p_Position)
-  {
-    m_Orientation = MatrixUtil::lookAt(m_Position,p_Position,Vector3(0.0f,1.0f,0.0f));
-    m_NeedUpdate = true;
-    _calcLookAt();
-  }
+	/*********************************************************************************/
+	void NodeComponent::setTransformation(const Matrix4& p_Transformation)
+	{
+		m_Position.x = m_Transformation._4_1;
+		m_Position.y = m_Transformation._4_2;
+		m_Position.z = m_Transformation._4_3;
+
+		m_Scale.x = MathUtil::sqrt(m_Transformation._1_1 * m_Transformation._1_1 + 
+			m_Transformation._2_1 * m_Transformation._2_1 +
+			m_Transformation._3_1 * m_Transformation._3_1);
+
+		m_Scale.y = MathUtil::sqrt(m_Transformation._1_2 * m_Transformation._1_2 + 
+			m_Transformation._2_2 * m_Transformation._2_2 +
+			m_Transformation._3_2 * m_Transformation._3_2);
+
+		m_Scale.y = MathUtil::sqrt(m_Transformation._1_3 * m_Transformation._1_3 + 
+			m_Transformation._2_3 * m_Transformation._2_3 +
+			m_Transformation._3_3 * m_Transformation._3_3);
+
+		m_Orientation = QuaternionUtil::fromTransformation(p_Transformation);
+
+		m_NeedUpdate = true;
+	}
+	/*********************************************************************************/
+	void NodeComponent::lookAt(const Vector3& p_Position)
+	{
+		setTransformation(MatrixUtil::lookAt(m_Position, m_Position, Vector3::Up));
+	}
+	/*********************************************************************************/
+	AABB NodeComponent::_calculateAABB()
+	{
+		AABB boundingBox;
+		if(ModelComponent* model = getGameObject()->getModelComponent())
+		{
+			boundingBox = model->getAABB();
+		}
+
+		Vector3 min = boundingBox.getMin();
+		Vector3 max = boundingBox.getMax();
+
+		min += m_Position;
+		max += m_Position;
+
+		boundingBox.setMax(max);
+		boundingBox.setMin(min);
+
+		return boundingBox;
+	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

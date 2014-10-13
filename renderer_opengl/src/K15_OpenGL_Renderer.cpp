@@ -52,6 +52,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	const GLenum Renderer::GLTopologyConverter[RenderOperation::T_COUNT] = {
 		GL_POINTS,    //T_DOT
 		GL_LINES,     //T_LINE
+		GL_LINE_STRIP,//T_LINE_STRIP
 		GL_TRIANGLES, //T_TRIANGLE
 		GL_TRIANGLE_STRIP, //T_TRIANGLESTRIP
 		GL_QUADS      //T_QUAD
@@ -190,6 +191,9 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 			glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
 			glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
 
+			K15_LOG_NORMAL("OpenGL Vendor: \"%s\"", glGetString(GL_VENDOR));
+			K15_LOG_NORMAL("OpenGL Renderer: \"%s\"", glGetString(GL_RENDERER));
+
 			if(majorVersion < K15_MIN_GL_VERSION_MAJOR ||
 			   (majorVersion == K15_MIN_GL_VERSION_MAJOR && 
 			   minorVersion < K15_MIN_GL_VERSION_MINOR))
@@ -204,7 +208,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 			m_Extensions = _getExtensions();
 			_loadExtensions();
 
-      kglGenProgramPipelines(1,&m_ProgramPipeline);
+			kglGenProgramPipelines(1,&m_ProgramPipeline);
 			kglBindProgramPipeline(m_ProgramPipeline);
 
 			kglGenVertexArrays(1,&m_VertexArray);
@@ -215,6 +219,8 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 			glEnable(GL_STENCIL_TEST); //enable stencil testing
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_BLEND);
+			glLineWidth(1.f);
+			glPointSize(1.f);
 
 			glEnable(GL_POLYGON_OFFSET_FILL); //enable glPolygonOffset for filled polys
 
@@ -499,11 +505,6 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
                                       GL_FALSE,p_Declaration->getVertexSize(),
                                       (const GLvoid*)element.offset);
 			}
-			else
-			{
-				K15_LOG_ERROR("Could not set vertex attribute \"%s\" for GpuProgram \"%s\".",
-					semanticname,m_GpuPrograms[GpuProgram::PS_VERTEX]->getName().c_str());
-			}
 		}
 	}
 	/*********************************************************************************/
@@ -618,26 +619,26 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 
 		String extension;
 
-    //try to get extensions via glGetStringi...
-    if(PFNGLGETSTRINGIPROC kglGetStringi = (PFNGLGETSTRINGIPROC)kglGetProcAddress("glGetStringi"))
-    {
-      GLint numExtensions = 0;
-      glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+		//try to get extensions via glGetStringi...
+		if(PFNGLGETSTRINGIPROC kglGetStringi = (PFNGLGETSTRINGIPROC)kglGetProcAddress("glGetStringi"))
+		{
+		  GLint numExtensions = 0;
+		  glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
 
-      for(int i = 0; i < numExtensions; ++i)
-      {
-        String extension = (char*)kglGetStringi(GL_EXTENSIONS, i);
-        extensions.push_back(extension);
-      }
+		  for(int i = 0; i < numExtensions; ++i)
+		  {
+			String extension = (char*)kglGetStringi(GL_EXTENSIONS, i);
+			extensions.push_back(extension);
+		  }
 
-      return extensions;
-    }
+		  return extensions;
+		}
 
-    // ... didn't work...get extensions via glGetString
-    static const char EXTENSION_SEPARATOR = ' ';
-    String extensionString;
+		// ... didn't work...get extensions via glGetString
+		static const char EXTENSION_SEPARATOR = ' ';
+		String extensionString;
 
-    extensionString = (char*)glGetString(GL_EXTENSIONS);
+		extensionString = (char*)glGetString(GL_EXTENSIONS);
 
 		String::size_type pos = String::npos;
 		do 
@@ -665,8 +666,17 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	{
 		if(_isExtensionSupported("GL_ARB_debug_output"))
 		{
-			glDebugMessageCallbackARB(glLogError,(const void*)(this));
-			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+			kglDebugMessageCallback = glDebugMessageCallback;
+			if(!kglDebugMessageCallback)
+			{
+				kglDebugMessageCallback = (PFNGLDEBUGMESSAGECALLBACKPROC)glDebugMessageCallbackAMD;
+			}
+
+			if(kglDebugMessageCallback)
+			{
+				kglDebugMessageCallback(glLogError,(const void*)(this));
+				glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+			}
 		}
 
 	#ifndef K15_GL_FORCE_EMULATED_EXTENSIONS
@@ -686,6 +696,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 			kglBindProgramPipeline = glBindProgramPipeline;
             kglValidateProgramPipeline = glValidateProgramPipeline;
             kglGetProgramPipelineInfoLog = glGetProgramPipelineInfoLog;
+			kglUseProgramStages = glUseProgramStages;
             //glProgramUniform*i
             kglProgramUniform1i = glProgramUniform1i;
             kglProgramUniform2i = glProgramUniform2i;

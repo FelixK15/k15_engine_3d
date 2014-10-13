@@ -27,6 +27,6 @@ GameStateBase* GameStateManager::getCurrentGameState() const
 /*********************************************************************************/
 void GameStateManager::update(const GameTime& p_GameTime)
 {
-	update_R(p_GameTime, m_CurrentGameStateIndex - 1);
+	update_R(p_GameTime, m_CurrentGameStateIndex);
 }
 /*********************************************************************************/

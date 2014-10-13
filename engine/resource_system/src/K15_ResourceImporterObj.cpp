@@ -20,20 +20,20 @@
 #include "K15_PrecompiledHeader.h"
 
 #include "K15_ResourceImporterObj.h"
-
-#if 0
-
 #include "K15_RawData.h"
 
 #include "K15_RendererBase.h"
 
 #include "K15_Mesh.h"
 #include "K15_SubMesh.h"
-/*#include "K15_Vector3.h"*/
+
 #include "K15_VertexBuffer.h"
 #include "K15_IndexBuffer.h"
 #include "K15_VertexDeclaration.h"
 #include "K15_Material.h"
+
+#include "K15_VertexData.h"
+#include "K15_IndexData.h"
 
 #include "tiny_obj_loader.h"
 
@@ -136,7 +136,7 @@ namespace K15_Engine { namespace Core {
 
 			if(shape.mesh.positions.size() > 0)
 			{
-				vertexDeclarationString += "PF4";
+				vertexDeclarationString += "PF3";
 			}
 
 			if(shape.mesh.normals.size() > 0)
@@ -150,17 +150,14 @@ namespace K15_Engine { namespace Core {
 			}
 
 			uint32 bufferPosition = 0;
-			static const float wComponent = 1.0f;
 
 			uint32 pos_position = 0, pos_normal = 0, pos_tex = 0;
 			for(uint32 i = 0;i < shape.mesh.indices.size();++i)
 			{
 				if(shape.mesh.positions.size() > pos_position)
 				{
-					memcpy(vertexTempBuffer + bufferPosition,&shape.mesh.positions[pos_position],sizeof(float)*3);
+					memcpy(vertexTempBuffer + bufferPosition, &shape.mesh.positions[pos_position],sizeof(float)*3);
 					bufferPosition += sizeof(float)*3;
-					memcpy(vertexTempBuffer + bufferPosition,&wComponent,sizeof(float));
-					bufferPosition += sizeof(float);
 
 					pos_position += 3;
 				}
@@ -189,13 +186,11 @@ namespace K15_Engine { namespace Core {
 			idbuffer = K15_NEW IndexBuffer(indexOptions);
 			vdeclaration = VertexDeclaration::create(vertexDeclarationString);
 
-			vbbuffer->setVertexDeclaration(vdeclaration);
+			submesh->setVertexData(K15_NEW VertexData(vdeclaration, vbbuffer, 0, shape.mesh.indices.size()));
+			submesh->setIndexData(K15_NEW IndexData(idbuffer, indexDataSize / indexSize, 0));
 
-			submesh->setVertexBuffer(vbbuffer);
-			submesh->setIndexBuffer(idbuffer);
-		
-			K15_DELETE_SIZE(Allocators[AC_GENERAL],vertexTempBuffer,vertexDataSize);
-			K15_DELETE_SIZE(Allocators[AC_GENERAL],indexTempBuffer,indexDataSize);
+			K15_DELETE_SIZE(Allocators[AC_GENERAL], vertexTempBuffer, vertexDataSize);
+			K15_DELETE_SIZE(Allocators[AC_GENERAL], indexTempBuffer, indexDataSize);
 		}
 
 		return mesh;
@@ -203,4 +198,3 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace
 
-#endif

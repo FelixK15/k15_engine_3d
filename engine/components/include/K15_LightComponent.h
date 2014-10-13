@@ -37,8 +37,8 @@ namespace K15_Engine { namespace Core {
 		/*********************************************************************************/
 		enum eLightType
 		{
-			LT_POINT = 0,		//<! Point Light
-			LT_SPOT,			  //<! Spot Light
+			LT_POINT = 0,	//<! Point Light
+			LT_SPOT,		//<! Spot Light
 			LT_DIRECTIONAL,	//<! Directional Light
 
 			LT_COUNT
@@ -52,22 +52,40 @@ namespace K15_Engine { namespace Core {
 		INLINE Enum getLightType() const;
 		INLINE bool isActive() const;
 		INLINE float getRadius() const;
+		INLINE float getConeAngle() const;
+		INLINE float getConstantAttenuation() const;
+		INLINE float getLinearAttenuation() const;
+		INLINE float getQuadricAttenuation() const;
+		INLINE float getSpotExponent() const;
 		INLINE const ColorRGBA& getDiffuseColor() const;
-    INLINE const ColorRGBA& getSpecularColor() const;
+		INLINE const ColorRGBA& getSpecularColor() const;
+		INLINE const Vector3& getDirection() const;
+		INLINE const Vector3& getAttenuation() const;
 		INLINE bool isDirty() const;
 
 		INLINE void setLightType(Enum p_LightType);
 		INLINE void setRadius(float p_Radius);
+		INLINE void setConstantAttenuation(float p_ConstAttenuation);
+		INLINE void setLinearAttenuation(float p_LinearAttenuation);
+		INLINE void setQuadricAttenuation(float p_QuadricAttenuation);
+		INLINE void setConeAngle(float p_ConeAngle);
 		INLINE void setDiffuseColor(const ColorRGBA& p_DiffuseColor);
-    INLINE void setSpecularColor(const ColorRGBA& p_SpecularColor);
+		INLINE void setSpecularColor(const ColorRGBA& p_SpecularColor);
+		INLINE void setDirection(const Vector3& p_Direction);
+		INLINE void setAttenuation(const Vector3& p_Attenuation);
+		INLINE void setSpotExponent(float p_SpotExponent);
 		INLINE void setActive(bool p_Active);
 		
 		virtual void onAddedToRenderQueue(RenderQueue* p_RenderQueue);
 
 	private:
+		expose Vector3 m_Direction;
+		expose Vector3 m_Attenuation;
 		expose ColorRGBA m_DiffuseColor;
-    expose ColorRGBA m_SpecularColor;
+		expose ColorRGBA m_SpecularColor;
+		expose float m_ConeAngle;
 		expose float m_Range;
+		expose float m_SpotExponent;
 		expose_enum(eLightType) Enum m_LightType;
 		expose bool m_Active;
 		bool m_Dirty;

@@ -97,6 +97,7 @@ namespace K15_Engine { namespace Core {
 		Vector3 m_Scale, m_OriginScale;
 		Vector3 m_LookAt;
 		bool m_NeedUpdate;
+		bool m_IsDirty;
 	};// end of Node class declaration
 #	include "K15_Node.inl"
 }}// end of K15_Engine::Core namespace

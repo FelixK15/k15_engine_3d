@@ -213,6 +213,7 @@ namespace K15_Engine { namespace Core {
 
 						m_ResourceDataCache.insert(Pair(ResourceName,ResourceBase*)(p_ResourceName,resource));
 						cachedResource = true;
+						resource->setName(p_ResourceName);
 						break;
 					}
 				}

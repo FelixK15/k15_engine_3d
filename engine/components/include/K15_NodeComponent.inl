@@ -24,10 +24,11 @@ void NodeComponent::setPosition(const Vector3& p_Position)
 	m_NeedUpdate = true;
 }
 /*********************************************************************************/
-// void Node::setOrientation(const Quaternion& p_Orientation)
-// {
-// 	m_Orientation = p_Orientation;
-// }
+void NodeComponent::setOrientation(const Quaternion& p_Orientation)
+{
+	m_Orientation = p_Orientation;
+	m_NeedUpdate = true;
+}
 /*********************************************************************************/
 void NodeComponent::setScale(const Vector3& p_Scale)
 {
@@ -38,7 +39,6 @@ void NodeComponent::setScale(const Vector3& p_Scale)
 void NodeComponent::translate(const Vector3& p_Translation)
 {
 	m_Position += p_Translation;
-	_calcLookAt();
 	m_NeedUpdate = true;
 }
 /*********************************************************************************/
@@ -50,7 +50,6 @@ void NodeComponent::translate(const Vector4& p_Translation)
 void NodeComponent::translate(float x, float y, float z)
 {
 	m_Position += Vector3(x,y,z);
-	_calcLookAt();
 	m_NeedUpdate = true;
 }
 /*********************************************************************************/
@@ -66,33 +65,29 @@ void NodeComponent::scale(float x, float y, float z)
 	m_NeedUpdate = true;
 }
 /*********************************************************************************/
-// void Node::rotate(const Quaternion& p_Rotation)
-// {
-// 	m_Orientation *= p_Rotation;
-// }
-/*********************************************************************************/
-void NodeComponent::rotate(const Vector3& p_Axis, float p_Radians)
+void NodeComponent::rotate(const Quaternion& p_Rotation)
 {
-	m_Orientation *= MatrixUtil::rotate(p_Axis, p_Radians);
-	_calcLookAt();
-	m_NeedUpdate = true;
+	m_Orientation *= p_Rotation;
 }
 /*********************************************************************************/
 void NodeComponent::roll(float p_Radians)
 {
-	rotate(Vector3(0.0f,0.0f,1.0f),p_Radians);
+	static Vector3 const zAxis = Vector3(0.0f, 0.0f, 1.0f);
+	rotate(zAxis, p_Radians);
 	m_NeedUpdate = true;
 }
 /*********************************************************************************/
 void NodeComponent::pitch(float p_Radians)
 {
-	rotate(Vector3(1.0f,0.0f,0.0f),p_Radians);
+	static Vector3 const xAxis = Vector3(1.0f, 0.0f, 0.0f);
+	rotate(xAxis, p_Radians);
 	m_NeedUpdate = true;
 }
 /*********************************************************************************/
 void NodeComponent::yaw(float p_Radians)
 {
-	rotate(Vector3(0.0f,1.0f,0.0f),p_Radians);
+	static Vector3 const yAxis = Vector3(0.0f, 1.0f, 0.0f);
+	rotate(yAxis, p_Radians);
 	m_NeedUpdate = true;
 }
 /*********************************************************************************/
@@ -106,7 +101,7 @@ const Vector3& NodeComponent::getScale() const
 	return m_Scale;
 }
 /*********************************************************************************/
-const Matrix4& NodeComponent::getOrientation() const
+const Quaternion& NodeComponent::getOrientation() const
 {
 	return m_Orientation;
 }
@@ -116,9 +111,9 @@ bool NodeComponent::needUpdate() const
 	return m_NeedUpdate;
 }
 /*********************************************************************************/
-const Vector3& NodeComponent::getLookAt() const
+Vector3 NodeComponent::getLookAt() const
 {
-	return m_LookAt;
+	return Vector3(m_Transformation._3_1, m_Transformation._3_2, m_Transformation._3_3);
 }
 /*********************************************************************************/
 GameObject* NodeComponent::getParent() const

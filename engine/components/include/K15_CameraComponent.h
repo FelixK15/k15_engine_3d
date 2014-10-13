@@ -72,7 +72,7 @@ namespace K15_Engine { namespace Rendering {
 		INLINE void setViewMatrixDirty(bool p_Dirty);
 
 		INLINE bool isProjectionMatrixDirty() const;
-		INLINE bool isViewMatrixDirty() const;
+		bool isViewMatrixDirty() const;
 
 		bool isVisible(const AABB& p_AABB);
 

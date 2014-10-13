@@ -22,6 +22,9 @@
  */
 
 /*********************************************************************************/
+//GL_ARB_debug_output
+PFNGLDEBUGMESSAGECALLBACKPROC kglDebugMessageCallback = 0;
+
 //GL_ARB_separate_shader_objects//
 PFNGLGENPROGRAMPIPELINESPROC	kglGenProgramPipelines= 0;
 PFNGLBINDPROGRAMPIPELINEPROC kglBindProgramPipeline= 0;

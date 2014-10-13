@@ -35,24 +35,24 @@ namespace K15_Engine { namespace Rendering {
 		/*********************************************************************************/
 		enum eVariableType
 		{
-		  VT_UNKNOW = 0,
-		  VT_INT,
-		  VT_BOOL,
-		  VT_FLOAT,
+			VT_UNKNOW = 0,
+			VT_INT,
+			VT_BOOL,
+			VT_FLOAT,
 
-		  VT_MATRIX2,
-		  VT_MATRIX3,
-		  VT_MATRIX4,
+			VT_MATRIX2,
+			VT_MATRIX3,
+			VT_MATRIX4,
 
-		  VT_VECTOR2,
-		  VT_VECTOR3,
-		  VT_VECTOR4,
+			VT_VECTOR2,
+			VT_VECTOR3,
+			VT_VECTOR4,
 
-		  VT_SAMPLER_1D,
-		  VT_SAMPLER_2D,
-		  VT_SAMPLER_3D,
+			VT_SAMPLER_1D,
+			VT_SAMPLER_2D,
+			VT_SAMPLER_3D,
 
-		  VT_COUNT
+			VT_COUNT
 		}; //VariableType
 		/*********************************************************************************/
 		enum eUpdateFrequency
@@ -61,8 +61,9 @@ namespace K15_Engine { namespace Rendering {
 			UF_PER_OBJECT	= 0x0002,
 			UF_PER_FRAME	= 0x0004,
 			UF_PER_CAMERA	= 0x0008,
+			UF_PER_LIGHT	= 0x0010,
 
-			UF_ALL			= UF_PER_CAMERA | UF_PER_OBJECT | UF_PER_FRAME | UF_PER_CAMERA,
+			UF_ALL			= UF_PER_CAMERA | UF_PER_OBJECT | UF_PER_FRAME | UF_PER_CAMERA | UF_PER_LIGHT,
 
 			UF_COUNT = 4
 		}; //UpdateFrequency
@@ -73,6 +74,7 @@ namespace K15_Engine { namespace Rendering {
 			PI_PROJECTION_MATRIX,
 			PI_MODEL_MATRIX,
 			PI_VIEW_PROJECTION_MATRIX,
+			PI_NORMAL_MATRIX,
 			PI_TIME,
 
 			PI_TEXTURE_1,
@@ -83,6 +85,21 @@ namespace K15_Engine { namespace Rendering {
 			PI_TEXTURE_6,
 			PI_TEXTURE_7,
 			PI_TEXTURE_8,
+
+			PI_LIGHT_TYPE,
+			PI_LIGHT_RADIUS,
+			PI_LIGHT_POSITION,
+			PI_LIGHT_DIRECTION,
+			PI_LIGHT_DIFFUSE,
+			PI_LIGHT_SPECULAR,
+			PI_LIGHT_CONE_ANGLE,
+			PI_LIGHT_CONSTANT_ATTENUATION,
+			PI_LIGHT_LINEAR_ATTENUATION,
+			PI_LIGHT_QUADRIC_ATTENUATION,
+			PI_LIGHT_SPOT_EXPONENT,
+
+			PI_LIGHT_COUNT,
+			PI_AMBIENT_COLOR,
 
 			PI_COUNT,
 			PI_USER = PI_COUNT + 128
@@ -105,7 +122,9 @@ namespace K15_Engine { namespace Rendering {
 		INLINE uint32 getSize() const;
 		INLINE const String& getName() const;
 		INLINE int32 getBufferIndex() const;
+		INLINE int32 getArrayIndex() const;
 		INLINE uint32 getOffset() const;
+
 		INLINE uint32 getRegisterIndex() const;
 		INLINE void* getData() const;
 		INLINE GpuProgram* getGpuProgram() const;
@@ -118,6 +137,7 @@ namespace K15_Engine { namespace Rendering {
 		INLINE void setUpdateFrequency(Enum p_UpdateFrequency);
 		INLINE void setBufferIndex(int32 p_Block);
 		INLINE void setOffset(uint32 p_Offset);
+		INLINE void setArrayIndex(int32 p_Index);
 		INLINE void setRegisterIndex(uint32 p_Location);
 		INLINE void setData(void* p_UserData);
 		INLINE void setGpuProgram(GpuProgram* p_Program);
@@ -129,6 +149,7 @@ namespace K15_Engine { namespace Rendering {
 		Enum m_UpdateFrequency;
 		Enum m_Identifier;
 		int32 m_BufferIndex;
+		int32 m_ArrayIndex;
 		uint32 m_RegisterIndex;
 		uint32 m_Size;
 		uint32 m_Offset;

@@ -19,6 +19,7 @@
 
 #include "K15_PrecompiledHeader.h"
 
+#include "K15_MathUtil.h"
 #include "K15_LightComponent.h"
 
 namespace K15_Engine { namespace Core {
@@ -31,8 +32,11 @@ namespace K15_Engine { namespace Core {
 		: GameObjectComponentBase(_TN(LightComponent)),
 		m_LightType(LT_POINT),
 		m_Range(0),
+		m_SpotExponent(1.f),
+		m_Attenuation(Vector3::Up),
+		m_ConeAngle(MathUtil::HalfPi),
 		m_DiffuseColor(ColorRGBA::White),
-    m_SpecularColor(ColorRGBA::White),
+		m_SpecularColor(ColorRGBA::White),
 		m_Active(true),
 		m_Dirty(false)
 	{
@@ -44,9 +48,9 @@ namespace K15_Engine { namespace Core {
 		
 	}
 	/*********************************************************************************/
-	void LightComponent::onAddedToRenderQueue(RenderQueue* p_RenderQueue)
+	void LightComponent::onAddedToRenderQueue( RenderQueue* p_RenderQueue )
 	{
-
+		GameObjectComponentBase::onAddedToRenderQueue(p_RenderQueue);
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

@@ -26,6 +26,7 @@
  *
  * EventListener can also register and unregister themselves as listener for specific events.
  */
+
 #ifndef _K15Engine_Core_EventManager_h_
 #define _K15Engine_Core_EventManager_h_
 

@@ -44,11 +44,21 @@ namespace K15_Engine { namespace Core {
 	void RenderTask::setRenderer(Rendering::RendererBase* p_Renderer)
 	{
 		m_Renderer = p_Renderer;
+		
+		if(m_RenderProcess)
+		{
+			m_RenderProcess->setRenderer(p_Renderer);
+		}
 	}
 	/*********************************************************************************/
 	void RenderTask::setRenderProcess(RenderProcessBase* p_RenderProcess)
 	{
 		m_RenderProcess = p_RenderProcess;
+
+		if(m_RenderProcess)
+		{
+			m_RenderProcess->setRenderer(m_Renderer);
+		}
 	}
 	/*********************************************************************************/
 	RenderProcessBase* RenderTask::getRenderProcess() const

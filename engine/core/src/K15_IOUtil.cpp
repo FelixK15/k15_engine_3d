@@ -52,25 +52,51 @@ namespace K15_Engine { namespace Core {
 		 
 		return exists;
 	}
-  /*********************************************************************************/
-  String IOUtil::convertToUnixFilePath(const String& p_WindowsFilePath)
-  {
-    String unixFilePath;
+	/*********************************************************************************/
+	String IOUtil::convertToUnixFilePath(const String& p_WindowsFilePath)
+	{
+		String unixFilePath;
 
-    unixFilePath.reserve(p_WindowsFilePath.size());
-    for(uint32 i = 0; i < p_WindowsFilePath.size(); ++i)
-    {
-      if(p_WindowsFilePath[i] == '\\')
-      {
-        unixFilePath[i] = '/';
-      }
-      else
-      {
-        unixFilePath[i] = p_WindowsFilePath[i];
-      }
-    }
+		unixFilePath.reserve(p_WindowsFilePath.size());
+		for(uint32 i = 0; i < p_WindowsFilePath.size(); ++i)
+		{
+			if(p_WindowsFilePath[i] == '\\')
+			{
+				unixFilePath.push_back('/');
+			}
+			else
+			{
+				unixFilePath.push_back(p_WindowsFilePath[i]);
+			}
+		}
 
-    return unixFilePath;
-  }
-  /*********************************************************************************/
+		return unixFilePath;
+	}
+	/*********************************************************************************/
+	bool IOUtil::folderExists(const String& p_AbsolutePath)
+	{
+		for(uint32 i = 0; i < p_AbsolutePath.size(); ++i)
+		{
+			if(p_AbsolutePath[i] == '//')
+			{
+				return folderExists(convertToUnixFilePath(p_AbsolutePath));
+			}
+		}
+
+		if(access(p_AbsolutePath.c_str(), 0) == 0)
+		{
+			struct stat status;
+			stat(p_AbsolutePath.c_str(), &status);
+
+			return (status.st_mode & S_IFDIR) != 0;
+		}
+
+		return false;
+	}
+	/*********************************************************************************/
+	bool IOUtil::directoryExists(const String& p_AbsoluteDirectory)
+	{
+		return folderExists(p_AbsoluteDirectory);
+	}
+	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

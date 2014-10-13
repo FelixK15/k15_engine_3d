@@ -45,15 +45,16 @@ namespace K15_Engine { namespace Rendering {
 		typedef FixedArray(GpuBuffer*,GpuBuffer::BT_COUNT) GpuBufferArray;
 		typedef FixedArray(Texture*,Texture::TS_COUNT) TextureArray;
 		typedef FixedArray(TextureSampler*,Texture::TS_COUNT) TextureSamplerArray;
+		typedef FixedArray(LightComponent*, 8) LightArray;
 		/*********************************************************************************/
 
 		/*********************************************************************************/
 		enum eFillMode
 		{
-		  FM_SOLID = 0,
-		  FM_WIREFRAME,
+			FM_SOLID = 0,
+			FM_WIREFRAME,
 
-		  FM_COUNT
+			FM_COUNT
 		};// FillMode
 		/*********************************************************************************/
 		enum eCullingMode
@@ -80,7 +81,7 @@ namespace K15_Engine { namespace Rendering {
 		{
 			//no alpha format
 			PF_RGB_8_I = 0,
-			PF_RGB_8_UI,
+			PF_RGB_8_U,
 			PF_RGB_16_I,
 			PF_RGB_16_U,
 			PF_RGB_16_F,
@@ -137,7 +138,7 @@ namespace K15_Engine { namespace Rendering {
 		void shutdown();
 
 		bool draw(RenderOperation* p_Rop);
-		//bool draw(RenderQueue* m_RenderQueue);
+		bool draw(RenderQueue* p_RenderQueue);
 
 		bool setRenderTarget(RenderTarget* p_RenderTarget);
 		INLINE RenderTarget* getRenderTarget() const;
@@ -177,6 +178,11 @@ namespace K15_Engine { namespace Rendering {
 		bool setClearColor(const ColorRGBA& p_ClearColor);
 		bool setClearColor(byte p_Red = 255, byte p_Green = 255, byte p_Blue = 255);
 		INLINE ColorRGBA& getClearColor();
+
+		INLINE void setAmbientColor(const ColorRGBA& p_AmbientColor);
+		INLINE const ColorRGBA& getAmbientColor() const;
+
+		INLINE void setLightArray(const LightArray& p_Lights);
 
 		INLINE void setLightningEnabled(bool p_Enabled);
 		INLINE bool getLightningEnabled() const;
@@ -252,9 +258,11 @@ namespace K15_Engine { namespace Rendering {
 		virtual void _drawDirect(uint32 p_VertexCount, uint32 p_Offset = 0){}
 
 	protected:
+		ColorRGBA m_AmbientColor;
 		ColorRGBA m_ClearColor;
 		AlphaState m_AlphaState;
 		DepthState m_DepthState;
+		LightArray m_LightArray;
 		GpuProgramArray m_GpuPrograms;
 		GpuBufferArray m_GpuBuffers;
 		TextureArray m_BoundTextures;

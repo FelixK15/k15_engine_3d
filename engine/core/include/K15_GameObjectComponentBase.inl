@@ -25,13 +25,13 @@ GameObject* GameObjectComponentBase::getGameObject() const
 /*********************************************************************************/
 void GameObjectComponentBase::setGameObject(GameObject* p_GameObject)
 {
-  m_GameObject = p_GameObject;
+	m_GameObject = p_GameObject;
 
-  _onGameObjectSet();
+	_onGameObjectSet();
 }
 /*********************************************************************************/
 bool GameObjectComponentBase::_AABBBNeedsUpdate()
 {
-	return false;
+	return true;
 }
 /*********************************************************************************/

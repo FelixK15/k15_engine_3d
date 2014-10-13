@@ -44,8 +44,8 @@ namespace K15_Engine { namespace Core {
 		virtual ResourceBase* _load(const RawData& p_ResourceData, const Rtti& p_ResourceType) OVERRIDE;
 
 	private:
-		Texture* _loadTexture(uint32 p_Width, uint32 p_Height, uint32* p_PixelBuffer);
-		Image* _loadImage(uint32 p_Width, uint32 p_Height, uint32* p_PixelBuffer);
+		Texture* _loadTexture(uint32 p_Width, uint32 p_Height, uint32 p_Components, uint32* p_PixelBuffer);
+		Image* _loadImage(uint32 p_Width, uint32 p_Height, uint32 p_Components, uint32* p_PixelBuffer);
 	};// end of TiffResourceImporter class declaration
 }}// end of K15_Engine::Core namespace
 

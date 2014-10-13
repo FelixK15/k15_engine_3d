@@ -48,6 +48,11 @@ const String& GpuProgramParameter::getName() const
 	return m_Name;
 }
 /*********************************************************************************/
+int32 GpuProgramParameter::getArrayIndex() const
+{
+	return m_ArrayIndex;
+}
+/*********************************************************************************/
 int32 GpuProgramParameter::getBufferIndex() const
 {
 	return m_BufferIndex;
@@ -78,11 +83,16 @@ void GpuProgramParameter::setSize(uint32 p_Size)
 	m_Size = p_Size;
 }
 /*********************************************************************************/
+void GpuProgramParameter::setArrayIndex(int32 p_Index)
+{
+	m_ArrayIndex = p_Index;
+}
+/*********************************************************************************/
 void GpuProgramParameter::setIdentifier(Enum p_Identifier)
 {
-	if(m_Identifier < PI_COUNT)
+	if(p_Identifier < PI_COUNT)
 	{
-		m_Name = UniformIdentifierName[m_Identifier];
+		m_Name = UniformIdentifierName[p_Identifier];
 		m_AutoParameter = true;
 		m_UpdateFrequency = UniformUpdateFrequency[p_Identifier];
 	}

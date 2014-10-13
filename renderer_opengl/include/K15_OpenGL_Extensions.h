@@ -25,6 +25,9 @@
 #define _K15Engine_RendererOGL_Extensions_h_
 
 /*********************************************************************************/
+//GL_ARB_debug_output
+extern PFNGLDEBUGMESSAGECALLBACKPROC kglDebugMessageCallback;
+
 //GL_ARB_separate_shader_objects//
 extern PFNGLGENPROGRAMPIPELINESPROC	kglGenProgramPipelines;
 extern PFNGLBINDPROGRAMPIPELINEPROC kglBindProgramPipeline;

@@ -35,6 +35,7 @@ namespace K15_Engine { namespace Rendering {
 		{
 			T_DOT = 0,
 			T_LINE,
+			T_LINE_STRIP,
 			T_TRIANGLE,
 			T_TRIANGLE_STRIP,
 			T_QUAD,
@@ -43,7 +44,7 @@ namespace K15_Engine { namespace Rendering {
 		}; //Topology
 		/*********************************************************************************/
 
-    GameObject* gameobject;
+		GameObject* gameobject;
 		IndexData* indexData;
 		VertexData* vertexData;
 		Material* material;

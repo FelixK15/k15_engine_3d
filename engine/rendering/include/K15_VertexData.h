@@ -25,9 +25,10 @@
 #define _K15Engine_Rendering_VertexData_h_
 
 #include "K15_Prerequisites.h"
+#include "K15_AllocatedObject.h"
 
 namespace K15_Engine { namespace Rendering { 
-  class K15_CORE_API VertexData
+  class K15_CORE_API VertexData : public RenderingAllocatedObject
   {
   public:
     typedef DynamicArray(Vertex*) VertexCache;

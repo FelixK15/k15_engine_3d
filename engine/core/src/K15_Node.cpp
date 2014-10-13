@@ -29,6 +29,7 @@ namespace K15_Engine { namespace Core {
 	Node::Node(const ObjectName& p_Name,Node* p_Parent)
 		: Object(p_Name),
 		  m_NeedUpdate(false),
+		  m_IsDirty(false),
 		  m_Parent(p_Parent),
 		  m_OriginOrientation(),
 		  m_OriginPosition(),
@@ -58,8 +59,8 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	const Matrix4& Node::getTransformation()
 	{
-// 		if(needUpdate())
-// 		{
+ 		if(needUpdate())
+ 		{
 			//update from parent
 			if(m_Parent)
 			{
@@ -85,8 +86,8 @@ namespace K15_Engine { namespace Core {
 // 			m_Transformation *= glm::translate(glm::mat4(1.0f),m_Position);
 
 			m_Transformation = MatrixUtil::scale(m_Scale);
-			m_Transformation *= MatrixUtil::translate(m_Position);
 			m_Transformation *= m_Orientation;
+			m_Transformation *= MatrixUtil::translate(m_Position);
 
 // 			m_Transformation._1_1 = m_Scale.x * rotation._1_1; 
 // 			m_Transformation._1_2 = m_Scale.y * rotation._1_2; 
@@ -108,7 +109,9 @@ namespace K15_Engine { namespace Core {
 // 			m_Transformation._4_4 = 1.0f;
 
 			m_NeedUpdate = false;
-		/*}*/
+		}
+
+		m_IsDirty = false;
 
 		return m_Transformation;
 	}
@@ -122,12 +125,12 @@ namespace K15_Engine { namespace Core {
 		m_LookAt.y = viewNormal.y;
 		m_LookAt.z = viewNormal.z;
 	}
-  /*********************************************************************************/
-  void Node::lookAt(const Vector3& p_Position)
-  {
-    m_Orientation = MatrixUtil::lookAt(m_Position,p_Position,Vector3(0.0f,1.0f,0.0f));
-    m_NeedUpdate = true;
-    _calcLookAt();
-  }
+	/*********************************************************************************/
+	void Node::lookAt(const Vector3& p_Position)
+	{
+		m_Orientation = MatrixUtil::lookAt(m_Position,p_Position,Vector3(0.0f,1.0f,0.0f));
+		m_NeedUpdate = true;
+		_calcLookAt();
+	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

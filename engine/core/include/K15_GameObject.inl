@@ -18,14 +18,24 @@
  */
 
 /*********************************************************************************/
-NodeComponent* GameObject::getNodeComponent()
+NodeComponent* GameObject::getNodeComponent() const
 {
   return m_NodeComponent;
 }
 /*********************************************************************************/
-CameraComponent* GameObject::getCameraComponent()
+CameraComponent* GameObject::getCameraComponent() const
 {
 	return m_CameraComponent;
+}
+/*********************************************************************************/
+ModelComponent* GameObject::getModelComponent() const
+{
+	return m_ModelComponent;
+}
+/*********************************************************************************/
+LightComponent* GameObject::getLightComponent() const
+{
+	return m_LightComponent;
 }
 /*********************************************************************************/
 const GameObject::ComponentArray& GameObject::getComponents() const
