@@ -36,7 +36,7 @@ namespace K15_Engine { namespace Core {
 		struct Plane
 		{
 		  Vector3 normal;
-		  Vector3 position;
+		  float distance;
 		}; // end of Frustum::Plane struct declaration
 		/*********************************************************************************/
 
@@ -88,9 +88,13 @@ namespace K15_Engine { namespace Core {
 		INLINE const Plane& getPlane(Enum p_Plane) const;
 		INLINE const Vector3& getCorner(Enum p_Corner) const;
 
+		INLINE void setNearPlaneDistance(float p_NearPlane);
+		INLINE void setFarPlaneDistance(float p_FarPlane);
   private:
 	  CornerArray m_Corners;
 	  PlaneArray m_Planes;
+	  float m_FarPlane;
+	  float m_NearPlane;
 	};// end of Frustum class declaration
 #	include "K15_Frustum.inl"
 }}// end of K15_Engine::Core namespace

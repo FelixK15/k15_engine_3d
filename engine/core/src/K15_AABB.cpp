@@ -25,18 +25,15 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	AABB::AABB()
 	{
-		float f	= 0.5f, t = 0.5f, r = 0.5f;
-		float n	= -f,	b = -t,	  l = -r;
+		m_Max.x =  0.5f; m_Max.y =  0.5f; m_Max.z = -0.5f;
+		m_Min.x = -0.5f; m_Min.y = -0.5f; m_Min.z =  0.5f;
+	}
+	/*********************************************************************************/
+	AABB::AABB(const Vector3& p_Min, const Vector3& p_Max)
+		: m_Min(p_Min),
+		m_Max(p_Max)
+	{
 
-		m_Corners[CT_FAR_LEFT_TOP] = Vector3(l,t,f);
-		m_Corners[CT_FAR_RIGHT_TOP] = Vector3(r,t,f);
-		m_Corners[CT_FAR_LEFT_BOTTOM] = Vector3(l,b,f);
-		m_Corners[CT_FAR_RIGHT_BOTTOM] = Vector3(r,b,f);
-
-		m_Corners[CT_NEAR_LEFT_TOP] = Vector3(l,t,n);
-		m_Corners[CT_NEAR_RIGHT_TOP] = Vector3(r,t,n);
-		m_Corners[CT_NEAR_LEFT_BOTTOM] = Vector3(l,b,n);
-		m_Corners[CT_NEAR_RIGHT_BOTTOM] = Vector3(r,b,n);
 	}
 	/*********************************************************************************/
 	AABB::~AABB()

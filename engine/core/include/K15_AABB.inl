@@ -18,173 +18,91 @@
  */
 
 /*********************************************************************************/
-const Vector3& AABB::getFarLeftTop() const
+Vector3 AABB::getFarLeftTop() const
 {
-	return m_Corners[CT_FAR_LEFT_TOP];
+	return Vector3(m_Min.x, m_Max.y, m_Max.z);
 }
 /*********************************************************************************/
-const Vector3& AABB::getFarRightTop() const
+Vector3 AABB::getFarRightTop() const
 {
-	return m_Corners[CT_FAR_RIGHT_TOP];
+	return Vector3(m_Max.x, m_Max.y, m_Max.z);
 }
 /*********************************************************************************/
-const Vector3& AABB::getFarLeftBottom() const
+Vector3 AABB::getFarLeftBottom() const
 {
-	return m_Corners[CT_FAR_LEFT_BOTTOM];
+	return Vector3(m_Min.x, m_Min.y, m_Max.z);
 }
 /*********************************************************************************/
-const Vector3& AABB::getFarRightBottom() const
+Vector3 AABB::getFarRightBottom() const
 {
-	return m_Corners[CT_FAR_RIGHT_BOTTOM];
+	return Vector3(m_Max.x, m_Min.y, m_Max.z);
 }
 /*********************************************************************************/
-const Vector3& AABB::getNearLeftTop() const
+Vector3 AABB::getNearLeftTop() const
 {
-	return m_Corners[CT_NEAR_LEFT_TOP];
+	return Vector3(m_Min.x, m_Max.y, m_Min.z);
 }
 /*********************************************************************************/
-const Vector3& AABB::getNearRightTop() const
+Vector3 AABB::getNearRightTop() const
 {
-	return m_Corners[CT_NEAR_RIGHT_TOP];
+	return Vector3(m_Max.x, m_Max.y, m_Min.z);
 }
 /*********************************************************************************/
-const Vector3& AABB::getNearLeftBottom() const
+Vector3 AABB::getNearLeftBottom() const
 {
-	return m_Corners[CT_NEAR_LEFT_BOTTOM];
+	return Vector3(m_Min.x, m_Min.y, m_Min.z);
 }
 /*********************************************************************************/
-const Vector3& AABB::getNearRightBottom() const
+Vector3 AABB::getNearRightBottom() const
 {
-	return m_Corners[CT_NEAR_RIGHT_BOTTOM];
+	return Vector3(m_Max.x, m_Min.y, m_Min.z);
 }
 /*********************************************************************************/
-void AABB::setCorner(const Vector3& p_Positon, Enum p_Corner)
+AABB::CornerArray AABB::getCorners() const
 {
-	m_Corners[p_Corner] = p_Positon;
-}
-/*********************************************************************************/
-const Vector3& AABB::getCorner(Enum p_Corner) const
-{
-	return m_Corners[p_Corner];
-}
-/*********************************************************************************/
-AABB::CornerArray& AABB::getCorners()
-{
-	return m_Corners;
-}
-/*********************************************************************************/
-float AABB::getMaxX() const
-{
-	float max_x = 0.0f;
+	CornerArray corners;
 
-	for(int i =0; i<CT_COUNT;++i)
-	{
-		if(max_x < m_Corners[i].x)
-		{
-			max_x = m_Corners[i].x;
-		}
-	}
+	corners[CT_FAR_LEFT_BOTTOM]		= getFarLeftBottom();
+	corners[CT_FAR_RIGHT_BOTTOM]	= getFarRightBottom();
+	corners[CT_FAR_LEFT_TOP]		= getFarLeftTop();
+	corners[CT_FAR_RIGHT_TOP]		= getFarRightTop();
+	corners[CT_NEAR_LEFT_BOTTOM]	= getNearLeftBottom();
+	corners[CT_NEAR_RIGHT_BOTTOM]	= getNearRightBottom();
+	corners[CT_NEAR_LEFT_TOP]		= getNearLeftTop();
+	corners[CT_NEAR_RIGHT_TOP]		= getNearRightTop();
 
-	return max_x;
+	return corners;
 }
 /*********************************************************************************/
-float AABB::getMaxY() const
+const Vector3& AABB::getMin() const
 {
-	float max_y = 0.0f;
-
-	for(int i = 0; i < CT_COUNT; ++i)
-	{
-		if(max_y < m_Corners[i].y)
-		{
-			max_y = m_Corners[i].y;
-		}
-	}
-
-	return max_y;
+	return m_Min;
 }
 /*********************************************************************************/
-float AABB::getMaxZ() const
+const Vector3& AABB::getMax() const
 {
-	float max_z = 0.0f;
-
-	for(int i = 0; i < CT_COUNT; ++i)
-	{
-		if(max_z < m_Corners[i].z)
-		{
-			max_z = m_Corners[i].z;
-		}
-	}
-
-	return max_z;
+	return m_Max;
 }
 /*********************************************************************************/
-float AABB::getMinX() const
+void AABB::setMin(const Vector3& p_Min)
 {
-	float min_x = 0.0f;
-
-	for(int i = 0; i < CT_COUNT;++i)
-	{
-		if(min_x > m_Corners[i].x)
-		{
-			min_x = m_Corners[i].x;
-		}
-	}
-
-	return min_x;
+	m_Min = p_Min;
 }
 /*********************************************************************************/
-float AABB::getMinY() const
+void AABB::setMax(const Vector3& p_Max)
 {
-	float min_y = 0.0f;
-
-	for(int i = 0; i < CT_COUNT; ++i)
-	{
-		if(min_y > m_Corners[i].y)
-		{
-			min_y = m_Corners[i].y;
-		}
-	}
-
-	return min_y;
-}
-/*********************************************************************************/
-float AABB::getMinZ() const
-{
-	float min_z = 0.0f;
-
-	for(int i = 0; i < CT_COUNT; ++i)
-	{
-		if(min_z > m_Corners[i].z)
-		{
-			min_z = m_Corners[i].z;
-		}
-	}
-
-	return min_z;
+	m_Max = p_Max;
 }
 /*********************************************************************************/
 void AABB::merge(const AABB& p_AABB)
 {
-	for(int i = 0; i < CT_COUNT; ++i)
-	{
-		if(getCorner(i) < p_AABB.getCorner(i))
-		{
-			m_Corners[i] = p_AABB.m_Corners[i];
-		}
-	}
+	if(m_Min < p_AABB.getMin()) m_Min = p_AABB.getMin();
+	if(m_Max > p_AABB.getMax()) m_Max = p_AABB.getMax();
 }
 /*********************************************************************************/
 bool AABB::operator<(const AABB& p_Rhs)
 {
-	for(int i = 0; i < CT_COUNT; ++i)
-	{
-		if(getCorner(i) < p_Rhs.getCorner(i))
-		{
-			return true;
-		}
-	}
-
-	return false;
+	return m_Min < p_Rhs.getMin() && m_Max > p_Rhs.getMax();
 }
 /*********************************************************************************/
 bool AABB::operator>(const AABB& p_Rhs)

@@ -43,3 +43,13 @@ const Vector3& Frustum::getCorner(Enum p_Corner) const
 	return m_Corners[p_Corner];
 }
 /*********************************************************************************/
+void Frustum::setFarPlaneDistance(float p_FarPlane)
+{
+	m_FarPlane = p_FarPlane;
+}
+/*********************************************************************************/
+void Frustum::setNearPlaneDistance(float p_NearPlane)
+{
+	m_NearPlane = p_NearPlane;
+}
+/*********************************************************************************/

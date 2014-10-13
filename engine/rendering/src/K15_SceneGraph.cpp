@@ -23,6 +23,7 @@
 #include "K15_SortUtil.h"
 #include "K15_CameraComponent.h"
 #include "K15_NodeComponent.h"
+#include "K15_LightComponent.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
@@ -32,6 +33,7 @@ namespace K15_Engine { namespace Core {
 
 	/*********************************************************************************/
 	SceneGraph::SceneGraph()
+		: m_VisibleLights()
 	{
 
 	}
@@ -39,6 +41,52 @@ namespace K15_Engine { namespace Core {
 	SceneGraph::~SceneGraph()
 	{
 
+	}
+	/*********************************************************************************/
+	void SceneGraph::addCamera(GameObject* p_Camera)
+	{
+		if(CameraComponent* cameraComponent = p_Camera->getCameraComponent())
+		{
+			m_Cameras.push_back(cameraComponent);
+		}
+	}
+	/*********************************************************************************/
+	void SceneGraph::removeCamera(GameObject* p_Camera)
+	{
+		if(CameraComponent* cameraComponent = p_Camera->getCameraComponent())
+		{
+			for(CameraArray::iterator iter = m_Cameras.begin(); iter != m_Cameras.end(); ++iter)
+			{
+				if((*iter) == cameraComponent)
+				{
+					m_Cameras.erase(iter);
+					break;
+				}
+			}
+		}
+	}
+	/*********************************************************************************/
+	void SceneGraph::addGameObject(GameObject* p_GameObject)
+	{
+		if(NodeComponent* nodeComponent = p_GameObject->getNodeComponent())
+		{
+			m_SceneNodes.push_back(nodeComponent);
+		}
+	}
+	/*********************************************************************************/
+	void SceneGraph::removeGameObject(GameObject* p_GameObject)
+	{
+		if(NodeComponent* nodeComponent = p_GameObject->getNodeComponent())
+		{
+			for(SceneNodeArray::iterator iter = m_SceneNodes.begin(); iter != m_SceneNodes.end(); ++iter)
+			{
+				if((*iter) == nodeComponent)
+				{
+					m_SceneNodes.erase(iter);
+					break;
+				}
+			}
+		}
 	}
 	/*********************************************************************************/
 	void SceneGraph::traverse(RenderQueue* p_RenderQueue)
@@ -60,6 +108,8 @@ namespace K15_Engine { namespace Core {
 				component = (*iter);
 				component->onAddedToRenderQueue(p_RenderQueue);
 			}
+
+			m_VisibleLights = _collectLights(visibleNodes);
 		}
 	}
 	/*********************************************************************************/
@@ -129,6 +179,38 @@ namespace K15_Engine { namespace Core {
 		Sort(components.begin(), components.end(), SortUtil::sortComponentsByType);
 
 		return components;
+	}
+	/*********************************************************************************/
+	RendererBase::LightArray SceneGraph::_collectLights( SceneNodeArray p_VisibleNodes ) const
+	{
+		RendererBase::LightArray lights;
+
+		for(uint32 i = 0; i < lights.size(); ++i)
+		{
+			lights[i] = 0;
+		}
+
+		GameObject* gameobject = 0;
+		LightComponent* light = 0;
+
+		int counter = 0;
+		for(SceneNodeArray::const_iterator iter = p_VisibleNodes.begin();
+			iter != p_VisibleNodes.end(); ++iter)
+		{
+			gameobject = (*iter)->getGameObject();
+
+			if(light = gameobject->getLightComponent())
+			{
+				if(light->isActive())
+				{
+					lights[counter++] = light;
+
+					if(counter == 7) return lights;
+				}
+			}
+		}
+
+		return lights;
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

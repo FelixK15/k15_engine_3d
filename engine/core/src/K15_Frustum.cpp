@@ -38,39 +38,12 @@ namespace K15_Engine { namespace Core {
   /*********************************************************************************/
   void Frustum::calculatePlanes()
   {
-    m_Planes[CP_FAR].normal	  = Vector3::Cross(m_Corners[FP_FAR_LEFT_TOP] - m_Corners[FP_FAR_RIGHT_TOP], m_Corners[FP_FAR_RIGHT_BOTTOM] - m_Corners[FP_FAR_RIGHT_TOP]);
-    m_Planes[CP_FAR].position = (m_Corners[FP_FAR_LEFT_TOP] - m_Corners[FP_FAR_RIGHT_BOTTOM]) * 0.5f;
 
-    m_Planes[CP_NEAR].normal   = m_Planes[CP_FAR].normal * -1.f;
-    m_Planes[CP_NEAR].position = (m_Corners[FP_NEAR_LEFT_TOP] - m_Corners[FP_NEAR_RIGHT_BOTTOM]) * 0.5f;
-
-    m_Planes[CP_TOP].normal	   = Vector3::Cross(m_Corners[FP_FAR_RIGHT_TOP] - m_Corners[FP_FAR_LEFT_TOP], m_Corners[FP_NEAR_LEFT_TOP] - m_Corners[FP_FAR_LEFT_TOP]);
-    m_Planes[CP_BOTTOM].normal = Vector3::Cross(m_Corners[FP_FAR_LEFT_BOTTOM] - m_Corners[FP_FAR_RIGHT_BOTTOM], m_Corners[FP_FAR_LEFT_BOTTOM] - m_Corners[FP_NEAR_LEFT_BOTTOM]);
-    m_Planes[CP_LEFT].normal   = Vector3::Cross(m_Corners[FP_NEAR_LEFT_TOP] - m_Corners[FP_NEAR_LEFT_BOTTOM], m_Corners[FP_FAR_LEFT_BOTTOM] - m_Corners[FP_NEAR_LEFT_BOTTOM]);
-    m_Planes[CP_RIGHT].normal  = Vector3::Cross(m_Corners[FP_NEAR_RIGHT_TOP] - m_Corners[FP_NEAR_RIGHT_BOTTOM], m_Corners[FP_FAR_RIGHT_BOTTOM] - m_Corners[FP_NEAR_RIGHT_BOTTOM]);
-
-    m_Planes[CP_TOP].position     = m_Corners[FP_FAR_RIGHT_TOP];
-    m_Planes[CP_BOTTOM].position  = m_Corners[FP_FAR_RIGHT_BOTTOM];
-    m_Planes[CP_LEFT].position	  = m_Corners[FP_FAR_LEFT_BOTTOM];
-    m_Planes[CP_RIGHT].position	  = m_Corners[FP_FAR_RIGHT_BOTTOM];
-
-    for(int i = 0; i < CP_COUNT; ++i)
-    {
-      m_Planes[i].normal.normalize();
-    }
   }
   /*********************************************************************************/
-  bool Frustum::isInside(const Vector3& p_Position)
-  {
-    for(int i = 0; i < CP_COUNT; ++i)
-    {
-      if(Vector3::Dot(p_Position - m_Planes[i].position, m_Planes[i].normal) > 0.f)
-      {
-        return true;
-      }
-    }
-    
-    return false;
-  }
+	bool Frustum::isInside(const Vector3& p_Position)
+	{
+		return false;
+	}
   /*********************************************************************************/
 }}// end of K15_Engine::Core namespace

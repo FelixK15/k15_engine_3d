@@ -29,6 +29,8 @@
 #include "K15_AllocatedObject.h"
 #include "K15_GameObject.h"
 
+#include "K15_RendererBase.h"
+
 namespace K15_Engine { namespace Core {
 	class K15_CORE_API SceneGraph : public Object, public RenderingAllocatedObject
 	{
@@ -37,7 +39,7 @@ namespace K15_Engine { namespace Core {
 	public:
 		typedef DynamicArray(NodeComponent*) SceneNodeArray;
 		typedef DynamicArray(CameraComponent*) CameraArray;
-
+		
 	public:
 		SceneGraph();
 		~SceneGraph();
@@ -50,17 +52,21 @@ namespace K15_Engine { namespace Core {
 
 		void traverse(RenderQueue* p_RenderQueue);
 
+		const RendererBase::LightArray& getVisibleLights() const {return m_VisibleLights;}
+
 		static SceneGraph* getDefault();
 
 	private:
 		CameraArray _getActiveCameras() const;
 		SceneNodeArray _getVisibleObjects(const CameraArray& p_ActiveCameras) const;
         GameObject::ComponentArray _collectVisibleComponents(SceneNodeArray p_VisibleNodes) const;
+		RendererBase::LightArray _collectLights(SceneNodeArray p_VisibileNodes) const;
 
 	private:
 		static SceneGraph ms_Default;
 
   private:
+		RendererBase::LightArray m_VisibleLights;
 		SceneNodeArray m_SceneNodes;
 		CameraArray m_Cameras;
 	};// end of SceneGraph class declaration
