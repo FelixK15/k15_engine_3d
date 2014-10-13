@@ -1,5 +1,5 @@
 /**
- * @file K15_Mesh.cpp
+ * @file K15_MeshManager.cpp
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
  * @date 2012/07/11
@@ -19,52 +19,57 @@
 
 #include "K15_PrecompiledHeader.h"
 
+#include "K15_MeshManager.h"
 #include "K15_Mesh.h"
-#include "K15_SubMesh.h"
+#include "K15_MeshInstance.h"
+#include "K15_ResourceManager.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
-	Mesh::Mesh()
-		: m_SubMeshes(),
-		m_AABB()
+	MeshManager::MeshManager()
+		: m_MeshCache()
 	{
 
 	}
 	/*********************************************************************************/
-	Mesh::~Mesh()
+	MeshManager::~MeshManager()
 	{
-
+		clear();
 	}
 	/*********************************************************************************/
-	void Mesh::calculateAABB()
+	MeshInstance* MeshManager::getMesh(const ResourceName& p_ResourceName)
 	{
-		float x_max = 0.0f,y_max = 0.0f,z_max = 0.0f;
-		float x_min = 0.0f,y_min = 0.0f,z_min = 0.0f;
-
-		SubMesh* subMesh = 0;
-		for(uint32 i = 0;i < m_SubMeshes.size();++i)
+		for(uint32 i = 0; i < m_MeshCache.size(); ++i)
 		{
-			subMesh = m_SubMeshes.at(i);
+			MeshCacheEntry& cacheEntry = m_MeshCache.at(i);
 
-			const AABB& subMeshAABB = subMesh->getAABB();
-			const AABB::CornerArray& corners = subMeshAABB.getCorners();
-			for(int j = 0;j < AABB::CT_COUNT;++j)
+			if(cacheEntry.Mesh->getName() == p_ResourceName)
 			{
-				const Vector3& corner = corners[j];
-
-				if(corner.x > x_max)		x_max = corner.x;
-				else if(corner.x < x_min)	x_min = corner.x;
-
-				if(corner.y > y_max)		y_max = corner.y;
-				else if(corner.y < y_min)	y_min = corner.y;
-
-				if(corner.z > z_max)		z_max = corner.z;
-				else if(corner.z < z_min)	z_min = corner.z;
+				MeshInstance* meshInstance = K15_NEW MeshInstance(cacheEntry.Mesh);
+				cacheEntry.ActiveInstances.push_back(meshInstance);
+				return meshInstance;
 			}
 		}
 
-		m_AABB.setMax(Vector3(x_max, y_max, z_max));
-		m_AABB.setMin(Vector3(x_min, y_min, z_min));
+		//load base mesh
+		if(Mesh* mesh = g_ResourceManager->getResource<Mesh>(p_ResourceName.c_str()))
+		{
+			MeshCacheEntry cacheEntry;
+			cacheEntry.Mesh = mesh;
+
+			m_MeshCache.push_back(cacheEntry);
+
+			return getMesh(p_ResourceName);
+		}
+
+		/// todo: Dummy Mesh?
+
+		return 0;
 	}
 	/*********************************************************************************/
-}}// end of K15_Engine::Rendering namespace
+	void MeshManager::clear()
+	{
+		m_MeshCache.clear();
+	}
+	/*********************************************************************************/
+}} // end of K15_Engine::Rendering namespace

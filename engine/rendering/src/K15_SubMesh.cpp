@@ -46,16 +46,16 @@ namespace K15_Engine { namespace Rendering {
 		float x_max = 0.0f,y_max = 0.0f,z_max = 0.0f;
 		float x_min = 0.0f,y_min = 0.0f,z_min = 0.0f;
 		Vertex* vertex = 0;
-    VertexBuffer* vertexBuffer = 0;
+		VertexBuffer* vertexBuffer = 0;
 		Vector4 pos;
-    uint32 vertexIndex = 0;
+		uint32 vertexIndex = 0;
 
 		if(m_VertexData)
 		{
 			for(uint32 i = 0;i < m_VertexData->getVertexCount();++i)
 			{
-        vertexIndex = i + m_VertexData->getOffsetInBytes();
-        vertexBuffer = m_VertexData->getVertexBuffer();
+				vertexIndex = i + m_VertexData->getOffsetInBytes();
+				vertexBuffer = m_VertexData->getVertexBuffer();
 				vertex = m_VertexData->getVertex(vertexIndex);
 				pos = vertex->getPosition();
 
@@ -70,15 +70,8 @@ namespace K15_Engine { namespace Rendering {
 			}
 		}
 
-		m_AABB.setCorner(Vector3(x_min,y_min,z_min),AABB::CT_FAR_LEFT_BOTTOM);
-		m_AABB.setCorner(Vector3(x_max,y_min,z_min),AABB::CT_FAR_RIGHT_BOTTOM);
-		m_AABB.setCorner(Vector3(x_min,y_max,z_min),AABB::CT_FAR_LEFT_TOP);
-		m_AABB.setCorner(Vector3(x_max,y_max,z_min),AABB::CT_FAR_RIGHT_TOP);
-
-		m_AABB.setCorner(Vector3(x_min,y_min,z_max),AABB::CT_NEAR_LEFT_BOTTOM);
-		m_AABB.setCorner(Vector3(x_max,y_min,z_max),AABB::CT_NEAR_RIGHT_BOTTOM);
-		m_AABB.setCorner(Vector3(x_min,y_max,z_max),AABB::CT_NEAR_LEFT_TOP);
-		m_AABB.setCorner(Vector3(x_max,y_max,z_max),AABB::CT_NEAR_LEFT_TOP);
+		m_AABB.setMax(Vector3(x_max, y_max, z_max));
+		m_AABB.setMin(Vector3(x_min, y_min, z_min));
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

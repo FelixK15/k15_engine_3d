@@ -19,6 +19,7 @@
 
 #include "K15_PrecompiledHeader.h"
 
+#include "K15_Mesh.h"
 #include "K15_MeshInstance.h"
 #include "K15_SubMeshInstance.h"
 #include "K15_SubMesh.h"
@@ -39,4 +40,17 @@ namespace K15_Engine { namespace Rendering {
 
   }
   /*********************************************************************************/
+  const AABB& MeshInstance::getAABB() const
+  {
+	  static AABB const defaultAABB;
+
+	  if(m_Mesh)
+	  {
+		  return m_Mesh->getAABB();
+	  }
+
+	  return defaultAABB;
+  }
+  /*********************************************************************************/
+
 }} // end of K15_Engine::Rendering

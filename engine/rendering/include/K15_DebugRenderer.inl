@@ -1,8 +1,8 @@
 /**
- * @file K15_MeshInstance.inl
+ * @file K15_DebugRenderer.inl
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2014/06/14
+ * @date 2013/12/10
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -18,25 +18,18 @@
  */
 
 /*********************************************************************************/
-Mesh* MeshInstance::getMesh() const
+RenderQueue* DebugRenderer::getRenderQueue() const
 {
-    return m_Mesh;
+	return m_RenderQueue;
 }
 /*********************************************************************************/
-SubMeshInstance* MeshInstance::getSubMeshInstance(uint32 p_Index) const
+bool DebugRenderer::isActive() const
 {
-    K15_ASSERT(p_Index < m_SubModelInstances.size() && p_Index >= 0, "Access out of bounds.");
-
-    return m_SubModelInstances[p_Index];
+	return m_Active;
 }
 /*********************************************************************************/
-const MeshInstance::SubMeshInstanceArray& MeshInstance::getSubMeshInstances() const
+void DebugRenderer::setActive(bool p_Active)
 {
-    return m_SubModelInstances;
-}
-/*********************************************************************************/
-uint32 MeshInstance::getSubMeshInstanceCount() const
-{
-    return m_SubModelInstances.size();
+	m_Active = p_Active;
 }
 /*********************************************************************************/

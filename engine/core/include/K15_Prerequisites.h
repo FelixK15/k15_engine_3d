@@ -112,13 +112,16 @@ namespace K15_Engine
 		class ResourceArchiveBase;
 		class ResourceImporterBase;
 		class ResourceImporterBitmap;
+		class SceneGraph;
 		class EventTask;
 		class NodeComponent;
+		class ModelComponent;
 		class Image;
 		class ProfilingNode;
 		class ProfilingManager;
 		class GameObject;
 		class GameObjectComponentBase;
+		class LightComponent;
 		class GameStateBase;
 		class GameStateManager;
 		class EventManager;
@@ -156,6 +159,8 @@ namespace K15_Engine
 	/*********************************************************************************/
 	namespace Rendering
 	{
+		class DebugRenderer;
+		class MeshManager;
 		class MaterialManager;
 		class MaterialData;
 		class RenderTarget;
@@ -398,6 +403,8 @@ namespace K15_Engine
 #include <ctime>
 #include <cassert>
 #include <malloc.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #define DynamicArray(T)		std::vector<T>
 #define HashMap(K,V)		std::map<K,V>
@@ -421,6 +428,8 @@ typedef std::stringstream	StringStream;
 	#include "windows.h"
 	#include "windowsx.h"
 	#include "winnt.h"
+	#include <io.h>
+
 	#if defined K15_BUILD
 		#define K15_CORE_API __declspec(dllexport)
 	#else
@@ -595,6 +604,7 @@ typedef std::stringstream	StringStream;
 
 typedef std::set<String> StringSet;
 
+#define g_DebugRenderer K15_Engine::Rendering::DebugRenderer::getInstance()
 #define g_FontManager K15_Engine::Core::FontManager::getInstance()
 #define g_InputManager K15_Engine::Core::InputManager::getInstance()
 #define g_Application K15_Engine::Core::Application::getInstance()
@@ -606,6 +616,7 @@ typedef std::set<String> StringSet;
 #define g_ThreadWorker K15_Engine::Core::ThreadWorker::getInstance()
 #define g_MaterialManager K15_Engine::Rendering::MaterialManager::getInstance()
 #define g_ResourceManager K15_Engine::Core::ResourceManager::getInstance()
+#define g_MeshManager K15_Engine::Rendering::MeshManager::getInstance()
 #define g_GameStateManager K15_Engine::Core::GameStateManager::getInstance()
 
 typedef unsigned char byte;
