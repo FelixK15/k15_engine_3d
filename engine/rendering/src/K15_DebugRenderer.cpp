@@ -41,33 +41,33 @@
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	uint32 const DebugRenderer::DEBUG_VERTEX_CACHE = 1000;
-  namespace internal
-  {
-    GpuProgram* debugVertexShader = 0;
-    GpuProgram* debugFragmentShader = 0;
+	namespace internal
+	{
+		GpuProgram* debugVertexShader = 0;
+		GpuProgram* debugFragmentShader = 0;
 
-    const String debugVertexShaderCode(
-      "in vec3 a_Position;\n"
-      "in vec4 a_Color;\n"
-      "uniform mat4 g_ProjMatrix;\n"
-      "uniform mat4 g_ViewMatrix;\n"
-      "out vec4 v_Color;\n"
-      "void main(void)\n"
-      "{\n"
-      "mat4 mvp = g_ProjMatrix * g_ViewMatrix;\n"
-      "v_Color = a_Color;\n"
-      "gl_Position = mvp * vec4(a_Position, 1.0);\n"
-      "}"
-    );
+		const String debugVertexShaderCode(
+			"in vec3 a_Position;\n"
+			"in vec4 a_Color;\n"
+			"uniform mat4 g_ProjMatrix;\n"
+			"uniform mat4 g_ViewMatrix;\n"
+			"out vec4 v_Color;\n"
+			"void main(void)\n"
+			"{\n"
+			"mat4 mvp = g_ProjMatrix * g_ViewMatrix;\n"
+			"v_Color = a_Color;\n"
+			"gl_Position = mvp * vec4(a_Position, 1.0);\n"
+			"}"
+			);
 
-    const String debugFragmentShaderCode(
-      "in vec4 v_Color;\n"
-      "void main(void)\n"
-      "{\n"
-      "gl_FragColor = v_Color;\n"
-      "}"
-    );
-  }
+		const String debugFragmentShaderCode(
+			"in vec4 v_Color;\n"
+			"void main(void)\n"
+			"{\n"
+			"gl_FragColor = v_Color;\n"
+			"}"
+			);
+	}
 	/*********************************************************************************/
 	DebugRenderer::DebugRenderer()
 		: m_RenderQueue(0),
@@ -93,11 +93,11 @@ namespace K15_Engine { namespace Rendering {
 		m_DebugMaterial = K15_NEW Material();
 		MaterialPass* pass1 = m_DebugMaterial->getPass(0, true);
 
-    internal::debugFragmentShader = K15_NEW GpuProgram("DebugFragment", GpuProgram::PS_FRAGMENT);
-    internal::debugVertexShader   = K15_NEW GpuProgram("DebugVertex", GpuProgram::PS_VERTEX);
+		internal::debugFragmentShader = K15_NEW GpuProgram("DebugFragment", GpuProgram::PS_FRAGMENT);
+		internal::debugVertexShader   = K15_NEW GpuProgram("DebugVertex", GpuProgram::PS_VERTEX);
 
-    internal::debugFragmentShader->setProgramCode(internal::debugFragmentShaderCode, true);
-    internal::debugVertexShader->setProgramCode(internal::debugVertexShaderCode, true);
+		internal::debugFragmentShader->setProgramCode(internal::debugFragmentShaderCode, true);
+		internal::debugVertexShader->setProgramCode(internal::debugVertexShaderCode, true);
 
 		pass1->setProgram(internal::debugFragmentShader, GpuProgram::PS_FRAGMENT);
 		pass1->setProgram(internal::debugVertexShader, GpuProgram::PS_VERTEX);
@@ -111,8 +111,8 @@ namespace K15_Engine { namespace Rendering {
 		K15_DELETE m_RenderQueue;
 		K15_DELETE m_DebugMaterial;
 
-    K15_DELETE internal::debugFragmentShader;
-    K15_DELETE internal::debugVertexShader;
+		K15_DELETE internal::debugFragmentShader;
+		K15_DELETE internal::debugVertexShader;
 	}
 	/*********************************************************************************/
 	void DebugRenderer::drawPoint(const Vector3& p_Position, float p_Radius, const ColorRGBA& p_Color)
@@ -178,31 +178,31 @@ namespace K15_Engine { namespace Rendering {
 	void DebugRenderer::drawArrow( const Vector3& p_Start, const Vector3& p_End, const ColorRGBA& p_Color )
 	{
 		Vector3 points[10];
-    Vector3 delta = p_Start - p_End;
-    float deltaLength = delta.length();
-    float length = 0.5f;
+		Vector3 delta = p_Start - p_End;
+		float deltaLength = delta.length();
+		float length = 0.5f;
 		uint32 bufferPos = m_BufferOffset;
 		uint16 indices = m_VertexCounter;
 		points[0] = Vector3::Zero;
 		points[1] = points[2] = points[3] = points[4] = points[5] = points[6] = points[7] = points[8] = points[9] = (Vector3::Forward * deltaLength);
 		points[3].z += length;  points[3].x += length;  points[3].y += length;
-    points[5].z += length;  points[5].x += length;  points[5].y -= length;
-    points[7].z += length;  points[7].x -= length;  points[7].y += length;
-    points[9].z += length;  points[9].x -= length;  points[9].y -= length;
-		
-    delta.normalize();
+		points[5].z += length;  points[5].x += length;  points[5].y -= length;
+		points[7].z += length;  points[7].x -= length;  points[7].y += length;
+		points[9].z += length;  points[9].x -= length;  points[9].y -= length;
 
-    float rotX = MathUtil::atan2(delta.y, delta.x);
-    float rotY = MathUtil::atan2(delta.z, delta.x);
+		delta.normalize();
 
-    Matrix4 rotation = MatrixUtil::rotate(Vector3::Right, rotX);
-    rotation *= MatrixUtil::rotate(Vector3::Up, rotY);
+		float rotX = MathUtil::atan2(delta.y, delta.x);
+		float rotY = MathUtil::atan2(delta.z, delta.x);
+
+		Matrix4 rotation = MatrixUtil::rotate(Vector3::Right, rotX);
+		rotation *= MatrixUtil::rotate(Vector3::Up, rotY);
 
 		for(int i = 0; i < 10; ++i)
 		{
-      //points[i] += p_Start;
-      points[i] = rotation * points[i];
-		  _writeVertex(points[i], p_Color);
+			//points[i] += p_Start;
+			points[i] = rotation * points[i];
+			_writeVertex(points[i], p_Color);
 		}
 
 		RenderOperation* rop = K15_NEW RenderOperation();
@@ -215,21 +215,76 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	void DebugRenderer::drawCube(const Vector3& p_Min, const Vector3& p_Max, const ColorRGBA& p_Color)
 	{
-		Vector3 points[10] = {
-      Vector3(p_Min.x, p_Min.y, p_Max.z),
-      Vector3(p_Min.x, p_Max.y, p_Max.z),
-      Vector3(p_Max.x, p_Max.y, p_Max.z),
-      Vector3(p_Max.x, p_Min.y, p_Max.z),
-      
-      Vector3(p_Max.x, p_Max.y, p_Min.z),
-      Vector3(p_Max.x, p_Min.y, p_Min.z),
-      Vector3(p_Min.x, p_Max.y, p_Min.z),
-      Vector3(p_Min.x, p_Max.y, p_Min.z))
-    }
+		Vector3 points[] = {
+			Vector3(p_Min.x, p_Min.y, p_Max.z),
+			Vector3(p_Min.x, p_Max.y, p_Max.z),
+			Vector3(p_Max.x, p_Max.y, p_Max.z),
+			Vector3(p_Max.x, p_Min.y, p_Max.z),
 
-    points[0] = ;
-    points[1] = Vector3(p_Min.x, p_Max.y, p_Max.z);
-    points[2] = Vector3()
+			Vector3(p_Max.x, p_Max.y, p_Min.z),
+			Vector3(p_Max.x, p_Min.y, p_Min.z),
+			Vector3(p_Min.x, p_Max.y, p_Min.z),
+			Vector3(p_Min.x, p_Max.y, p_Min.z)
+		};
+
+		uint16 indices = 36;
+		uint16 vertexCountPrev = m_VertexCounter;
+		uint32 offset = m_BufferOffset;
+
+		_writeVertex(Vector3(p_Min.x, p_Min.y, p_Max.z), p_Color);
+		_writeVertex(Vector3(p_Min.x, p_Max.y, p_Max.z), p_Color);
+		_writeVertex(Vector3(p_Max.x, p_Max.y, p_Max.z), p_Color);
+
+		_writeVertex(Vector3(p_Max.x, p_Max.y, p_Max.z), p_Color);
+		_writeVertex(Vector3(p_Max.x, p_Min.y, p_Max.z), p_Color);
+		_writeVertex(Vector3(p_Min.x, p_Min.y, p_Max.z), p_Color);
+
+		_writeVertex(Vector3(p_Min.x, p_Max.y, p_Max.z), p_Color);
+		_writeVertex(Vector3(p_Min.x, p_Max.y, p_Min.z), p_Color);
+		_writeVertex(Vector3(p_Max.x, p_Max.y, p_Min.z), p_Color);
+
+		_writeVertex(Vector3(p_Max.x, p_Max.y, p_Min.z), p_Color);
+		_writeVertex(Vector3(p_Max.x, p_Max.y, p_Max.z), p_Color);
+		_writeVertex(Vector3(p_Min.x, p_Max.y, p_Max.z), p_Color);
+
+		_writeVertex(Vector3(p_Max.x, p_Min.y, p_Max.z), p_Color);
+		_writeVertex(Vector3(p_Max.x, p_Max.y, p_Max.z), p_Color);
+		_writeVertex(Vector3(p_Max.x, p_Max.y, p_Min.z), p_Color);
+
+		_writeVertex(Vector3(p_Max.x, p_Max.y, p_Min.z), p_Color);
+		_writeVertex(Vector3(p_Max.x, p_Min.y, p_Min.z), p_Color);
+		_writeVertex(Vector3(p_Max.x, p_Min.y, p_Max.z), p_Color);
+
+		_writeVertex(Vector3(p_Min.x, p_Max.y, p_Max.z), p_Color);
+		_writeVertex(Vector3(p_Min.x, p_Min.y, p_Max.z), p_Color);
+		_writeVertex(Vector3(p_Min.x, p_Min.y, p_Min.z), p_Color);
+
+		_writeVertex(Vector3(p_Min.x, p_Min.y, p_Min.z), p_Color);
+		_writeVertex(Vector3(p_Min.x, p_Max.y, p_Min.z), p_Color);
+		_writeVertex(Vector3(p_Min.x, p_Max.y, p_Max.z), p_Color);
+
+		_writeVertex(Vector3(p_Min.x, p_Min.y, p_Min.z), p_Color);
+		_writeVertex(Vector3(p_Max.x, p_Min.y, p_Min.z), p_Color);
+		_writeVertex(Vector3(p_Max.x, p_Max.y, p_Min.z), p_Color);
+
+		_writeVertex(Vector3(p_Max.x, p_Max.y, p_Min.z), p_Color);
+		_writeVertex(Vector3(p_Min.x, p_Max.y, p_Min.z), p_Color);
+		_writeVertex(Vector3(p_Min.x, p_Min.y, p_Min.z), p_Color);
+
+		_writeVertex(Vector3(p_Min.x, p_Min.y, p_Max.z), p_Color);
+		_writeVertex(Vector3(p_Min.x, p_Min.y, p_Min.z), p_Color);
+		_writeVertex(Vector3(p_Max.x, p_Min.y, p_Min.z), p_Color);
+
+		_writeVertex(Vector3(p_Max.x, p_Min.y, p_Min.z), p_Color);
+		_writeVertex(Vector3(p_Max.x, p_Min.y, p_Max.z), p_Color);
+		_writeVertex(Vector3(p_Min.x, p_Min.y, p_Max.z), p_Color);
+
+		RenderOperation* rop = K15_NEW RenderOperation(); 
+		rop->vertexData = K15_NEW VertexData(m_VertexDeclaration, m_VertexBuffer, offset, indices);
+		rop->indexData = K15_NEW IndexData(m_IndexBuffer, indices, vertexCountPrev * sizeof(uint16));
+		rop->material = m_DebugMaterial;
+		rop->topology = RenderOperation::T_TRIANGLE;
+		m_RenderQueue->addRenderOperation(rop);
 	}
 	/*********************************************************************************/
 	void DebugRenderer::drawAABB(const AABB& p_AABB, const ColorRGBA& p_Color)
@@ -239,59 +294,7 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	void DebugRenderer::drawSphere(const Vector3& p_Center, float p_Radius, const ColorRGBA& p_Color)
 	{
-		static int const verticesPerRing = 19;
-		static int const rings = 5;
-		static float const radiusStep = p_Radius / rings;
-		static float const angleStep = MathUtil::TwoPi / verticesPerRing;
-		float angle = 0.f; float sinA = 0.f; float cosA = 0.f;
-		float y = 0.f; float radius = radiusStep;
-		Vector3* vertices = (Vector3*)alloca(verticesPerRing * rings * sizeof(Vector3));
-		int counter = 0; uint32 offset = m_BufferOffset; uint16 vertexCountPrev = m_VertexCounter;
-		for(int i = 0; i < rings; ++i)
-		{
-			for(int j = 0; j < 10; ++j)
-			{
-				sinA = MathUtil::sin(angle) * radius;
-				cosA = MathUtil::cos(angle) * radius;
-
-				Vector3 vertex;
-				vertex.y = y;
-				vertex.x = cosA;
-				vertex.z = sinA;
-				vertex += p_Center;
-				vertices[counter++] = vertex;
-				if(j != 0)
-				{
-					vertices[counter++] = vertex;
-				}
-
-				angle += angleStep;
-			}
-
-			if(i < rings/2)
-			{
-				radius += radiusStep;
-			}
-			else
-			{
-				radius -= radiusStep;
-			}
-
-			y -= radiusStep;
-			angle = 0.f;
-		}
-
-		for(int i = 0; i < counter; ++i)
-		{
-			_writeVertex(vertices[i], p_Color);
-		}
-
-		RenderOperation* rop = K15_NEW RenderOperation(); 
-		rop->vertexData = K15_NEW VertexData(m_VertexDeclaration, m_VertexBuffer, offset, counter);
-		rop->indexData = K15_NEW IndexData(m_IndexBuffer, counter, vertexCountPrev * sizeof(uint16));
-		rop->material = m_DebugMaterial;
-		rop->topology = RenderOperation::T_LINE;
-		m_RenderQueue->addRenderOperation(rop);
+		
 	}
 	/*********************************************************************************/
 	void DebugRenderer::_writeVertex(const Vector3& p_Position, const ColorRGBA& p_Color)
@@ -313,5 +316,5 @@ namespace K15_Engine { namespace Rendering {
 		m_BufferOffset = 0;
 		m_VertexCounter = 0;
 	}
-/*********************************************************************************/
+	/*********************************************************************************/
 }}

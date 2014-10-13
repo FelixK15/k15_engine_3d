@@ -41,7 +41,7 @@ namespace K15_Engine { namespace Core {
 		GameObject(const ObjectName& p_Name);
 		~GameObject();
 
-		const AABB& getAABB();
+		AABB getAABB();
 
 		void addComponent(GameObjectComponentBase* p_Component);
 		void onAddedToRenderQueue(RenderQueue* p_RenderQueue);

@@ -69,7 +69,7 @@ namespace K15_Engine { namespace Test {
 		m_Camera = K15_NEW GameObject("Camera");
 		m_Camera->addComponent(K15_NEW CameraComponent());
 		m_Camera->addComponent(K15_NEW NodeComponent());
-		//m_Camera->addComponent(K15_NEW FirstPersonControlComponent());
+		m_Camera->addComponent(K15_NEW FirstPersonControlComponent());
 		m_Camera->setPosition(0.f, 0.f, 5.f);
 		TextureSampler* sampler = K15_NEW TextureSampler();
 		sampler->setSlot(Texture::TS_SLOT1);
@@ -80,7 +80,7 @@ namespace K15_Engine { namespace Test {
 
 		m_Bunny = K15_NEW GameObject("Bunny");
 		m_Bunny->addComponent(K15_NEW NodeComponent());
-		//m_Bunny->addComponent(K15_NEW ModelComponent("bunny.obj"));
+		m_Bunny->addComponent(K15_NEW ModelComponent("crate.obj"));
 		m_Bunny->setPosition(0.f, 0.f, 0.f);
 		SceneGraph::getDefault()->addGameObject(m_Bunny);
 
@@ -102,7 +102,7 @@ namespace K15_Engine { namespace Test {
 		m_Camera->update(p_GameTime);
 		m_Bunny->update(p_GameTime);
 
-    g_DebugRenderer->drawArrow(Vector3::Zero, (Vector3::Forward + Vector3::Right + Vector3::Up) * 4, ColorRGBA::Red);
+		g_DebugRenderer->drawAABB(m_Bunny->getAABB(), ColorRGBA::Green);
 	}
 	/*********************************************************************************/
 	void TestGameState::_addLights()

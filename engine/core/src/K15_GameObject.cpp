@@ -59,9 +59,9 @@ namespace K15_Engine { namespace Core {
 	  m_Components.clear();
 	}
 	/*********************************************************************************/
-	const AABB& GameObject::getAABB()
+	AABB GameObject::getAABB()
 	{
-		static AABB aabb;
+		AABB aabb;
 
 		if(m_NodeComponent->needUpdate())
 		{
@@ -71,12 +71,8 @@ namespace K15_Engine { namespace Core {
 				aabb.merge((*iter)->getAABB());
 			}
 
-			AABB::CornerArray& corners = aabb.getCorners();
-
-			for(int i = 0; i < AABB::CT_COUNT; ++i)
-			{
-				corners[i] += getPosition();
-			}
+			aabb.setMin(aabb.getMin() + getPosition());
+			aabb.setMax(aabb.getMax() + getPosition());
 		}
 		
 		return aabb;

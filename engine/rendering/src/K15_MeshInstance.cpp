@@ -46,6 +46,7 @@ namespace K15_Engine { namespace Rendering {
 
 	  if(m_Mesh)
 	  {
+		  m_Mesh->calculateAABB();
 		  return m_Mesh->getAABB();
 	  }
 

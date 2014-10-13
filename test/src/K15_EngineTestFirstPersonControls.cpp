@@ -78,39 +78,36 @@ namespace K15_Engine { namespace Test {
 		NodeComponent* node = getGameObject()->getNodeComponent();
 		if(node && m_RotationDirty)
 		{	
-			Vector3 pos = node->getPosition();
 			node->yaw(m_Yaw);
 			node->pitch(m_Pitch);
-			pos += m_MoveVector;
-			node->setPosition(pos);
 			m_Yaw = m_Pitch = 0.f;
 		}
 	}
 	/*********************************************************************************/
 	bool FirstPersonControlComponent::moveForward(InputEvent* p_Arg)
 	{
-		m_MoveVector.z += p_Arg->getValue();
+		getGameObject()->translate(0.f, 0.f, -p_Arg->getValue());
 		m_RotationDirty = true;
 		return true;
 	}
 	/*********************************************************************************/
 	bool FirstPersonControlComponent::moveBackward(InputEvent* p_Arg)
 	{
-		m_MoveVector.z -= p_Arg->getValue();
+		getGameObject()->translate(0.f, 0.f, p_Arg->getValue());
 		m_RotationDirty = true;
 		return true;
 	}
 	/*********************************************************************************/
 	bool FirstPersonControlComponent::moveLeft(InputEvent* p_Arg)
 	{
-		m_MoveVector.x += p_Arg->getValue();
+		getGameObject()->translate(-p_Arg->getValue(), 0.f, 0.f);
 		m_RotationDirty = true;
 		return true;
 	}
 	/*********************************************************************************/
 	bool FirstPersonControlComponent::moveRight(InputEvent* p_Arg)
 	{
-		m_MoveVector.x -= p_Arg->getValue();
+		getGameObject()->translate(p_Arg->getValue(), 0.f, 0.f);
 		m_RotationDirty = true;
 		return true;
 	}
