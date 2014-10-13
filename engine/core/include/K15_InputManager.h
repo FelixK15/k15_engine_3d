@@ -68,6 +68,8 @@ namespace K15_Engine { namespace Core {
 		INLINE bool operator()(InputEvent* p_Arg) const;
 		INLINE bool operator==(const InputHandler& p_Rhs) const;
 
+		INLINE bool isValid() const;
+
 	private:
 		template<class T, bool (T::*MemberFunction)(InputEvent*)>
 		static bool getHandlerFunction(void* p_Object, InputEvent* p_Args);
@@ -128,7 +130,7 @@ namespace K15_Engine { namespace Core {
 		void addInputBinding(const ObjectName& p_ActionName, const InputHandler& p_InputHandler);
 
 		void removeInputBinding(const ObjectName& p_ActionName);
-		
+
 		float getValue(const ObjectName& p_ActionName);
 
 	private:

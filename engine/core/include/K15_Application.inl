@@ -34,6 +34,11 @@ const String& Application::getGameRootDir() const
 	return m_GameRootDir;
 }
 /*********************************************************************************/
+const String& Application::getHomeDir() const
+{
+	return m_HomeDir;
+}
+/*********************************************************************************/
 const StringSet& Application::getPluginList() const
 {
 	return m_Plugins;
@@ -57,6 +62,11 @@ RenderTask* Application::getRenderTask() const
 PhysicsTask* Application::getPhysicsTask() const
 {
 	return m_PhysicsTask;
+}
+/*********************************************************************************/
+MeshManager* Application::getMeshManager() const
+{
+	return m_MeshManager;
 }
 /*********************************************************************************/
 TaskManager* Application::getTaskManager() const

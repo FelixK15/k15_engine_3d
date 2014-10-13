@@ -29,9 +29,14 @@
 
 namespace K15_Engine { namespace Core { namespace InputDevices {
 	/*********************************************************************************/
-	int g_LastMousePos_x = 0;
-	int g_LastMousePos_y = 0;
-	float g_MouseWheelDelta = 0.0f;
+	namespace internal
+	{
+		int lastMousePos_x = 0;
+		int lastMousePos_y = 0;
+		float mouseWheelDelta = 0.0f;
+		bool mouseLocked = false;
+	}
+	/*********************************************************************************/
 	Mouse::InputStringToEnumMap Mouse::InputStringToEnum = Mouse::createButtonToEnumMap();
 	EventName Mouse::EventDoubleClicked = _EN(EventDoubleClicked);
 	EventName Mouse::EventMouseMoved	= _EN(EventMouseMoved);
@@ -41,58 +46,14 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 	/*********************************************************************************/
 
 	/*********************************************************************************/
-	Mouse::InputTrigger::InputTrigger(Enum p_Button)
-		: m_Button(p_Button)
-	{
-
-	}
-	/*********************************************************************************/
-	float Mouse::InputTrigger::getValue()
-	{
-		return Mouse::isPressed(m_Button) ? 1.0f : 0.0f;
-	}
-	/*********************************************************************************/
-
-	/*********************************************************************************/
-	Mouse::AxisTrigger::AxisTrigger(Enum p_Axis)
-		: m_Axis(p_Axis)
-	{
-
-	}
-	/*********************************************************************************/
-	float Mouse::AxisTrigger::getValue()
-	{
-		int32 x_delta = 0, y_delta = 0;
-		float x_deltaNDC = 0.0f, y_deltaNDC = 0.0f;
-		getMousePosDelta(&x_delta, &y_delta);
-		x_deltaNDC = (float)x_delta / (float)RenderWindow::getWidth();
-		y_deltaNDC = (float)y_delta / (float)RenderWindow::getHeight();
-
-		return 0.0f;
-	}
-	/*********************************************************************************/
-
-	/*********************************************************************************/
-	Mouse::WheelTrigger::WheelTrigger()
-	{
-
-	}
-	/*********************************************************************************/
-	float Mouse::WheelTrigger::getValue()
-	{
-		return Mouse::getMouseWheelDelta();
-	}
-	/*********************************************************************************/
-
-	/*********************************************************************************/
 	void Mouse::setMouseWheelDelta(float p_Delta)
 	{
-		g_MouseWheelDelta = p_Delta;
+		internal::mouseWheelDelta = p_Delta;
 	}
 	/*********************************************************************************/
 	float Mouse::getMouseWheelDelta()
 	{
-		return g_MouseWheelDelta;
+		return internal::mouseWheelDelta;
 	}
 	/*********************************************************************************/
 	void Mouse::getMousePosDelta(int32 *x,int32 *y)
@@ -103,27 +64,37 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		getMousePos(&temp_x,&temp_y);
 		if(x)
 		{
-			if(temp_x > g_LastMousePos_x)
+			if(temp_x > internal::lastMousePos_x)
 			{
-				*x = temp_x - g_LastMousePos_x;
+				*x = temp_x - internal::lastMousePos_x;
 			}
 			else
 			{
-				*x = g_LastMousePos_x - temp_x;
+				*x = internal::lastMousePos_x - temp_x;
 			}
 		}
 
 		if(y)
 		{
-			if(temp_y > g_LastMousePos_y)
+			if(temp_y > internal::lastMousePos_y)
 			{
-				*y = temp_y - g_LastMousePos_y;
+				*y = temp_y - internal::lastMousePos_y;
 			}
 			else
 			{
-				*y = g_LastMousePos_y - temp_y;
+				*y = internal::lastMousePos_y - temp_y;
 			}
 		}
+	}
+	/*********************************************************************************/
+	void Mouse::lockMouse(bool p_MouseLocked)
+	{
+		internal::mouseLocked = p_MouseLocked;
+	}
+	/*********************************************************************************/
+	bool Mouse::isMouseLocked()
+	{
+		return internal::mouseLocked;
 	}
 	/*********************************************************************************/
 	const Mouse::InputStringToEnumMap& Mouse::createButtonToEnumMap()

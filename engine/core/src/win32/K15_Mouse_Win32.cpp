@@ -46,7 +46,10 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 	/*********************************************************************************/
 	void Mouse::setMousePos(int32 x, int32 y)
 	{
-		SetCursorPos(x,y);
+		RECT windowRect;
+		GetWindowRect(RenderWindowImpl::getHandleWindow(), &windowRect);
+
+		SetCursorPos(x + windowRect.left,y + windowRect.top);
 	}
 	/*********************************************************************************/
 	void Mouse::getMousePos(int32 *x,int32 *y)

@@ -37,34 +37,6 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		/*********************************************************************************/
 
 		/*********************************************************************************/
-		class K15_CORE_API InputTrigger : public InputTriggerBase
-		{
-		public:
-			InputTrigger(Enum p_Button);
-
-			virtual float getValue() OVERRIDE;
-		private:
-			Enum m_Button;
-		};// end of Mouse::InputTrigger class declaration
-		/*********************************************************************************/
-		class K15_CORE_API AxisTrigger : public InputTriggerBase
-		{
-		public:
-			AxisTrigger(Enum p_Axis);
-
-			virtual float getValue() OVERRIDE;
-		private:
-			Enum m_Axis;
-		};// end of Mouse::AxisTrigger class declaration
-		/*********************************************************************************/
-		class K15_CORE_API WheelTrigger : public InputTriggerBase
-		{
-		public:
-			WheelTrigger();
-
-			virtual float getValue() OVERRIDE;
-		};
-		/*********************************************************************************/
 		static EventName EventMousePressed;
 		static EventName EventMouseReleased;
 		static EventName EventDoubleClicked;
@@ -91,6 +63,8 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		static void hideMouse();
 		static void showMouse();
 
+		static void lockMouse(bool p_MouseLocked);
+
 		static void setMousePos(int32 x, int32 y);
 		static void getMousePos(int32 *x,int32 *y);
 
@@ -99,6 +73,7 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 
 		static void getMousePosDelta(int32 *x,int32 *y);
 
+		static bool isMouseLocked();
 		static bool setMouseIcon(byte* p_IconData, int32 p_Width = 32, int32 p_Height = 32, uint32 p_ColorBits = 32);
 		static bool setMouseIcon(const String& p_IconPath);
 
@@ -106,6 +81,7 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 
 	private:
 		static const InputStringToEnumMap& createButtonToEnumMap();
+		static bool ms_MouseLocked;
 	};// end of Mouse class declaration
 }}}// end of K15_Engine::Core::InputDevice namespace
 

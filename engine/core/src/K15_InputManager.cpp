@@ -27,6 +27,7 @@
 #include "K15_IniFileParser.h"
 
 #include "K15_RenderWindow.h"
+#include "K15_IOUtil.h"
 
 #include "OIS.h"
 
@@ -252,13 +253,18 @@ namespace K15_Engine { namespace Core {
 			#else
 				m_Keyboard->capture();
 				m_Mouse->capture();
-				m_JoyStick->capture();
+
+				if(m_JoyStick)
+				{
+					m_JoyStick->capture();
+				}
 			#endif //K15_PLATFORM_MOBILE
 		}
 		/*********************************************************************************/
 		bool init()
 		{
 			OIS::ParamList params;
+
 			#ifdef K15_OS_WINDOWS
 				size_t windowHnd = (size_t)RenderWindowImpl::getHandleWindow();
 				std::ostringstream windowHndStr;
@@ -266,11 +272,12 @@ namespace K15_Engine { namespace Core {
 				params.insert(std::make_pair("WINDOW", windowHndStr.str()));
 
 				#ifdef K15_DEBUG
-					params.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_FOREGROUND")));
-					params.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_NONEXCLUSIVE")));
 					params.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_FOREGROUND")));
 					params.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_NONEXCLUSIVE")));
-				#endif //K15_DEBUG
+					params.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_FOREGROUND")));
+					params.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_NONEXCLUSIVE")));
+				#endif // K15_DEBUG
+
 			#elif defined K15_OS_LINUX
 				std::ostringstream windowHndStr;
 				windowHndStr << RenderWindowImpl::ms_Window;
@@ -283,7 +290,7 @@ namespace K15_Engine { namespace Core {
 					params.insert(std::make_pair(std::string("XAutoRepeatOn"), std::string("true")));
 				#endif //K15_DEBUG
 			#endif
-
+			
 			if(!(m_InputManager = OIS::InputManager::createInputSystem(params)))
 			{
 				K15_LOG_ERROR("Could not initialize OIS InputManager.");
@@ -303,8 +310,11 @@ namespace K15_Engine { namespace Core {
 				m_Touch->setEventCallback(this);
 			#endif // K15_PLATFORM_MOBILE
 
-			m_JoyStick = static_cast<OIS::JoyStick*>(m_InputManager->createInputObject(OIS::OISJoyStick, true));
-			m_JoyStick->setEventCallback(this);
+			if(m_InputManager->getNumberOfDevices(OIS::OISJoyStick) > 0)
+			{
+				m_JoyStick = static_cast<OIS::JoyStick*>(m_InputManager->createInputObject(OIS::OISJoyStick, true));
+				m_JoyStick->setEventCallback(this);
+			}
 
 			m_Initialized = true;
 
@@ -312,7 +322,7 @@ namespace K15_Engine { namespace Core {
 			const OIS::MouseState& ms = m_Mouse->getMouseState();
 			ms.width = RenderWindow::getWidth();
 			ms.height = RenderWindow::getHeight();
-
+			
 			return true;
 		}
 		/*********************************************************************************/
@@ -418,9 +428,6 @@ namespace K15_Engine { namespace Core {
 		/*********************************************************************************/
 		virtual bool mouseMoved(const OIS::MouseEvent &arg)
 		{
-			static float lastNDC_x = 0.f;
-			static float lastNDC_y = 0.f;
-
 			MouseEventArguments args;
 			args.pressed = false;
 			args.button = InputDevices::Mouse::BTN_NONE;
@@ -430,11 +437,17 @@ namespace K15_Engine { namespace Core {
 			TriggeredInput input;
 			input.Device = _ON(mouse);
 			
-			float deltaNDC_x = lastNDC_x - args.xNDC;
-			float deltaNDC_y = lastNDC_y - args.yNDC;
+			float screenMid_x = (float)RenderWindow::getWidth() * 0.5f;
+			float screenMid_y = (float)RenderWindow::getHeight() * 0.5f;
 
-			lastNDC_x = args.xNDC;
-			lastNDC_y = args.yNDC;
+			float posX = screenMid_x + (float)arg.state.X.rel;
+			float PosY = screenMid_y + (float)arg.state.Y.rel;
+
+			float deltaNDC_x = posX / RenderWindow::getWidth();
+			float deltaNDC_y = PosY / RenderWindow::getHeight();
+
+			deltaNDC_x -= 0.5f; deltaNDC_y -= 0.5f;
+			deltaNDC_x *= 2.f;  deltaNDC_y *= 2.f;
 
 			if(fabs(deltaNDC_x) > K15_EPSILON)
 			{
@@ -448,6 +461,11 @@ namespace K15_Engine { namespace Core {
 				input.Key = InputDevices::Mouse::MA_VERTICAL;
 				input.Value = deltaNDC_y;
 				m_TriggeredInput.push_back(input);
+			}
+
+			if(InputDevices::Mouse::isMouseLocked())
+			{
+				InputDevices::Mouse::setMousePos(RenderWindow::getWidth() / 2, RenderWindow::getHeight() / 2);
 			}
 
 			return true;
@@ -632,7 +650,7 @@ namespace K15_Engine { namespace Core {
 				for(uint32 j = 0; j < m_InputMapping.size(); ++j)
 				{
 					const InputMapping& mapping = m_InputMapping[j];
-					if(mapping.Device == input.Device && mapping.Key == input.Key)
+					if(mapping.Device == input.Device && mapping.Key == input.Key && mapping.Handler.isValid())
 					{
 						InputEvent inputEvent(0, input.Value);
 						mapping.Handler(&inputEvent);
@@ -696,9 +714,12 @@ namespace K15_Engine { namespace Core {
 		String binding;
 		String device;
 		String deviceInput;
-		String inputFileName;
-		String gameRootDir = g_Application->getGameRootDir();
-		inputFileName = gameRootDir + Application::InputFileName;
+		String inputFileName = g_Application->getGameRootDir() + Application::InputFileName;
+
+		if(!IOUtil::fileExists(inputFileName))
+		{
+			inputFileName = g_Application->getHomeDir() + Application::InputFileName;
+		}
 
 		IniFileParser inputFile(inputFileName);
 

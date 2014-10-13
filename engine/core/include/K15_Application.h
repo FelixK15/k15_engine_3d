@@ -64,6 +64,7 @@ namespace K15_Engine { namespace Core {
     
 		INLINE void setGameRootDir(const String& p_GameRootDir);
 
+		INLINE const String& getHomeDir() const;
 		INLINE const String& getGameRootDir() const;
 		INLINE const StringSet& getPluginList() const;
 		INLINE const StringSet& getCommandList() const;
@@ -99,6 +100,7 @@ namespace K15_Engine { namespace Core {
 		INLINE RenderTask* getRenderTask() const;
 		INLINE PhysicsTask* getPhysicsTask() const;
 
+		INLINE MeshManager* getMeshManager() const;
 		INLINE TaskManager* getTaskManager() const;
 		INLINE ProfilingManager* getProfileManager() const;
 		INLINE EventManager* getEventManager() const;
@@ -151,6 +153,7 @@ namespace K15_Engine { namespace Core {
 				GameTime m_GameTime;
 
 	expose_read String m_GameRootDir;
+	expose_read String m_HomeDir;
 
 	expose_read StringSet m_Plugins;
     
@@ -159,6 +162,7 @@ namespace K15_Engine { namespace Core {
 				ApplicationModuleList m_LoadedModules;
 
 				TaskManager* m_TaskManager;
+				MeshManager* m_MeshManager;
 				ResourceManager* m_ResourceManager;
 				ProfilingManager* m_ProfileManager;
 				EventManager* m_EventManager;
@@ -167,6 +171,7 @@ namespace K15_Engine { namespace Core {
 				InputManager* m_InputManager;
 				GameStateManager* m_GameStateManager;
 				ThreadWorker* m_ThreadWorker;
+				DebugRenderer* m_DebugRenderer;
 
 				RenderTask* m_RenderTask;
 				PhysicsTask* m_PhysicsTask;

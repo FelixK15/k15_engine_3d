@@ -28,6 +28,8 @@
 #include "K15_RenderTask.h"
 #include "K15_ResourceManager.h"
 #include "K15_GameStateManager.h"
+#include "K15_DebugRenderer.h"
+#include "K15_MeshManager.h"
 #include "K15_IniFileParser.h"
 #include "K15_Texture.h"
 #include "K15_Functor.h"
@@ -40,6 +42,8 @@
 
 #include "K15_Mouse.h"
 #include "K15_Keyboard.h"
+
+#include "K15_IOUtil.h"
 
 #ifdef K15_DEBUG
     #ifdef K15_OS_WINDOWS
@@ -83,7 +87,9 @@ namespace K15_Engine { namespace Core {
 		m_MaxFPS(30),
 		m_AvgFrameTime(0.033f),
 		m_FrameAllocator(0),
-		m_GameStateManager(0)
+		m_GameStateManager(0),
+		m_DebugRenderer(0),
+		m_HomeDir()
 	{
 		memset(m_FrameStatistics,0,sizeof(FrameStatistic) * FrameStatisticCount);
 
@@ -138,11 +144,11 @@ namespace K15_Engine { namespace Core {
 
 		if((pos = appPath.find_last_of('\\')) != String::npos)
 		{
-            m_GameRootDir = appPath.substr(0, pos+1);
+            m_HomeDir = appPath.substr(0, pos+1);
 		}
         else if((pos = appPath.find_last_of('/')) != String::npos)
         {
-            m_GameRootDir = appPath.substr(0, pos+1);
+            m_HomeDir = appPath.substr(0, pos+1);
         }
 
 		for(int i = 1;i < p_CommandCount;++i)
@@ -248,6 +254,9 @@ namespace K15_Engine { namespace Core {
 		K15_LOG_NORMAL("Initializing ResourceManager...");
 		m_ResourceManager = K15_NEW ResourceManager();
 
+		K15_LOG_NORMAL("Initializing MeshManager...");
+		m_MeshManager = K15_NEW MeshManager();
+
 		K15_LOG_NORMAL("Initializing GameStateManager...");
 		m_GameStateManager = K15_NEW GameStateManager();
 
@@ -273,10 +282,10 @@ namespace K15_Engine { namespace Core {
 		//load input file
 		g_InputManager->parseInputConfig();
 
-        K15_ASSERT(RenderWindow::initialize(), "Could not initialize RenderWindow!");
-	
 		//process settings
 		processSettings();
+
+        K15_ASSERT(RenderWindow::initialize(), "Could not initialize RenderWindow!");
 
 		//Load plugins
 		loadPluginsFile();
@@ -325,6 +334,8 @@ namespace K15_Engine { namespace Core {
 	{
 		static float startFrameTime = 0.0;
 		static float endFrameTime = 0.0;
+		static float newTime = 0.f;
+		static float currentTime = getTime();
 		static float diffTime = m_AvgFrameTime;
 		static float FPSTime = 0.0; //counting to 1 second and then restarts
 		static uint32 FPSFrameCounter = 0;
@@ -332,7 +343,10 @@ namespace K15_Engine { namespace Core {
 		//clear the frame allocator on the start of each frame
 		m_FrameAllocator->clear();
 
-		startFrameTime = getTime();
+		newTime = getTime();
+		diffTime = newTime - currentTime;
+		currentTime = newTime;
+		//startFrameTime = getTime();
 
 		K15_PROFILE_BLOCK("Application::onPreTick",
 			onPreTick();
@@ -354,10 +368,10 @@ namespace K15_Engine { namespace Core {
 			onPostTick();
 		);
 
-		endFrameTime = getTime();
+		//endFrameTime = getTime();
 
 		//so is there any frame time left?
-        if(endFrameTime >= startFrameTime)
+        /*if(endFrameTime >= startFrameTime)
         {
             diffTime = endFrameTime - startFrameTime;
         }
@@ -365,7 +379,7 @@ namespace K15_Engine { namespace Core {
         {
             //unlogical..happens sometimes :(
             diffTime = m_AvgFrameTime;
-        }
+        }*/
 
 
 		if(diffTime < m_AvgFrameTime)
@@ -385,7 +399,7 @@ namespace K15_Engine { namespace Core {
 		{
 			//frame took longer than expected. fire a warning
 			//and then clip diffTime to the max frame time
-			K15_LOG_WARNING("Frame %i took %.3f seconds to render! (%.3f seconds is average)",m_FrameCounter,diffTime,m_AvgFrameTime);
+			//K15_LOG_WARNING("Frame %i took %.3f seconds to render! (%.3f seconds is average)",m_FrameCounter,diffTime,m_AvgFrameTime);
 
             //update running time
             m_RunningTime += diffTime;
@@ -441,6 +455,11 @@ namespace K15_Engine { namespace Core {
 
 		static String pluginsFileName;
 		pluginsFileName = m_GameRootDir + PluginFileName;
+
+		if(!IOUtil::fileExists(pluginsFileName))
+		{
+			pluginsFileName = m_HomeDir + PluginFileName;
+		}
 
 		StringSet pluginsToLoad;
 		IniFileParser pluginFile(pluginsFileName);
@@ -545,8 +564,17 @@ namespace K15_Engine { namespace Core {
 		OSLayer::shutdown();
 		m_ProfileManager->clear();
 
+		if(m_DebugRenderer)
+		{
+			K15_LOG_NORMAL("Destroying DebugRenderer...");
+			K15_DELETE m_DebugRenderer;
+		}
+
 		K15_LOG_NORMAL("Destroying GameStateManager...");
 		K15_DELETE m_GameStateManager;
+
+		K15_LOG_NORMAL("Destroying MeshManager...");
+		K15_DELETE m_MeshManager;
 
 		K15_LOG_NORMAL("Destroying ResourceManager...");
 		K15_DELETE m_ResourceManager;
@@ -584,16 +612,13 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void Application::loadGameDirFile()
 	{
-		static const uint32 GameDirBufferSize = 256;
-		static char GameDirBuffer[GameDirBufferSize];
-		FileStream gameDirFile(GameDirFileName);
-
-		if(gameDirFile.is_open())
+		String gameDirFileName = m_HomeDir + GameDirFileName;
+		if(IOUtil::fileExists(gameDirFileName))
 		{
-			GameDirBuffer[0] = '\0';
-			gameDirFile.getline(GameDirBuffer,GameDirBufferSize);
-			m_GameRootDir = m_GameRootDir + GameDirBuffer; //concatenate with previous gamerootdir.
-			gameDirFile.close();
+			String gameDir = IOUtil::readWholeFile(gameDirFileName);
+			m_GameRootDir = m_HomeDir + gameDir;
+			m_GameRootDir = IOUtil::convertToUnixFilePath(m_GameRootDir);
+			
 		}
 		else
 		{
@@ -634,12 +659,19 @@ namespace K15_Engine { namespace Core {
 				}
 			}
 
-      if(currentParam.Name == "Fullscreen")
-      {
-        bool value = StringUtil::toBool(currentParam.Value);
+			if(currentParam.Name == "Fullscreen")
+			{
+				bool value = StringUtil::toBool(currentParam.Value);
 
-        RenderWindow::setIsFullscreen(value);
-      }
+				RenderWindow::setIsFullscreen(value);
+			}
+
+			if(currentParam.Name == "LockMouse")
+			{
+				bool value = StringUtil::toBool(currentParam.Value);
+
+				InputDevices::Mouse::lockMouse(value);
+			}
 		}
 	}
 	/*********************************************************************************/
@@ -655,6 +687,8 @@ namespace K15_Engine { namespace Core {
 				{
 					(*iter)->onRendererInitialized(renderer);
 				}
+
+				m_DebugRenderer = K15_NEW DebugRenderer();
 			}
 		}
 	}

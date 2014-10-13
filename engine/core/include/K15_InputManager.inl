@@ -50,6 +50,11 @@ bool InputHandler::operator==(const InputHandler& p_Rhs) const
 	return m_Object == p_Rhs.m_Object && m_Handler == p_Rhs.m_Handler;
 }
 /*********************************************************************************/
+bool InputHandler::isValid() const
+{
+	return m_Object != 0 && m_Handler != 0;
+}
+/*********************************************************************************/
 template<class T, bool (T::*MemberFunction)(InputEvent*)>
 static bool InputHandler::getHandlerFunction(void* p_Object, InputEvent* p_Args)
 {
