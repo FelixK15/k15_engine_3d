@@ -87,31 +87,37 @@ void LightComponent::setLightType(Enum p_LightType)
 void LightComponent::setRadius(float p_Radius)
 {
 	m_Range = p_Radius;
+	m_Dirty = true;
 }
 /*********************************************************************************/
 void LightComponent::setConstantAttenuation(float p_ConstAttenuation)
 {
 	m_Attenuation.x = p_ConstAttenuation;
+	m_Dirty = true;
 }
 /*********************************************************************************/
 void LightComponent::setLinearAttenuation(float p_LinearAttenuation)
 {
 	m_Attenuation.y = p_LinearAttenuation;
+	m_Dirty = true;
 }
 /*********************************************************************************/
 void LightComponent::setQuadricAttenuation(float p_QuadricAttenuation)
 {
 	m_Attenuation.z = p_QuadricAttenuation;
+	m_Dirty = true;
 }
 /*********************************************************************************/
 void LightComponent::setConeAngle(float p_ConeAngle)
 {
 	m_ConeAngle = p_ConeAngle;
+	m_Dirty = true;
 }
 /*********************************************************************************/
 void LightComponent::setSpotExponent(float p_SpotExponent)
 {
 	m_SpotExponent = p_SpotExponent;
+	m_Dirty = true;
 }
 /*********************************************************************************/
 void LightComponent::setActive(bool p_Active)
@@ -122,15 +128,18 @@ void LightComponent::setActive(bool p_Active)
 void LightComponent::setDiffuseColor(const ColorRGBA& p_DiffuseColor)
 {
 	m_DiffuseColor = p_DiffuseColor;
+	m_Dirty = true;
 }
 /*********************************************************************************/
 void LightComponent::setSpecularColor(const ColorRGBA& p_SpecularColor)
 {
-  m_SpecularColor = p_SpecularColor;
+	m_SpecularColor = p_SpecularColor;
+	m_Dirty = true;
 }
 /*********************************************************************************/
 void LightComponent::setDirection(const Vector3& p_Direction)
 {
 	m_Direction = p_Direction;
+	m_Dirty = true;
 }
 /*********************************************************************************/

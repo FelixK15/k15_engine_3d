@@ -21,6 +21,7 @@
 
 #include "K15_MathUtil.h"
 #include "K15_LightComponent.h"
+#include "K15_GameObject.h"
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
@@ -51,6 +52,16 @@ namespace K15_Engine { namespace Core {
 	void LightComponent::onAddedToRenderQueue( RenderQueue* p_RenderQueue )
 	{
 		GameObjectComponentBase::onAddedToRenderQueue(p_RenderQueue);
+	}
+	/*********************************************************************************/
+	bool LightComponent::isDirty() const
+	{
+		if(NodeComponent* node = getGameObject()->getNodeComponent())
+		{
+			return m_Dirty || node->needUpdate();
+		}
+
+		return m_Dirty;
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

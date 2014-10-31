@@ -855,66 +855,69 @@ namespace K15_Engine { namespace Rendering {
 							{
 								if(LightComponent* light = m_LightArray.at(param.getArrayIndex()))
 								{
-									if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_TYPE)
+									if(light->isActive() && light->isDirty())
 									{
-										int type = light->getLightType();
-										param.setData((void*)&type);
-									}
-									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_RADIUS)
-									{
-										float radius = light->getRadius();
-										param.setData((void*)&radius);
-									}
-									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_POSITION)
-									{
-										Vector4 position = Vector4(light->getGameObject()->getPosition(), 1.f);
-										position = getActiveCamera()->getViewMatrix() * position;
+										if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_TYPE)
+										{
+											int type = light->getLightType();
+											param.setData((void*)&type);
+										}
+										else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_RADIUS)
+										{
+											float radius = light->getRadius();
+											param.setData((void*)&radius);
+										}
+										else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_POSITION)
+										{
+											Vector4 position = Vector4(light->getGameObject()->getPosition(), 1.f);
+											position = getActiveCamera()->getViewMatrix() * position;
 
-										param.setData((void*)&position);
-									}
-									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_DIRECTION)
-									{
-										Vector3 direction = light->getDirection();
-										param.setData((void*)&direction);
-									}
-									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_DIFFUSE)
-									{
-										Vector4 colorVec;
-										ColorRGBA diffuseColor = light->getDiffuseColor();
-										diffuseColor.toColorVector(colorVec);
-										param.setData((void*)&colorVec);
-									}
-									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_SPECULAR)
-									{
-										Vector4 colorVec;
-										ColorRGBA specularColor = light->getSpecularColor();
-										specularColor.toColorVector(colorVec);
-										param.setData((void*)&colorVec);
-									}
-									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_CONE_ANGLE)
-									{
-										float coneAngle = light->getConeAngle();
-										param.setData((void*)&coneAngle);
-									}
-									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_CONSTANT_ATTENUATION)
-									{
-										float constantAttenuation = light->getConstantAttenuation();
-										param.setData((void*)&constantAttenuation);
-									}
-									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_LINEAR_ATTENUATION)
-									{
-										float linearAttenuation = light->getLinearAttenuation();
-										param.setData((void*)&linearAttenuation);
-									}
-									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_QUADRIC_ATTENUATION)
-									{
-										float quadricAttenuation = light->getQuadricAttenuation();
-										param.setData((void*)&quadricAttenuation);
-									}
-									else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_SPOT_EXPONENT)
-									{
-										float spotExponent = light->getSpotExponent();
-										param.setData((void*)&spotExponent);
+											param.setData((void*)&position);
+										}
+										else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_DIRECTION)
+										{
+											Vector3 direction = light->getDirection();
+											param.setData((void*)&direction);
+										}
+										else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_DIFFUSE)
+										{
+											Vector4 colorVec;
+											ColorRGBA diffuseColor = light->getDiffuseColor();
+											diffuseColor.toColorVector(colorVec);
+											param.setData((void*)&colorVec);
+										}
+										else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_SPECULAR)
+										{
+											Vector4 colorVec;
+											ColorRGBA specularColor = light->getSpecularColor();
+											specularColor.toColorVector(colorVec);
+											param.setData((void*)&colorVec);
+										}
+										else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_CONE_ANGLE)
+										{
+											float coneAngle = light->getConeAngle();
+											param.setData((void*)&coneAngle);
+										}
+										else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_CONSTANT_ATTENUATION)
+										{
+											float constantAttenuation = light->getConstantAttenuation();
+											param.setData((void*)&constantAttenuation);
+										}
+										else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_LINEAR_ATTENUATION)
+										{
+											float linearAttenuation = light->getLinearAttenuation();
+											param.setData((void*)&linearAttenuation);
+										}
+										else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_QUADRIC_ATTENUATION)
+										{
+											float quadricAttenuation = light->getQuadricAttenuation();
+											param.setData((void*)&quadricAttenuation);
+										}
+										else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_SPOT_EXPONENT)
+										{
+											float spotExponent = light->getSpotExponent();
+											param.setData((void*)&spotExponent);
+										}
 									}
 								}
 							}

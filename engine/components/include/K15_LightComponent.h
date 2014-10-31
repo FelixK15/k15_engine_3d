@@ -61,7 +61,7 @@ namespace K15_Engine { namespace Core {
 		INLINE const ColorRGBA& getSpecularColor() const;
 		INLINE const Vector3& getDirection() const;
 		INLINE const Vector3& getAttenuation() const;
-		INLINE bool isDirty() const;
+		bool isDirty() const;
 
 		INLINE void setLightType(Enum p_LightType);
 		INLINE void setRadius(float p_Radius);
