@@ -44,6 +44,10 @@
 #include "K15_DebugRenderer.h"
 #include "K15_MathUtil.h"
 
+//debug
+#include "K15_Keyboard.h"
+
+
 namespace K15_Engine { namespace Test {
 	/*********************************************************************************/
 	TestGameState::TestGameState()
@@ -102,7 +106,25 @@ namespace K15_Engine { namespace Test {
 		m_Camera->update(p_GameTime);
 		m_Bunny->update(p_GameTime);
 
-		g_DebugRenderer->drawAABB(m_Bunny->getAABB(), ColorRGBA::Green);
+		if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_LEFT))
+		{
+			m_Light1->translate(-1.0f, 0.0f, 0.0f);
+		}
+		else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_RIGHT))
+		{
+			m_Light1->translate(1.0f, 0.0f, 0.0f);
+		}
+
+		if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_UP))
+		{
+			m_Light1->translate(0.0f, 1.0f, 0.0f);
+		}
+		else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_DOWN))
+		{
+			m_Light1->translate(0.0f, -1.0f, 0.0f);
+		}
+
+		g_DebugRenderer->drawCross(m_Light1->getPosition(), 1.0f, m_Light1->getLightComponent()->getDiffuseColor());
 	}
 	/*********************************************************************************/
 	void TestGameState::_addLights()
@@ -118,8 +140,8 @@ namespace K15_Engine { namespace Test {
 		m_Light3->addComponent(K15_NEW LightComponent());
 
 		SceneGraph::getDefault()->addGameObject(m_Light1);
-		SceneGraph::getDefault()->addGameObject(m_Light2);
-		SceneGraph::getDefault()->addGameObject(m_Light3);
+// 		SceneGraph::getDefault()->addGameObject(m_Light2);
+// 		SceneGraph::getDefault()->addGameObject(m_Light3);
 
 		m_Light1->translate(8.f, 0.f, 0.f);
 		m_Light2->translate(-8.f, 0.f, 0.f);

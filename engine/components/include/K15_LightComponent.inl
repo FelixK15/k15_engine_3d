@@ -78,6 +78,11 @@ bool LightComponent::isActive() const
 	return m_Active;
 }
 /*********************************************************************************/
+void LightComponent::setDirty(bool p_Dirty)
+{
+	m_Dirty = p_Dirty;
+}
+/*********************************************************************************/
 void LightComponent::setLightType(Enum p_LightType)
 {
 	K15_ASSERT(p_LightType < LT_COUNT,"Invalid light type.");

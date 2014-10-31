@@ -560,6 +560,11 @@ namespace K15_Engine { namespace Core {
 
 		g_InputManager->shutdown();
 
+		if(getRenderer())
+		{
+			getRenderer()->shutdown();
+		}
+
 		RenderWindow::shutdown();
 		OSLayer::shutdown();
 		m_ProfileManager->clear();

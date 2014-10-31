@@ -75,7 +75,7 @@ namespace K15_Engine { namespace Core {
 		INLINE void setAttenuation(const Vector3& p_Attenuation);
 		INLINE void setSpotExponent(float p_SpotExponent);
 		INLINE void setActive(bool p_Active);
-		
+		INLINE void setDirty(bool p_Dirty);
 		virtual void onAddedToRenderQueue(RenderQueue* p_RenderQueue);
 
 	private:

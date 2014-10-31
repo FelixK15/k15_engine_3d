@@ -697,6 +697,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
             kglValidateProgramPipeline = glValidateProgramPipeline;
             kglGetProgramPipelineInfoLog = glGetProgramPipelineInfoLog;
 			kglUseProgramStages = glUseProgramStages;
+			kglDeleteProgramPipelines = glDeleteProgramPipelines;
             //glProgramUniform*i
             kglProgramUniform1i = glProgramUniform1i;
             kglProgramUniform2i = glProgramUniform2i;
@@ -754,6 +755,7 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
             kglBindProgramPipeline = _kglBindProgramPipeline;
             kglValidateProgramPipeline = _kglValidateProgramPipeline;
             kglGetProgramPipelineInfoLog = _kglGetProgramPipelineInfoLog;
+			kglDeleteProgramPipelines = _kglDeleteProgramPipelines;
             //glProgramUniform*i
             /*kglProgramUniform1i = _kglProgramUniform1i;
             kglProgramUniform2i = _kglProgramUniform2i;

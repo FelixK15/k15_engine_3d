@@ -742,6 +742,7 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	void RendererBase::updateGpuProgramParameter(RenderOperation* p_Rop)
 	{
+		bool lightsHaveBeenUpdated = false;
 		GpuProgram* program = 0;
 		for(GpuProgramArray::iterator iter = m_GpuPrograms.begin();iter != m_GpuPrograms.end();++iter)
 		{
@@ -857,6 +858,8 @@ namespace K15_Engine { namespace Rendering {
 								{
 									if(light->isActive() && light->isDirty())
 									{
+										lightsHaveBeenUpdated = true;
+
 										if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_TYPE)
 										{
 											int type = light->getLightType();
@@ -929,6 +932,17 @@ namespace K15_Engine { namespace Rendering {
 							}
 						}
 					}
+				}
+			}
+		}
+
+		if(lightsHaveBeenUpdated)
+		{
+			for(uint32 i = 0; i < m_LightArray.size(); ++i)
+			{
+				if(m_LightArray[i] != 0)
+				{
+					m_LightArray[i]->setDirty(false);
 				}
 			}
 		}
