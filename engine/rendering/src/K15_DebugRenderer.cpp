@@ -99,9 +99,14 @@ namespace K15_Engine { namespace Rendering {
 		internal::debugFragmentShader->setProgramCode(internal::debugFragmentShaderCode, true);
 		internal::debugVertexShader->setProgramCode(internal::debugVertexShaderCode, true);
 
+		DepthState depthState = pass1->getDepthState();
+		depthState.setBias(5.f);
+		//depthState.setFunction(RendererBase::FT_GREATER_EQUAL);
+
 		pass1->setProgram(internal::debugFragmentShader, GpuProgram::PS_FRAGMENT);
 		pass1->setProgram(internal::debugVertexShader, GpuProgram::PS_VERTEX);
 		pass1->setFillMode(RendererBase::FM_WIREFRAME);
+		pass1->setDepthState(depthState);
 	}
 	/*********************************************************************************/
 	DebugRenderer::~DebugRenderer()
