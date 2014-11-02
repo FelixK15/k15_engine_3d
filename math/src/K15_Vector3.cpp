@@ -22,6 +22,7 @@
  */
 
 #include "K15_Vector3.h"
+#include "K15_Vector4.h"
 #include "K15_MathUtil.h"
 #include "K15_Quaternion.h"
 
@@ -31,9 +32,9 @@ namespace K15_Engine { namespace Math {
 	const Vector3 Vector3::Right = Vector3(1.f,0.f,0.f);
 	const Vector3 Vector3::Forward = Vector3(0.f,0.f,-1.f);
 	const Vector3 Vector3::Zero = Vector3(0.f,0.f,0.f);
-  const Vector3 Vector3::X_Axis = Vector3::Right;
-  const Vector3 Vector3::Y_Axis = Vector3::Up;
-  const Vector3 Vector3::Z_Axis = Vector3::Forward;
+	const Vector3 Vector3::X_Axis = Vector3::Right;
+	const Vector3 Vector3::Y_Axis = Vector3::Up;
+	const Vector3 Vector3::Z_Axis = Vector3::Forward;
 	/*********************************************************************************/
 	
 	/*********************************************************************************/
@@ -59,6 +60,13 @@ namespace K15_Engine { namespace Math {
 	}
 	/*********************************************************************************/
 	Vector3::Vector3(const Vector3& p_Vector)
+	{
+		x = p_Vector.x;
+		y = p_Vector.y;
+		z = p_Vector.z;
+	}
+	/*********************************************************************************/
+	Vector3::Vector3( const Vector4& p_Vector )
 	{
 		x = p_Vector.x;
 		y = p_Vector.y;

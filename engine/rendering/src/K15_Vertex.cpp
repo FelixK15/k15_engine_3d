@@ -38,14 +38,14 @@ namespace K15_Engine { namespace Rendering {
 
 	}
 	/*********************************************************************************/
-	Vector4 Vertex::getPosition() const
+	Vector3 Vertex::getPosition() const
 	{
-		return get<Vector4>(VertexElement::ES_POSITION);
+		return get<Vector3>(VertexElement::ES_POSITION);
 	}
 	/*********************************************************************************/
-	Vector4 Vertex::getNormal() const
+	Vector3 Vertex::getNormal() const
 	{
-		return get<Vector4>(VertexElement::ES_NORMAL);
+		return get<Vector3>(VertexElement::ES_NORMAL);
 	}
 	/*********************************************************************************/
 	Vector2 Vertex::getUV() const
@@ -58,14 +58,14 @@ namespace K15_Engine { namespace Rendering {
 		return get<ColorRGBA>(VertexElement::ES_COLOR);
 	}
 	/*********************************************************************************/
-	void Vertex::setPosition(const Vector4& p_Position)
+	void Vertex::setPosition(const Vector3& p_Position)
 	{
-		set<Vector4>(p_Position,VertexElement::ES_POSITION);
+		set<Vector3>(p_Position,VertexElement::ES_POSITION);
 	}
 	/*********************************************************************************/
-	void Vertex::setNormal(const Vector4& p_Normal)
+	void Vertex::setNormal(const Vector3& p_Normal)
 	{
-		set<Vector4>(p_Normal,VertexElement::ES_NORMAL);
+		set<Vector3>(p_Normal,VertexElement::ES_NORMAL);
 	}
 	/*********************************************************************************/
 	void Vertex::setUV(const Vector2& p_UV)

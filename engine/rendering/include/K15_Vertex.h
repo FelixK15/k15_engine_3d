@@ -31,6 +31,7 @@
 #include "K15_VertexDeclaration.h"
 
 #include "K15_Vector4.h"
+#include "K15_Vector3.h"
 #include "K15_Vector2.h"
 
 namespace K15_Engine { namespace Rendering {
@@ -46,13 +47,13 @@ namespace K15_Engine { namespace Rendering {
 		template<class Type>
 		void set(const Type& p_Value,Enum p_Semantic);
 
-		Vector4 getPosition() const;
-		Vector4 getNormal() const;
+		Vector3 getPosition() const;
+		Vector3 getNormal() const;
 		Vector2 getUV() const;
 		ColorRGBA getColor() const;
 
-		void setPosition(const Vector4& p_Position);
-		void setNormal(const Vector4& p_Normal);
+		void setPosition(const Vector3& p_Position);
+		void setNormal(const Vector3& p_Normal);
 		void setUV(const Vector2& p_UV);
 		void setColor(const ColorRGBA& p_Color);
 
@@ -62,7 +63,7 @@ namespace K15_Engine { namespace Rendering {
 	private:
 		uint32 m_Index;
 		VertexBuffer* m_Buffer;
-    VertexDeclaration* m_Declaration;
+		VertexDeclaration* m_Declaration;
 	};// end of Vertex class declaration
 #	include "K15_Vertex.inl"
 }}// end of K15_Engine::Rendering namespace

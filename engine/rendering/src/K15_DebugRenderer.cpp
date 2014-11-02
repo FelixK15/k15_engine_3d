@@ -28,6 +28,7 @@
 #include "K15_AABB.h"
 #include "K15_VertexBuffer.h"
 #include "K15_VertexData.h"
+#include "K15_Vertex.h"
 #include "K15_IndexData.h"
 #include "K15_IndexBuffer.h"
 #include "K15_VertexDeclaration.h"
@@ -37,6 +38,11 @@
 #include "K15_GpuProgramCatalog.h"
 #include "K15_Material.h"
 #include "K15_RendererBase.h"
+#include "K15_GameObject.h"
+#include "K15_ModelComponent.h"
+#include "K15_MeshInstance.h"
+#include "K15_Mesh.h"
+#include "K15_SubMesh.h"
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
@@ -317,9 +323,73 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	void DebugRenderer::clearRenderQueue()
 	{
+		for(uint32 i = 0; i < m_RenderQueue->size(); ++i)
+		{
+			RenderOperation* rop = m_RenderQueue->getRenderOperation(i);
+			K15_DELETE rop->vertexData;
+			K15_DELETE rop->indexData;
+		}
+
 		m_RenderQueue->clear();
 		m_BufferOffset = 0;
 		m_VertexCounter = 0;
+	}
+	/*********************************************************************************/
+	void DebugRenderer::drawNormals( GameObject* p_GameObject, const ColorRGBA& p_Color )
+	{
+		if(p_GameObject && p_GameObject->getModelComponent())
+		{
+			ModelComponent* modelComponent = p_GameObject->getModelComponent();
+			Mesh* mesh = modelComponent->getMeshInstance()->getMesh();
+			SubMesh* submesh = 0;
+			VertexData* vertexData = 0;
+			VertexDeclaration* vertexDeclaration = 0;
+			Vertex* vertex = 0;
+			Matrix4 modelMatrix = p_GameObject->getTransformation();
+			VertexElement normalVertexElement;
+			Vector4 normal; Vector4 position;
+			bool foundNormalElement = true;
+
+
+			const Mesh::SubMeshArray& submeshes = mesh->getSubMeshes();
+
+			for(uint32 i = 0; i < submeshes.size(); ++i)
+			{
+				submesh = submeshes[i];
+				vertexData = submesh->getVertexData();
+				vertexDeclaration = vertexData->getVertexDeclaration();
+
+				for(uint32 j = 0; j < vertexDeclaration->getElementCount(); ++j)
+				{
+					const VertexElement& element = vertexDeclaration->getElement(j);
+
+					if(element.semantic == VertexElement::ES_NORMAL)
+					{
+						normalVertexElement = element;
+						foundNormalElement = true;
+						break;
+					}
+				}
+
+
+				if(foundNormalElement)
+				{
+					for(uint32 j = 0; j < vertexData->getVertexCount(); ++j)
+					{
+						vertex = vertexData->getVertex(j);
+						normal = vertex->getNormal();
+						position = vertex->getPosition();
+
+						normal = modelMatrix * normal;
+						position = modelMatrix * position;
+
+						drawLine(position, position + normal, p_Color);
+					}
+				}
+
+				foundNormalElement = false;
+			}
+		}
 	}
 	/*********************************************************************************/
 }}
