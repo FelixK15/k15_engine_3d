@@ -30,9 +30,9 @@ namespace K15_Engine { namespace Math {
 	const Vector4 Vector4::Up = Vector4(0.0f,1.0f,0.0f,1.0f);
 	const Vector4 Vector4::Right = Vector4(1.0f,0.f,0.0f,1.0f);
 	const Vector4 Vector4::Forward = Vector4(0.0f,0.0f,1.0f,1.0f);
-  const Vector4 Vector4::X_Axis = Vector4::Right;
-  const Vector4 Vector4::Y_Axis = Vector4::Up;
-  const Vector4 Vector4::Z_Axis = Vector4::Forward;
+	const Vector4 Vector4::X_Axis = Vector4::Right;
+	const Vector4 Vector4::Y_Axis = Vector4::Up;
+	const Vector4 Vector4::Z_Axis = Vector4::Forward;
 	const Vector4 Vector4::Zero = Vector4(0.0f,0.0f,0.0f,0.0f);
 	/*********************************************************************************/
 	
@@ -79,10 +79,10 @@ namespace K15_Engine { namespace Math {
 	void Vector4::normalize()
 	{
 		float len = length();
-    x /= len;
-    y /= len;
-    z /= len;
-    w /= len;
+		x /= len;
+		y /= len;
+		z /= len;
+		w /= len;
 	}
 	/*********************************************************************************/
 	float Vector4::length() const
@@ -116,17 +116,17 @@ namespace K15_Engine { namespace Math {
 	Vector4 Vector4::cross(const Vector4& p_Vector) const
 	{
 		Vector3 vec, vec2, vec3;
-    Vector4 crossVec;
+		Vector4 crossVec;
 
-    memcpy(&vec, m_VectorArray, sizeof(Vector3));
-    memcpy(&vec2, &p_Vector, sizeof(Vector3));
+		memcpy(&vec, m_VectorArray, sizeof(Vector3));
+		memcpy(&vec2, &p_Vector, sizeof(Vector3));
 
-    vec3 = vec.cross(vec2);
+		vec3 = vec.cross(vec2);
 
-    memcpy(&crossVec, &vec3, sizeof(Vector3));
-    crossVec.w = 1.f;
+		memcpy(&crossVec, &vec3, sizeof(Vector3));
+		crossVec.w = 1.f;
 
-    return crossVec;
+		return crossVec;
 	}
 	/*********************************************************************************/
 	const Vector4& Vector4::operator=(const Vector4& p_Vector)
@@ -147,10 +147,10 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Vector4& Vector4::operator*=(float p_Scale)
 	{
-    x *= p_Scale;
-    y *= p_Scale;
-    z *= p_Scale;
-    w *= p_Scale;
+		x *= p_Scale;
+		y *= p_Scale;
+		z *= p_Scale;
+		w *= p_Scale;
 
 		return *this;
 	}
@@ -172,30 +172,30 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	const Vector4& Vector4::operator+=(const Vector4& p_Vector)
 	{
-    x += p_Vector.x;
-    y += p_Vector.y;
-    z += p_Vector.z;
-    w += p_Vector.w;
+		x += p_Vector.x;
+		y += p_Vector.y;
+		z += p_Vector.z;
+		w += p_Vector.w;
 
 		return *this;
 	}
 	/*********************************************************************************/
 	const Vector4& Vector4::operator-=(const Vector4& p_Vector)
 	{
-    x -= p_Vector.x;
-    y -= p_Vector.y;
-    z -= p_Vector.z;
-    w -= p_Vector.w;
+		x -= p_Vector.x;
+		y -= p_Vector.y;
+		z -= p_Vector.z;
+		w -= p_Vector.w;
 
 		return *this;
 	}
 	/*********************************************************************************/
 	const Vector4& Vector4::operator/=(float p_Scalar)
 	{
-    x /= p_Scalar;
-    y /= p_Scalar;
-    z /= p_Scalar;
-    w /= p_Scalar;
+		x /= p_Scalar;
+		y /= p_Scalar;
+		z /= p_Scalar;
+		w /= p_Scalar;
 
 		return *this;
 	}
@@ -259,10 +259,10 @@ namespace K15_Engine { namespace Math {
   /*********************************************************************************/
   float Vector4::operator[](int p_Index) const
   {
-    if(p_Index < 0) p_Index = 0;
-    if(p_Index > 3) p_Index = 3;
+	  if(p_Index < 0) p_Index = 0;
+	  if(p_Index > 3) p_Index = 3;
 
-    return m_VectorArray[p_Index];
+	  return m_VectorArray[p_Index];
   }
   /*********************************************************************************/
 }}//end of K15_Engine::Math namespace
