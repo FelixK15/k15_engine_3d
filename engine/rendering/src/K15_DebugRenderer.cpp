@@ -90,29 +90,7 @@ namespace K15_Engine { namespace Rendering {
 		vb_option.UsageOption = VertexBuffer::UO_DYNAMIC;
 		m_VertexBuffer = K15_NEW VertexBuffer(vb_option);
 
-		IndexBuffer::CreationOptions ib_option = IndexBuffer::DefaultOptions;
-		ib_option.Size = sizeof(uint16) * DEBUG_VERTEX_CACHE;
-		ib_option.IndexType = IndexBuffer::IT_UINT16;
-		ib_option.UsageOption = IndexBuffer::UO_DYNAMIC;
-		m_IndexBuffer = K15_NEW IndexBuffer(ib_option);
-
-		m_DebugMaterial = K15_NEW Material();
-		MaterialPass* pass1 = m_DebugMaterial->getPass(0, true);
-
-		internal::debugFragmentShader = K15_NEW GpuProgram("DebugFragment", GpuProgram::PS_FRAGMENT);
-		internal::debugVertexShader   = K15_NEW GpuProgram("DebugVertex", GpuProgram::PS_VERTEX);
-
-		internal::debugFragmentShader->setProgramCode(internal::debugFragmentShaderCode, true);
-		internal::debugVertexShader->setProgramCode(internal::debugVertexShaderCode, true);
-
-		DepthState depthState = pass1->getDepthState();
-		depthState.setBias(5.f);
-		//depthState.setFunction(RendererBase::FT_GREATER_EQUAL);
-
-		pass1->setProgram(internal::debugFragmentShader, GpuProgram::PS_FRAGMENT);
-		pass1->setProgram(internal::debugVertexShader, GpuProgram::PS_VERTEX);
-		pass1->setFillMode(RendererBase::FM_WIREFRAME);
-		pass1->setDepthState(depthState);
+		_createDebugMaterial();
 	}
 	/*********************************************************************************/
 	DebugRenderer::~DebugRenderer()
@@ -135,7 +113,6 @@ namespace K15_Engine { namespace Rendering {
 		_writeVertex(p_Position, p_Color);
 		rop->topology = RenderOperation::T_DOT;
 		rop->vertexData = K15_NEW VertexData(m_VertexDeclaration, m_VertexBuffer, bufferPos, 1);
-		rop->indexData = K15_NEW IndexData(m_IndexBuffer, 1, indices * sizeof(uint16));
 		rop->material = m_DebugMaterial;
 		m_RenderQueue->addRenderOperation(rop);
 	}
@@ -162,7 +139,6 @@ namespace K15_Engine { namespace Rendering {
 
 		rop->topology = RenderOperation::T_LINE;
 		rop->vertexData = K15_NEW VertexData(m_VertexDeclaration, m_VertexBuffer, bufferPos, 6);
-		rop->indexData = K15_NEW IndexData(m_IndexBuffer, 6, indices * sizeof(uint16));
 		rop->material = m_DebugMaterial;
 		m_RenderQueue->addRenderOperation(rop);
 	}
@@ -181,7 +157,6 @@ namespace K15_Engine { namespace Rendering {
 
 		rop->topology = RenderOperation::T_LINE;
 		rop->vertexData = K15_NEW VertexData(m_VertexDeclaration, m_VertexBuffer, bufferPos, 2);
-		rop->indexData = K15_NEW IndexData(m_IndexBuffer, 2, indices * sizeof(uint16));
 		rop->material = m_DebugMaterial;
 		m_RenderQueue->addRenderOperation(rop);
 	}
@@ -211,7 +186,6 @@ namespace K15_Engine { namespace Rendering {
 
 		for(int i = 0; i < 10; ++i)
 		{
-			//points[i] += p_Start;
 			points[i] = rotation * points[i];
 			_writeVertex(points[i], p_Color);
 		}
@@ -219,7 +193,6 @@ namespace K15_Engine { namespace Rendering {
 		RenderOperation* rop = K15_NEW RenderOperation();
 		rop->topology = RenderOperation::T_LINE;
 		rop->vertexData = K15_NEW VertexData(m_VertexDeclaration, m_VertexBuffer, bufferPos, 10);
-		rop->indexData = K15_NEW IndexData(m_IndexBuffer, 10, indices * sizeof(uint16));
 		rop->material = m_DebugMaterial;
 		m_RenderQueue->addRenderOperation(rop);
 	}
@@ -292,7 +265,6 @@ namespace K15_Engine { namespace Rendering {
 
 		RenderOperation* rop = K15_NEW RenderOperation(); 
 		rop->vertexData = K15_NEW VertexData(m_VertexDeclaration, m_VertexBuffer, offset, indices);
-		rop->indexData = K15_NEW IndexData(m_IndexBuffer, indices, vertexCountPrev * sizeof(uint16));
 		rop->material = m_DebugMaterial;
 		rop->topology = RenderOperation::T_TRIANGLE;
 		m_RenderQueue->addRenderOperation(rop);
@@ -316,8 +288,6 @@ namespace K15_Engine { namespace Rendering {
 		m_BufferOffset += sizeof(Vector3);
 		m_VertexBuffer->writeData(sizeof(Vector4), (byte*)&colorVec, m_BufferOffset);
 		m_BufferOffset += sizeof(Vector4);
-
-		m_IndexBuffer->writeData(sizeof(uint16), (byte*)&m_VertexCounter, m_VertexCounter * sizeof(uint16));
 		++m_VertexCounter;
 	}
 	/*********************************************************************************/
@@ -335,7 +305,7 @@ namespace K15_Engine { namespace Rendering {
 		m_VertexCounter = 0;
 	}
 	/*********************************************************************************/
-	void DebugRenderer::drawNormals( GameObject* p_GameObject, const ColorRGBA& p_Color )
+	void DebugRenderer::drawNormals(GameObject* p_GameObject, float p_Length, const ColorRGBA& p_Color)
 	{
 		if(p_GameObject && p_GameObject->getModelComponent())
 		{
@@ -347,7 +317,7 @@ namespace K15_Engine { namespace Rendering {
 			Vertex* vertex = 0;
 			Matrix4 modelMatrix = p_GameObject->getTransformation();
 			VertexElement normalVertexElement;
-			Vector4 normal; Vector4 position;
+			Vector3 normal; Vector3 position;
 			bool foundNormalElement = true;
 
 
@@ -374,6 +344,7 @@ namespace K15_Engine { namespace Rendering {
 
 				if(foundNormalElement)
 				{
+					uint32 renderQueueSize = 0;
 					for(uint32 j = 0; j < vertexData->getVertexCount(); ++j)
 					{
 						vertex = vertexData->getVertex(j);
@@ -383,13 +354,55 @@ namespace K15_Engine { namespace Rendering {
 						normal = modelMatrix * normal;
 						position = modelMatrix * position;
 
+						normal *= p_Length;
+
 						drawLine(position, position + normal, p_Color);
+
+						renderQueueSize = m_RenderQueue->size();
 					}
 				}
 
 				foundNormalElement = false;
 			}
 		}
+	}
+	/*********************************************************************************/
+	void DebugRenderer::drawAxis(GameObject* p_GameObject, float p_Length)
+	{
+		NodeComponent* nodeComponent = 0;
+
+		if((nodeComponent = p_GameObject->getNodeComponent()) != 0)
+		{
+			const Matrix4& transformation = nodeComponent->getTransformation();
+			Vector3 position = p_GameObject->getPosition();
+			Vector3 xAxis = transformation.getXAxis() * p_Length;
+			Vector3 yAxis = transformation.getYAxis() * p_Length;
+			Vector3 zAxis = transformation.getZAxis() * p_Length;
+
+			position = transformation * position;
+
+			drawArrow(position, position + xAxis, ColorRGBA::Red);
+			drawArrow(position, position + yAxis, ColorRGBA::Green);
+			drawArrow(position, position + zAxis, ColorRGBA::Blue);
+		}
+	}
+	/*********************************************************************************/
+	void DebugRenderer::_createDebugMaterial()
+	{
+		m_DebugMaterial = K15_NEW Material();
+		m_DebugMaterial->setName(_TN(DebugMaterial));
+
+		MaterialPass* pass1 = m_DebugMaterial->getPass(0, true);
+
+		internal::debugFragmentShader = K15_NEW GpuProgram("DebugFragment", GpuProgram::PS_FRAGMENT);
+		internal::debugVertexShader   = K15_NEW GpuProgram("DebugVertex", GpuProgram::PS_VERTEX);
+
+		internal::debugFragmentShader->setProgramCode(internal::debugFragmentShaderCode, true);
+		internal::debugVertexShader->setProgramCode(internal::debugVertexShaderCode, true);
+
+		pass1->setProgram(internal::debugFragmentShader, GpuProgram::PS_FRAGMENT);
+		pass1->setProgram(internal::debugVertexShader, GpuProgram::PS_VERTEX);
+		pass1->setFillMode(RendererBase::FM_WIREFRAME);
 	}
 	/*********************************************************************************/
 }}

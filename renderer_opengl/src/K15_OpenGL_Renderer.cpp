@@ -468,7 +468,8 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	void Renderer::_drawDirect(uint32 p_VertexCount ,uint32 p_Offset)
 	{
 		VertexBuffer* vertexBuffer = (VertexBuffer*)m_GpuBuffers[GpuBuffer::BT_VERTEX_BUFFER];
-		glDrawArrays(GLTopologyConverter[m_Topology], p_Offset, p_VertexCount);
+		GLint firstElement = p_Offset / getVertexDeclaration()->getVertexSize();
+		glDrawArrays(GLTopologyConverter[m_Topology], firstElement, p_VertexCount);
 	}
 	/*********************************************************************************/
 	void Renderer::_setVertexDeclaration(VertexDeclaration* p_Declaration)

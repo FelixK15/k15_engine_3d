@@ -45,16 +45,19 @@ namespace K15_Engine { namespace Rendering {
 		void drawArrow(const Vector3& p_Start, const Vector3& p_End, const ColorRGBA& p_Color);
 		void drawCube(const Vector3& p_Min, const Vector3& p_Max, const ColorRGBA& p_Color);
 		void drawAABB(const AABB& p_AABB, const ColorRGBA& p_Color);
-		void drawNormals(GameObject* p_GameObject, const ColorRGBA& p_Color);
+		void drawNormals(GameObject* p_GameObject, float p_Length, const ColorRGBA& p_Color);
 		void drawSphere(const Vector3& p_Center, float p_Radius, const ColorRGBA& p_Color);
+		void drawAxis(GameObject* p_GameObject, float p_Length);
 
 		INLINE RenderQueue* getRenderQueue() const;
 		INLINE bool isActive() const;
 		INLINE void setActive(bool p_Active);
 
 		void clearRenderQueue();
+
 	private:
 		void _writeVertex(const Vector3& p_Position, const ColorRGBA& p_Color);
+		void _createDebugMaterial();
 
 	private:
 		uint32 m_BufferOffset;
