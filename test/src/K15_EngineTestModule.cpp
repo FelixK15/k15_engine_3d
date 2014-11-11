@@ -125,7 +125,7 @@ namespace K15_Engine { namespace Test {
 		}
 
 		g_DebugRenderer->drawCross(m_Light1->getPosition(), 1.0f, m_Light1->getLightComponent()->getDiffuseColor());
-		g_DebugRenderer->drawNormals(m_Bunny, ColorRGBA::Green);
+		g_DebugRenderer->drawNormals(m_Bunny, 0.5f, ColorRGBA::Green);
 	}
 	/*********************************************************************************/
 	void TestGameState::_addLights()

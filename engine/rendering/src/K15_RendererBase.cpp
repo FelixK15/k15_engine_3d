@@ -804,8 +804,9 @@ namespace K15_Engine { namespace Rendering {
 								}
 
 								Matrix4 modelViewMat = viewMat * modelMat;
-								modelViewMat = modelViewMat.inverse();
+								
 								modelViewMat = modelViewMat.transpose();
+								modelViewMat = modelViewMat.inverse();
 
 								param.setData((void*)&modelViewMat);
 							}

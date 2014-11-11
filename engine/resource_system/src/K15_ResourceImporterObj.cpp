@@ -41,6 +41,15 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	K15_IMPLEMENT_RTTI_BASE(Core,ResourceImporterObj,ResourceImporterBase);
 	typedef std::vector<tinyobj::shape_t> ShapeArray;
+	typedef DynamicArray(Vector3) PositionArray;
+	typedef PositionArray NormalArray;
+	typedef DynamicArray(int) IndexArray;
+
+	namespace internal
+	{
+		PositionArray getPositions(const String& p_OBJString);
+		NormalArray getNormals(const PositionArray& p_Positions);
+	}
 	/*********************************************************************************/
 
 	/*********************************************************************************/
@@ -67,133 +76,117 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	ResourceBase* ResourceImporterObj::_load(const RawData& p_ResourceData, const Rtti& p_ResourceType)
 	{
-		StringStream stream;
-		stream.write((char*)p_ResourceData.data,p_ResourceData.size);
-
-		ShapeArray shapes;
-		tinyobj::MaterialFileReader reader("");
-		String err = tinyobj::LoadObj(shapes,(std::istream&)stream,reader);
-
-		if(!err.empty())
-		{
-			setError(err);
-			return 0;
-		}
-
 		Mesh* mesh = K15_NEW Mesh();
-		SubMesh* submesh = 0;
-		IndexBuffer* idbuffer = 0;
-		VertexBuffer* vbbuffer = 0;
-		VertexDeclaration* vdeclaration = 0;
+		String objString((char*)p_ResourceData.data);
+		PositionArray positions;
+		NormalArray normals;
 
-		for(ShapeArray::iterator iter = shapes.begin();iter != shapes.end();++iter)
+		positions = internal::getPositions(objString);
+		normals = internal::getNormals(positions);
+
+		uint32 vertexBufferSize = sizeof(Vector3) * 2 * positions.size();
+		uint32 vertexBufferTempOffset = 0;
+		byte* vertexBufferTemp = (byte*)OSLayer::os_malloc(vertexBufferSize);
+
+		for(size_t i = 0; i < positions.size(); ++i)
 		{
-			submesh = K15_NEW SubMesh(mesh);
-			IndexBuffer::CreationOptions indexOptions;
-			VertexBuffer::CreationOptions vertexOptions;
-			String vertexDeclarationString;
+			Vector3 position = positions[i];
+			Vector3 normal = normals[i / 3];
 
-			indexOptions.IndexType = IndexBuffer::IT_UINT16;
+			memcpy(vertexBufferTemp + vertexBufferTempOffset, &position, sizeof(Vector3));
+			vertexBufferTempOffset += sizeof(Vector3);
 
-			tinyobj::shape_t& shape = (*iter);
-
-			//Check if the indices are greater than 16bit
-			for(uint32 i = 0;i < shape.mesh.indices.size();++i)
-			{
-				if(shape.mesh.indices.at(i) > std::numeric_limits<uint16>::max())
-				{
-					indexOptions.IndexType = IndexBuffer::IT_UINT32;
-				}
-			}
-
-			uint32 indexSize = indexOptions.IndexType == IndexBuffer::IT_UINT32 ?  sizeof(uint32) : sizeof(uint16);
-			uint32 indexDataSize = indexSize * shape.mesh.indices.size();
-
-			byte* indexTempBuffer = K15_NEW_SIZE(Allocators[AC_GENERAL],indexDataSize) byte;
-
-			//copy index data
-			uint32 indexBufferPos = 0;
-			for(uint32 i = 0;i < shape.mesh.indices.size();++i)
-			{
-				memcpy(indexTempBuffer + indexBufferPos,&shape.mesh.indices[i],indexSize);
-				indexBufferPos += indexSize;
-			}
-
-			//set index data
-			indexOptions.InitialData.data = indexTempBuffer;
-			indexOptions.InitialData.size = indexDataSize;
-
-			uint32 vertexDataSize = 0;
-			byte* vertexTempBuffer = 0;
-
-			//calculate vertex buffer size
-			vertexDataSize = (shape.mesh.positions.size() + shape.mesh.positions.size() / 3) * sizeof(float);
-			vertexDataSize += shape.mesh.normals.size() * sizeof(float);
-			vertexDataSize += shape.mesh.texcoords.size() * sizeof(float);
-
-			//allocate vertex temp buffer
-			vertexTempBuffer = (byte*)K15_NEW_SIZE(Allocators[AC_GENERAL],vertexDataSize) byte;
-
-			if(shape.mesh.positions.size() > 0)
-			{
-				vertexDeclarationString += "PF3";
-			}
-
-			if(shape.mesh.normals.size() > 0)
-			{
-				vertexDeclarationString += "NF3";
-			}
-
-			if(shape.mesh.texcoords.size() > 0)
-			{
-				vertexDeclarationString += "TF2";
-			}
-
-			uint32 bufferPosition = 0;
-
-			uint32 pos_position = 0, pos_normal = 0, pos_tex = 0;
-			for(uint32 i = 0;i < shape.mesh.indices.size();++i)
-			{
-				if(shape.mesh.positions.size() > pos_position)
-				{
-					memcpy(vertexTempBuffer + bufferPosition, &shape.mesh.positions[pos_position],sizeof(float)*3);
-					bufferPosition += sizeof(float)*3;
-
-					pos_position += 3;
-				}
-
-				if(shape.mesh.normals.size() > pos_normal)
-				{
-					memcpy(vertexTempBuffer + bufferPosition,&shape.mesh.normals[pos_normal],sizeof(float)*3);
-					bufferPosition += sizeof(float)*3;
-
-					pos_normal += 3;
-				}
-
-				if(shape.mesh.texcoords.size() > pos_tex)
-				{
-					memcpy(vertexTempBuffer + bufferPosition,&shape.mesh.texcoords[pos_tex],sizeof(float)*2);
-					bufferPosition += sizeof(float)*2;
-
-					pos_tex += 2;
-				}
-			}
-
-			vertexOptions.InitialData.data = vertexTempBuffer;
-			vertexOptions.InitialData.size = vertexDataSize;
-
-			vbbuffer = K15_NEW VertexBuffer(vertexOptions);
-			idbuffer = K15_NEW IndexBuffer(indexOptions);
-			vdeclaration = VertexDeclaration::create(vertexDeclarationString);
-
-			submesh->setVertexData(K15_NEW VertexData(vdeclaration, vbbuffer, 0, shape.mesh.indices.size()));
-			submesh->setIndexData(K15_NEW IndexData(idbuffer, indexDataSize / indexSize, 0));
-
-			K15_DELETE_SIZE(Allocators[AC_GENERAL], vertexTempBuffer, vertexDataSize);
-			K15_DELETE_SIZE(Allocators[AC_GENERAL], indexTempBuffer, indexDataSize);
+			memcpy(vertexBufferTemp + vertexBufferTempOffset, &normal, sizeof(Vector3));
+			vertexBufferTempOffset += sizeof(Vector3);
 		}
+
+		VertexBuffer::CreationOptions vertexBufferOptions;
+
+		vertexBufferOptions.InitialData.data = vertexBufferTemp;
+		vertexBufferOptions.InitialData.size = vertexBufferSize;
+
+		VertexBuffer* vertexBuffer = K15_NEW VertexBuffer(vertexBufferOptions);
+		VertexDeclaration* vertexDeclaration = VertexDeclaration::create("PF3NF3");
+
+		VertexData* vertexData = K15_NEW VertexData(vertexDeclaration, vertexBuffer, 0, positions.size());
+		SubMesh* subMesh = K15_NEW SubMesh(mesh);
+
+		subMesh->setVertexData(vertexData);
+
+		OSLayer::os_free(vertexBufferTemp);
 
 		return mesh;
+	}
+	/*********************************************************************************/
+
+
+
+	/*********************************************************************************/
+	PositionArray internal::getPositions(const String& p_OBJString)
+	{
+		PositionArray positions; IndexArray indices;
+		PositionArray orderedPositions;
+
+		StringStream stream(p_OBJString);
+		char* lineBuffer = (char*)alloca(256);
+		Vector3 position;
+		int index[6] = {0};
+
+		while(!stream.eof())
+		{
+			stream.getline(lineBuffer, 256);
+
+			if(lineBuffer[0] == 'v' && isspace(lineBuffer[1]))
+			{
+				sscanf(lineBuffer, "v %f %f %f", &position.x, &position.y, &position.z);
+
+				positions.push_back(position);
+			}
+			else if(lineBuffer[0] == 'f')
+			{
+				sscanf(lineBuffer, "f %d//%d %d//%d %d//%d", &index[0], &index[1], &index[2], &index[3], &index[4], &index[5]);
+
+				indices.push_back(index[0] - 1);
+				indices.push_back(index[2] - 1);
+				indices.push_back(index[4] - 1);
+			}
+		}
+
+		for(size_t i = 0; i < indices.size(); i += 3)
+		{
+			index[0] = indices[i];
+			index[1] = indices[i + 1];
+			index[2] = indices[i + 2];
+
+			orderedPositions.push_back(positions[index[0]]);
+			orderedPositions.push_back(positions[index[1]]);
+			orderedPositions.push_back(positions[index[2]]);
+		}
+
+		return orderedPositions;
+	}
+	/*********************************************************************************/
+	NormalArray internal::getNormals(const PositionArray& p_Positions)
+	{
+		NormalArray normals;
+		size_t counter = 0;
+
+		if(p_Positions.size() % 3 == 0)
+		{
+			while(counter < p_Positions.size())
+			{
+				Vector3 normal = Vector3::Cross(p_Positions[counter + 2] - p_Positions[counter + 1],
+					p_Positions[counter] - p_Positions[counter + 1]);
+
+				normal.normalize();
+
+				normals.push_back(normal);
+
+				counter += 3;
+			}
+		}
+
+		return normals;
 	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace

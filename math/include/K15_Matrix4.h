@@ -53,8 +53,15 @@ namespace K15_Engine { namespace Math {
 		Matrix4 inverse() const;
 		Matrix4 transpose() const;
 
+		static Matrix4 Inverse(const Matrix4& p_Matrix);
+		static Matrix4 Transpose(const Matrix4& p_Matrix);
+
 		bool isIdentity() const;
 		bool isZero() const;
+
+		Vector3 getXAxis() const;
+		Vector3 getYAxis() const;
+		Vector3 getZAxis() const;
 
 		float operator[](int p_Index) const;
 		

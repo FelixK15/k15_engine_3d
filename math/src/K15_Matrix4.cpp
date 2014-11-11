@@ -133,6 +133,39 @@ namespace K15_Engine { namespace Math {
 		return true;
 	}
 	/*********************************************************************************/
+	Vector3 Matrix4::getXAxis() const
+	{
+		Vector3 xAxis;
+
+		xAxis.x = _1_1;
+		xAxis.y = _2_1;
+		xAxis.z = _3_1;
+
+		return xAxis;
+	}
+	/*********************************************************************************/
+	Vector3 Matrix4::getYAxis() const
+	{
+		Vector3 yAxis;
+
+		yAxis.x = _1_2;
+		yAxis.y = _2_2;
+		yAxis.z = _3_2;
+
+		return yAxis;
+	}
+	/*********************************************************************************/
+	Vector3 Matrix4::getZAxis() const
+	{
+		Vector3 zAxis;
+
+		zAxis.x = _1_3;
+		zAxis.y = _2_3;
+		zAxis.z = _3_3;
+
+		return zAxis;
+	}
+	/*********************************************************************************/
 	Matrix4 Matrix4::operator*(const Matrix4& p_Matrix) const
 	{
 		Matrix4 matrix = *this;
@@ -275,6 +308,22 @@ namespace K15_Engine { namespace Math {
 		if(p_Index > 15)  p_Index = 15;
 
 		return m_MatrixArray[p_Index];
+	}
+	/*********************************************************************************/
+	Matrix4 Matrix4::Inverse(const Matrix4& p_Matrix)
+	{
+		Matrix4 invMatrix = p_Matrix;
+		invMatrix.inverse();
+
+		return invMatrix;
+	}
+	/*********************************************************************************/
+	Matrix4 Matrix4::Transpose(const Matrix4& p_Matrix)
+	{
+		Matrix4 transMatrix = p_Matrix;
+		transMatrix.transpose();
+
+		return transMatrix;
 	}
 	/*********************************************************************************/
 }}//end of K15_Engine::Math namespace

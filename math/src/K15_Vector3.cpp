@@ -26,6 +26,9 @@
 #include "K15_MathUtil.h"
 #include "K15_Quaternion.h"
 
+#include "glm/vec3.hpp"
+#include "glm/detail/func_geometric.hpp"
+
 namespace K15_Engine { namespace Math { 
 	/*********************************************************************************/
 	const Vector3 Vector3::Up = Vector3(0.f,1.f,0.f);
@@ -116,10 +119,18 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	Vector3 Vector3::cross(const Vector3& p_Vector) const
 	{
-		float tmpx = y * p_Vector.z - z * p_Vector.y;
-		float tmpy = z * p_Vector.x - x * p_Vector.z;
-		float tmpz = x * p_Vector.y - y * p_Vector.x;
-		return Vector3(tmpx, tmpy, tmpz);
+		Vector3 vector;
+		glm::vec3 v1;
+		glm::vec3 v2;
+
+		memcpy(&v1, this, sizeof(Vector3));
+		memcpy(&v2, &p_Vector, sizeof(Vector3));
+
+		glm::vec3 v3 = glm::cross(v1, v2);
+
+		memcpy(&vector, &v3, sizeof(Vector3));
+
+		return vector;
 	}
 	/*********************************************************************************/
 	const Vector3& Vector3::operator=(const Vector3& p_Vector)
