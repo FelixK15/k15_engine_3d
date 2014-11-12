@@ -35,12 +35,9 @@
 #include "K15_VertexData.h"
 #include "K15_IndexData.h"
 
-#include "tiny_obj_loader.h"
-
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	K15_IMPLEMENT_RTTI_BASE(Core,ResourceImporterObj,ResourceImporterBase);
-	typedef std::vector<tinyobj::shape_t> ShapeArray;
 	typedef DynamicArray(Vector3) PositionArray;
 	typedef PositionArray NormalArray;
 	typedef DynamicArray(int) IndexArray;

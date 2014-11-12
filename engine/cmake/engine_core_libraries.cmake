@@ -6,7 +6,6 @@ find_library(DETOUR_LIB NAMES detour libdetour)
 find_library(JSONCPP_LIB NAMES jsoncpp libjsoncpp)
 find_library(TIFF_LIB NAMES libtiff)
 find_library(MINIZIP_LIB NAMES minizip libminizip)
-find_library(OBJLOADER_LIB NAMES tinyobjloader libtinyonjloader)
 find_library(ZLIB_LIB NAMES zlib libzlib)
 find_library(OIS_LIB NAMES ois libois)
 
@@ -40,12 +39,6 @@ else()
 	message(STATUS "Successfully found library 'minizip' (${MINIZIP_LIB}).")
 endif()
 
-if("${OBJLOADER_LIB}" STREQUAL "OBJLOADER_LIB-NOTFOUND")
-	message(SEND_ERROR "Could not found library 'tinyobjloader' ... Wrong DEPENDENCY_PATH?")
-else()
-	message(STATUS "Successfully found library 'tinyobjloader' (${OBJLOADER_LIB}).")
-endif()
-
 if("${ZLIB_LIB}" STREQUAL "ZLIB_LIB-NOTFOUND")
 	message(SEND_ERROR "Could not found library 'zlib' ... Wrong DEPENDENCY_PATH?")
 else()
@@ -65,7 +58,6 @@ set(ENGINE_LIBS "${ENGINE_LIBS}"
 "${JSONCPP_LIB}"
 "${TIFF_LIB}"
 "${MINIZIP_LIB}"
-"${OBJLOADER_LIB}"
 "${ZLIB_LIB}"
 "${OIS_LIB}"
 "k15math"
