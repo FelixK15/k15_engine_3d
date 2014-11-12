@@ -51,6 +51,10 @@ namespace K15_Engine { namespace Math {
 		Matrix3 inverse() const;
 		Matrix3 transpose() const;
 
+		Vector3 getXAxis() const;
+		Vector3 getYAxis() const;
+		Vector3 getZAxis() const;
+
 		bool isIdentity() const;
 		bool isZero() const;
 		

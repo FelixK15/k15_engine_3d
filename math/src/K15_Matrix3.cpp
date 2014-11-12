@@ -71,19 +71,19 @@ namespace K15_Engine { namespace Math {
 	/*********************************************************************************/
 	float Matrix3::determinant() const
 	{
-    glm::mat3 mat;
-    memcpy(&mat, m_MatrixArray, sizeof(m_MatrixArray));
-    return glm::determinant(mat);
+		glm::mat3 mat;
+		memcpy(&mat, m_MatrixArray, sizeof(m_MatrixArray));
+		return glm::determinant(mat);
 	}
 	/*********************************************************************************/
 	Matrix3 Matrix3::inverse() const
 	{
-    Matrix3 invMat;
-    glm::mat3 mat;
-    memcpy(&mat, m_MatrixArray, sizeof(mat));
+		Matrix3 invMat;
+		glm::mat3 mat;
+		memcpy(&mat, m_MatrixArray, sizeof(mat));
 
-    mat = glm::inverse(mat);
-    memcpy(&invMat, &mat, sizeof(mat));
+		mat = glm::inverse(mat);
+		memcpy(&invMat, &mat, sizeof(mat));
 		
 		return invMat;
 	}
@@ -91,12 +91,45 @@ namespace K15_Engine { namespace Math {
 	Matrix3 Matrix3::transpose() const
 	{
 		Matrix3 transMat;
-    glm::mat3 mat;
-    memcpy(&mat, m_MatrixArray, sizeof(mat));
+		glm::mat3 mat;
+		memcpy(&mat, m_MatrixArray, sizeof(mat));
 
-    mat = glm::transpose(mat);
-    memcpy(&transMat, &mat, sizeof(mat));
+		mat = glm::transpose(mat);
+		memcpy(&transMat, &mat, sizeof(mat));
 		return transMat;
+	}
+	/*********************************************************************************/
+	Vector3 Matrix3::getXAxis() const
+	{
+		Vector3 xAxis;
+
+		xAxis.x = _1_1;
+		xAxis.y = _2_1;
+		xAxis.z = _3_1;
+
+		return xAxis;
+	}
+	/*********************************************************************************/
+	Vector3 Matrix3::getYAxis() const
+	{
+		Vector3 yAxis;
+
+		yAxis.x = _1_2;
+		yAxis.y = _2_2;
+		yAxis.z = _3_2;
+
+		return yAxis;
+	}
+	/*********************************************************************************/
+	Vector3 Matrix3::getZAxis() const
+	{
+		Vector3 zAxis;
+
+		zAxis.x = _1_3;
+		zAxis.y = _2_3;
+		zAxis.z = _3_3;
+
+		return zAxis;
 	}
 	/*********************************************************************************/
 	bool Matrix3::isIdentity() const
@@ -180,10 +213,10 @@ namespace K15_Engine { namespace Math {
 	const Matrix3& Matrix3::operator*=(const Matrix3& p_Matrix)
 	{
 		glm::mat3 mat, mat2;
-    memcpy(&mat, m_MatrixArray, sizeof(mat));
-    memcpy(&mat2, &p_Matrix, sizeof(mat2));
-		
-    mat *= mat2;
+		memcpy(&mat, m_MatrixArray, sizeof(mat));
+		memcpy(&mat2, &p_Matrix, sizeof(mat2));
+
+		mat *= mat2;
 
 		memcpy(m_MatrixArray,&mat,sizeof(mat));
 
@@ -244,11 +277,12 @@ namespace K15_Engine { namespace Math {
 		return !this->operator==(p_Matrix);
 	}
 	/*********************************************************************************/
-  float Matrix3::operator[](int p_Index) const
-  {
-    if(p_Index < 0) p_Index = 0;
-    if(p_Index > 8) p_Index = 8;
+	float Matrix3::operator[](int p_Index) const
+	{
+		if(p_Index < 0) p_Index = 0;
+		if(p_Index > 8) p_Index = 8;
 
-    return m_MatrixArray[p_Index];
-  }
+		return m_MatrixArray[p_Index];
+	}
+	/*********************************************************************************/
 }}//end of K15_Engine::Math namespace
