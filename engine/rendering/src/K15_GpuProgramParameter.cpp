@@ -46,7 +46,7 @@ namespace K15_Engine { namespace Rendering {
 
 		"g_Lights[].type",					//PI_LIGHT_TYPE
 		"g_Lights[].radius",				//PI_LIGHT_RADIUS
-		"g_Lights[].position",				//PI_LIGHT_POSITION
+		"g_Lights[].positionES",			//PI_LIGHT_POSITION
 		"g_Lights[].direction",				//PI_LIGHT_DIRECTION
 		"g_Lights[].diffuse",				//PI_LIGHT_DIFFUSE
 		"g_Lights[].specular",				//PI_LIGHT_SPECULAR

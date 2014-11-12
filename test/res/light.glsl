@@ -4,7 +4,7 @@ const int LT_DIRECTION = 2;
 
 struct Light
 {
-	vec4 position;
+	vec4 positionES;
 	vec4 diffuse;
 	vec4 specular;
 	vec4 direction;
@@ -17,48 +17,18 @@ struct Light
 	int type;
 };
 
-vec4 phongLightCalc(Light light, vec4 normal, vec4 eyeSpacePosition)
+vec4 phongLightCalc(Light p_Light, vec4 p_Normal, vec4 p_PositionES)
 {
-	vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
-	vec4 diffuseColor = vec4(0.0, 0.0, 0.0, 1.0);
-	vec4 specularColor = vec4(0.0, 0.0, 0.0, 1.0);
-	vec4 eyeVec = normalize(vec4(0.0, 0.0, 0.0, 1.0) - eyeSpacePosition);
+	vec4 color = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	vec4 lightDirectionES = p_Light.positionES - p_PositionES;
+	float lightLength = length(lightDirectionES);
 
-	vec4 lightDirection = light.position - eyeSpacePosition;
-	vec4 reflection = normalize(reflect(-lightDirection, normal));
-	float lightDistance = length(lightDirection);
-	float attenuation = 1 - pow((lightDistance/light.radius) , 2);
-	lightDirection.w = 1.0;
+	lightDirectionES = normalize(lightDirectionES);
 
-	lightDirection = normalize(lightDirection);
+	float lambert = max(dot(p_Normal, lightDirectionES), 0.0f);
 
-	float lightIntensity = max(0.0, dot(lightDirection, normal));
-	float specularIntensity = max(0.0, dot(reflection, eyeVec));
+	color = lambert * p_Light.diffuse;
+	color.w = 1.0f;
 
-	if(specularIntensity > 0.0)
-	{
-		specularIntensity = pow(specularIntensity, 25.0);
-		specularColor = specularIntensity * light.specular;
-	}
-	
-	diffuseColor = lightIntensity * light.diffuse;
-	color = attenuation * (diffuseColor + specularColor);
-
-	if(light.type == LT_SPOT)
-	{
-		float spot = max(0.0, dot(-lightDirection, light.direction));
-		float angle = acos(spot);
-		if(angle > light.coneAngle)
-		{
-			spot = 0.0;
-		}
-		else
-		{
-			spot = 1.0;
-		}
-
-		color = spot * color;
-	}
-
-	return color;
+	return vec4(lambert, lambert, lambert, 1.0f);
 }

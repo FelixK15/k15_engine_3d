@@ -132,7 +132,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void BlockAllocator::dealloc(void* p_Pointer,size_t p_Size)
 	{
-		dealloc_R(m_First,p_Pointer,p_Size);
+		dealloc_R(m_Current, p_Pointer, p_Size);
 	}
 	/*********************************************************************************/
 	void BlockAllocator::defragment_R(MemoryBlock* p_Block, size_t p_Size)

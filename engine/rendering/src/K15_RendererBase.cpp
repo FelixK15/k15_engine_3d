@@ -101,6 +101,7 @@ namespace K15_Engine { namespace Rendering {
 		m_Initialized(false),
 		m_RenderTarget(0),
 		m_VertexDeclaration(0),
+		m_LastError(),
 		m_Material(0),
 		m_GpuBuffers(),
 		m_GpuPrograms(),
@@ -794,21 +795,20 @@ namespace K15_Engine { namespace Rendering {
 									StringUtil::format("Trying to set normal matrix in shader \"%s\", but there's no active camera to get it from.",
 									program->getName().c_str()));
 
-								Matrix4 modelMat;
-								Matrix4 viewMat = p_Camera->getViewMatrix();
+								Matrix4 modelViewMatrix = p_Camera->getViewMatrix();
 
 								GameObject* gameObject = 0;
 								if((gameObject = p_Rop->gameobject) != 0)
 								{
-									modelMat = gameObject->getTransformation();	
+									modelViewMatrix *= gameObject->getTransformation();	
 								}
 
-								Matrix4 modelViewMat = viewMat * modelMat;
-								
-								modelViewMat = modelViewMat.transpose();
-								modelViewMat = modelViewMat.inverse();
+								Matrix4 normalMatrix = modelViewMatrix;
 
-								param.setData((void*)&modelViewMat);
+								normalMatrix.inverse();
+								normalMatrix.transpose();
+
+								param.setData((void*)&normalMatrix);
 							}
 							else if(param.getIdentifier() == GpuProgramParameter::PI_MODEL_MATRIX && p_Rop)
 							{

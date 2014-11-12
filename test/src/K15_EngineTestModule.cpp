@@ -102,7 +102,7 @@ namespace K15_Engine { namespace Test {
 	/*********************************************************************************/
 	void TestGameState::update(const GameTime& p_GameTime)
 	{
-		m_Bunny->yaw(0.01f);
+		//m_Bunny->yaw(0.01f);
 		m_Camera->update(p_GameTime);
 		m_Bunny->update(p_GameTime);
 
@@ -126,6 +126,7 @@ namespace K15_Engine { namespace Test {
 
 		g_DebugRenderer->drawCross(m_Light1->getPosition(), 1.0f, m_Light1->getLightComponent()->getDiffuseColor());
 		g_DebugRenderer->drawNormals(m_Bunny, 0.5f, ColorRGBA::Green);
+		g_DebugRenderer->drawAxis(m_Bunny, 1.5f);
 	}
 	/*********************************************************************************/
 	void TestGameState::_addLights()

@@ -280,31 +280,6 @@ namespace K15_Engine { namespace Rendering {
 		
 	}
 	/*********************************************************************************/
-	void DebugRenderer::_writeVertex(const Vector3& p_Position, const ColorRGBA& p_Color)
-	{
-		Vector4 colorVec;
-		p_Color.toColorVector(colorVec);
-		m_VertexBuffer->writeData(sizeof(Vector3), (byte*)&p_Position, m_BufferOffset);
-		m_BufferOffset += sizeof(Vector3);
-		m_VertexBuffer->writeData(sizeof(Vector4), (byte*)&colorVec, m_BufferOffset);
-		m_BufferOffset += sizeof(Vector4);
-		++m_VertexCounter;
-	}
-	/*********************************************************************************/
-	void DebugRenderer::clearRenderQueue()
-	{
-		for(uint32 i = 0; i < m_RenderQueue->size(); ++i)
-		{
-			RenderOperation* rop = m_RenderQueue->getRenderOperation(i);
-			K15_DELETE rop->vertexData;
-			K15_DELETE rop->indexData;
-		}
-
-		m_RenderQueue->clear();
-		m_BufferOffset = 0;
-		m_VertexCounter = 0;
-	}
-	/*********************************************************************************/
 	void DebugRenderer::drawNormals(GameObject* p_GameObject, float p_Length, const ColorRGBA& p_Color)
 	{
 		if(p_GameObject && p_GameObject->getModelComponent())
@@ -379,12 +354,37 @@ namespace K15_Engine { namespace Rendering {
 			Vector3 yAxis = transformation.getYAxis() * p_Length;
 			Vector3 zAxis = transformation.getZAxis() * p_Length;
 
-			position = transformation * position;
+			//position = transformation * position;
 
 			drawArrow(position, position + xAxis, ColorRGBA::Red);
 			drawArrow(position, position + yAxis, ColorRGBA::Green);
 			drawArrow(position, position + zAxis, ColorRGBA::Blue);
 		}
+	}
+	/*********************************************************************************/
+	void DebugRenderer::_writeVertex(const Vector3& p_Position, const ColorRGBA& p_Color)
+	{
+		Vector4 colorVec;
+		p_Color.toColorVector(colorVec);
+		m_VertexBuffer->writeData(sizeof(Vector3), (byte*)&p_Position, m_BufferOffset);
+		m_BufferOffset += sizeof(Vector3);
+		m_VertexBuffer->writeData(sizeof(Vector4), (byte*)&colorVec, m_BufferOffset);
+		m_BufferOffset += sizeof(Vector4);
+		++m_VertexCounter;
+	}
+	/*********************************************************************************/
+	void DebugRenderer::clearRenderQueue()
+	{
+		for(uint32 i = 0; i < m_RenderQueue->size(); ++i)
+		{
+			RenderOperation* rop = m_RenderQueue->getRenderOperation(i);
+			K15_DELETE rop->vertexData;
+			K15_DELETE rop->indexData;
+		}
+
+		m_RenderQueue->clear();
+		m_BufferOffset = 0;
+		m_VertexCounter = 0;
 	}
 	/*********************************************************************************/
 	void DebugRenderer::_createDebugMaterial()
