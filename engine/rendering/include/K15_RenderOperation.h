@@ -43,6 +43,17 @@ namespace K15_Engine { namespace Rendering {
 			T_COUNT
 		}; //Topology
 		/*********************************************************************************/
+		RenderOperation()
+			: gameobject(0),
+			indexData(0),
+			vertexData(0),
+			material(0),
+			subMesh(0),
+			alphaState(0),
+			topology(T_TRIANGLE)
+		{
+			
+		}
 
 		GameObject* gameobject;
 		IndexData* indexData;

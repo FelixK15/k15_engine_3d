@@ -177,10 +177,7 @@ namespace K15_Engine { namespace Core {
 				PhysicsTask* m_PhysicsTask;
 				EventTask* m_EventTask;
 				
-				
-#			if defined K15_DEBUG
 				MemoryProfilingTask* m_MemoryProfilingTask;
-#			endif
 	}; //end of Application class definition
 #	include "K15_Application.inl"
 }} //end of K15_Engine::Core namespace

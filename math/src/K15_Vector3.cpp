@@ -38,6 +38,7 @@ namespace K15_Engine { namespace Math {
 	const Vector3 Vector3::X_Axis = Vector3::Right;
 	const Vector3 Vector3::Y_Axis = Vector3::Up;
 	const Vector3 Vector3::Z_Axis = Vector3::Forward;
+	const Vector3 Vector3::One = Vector3(1.0f, 1.0f, 1.0f);
 	/*********************************************************************************/
 	
 	/*********************************************************************************/

@@ -163,7 +163,9 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	void DebugRenderer::drawArrow( const Vector3& p_Start, const Vector3& p_End, const ColorRGBA& p_Color )
 	{
-		Vector3 points[10];
+		static int const NUM_VERTICES = 10;
+
+		Vector3 points[NUM_VERTICES];
 		Vector3 delta = p_Start - p_End;
 		float deltaLength = delta.length();
 		float length = 0.5f;
@@ -184,7 +186,7 @@ namespace K15_Engine { namespace Rendering {
 		Matrix4 rotation = MatrixUtil::rotate(Vector3::Right, rotX);
 		rotation *= MatrixUtil::rotate(Vector3::Up, rotY);
 
-		for(int i = 0; i < 10; ++i)
+		for(int i = 0; i < NUM_VERTICES; ++i)
 		{
 			points[i] = rotation * points[i];
 			_writeVertex(points[i], p_Color);
@@ -192,7 +194,7 @@ namespace K15_Engine { namespace Rendering {
 
 		RenderOperation* rop = K15_NEW RenderOperation();
 		rop->topology = RenderOperation::T_LINE;
-		rop->vertexData = K15_NEW VertexData(m_VertexDeclaration, m_VertexBuffer, bufferPos, 10);
+		rop->vertexData = K15_NEW VertexData(m_VertexDeclaration, m_VertexBuffer, bufferPos, NUM_VERTICES);
 		rop->material = m_DebugMaterial;
 		m_RenderQueue->addRenderOperation(rop);
 	}
@@ -350,11 +352,9 @@ namespace K15_Engine { namespace Rendering {
 		{
 			const Matrix4& transformation = nodeComponent->getTransformation();
 			Vector3 position = p_GameObject->getPosition();
-			Vector3 xAxis = transformation.getXAxis() * p_Length;
-			Vector3 yAxis = transformation.getYAxis() * p_Length;
-			Vector3 zAxis = transformation.getZAxis() * p_Length;
-
-			//position = transformation * position;
+			Vector3 xAxis(transformation.getXAxis() * p_Length);
+			Vector3 yAxis(transformation.getYAxis() * p_Length);
+			Vector3 zAxis(transformation.getZAxis() * p_Length);
 
 			drawArrow(position, position + xAxis, ColorRGBA::Red);
 			drawArrow(position, position + yAxis, ColorRGBA::Green);

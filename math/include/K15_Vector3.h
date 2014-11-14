@@ -38,6 +38,7 @@ namespace K15_Engine { namespace Math {
 		static const Vector3 Y_Axis;
 		static const Vector3 Z_Axis;
 		static const Vector3 Zero;
+		static const Vector3 One;
 		/*********************************************************************************/
 	public:
 		Vector3();

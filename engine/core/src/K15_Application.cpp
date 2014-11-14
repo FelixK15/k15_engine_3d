@@ -273,11 +273,9 @@ namespace K15_Engine { namespace Core {
 		m_PhysicsTask = K15_NEW PhysicsTask();
 		m_TaskManager->addTask(m_PhysicsTask);
 
-#		if defined K15_DEBUG
 		K15_LOG_NORMAL("Creating and adding memoryprofiler task...");
 		m_MemoryProfilingTask = K15_NEW MemoryProfilingTask();
 		m_TaskManager->addTask(m_MemoryProfilingTask);
-#		endif
 
 		//load input file
 		g_InputManager->parseInputConfig();
@@ -422,7 +420,7 @@ namespace K15_Engine { namespace Core {
 		++FPSFrameCounter;
 		++m_FrameCounter;
 
-	#if defined K15_DEBUG
+	//#if defined K15_DEBUG
 		//save statistic for this frame
 		static uint32 FrameStatisticIndex = 0;
 		FrameStatisticIndex = m_FrameCounter % (FrameStatisticCount - 1);
@@ -438,7 +436,7 @@ namespace K15_Engine { namespace Core {
 		{
 			  g_ProfileManager->eraseProfilingForFrame((m_FrameCounter - 1) - FrameStatisticCount);
 		}
-	#endif //K15_DEBUG
+	//#endif //K15_DEBUG
 	}
 	/*********************************************************************************/
 	void Application::onPostTick()

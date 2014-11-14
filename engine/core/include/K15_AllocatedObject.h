@@ -36,9 +36,7 @@ namespace K15_Engine { namespace Core {
 		{
 		  static uint32 GeneralAllocatorSize;
 		  static uint32 ModuleAllocatorSize;
-	#if defined K15_DEBUG
 		  static uint32 DebugAllocatorSize;
-	#endif //K15_DEBUG
 		  static uint32 ResourceAllocatorSize;
 		  static uint32 RenderAllocatorSize;
 		  static uint32 ProfilingAllocatorSize;
@@ -60,11 +58,9 @@ namespace K15_Engine { namespace Core {
 			AC_CORE = 0,
 			AC_GENERAL,
 			AC_MODULE,
-			#if defined K15_DEBUG
-				AC_DEBUG,
-				AC_PROFILING,
-				AC_PROFILING_NODE_POOL,
-			#endif //K15_DEBUG
+			AC_DEBUG,
+			AC_PROFILING,
+			AC_PROFILING_NODE_POOL,
 			AC_RENDERING,
 			AC_GAMEVENTS,
 			AC_THREADING,
@@ -128,13 +124,9 @@ namespace K15_Engine { namespace Core {
 	typedef AllocatedObject<BaseAllocatedObject::AC_GENERAL> GeneralAllocatedObject;
 	typedef AllocatedObject<BaseAllocatedObject::AC_GENERAL> MemoryAllocatedObject;
 	typedef AllocatedObject<BaseAllocatedObject::AC_MODULE> ModuleAllocatedObject;
-	#if defined K15_DEBUG
-		typedef AllocatedObject<BaseAllocatedObject::AC_DEBUG> DebugAllocatedObject;
-	#endif //K15_DEBUIG
+	typedef AllocatedObject<BaseAllocatedObject::AC_DEBUG> DebugAllocatedObject;
 	typedef AllocatedObject<BaseAllocatedObject::AC_RENDERING> RenderingAllocatedObject;
-	#if defined K15_DEBUG
-		typedef AllocatedObject<BaseAllocatedObject::AC_PROFILING> ProfilingAllocatedObject;
-	#endif //K15_DEBUG
+	typedef AllocatedObject<BaseAllocatedObject::AC_PROFILING> ProfilingAllocatedObject;
 	typedef AllocatedObject<BaseAllocatedObject::AC_GAMEVENTS> GameEventAllocatedObject;
 	typedef AllocatedObject<BaseAllocatedObject::AC_GENERAL> InputManagerAllocatedObject;
 	typedef AllocatedObject<BaseAllocatedObject::AC_GENERAL> DynamicLibraryAllocatedObject;

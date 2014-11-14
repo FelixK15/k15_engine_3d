@@ -102,7 +102,7 @@ void* AllocatedObject<Category>::operator new(size_t p_Size)
 template<Enum Category>
 void AllocatedObject<Category>::operator delete(void* p_Pointer,size_t p_Size)
 {
-	Allocators[Category]->deallocate(p_Pointer);
+	Allocators[Category]->deallocate(p_Pointer, p_Size);
 }
 /*********************************************************************************/
 template<Enum Category>
@@ -114,7 +114,7 @@ void* AllocatedObject<Category>::operator new[](size_t p_Size)
 template<Enum Category>
 void AllocatedObject<Category>::operator delete[](void* p_Pointer,size_t p_Size)
 {
-	Allocators[Category]->deallocate(p_Pointer);
+	Allocators[Category]->deallocate(p_Pointer, p_Size);
 }
 /*********************************************************************************/
 

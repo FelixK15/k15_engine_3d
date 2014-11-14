@@ -120,6 +120,12 @@ namespace K15_Engine { namespace Rendering {
 			m_GpuPrograms[i] = 0;
 		}
 
+		for(int i = 0;i < Texture::TS_COUNT; ++i)
+		{
+			m_BoundSamplers[i] = 0;
+			m_BoundTextures[i] = 0;
+		}
+
 		g_EventManager->addHandler(RenderWindow::EventResolutionChanged,K15_EventHandler(RendererBase,onEventResolutionChanged,this));
 		g_EventManager->addHandler(RenderWindow::EventInitialized,K15_EventHandler(RendererBase,onEventRenderWindowInitialized,this));
 	}

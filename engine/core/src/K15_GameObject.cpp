@@ -35,7 +35,9 @@ namespace K15_Engine { namespace Core {
 		: Object(),
 		m_Components(),
 		m_NodeComponent(K15_NEW NodeComponent(this)),
-		m_CameraComponent(0)
+		m_CameraComponent(0),
+		m_ModelComponent(0),
+		m_LightComponent(0)
 	{
     
 	}
@@ -44,19 +46,21 @@ namespace K15_Engine { namespace Core {
 		: Object(p_Name),
 		m_Components(),
 		m_NodeComponent(K15_NEW NodeComponent(this)),
-		m_CameraComponent(0)
+		m_CameraComponent(0),
+		m_ModelComponent(0),
+		m_LightComponent(0)
 	{
 		
 	}
 	/*********************************************************************************/
 	GameObject::~GameObject()
 	{
-	  for(uint32 i = 0; i < m_Components.size(); ++i)
-	  {
-		  K15_DELETE m_Components[i];
-	  }
+		for(uint32 i = 0; i < m_Components.size(); ++i)
+		{
+			K15_DELETE m_Components[i];
+		}
 
-	  m_Components.clear();
+		m_Components.clear();
 	}
 	/*********************************************************************************/
 	AABB GameObject::getAABB()

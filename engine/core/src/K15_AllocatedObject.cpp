@@ -34,11 +34,9 @@ namespace K15_Engine { namespace Core {
   /*********************************************************************************/
   uint32 BaseAllocatedObject::CoreAllocatorSizes::GeneralAllocatorSize = size_megabyte(5);
   uint32 BaseAllocatedObject::CoreAllocatorSizes::ModuleAllocatorSize = size_megabyte(1);
-#if defined K15_DEBUG
   uint32 BaseAllocatedObject::CoreAllocatorSizes::DebugAllocatorSize = size_megabyte(10);
   uint32 BaseAllocatedObject::CoreAllocatorSizes::ProfilingAllocatorSize = size_megabyte(9);
   uint32 BaseAllocatedObject::CoreAllocatorSizes::ProfilingNodePoolCount = 128;
-#endif //K15_DEBUG
   uint32 BaseAllocatedObject::CoreAllocatorSizes::RenderAllocatorSize = size_megabyte(15);
   uint32 BaseAllocatedObject::CoreAllocatorSizes::GameEventAllocatorSize = size_megabyte(1);
   uint32 BaseAllocatedObject::CoreAllocatorSizes::ThreadingAllocatorSize = size_megabyte(1);
@@ -51,11 +49,7 @@ namespace K15_Engine { namespace Core {
 
   /*********************************************************************************/
   BaseAllocatedObject::AllocatorArray BaseAllocatedObject::Allocators;
-#if defined K15_DEBUG
   uint32 BaseAllocatedObject::MemorySize = size_megabyte(45); //Default - Debug is 150MB
-#else
-  uint32 BaseAllocatedObject::MemorySize = size_megabyte(30); //Default is 100MB
-#endif //K15_DEBUG
   uint32 BaseAllocatedObject::AllocatorCount = 0;
   /*********************************************************************************/
 
@@ -69,13 +63,9 @@ namespace K15_Engine { namespace Core {
 
 		addAllocator<BlockAllocator>("GeneralAllocator",CoreAllocatorSizes::GeneralAllocatorSize);
 		addAllocator<BlockAllocator>("ModuleAllocator",CoreAllocatorSizes::ModuleAllocatorSize);
-
-	#if defined K15_DEBUG
 		addAllocator<BlockAllocator>("DebugAllocator",CoreAllocatorSizes::DebugAllocatorSize);
 		addAllocator<BlockAllocator>("ProfilingAllocator",CoreAllocatorSizes::ProfilingAllocatorSize,Allocators[AC_DEBUG]);
 		addAllocator<PoolAllocator<ProfilingNode> >("ProfilingNodePool",CoreAllocatorSizes::ProfilingNodePoolCount * sizeof(ProfilingNode),Allocators[AC_PROFILING]);
-	#endif //K15_DEBUG
-
 		addAllocator<BlockAllocator>("RenderAllocator",CoreAllocatorSizes::RenderAllocatorSize);
 		addAllocator<BlockAllocator>("GameEventAllocator",CoreAllocatorSizes::GameEventAllocatorSize);
 		addAllocator<BlockAllocator>("TreadingAllocator",CoreAllocatorSizes::ThreadingAllocatorSize);
@@ -96,13 +86,9 @@ namespace K15_Engine { namespace Core {
 		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_THREADING],BlockAllocator);
 		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_GAMEVENTS],BlockAllocator);
 		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_RENDERING],BlockAllocator);
-
-		#if defined K15_DEBUG
-			K15_DELETE_T(Allocators[AC_PROFILING],Allocators[AC_PROFILING_NODE_POOL],PoolAllocator<ProfilingNode>);
-			K15_DELETE_T(Allocators[AC_DEBUG],Allocators[AC_PROFILING],BlockAllocator);
-			K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_DEBUG],BlockAllocator);
-		#endif
-
+		K15_DELETE_T(Allocators[AC_PROFILING],Allocators[AC_PROFILING_NODE_POOL],PoolAllocator<ProfilingNode>);
+		K15_DELETE_T(Allocators[AC_DEBUG],Allocators[AC_PROFILING],BlockAllocator);
+		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_DEBUG],BlockAllocator);
 		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_MODULE],BlockAllocator);
 		K15_DELETE_T(Allocators[AC_CORE],Allocators[AC_GENERAL],BlockAllocator);
 

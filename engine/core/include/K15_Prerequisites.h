@@ -25,32 +25,34 @@
 #define _K15Engine_Prerequisites_h_
 
 #ifdef __ANDROID__
-#	define K15_OS_ANDROID
+	#define K15_OS_ANDROID
 #elif defined _WIN32
-#	define K15_OS_WINDOWS
+	#define K15_OS_WINDOWS
 #elif defined __linux__
-#	define K15_OS_LINUX
+	#define K15_OS_LINUX
 #elif defined __APPLE__
-#	define K15_OS_APPLE
+	#define K15_OS_APPLE
 #endif //_WIN32
 
 #if defined (K15_OS_WINDOWS)
     #ifdef _WIN64
-	#	define K15_64_BIT
+		#define K15_64_BIT
 	#endif //_WIN64
 #else
-#	include <limits.h>
-#	ifdef __LP64__
-#		define K15_64_BIT
-#	endif //__LP64__
+	#include <limits.h>
+	#ifdef __LP64__
+		#define K15_64_BIT
+	#endif //__LP64__
 #endif //K15_OS_WINDOWS
 
 #if defined (K15_64_BIT)
-#	define K15_PTR_SIZE 64
-#	define K15_PTR_HEX_MASK 0xFFFFFFFFFFFFFFFF
+	#pragma message("Compiling for 32 bit system.")
+	#define K15_PTR_SIZE 64
+	#define K15_PTR_HEX_MASK 0xFFFFFFFFFFFFFFFF
 #else
-#	define K15_PTR_SIZE 32
-#	define K15_PTR_HEX_MASK 0xFFFFFFFF
+	#pragma message("Compiling for 32 bit system.")
+	#define K15_PTR_SIZE 32
+	#define K15_PTR_HEX_MASK 0xFFFFFFFF
 #endif //K15_64_BIT
 
 //edit export defines
@@ -363,12 +365,14 @@ namespace K15_Engine
 
 //Threading
 #if !defined K15_CPP11_SUPPORT
+	#pragma message "The compiler does NOT support C++11 features..."
 	#include "..\..\dependencies\TinyThread\include\tinythread.h"
 	#define g_CurrentThread tthread::this_thread
     typedef tthread::thread Thread;
     typedef tthread::mutex Mutex;
     typedef tthread::lock_guard<Mutex> LockGuard;
 #else
+	#pragma message("The compiler does support C++11 features...")
 	#include <thread>		
 	#include <mutex>
 	#include <chrono>
@@ -423,8 +427,9 @@ typedef std::ifstream		ReadFileStream;
 typedef std::stringstream	StringStream;
 
 #if defined K15_OS_WINDOWS
+	#pragma message("Compiling for windows")
 	#define _WINSOCKAPI_    // stops windows.h including winsock.h
-  #define WIN32_LEAN_AND_MEAN
+	#define WIN32_LEAN_AND_MEAN
 	#include "windows.h"
 	#include "windowsx.h"
 	#include "winnt.h"
@@ -463,6 +468,7 @@ typedef std::stringstream	StringStream;
 #endif //K15_OS_WINDOWS
   
 #if defined K15_OS_LINUX
+	#pragma message("Compiling for linux")
     #pragma GCC diagnostic ignored "-fpermissive"
     #include <X11/Xlib.h>
     #include <X11/Xutil.h>
@@ -478,24 +484,25 @@ typedef std::stringstream	StringStream;
 
 
 #if defined K15_OS_ANDROID
-  struct android_app;
-  struct ANativeWindow;
-  struct ASensorEventQueue;
-  struct ASensor;
-  struct ASensorManager;
-  #include "android_native_app_glue.h"
-  #include <android\sensor.h>
-  #include <android\input.h>
-  #include <android\log.h>
-  #include <android\asset_manager.h>
-  #include <android\asset_manager_jni.h>
-  #include <dlfcn.h>
-  #include <jni.h>
-  #include <unistd.h>
+	#pragma message("Compiling for android")
+	struct android_app;
+	struct ANativeWindow;
+	struct ASensorEventQueue;
+	struct ASensor;
+	struct ASensorManager;
+	#include "android_native_app_glue.h"
+	#include <android\sensor.h>
+	#include <android\input.h>
+	#include <android\log.h>
+	#include <android\asset_manager.h>
+	#include <android\asset_manager_jni.h>
+	#include <dlfcn.h>
+	#include <jni.h>
+	#include <unistd.h>
 
-  typedef K15_Engine::Core::DynamicLibrary_Linux DynamicLibraryType;
-  typedef K15_Engine::Core::OSLayer_Android OSLayer;
-  typedef K15_Engine::Core::RenderWindow_Android RenderWindowType;
+	typedef K15_Engine::Core::DynamicLibrary_Linux DynamicLibraryType;
+	typedef K15_Engine::Core::OSLayer_Android OSLayer;
+	typedef K15_Engine::Core::RenderWindow_Android RenderWindowType;
 #endif //K15_OS_ANDROID
 
 
@@ -522,24 +529,26 @@ typedef std::stringstream	StringStream;
 #endif //K15_OS_WINDOWS
  
 #if defined K15_DEBUG
-#	define K15_NEW	  new(__FILE__,__LINE__,__FUNCTION__) 
-#	define K15_DELETE delete
+	#pragma message("Using debug version")
+	#define K15_NEW	  new(__FILE__,__LINE__,__FUNCTION__) 
+	#define K15_DELETE delete
 
-#	define K15_NEW_T2(objType) new(Allocators[Category]->allocateDebug(sizeof(objType),__FILE__,__LINE__,false,__FUNCTION__))
-#	define K15_NEW_T(allocator,objType) new(allocator->allocateDebug(sizeof(objType),__FILE__,__LINE__,false,__FUNCTION__))
-#	define K15_NEW_SIZE(allocator,size) new(allocator->allocateDebug(size,__FILE__,__LINE__,false,__FUNCTION__))
+	#define K15_NEW_T2(objType) new(Allocators[Category]->allocateDebug(sizeof(objType),__FILE__,__LINE__,false,__FUNCTION__))
+	#define K15_NEW_T(allocator,objType) new(allocator->allocateDebug(sizeof(objType),__FILE__,__LINE__,false,__FUNCTION__))
+	#define K15_NEW_SIZE(allocator,size) new(allocator->allocateDebug(size,__FILE__,__LINE__,false,__FUNCTION__))
 
-#	define K15_DELETE_SIZE(allocator,ptr,size) if(ptr){allocator->deallocateDebug((void*)ptr,size,__FILE__,__LINE__,false,__FUNCTION__);}
-#	define K15_DELETE_T(allocator,ptr,type) if(ptr){((type*)ptr)->~type();K15_DELETE_SIZE(allocator,ptr,sizeof(type));}
+	#define K15_DELETE_SIZE(allocator,ptr,size) if(ptr){allocator->deallocateDebug((void*)ptr,size,__FILE__,__LINE__,false,__FUNCTION__);}
+	#define K15_DELETE_T(allocator,ptr,type) if(ptr){((type*)ptr)->~type();K15_DELETE_SIZE(allocator,ptr,sizeof(type));}
 #else
-#	define K15_NEW    new
-#	define K15_DELETE delete
+	#pragma message("Using release version")
+	#define K15_NEW    new
+	#define K15_DELETE delete
 
-#	define K15_NEW_SIZE(allocator,size) new(allocator->allocate(size))
-#	define K15_NEW_T(allocator,objType) new(allocator->allocate(sizeof(objType)))
-#	define K15_NEW_T2(objType) new(Allocators[Category]->allocate(sizeof(objType)))
+	#define K15_NEW_SIZE(allocator,size) new(allocator->allocate(size))
+	#define K15_NEW_T(allocator,objType) new(allocator->allocate(sizeof(objType)))
+	#define K15_NEW_T2(objType) new(Allocators[Category]->allocate(sizeof(objType)))
 
-#	define K15_DELETE_SIZE(allocator,ptr,size) if(ptr){allocator->deallocate((void*)ptr,size);}
+	#define K15_DELETE_SIZE(allocator,ptr,size) if(ptr){allocator->deallocate((void*)ptr,size);}
 #endif //K15_DEBUG
 
 
@@ -688,5 +697,30 @@ typedef K15_Engine::Core::HashedString ResourceName;
 		#define INLINE inline
 	#endif //K15_FORCE_INLINE
 #endif //K15_NO_INLINE
+
+#ifdef K15_USE_MEMORY_MANAGEMENT
+	#pragma message("K15 Engine Memory Management is used.")
+#else
+	#pragma message("K15 Engine Memory Management is NOT used.")
+
+	#undef K15_NEW
+	#undef K15_DELETE
+	#undef K15_NEW_T2
+	#undef K15_NEW_T
+	#undef K15_NEW_SIZE
+	#undef K15_DELETE_SIZE
+	#undef K15_DELETE_T
+
+	#define K15_NEW		::new
+	#define K15_DELETE	::delete
+
+	#define K15_NEW_T2(objType)				::new(malloc(sizeof(objType)))
+	#define K15_NEW_T(allocator,objType)	K15_NEW_T2(objType)
+	#define K15_NEW_SIZE(allocator,size)	::new(malloc(size))
+
+	#define K15_DELETE_SIZE(allocator,ptr,size) ::delete ptr
+	#define K15_DELETE_T(allocator,ptr,type)	::delete ptr
+#endif //K15_USE_MEMORY_MANAGEMENT
+
 
 #endif //_K15Engine_Prerequisites_h_
