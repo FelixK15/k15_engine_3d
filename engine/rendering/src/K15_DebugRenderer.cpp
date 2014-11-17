@@ -355,9 +355,13 @@ namespace K15_Engine { namespace Rendering {
 			Vector3 yAxis(transformation.getYAxis() * p_Length);
 			Vector3 zAxis(transformation.getZAxis() * p_Length);
 
-			drawArrow(position, position + xAxis, ColorRGBA::Red);
-			drawArrow(position, position + yAxis, ColorRGBA::Green);
-			drawArrow(position, position + zAxis, ColorRGBA::Blue);
+			drawLine(position, position + xAxis, ColorRGBA::Red);
+			drawLine(position, position + yAxis, ColorRGBA::Green);
+			drawLine(position, position + zAxis, ColorRGBA::Blue);
+
+			/*drawArrow(position, position + xAxis, ColorRGBA::Red);
+			drawLine(position, position + yAxis, ColorRGBA::Green);
+			drawLine(position, position + zAxis, ColorRGBA::Blue);*/
 		}
 	}
 	/*********************************************************************************/

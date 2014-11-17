@@ -602,15 +602,15 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		}
 		else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX2)
 		{
-		  kglProgramUniformMatrix2fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
+		  kglProgramUniformMatrix2fv(program, p_Parameter.getRegisterIndex(), 1, GL_FALSE, (float*)p_Parameter.getData());
 		}
 		else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX3)
 		{
-		  kglProgramUniformMatrix3fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
+		  kglProgramUniformMatrix3fv(program, p_Parameter.getRegisterIndex(), 1, GL_FALSE, (float*)p_Parameter.getData());
 		}
 		else if(p_Parameter.getType() == GpuProgramParameter::VT_MATRIX4)
 		{
-		  kglProgramUniformMatrix4fv(program, p_Parameter.getRegisterIndex(),1,GL_FALSE,(float*)p_Parameter.getData());
+		  kglProgramUniformMatrix4fv(program, p_Parameter.getRegisterIndex(), 1, GL_FALSE, (float*)p_Parameter.getData());
 		}
 	}
 	/*********************************************************************************/

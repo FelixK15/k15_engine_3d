@@ -79,9 +79,9 @@ namespace K15_Engine { namespace Core {
 // 				m_Position = m_OriginPosition;
 			}
 
-			m_Transformation = MatrixUtil::scale(m_Scale);
+			m_Transformation = MatrixUtil::translate(m_Position);
 			m_Transformation *= m_Orientation.toRotationMatrix();
-			m_Transformation *= MatrixUtil::translate(m_Position);
+			m_Transformation *= MatrixUtil::scale(m_Scale);
 
 			m_NeedUpdate = false;
 		}
