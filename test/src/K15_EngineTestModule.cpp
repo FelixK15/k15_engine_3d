@@ -102,7 +102,7 @@ namespace K15_Engine { namespace Test {
 	/*********************************************************************************/
 	void TestGameState::update(const GameTime& p_GameTime)
 	{
-		//m_Bunny->yaw(0.01f);
+		m_Bunny->yaw(0.01f);
 		m_Camera->update(p_GameTime);
 		m_Bunny->update(p_GameTime);
 
@@ -122,6 +122,11 @@ namespace K15_Engine { namespace Test {
 		else if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_DOWN))
 		{
 			m_Light1->translate(0.0f, -1.0f, 0.0f);
+		}
+
+		if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_ESCAPE))
+		{
+			g_Application->setRunning(false);
 		}
 
 		g_DebugRenderer->drawCross(m_Light1->getPosition(), 1.0f, m_Light1->getLightComponent()->getDiffuseColor());

@@ -25,7 +25,7 @@
 
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
-	K15_IMPLEMENT_RTTI_BASE(Core,ResourceImporterBase,Object);
+	K15_IMPLEMENT_RTTI_BASE(Core, ResourceImporterBase, Object);
 	/*********************************************************************************/
 
 	/*********************************************************************************/

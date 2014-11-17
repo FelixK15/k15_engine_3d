@@ -198,7 +198,7 @@ namespace K15_Engine { namespace Core {
 					}
 
 					K15_LOG_DEBUG("Loading resource \"%s\" using resource loader \"%s\".",
-						p_ResourceName.c_str(),importer->getTypeName().c_str());
+						p_ResourceName.c_str(),importer->getType().getName().c_str());
 
 					//load resource using importer
 					if((resource = importer->load(resourceData,p_ResourceTypeName)) == 0)
@@ -209,7 +209,7 @@ namespace K15_Engine { namespace Core {
 					else
 					{
 						K15_LOG_SUCCESS("Successfully loaded resource \"%s\" using resource loader \"%s\".",
-							p_ResourceName.c_str(),importer->getTypeName().c_str());
+							p_ResourceName.c_str(),importer->getType().getName().c_str());
 
 						m_ResourceDataCache.insert(Pair(ResourceName,ResourceBase*)(p_ResourceName,resource));
 						cachedResource = true;
