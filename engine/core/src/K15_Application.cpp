@@ -591,6 +591,8 @@ namespace K15_Engine { namespace Core {
 		K15_LOG_NORMAL("Destroying TaskMananger...");
 		K15_DELETE m_TaskManager;
 
+		m_RenderTask = 0;
+
 		K15_LOG_NORMAL("Destroying ProfilingManager...");
 		K15_DELETE m_ProfileManager;
 
@@ -603,8 +605,12 @@ namespace K15_Engine { namespace Core {
 		K15_LOG_NORMAL("Destroying LogManager...");
 		K15_DELETE m_LogManager;
 
-		m_FrameAllocator->~StackAllocator();
-		K15_DELETE_SIZE(Allocators[AC_CORE],m_FrameAllocator,sizeof(StackAllocator));
+		#ifdef K15_USE_MEMORY_MANAGEMENT
+			m_FrameAllocator->~StackAllocator();
+			K15_DELETE_SIZE(Allocators[AC_CORE],m_FrameAllocator,sizeof(StackAllocator));
+		#endif
+
+		K15_DELETE m_FrameAllocator;
 
 		K15_DELETE this; //evil
 

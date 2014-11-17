@@ -673,7 +673,12 @@ typedef K15_Engine::Core::HashedString ResourceName;
 #define K15_WEAKPTR(T)	 typedef std::weak_ptr<T>	T##WeakPtr;
 #define K15_UNIQUEPTR(T) typedef std::unique_ptr<T> T##UniquePtr;
 
-#define K15_NON_COPYABLE(T) protected: T(const T&){}; T& operator=(const T&){return *this;};
+#define K15_NON_COPYABLE(X) \
+	protected: \
+	X(const X& rhs){} \
+	X& operator=(const X& rhs){return *this;} \
+	X(X&& rhs){} \
+	X& operator=(X&& rhs){return *this;}
 
 #define K15_EXECUTE_CRITICAL_FUNCTION(obj,func) {obj.lockMutex();obj.func;obj.unlockMutex();}
 #define K15_EXECUTE_CRITICAL_FUNCTION_PTR(obj,func) {obj->lockMutex();obj->func;obj->unlockMutex();}

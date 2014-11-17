@@ -95,7 +95,6 @@ namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
 	DebugRenderer::~DebugRenderer()
 	{
-		K15_DELETE m_IndexBuffer;
 		K15_DELETE m_VertexBuffer;
 		K15_DELETE m_RenderQueue;
 		K15_DELETE m_DebugMaterial;

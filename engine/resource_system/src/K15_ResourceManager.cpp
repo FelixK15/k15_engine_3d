@@ -38,7 +38,7 @@ namespace K15_Engine { namespace Core {
 	{
 		closeOpenResourceFiles();
 		clearResourceCache();
-		clearResources();
+		//clearResources();
 	}
 	/*********************************************************************************/
 	void ResourceManager::update(const GameTime &gtTime)

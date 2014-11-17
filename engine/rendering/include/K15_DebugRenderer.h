@@ -63,7 +63,6 @@ namespace K15_Engine { namespace Rendering {
 		uint32 m_BufferOffset;
 		RenderQueue* m_RenderQueue;
 		VertexBuffer* m_VertexBuffer;
-		IndexBuffer* m_IndexBuffer;
 		VertexDeclaration* m_VertexDeclaration;
 		Material* m_DebugMaterial;
 		uint16 m_VertexCounter;
