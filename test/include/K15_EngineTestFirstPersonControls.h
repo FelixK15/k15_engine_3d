@@ -25,6 +25,8 @@
 
 #include "K15_GameObjectComponentBase.h"
 
+#include "K15_Quaternion.h"
+
 namespace K15_Engine { namespace Test {
 	class FirstPersonControlComponent : public GameObjectComponentBase
 	{
@@ -49,20 +51,16 @@ namespace K15_Engine { namespace Test {
 		bool moveRight(InputEvent* p_Arg);
 		bool moveBackward(InputEvent* p_Arg);
 
-		bool yaw(InputEvent* p_Arg);
-		bool pitch(InputEvent* p_Arg);
+		bool rotateY(InputEvent* p_Arg);
+		bool rotateX(InputEvent* p_Arg);
 		
-		INLINE void setSpeed(float p_Speed);
-		INLINE float getSpeed() const;
+// 		INLINE void setSpeed(float p_Speed);
+// 		INLINE float getSpeed() const;
 
 	private:
-		Vector3 m_Up;
-		Vector3 m_Right;
-		Vector3 m_Forward;
-		Vector3 m_MoveVector;
-		float m_Speed;
-		float m_Yaw;
-		float m_Pitch;
+		Quaternion m_Rotation;
+		float m_RotationY;
+		float m_RotationX;
 		bool m_RotationDirty;
 	}; // end of FirstPersonControls class declaration
 	#include "K15_EngineTestFirstPersonControls.inl"

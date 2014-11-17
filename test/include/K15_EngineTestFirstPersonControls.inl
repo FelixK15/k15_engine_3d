@@ -18,13 +18,13 @@
  */
 
 /*********************************************************************************/
-void FirstPersonControlComponent::setSpeed(float p_Speed)
-{
-	m_Speed = p_Speed;
-}
-/*********************************************************************************/
-float FirstPersonControlComponent::getSpeed() const
-{
-	return m_Speed;
-}
+// void FirstPersonControlComponent::setSpeed(float p_Speed)
+// {
+// 	m_Speed = p_Speed;
+// }
+// /*********************************************************************************/
+// float FirstPersonControlComponent::getSpeed() const
+// {
+// 	return m_Speed;
+// }
 /*********************************************************************************/

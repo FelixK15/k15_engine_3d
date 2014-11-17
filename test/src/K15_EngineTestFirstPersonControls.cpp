@@ -45,21 +45,18 @@ namespace K15_Engine { namespace Test {
 	/*********************************************************************************/
 	FirstPersonControlComponent::FirstPersonControlComponent()
 		: GameObjectComponentBase(_ON(FirstPersonControlComponent)),
-		m_Up(Vector3(0.f, 1.f, 0.f)),
-		m_Right(Vector3(1.f, 0.f ,0.f)),
-		m_Forward(Vector3(0.f, 0.f, -1.f)),
-		m_MoveVector(Vector3::Zero),
-		m_Speed(30.f),
-		m_Yaw(0.f),
-		m_Pitch(0.f)
+		m_RotationDirty(false),
+		m_RotationX(0.0f),
+		m_RotationY(0.0f),
+		m_Rotation()
 	{
 		g_InputManager->addInputBinding(InputMoveLeft, K15_InputHandler(FirstPersonControlComponent, moveLeft, this));
 		g_InputManager->addInputBinding(InputMoveRight,	K15_InputHandler(FirstPersonControlComponent, moveRight, this));
 		g_InputManager->addInputBinding(InputMoveForward, K15_InputHandler(FirstPersonControlComponent, moveForward, this));
 		g_InputManager->addInputBinding(InputMoveBackward, K15_InputHandler(FirstPersonControlComponent, moveBackward, this));
 
-		g_InputManager->addInputBinding(InputLookHorizontal, K15_InputHandler(FirstPersonControlComponent, yaw, this));
-		g_InputManager->addInputBinding(InputLookVertical, K15_InputHandler(FirstPersonControlComponent, pitch, this));
+		g_InputManager->addInputBinding(InputLookHorizontal, K15_InputHandler(FirstPersonControlComponent, rotateY, this));
+		g_InputManager->addInputBinding(InputLookVertical, K15_InputHandler(FirstPersonControlComponent, rotateX, this));
 	}
 	/*********************************************************************************/
 	FirstPersonControlComponent::~FirstPersonControlComponent()
@@ -78,50 +75,50 @@ namespace K15_Engine { namespace Test {
 		NodeComponent* node = getGameObject()->getNodeComponent();
 		if(node && m_RotationDirty)
 		{	
-			node->yaw(m_Yaw);
-			node->pitch(m_Pitch);
-			m_Yaw = m_Pitch = 0.f;
+			m_Rotation = QuaternionUtil::fromAxisAngles(Vector3::Up, m_RotationY) * QuaternionUtil::fromAxisAngles(Vector3::Right, m_RotationX);
+			node->setOrientation(m_Rotation);
+			m_RotationDirty = false;
 		}
 	}
 	/*********************************************************************************/
 	bool FirstPersonControlComponent::moveForward(InputEvent* p_Arg)
 	{
-		getGameObject()->translate(0.f, 0.f, -p_Arg->getValue());
+		getGameObject()->translate(-getGameObject()->getTransformation().getZAxis());
 		m_RotationDirty = true;
 		return true;
 	}
 	/*********************************************************************************/
 	bool FirstPersonControlComponent::moveBackward(InputEvent* p_Arg)
 	{
-		getGameObject()->translate(0.f, 0.f, p_Arg->getValue());
+		getGameObject()->translate(getGameObject()->getTransformation().getZAxis());
 		m_RotationDirty = true;
 		return true;
 	}
 	/*********************************************************************************/
 	bool FirstPersonControlComponent::moveLeft(InputEvent* p_Arg)
 	{
-		getGameObject()->translate(-p_Arg->getValue(), 0.f, 0.f);
+		getGameObject()->translate(-getGameObject()->getTransformation().getXAxis());
 		m_RotationDirty = true;
 		return true;
 	}
 	/*********************************************************************************/
 	bool FirstPersonControlComponent::moveRight(InputEvent* p_Arg)
 	{
-		getGameObject()->translate(p_Arg->getValue(), 0.f, 0.f);
+		getGameObject()->translate(getGameObject()->getTransformation().getXAxis());
 		m_RotationDirty = true;
 		return true;
 	}
 	/*********************************************************************************/
-	bool FirstPersonControlComponent::yaw(InputEvent* p_Arg)
+	bool FirstPersonControlComponent::rotateY(InputEvent* p_Arg)
 	{
-		m_Yaw = p_Arg->getValue();
+		m_RotationY += -p_Arg->getValue();
 		m_RotationDirty = true;
 		return true;
 	}
 	/*********************************************************************************/
-	bool FirstPersonControlComponent::pitch(InputEvent* p_Arg)
+	bool FirstPersonControlComponent::rotateX(InputEvent* p_Arg)
 	{
-		m_Pitch = p_Arg->getValue();
+		m_RotationX += -p_Arg->getValue();
 		m_RotationDirty = true;
 		return true;
 	}
