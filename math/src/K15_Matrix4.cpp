@@ -138,8 +138,8 @@ namespace K15_Engine { namespace Math {
 		Vector3 xAxis;
 
 		xAxis.x = _1_1;
-		xAxis.y = _2_1;
-		xAxis.z = _3_1;
+		xAxis.y = _1_2;
+		xAxis.z = _1_3;
 
 		return xAxis;
 	}
@@ -148,9 +148,9 @@ namespace K15_Engine { namespace Math {
 	{
 		Vector3 yAxis;
 
-		yAxis.x = _1_2;
+		yAxis.x = _2_1;
 		yAxis.y = _2_2;
-		yAxis.z = _3_2;
+		yAxis.z = _2_3;
 
 		return yAxis;
 	}
@@ -159,8 +159,8 @@ namespace K15_Engine { namespace Math {
 	{
 		Vector3 zAxis;
 
-		zAxis.x = _1_3;
-		zAxis.y = _2_3;
+		zAxis.x = _3_1;
+		zAxis.y = _3_2;
 		zAxis.z = _3_3;
 
 		return zAxis;
