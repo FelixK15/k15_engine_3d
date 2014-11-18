@@ -84,7 +84,7 @@ namespace K15_Engine { namespace Core {
 		m_GameRootDir(),
 		m_GameTime(0.0,1.0),
 		m_FrameCounter(0),
-		m_MaxFPS(30),
+		m_MaxFPS(60),
 		m_AvgFrameTime(0.033f),
 		m_FrameAllocator(0),
 		m_GameStateManager(0),
@@ -558,6 +558,12 @@ namespace K15_Engine { namespace Core {
 
 		g_InputManager->shutdown();
 
+		if(m_DebugRenderer)
+		{
+			K15_LOG_NORMAL("Destroying DebugRenderer...");
+			K15_DELETE m_DebugRenderer;
+		}
+
 		if(getRenderer())
 		{
 			getRenderer()->shutdown();
@@ -566,12 +572,6 @@ namespace K15_Engine { namespace Core {
 		RenderWindow::shutdown();
 		OSLayer::shutdown();
 		m_ProfileManager->clear();
-
-		if(m_DebugRenderer)
-		{
-			K15_LOG_NORMAL("Destroying DebugRenderer...");
-			K15_DELETE m_DebugRenderer;
-		}
 
 		K15_LOG_NORMAL("Destroying GameStateManager...");
 		K15_DELETE m_GameStateManager;
