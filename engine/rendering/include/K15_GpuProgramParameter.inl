@@ -68,6 +68,16 @@ uint32 GpuProgramParameter::getRegisterIndex() const
 	return m_RegisterIndex;
 }
 /*********************************************************************************/
+void* GpuProgramParameter::getData() const
+{
+	return m_Data;
+}
+/*********************************************************************************/
+GpuProgram* GpuProgramParameter::getGpuProgram() const
+{
+	return m_Program;
+}
+/*********************************************************************************/
 void GpuProgramParameter::setType(Enum p_VariableType)
 {
 	m_Type = p_VariableType;
@@ -125,11 +135,6 @@ void GpuProgramParameter::setRegisterIndex(uint32 p_Location)
 	m_RegisterIndex = p_Location;
 }
 /*********************************************************************************/
-void* GpuProgramParameter::getData() const
-{
-	return m_Data;
-}
-/*********************************************************************************/
 void GpuProgramParameter::setData(void* p_UserData)
 {
 	m_Data = p_UserData;
@@ -138,10 +143,5 @@ void GpuProgramParameter::setData(void* p_UserData)
 void GpuProgramParameter::setGpuProgram(GpuProgram* p_Program)
 {
 	m_Program = p_Program;
-}
-/*********************************************************************************/
-GpuProgram* GpuProgramParameter::getGpuProgram() const
-{
-	return m_Program;
 }
 /*********************************************************************************/

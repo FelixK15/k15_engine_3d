@@ -56,7 +56,7 @@ namespace K15_Engine { namespace Core {
 		INLINE float getConstantAttenuation() const;
 		INLINE float getLinearAttenuation() const;
 		INLINE float getQuadricAttenuation() const;
-		INLINE float getSpotExponent() const;
+		INLINE float getSpecularExponent() const;
 		INLINE const ColorRGBA& getDiffuseColor() const;
 		INLINE const ColorRGBA& getSpecularColor() const;
 		INLINE const Vector3& getDirection() const;
@@ -73,7 +73,7 @@ namespace K15_Engine { namespace Core {
 		INLINE void setSpecularColor(const ColorRGBA& p_SpecularColor);
 		INLINE void setDirection(const Vector3& p_Direction);
 		INLINE void setAttenuation(const Vector3& p_Attenuation);
-		INLINE void setSpotExponent(float p_SpotExponent);
+		INLINE void setSpecularExponent(float p_SpecularExponent);
 		INLINE void setActive(bool p_Active);
 		INLINE void setDirty(bool p_Dirty);
 		virtual void onAddedToRenderQueue(RenderQueue* p_RenderQueue);
@@ -85,7 +85,7 @@ namespace K15_Engine { namespace Core {
 		expose ColorRGBA m_SpecularColor;
 		expose float m_ConeAngle;
 		expose float m_Range;
-		expose float m_SpotExponent;
+		expose float m_SpecularExponent;
 		expose_enum(eLightType) Enum m_LightType;
 		expose bool m_Active;
 		bool m_Dirty;

@@ -31,6 +31,7 @@ namespace K15_Engine { namespace Rendering {
 	{
 		/*********************************************************************************/
 		static const ColorRGBA Transparent;
+
 		static const ColorRGBA White;
 		static const ColorRGBA Black;
 		static const ColorRGBA Red;
@@ -41,18 +42,21 @@ namespace K15_Engine { namespace Rendering {
 		static const ColorRGBA Brown;
 		static const ColorRGBA Purple;
 		static const ColorRGBA Pink;
-		static const ColorRGBA DarkRed;
+
 		static const ColorRGBA LightRed;
-		static const ColorRGBA DarkBlue;
 		static const ColorRGBA LightBlue;
-		static const ColorRGBA DarkGreen;
 		static const ColorRGBA LightGreen;
 		static const ColorRGBA LightYellow;
+		static const ColorRGBA LightGrey;
+		static const ColorRGBA LightBrown;
+
+		static const ColorRGBA DarkRed;
+		static const ColorRGBA DarkBlue;
+		static const ColorRGBA DarkGreen;
 		static const ColorRGBA DarkYellow;
 		static const ColorRGBA DarkGrey;
-		static const ColorRGBA LightGrey;
 		static const ColorRGBA DarkBrown;
-		static const ColorRGBA LightBrown;
+		
 		/*********************************************************************************/
 		ColorRGBA(byte p_Red = 0,byte p_Green = 0,byte p_Blue = 0,byte p_Alpha = 255);
 

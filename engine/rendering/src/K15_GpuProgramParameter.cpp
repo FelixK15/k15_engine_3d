@@ -34,6 +34,7 @@ namespace K15_Engine { namespace Rendering {
 		"g_ViewProjMatrix", //PI_VIEW_PROJECTION_MATRIX
 		"g_NormalMatrix",	//PI_NORMAL_MATRIX
 		"g_Time",			//PI_TIME
+		"g_ViewportSize",	//PI_RESOLUTION
 
 		"g_Texture1",      //PI_TEXTURE_1
 		"g_Texture2",      //PI_TEXTURE_2
@@ -54,7 +55,8 @@ namespace K15_Engine { namespace Rendering {
 		"g_Lights[].constantAttenuation",	//PI_LIGHT_CONSTANT_ATTENUATION
 		"g_Lights[].linearAttenuation",		//PI_LIGHT_LINEAR_ATTENUATION
 		"g_Lights[].quadricAttenuation",	//PI_LIGHT_QUADRIC_ATTENUATION
-		"g_Lights[].spotExponent",			//PI_LIGHT_SPOT_EXPONENT
+		"g_Lights[].specularExponent",		
+		//PI_LIGHT_SPOT_EXPONENT
 
 		"g_LightCount",		//PI_LIGHT_COUNT
 		"g_AmbientColor"	//PI_AMBIENT_COLOR
@@ -67,6 +69,7 @@ namespace K15_Engine { namespace Rendering {
 		UF_PER_CAMERA | UF_PER_FRAME,	//PI_VIEW_PROJECTION_MATRIX
 		UF_PER_OBJECT,					//PI_NORMAL_MATRIX
 		UF_PER_FRAME,					//PI_TIME
+		UF_PER_RENDERSETTINGS,
 
 		UF_PER_MATERIAL,	//PI_TEXTURE_1,
 		UF_PER_MATERIAL,	//PI_TEXTURE_2,

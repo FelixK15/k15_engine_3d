@@ -48,9 +48,9 @@ float LightComponent::getQuadricAttenuation() const
 	return m_Attenuation.z;
 }
 /*********************************************************************************/
-float LightComponent::getSpotExponent() const
+float LightComponent::getSpecularExponent() const
 {
-	return m_SpotExponent;
+	return m_SpecularExponent;
 }
 /*********************************************************************************/
 const Vector3& LightComponent::getDirection() const
@@ -119,9 +119,9 @@ void LightComponent::setConeAngle(float p_ConeAngle)
 	m_Dirty = true;
 }
 /*********************************************************************************/
-void LightComponent::setSpotExponent(float p_SpotExponent)
+void LightComponent::setSpecularExponent(float p_SpecularExponent)
 {
-	m_SpotExponent = p_SpotExponent;
+	m_SpecularExponent = p_SpecularExponent;
 	m_Dirty = true;
 }
 /*********************************************************************************/

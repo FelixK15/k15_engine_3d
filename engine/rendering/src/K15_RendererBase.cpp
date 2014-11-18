@@ -366,15 +366,7 @@ namespace K15_Engine { namespace Rendering {
 			
 			m_GpuParameterUpdateMask = GpuProgramParameter::UF_ALL;
 
-			if(errorOccured())
-			{
-				K15_LOG_ERROR("Error binding gpu program for program stage \"%s\". %s",
-					p_GpuProgram->getName().c_str(),
-					eProgramStageStr[p_Stage],
-					getLastError().c_str());
-
-				return false;
-			}
+			return !errorOccured();
 		}
 
 		return true;
@@ -397,10 +389,10 @@ namespace K15_Engine { namespace Rendering {
 				_bindBuffer(p_Buffer,p_BufferType);
 				p_Buffer->setIsBound(true);
 
-        if(p_Buffer->isDirty())
-        {
-          p_Buffer->uploadShadowBufferToGpu();
-        }
+				if(p_Buffer->isDirty())
+				{
+				  p_Buffer->uploadShadowBufferToGpu();
+				}
 
 				if(errorOccured())
 				{
@@ -658,11 +650,11 @@ namespace K15_Engine { namespace Rendering {
 			{
 				p_Texture->setIsBound(true);
 
-				if(p_Texture->getTextureSamplerSlot() != Texture::TS_NO_SLOT)
-				{
-					K15_LOG_WARNING("Texture uses sampler in slot %u, but theres currently no sampler bounds to this slot.",
-						p_Slot);
-				}
+// 				if(p_Texture->getTextureSamplerSlot() != Texture::TS_NO_SLOT)
+// 				{
+// 					K15_LOG_WARNING("Texture uses sampler in slot %u, but theres currently no sampler bounds to this slot.",
+// 						p_Slot);
+// 				}
 			}
 
 			if(errorOccured())
@@ -859,7 +851,15 @@ namespace K15_Engine { namespace Rendering {
 
 								param.setData((void*)&ambientColor);
 							}
-							else if(param.getIdentifier() >= GpuProgramParameter::PI_LIGHT_TYPE && param.getIdentifier() <= GpuProgramParameter::PI_LIGHT_SPOT_EXPONENT)
+							else if(param.getIdentifier() == GpuProgramParameter::PI_VIEWPORT_SIZE)
+							{
+								Vector2 viewportSize;
+								viewportSize.x = RenderWindow::getResolution().width;
+								viewportSize.y = RenderWindow::getResolution().height;
+
+								param.setData((void*)&viewportSize);
+							}
+							else if(param.getIdentifier() >= GpuProgramParameter::PI_LIGHT_TYPE && param.getIdentifier() <= GpuProgramParameter::PI_LIGHT_SPECULAR_EXPONENT)
 							{
 								if(LightComponent* light = m_LightArray.at(param.getArrayIndex()))
 								{
@@ -923,9 +923,9 @@ namespace K15_Engine { namespace Rendering {
 											float quadricAttenuation = light->getQuadricAttenuation();
 											param.setData((void*)&quadricAttenuation);
 										}
-										else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_SPOT_EXPONENT)
+										else if(param.getIdentifier() == GpuProgramParameter::PI_LIGHT_SPECULAR_EXPONENT)
 										{
-											float spotExponent = light->getSpotExponent();
+											float spotExponent = light->getSpecularExponent();
 											param.setData((void*)&spotExponent);
 										}
 									}

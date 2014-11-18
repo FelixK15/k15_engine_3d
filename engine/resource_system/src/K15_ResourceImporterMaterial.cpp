@@ -87,7 +87,11 @@ namespace K15_Engine { namespace Core {
 				{
 					materialPass->setNormalMap(g_ResourceManager->getResource<Texture>(normalMapFile));
 				}
-				
+
+				//TextureSampler* sampler = K15_NEW TextureSampler();
+				//sampler->setSlot(Texture::TS_SLOT1);
+
+				//materialPass->setDiffuseSampler(sampler);
 
 				String gpuProgramBatchName = pass.get("ShaderBatch","").asString();
 				String vertexProgramName = pass.get("VertexShader","").asString();

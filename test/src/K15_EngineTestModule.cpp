@@ -106,6 +106,11 @@ namespace K15_Engine { namespace Test {
 		m_Camera->update(p_GameTime);
 		m_Bunny->update(p_GameTime);
 
+		if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_K))
+		{
+			m_Bunny->scale(0.2f, 0.0f, 0.2f);
+		}
+
 		if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_LEFT))
 		{
 			m_Light1->translate(-1.0f, 0.0f, 0.0f);
@@ -156,8 +161,9 @@ namespace K15_Engine { namespace Test {
 
 		LightComponent* light1 = m_Light1->getLightComponent();
 		light1->setLightType(LightComponent::LT_POINT);
-		light1->setDiffuseColor(ColorRGBA::Red);
+		light1->setDiffuseColor(ColorRGBA::LightBrown);
 		light1->setSpecularColor(ColorRGBA::White);
+		light1->setSpecularExponent(50.0f);
 		light1->setRadius(10.0f);
 
 		LightComponent* light2 = m_Light2->getLightComponent();

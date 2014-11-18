@@ -27,7 +27,8 @@ namespace K15_Engine { namespace Rendering {
 		: m_BlendOperation(0),
 		m_SourceBlendFunction(0),
 		m_DestinationBlendFunction(0),
-		m_ConstantColor(ColorRGBA(0,0,0,0))
+		m_ConstantColor(ColorRGBA(0,0,0,0)),
+		m_Enabled(true)
 	{
 
 	}

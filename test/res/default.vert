@@ -9,9 +9,6 @@ uniform mat4 g_ProjMatrix;
 uniform mat4 g_ViewMatrix;
 uniform mat4 g_NormalMatrix;
 
-uniform Light g_Lights[8];
-uniform int g_LightCount;
-
 out vec2 v_UV;
 out vec4 v_Position;
 out vec4 v_Normal;
@@ -27,8 +24,6 @@ void main(void)
 	v_Normal = normalize(g_NormalMatrix * vec4(a_Normal, 0.0));
 	v_Position = transformedPosition;
 	v_PositionES = mv * vec4(a_Position, 1.0);
-
-	v_Color = phongLightCalc(g_Lights[0], v_Normal, v_PositionES);
 
 	gl_Position = transformedPosition;
 }

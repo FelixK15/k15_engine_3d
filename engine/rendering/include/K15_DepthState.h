@@ -45,7 +45,7 @@ namespace K15_Engine { namespace Rendering {
 
 		bool operator!=(const DepthState& p_Other) const;
 
-		private:
+	private:
 		expose Enum m_Function;
 		expose float m_Bias;
 		expose bool m_Enabled;

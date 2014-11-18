@@ -33,7 +33,7 @@ namespace K15_Engine { namespace Core {
 		: GameObjectComponentBase(_TN(LightComponent)),
 		m_LightType(LT_POINT),
 		m_Range(0),
-		m_SpotExponent(1.f),
+		m_SpecularExponent(20.f),
 		m_Attenuation(Vector3::Up),
 		m_ConeAngle(MathUtil::HalfPi),
 		m_DiffuseColor(ColorRGBA::White),

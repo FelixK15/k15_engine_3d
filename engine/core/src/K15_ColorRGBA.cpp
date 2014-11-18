@@ -23,23 +23,32 @@
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/
-	const ColorRGBA ColorRGBA::Transparent = ColorRGBA(255,255,255,255);
-	const ColorRGBA ColorRGBA::White = ColorRGBA(255,255,255);
-	const ColorRGBA ColorRGBA::Black = ColorRGBA(0,0,0);
-	const ColorRGBA ColorRGBA::Red = ColorRGBA(255,0,0);
-	const ColorRGBA ColorRGBA::Green = ColorRGBA(0,255,0);
-	const ColorRGBA ColorRGBA::Blue = ColorRGBA(0,0,255);
-	const ColorRGBA ColorRGBA::Yellow = ColorRGBA(255,255,0);
-	const ColorRGBA ColorRGBA::Grey = ColorRGBA(127,127,127);
-	const ColorRGBA ColorRGBA::Brown = ColorRGBA(140,75,0);
-	const ColorRGBA ColorRGBA::Purple = ColorRGBA(127,0,115);
-	const ColorRGBA ColorRGBA::Pink = ColorRGBA(255,127,135);
-	const ColorRGBA ColorRGBA::DarkRed = ColorRGBA(127,0,0);
-	const ColorRGBA ColorRGBA::DarkBlue = ColorRGBA(0,0,127);
-	const ColorRGBA ColorRGBA::DarkGreen = ColorRGBA(0,127,0);
-	const ColorRGBA ColorRGBA::DarkYellow = ColorRGBA(127,127,0);
-	const ColorRGBA ColorRGBA::DarkGrey = ColorRGBA(64,64,64);
-	const ColorRGBA ColorRGBA::DarkBrown = ColorRGBA(54,40,0);
+	const ColorRGBA ColorRGBA::Transparent = ColorRGBA(255,255, 255, 255);
+
+	const ColorRGBA ColorRGBA::White	= ColorRGBA(255, 255, 255);
+	const ColorRGBA ColorRGBA::Black	= ColorRGBA(0, 0, 0);
+	const ColorRGBA ColorRGBA::Red		= ColorRGBA(190, 0, 0);
+	const ColorRGBA ColorRGBA::Green	= ColorRGBA(0, 190, 0);
+	const ColorRGBA ColorRGBA::Blue		= ColorRGBA(0, 0, 190);
+	const ColorRGBA ColorRGBA::Yellow	= ColorRGBA(190, 190, 0);
+	const ColorRGBA ColorRGBA::Grey		= ColorRGBA(64, 64, 64);
+	const ColorRGBA ColorRGBA::Brown	= ColorRGBA(127, 51, 0);
+	const ColorRGBA ColorRGBA::Purple	= ColorRGBA(127, 0, 115);
+	const ColorRGBA ColorRGBA::Pink		= ColorRGBA(255, 127, 135);
+
+	const ColorRGBA ColorRGBA::LightRed		= ColorRGBA(255, 0, 0);
+	const ColorRGBA ColorRGBA::LightBlue	= ColorRGBA(0, 0, 255);
+	const ColorRGBA ColorRGBA::LightGreen	= ColorRGBA(0, 255, 0);
+	const ColorRGBA ColorRGBA::LightYellow	= ColorRGBA(255, 255, 0);
+	const ColorRGBA ColorRGBA::LightGrey	= ColorRGBA(127, 127, 127);
+	const ColorRGBA ColorRGBA::LightBrown	= ColorRGBA(127, 106, 0);
+
+	const ColorRGBA ColorRGBA::DarkRed		= ColorRGBA(127,0,0);
+	const ColorRGBA ColorRGBA::DarkBlue		= ColorRGBA(0,0,127);
+	const ColorRGBA ColorRGBA::DarkGreen	= ColorRGBA(0,127,0);
+	const ColorRGBA ColorRGBA::DarkYellow	= ColorRGBA(127,127,0);
+	const ColorRGBA ColorRGBA::DarkGrey		= ColorRGBA(64,64,64);
+	const ColorRGBA ColorRGBA::DarkBrown	= ColorRGBA(54,40,0);
 	/*********************************************************************************/
 
 	/*********************************************************************************/

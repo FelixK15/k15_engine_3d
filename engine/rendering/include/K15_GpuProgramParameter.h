@@ -57,13 +57,14 @@ namespace K15_Engine { namespace Rendering {
 		/*********************************************************************************/
 		enum eUpdateFrequency
 		{
-			UF_PER_MATERIAL	= 0x0001,
-			UF_PER_OBJECT	= 0x0002,
-			UF_PER_FRAME	= 0x0004,
-			UF_PER_CAMERA	= 0x0008,
-			UF_PER_LIGHT	= 0x0010,
+			UF_PER_MATERIAL			= 0x0001,
+			UF_PER_OBJECT			= 0x0002,
+			UF_PER_FRAME			= 0x0004,
+			UF_PER_CAMERA			= 0x0008,
+			UF_PER_LIGHT			= 0x0010,
+			UF_PER_RENDERSETTINGS	= 0x0020,
 
-			UF_ALL			= UF_PER_CAMERA | UF_PER_OBJECT | UF_PER_FRAME | UF_PER_CAMERA | UF_PER_LIGHT,
+			UF_ALL				= UF_PER_CAMERA | UF_PER_OBJECT | UF_PER_FRAME | UF_PER_CAMERA | UF_PER_LIGHT | UF_PER_RENDERSETTINGS,
 
 			UF_COUNT = 4
 		}; //UpdateFrequency
@@ -76,6 +77,7 @@ namespace K15_Engine { namespace Rendering {
 			PI_VIEW_PROJECTION_MATRIX,
 			PI_NORMAL_MATRIX,
 			PI_TIME,
+			PI_VIEWPORT_SIZE,
 
 			PI_TEXTURE_1,
 			PI_TEXTURE_2,
@@ -96,7 +98,7 @@ namespace K15_Engine { namespace Rendering {
 			PI_LIGHT_CONSTANT_ATTENUATION,
 			PI_LIGHT_LINEAR_ATTENUATION,
 			PI_LIGHT_QUADRIC_ATTENUATION,
-			PI_LIGHT_SPOT_EXPONENT,
+			PI_LIGHT_SPECULAR_EXPONENT,
 
 			PI_LIGHT_COUNT,
 			PI_AMBIENT_COLOR,
@@ -143,8 +145,8 @@ namespace K15_Engine { namespace Rendering {
 		INLINE void setGpuProgram(GpuProgram* p_Program);
     
 	private:
-		GpuProgram* m_Program;
 		String m_Name;
+		GpuProgram* m_Program;
 		Enum m_Type;
 		Enum m_UpdateFrequency;
 		Enum m_Identifier;
