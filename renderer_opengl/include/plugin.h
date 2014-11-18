@@ -27,8 +27,6 @@
 #	include "K15_OpenGL_Prerequisites.h"
 #endif //K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
 
-#include "K15_ApplicationModuleDescription.h"
-
 extern "C"
 {
 /*********************************************************************************/

@@ -17,10 +17,9 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_LogManager.h"
+#include "K15_OpenGL_PrecompiledHeader.h"
 
 #include "K15_OpenGL_GpuProgramBatchImpl.h"
-
 #include "K15_OpenGL_GpuProgramImpl.h"
 
 namespace K15_Engine { namespace Rendering { namespace OpenGL {

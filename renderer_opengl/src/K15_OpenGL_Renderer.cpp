@@ -17,7 +17,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_LogManager.h"
+#include "K15_OpenGL_PrecompiledHeader.h"
 
 #include "K15_OpenGL_Renderer.h"
 #include "K15_OpenGL_GpuBufferImpl.h"
@@ -27,16 +27,8 @@
 #include "K15_OpenGL_TextureSamplerImpl.h"
 #include "K15_OpenGL_VertexDeclarationImpl.h"
 #include "K15_OpenGL_Emulation.h"
+#include "K15_OpenGL_DebugUtil.h"
 #include "K15_OpenGL_Extensions_Impl.h"
-
-#include "K15_IndexBuffer.h"
-#include "K15_VertexBuffer.h"
-
-#include "K15_RenderWindow.h"
-
-#include "K15_Vector2.h"
-#include "K15_Vector3.h"
-#include "K15_Vector4.h"
 
 namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	/*********************************************************************************/
@@ -86,46 +78,6 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		GL_CONSTANT_ALPHA,            //BF_CONSTANT_ALPHA
 		GL_ONE_MINUS_CONSTANT_ALPHA   //BF_ONE_MINUS_CONSTANT_ALPHA
 	}; //BlendFunctionConverter
-	/*********************************************************************************/
-    void GLAPIENTRY glLogError(GLenum p_Source, GLenum p_Type, GLuint p_ID, GLenum p_Severity, GLsizei p_Length, const GLchar* p_Message, GLvoid* p_UserParam)
-	{
-		static String msg;
-    
-		if(p_Source == GL_DEBUG_SOURCE_API)
-		{
-			msg = "API error:";
-		}
-		else if(p_Source == GL_DEBUG_SOURCE_WINDOW_SYSTEM)
-		{
-			msg = "Window system error:";
-		}
-		else if(p_Source == GL_DEBUG_SOURCE_SHADER_COMPILER)
-		{
-			msg = "Shader compiler error:";
-		}
-		else if(p_Source == GL_DEBUG_SOURCE_THIRD_PARTY)
-		{
-			msg = "Third party error:";
-		}
-		else if(p_Source == GL_DEBUG_SOURCE_APPLICATION)
-		{
-			msg = "Application error:";
-		}
-		else
-		{
-			msg = "Undefined OGL error:";
-		}
-
-		msg += p_Message;
-
-		RendererBase* renderer = (RendererBase*)p_UserParam;
-		msg = renderer->getLastError() + "\n" + msg;
-
-		if(renderer)
-		{
-			//renderer->setLastError(msg);
-		}
-	}
 	/*********************************************************************************/
 
     /*********************************************************************************/
@@ -665,19 +617,23 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	/*********************************************************************************/
 	void Renderer::_loadExtensions()
 	{
-		if(_isExtensionSupported("GL_ARB_debug_output"))
+		if(_isExtensionSupported("GL_AMD_debug_output"))
+		{
+			kglDebugMessageCallbackAMD = glDebugMessageCallbackAMD;
+		}
+		else if(_isExtensionSupported("GL_ARB_debug_output"))
 		{
 			kglDebugMessageCallback = glDebugMessageCallback;
-			if(!kglDebugMessageCallback)
-			{
-				kglDebugMessageCallback = (PFNGLDEBUGMESSAGECALLBACKPROC)glDebugMessageCallbackAMD;
-			}
+		}
 
-			if(kglDebugMessageCallback)
-			{
-				kglDebugMessageCallback(glLogError,(const void*)(this));
-				glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-			}
+		if(kglDebugMessageCallback)
+		{
+			kglDebugMessageCallback( DebugUtil::logError_ARB, (const GLvoid*)(this));
+			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		}
+		else if(kglDebugMessageCallbackAMD)
+		{ 
+			kglDebugMessageCallbackAMD( DebugUtil::logError_AMD, (GLvoid*)(this));
 		}
 
 	#ifndef K15_GL_FORCE_EMULATED_EXTENSIONS

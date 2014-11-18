@@ -17,11 +17,11 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+#include "K15_OpenGL_PrecompiledHeader.h"
+
 #include "K15_OpenGL_Emulation.h"
 #include "K15_OpenGL_GpuProgramBatchImpl.h"
 #include "K15_OpenGL_GpuProgramImpl.h"
-
-#include "K15_Application.h"
 #include "K15_OpenGL_Renderer.h"
 
 namespace K15_Engine { namespace Rendering { namespace OpenGL {

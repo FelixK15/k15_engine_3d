@@ -17,10 +17,11 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "GLES2/K15_OpenGL_GLES2.h"
-#include "K15_LogManager.h"
+#include "K15_OpenGL_PrecompiledHeader.h"
 
 #if defined K15_OS_ANDROID || defined K15_OS_IOS
+
+#include "GLES2/K15_OpenGL_GLES2.h"
 
 /*********************************************************************************/
 PFNK15GLINIT        kglInit =			K15_Engine::Rendering::OpenGL::_gles2Init;

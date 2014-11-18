@@ -17,12 +17,11 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+#include "K15_OpenGL_PrecompiledHeader.h"
+
 #include "plugin.h"
 
 #include "K15_OpenGL_Renderer.h"
-#include "K15_Application.h"
-#include "K15_RenderTask.h"
-#include "K15_RenderProcessBase.h"
 
 extern "C"
 {

@@ -28,6 +28,9 @@
 //GL_ARB_debug_output
 extern PFNGLDEBUGMESSAGECALLBACKPROC kglDebugMessageCallback;
 
+//GL_AMD_debug_output
+extern PFNGLDEBUGMESSAGECALLBACKAMDPROC kglDebugMessageCallbackAMD;
+
 //GL_ARB_separate_shader_objects//
 extern PFNGLGENPROGRAMPIPELINESPROC	kglGenProgramPipelines;
 extern PFNGLBINDPROGRAMPIPELINEPROC kglBindProgramPipeline;

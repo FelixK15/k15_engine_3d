@@ -17,8 +17,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "K15_LogManager.h"
-#include "K15_RenderWindow.h"
+#include "K15_OpenGL_PrecompiledHeader.h"
 
 #ifdef K15_OS_WINDOWS
 

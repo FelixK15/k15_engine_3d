@@ -28,9 +28,6 @@
 #	include "K15_OpenGL_Prerequisites.h"
 #endif //K15_RENDERER_USE_PREDEFINED_HEADERS
 
-#include "K15_GpuBuffer.h"
-#include "K15_IndexBuffer.h"
-
 namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	class GpuBufferImpl : public GpuBufferImplBase
 	{

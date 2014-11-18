@@ -1,8 +1,8 @@
 /**
- * @file K15_WGL_GpuProgramBatchImpl.h
+ * @file K15_OpenGL_Debug.h
  * @author  Felix Klinge <f.klinge@k15games.de>
  * @version 1.0
- * @date 2014/04/05
+ * @date 2013/12/13
  * @section LICENSE
  *
  * This program is free software; you can redistribute it and/or
@@ -21,22 +21,13 @@
  * 
  */
 
-#ifndef _K15Engine_Renderer_OpenGL_GpuProgramBatchImpl_h_
-#define _K15Engine_Renderer_OpenGL_GpuProgramBatchImpl_h_
-
-#ifndef K15_USE_PRECOMPILED_HEADER
-#	include "K15_OpenGL_Prerequisites.h"
-#endif //K15_USE_PRECOMPILED_HEADER
+#include "K15_OpenGL_Prerequisites.h"
 
 namespace K15_Engine { namespace Rendering { namespace OpenGL {
-	class K15_RENDERER_API GpuProgramBatchImpl : public GpuProgramBatchImplBase
+	class DebugUtil
 	{
 	public:
-		GpuProgramBatchImpl();
-		~GpuProgramBatchImpl();
-
-		bool compile() OVERRIDE;
-	}; //GpuProgramBatchImpl class declaration
-}}} // end of K15_Engine::Rendering::WGL namespace
-
-#endif //_K15Engine_Renderer_OpenGL_GpuProgramBatchImpl_h_
+		static void GLAPIENTRY logError_ARB(GLenum p_Source, GLenum p_Type, GLuint p_ID, GLenum p_Severity, GLsizei p_Length, const GLchar* p_Message, GLvoid* p_UserParam);
+		static void GLAPIENTRY logError_AMD(GLuint p_ID, GLenum p_Category, GLenum p_Severity, GLsizei p_Length, const GLchar* p_Message, GLvoid* p_UserParam);
+	}; // end of DebugUtil class declaration
+}}} // end of K15_Engine::Rendering::OpenGL namespace

@@ -25,8 +25,6 @@
 #define _K15Engine_Renderer_OpenGL_Renderer_h_
 
 #include "K15_OpenGL_Prerequisites.h"
-#include "K15_RendererBase.h"
-#include "K15_RenderOperation.h"
 
 namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	class Renderer : public RendererBase

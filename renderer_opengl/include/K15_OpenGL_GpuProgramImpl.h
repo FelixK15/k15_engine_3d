@@ -28,8 +28,6 @@
 #	include "K15_OpenGL_Prerequisites.h"
 #endif //K15_RENDERER_OGL_USE_PREDEFINED_HEADERS
 
-#include "K15_GpuProgram.h"
-
 namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	class GpuProgramImpl : public GpuProgramImplBase
 	{

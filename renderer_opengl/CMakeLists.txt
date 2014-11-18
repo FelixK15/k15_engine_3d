@@ -17,6 +17,20 @@ include(renderer_opengl_compiler_settings)
 include(renderer_opengl_src)
 include(renderer_opengl_dependencies)
 
+#set precompiler header support for msvc
+if(COMPILER_IS_MSVC)
+	foreach(SRC_FILE ${ENGINE_SRC})
+		string(REGEX MATCH ".*cpp" SRC_CPP ${SRC_FILE})
+
+		if(SRC_CPP)
+			set_source_files_properties("${SRC_CPP}" PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} /YuK15_OpenGL_PrecompiledHeader.h")
+		endif()
+
+	endforeach()
+	
+	set_source_files_properties("./src/K15_OpenGL_PrecompiledHeader.cpp" PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} /YcK15_OpenGL_PrecompiledHeader.h")
+endif()
+
 set(RENDERER_OGL_SRC ${RENDERER_OGL_SRC} ${OGL_INC} ${OGL_SRC} ${OGL_WGL_SRC} ${OGL_WGL_INC} ${OGL_GLX_INC} ${OGL_GLX_SRC} ${OGL_GLES2_SRC} ${OGL_GLES2_INC})
 
 #organize source files
