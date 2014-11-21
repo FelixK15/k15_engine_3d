@@ -4,7 +4,6 @@ link_directories("${DEPENDENCY_PATH}")
 find_library(ENET_LIB NAMES enet libenet)
 find_library(DETOUR_LIB NAMES detour libdetour)
 find_library(JSONCPP_LIB NAMES jsoncpp libjsoncpp)
-find_library(TIFF_LIB NAMES libtiff)
 find_library(MINIZIP_LIB NAMES minizip libminizip)
 find_library(ZLIB_LIB NAMES zlib libzlib)
 find_library(OIS_LIB NAMES ois libois)
@@ -25,12 +24,6 @@ if("${JSONCPP_LIB}" STREQUAL "JSONCPP_LIB-NOTFOUND")
 	message(SEND_ERROR "Could not found library 'jsoncpp' ... Wrong DEPENDENCY_PATH?")
 else()
 	message(STATUS "Successfully found library 'jsoncpp' (${JSONCPP_LIB}).")
-endif()
-
-if("${TIFF_LIB}" STREQUAL "TIFF_LIB-NOTFOUND")
-	message(SEND_ERROR "Could not found library 'libtiff' ... Wrong DEPENDENCY_PATH?")
-else()
-	message(STATUS "Successfully found library 'libtiff' (${TIFF_LIB}).")
 endif()
 
 if("${MINIZIP_LIB}" STREQUAL "MINIZIP_LIB-NOTFOUND")
@@ -56,7 +49,6 @@ set(ENGINE_LIBS "${ENGINE_LIBS}"
 "${ENET_LIB}"
 "${DETOUR_LIB}"
 "${JSONCPP_LIB}"
-"${TIFF_LIB}"
 "${MINIZIP_LIB}"
 "${ZLIB_LIB}"
 "${OIS_LIB}"
