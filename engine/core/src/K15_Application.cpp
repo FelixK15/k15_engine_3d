@@ -330,8 +330,6 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void Application::tick()
 	{
-		static float startFrameTime = 0.0;
-		static float endFrameTime = 0.0;
 		static float newTime = 0.f;
 		static float currentTime = getTime();
 		static float diffTime = m_AvgFrameTime;
@@ -369,15 +367,15 @@ namespace K15_Engine { namespace Core {
 		//endFrameTime = getTime();
 
 		//so is there any frame time left?
-        /*if(endFrameTime >= startFrameTime)
+        if(getTime() >= currentTime)
         {
-            diffTime = endFrameTime - startFrameTime;
+            //diffTime = endFrameTime - startFrameTime;
         }
         else
         {
             //unlogical..happens sometimes :(
             diffTime = m_AvgFrameTime;
-        }*/
+        }
 
 
 		if(diffTime < m_AvgFrameTime)
@@ -408,6 +406,7 @@ namespace K15_Engine { namespace Core {
 
         //update game time
         m_GameTime.setDeltaTime(diffTime);
+		m_GameTime.setTotalTime(m_GameTime.getTotalTime() + diffTime);
 
         if(FPSTime >= 1.0)
 		{

@@ -54,6 +54,7 @@ namespace K15_Engine { namespace Rendering {
 		AABB m_AABB;
 		VertexData* m_VertexData;
 		IndexData* m_IndexData;
+		Material* m_Material;
 		Mesh* m_Mesh;
 	};// end of SubMesh class declaration
 #	include "K15_SubMesh.inl"

@@ -27,39 +27,44 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	{
 		String msg;
 
-		if(p_Source == GL_DEBUG_SOURCE_API)
+		if(p_Type == GL_DEBUG_TYPE_ERROR_ARB &&
+		   (p_Severity == GL_DEBUG_SEVERITY_HIGH/* ||
+		    p_Severity == GL_DEBUG_SEVERITY_MEDIUM*/))
 		{
-			msg = "API error:";
-		}
-		else if(p_Source == GL_DEBUG_SOURCE_WINDOW_SYSTEM)
-		{
-			msg = "Window system error:";
-		}
-		else if(p_Source == GL_DEBUG_SOURCE_SHADER_COMPILER)
-		{
-			msg = "Shader compiler error:";
-		}
-		else if(p_Source == GL_DEBUG_SOURCE_THIRD_PARTY)
-		{
-			msg = "Third party error:";
-		}
-		else if(p_Source == GL_DEBUG_SOURCE_APPLICATION)
-		{
-			msg = "Application error:";
-		}
-		else
-		{
-			msg = "Undefined OGL error:";
-		}
+			if(p_Source == GL_DEBUG_SOURCE_API)
+			{
+				msg = "API error:";
+			}
+			else if(p_Source == GL_DEBUG_SOURCE_WINDOW_SYSTEM)
+			{
+				msg = "Window system error:";
+			}
+			else if(p_Source == GL_DEBUG_SOURCE_SHADER_COMPILER)
+			{
+				msg = "Shader compiler error:";
+			}
+			else if(p_Source == GL_DEBUG_SOURCE_THIRD_PARTY)
+			{
+				msg = "Third party error:";
+			}
+			else if(p_Source == GL_DEBUG_SOURCE_APPLICATION)
+			{
+				msg = "Application error:";
+			}
+			else
+			{
+				msg = "Undefined OGL error:";
+			}
 
-		msg += p_Message;
+			msg += p_Message;
 
-		RendererBase* renderer = (RendererBase*)p_UserParam;
-		msg = renderer->getLastError() + "\n" + msg;
+			RendererBase* renderer = (RendererBase*)p_UserParam;
+			msg = renderer->getLastError() + "\n" + msg;
 
-		if(renderer)
-		{
-			renderer->setLastError(msg);
+			if(renderer)
+			{
+				renderer->setLastError(msg);
+			}
 		}
 	}
 	/*********************************************************************************/
@@ -67,51 +72,55 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 	{
 		String msg;
 
-		if(p_Category == GL_DEBUG_CATEGORY_API_ERROR_AMD)
+		if(p_Severity == GL_DEBUG_SEVERITY_HIGH_AMD ||
+		   p_Severity == GL_DEBUG_SEVERITY_MEDIUM_AMD)
 		{
-			msg = "API error:";
-		}
-		else if(p_Category == GL_DEBUG_CATEGORY_WINDOW_SYSTEM_AMD)
-		{
-			msg = "Window system error:";
-		}
-		else if(p_Category == GL_DEBUG_CATEGORY_SHADER_COMPILER_AMD)
-		{
-			msg = "Shader compiler error:";
-		}
-		else if(p_Category == GL_DEBUG_CATEGORY_OTHER_AMD)
-		{
-			msg = "Third party error:";
-		}
-		else if(p_Category == GL_DEBUG_CATEGORY_APPLICATION_AMD)
-		{
-			msg = "Application error:";
-		}
-		else if(p_Category == GL_DEBUG_CATEGORY_PERFORMANCE_AMD)
-		{
-			msg = "Performance warning:";
-		}
-		else if(p_Category == GL_DEBUG_CATEGORY_UNDEFINED_BEHAVIOR_AMD)
-		{
-			msg = "Undefined Behavior:";
-		}
-		else if(p_Category == GL_DEBUG_CATEGORY_DEPRECATION_AMD)
-		{
-			msg = "Deprecation warning:";
-		}
-		else
-		{
-			msg = "Undefined OGL error:";
-		}
+			if(p_Category == GL_DEBUG_CATEGORY_API_ERROR_AMD)
+			{
+				msg = "API error:";
+			}
+			else if(p_Category == GL_DEBUG_CATEGORY_WINDOW_SYSTEM_AMD)
+			{
+				msg = "Window system error:";
+			}
+			else if(p_Category == GL_DEBUG_CATEGORY_SHADER_COMPILER_AMD)
+			{
+				msg = "Shader compiler error:";
+			}
+			else if(p_Category == GL_DEBUG_CATEGORY_OTHER_AMD)
+			{
+				msg = "Third party error:";
+			}
+			else if(p_Category == GL_DEBUG_CATEGORY_APPLICATION_AMD)
+			{
+				msg = "Application error:";
+			}
+			else if(p_Category == GL_DEBUG_CATEGORY_PERFORMANCE_AMD)
+			{
+				msg = "Performance warning:";
+			}
+			else if(p_Category == GL_DEBUG_CATEGORY_UNDEFINED_BEHAVIOR_AMD)
+			{
+				msg = "Undefined Behavior:";
+			}
+			else if(p_Category == GL_DEBUG_CATEGORY_DEPRECATION_AMD)
+			{
+				msg = "Deprecation warning:";
+			}
+			else
+			{
+				msg = "Undefined OGL error:";
+			}
 
-		msg += p_Message;
+			msg += p_Message;
 
-		RendererBase* renderer = (RendererBase*)p_UserParam;
-		msg = renderer->getLastError() + "\n" + msg;
+			RendererBase* renderer = (RendererBase*)p_UserParam;
+			msg = renderer->getLastError() + "\n" + msg;
 
-		if(renderer)
-		{
-			renderer->setLastError(msg);
+			if(renderer)
+			{
+				renderer->setLastError(msg);
+			}
 		}
 	}
 	/*********************************************************************************/

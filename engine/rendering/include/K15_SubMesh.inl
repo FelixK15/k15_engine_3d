@@ -38,6 +38,16 @@ IndexData* SubMesh::getIndexData() const
 	return m_IndexData;
 }
 /*********************************************************************************/
+void SubMesh::setMaterial(Material* p_Material)
+{
+	m_Material = p_Material;
+}
+/*********************************************************************************/
+Material* SubMesh::getMaterial() const
+{
+	return m_Material;
+}
+/*********************************************************************************/
 Mesh* SubMesh::getMesh() const
 {
   return m_Mesh;

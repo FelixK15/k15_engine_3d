@@ -55,10 +55,16 @@ namespace K15_Engine { namespace Core {
 		*/
 		INLINE const float getMultiplier() const{return m_Mulitplicator;}
 
+		INLINE const float getTotalTime() const{return m_TotalTime;}
+
 		INLINE void setDeltaTime(float p_DeltaTime){m_DeltaTime = p_DeltaTime;}
 
 		INLINE void setMultiplier(float p_Multiplier){m_Mulitplicator = p_Multiplier;}
+
+		INLINE void setTotalTime(float p_TotalTIme){m_TotalTime = p_TotalTIme;}
+
 	private:
+		float m_TotalTime;
 		float m_DeltaTime;
 		float m_Mulitplicator;
 		float m_RawDeltaTime;

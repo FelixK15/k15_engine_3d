@@ -31,6 +31,8 @@ namespace K15_Engine { namespace Rendering {
 	const char* VertexElement::SemanticNames[VertexElement::ES_COUNT] = {
 		"a_Position",	//ES_POSITION
 		"a_Normal",		//ES_NORMAL
+		"a_Tangent",	//ES_TANGENT
+		"a_Bitangent",	//ES_BITANGENT
 		"a_TexCoord",	//ES_TEXCOORD
 		"a_Color"		//ES_COLOR
 	}; //SemanticNames
@@ -41,6 +43,8 @@ namespace K15_Engine { namespace Rendering {
 		'P', //ES_POSITION
 		'N', //ES_NORMAL
 		'T', //ES_TEXCOORD
+		'G', //ES_TANGENT
+		'B', //ES_BITANGENT
 		'C'  //ES_COLOR
 	}; //SemanticToCharconverter
 	/*********************************************************************************/
@@ -273,6 +277,14 @@ namespace K15_Engine { namespace Rendering {
 			else if(elementStr[0] == 'C')
 			{
 				element.semantic = VertexElement::ES_COLOR;
+			}
+			else if(elementStr[0] == 'G')
+			{
+				element.semantic = VertexElement::ES_TANGENT;
+			}
+			else if(elementStr[0] == 'B')
+			{
+				element.semantic = VertexElement::ES_BITANGENT;
 			}
 			else
 			{

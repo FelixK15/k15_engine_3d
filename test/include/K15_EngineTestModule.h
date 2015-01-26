@@ -53,6 +53,7 @@ namespace K15_Engine { namespace Test {
 		GameObject* m_Light2;
 		GameObject* m_Light3;
 		GameObject* m_Bunny;
+		//GameObject* m_Cube2;
 	}; // end of TestModule class declaration
 }} // end of K15_Engine::Test namespace
 

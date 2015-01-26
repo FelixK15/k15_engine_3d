@@ -7,7 +7,7 @@ include_directories(../engine/rendering/include)
 include_directories(../engine/components/include)
 include_directories(../engine/resource_system/include)
 include_directories(../engine/serialization/include)
-include_directories(../math/include)
+include_directories(../dependencies/math/include)
 
 set(TEST_SRC "./src/main.cpp"
 "./src/K15_EngineTestModule.cpp"

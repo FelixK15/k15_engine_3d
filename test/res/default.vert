@@ -3,6 +3,8 @@
 in vec3 a_Position;
 in vec3 a_Normal;
 in vec2 a_TexCoord;
+in vec3 a_Tangent;
+in vec3 a_Bitangent;
 
 uniform mat4 g_ModelMatrix;
 uniform mat4 g_ProjMatrix;

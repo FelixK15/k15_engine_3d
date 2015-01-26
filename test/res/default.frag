@@ -23,7 +23,7 @@ void main(void)
 
 	color.w = 1.0f;
 
-	gl_FragColor = texture2D(g_Texture1, v_UV);// + g_AmbientColor;
+	gl_FragColor = color;//texture2D(g_Texture1, v_UV);// + g_AmbientColor;
 
 	//color = v_PositionES;
 	//color = v_Position;

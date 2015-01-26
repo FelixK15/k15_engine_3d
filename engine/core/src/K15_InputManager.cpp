@@ -33,9 +33,13 @@
 
 #ifdef K15_OS_WINDOWS
 	#pragma comment(lib, "dinput8")
-	#pragma comment(lib, "dxguid")
+
+	#ifndef _WIN32_WINNT
+		#pragma comment(lib, "dxguid")
+	#endif // _WIN32_WINNT
+
 	#ifdef OIS_WIN32_XINPUT_SUPPORT
-		#pragma comment(lib, "XInput")
+		#pragma comment(lib, "XINPUT_1_3")
 	#endif //OIS_WIN32_XINPUT_SUPPORT
 #endif //K15_OS_WINDOWS
 
@@ -715,7 +719,7 @@ namespace K15_Engine { namespace Core {
 		String device;
 		String deviceInput;
 		String inputFileName = g_Application->getGameRootDir() + Application::InputFileName;
-
+		
 		if(!IOUtil::fileExists(inputFileName))
 		{
 			inputFileName = g_Application->getHomeDir() + Application::InputFileName;

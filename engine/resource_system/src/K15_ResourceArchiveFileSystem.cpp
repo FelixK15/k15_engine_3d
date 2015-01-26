@@ -50,7 +50,7 @@ namespace K15_Engine { namespace Core {
 	bool ResourceArchiveFileSystem::getResource(const String& p_ResourceName, RawData* p_Data)
 	{
 		String resourcePath = m_RootDirectory + (p_ResourceName.front() == '/' ? p_ResourceName.substr(1) : p_ResourceName);
-		FILE* resourceFile = fopen(resourcePath.c_str(), "r");
+		FILE* resourceFile = fopen(resourcePath.c_str(), "rb");
 
 		if(!resourceFile)
 		{
@@ -62,17 +62,17 @@ namespace K15_Engine { namespace Core {
 		p_Data->data = K15_NEW_SIZE(BaseAllocatedObject::Allocators[BaseAllocatedObject::AC_RESOURCE], fileSize) byte;
 		p_Data->size = fileSize;
 
-		fread(p_Data->data, fileSize, 1, resourceFile);
+		uint32 bytesRead = fread(p_Data->data, 1, fileSize, resourceFile);
 
 		fclose(resourceFile);
 
-		return true;
+		return bytesRead == fileSize;
 	}
 	/*********************************************************************************/
 	bool ResourceArchiveFileSystem::hasResource(const String& p_ResourceName)
 	{
 		String resourcePath = m_RootDirectory + (p_ResourceName.front() == '/' ? p_ResourceName.substr(1) : p_ResourceName);
-		FILE* resourceFile = fopen(resourcePath.c_str(), "r");
+		FILE* resourceFile = fopen(resourcePath.c_str(), "rb");
 
 		if(!resourceFile)
 		{

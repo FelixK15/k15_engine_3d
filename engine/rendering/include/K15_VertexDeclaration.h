@@ -37,6 +37,8 @@ namespace K15_Engine { namespace Rendering {
 		{
 		  ES_POSITION = 0,
 		  ES_NORMAL,
+		  ES_TANGENT,
+		  ES_BITANGENT,
 		  ES_TEXCOORD,
 		  ES_COLOR,
 

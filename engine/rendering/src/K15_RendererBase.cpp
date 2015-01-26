@@ -854,8 +854,8 @@ namespace K15_Engine { namespace Rendering {
 							else if(param.getIdentifier() == GpuProgramParameter::PI_VIEWPORT_SIZE)
 							{
 								Vector2 viewportSize;
-								viewportSize.x = RenderWindow::getResolution().width;
-								viewportSize.y = RenderWindow::getResolution().height;
+								viewportSize.x = (float)RenderWindow::getResolution().width;
+								viewportSize.y = (float)RenderWindow::getResolution().height;
 
 								param.setData((void*)&viewportSize);
 							}

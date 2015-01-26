@@ -38,7 +38,7 @@ include_directories(./resource_system/include/)
 include_directories(./components/include)
 include_directories(./serialization/include)
 
-include_directories(../math/include)
+include_directories(../dependencies/math/include)
 include_directories(../dependencies/enet/include)
 include_directories(../dependencies/detour/include)
 include_directories(../dependencies/jsoncpp/include)
@@ -47,7 +47,8 @@ include_directories(../dependencies/minizip/include)
 include_directories(../dependencies/zlib/include)
 include_directories(../dependencies/tinyobjloader/include)
 include_directories(../dependencies/ois/include)
-include_directories(../dependencies/stb_image/include)
+include_directories(../dependencies/resourceformats/include)
+include_directories(../dependencies/stb)
 
 #If we're building a shared library, we need to link all the libraries.
 if(NOT BUILD_STATIC_CORE)

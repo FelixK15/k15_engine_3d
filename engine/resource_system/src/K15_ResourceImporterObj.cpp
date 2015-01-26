@@ -19,6 +19,7 @@
 
 #include "K15_PrecompiledHeader.h"
 
+#include "K15_ResourceManager.h"
 #include "K15_ResourceImporterObj.h"
 #include "K15_RawData.h"
 
@@ -35,18 +36,11 @@
 #include "K15_VertexData.h"
 #include "K15_IndexData.h"
 
+#include <K15_MeshFormat.h>
+
 namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	K15_IMPLEMENT_RTTI_BASE(Core,ResourceImporterObj,ResourceImporterBase);
-	typedef DynamicArray(Vector3) PositionArray;
-	typedef PositionArray NormalArray;
-	typedef DynamicArray(int) IndexArray;
-
-	namespace internal
-	{
-		PositionArray getPositions(const String& p_OBJString);
-		NormalArray getNormals(const PositionArray& p_Positions);
-	}
 	/*********************************************************************************/
 
 	/*********************************************************************************/
@@ -63,7 +57,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void ResourceImporterObj::getExtensionList(ExtensionSet& p_ExtensionSet)
 	{
-		p_ExtensionSet.insert(".obj");
+		p_ExtensionSet.insert(".k15mesh");
 	}
 	/*********************************************************************************/
 	void ResourceImporterObj::getMagicNumber(MagicNumberSet& p_MagicNumber)
@@ -73,44 +67,86 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	ResourceBase* ResourceImporterObj::_load(const RawData& p_ResourceData, const Rtti& p_ResourceType)
 	{
-		Mesh* mesh = K15_NEW Mesh();
-		String objString((char*)p_ResourceData.data);
-		PositionArray positions;
-		NormalArray normals;
+		K15_MeshFormat meshFormat;
 
-		positions = internal::getPositions(objString);
-		normals = internal::getNormals(positions);
-
-		uint32 vertexBufferSize = sizeof(Vector3) * 2 * positions.size();
-		uint32 vertexBufferTempOffset = 0;
-		byte* vertexBufferTemp = (byte*)OSLayer::os_malloc(vertexBufferSize);
-
-		for(size_t i = 0; i < positions.size(); ++i)
+		if (K15_LoadMeshFormatFromMemory(&meshFormat, p_ResourceData.data) != K15_SUCCESS)
 		{
-			Vector3 position = positions[i];
-			Vector3 normal = normals[i / 3];
-
-			memcpy(vertexBufferTemp + vertexBufferTempOffset, &position, sizeof(Vector3));
-			vertexBufferTempOffset += sizeof(Vector3);
-
-			memcpy(vertexBufferTemp + vertexBufferTempOffset, &normal, sizeof(Vector3));
-			vertexBufferTempOffset += sizeof(Vector3);
+			return 0;
 		}
 
-		VertexBuffer::CreationOptions vertexBufferOptions;
+		uint32 submeshCount = meshFormat.submeshCount;
+		String vertexDeclearationString = "";
 
-		vertexBufferOptions.InitialData.data = vertexBufferTemp;
-		vertexBufferOptions.InitialData.size = vertexBufferSize;
+		Mesh* mesh = K15_NEW Mesh();
+		mesh->setName(meshFormat.meshName);
 
-		VertexBuffer* vertexBuffer = K15_NEW VertexBuffer(vertexBufferOptions);
-		VertexDeclaration* vertexDeclaration = VertexDeclaration::create("PF3NF3");
+		for(uint32 submeshIndex = 0;
+			submeshIndex < submeshCount;
+			++submeshIndex)
+		{
+			K15_SubMeshFormat* currentSubmeshFormat = &meshFormat.submeshes[submeshIndex];
+			SubMesh* currentSubmesh = K15_NEW SubMesh(mesh);
+			Material* submeshMaterial = g_ResourceManager->getResource<Material>("Robbie_the_Rabbit_rigged.k15material");
+		
+			vertexDeclearationString += "PF3NF3GF3BF3";
 
-		VertexData* vertexData = K15_NEW VertexData(vertexDeclaration, vertexBuffer, 0, positions.size());
-		SubMesh* subMesh = K15_NEW SubMesh(mesh);
+			for(uint8 textureChannelIndex = 0;
+				textureChannelIndex < currentSubmeshFormat->textureChannelCount;
+				++textureChannelIndex)
+			{
+				vertexDeclearationString += "TF2";
+			}
 
-		subMesh->setVertexData(vertexData);
+			for(uint8 colorChannelIndex = 0;
+				colorChannelIndex < currentSubmeshFormat->colorChannelCount;
+				++colorChannelIndex)
+			{
+				vertexDeclearationString += "CF4";
+			}
 
-		OSLayer::os_free(vertexBufferTemp);
+			VertexDeclaration* vertexDeclaration = VertexDeclaration::create(vertexDeclearationString);
+
+			uint32 indexCount = currentSubmeshFormat->triangleCount * 3;
+			uint32 vertexCount = currentSubmeshFormat->vertexCount;
+			uint32 vertexDataSize = vertexCount * vertexDeclaration->getVertexSize();
+			uint32 indexDataSize = indexCount * sizeof(uint16);
+
+			VertexBuffer::CreationOptions vboOptions;
+			IndexBuffer::CreationOptions iboOptions;
+
+			vboOptions.InitialData.data = (byte*)currentSubmeshFormat->vertexData;
+			vboOptions.InitialData.size = vertexDataSize;
+
+			uint16* rawIndexData = (uint16*)malloc(indexDataSize);
+
+			for(uint32 triangleIndex = 0;
+				triangleIndex < currentSubmeshFormat->triangleCount;
+				++triangleIndex)
+			{
+				uint32 index = triangleIndex * 3;
+				rawIndexData[index] = currentSubmeshFormat->triangleData[triangleIndex].indices[0];
+				rawIndexData[index + 1] = currentSubmeshFormat->triangleData[triangleIndex].indices[1];
+				rawIndexData[index + 2] = currentSubmeshFormat->triangleData[triangleIndex].indices[2];
+			}
+
+			iboOptions.InitialData.data = (byte*)rawIndexData;
+			iboOptions.InitialData.size = indexDataSize;
+
+			iboOptions.IndexType = IndexBuffer::IT_UINT16;
+
+			VertexBuffer* submeshVertexBuffer = K15_NEW VertexBuffer(vboOptions);
+			IndexBuffer* submeshIndexBuffer = K15_NEW IndexBuffer(iboOptions);
+
+			VertexData* vertexData = K15_NEW VertexData(vertexDeclaration, submeshVertexBuffer, 0, vertexCount);
+			IndexData* indexData = K15_NEW IndexData(submeshIndexBuffer, indexCount, 0);
+
+			currentSubmesh->setMaterial(submeshMaterial);
+			currentSubmesh->setVertexData(vertexData);
+			currentSubmesh->setIndexData(indexData);
+
+			free(rawIndexData);
+		}
+		
 
 		return mesh;
 	}
@@ -118,73 +154,7 @@ namespace K15_Engine { namespace Core {
 
 
 
-	/*********************************************************************************/
-	PositionArray internal::getPositions(const String& p_OBJString)
-	{
-		PositionArray positions; IndexArray indices;
-		PositionArray orderedPositions;
 
-		StringStream stream(p_OBJString);
-		char* lineBuffer = (char*)alloca(256);
-		Vector3 position;
-		int index[6] = {0};
-
-		while(!stream.eof())
-		{
-			stream.getline(lineBuffer, 256);
-
-			if(lineBuffer[0] == 'v' && isspace(lineBuffer[1]))
-			{
-				sscanf(lineBuffer, "v %f %f %f", &position.x, &position.y, &position.z);
-
-				positions.push_back(position);
-			}
-			else if(lineBuffer[0] == 'f')
-			{
-				sscanf(lineBuffer, "f %d//%d %d//%d %d//%d", &index[0], &index[1], &index[2], &index[3], &index[4], &index[5]);
-
-				indices.push_back(index[0] - 1);
-				indices.push_back(index[2] - 1);
-				indices.push_back(index[4] - 1);
-			}
-		}
-
-		for(size_t i = 0; i < indices.size(); i += 3)
-		{
-			index[0] = indices[i];
-			index[1] = indices[i + 1];
-			index[2] = indices[i + 2];
-
-			orderedPositions.push_back(positions[index[0]]);
-			orderedPositions.push_back(positions[index[1]]);
-			orderedPositions.push_back(positions[index[2]]);
-		}
-
-		return orderedPositions;
-	}
-	/*********************************************************************************/
-	NormalArray internal::getNormals(const PositionArray& p_Positions)
-	{
-		NormalArray normals;
-		size_t counter = 0;
-
-		if(p_Positions.size() % 3 == 0)
-		{
-			while(counter < p_Positions.size())
-			{
-				Vector3 normal = Vector3::Cross(p_Positions[counter + 2] - p_Positions[counter + 1],
-					p_Positions[counter] - p_Positions[counter + 1]);
-
-				normal.normalize();
-
-				normals.push_back(normal);
-
-				counter += 3;
-			}
-		}
-
-		return normals;
-	}
 	/*********************************************************************************/
 }}// end of K15_Engine::Core namespace
 

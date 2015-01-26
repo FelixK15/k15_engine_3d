@@ -174,7 +174,11 @@ GLboolean K15_Engine::Rendering::OpenGL::_wglInit(GLint p_ColorBits, GLint p_Dep
 /*********************************************************************************/
 GLboolean K15_Engine::Rendering::OpenGL::_wglSwapBuffers()
 {
-  	SwapBuffers(ms_DeviceContext);
+	HDC test = GetDC(RenderWindow_Win32::getHandleWindow());
+
+	SwapBuffers(test);
+
+//  	SwapBuffers(ms_DeviceContext);
 
     return GL_TRUE;
 }

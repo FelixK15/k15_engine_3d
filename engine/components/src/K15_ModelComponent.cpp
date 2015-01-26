@@ -82,18 +82,23 @@ namespace K15_Engine { namespace Core {
 	{
 		RenderOperation* rop = 0;
 		SubMesh* submesh = 0;
-		for(uint32 i = 0; i < m_MeshInstance->getMesh()->getSubMeshes().size(); ++i)
-		{
-			submesh = m_MeshInstance->getMesh()->getSubMesh(i);
-			rop = K15_NEW RenderOperation();
-			rop->gameobject = getGameObject();
-			rop->vertexData = submesh->getVertexData();
-			rop->indexData = submesh->getIndexData();
-			rop->material = g_ResourceManager->getResource<Material>("wall.json");
-			/*rop->material = submesh->getMaterial();*/
-			rop->topology = RenderOperation::T_TRIANGLE;
 
-			p_RenderQueue->addRenderOperation(rop);
+		if (m_MeshInstance
+			&& m_MeshInstance->getMesh())
+		{
+			for(uint32 i = 0; i < m_MeshInstance->getMesh()->getSubMeshes().size(); ++i)
+			{
+				submesh = m_MeshInstance->getMesh()->getSubMesh(i);
+				rop = K15_NEW RenderOperation();
+				rop->gameobject = getGameObject();
+				rop->vertexData = submesh->getVertexData();
+				rop->indexData = submesh->getIndexData();
+				//rop->material = g_ResourceManager->getResource<Material>("wall.json");
+				rop->material = submesh->getMaterial();
+				rop->topology = RenderOperation::T_TRIANGLE;
+
+				p_RenderQueue->addRenderOperation(rop);
+			}
 		}
 	}
 	/*********************************************************************************/

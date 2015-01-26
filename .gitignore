@@ -29,4 +29,7 @@ android_make/TowerDefense/res/
 build
 build-dependencies
 *.lnk
+*.swp
 build_dependencies/
+dependencies/resourceformats/.git
+tools/resource_compiler/.git

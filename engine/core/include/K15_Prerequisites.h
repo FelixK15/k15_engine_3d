@@ -481,7 +481,7 @@ typedef std::stringstream	StringStream;
     typedef K15_Engine::Core::OSLayer_Linux OSLayer;
     typedef K15_Engine::Core::DynamicLibrary_Linux DynamicLibraryType;
 #endif //K15_OS_LINUX
-
+	
 
 #if defined K15_OS_ANDROID
 	#pragma message("Compiling for android")

@@ -31,7 +31,8 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	RenderTask::RenderTask()
 		: TaskBase(TaskPriority),
-		  m_RenderProcess(0)
+		  m_RenderProcess(0),
+		  m_Renderer(0)
 	{
 	
 	}

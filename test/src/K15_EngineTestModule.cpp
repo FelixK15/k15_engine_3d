@@ -84,9 +84,16 @@ namespace K15_Engine { namespace Test {
 
 		m_Bunny = K15_NEW GameObject("Bunny");
 		m_Bunny->addComponent(K15_NEW NodeComponent());
-		m_Bunny->addComponent(K15_NEW ModelComponent("crate.obj"));
+		m_Bunny->addComponent(K15_NEW ModelComponent("Robbie_the_Rabbit_rigged.k15mesh"));
 		m_Bunny->setPosition(0.f, 0.f, 0.f);
+		
+// 		m_Cube2 = K15_NEW GameObject("Cube");
+// 		m_Cube2->addComponent(K15_NEW NodeComponent());
+// 		m_Cube2->addComponent(K15_NEW ModelComponent("crate.obj"));
+// 		m_Cube2->setPosition(0.f, 0.f, -8.f);
+
 		SceneGraph::getDefault()->addGameObject(m_Bunny);
+		//SceneGraph::getDefault()->addGameObject(m_Cube2);
 
 		_addLights();
 
@@ -102,7 +109,10 @@ namespace K15_Engine { namespace Test {
 	/*********************************************************************************/
 	void TestGameState::update(const GameTime& p_GameTime)
 	{
+		g_DebugRenderer->drawCross(m_Light1->getPosition(), 1.0f, m_Light1->getLightComponent()->getDiffuseColor());
+
 		m_Bunny->yaw(0.01f);
+		//m_Cube2->pitch(0.01f);
 		m_Camera->update(p_GameTime);
 		m_Bunny->update(p_GameTime);
 
@@ -133,10 +143,6 @@ namespace K15_Engine { namespace Test {
 		{
 			g_Application->setRunning(false);
 		}
-
-		g_DebugRenderer->drawCross(m_Light1->getPosition(), 1.0f, m_Light1->getLightComponent()->getDiffuseColor());
-		g_DebugRenderer->drawNormals(m_Bunny, 0.5f, ColorRGBA::Green);
-		g_DebugRenderer->drawAxis(m_Bunny, 1.5f);
 	}
 	/*********************************************************************************/
 	void TestGameState::_addLights()

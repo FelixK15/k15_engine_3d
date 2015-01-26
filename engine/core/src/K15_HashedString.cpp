@@ -31,6 +31,13 @@ namespace K15_Engine { namespace Core {
 		
 	}
 	/*********************************************************************************/
+	HashedString::HashedString(uint32 p_HashValue)
+		: m_Hash(p_HashValue),
+		m_String()
+	{
+
+	}
+	/*********************************************************************************/
 	HashedString::HashedString(const char *pString)
 		: m_Hash(createHash(pString,strlen(pString))),
 		  m_String(pString)

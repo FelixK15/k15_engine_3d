@@ -31,6 +31,7 @@ namespace K15_Engine { namespace Rendering {
 	SubMesh::SubMesh(Mesh* p_Mesh)
 		: m_IndexData(0),
 		m_VertexData(0),
+		m_Material(0),
 		m_Mesh(p_Mesh)
 	{
 		m_Mesh->addSubMesh(this);

@@ -3,14 +3,12 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/..")
 
-link_directories("${DEPENDENCY_PATH}")
-
 include_directories(../engine/core/include)
 include_directories(../engine/rendering/include)
 include_directories(../engine/resource_system/include)
 include_directories(../engine/serialization/include)
 include_directories(../dependencies/glew/include/)
-include_directories(../math/include)
+include_directories(../dependencies/math/include)
 include_directories(./include/)
 
 include(renderer_opengl_compiler_settings)
@@ -46,4 +44,3 @@ source_group("src\\GLES2" FILES ${OGL_GLES2_SRC})
 
 add_library(renderer_opengl SHARED ${RENDERER_OGL_SRC})
 target_link_libraries(renderer_opengl ${OGL_DEPENDENCIES})
-#target_link_libraries(renderer_opengl LINK_INTERFACE_LIBRARIES)

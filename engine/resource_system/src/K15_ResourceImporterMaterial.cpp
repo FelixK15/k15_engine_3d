@@ -19,6 +19,7 @@
 
 #include "K15_PrecompiledHeader.h"
 
+#include "K15_ResourceManager.h"
 #include "K15_ResourceImporterMaterial.h"
 #include "K15_RendererBase.h"
 #include "K15_ResourceManager.h"
@@ -27,6 +28,8 @@
 #include "K15_GpuProgramCatalog.h"
 #include "K15_RawData.h"
 #include "K15_IOUtil.h"
+
+#include <K15_MaterialFormat.h>
 
 
 #include "json/reader.h"
@@ -46,7 +49,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void ResourceImporterMaterial::getExtensionList(ExtensionSet& p_ExtensionSet)
 	{
-		p_ExtensionSet.insert(".json");
+		p_ExtensionSet.insert(".k15material");
 	}
 	/*********************************************************************************/
 	void ResourceImporterMaterial::getMagicNumber(MagicNumberSet& p_MagicNumber)
@@ -56,81 +59,58 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	ResourceBase* ResourceImporterMaterial::_load(const RawData& p_ResourceData, const Rtti& p_ResourceType)
 	{
-		StringStream stream;
-		stream.write((const char*)p_ResourceData.data,p_ResourceData.size);
-
-		Json::Value root;
-		Json::Reader reader;
-		Material* material = 0;
-		if(reader.parse((std::istream&)stream,root,false))
+		K15_MaterialFormat materialFormat;
+		
+		if(K15_LoadMaterialFormatFromMemory(&materialFormat, p_ResourceData.data) != K15_SUCCESS)
 		{
-			material = K15_NEW Material();
-			material->setName(root["Name"].asString());
-
-			Json::Value& passes = root["Passes"];
-			uint32 passCounter = 0;
-			for(uint32 i = 0; i < passes.size(); ++i)
-			{
-				Json::Value& pass = passes[i];
-				
-				MaterialPass* materialPass = material->getPass(passCounter,true);
-
-				String diffuseMapFile = pass.get("DiffuseMap", "").asString();
-				String normalMapFile = pass.get("NormalMap", "").asString();
-
-				if(!diffuseMapFile.empty())
-				{
-					materialPass->setDiffuseMap(g_ResourceManager->getResource<Texture>(diffuseMapFile));
-				}
-				
-				if(!normalMapFile.empty())
-				{
-					materialPass->setNormalMap(g_ResourceManager->getResource<Texture>(normalMapFile));
-				}
-
-				//TextureSampler* sampler = K15_NEW TextureSampler();
-				//sampler->setSlot(Texture::TS_SLOT1);
-
-				//materialPass->setDiffuseSampler(sampler);
-
-				String gpuProgramBatchName = pass.get("ShaderBatch","").asString();
-				String vertexProgramName = pass.get("VertexShader","").asString();
-				String fragmentProgramName = pass.get("FragmentShader", "").asString();
-
-				K15_ASSERT(!(gpuProgramBatchName.empty() && 
-					vertexProgramName.empty() && fragmentProgramName.empty()),
-					StringUtil::format("No shader defined for material \"%s\".", getName().c_str()));
-
-				if(!gpuProgramBatchName.empty())
-				{
-					GpuProgramBatch* batch = GpuProgramCatalog::getGpuProgramBatch(gpuProgramBatchName);
-					materialPass->setProgramBatch(batch);
-				}
-				else
-				{
-					GpuProgram* vertexShader = GpuProgramCatalog::getGpuProgram(vertexProgramName, GpuProgram::PS_VERTEX);
-					GpuProgram* fragmentShader = GpuProgramCatalog::getGpuProgram(fragmentProgramName, GpuProgram::PS_FRAGMENT);
-
-					materialPass->setProgram(vertexShader, vertexShader->getStage());
-					materialPass->setProgram(fragmentShader, fragmentShader->getStage());
-				}
-
-				///cullingmode
-				String cullingmode = pass.get("CullingMode","CM_CCW").asString();
-
-				if(cullingmode == "CM_CCW")
-				{
-					materialPass->setCullingMode(RendererBase::CM_CCW);
-				}
-				else 
-				{
-					materialPass->setCullingMode(RendererBase::CM_CW);
-				}
-			}
+			return 0;
 		}
-		else
+		
+		uint32 submaterialCount = materialFormat.submaterialCount;
+		
+		Material* material = K15_NEW Material();
+		material->setName(materialFormat.materialName);
+		
+		for(uint32 submaterialIndex = 0;
+			submaterialIndex < materialFormat.submaterialCount;
+			++submaterialIndex)
 		{
-			setError(reader.getFormattedErrorMessages());
+			K15_SubMaterialFormat* currentSubmaterial = &materialFormat.subMaterials[submaterialIndex];
+			MaterialPass* currentMaterialPass = material->getPass(submaterialIndex, true);
+
+			ColorRGBA diffuseColor;
+			ColorRGBA specularColor;
+			ColorRGBA ambientColor;
+
+			diffuseColor.R = (byte)(currentSubmaterial->diffuseColor[0] * 255.f);
+			diffuseColor.G = (byte)(currentSubmaterial->diffuseColor[1] * 255.f);
+			diffuseColor.B = (byte)(currentSubmaterial->diffuseColor[2] * 255.f);
+
+			specularColor.R = (byte)(currentSubmaterial->specularColor[0] * 255.f);
+			specularColor.G = (byte)(currentSubmaterial->specularColor[1] * 255.f);
+			specularColor.B = (byte)(currentSubmaterial->specularColor[2] * 255.f);
+
+			ambientColor.R = (byte)(currentSubmaterial->ambientColor[0] * 255.f);
+			ambientColor.G = (byte)(currentSubmaterial->ambientColor[1] * 255.f);
+			ambientColor.B = (byte)(currentSubmaterial->ambientColor[2] * 255.f);
+
+			currentMaterialPass->setShininess(currentSubmaterial->shininess);
+			currentMaterialPass->setDiffuse(diffuseColor);
+			currentMaterialPass->setSpecular(specularColor);
+			currentMaterialPass->setAmbient(ambientColor);
+			
+			for(uint32 diffuseTextureIndex = 0;
+				diffuseTextureIndex < currentSubmaterial->diffuseTextureCount;
+				++diffuseTextureIndex)
+			{
+				K15_SubMaterialTextureFormat* currentTexture = &currentSubmaterial->diffuseTextureFormat[diffuseTextureIndex];
+				Texture* diffuseTexture = g_ResourceManager->getResource<Texture>(currentTexture->textureName);
+
+				currentMaterialPass->setDiffuseMap(diffuseTexture);
+			}
+
+			currentMaterialPass->setProgram(GpuProgramCatalog::getGpuProgram("default.vert", GpuProgram::PS_VERTEX), GpuProgram::PS_VERTEX);
+			currentMaterialPass->setProgram(GpuProgramCatalog::getGpuProgram("default.frag", GpuProgram::PS_FRAGMENT), GpuProgram::PS_FRAGMENT);
 		}
 
 		return material;

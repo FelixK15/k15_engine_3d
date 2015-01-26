@@ -33,6 +33,7 @@ namespace K15_Engine { namespace Core {
 
 	public:
 		HashedString();
+		HashedString(uint32 p_HashValue);
 		HashedString(const char* p_String);
 		HashedString(const String& p_String);
 		HashedString(const HashedString& p_Other);
