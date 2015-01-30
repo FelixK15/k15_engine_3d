@@ -1,0 +1,33 @@
+#ifndef _K15_ResourceFormat_FormatValues_h_
+#define _K15_ResourceFormat_FormatValues_h_
+
+//Mesh Format Values
+#define K15_MESH_DATA_POSITION	1
+#define K15_MESH_DATA_NORMAL	2
+#define K15_MESH_DATA_TANGENT	3
+#define K15_MESH_DATA_BITANGENT 4
+#define K15_MESH_DATA_COLOR		5
+#define K15_MESH_DATA_TEXCOORD	6
+
+//Material Format Values
+#define K15_MATERIAL_COLOR_DIFFUSE						10
+#define K15_MATERIAL_COLOR_SPECULAR						11
+#define K15_MATERIAL_COLOR_AMBIENT						12
+#define K15_MATERIAL_DATA_SHININESS						13
+#define K15_MATERIAL_DATA_SHININESS_STRENGTH			14
+#define K15_MATERIAL_TEXTURE_DIFFUSE					15
+#define K15_MATERIAL_TEXTURE_NAME						16
+#define K15_MATERIAL_TEXTURE_BLEND_STRENGTH				17
+#define K15_MATERIAL_TEXTURE_BLEND_OPERATION			18
+#define K15_MATERIAL_TEXTURE_MAPPING					19
+#define K15_MATERIAL_TEXTURE_HAS_ALPHA					20
+
+#define K15_MATERIAL_TEXTURE_MAP_WRAP					30
+#define K15_MATERIAL_TEXTURE_MAP_CLAMP					31
+#define K15_MATERIAL_TEXTURE_MAP_MIRROR					32
+
+//Texture Format Values
+#define K15_TEXTURE_DXT3_COMPRESSION					1
+#define K15_TEXTURE_DXT5_COMPRESSION					2
+
+#endif //_K15_ResourceFormat_ReturnVa_K15_ResourceFormat_FormatValues_h_lues_h_

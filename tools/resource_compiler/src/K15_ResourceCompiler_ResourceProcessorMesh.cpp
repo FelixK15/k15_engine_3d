@@ -289,7 +289,8 @@ namespace K15_ResourceCompiler
 				
 				//texture path is a local path
 				texturePath = (tempTexturePath.C_Str() + 1); //+1 as we don't want the leading folder slash
-				textureFileName = StringUtil::getFileName(texturePath);
+				textureFileName = StringUtil::getFileNameWithoutExtension(texturePath);
+				textureFileName += ".k15tex";
 
 				texturePath = p_MeshProcessor->getCompilerEnvironment().getOutputPath() + texturePath;
 
