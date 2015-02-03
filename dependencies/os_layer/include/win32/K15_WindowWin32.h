@@ -8,6 +8,7 @@ struct K15_WindowSettings;
 struct K15_Win32Window
 {
 	HWND hwnd;
+	DWORD style;
 }; // end of K15_Win32InternalWindowEnvironment struct declaration
 
 uint8 K15_Win32CreateWindow(K15_OSLayerContext* p_OSContext, K15_Window* p_Window, uint32 p_Flags, uint8 p_MonitorIndex);

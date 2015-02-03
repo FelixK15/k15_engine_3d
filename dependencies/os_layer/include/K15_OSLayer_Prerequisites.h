@@ -5,10 +5,12 @@
 
 #include <assert.h>
 #include <memory.h>
+#include <math.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <io.h>
 #include <fcntl.h>
+
 #ifdef __ANDROID__
 	#define K15_OS_ANDROID
 #elif defined _WIN32
@@ -47,6 +49,7 @@
 	#include "windows.h"
 	#include "windowsx.h"
 	#include "winnt.h"
+	#include "xinput.h"
 
 	//8 bit types
 	typedef signed    __int8  int8;

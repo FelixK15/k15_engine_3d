@@ -5,6 +5,21 @@
 #include "win32/K15_WindowWin32.h"
 #include "win32/K15_EventsWin32.h"
 
+/*********************************************************************************/
+void K15_Win32AllocateDebugConsole()
+{
+	AllocConsole();
+	long stdHandle;
+	int handleConsole;
+	FILE* fp;
+
+	stdHandle = (long)GetStdHandle(STD_OUTPUT_HANDLE);
+	handleConsole = _open_osfhandle(stdHandle, _O_TEXT);
+	fp = _fdopen(handleConsole, "w");
+	*stdout = *fp;
+	setvbuf( stdout, NULL, _IONBF, 0 );
+}
+/*********************************************************************************/
 uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 {
 	K15_OSLayerContext win32OSContext;
@@ -25,33 +40,43 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 
 	//Debug console
 #ifdef K15_DEBUG
-	AllocConsole();
-	long stdHandle;
-	int handleConsole;
-	FILE* fp;
-
-	stdHandle = (long)GetStdHandle(STD_OUTPUT_HANDLE);
-	handleConsole = _open_osfhandle(stdHandle, _O_TEXT);
-	fp = _fdopen(handleConsole, "w");
-	*stdout = *fp;
-	setvbuf( stdout, NULL, _IONBF, 0 );
-
-	CONSOLE_SCREEN_BUFFER_INFO csbi;
-	if ( GetConsoleScreenBufferInfo((HANDLE)handleConsole, &csbi) )
-	{
-		COORD bufferSize;
-		bufferSize.X = csbi.dwSize.X;
-		bufferSize.Y = 9999;
-		SetConsoleScreenBufferSize((HANDLE)handleConsole, bufferSize);
-	}
+	K15_Win32AllocateDebugConsole();
 #endif //K15_DEBUG
 
 	K15_Win32Context* win32SpecificContext = (K15_Win32Context*)malloc(sizeof(K15_Win32Context));
-	
+	memset(win32SpecificContext, 0, sizeof(K15_Win32Context));
+
 	if (!win32SpecificContext)
 	{
 		return K15_ERROR_OUT_OF_MEMORY;
 	}
+
+	//try to load xinput (1.3 should be supported for all necessary windows versions including windows xp)
+	HMODULE xinput = LoadLibraryA("xinput1_3");
+
+	if (!xinput)
+	{
+		K15_Win32ShutdownOSLayer();
+		return K15_ERROR_SYSTEM;
+	}
+
+	win32SpecificContext->XInput.module = xinput;
+
+	//get xinput functions
+	win32SpecificContext->XInput.enable = (XInputEnableFnc)GetProcAddress(xinput, "XInputEnable");
+	win32SpecificContext->XInput.getCapabilities = (XInputGetCapabilitiesFnc)GetProcAddress(xinput, "XInputGetCapabilities");
+	win32SpecificContext->XInput.getState = (XInputGetStateFnc)GetProcAddress(xinput, "XInputGetState");
+	win32SpecificContext->XInput.setState = (XInputSetStateFnc)GetProcAddress(xinput, "XInputSetState");
+
+	if (!win32SpecificContext->XInput.enable || !win32SpecificContext->XInput.getCapabilities 
+		|| !win32SpecificContext->XInput.getState || !win32SpecificContext->XInput.setState)
+	{
+		K15_Win32ShutdownOSLayer();
+		return K15_ERROR_SYSTEM;
+	}
+
+	//enable XInput
+	win32SpecificContext->XInput.enable(TRUE);
 
 	//win32 context as userdata
 	win32SpecificContext->hInstance = p_hInstance;
@@ -75,3 +100,16 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 
 	return K15_SUCCESS;
 }
+/*********************************************************************************/
+void K15_Win32ShutdownOSLayer()
+{
+	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
+	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
+
+	if (win32Context->XInput.module)
+	{
+		FreeLibrary(win32Context->XInput.module);
+		win32Context->XInput.module = 0;
+	}
+}
+/*********************************************************************************/

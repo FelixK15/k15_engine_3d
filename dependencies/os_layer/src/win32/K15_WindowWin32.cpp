@@ -79,8 +79,28 @@ uint8 K15_Win32CreateWindow(K15_OSLayerContext* p_OSContext, K15_Window* p_Windo
 		return K15_ERROR_MONITOR_NOT_FOUND;
 	}
 
+	DWORD style = WS_VISIBLE;
+
+	if (p_Flags == 0)
+	{
+		style |= WS_OVERLAPPEDWINDOW;
+	}
+	else
+	{
+		if ((p_Flags & K15_WINDOW_FLAG_BORDERLESS) == 0)
+		{
+			style |= WS_BORDER;
+		}
+
+		if ((p_Flags & K15_WINDOW_FLAG_NO_BUTTONS) == 0)
+		{
+			style |= WS_CAPTION;
+			style |= WS_SYSMENU;
+		}
+	}
+
 	//create window with default settings
-	HWND handle = CreateWindow("K15_Win32WindowClass", "", WS_OVERLAPPEDWINDOW,
+	HWND handle = CreateWindow("K15_Win32WindowClass", "", style,
 									 monitorInfo.rcMonitor.left, monitorInfo.rcMonitor.top, 
 									 width, height, 0, 0, hInstance, 0);
 
@@ -92,12 +112,11 @@ uint8 K15_Win32CreateWindow(K15_OSLayerContext* p_OSContext, K15_Window* p_Windo
 	K15_Win32Window* win32Window = (K15_Win32Window*)malloc(sizeof(K15_Win32Window));
 
 	win32Window->hwnd = handle;
-	
+	win32Window->style = style;
+
 	p_Window->userData = (void*)win32Window;
 	p_Window->height = height;
 	p_Window->width = width;
-
-	ShowWindow(handle, SW_SHOW);
 
 	return K15_SUCCESS;
 }

@@ -15,9 +15,12 @@ struct K15_SystemEvent		// 96 Bits
 	{
 		uint32 windowHandle;
 		uint32 key;
-		uint32 button;
+		uint32 mouseButton;
+		uint32 controllerButton; //high order:controller ID | low order: button ID
 		uint32 wheelDelta;
-		
+		uint32 controllerIndex;
+		float triggerValue;
+		float thumbValue;
 		struct 
 		{
 			uint16 x;
