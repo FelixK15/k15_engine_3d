@@ -3,10 +3,10 @@
 
 #include "K15_OSLayer_Prerequisites.h"
 
-typedef void (*XInputEnableFnc)(BOOL);
-typedef DWORD (*XInputGetCapabilitiesFnc)(DWORD, DWORD, XINPUT_CAPABILITIES*);
-typedef DWORD (*XInputGetStateFnc)(DWORD, XINPUT_STATE*);
-typedef DWORD (*XInputSetStateFnc)(DWORD, XINPUT_VIBRATION*);
+typedef void (WINAPI *XInputEnableFnc)(BOOL);
+typedef DWORD (WINAPI *XInputGetCapabilitiesFnc)(DWORD, DWORD, XINPUT_CAPABILITIES*);
+typedef DWORD (WINAPI *XInputGetStateFnc)(DWORD, XINPUT_STATE*);
+typedef DWORD (WINAPI *XInputSetStateFnc)(DWORD, XINPUT_VIBRATION*);
 
 const DWORD K15_WIN32_MAX_CONTROLLER = 4;
 

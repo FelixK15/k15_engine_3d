@@ -56,7 +56,7 @@ uint8 K15_Win32CreateWindow(K15_OSLayerContext* p_OSContext, K15_Window* p_Windo
 	HMONITOR* monitorHandles = (HMONITOR*)malloc(sizeof(HMONITOR) * amountMonitors);
 	
 	//clamp monitorindex if needed
-	if (monitorID > amountMonitors)
+	if (monitorID > amountMonitors-1)
 	{
 		monitorID = 0;
 	}
