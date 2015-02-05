@@ -29,7 +29,7 @@
 
 #include "K15_MathUtil.h"
 #include "K15_InputManager.h"
-#include "K15_LogManager.h"
+
 
 namespace K15_Engine { namespace Test {
 	/*********************************************************************************/

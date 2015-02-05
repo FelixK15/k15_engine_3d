@@ -76,7 +76,7 @@ namespace K15_Engine { namespace Core {
 
 		if(iter == m_Listener.end())
 		{
-			K15_LOG_ERROR("No handler for event \"%s\".",p_EventName.c_str());
+			K15_LOG_ERROR_MESSAGE("No handler for event \"%s\".",p_EventName.c_str());
 			return;
 		}
 

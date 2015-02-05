@@ -24,46 +24,18 @@
 #ifndef _K15Engine_Prerequisites_h_
 #define _K15Engine_Prerequisites_h_
 
-#ifdef __ANDROID__
-	#define K15_OS_ANDROID
-#elif defined _WIN32
-	#define K15_OS_WINDOWS
-#elif defined __linux__
-	#define K15_OS_LINUX
-#elif defined __APPLE__
-	#define K15_OS_APPLE
-#endif //_WIN32
-
-#if defined (K15_OS_WINDOWS)
-    #ifdef _WIN64
-		#define K15_64_BIT
-	#endif //_WIN64
-#else
-	#include <limits.h>
-	#ifdef __LP64__
-		#define K15_64_BIT
-	#endif //__LP64__
-#endif //K15_OS_WINDOWS
-
-#if defined (K15_64_BIT)
-	#pragma message("Compiling for 32 bit system.")
-	#define K15_PTR_SIZE 64
-	#define K15_PTR_HEX_MASK 0xFFFFFFFFFFFFFFFF
-#else
-	#pragma message("Compiling for 32 bit system.")
-	#define K15_PTR_SIZE 32
-	#define K15_PTR_HEX_MASK 0xFFFFFFFF
-#endif //K15_64_BIT
+#include <K15_OSLayer_Prerequisites.h>
+#include <K15_Logging.h>
 
 //edit export defines
 #if defined K15_CODE_GENERATOR
 #	define expose		__attribute__((annotate("expose")))
-# define expose_enum(x) __attribute__((annotate("expose")))
+#	define expose_enum(x) __attribute__((annotate("expose")))
 #	define expose_read  __attribute__((annotate("expose_readonly")));
 #else
 #	define expose 
 #	define expose_read 
-# define expose_enum(x)
+#	define expose_enum(x)
 #endif //K15_CODE_GENERATOR
 
 namespace K15_Engine
@@ -73,24 +45,11 @@ namespace K15_Engine
 	{
 		class HashedString;
 		class Application;
-		class ApplicationOSLayer;
 		class ApplicationModule;
 		class TaskManager;
 		class RenderWindow;
 		class TaskBase;
 		class GameTime;
-        #if defined K15_OS_ANDROID
-			class DynamicLibrary_Linux;
-			class OSLayer_Android;
-        #elif defined K15_OS_WINDOWS
-			class DynamicLibrary_Win32;
-			class OSLayer_Win32;
-        #elif defined K15_OS_LINUX
-            class DynamicLibrary_Linux;
-            class OSLayer_Linux;
-        #endif //K15_OS_WINDOWS
-		class DynamicLibraryBase;
-		class DynamicLibraryManager;
 		class EventManager;
 		class EventListener;
 		class GameEvent;
@@ -201,92 +160,6 @@ namespace K15_Engine
 		struct VertexElement;
 		struct TextureCreationOptions;
 		struct ColorRGBA;
-
-		// surface description flags
-		const unsigned int DDSF_CAPS           = 0x00000001l;
-		const unsigned int DDSF_HEIGHT         = 0x00000002l;
-		const unsigned int DDSF_WIDTH          = 0x00000004l;
-		const unsigned int DDSF_PITCH          = 0x00000008l;
-		const unsigned int DDSF_PIXELFORMAT    = 0x00001000l;
-		const unsigned int DDSF_MIPMAPCOUNT    = 0x00020000l;
-		const unsigned int DDSF_LINEARSIZE     = 0x00080000l;
-		const unsigned int DDSF_DEPTH          = 0x00800000l;
-
-		// pixel format flags
-		const unsigned int DDSF_ALPHAPIXELS    = 0x00000001l;
-		const unsigned int DDSF_FOURCC         = 0x00000004l;
-		const unsigned int DDSF_RGB            = 0x00000040l;
-		const unsigned int DDSF_RGBA           = 0x00000041l;
-
-		// dwCaps1 flags
-		const unsigned int DDSF_COMPLEX         = 0x00000008l;
-		const unsigned int DDSF_TEXTURE         = 0x00001000l;
-		const unsigned int DDSF_MIPMAP          = 0x00400000l;
-
-		// dwCaps2 flags
-		const unsigned int DDSF_CUBEMAP         = 0x00000200l;
-		const unsigned int DDSF_CUBEMAP_POSITIVEX  = 0x00000400l;
-		const unsigned int DDSF_CUBEMAP_NEGATIVEX  = 0x00000800l;
-		const unsigned int DDSF_CUBEMAP_POSITIVEY  = 0x00001000l;
-		const unsigned int DDSF_CUBEMAP_NEGATIVEY  = 0x00002000l;
-		const unsigned int DDSF_CUBEMAP_POSITIVEZ  = 0x00004000l;
-		const unsigned int DDSF_CUBEMAP_NEGATIVEZ  = 0x00008000l;
-		const unsigned int DDSF_CUBEMAP_ALL_FACES  = 0x0000FC00l;
-		const unsigned int DDSF_VOLUME          = 0x00200000l;
-
-		// compressed texture types
-		const unsigned int FOURCC_DXT1 = 0x31545844l; //(MAKEFOURCC('D','X','T','1'))
-		const unsigned int FOURCC_DXT3 = 0x33545844l; //(MAKEFOURCC('D','X','T','3'))
-		const unsigned int FOURCC_DXT5 = 0x35545844l; //(MAKEFOURCC('D','X','T','5'))
-
-		struct DXTColBlock
-		{
-			unsigned short col0;
-			unsigned short col1;
-
-			unsigned char row[4];
-		};
-
-		struct DXT3AlphaBlock
-		{
-			unsigned short row[4];
-		};
-
-		struct DXT5AlphaBlock
-		{
-			unsigned char alpha0;
-			unsigned char alpha1;
-
-			unsigned char row[6];
-		};
-
-		struct DDS_PIXELFORMAT
-		{
-			unsigned int dwSize;
-			unsigned int dwFlags;
-			unsigned int dwFourCC;
-			unsigned int dwRGBBitCount;
-			unsigned int dwRBitMask;
-			unsigned int dwGBitMask;
-			unsigned int dwBBitMask;
-			unsigned int dwABitMask;
-		};
-
-		struct DDS_HEADER
-		{
-			unsigned int dwSize;
-			unsigned int dwFlags;
-			unsigned int dwHeight;
-			unsigned int dwWidth;
-			unsigned int dwPitchOrLinearSize;
-			unsigned int dwDepth;
-			unsigned int dwMipMapCount;
-			unsigned int dwReserved1[11];
-			DDS_PIXELFORMAT ddspf;
-			unsigned int dwCaps1;
-			unsigned int dwCaps2;
-			unsigned int dwReserved2[3];
-		};
 	} //end of K15_Engine::Rendering namespace
 	/*********************************************************************************/
 	namespace Math
@@ -329,20 +202,6 @@ namespace K15_Engine
 	using namespace Math;
 }// end of K15_Engine namespace
 
-#ifdef __GNUC__
-//http://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html
-# define K15_GCC_VERSION (__GNUC__ * 10000 \
-                          + __GNUC_MINOR__ * 100 \
-                          + __GNUC_PATCHLEVEL__)
-#endif //__GNUC__
-
-#if defined _DEBUG || defined DEBUG
-#	define K15_DEBUG
-#endif //_DEBUG
-
-#if __cplusplus > 199711L || _MSC_VER >= 1700 || K15_GCC_VERSION > 40800
-#	define K15_CPP11_SUPPORT
-#endif //__cplusplus > 199711L || _MSC_VER >= 1700 || K15_GCC_VERSION > 40800
 
 #define K15_VERSION_MAJOR 1
 #define K15_VERSION_MINOR 0
@@ -427,14 +286,7 @@ typedef std::ifstream		ReadFileStream;
 typedef std::stringstream	StringStream;
 
 #if defined K15_OS_WINDOWS
-	#pragma message("Compiling for windows")
-	#define _WINSOCKAPI_    // stops windows.h including winsock.h
-	#define WIN32_LEAN_AND_MEAN
-	#include "windows.h"
-	#include "windowsx.h"
-	#include "winnt.h"
-	#include <io.h>
-
+	
 	#if defined K15_BUILD
 		#define K15_CORE_API __declspec(dllexport)
 	#else
@@ -448,27 +300,11 @@ typedef std::stringstream	StringStream;
 	#define K15_BREAK_APPLICATION() __debugbreak()
 	#define K15_TERMINATE_APPLICATION() abort()
 
-	typedef K15_Engine::Core::DynamicLibrary_Win32 DynamicLibraryType;
-	typedef K15_Engine::Core::OSLayer_Win32 OSLayer;
-
-	//8 bit types
-	typedef signed    __int8  int8;
-	typedef unsigned  __int8  uint8;
-	//16 bit types
-	typedef signed    __int16 int16;
-	typedef unsigned  __int16 uint16;
-	//32 bit types
-	typedef signed    __int32 int32;
-	typedef unsigned  __int32 uint32;
-	//64 bit types
-	typedef signed    __int64 int64;
-	typedef unsigned  __int64 uint64;
 #else
 	#define K15_CORE_API
 #endif //K15_OS_WINDOWS
   
 #if defined K15_OS_LINUX
-	#pragma message("Compiling for linux")
     #pragma GCC diagnostic ignored "-fpermissive"
     #include <X11/Xlib.h>
     #include <X11/Xutil.h>
@@ -478,8 +314,6 @@ typedef std::stringstream	StringStream;
     typedef _XDisplay Display;
     typedef unsigned long GLXWindow;
     typedef unsigned long Window;
-    typedef K15_Engine::Core::OSLayer_Linux OSLayer;
-    typedef K15_Engine::Core::DynamicLibrary_Linux DynamicLibraryType;
 #endif //K15_OS_LINUX
 	
 
@@ -499,33 +333,12 @@ typedef std::stringstream	StringStream;
 	#include <dlfcn.h>
 	#include <jni.h>
 	#include <unistd.h>
-
-	typedef K15_Engine::Core::DynamicLibrary_Linux DynamicLibraryType;
-	typedef K15_Engine::Core::OSLayer_Android OSLayer;
-	typedef K15_Engine::Core::RenderWindow_Android RenderWindowType;
 #endif //K15_OS_ANDROID
 
 
 #ifndef K15_OS_WINDOWS
 	//TEXT macro from windows
 	#define TEXT(x) x
-
-    //undef to disable debug mode
-    #define K15_DEBUG
-
-	//8 bit types
-	typedef signed		char		int8;
-	typedef unsigned	char		uint8;
-	//16 bit types
-	typedef signed		short		int16;
-	typedef unsigned	short		uint16;
-	//32 bit types
-	typedef signed		int			int32;
-	typedef unsigned	int			uint32;
-	//64 bit types
-	typedef signed		long long	int64;
-	typedef unsigned	long long	uint64;
-
 #endif //K15_OS_WINDOWS
  
 #if defined K15_DEBUG
@@ -628,7 +441,6 @@ typedef std::set<String> StringSet;
 #define g_MeshManager K15_Engine::Rendering::MeshManager::getInstance()
 #define g_GameStateManager K15_Engine::Core::GameStateManager::getInstance()
 
-typedef unsigned char byte;
 typedef unsigned int Enum;
 
 typedef K15_Engine::Core::HashedString ObjectName;
@@ -638,7 +450,7 @@ typedef K15_Engine::Core::HashedString ProfilingName;
 typedef K15_Engine::Core::HashedString ResourceName;
 
 #if defined K15_NO_STRINGS
-#	define _ON(x)  K15_Engine::Core::ObjectNames::ObjectNames::x
+#	define _ON(x) K15_Engine::Core::ObjectNames::ObjectNames::x
 #	define _TN(x) K15_Engine::Core::ObjectNames::TypeNames::x
 #	define _EN(x) K15_Engine::Core::ObjectNames::EventNames::x
 #	define _RN(x) K15_Engine::Core::ObjectNames::ResourceNames::x
@@ -655,18 +467,6 @@ typedef K15_Engine::Core::HashedString ResourceName;
 
 #define K15_EPSILON 1e-5
 
-// #if defined _MSC_VER || K15_GCC_VERSION
-// #	define K15_USE_PRECOMPILED_HEADERS
-// #endif //_MSC_VER || K15_GCC_VERSION
-
-#define GIGABYTE	1073741824
-#define MEGABYTE	1048576
-#define KILOBYTE	1024
-
-#define size_gigabyte(s) (uint32)(s*GIGABYTE)
-#define size_megabyte(s) (uint32)(s*MEGABYTE)
-#define size_kilobyte(s) (uint32)(s*KILOBYTE)
-
 #define K15_PX_TO_NDC(px_pos, dimension_max) ((((float)px_pos / (float)dimension_max) - 0.5f) * 2.f)
 
 #define K15_PTR(T)		 typedef std::shared_ptr<T> T##Ptr;
@@ -679,19 +479,6 @@ typedef K15_Engine::Core::HashedString ResourceName;
 	X& operator=(const X& rhs){return *this;} \
 	X(X&& rhs){} \
 	X& operator=(X&& rhs){return *this;}
-
-#define K15_EXECUTE_CRITICAL_FUNCTION(obj,func) {obj.lockMutex();obj.func;obj.unlockMutex();}
-#define K15_EXECUTE_CRITICAL_FUNCTION_PTR(obj,func) {obj->lockMutex();obj->func;obj->unlockMutex();}
-
-#ifdef K15_OS_ANDROID
-	#define K15_PLATFORM_MOBILE
-#endif //K15_OS_ANDROID
-
-#if defined (K15_CPP11_SUPPORT)
-	#define OVERRIDE override
-#else
-	#define OVERRIDE
-#endif //K15_CPP11_SUPPORT
 
 #if defined (K15_NO_INLINE)
 	#define INLINE

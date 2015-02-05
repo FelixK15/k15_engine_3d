@@ -14,46 +14,8 @@ struct K15_LogContext
 	unsigned int filterMask;
 };
 /*********************************************************************************/
-#ifdef K15_LOG_ADD_STDOUT_LOGGING
-void K15_LogStdoutLog(const char* p_Message, LogPriority p_LogPriority)
-{
-	static const char* NORMAL_CONSOLE_COLOR = "\033[0m";
-	static const char* DEBUG_CONSOLE_COLOR = "\033[0;34m";
-	static const char* ERROR_CONSOLE_COLOR = "\033[0;31m";
-	static const char* WARNING_CONSOLE_COLOR = "\033[0;37m";
-	static const char* SUCCESS_CONSOLE_COLOR = "\033[0;32m";
-// 
-// 	if(p_LogPriority == K15_LOG_PRIORITY_NORMAL)
-// 	{
-// 		printf(NORMAL_CONSOLE_COLOR);
-// 	}
-// 	else if(p_LogPriority == K15_LOG_PRIORITY_ERROR)
-// 	{
-// 		printf(ERROR_CONSOLE_COLOR);
-// 	}
-// 	else if(p_LogPriority == K15_LOG_PRIORITY_WARNING)
-// 	{
-// 		printf(WARNING_CONSOLE_COLOR);
-// 	}
-// 	else if(p_LogPriority == K15_LOG_PRIORITY_SUCCESS)
-// 	{
-// 		printf(SUCCESS_CONSOLE_COLOR);
-// 	}
-// 	else if(p_LogPriority == K15_LOG_PRIORITY_DEBUG)
-// 	{
-// 		printf(DEBUG_CONSOLE_COLOR);
-//	}
-
-	printf("%s", p_Message/*, NORMAL_CONSOLE_COLOR*/);
-}
-
-unsigned int g_LogCount = 1;
-K15_LogContext g_LogContexts[K15_MAX_LOG_CONTEXT_COUNT] = {
-	{K15_LogStdoutLog, K15_LOG_PRIORITY_ALL}
-};
-#else
+K15_LogContext g_LogContexts[K15_MAX_LOG_CONTEXT_COUNT] = {};
 unsigned int g_LogCount = 0;
-#endif
 
 /*********************************************************************************/
 

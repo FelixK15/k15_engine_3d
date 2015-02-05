@@ -5,6 +5,8 @@ set(ENGINE_LIBS enet
 				jsoncpp
 				minizip
 				zlib
-				ois
 				resourceformats
+				os_layer
+				logging
+				rendering
 				k15math)

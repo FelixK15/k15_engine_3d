@@ -70,28 +70,13 @@ namespace K15_Engine { namespace Core {
 		INLINE const StringSet& getCommandList() const;
 		INLINE const ApplicationParameterList& getApplicationParameter() const;
 
-    #if defined K15_OS_ANDROID
-		void initialize(android_app* p_App);
-    #endif //K15_OS_ANDROID
 		void initialize(int p_CommandCount,char** p_Commands);
-		void initialize();
-		
-		void tryInitializeRenderer();
 
 		void run();
 
-		void tick();
+		void tick(float p_DeltaTime);
 
 		void shutdown();
-
-		void onPreTick();
-		void onPostTick();
-
-		void onBeforeRender();
-		void onAfterRender();
-
-		RendererBase* getRenderer() const;
-		void setRenderer(RendererBase* p_Renderer);
 
 		INLINE void addApplicationModule(ApplicationModule* p_Module);
 
@@ -100,29 +85,20 @@ namespace K15_Engine { namespace Core {
 		INLINE RenderTask* getRenderTask() const;
 		INLINE PhysicsTask* getPhysicsTask() const;
 
-		INLINE MeshManager* getMeshManager() const;
 		INLINE TaskManager* getTaskManager() const;
 		INLINE ProfilingManager* getProfileManager() const;
 		INLINE EventManager* getEventManager() const;
 		INLINE DynamicLibraryManager* getDynamicLibraryManager() const;
-		INLINE LogManager* getLogManager() const;
 		INLINE InputManager* getInputManager() const;
 		INLINE StackAllocator* getFrameAllocator();
 
 		INLINE float getRunningTime() const;
 
-		INLINE void setRunning(bool p_Running);
-		INLINE bool getRunning() const;
-
-		INLINE String getLastError();
 		INLINE float getTime();
 
 		INLINE const GameTime& getGameTime() const;
 		INLINE const float getDeltaTime() const;
 		INLINE const float getRawDeltaTime() const;
-
-		INLINE void setMaxFPS(uint32 p_MaxFPS);
-		INLINE uint32 getMaxFPS() const;
 
 		INLINE const FrameStatistic& getFrameStatistic(uint32 p_FrameNumber) const;
 		INLINE FrameStatistic& getCurrentFrameStatistic();
@@ -153,7 +129,6 @@ namespace K15_Engine { namespace Core {
 				GameTime m_GameTime;
 
 	expose_read String m_GameRootDir;
-	expose_read String m_HomeDir;
 
 	expose_read StringSet m_Plugins;
     

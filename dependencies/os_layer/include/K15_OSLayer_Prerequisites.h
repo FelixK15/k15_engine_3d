@@ -8,7 +8,6 @@
 #include <math.h>
 #include <malloc.h>
 #include <stdio.h>
-#include <io.h>
 #include <fcntl.h>
 
 #ifdef __ANDROID__
@@ -21,6 +20,10 @@
 	#define K15_OS_APPLE
 #endif //_WIN32
 
+#ifdef K15_OS_ANDROID
+#define K15_PLATFORM_MOBILE
+#endif //K15_OS_ANDROID
+
 #if defined (K15_OS_WINDOWS)
 	#ifdef _WIN64
 		#define K15_64_BIT
@@ -32,15 +35,36 @@
 	#endif //__LP64__
 #endif //K15_OS_WINDOWS
 
+#ifdef __GNUC__
+//http://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html
+# define K15_GCC_VERSION (__GNUC__ * 10000 \
+	+ __GNUC_MINOR__ * 100 \
+	+ __GNUC_PATCHLEVEL__)
+#endif //__GNUC__
+
 #if __cplusplus > 199711L || _MSC_VER >= 1700 || K15_GCC_VERSION > 40800
 	#define K15_CPP11_SUPPORT
 #endif //__cplusplus > 199711L || _MSC_VER >= 1700 || K15_GCC_VERSION > 40800
 
-#ifdef _DEBUG
+#if defined _DEBUG || defined DEBUG
 	#define K15_DEBUG
 #endif //_DEBUG
 
-#define internal static
+#if defined (K15_CPP11_SUPPORT)
+	#define OVERRIDE override
+#else
+	#define OVERRIDE
+#endif //K15_CPP11_SUPPORT
+
+#define GIGABYTE	1073741824
+#define MEGABYTE	1048576
+#define KILOBYTE	1024
+
+#define size_gigabyte(s) (uint32)(s*GIGABYTE)
+#define size_megabyte(s) (uint32)(s*MEGABYTE)
+#define size_kilobyte(s) (uint32)(s*KILOBYTE)
+
+#define intern static
 #define global static
 
 #ifdef K15_OS_WINDOWS
@@ -50,6 +74,8 @@
 	#include "windowsx.h"
 	#include "winnt.h"
 	#include "xinput.h"
+	#include "stdlib.h"
+	#include <io.h>
 
 	//8 bit types
 	typedef signed    __int8  int8;

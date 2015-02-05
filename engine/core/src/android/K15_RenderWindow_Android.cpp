@@ -42,12 +42,12 @@ namespace K15_Engine { namespace Core {
 	{
 		if((m_Window = ((OSLayer)g_Application->getOSLayer()).getAndroidApp()->window) == 0)
 		{
-			K15_LOG_ERROR("android_app::window is NULL");
+			K15_LOG_ERROR_MESSAGE("android_app::window is NULL");
 			return false;
 		}
 		else
 		{
-			K15_LOG_SUCCESS("Successfully retrieved android_app::window.");
+			K15_LOG_SUCCESS_MESSAGE("Successfully retrieved android_app::window.");
 		}
 		return true;
 	}

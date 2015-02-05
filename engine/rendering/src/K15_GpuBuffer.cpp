@@ -20,7 +20,7 @@
 #include "K15_PrecompiledHeader.h"
 #include "K15_GpuBuffer.h"
 #include "K15_RendererBase.h"
-#include "K15_LogManager.h"
+
 #include "K15_IndexBuffer.h"
 #include "K15_StringUtil.h"
 

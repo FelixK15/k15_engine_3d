@@ -26,7 +26,7 @@
 #ifdef K15_OS_WINDOWS
 
 #include "K15_Mouse.h"
-#include "K15_LogManager.h"
+
 #include "K15_RenderWindow.h"
 
 namespace K15_Engine { namespace Core { namespace InputDevices {
@@ -74,7 +74,7 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 
 		if((newCursor = (HCURSOR)CreateBitmap(p_Width,p_Height,1,p_ColorBits,p_IconData)) == 0)
 		{
-			K15_LOG_ERROR("Could not load cursor image from memory. (%s)",g_Application->getLastError().c_str());
+			K15_LOG_ERROR_MESSAGE("Could not load cursor image from memory. (%s)",g_Application->getLastError().c_str());
 			return false;
 		}
 
@@ -95,7 +95,7 @@ namespace K15_Engine { namespace Core { namespace InputDevices {
 		HCURSOR newCursor = 0;
 		if((newCursor = (HCURSOR)LoadImage(RenderWindowImpl::getHandleInstance(),p_IconPath.c_str(),IMAGE_CURSOR,0,0,LR_DEFAULTSIZE | LR_LOADFROMFILE)) == 0)
 		{
-			K15_LOG_ERROR("Could not load cursor image from file \"%s\". (%s)",p_IconPath.c_str(),g_Application->getLastError().c_str());
+			K15_LOG_ERROR_MESSAGE("Could not load cursor image from file \"%s\". (%s)",p_IconPath.c_str(),g_Application->getLastError().c_str());
 			return false;
 		}
 

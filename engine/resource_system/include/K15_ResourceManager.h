@@ -26,7 +26,7 @@
 #include "K15_Prerequisites.h"
 #include "K15_Application.h"
 #include "K15_AllocatedObject.h"
-#include "K15_LogManager.h"
+
 
 #include "K15_ResourceArchiveBase.h"
 /*#include "K15_ResourceHandle.h"*/

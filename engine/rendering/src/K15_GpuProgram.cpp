@@ -83,7 +83,7 @@ namespace K15_Engine { namespace Rendering {
 				if(getRenderer()->errorOccured())
 				{
 					m_Error = getRenderer()->getLastError();
-					K15_LOG_ERROR("Could not load binary code for shader \"%s\". %s",m_Name.c_str(),m_Error.c_str());
+					K15_LOG_ERROR_MESSAGE("Could not load binary code for shader \"%s\". %s",m_Name.c_str(),m_Error.c_str());
 					m_Compiled = false;
 				}
 
@@ -98,7 +98,7 @@ namespace K15_Engine { namespace Rendering {
 				if(!m_Impl->compileShaderCode())
 				{
 					m_Error = getRenderer()->getLastError();
-					K15_LOG_ERROR("Could not compile shader code for shader \"%s\". %s",m_Name.c_str(),m_Error.c_str());
+					K15_LOG_ERROR_MESSAGE("Could not compile shader code for shader \"%s\". %s",m_Name.c_str(),m_Error.c_str());
 					m_Compiled = false;
 				}
 				else
@@ -179,7 +179,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(includeFile.empty())
 			{
-				K15_LOG_ERROR("Invalid line in GpuProgram. Line: %s, Program: \"%s\"",includeLine.c_str(),m_Name.c_str());
+				K15_LOG_ERROR_MESSAGE("Invalid line in GpuProgram. Line: %s, Program: \"%s\"",includeLine.c_str(),m_Name.c_str());
 				break;
 			}
 
@@ -198,7 +198,7 @@ namespace K15_Engine { namespace Rendering {
 	{
 		if(!m_Compiled)
 		{
-			K15_LOG_ERROR("Can't reflect shader \"%s\". Has not been compiled.",getName().c_str());
+			K15_LOG_ERROR_MESSAGE("Can't reflect shader \"%s\". Has not been compiled.",getName().c_str());
 			return false;
 		}
 		else
@@ -249,7 +249,7 @@ namespace K15_Engine { namespace Rendering {
 			//did everything went smoothly?
 			if(getRenderer()->errorOccured())
 			{
-				K15_LOG_ERROR("Could not reflect shader \"%s\". %s.",m_Name.c_str(),getRenderer()->getLastError().c_str());
+				K15_LOG_ERROR_MESSAGE("Could not reflect shader \"%s\". %s.",m_Name.c_str(),getRenderer()->getLastError().c_str());
 				return false;
 			}
 		}

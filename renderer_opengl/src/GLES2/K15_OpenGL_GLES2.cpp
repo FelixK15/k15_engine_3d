@@ -46,12 +46,12 @@ GLboolean K15_Engine::Rendering::OpenGL::_gles2Init(GLint p_ColorBits, GLint p_D
 
 	if(eglInitialize(ms_Display,&ver_Major,&ver_Minor) == EGL_FALSE)
 	{
-		K15_LOG_ERROR("Could not initialize EGL Display.");
+		K15_LOG_ERROR_MESSAGE("Could not initialize EGL Display.");
 		return GL_FALSE;
 	}
 
-	K15_LOG_SUCCESS("Successfully initialize EGL Display.");
-	K15_LOG_SUCCESS("EGL Version: %i.%i",ver_Major,ver_Minor);
+	K15_LOG_SUCCESS_MESSAGE("Successfully initialize EGL Display.");
+	K15_LOG_SUCCESS_MESSAGE("EGL Version: %i.%i",ver_Major,ver_Minor);
 
 	EGLConfig config = 0;
 	EGLint configCount = 0;
@@ -69,30 +69,30 @@ GLboolean K15_Engine::Rendering::OpenGL::_gles2Init(GLint p_ColorBits, GLint p_D
 
 	if(eglChooseConfig(ms_Display,attribs,&config,1,&configCount) == EGL_FALSE)
 	{
-		K15_LOG_ERROR("Could not get EGL config.");
+		K15_LOG_ERROR_MESSAGE("Could not get EGL config.");
 		return GL_FALSE;
 	}
 
-	K15_LOG_SUCCESS("EGL config retrieved.");
+	K15_LOG_SUCCESS_MESSAGE("EGL config retrieved.");
 
 	if(eglGetConfigAttrib(ms_Display,config,EGL_NATIVE_VISUAL_ID,&format) == EGL_FALSE)
 	{
-		K15_LOG_ERROR("Could not get config attributes 'EGL_NATIVE_VISUAL_ID'.");
+		K15_LOG_ERROR_MESSAGE("Could not get config attributes 'EGL_NATIVE_VISUAL_ID'.");
 		return GL_FALSE;
 	}
 
-	K15_LOG_SUCCESS("Retrieved 'EGL_NATIVE_VISUAL_ID'. (%i)",format);
+	K15_LOG_SUCCESS_MESSAGE("Retrieved 'EGL_NATIVE_VISUAL_ID'. (%i)",format);
 
 #if defined K15_OS_ANDROID
 	ANativeWindow_setBuffersGeometry(RenderWindowType::getNativeWindow(), 0, 0, format);
 	if((ms_Surface = eglCreateWindowSurface(ms_Display, config, RenderWindowType::getNativeWindow(), 0)) == 0)
 #endif //K15_OS_ANDROID
 	{
-		K15_LOG_ERROR("Could not create EGL window surface.");
+		K15_LOG_ERROR_MESSAGE("Could not create EGL window surface.");
 		return GL_FALSE;
 	}
 
-	K15_LOG_SUCCESS("Created EGL window surface.");
+	K15_LOG_SUCCESS_MESSAGE("Created EGL window surface.");
 
 	const EGLint contextAttribList[] = {
 		EGL_CONTEXT_CLIENT_VERSION, 2,
@@ -101,23 +101,23 @@ GLboolean K15_Engine::Rendering::OpenGL::_gles2Init(GLint p_ColorBits, GLint p_D
 
 	if((ms_Context = eglCreateContext(ms_Display,config,0,contextAttribList)) == 0)
 	{
-		K15_LOG_ERROR("Could not create GLES context.");
+		K15_LOG_ERROR_MESSAGE("Could not create GLES context.");
 		return GL_FALSE;
 	}
 
-	K15_LOG_SUCCESS("Created GLES context.");
+	K15_LOG_SUCCESS_MESSAGE("Created GLES context.");
 
 	if(eglMakeCurrent(ms_Display,ms_Surface,ms_Surface,ms_Context) == EGL_FALSE)
 	{
-		K15_LOG_ERROR("Could not set GLES context as current context.");
+		K15_LOG_ERROR_MESSAGE("Could not set GLES context as current context.");
 		return GL_FALSE;
 	}
 
-	K15_LOG_SUCCESS("Set GLES context as current context.");
+	K15_LOG_SUCCESS_MESSAGE("Set GLES context as current context.");
 
 	const unsigned char* glesVersion = glGetString(GL_VERSION);
 
-	K15_LOG_SUCCESS("GLES Version: %s",glesVersion);
+	K15_LOG_SUCCESS_MESSAGE("GLES Version: %s",glesVersion);
 
 	GLint width,height;
 	eglQuerySurface(ms_Display,ms_Surface,EGL_WIDTH,&width);
@@ -127,7 +127,7 @@ GLboolean K15_Engine::Rendering::OpenGL::_gles2Init(GLint p_ColorBits, GLint p_D
 	resolution.width = width;
 	resolution.height = height;
 
-	K15_LOG_NORMAL("Setting resolution to %ix%i...",width,height);
+	K15_LOG_NORMAL_MESSAGE("Setting resolution to %ix%i...",width,height);
 	RenderWindow::setResolution(resolution,false);
 
 	K15_LOG_DEBUG("Supported OpenGL ES Extensions:%s",glGetString(GL_EXTENSIONS));

@@ -251,7 +251,7 @@ namespace K15_Engine { namespace Rendering {
 
 		if(p_DeclarationString.size() < SIZE_ELEMENT)
 		{
-			K15_LOG_ERROR("Invalid vertex declaration string \"%s\"",p_DeclarationString.c_str());
+			K15_LOG_ERROR_MESSAGE("Invalid vertex declaration string \"%s\"",p_DeclarationString.c_str());
 			return;
 		}
     
@@ -288,7 +288,7 @@ namespace K15_Engine { namespace Rendering {
 			}
 			else
 			{
-				K15_LOG_ERROR("Invalid element declaration \"%s\"",elementStr.c_str());
+				K15_LOG_ERROR_MESSAGE("Invalid element declaration \"%s\"",elementStr.c_str());
 				continue;
 			}
 
@@ -326,7 +326,7 @@ namespace K15_Engine { namespace Rendering {
 			}
 			else
 			{
-				K15_LOG_ERROR("Invalid element declaration \"%s\"",elementStr.c_str());
+				K15_LOG_ERROR_MESSAGE("Invalid element declaration \"%s\"",elementStr.c_str());
 				continue;
 			}
 

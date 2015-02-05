@@ -20,7 +20,7 @@
 #include "K15_PrecompiledHeader.h"
 #include "K15_Texture.h"
 #include "K15_RendererBase.h"
-#include "K15_LogManager.h"
+
 
 namespace K15_Engine { namespace Rendering {
 	/*********************************************************************************/

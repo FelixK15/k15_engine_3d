@@ -143,14 +143,14 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 			glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
 			glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
 
-			K15_LOG_NORMAL("OpenGL Vendor: \"%s\"", glGetString(GL_VENDOR));
-			K15_LOG_NORMAL("OpenGL Renderer: \"%s\"", glGetString(GL_RENDERER));
+			K15_LOG_NORMAL_MESSAGE("OpenGL Vendor: \"%s\"", glGetString(GL_VENDOR));
+			K15_LOG_NORMAL_MESSAGE("OpenGL Renderer: \"%s\"", glGetString(GL_RENDERER));
 
 			if(majorVersion < K15_MIN_GL_VERSION_MAJOR ||
 			   (majorVersion == K15_MIN_GL_VERSION_MAJOR && 
 			   minorVersion < K15_MIN_GL_VERSION_MINOR))
 			{
-				K15_LOG_ERROR("OpenGL version %u.%u is insufficient. OpenGL version greater or equal %u.%u is required.", 
+				K15_LOG_ERROR_MESSAGE("OpenGL version %u.%u is insufficient. OpenGL version greater or equal %u.%u is required.", 
 					majorVersion, minorVersion, K15_MIN_GL_VERSION_MAJOR, K15_MIN_GL_VERSION_MAJOR);
 
 				kglShutdown();
@@ -496,13 +496,13 @@ namespace K15_Engine { namespace Rendering { namespace OpenGL {
 		GLuint program = glProgram->getProgramGL();
 		if(p_Parameter.getType() == GpuProgramParameter::VT_UNKNOW)
 		{
-		  K15_LOG_ERROR("GpuProgramParameter \"%s\" from GpuProgram \"%s\" is unknown.",
+		  K15_LOG_ERROR_MESSAGE("GpuProgramParameter \"%s\" from GpuProgram \"%s\" is unknown.",
 			p_Parameter.getName().c_str(),
 			p_Parameter.getGpuProgram()->getName().c_str());
 		}
 		else if(!p_Parameter.getData())
 		{
-			K15_LOG_ERROR("GpuProgramParameter \"%s\" from GpuProgram \"%s\" has no data.",
+			K15_LOG_ERROR_MESSAGE("GpuProgramParameter \"%s\" from GpuProgram \"%s\" has no data.",
 				p_Parameter.getName().c_str(),
 				p_Parameter.getGpuProgram()->getName().c_str());
 		}

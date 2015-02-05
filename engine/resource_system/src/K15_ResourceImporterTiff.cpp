@@ -76,7 +76,7 @@ namespace K15_Engine { namespace Core {
 
 		if(!pixelData)
 		{
-			K15_LOG_ERROR("Could not load image. Error: %s", stbi_failure_reason());
+			K15_LOG_ERROR_MESSAGE("Could not load image. Error: %s", stbi_failure_reason());
 			return 0;
 		}
 

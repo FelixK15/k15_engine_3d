@@ -43,7 +43,7 @@ namespace K15_Engine { namespace Core {
       wc.hCursor = LoadCursor(0,IDC_ARROW);
 
       if(RegisterClass(&wc) == FALSE) {
-         K15_LOG_ERROR("Could not register WNDCLASS \"K15_RenderWindowClass\" Error:%s", OSLayer::getError().c_str());
+         K15_LOG_ERROR_MESSAGE("Could not register WNDCLASS \"K15_RenderWindowClass\" Error:%s", OSLayer::getError().c_str());
          return false;
       }
 
@@ -54,7 +54,7 @@ namespace K15_Engine { namespace Core {
                                          "", WS_OVERLAPPEDWINDOW,
                                          CW_USEDEFAULT,CW_USEDEFAULT, width, height,
                                          0,0,ms_Instance,0)) == INVALID_HANDLE_VALUE) {
-         K15_LOG_ERROR("Could not create window. Error:%s", OSLayer::getError().c_str());
+         K15_LOG_ERROR_MESSAGE("Could not create window. Error:%s", OSLayer::getError().c_str());
          return false;
       }
 
@@ -127,7 +127,7 @@ namespace K15_Engine { namespace Core {
 
         if(SetWindowPos(ms_HandleWindow,HWND_TOP,0,0,currentResolution.width, currentResolution.height,
           SWP_DRAWFRAME) == FALSE) {
-             K15_LOG_ERROR("Could not change resolution to \"%ix%i\" Error:%s",
+             K15_LOG_ERROR_MESSAGE("Could not change resolution to \"%ix%i\" Error:%s",
                currentResolution.width, 
                currentResolution.height, 
                OSLayer::getError().c_str());

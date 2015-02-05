@@ -22,7 +22,7 @@
 #include "K15_ResourceManager.h"
 #include "K15_ResourceArchiveBase.h"
 
-#include "K15_LogManager.h"
+
 
 namespace K15_Engine { namespace Core { 
 	/*********************************************************************************/
@@ -51,7 +51,7 @@ namespace K15_Engine { namespace Core {
 		{
 			if(iter->second->getResourceReferences() == 0 && !iter->second->isMarkedAsUnreferenced())
 			{
-				K15_LOG_NORMAL("Asset \"%s\" is no longer referenced.",iter->second->getName().c_str());
+				K15_LOG_NORMAL_MESSAGE("Asset \"%s\" is no longer referenced.",iter->second->getName().c_str());
 				iter->second->setMarkedAsUnreferenced(true);
 			}
 
@@ -63,7 +63,7 @@ namespace K15_Engine { namespace Core {
 					(iter->second->getPriority() == ResourceBase::RP_NORMAL && difference > 200.0) ||
 					(iter->second->getPriority() == ResourceBase::RP_HIGH	&& difference > 500.0))
 				{
-					K15_LOG_NORMAL("Deleting Asset \"%s\"",iter->second->getName().c_str());
+					K15_LOG_NORMAL_MESSAGE("Deleting Asset \"%s\"",iter->second->getName().c_str());
 					deleteResource(iter->second);
 
 					m_ResourceDataCache.erase(iter);
@@ -92,7 +92,7 @@ namespace K15_Engine { namespace Core {
 		{
 			if((*iter)->isOpen())
 			{
-				K15_LOG_NORMAL("Closing resource file \"%s\"",(*iter)->getFileName().c_str());
+				K15_LOG_NORMAL_MESSAGE("Closing resource file \"%s\"",(*iter)->getFileName().c_str());
 				(*iter)->close();
 			}
 		}
@@ -159,7 +159,7 @@ namespace K15_Engine { namespace Core {
 			if(!resourceArchive->open() && !alreadyOpen)
 			{
 				//log error and load debug resoure
-				K15_LOG_ERROR("Could not open resource archive %s. Error:\"%s\".",
+				K15_LOG_ERROR_MESSAGE("Could not open resource archive %s. Error:\"%s\".",
 					resourceArchive->getFileName().c_str(),resourceArchive->getError().c_str());
 			}
 			else
@@ -168,7 +168,7 @@ namespace K15_Engine { namespace Core {
 				{
 					if(!resourceArchive->getResource(p_ResourceName.c_str(),&resourceData))
 					{
-						K15_LOG_ERROR("Could not load resource \"%s\" from resource archive \"%s\", "
+						K15_LOG_ERROR_MESSAGE("Could not load resource \"%s\" from resource archive \"%s\", "
 							"eventhough resource confirms to hold the resource. Error:\"%s\".",
 							p_ResourceName.c_str(),resourceArchive->getFileName().c_str(),resourceArchive->getError().c_str());
 
@@ -203,12 +203,12 @@ namespace K15_Engine { namespace Core {
 					//load resource using importer
 					if((resource = importer->load(resourceData,p_ResourceTypeName)) == 0)
 					{
-						K15_LOG_ERROR("Could not load Resource \"%s\" using Resource Importer \"%s\". Error\"%s\".",
+						K15_LOG_ERROR_MESSAGE("Could not load Resource \"%s\" using Resource Importer \"%s\". Error\"%s\".",
 							p_ResourceName.c_str(),importer->getName().c_str(),importer->getError().c_str());
 					}
 					else
 					{
-						K15_LOG_SUCCESS("Successfully loaded resource \"%s\" using resource loader \"%s\".",
+						K15_LOG_SUCCESS_MESSAGE("Successfully loaded resource \"%s\" using resource loader \"%s\".",
 							p_ResourceName.c_str(),importer->getType().getName().c_str());
 
 						m_ResourceDataCache.insert(Pair(ResourceName,ResourceBase*)(p_ResourceName,resource));

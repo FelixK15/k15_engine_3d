@@ -25,9 +25,8 @@
 #include "K15_OpenGL_Emulation.h"
 
 #include "K15_ApplicationModuleDescription.h"
-
 #include "K15_Application.h"
-#include "K15_LogManager.h"
+
 #include "K15_RenderTask.h"
 #include "K15_RendererBase.h"
 #include "K15_GpuProgramParameter.h"

@@ -5,6 +5,63 @@
 #include "win32/K15_WindowWin32.h"
 #include "win32/K15_EventsWin32.h"
 
+#include <K15_Logging.h>
+
+#ifdef K15_DEBUG
+/*********************************************************************************/
+void K15_Win32LogVisualStudio(const char* p_Message, LogPriority p_Priority)
+{
+	OutputDebugStringA(p_Message);
+}
+/*********************************************************************************/
+void K15_Win32LogConsole(const char* p_Message, LogPriority p_Priority)
+{
+	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	WORD colorCode = 0;
+
+	switch (p_Priority)
+	{
+	case K15_LOG_PRIORITY_NORMAL:
+		{
+			colorCode = FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN;
+			break;
+		}
+
+	case K15_LOG_PRIORITY_ERROR:
+		{
+			colorCode = FOREGROUND_RED;
+			break;
+		}
+	
+	case K15_LOG_PRIORITY_WARNING:
+		{
+			colorCode = FOREGROUND_GREEN | FOREGROUND_RED;
+			break;
+		}
+
+	case K15_LOG_PRIORITY_SUCCESS:
+		{
+			colorCode = FOREGROUND_GREEN;
+			break;
+		}
+	
+	case K15_LOG_PRIORITY_DEBUG:
+		{
+			colorCode = FOREGROUND_RED | FOREGROUND_BLUE;
+			break;
+		}
+
+		//set output color
+		SetConsoleTextAttribute(consoleHandle,colorCode);
+		printf("%s\n", p_Message);
+
+		//set color back to white
+		SetConsoleTextAttribute(consoleHandle, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN); 
+	}
+}
+/*********************************************************************************/
+#endif //K15_DEBUG
+
 /*********************************************************************************/
 void K15_Win32AllocateDebugConsole()
 {
@@ -25,22 +82,36 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	K15_OSLayerContext win32OSContext;
 
 	//window
-	win32OSContext.createWindow = K15_Win32CreateWindow;
-	win32OSContext.setWindowDimension = K15_Win32SetWindowDimension;
-	win32OSContext.setWindowFullscreen = K15_Win32SetWindowFullscreen;
-	win32OSContext.setWindowTitle = K15_Win32SetWindowTitle;
-	win32OSContext.closeWindow = K15_Win32CloseWindow;
+	win32OSContext.window.createWindow = K15_Win32CreateWindow;
+	win32OSContext.window.setWindowDimension = K15_Win32SetWindowDimension;
+	win32OSContext.window.setWindowFullscreen = K15_Win32SetWindowFullscreen;
+	win32OSContext.window.setWindowTitle = K15_Win32SetWindowTitle;
+	win32OSContext.window.closeWindow = K15_Win32CloseWindow;
+	win32OSContext.window.window = 0;
 
 	//events
-	win32OSContext.pumpSystemEvents = K15_Win32PumpSystemEvents;
+	win32OSContext.events.pumpSystemEvents = K15_Win32PumpSystemEvents;
 
+	//get current dir
+	LPSTR currentDirectoryBuffer = (LPSTR)malloc(MAX_PATH);
+	GetCurrentDirectoryA(MAX_PATH, currentDirectoryBuffer);
 
-	win32OSContext.window = 0;
+	//system
+	win32OSContext.system.systemIdentifier = OS_WINDOWS;
+	win32OSContext.system.sleep = K15_Win32Sleep;
+	win32OSContext.system.getError = K15_Win32GetError;
+	win32OSContext.system.homeDir = currentDirectoryBuffer;
+
+	win32OSContext.commandLineArgCount = __argc;
+	win32OSContext.commandLineArgs = __argv;
 	win32OSContext.userData = 0;
 
 	//Debug console
 #ifdef K15_DEBUG
 	K15_Win32AllocateDebugConsole();
+
+	K15_LogRegisterLogFnc(K15_Win32LogVisualStudio, K15_LOG_PRIORITY_DEFAULT);
+	K15_LogRegisterLogFnc(K15_Win32LogConsole, K15_LOG_PRIORITY_DEFAULT);
 #endif //K15_DEBUG
 
 	K15_Win32Context* win32SpecificContext = (K15_Win32Context*)malloc(sizeof(K15_Win32Context));
@@ -56,7 +127,6 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 
 	if (!xinput)
 	{
-		K15_Win32ShutdownOSLayer();
 		return K15_ERROR_SYSTEM;
 	}
 
@@ -71,7 +141,6 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	if (!win32SpecificContext->XInput.enable || !win32SpecificContext->XInput.getCapabilities 
 		|| !win32SpecificContext->XInput.getState || !win32SpecificContext->XInput.setState)
 	{
-		K15_Win32ShutdownOSLayer();
 		return K15_ERROR_SYSTEM;
 	}
 
@@ -80,7 +149,8 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 
 	//win32 context as userdata
 	win32SpecificContext->hInstance = p_hInstance;
-
+	QueryPerformanceFrequency(&win32SpecificContext->performanceFrequency);
+	
 	win32OSContext.userData = (void*)win32SpecificContext;
 
 	//Register Window Class
@@ -101,6 +171,26 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
+char* K15_Win32GetError()
+{
+	DWORD errorNo = GetLastError();
+	char* messageBuffer = (char*)malloc(256);
+
+	if (FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, 0, errorNo, LANG_ENGLISH, messageBuffer, 256, 0) == 0)
+	{
+		free(messageBuffer);
+		messageBuffer = "Unkown Error";
+	}
+	
+	return messageBuffer;
+}
+/*********************************************************************************/
+void K15_Win32Sleep(float p_SleepTimeInSeconds)
+{
+	DWORD milliSeconds = (DWORD)(p_SleepTimeInSeconds * 1000.f);
+	Sleep(milliSeconds);
+}
+/*********************************************************************************/
 void K15_Win32ShutdownOSLayer()
 {
 	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
@@ -111,5 +201,16 @@ void K15_Win32ShutdownOSLayer()
 		FreeLibrary(win32Context->XInput.module);
 		win32Context->XInput.module = 0;
 	}
+}
+/*********************************************************************************/
+float K15_Win32GetTicks()
+{
+	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
+	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
+
+	LARGE_INTEGER counts;
+	QueryPerformanceCounter(&counts);
+
+	return (float)(counts.QuadPart / win32Context->performanceFrequency.QuadPart);
 }
 /*********************************************************************************/

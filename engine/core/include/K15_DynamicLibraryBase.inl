@@ -27,7 +27,7 @@ Functor0<ReturnType> DynamicLibraryBase::getSymbol(const String& p_SymbolName)
 
 		if(!symbol)
 		{
-			K15_LOG_ERROR("Could not find symbol \"%s\" (library:\"%s\") Error:%s",p_SymbolName.c_str(),getFileName().c_str(),Application::getInstance()->getLastError().c_str());
+			K15_LOG_ERROR_MESSAGE("Could not find symbol \"%s\" (library:\"%s\") Error:%s",p_SymbolName.c_str(),getFileName().c_str(),Application::getInstance()->getLastError().c_str());
 		}
 		else
 		{
@@ -39,7 +39,7 @@ Functor0<ReturnType> DynamicLibraryBase::getSymbol(const String& p_SymbolName)
 	}
 	else
 	{
-	    K15_LOG_NORMAL("Trying to load symbol from already unloaded library - Symbol:\"%s\" (Library:\"%s\")",p_SymbolName.c_str(),getFileName().c_str());
+	    K15_LOG_NORMAL_MESSAGE("Trying to load symbol from already unloaded library - Symbol:\"%s\" (Library:\"%s\")",p_SymbolName.c_str(),getFileName().c_str());
 	}
 
 	return Functor0<ReturnType>();

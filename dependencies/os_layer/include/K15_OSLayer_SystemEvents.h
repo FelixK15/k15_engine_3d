@@ -23,10 +23,15 @@ struct K15_SystemEvent		// 96 Bits
 		float thumbValue;
 		struct 
 		{
-			uint16 x;
-			uint16 y;
+			int16 x;
+			int16 y;
 		} position;
-	}; //32 bit
+		struct  
+		{
+			uint16 width;
+			uint16 height;
+		} size;
+	} params; //32 bit
 }; // end of K15_SystemEvent struct declaration
 
 uint8 K15_PumpSystemEvents();

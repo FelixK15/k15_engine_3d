@@ -2,10 +2,10 @@
 #include "K15_OSLayer_OSContext.h"
 
 /*********************************************************************************/
-internal K15_SystemEvent g_EventList[K15_EVENT_TYPE_COUNT][K15_EVENTS_PER_BUCKET] = {0};
-internal K15_SystemEvent g_MasterEventList[K15_EVENTS_PER_BUCKET] = {0};
-internal uint32 g_MasterListSize = 0;
-internal uint32 g_EventListSize[K15_EVENT_TYPE_COUNT] = {0};
+intern K15_SystemEvent g_EventList[K15_EVENT_TYPE_COUNT][K15_EVENTS_PER_BUCKET] = {0};
+intern K15_SystemEvent g_MasterEventList[K15_EVENTS_PER_BUCKET] = {0};
+intern uint32 g_MasterListSize = 0;
+intern uint32 g_EventListSize[K15_EVENT_TYPE_COUNT] = {0};
 /*********************************************************************************/
 
 
@@ -15,7 +15,7 @@ uint8 K15_PumpSystemEvents()
 {
 	K15_OSLayerContext* osLayerContext = K15_GetOSLayerContext();
 
-	return osLayerContext->pumpSystemEvents(osLayerContext);
+	return osLayerContext->events.pumpSystemEvents(osLayerContext);
 }
 /*********************************************************************************/
 uint8 K15_GetSystemEventFromQueue(K15_SystemEvent* p_SystemEvent, uint32 p_Flags)

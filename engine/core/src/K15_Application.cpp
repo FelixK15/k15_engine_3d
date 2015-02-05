@@ -88,8 +88,7 @@ namespace K15_Engine { namespace Core {
 		m_AvgFrameTime(0.033f),
 		m_FrameAllocator(0),
 		m_GameStateManager(0),
-		m_DebugRenderer(0),
-		m_HomeDir()
+		m_DebugRenderer(0)
 	{
 		memset(m_FrameStatistics,0,sizeof(FrameStatistic) * FrameStatisticCount);
 
@@ -114,42 +113,11 @@ namespace K15_Engine { namespace Core {
 	{
 		m_Commands.clear();
 	}
-	/*********************************************************************************/
-	RendererBase* Application::getRenderer() const
-	{
-		RendererBase* renderer = 0;
-
-		if(m_RenderTask)
-		{
-			renderer = m_RenderTask->getRenderer();
-		}
-
-		return renderer;
-	}
-	/*********************************************************************************/
-	void Application::setRenderer(RendererBase* p_Renderer)
-	{
-		K15_ASSERT(p_Renderer,"Passed NULL renderer.");
-		K15_ASSERT(m_RenderTask,"Renderer passed before Application::initialize.");
-
-		m_RenderTask->setRenderer(p_Renderer);
-	}
-	/*********************************************************************************/
+		/*********************************************************************************/
 	void Application::createCommandList(int p_CommandCount,char** p_Commands)
 	{
-		//the 1. entry in the command array is always (on every system?) the path to the application. 
-		//We'll set the path to the application as the default game root dir.
 		static String appPath = p_Commands[0];
 		String::size_type pos = String::npos;
-
-		if((pos = appPath.find_last_of('\\')) != String::npos)
-		{
-            m_HomeDir = appPath.substr(0, pos+1);
-		}
-        else if((pos = appPath.find_last_of('/')) != String::npos)
-        {
-            m_HomeDir = appPath.substr(0, pos+1);
-        }
 
 		for(int i = 1;i < p_CommandCount;++i)
 		{
@@ -174,13 +142,13 @@ namespace K15_Engine { namespace Core {
 	{
 		static String settingsFileName;
 		settingsFileName = m_GameRootDir + SettingsFileName;
-		K15_LOG_NORMAL("Trying to open settings file %s",SettingsFileName.c_str());
+		K15_LOG_NORMAL_MESSAGE("Trying to open settings file %s",SettingsFileName.c_str());
 
 		IniFileParser settingsFile(settingsFileName);
 		
 		if(settingsFile.isValid())
 		{
-			K15_LOG_SUCCESS("Successfully opened settings file!");
+			K15_LOG_SUCCESS_MESSAGE("Successfully opened settings file!");
 			IniFileGroup group;
 			if(settingsFile.getGroupEntries("",&group))
 			{
@@ -197,17 +165,9 @@ namespace K15_Engine { namespace Core {
 		}
 		else
 		{
-			K15_LOG_ERROR("Could not open settings file. Error:%s",settingsFile.getError().c_str());
+			K15_LOG_ERROR_MESSAGE("Could not open settings file. Error:%s",settingsFile.getError().c_str());
 		}
 	}
-	/*********************************************************************************/
-#if defined K15_OS_ANDROID
-	void Application::initialize(android_app* p_App)
-	{
-		OSLayer::setAndroidApp(p_App);
-		initialize();
-	}
-#endif //K15_OS_ANDROID
 	/*********************************************************************************/
 	void Application::initialize(int p_CommandCount,char** p_Commands)
 	{
@@ -219,61 +179,61 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void Application::initialize()
 	{
-		K15_LOG_NORMAL("Initializing OS layer (OS:\"%s\")",OSLayer::OSName.c_str());
+		K15_LOG_NORMAL_MESSAGE("Initializing OS layer (OS:\"%s\")",OSLayer::OSName.c_str());
 
 		//try to initialize the os layer
 		if(!OSLayer::initialize())
 		{
-			K15_LOG_ERROR("Failed to initialize OS layer");
+			K15_LOG_ERROR_MESSAGE("Failed to initialize OS layer");
 			return;
 		}
 
-		K15_LOG_SUCCESS("OS layer initialized!");
+		K15_LOG_SUCCESS_MESSAGE("OS layer initialized!");
 
 		loadGameDirFile();
 		loadSettingsFile();
 		
-		K15_LOG_NORMAL("Initializing DynamicLibraryManager...");
+		K15_LOG_NORMAL_MESSAGE("Initializing DynamicLibraryManager...");
 		m_DynamicLibraryManager = K15_NEW DynamicLibraryManager();
 		
-		K15_LOG_NORMAL("Initializing EventManager...");
+		K15_LOG_NORMAL_MESSAGE("Initializing EventManager...");
 		m_EventManager = K15_NEW EventManager();
 		
-		K15_LOG_NORMAL("Initializing ProfilingManager...");
+		K15_LOG_NORMAL_MESSAGE("Initializing ProfilingManager...");
 		m_ProfileManager = K15_NEW ProfilingManager();;
 
-		K15_LOG_NORMAL("Initializing TaskManager...");
+		K15_LOG_NORMAL_MESSAGE("Initializing TaskManager...");
 		m_TaskManager = K15_NEW TaskManager();
 
-		K15_LOG_NORMAL("Initializing InputManager...");
+		K15_LOG_NORMAL_MESSAGE("Initializing InputManager...");
 		m_InputManager = K15_NEW InputManager();
 
-		K15_LOG_NORMAL("Initializing ThreadWorker...");
+		K15_LOG_NORMAL_MESSAGE("Initializing ThreadWorker...");
 		m_ThreadWorker = K15_NEW ThreadWorker();
 
-		K15_LOG_NORMAL("Initializing ResourceManager...");
+		K15_LOG_NORMAL_MESSAGE("Initializing ResourceManager...");
 		m_ResourceManager = K15_NEW ResourceManager();
 
-		K15_LOG_NORMAL("Initializing MeshManager...");
+		K15_LOG_NORMAL_MESSAGE("Initializing MeshManager...");
 		m_MeshManager = K15_NEW MeshManager();
 
-		K15_LOG_NORMAL("Initializing GameStateManager...");
+		K15_LOG_NORMAL_MESSAGE("Initializing GameStateManager...");
 		m_GameStateManager = K15_NEW GameStateManager();
 
-		K15_LOG_NORMAL("Tasks will get created and added to the task manager.");
-		K15_LOG_NORMAL("Creating and adding event task...");
+		K15_LOG_NORMAL_MESSAGE("Tasks will get created and added to the task manager.");
+		K15_LOG_NORMAL_MESSAGE("Creating and adding event task...");
 		m_EventTask = K15_NEW EventTask();
 		m_TaskManager->addTask(m_EventTask);
 
-		K15_LOG_NORMAL("Creating and adding render task...");
+		K15_LOG_NORMAL_MESSAGE("Creating and adding render task...");
 		m_RenderTask = K15_NEW RenderTask();
 		m_TaskManager->addTask(m_RenderTask);
 
-		K15_LOG_NORMAL("Creating and adding physics task...");
+		K15_LOG_NORMAL_MESSAGE("Creating and adding physics task...");
 		m_PhysicsTask = K15_NEW PhysicsTask();
 		m_TaskManager->addTask(m_PhysicsTask);
 
-		K15_LOG_NORMAL("Creating and adding memoryprofiler task...");
+		K15_LOG_NORMAL_MESSAGE("Creating and adding memoryprofiler task...");
 		m_MemoryProfilingTask = K15_NEW MemoryProfilingTask();
 		m_TaskManager->addTask(m_MemoryProfilingTask);
 
@@ -448,7 +408,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void Application::loadPluginsFile()
 	{
-		K15_LOG_NORMAL("Trying to open plugin file \"%s\".",PluginFileName.c_str());
+		K15_LOG_NORMAL_MESSAGE("Trying to open plugin file \"%s\".",PluginFileName.c_str());
 
 		static String pluginsFileName;
 		pluginsFileName = m_GameRootDir + PluginFileName;
@@ -463,7 +423,7 @@ namespace K15_Engine { namespace Core {
 
 		if(pluginFile.isValid())
 		{
-			K15_LOG_SUCCESS("Opened plugin file \"%s\".",PluginFileName.c_str());
+			K15_LOG_SUCCESS_MESSAGE("Opened plugin file \"%s\".",PluginFileName.c_str());
 
 			IniFileGroup group;
 			if(pluginFile.getGroupEntries("",&group))
@@ -482,7 +442,7 @@ namespace K15_Engine { namespace Core {
 		}
 		else
 		{
-			K15_LOG_ERROR("Could not open plugin file \"%s\". Error:%s",pluginsFileName.c_str(),pluginFile.getError().c_str());
+			K15_LOG_ERROR_MESSAGE("Could not open plugin file \"%s\". Error:%s",pluginsFileName.c_str(),pluginFile.getError().c_str());
 		}
 	}
 	/*********************************************************************************/
@@ -493,7 +453,7 @@ namespace K15_Engine { namespace Core {
 		char* messageBuffer = (char*)alloca(PluginInfoBufferSize);
 		for(StringSet::const_iterator iter = p_PluginNames.begin();iter != p_PluginNames.end();++iter)
 		{
-			K15_LOG_NORMAL("Trying to initialize plugin \"%s\"",iter->c_str());
+			K15_LOG_NORMAL_MESSAGE("Trying to initialize plugin \"%s\"",iter->c_str());
 			
 			if((lib = m_DynamicLibraryManager->load(*iter)) != 0)
 			{
@@ -503,16 +463,16 @@ namespace K15_Engine { namespace Core {
 
 				if(!moduleDescFunc.isValid() || !initFunc.isValid())
 				{
-					K15_LOG_ERROR("Failed to initialize plugin \"%s\"",(*iter).c_str());
+					K15_LOG_ERROR_MESSAGE("Failed to initialize plugin \"%s\"",(*iter).c_str());
 					
 					if(!moduleDescFunc.isValid())
 					{
-						K15_LOG_ERROR("Plugin \"%s\" has no \"getDescription\" function.",(*iter).c_str());
+						K15_LOG_ERROR_MESSAGE("Plugin \"%s\" has no \"getDescription\" function.",(*iter).c_str());
 					}
 
 					if(!initFunc.isValid())
 					{
-						K15_LOG_ERROR("Plugin \"%s\" has no \"pluginLoad\" function.",(*iter).c_str());
+						K15_LOG_ERROR_MESSAGE("Plugin \"%s\" has no \"pluginLoad\" function.",(*iter).c_str());
 					}
 
 					break;
@@ -524,14 +484,14 @@ namespace K15_Engine { namespace Core {
 				//get the plugins module description to check what kind of module we're loading
 				ApplicationModuleDescription description = moduleDescFunc();
 				
-				K15_LOG_SUCCESS("Plugin information:\n\tAuthor:\t%s\n\tVersion:\t%u.%u\n\tEngine Version:\t%u",description.Author.c_str(),description.MajorVersion,description.MinorVersion,description.CompiledWithEngineVersion);
+				K15_LOG_SUCCESS_MESSAGE("Plugin information:\n\tAuthor:\t%s\n\tVersion:\t%u.%u\n\tEngine Version:\t%u",description.Author.c_str(),description.MajorVersion,description.MinorVersion,description.CompiledWithEngineVersion);
 
 				static ApplicationParameterList pluginSettings;
 
 				//Filter plugin parameter by group name
 				for(StringSet::iterator groupIter = description.GroupFilter.begin();groupIter != description.GroupFilter.end();++groupIter)
 				{
-					K15_LOG_NORMAL("Filtering plugin parameter (by group name \"%s\")...",(*groupIter).c_str());
+					K15_LOG_NORMAL_MESSAGE("Filtering plugin parameter (by group name \"%s\")...",(*groupIter).c_str());
 					const String& groupName = *groupIter;
 					uint32 counter = 0;
 					for(ApplicationParameterList::iterator paramIter = m_ApplicationParameter.begin();paramIter != m_ApplicationParameter.end();++paramIter)
@@ -542,7 +502,7 @@ namespace K15_Engine { namespace Core {
 							++counter;
 						}
 					}
-					K15_LOG_NORMAL("...Done filtering plugin parameter. (%i parameter found)",counter);
+					K15_LOG_NORMAL_MESSAGE("...Done filtering plugin parameter. (%i parameter found)",counter);
 				}
 			}
 		}
@@ -559,7 +519,7 @@ namespace K15_Engine { namespace Core {
 
 		if(m_DebugRenderer)
 		{
-			K15_LOG_NORMAL("Destroying DebugRenderer...");
+			K15_LOG_NORMAL_MESSAGE("Destroying DebugRenderer...");
 			K15_DELETE m_DebugRenderer;
 		}
 
@@ -572,36 +532,36 @@ namespace K15_Engine { namespace Core {
 		OSLayer::shutdown();
 		m_ProfileManager->clear();
 
-		K15_LOG_NORMAL("Destroying GameStateManager...");
+		K15_LOG_NORMAL_MESSAGE("Destroying GameStateManager...");
 		K15_DELETE m_GameStateManager;
 
-		K15_LOG_NORMAL("Destroying MeshManager...");
+		K15_LOG_NORMAL_MESSAGE("Destroying MeshManager...");
 		K15_DELETE m_MeshManager;
 
-		K15_LOG_NORMAL("Destroying ResourceManager...");
+		K15_LOG_NORMAL_MESSAGE("Destroying ResourceManager...");
 		K15_DELETE m_ResourceManager;
 
-		K15_LOG_NORMAL("Destroying ThreadWorker...");
+		K15_LOG_NORMAL_MESSAGE("Destroying ThreadWorker...");
 		K15_DELETE m_ThreadWorker;
 
-		K15_LOG_NORMAL("Destroying InputManager...");
+		K15_LOG_NORMAL_MESSAGE("Destroying InputManager...");
 		K15_DELETE m_InputManager;
 
-		K15_LOG_NORMAL("Destroying TaskMananger...");
+		K15_LOG_NORMAL_MESSAGE("Destroying TaskMananger...");
 		K15_DELETE m_TaskManager;
 
 		m_RenderTask = 0;
 
-		K15_LOG_NORMAL("Destroying ProfilingManager...");
+		K15_LOG_NORMAL_MESSAGE("Destroying ProfilingManager...");
 		K15_DELETE m_ProfileManager;
 
-		K15_LOG_NORMAL("Destroying EventManager...");
+		K15_LOG_NORMAL_MESSAGE("Destroying EventManager...");
 		K15_DELETE m_EventManager;
 
-		K15_LOG_NORMAL("Destroying DynamicLibraryManager...");
+		K15_LOG_NORMAL_MESSAGE("Destroying DynamicLibraryManager...");
 		K15_DELETE m_DynamicLibraryManager;
 
-		K15_LOG_NORMAL("Destroying LogManager...");
+		K15_LOG_NORMAL_MESSAGE("Destroying LogManager...");
 		K15_DELETE m_LogManager;
 
 		#ifdef K15_USE_MEMORY_MANAGEMENT

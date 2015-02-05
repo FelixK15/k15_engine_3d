@@ -45,7 +45,7 @@ GLboolean K15_Engine::Rendering::OpenGL::_glxInit(GLint p_ColorBits, GLint p_Dep
     int attribList[RenderWindowImpl::X_ATTRIB_ARRAY_SIZE] = {0};
     //get glx version
     glXQueryVersion(display, &glx_major, &glx_minor);
-    K15_LOG_NORMAL("Using glx version %d.%d.",
+    K15_LOG_NORMAL_MESSAGE("Using glx version %d.%d.",
                    glx_major, glx_minor);
 
     RenderWindowImpl::getXAttributes(attribList, RenderWindowImpl::X_ATTRIB_ARRAY_SIZE, false);
@@ -55,7 +55,7 @@ GLboolean K15_Engine::Rendering::OpenGL::_glxInit(GLint p_ColorBits, GLint p_Dep
 
     if(!vi)
     {
-        K15_LOG_ERROR("Could not get XVisualInfo via glXChooseVisual.");
+        K15_LOG_ERROR_MESSAGE("Could not get XVisualInfo via glXChooseVisual.");
         return GL_FALSE;
     }
 
@@ -66,7 +66,7 @@ GLboolean K15_Engine::Rendering::OpenGL::_glxInit(GLint p_ColorBits, GLint p_Dep
 
     if(!legacyContext)
     {
-        K15_LOG_ERROR("Could not create legacy GLX context.");
+        K15_LOG_ERROR_MESSAGE("Could not create legacy GLX context.");
         return GL_FALSE;
     }
 
@@ -76,19 +76,19 @@ GLboolean K15_Engine::Rendering::OpenGL::_glxInit(GLint p_ColorBits, GLint p_Dep
     glGetIntegerv(GL_MAJOR_VERSION, &gl_major);
     glGetIntegerv(GL_MINOR_VERSION, &gl_minor);
 
-    K15_LOG_SUCCESS("Successfully created legacy OpenGL %d.%d context",
+    K15_LOG_SUCCESS_MESSAGE("Successfully created legacy OpenGL %d.%d context",
                     gl_major, gl_minor);
 
     //now is the time to initialize glew...
-    K15_LOG_NORMAL("Trying to initialize glew...");
+    K15_LOG_NORMAL_MESSAGE("Trying to initialize glew...");
     GLenum initState = glewInit();
     if(initState == GLEW_NO_ERROR)
     {
-        K15_LOG_SUCCESS("Successfully initialized glew. (Version %s)", glewGetString(GLEW_VERSION));
+        K15_LOG_SUCCESS_MESSAGE("Successfully initialized glew. (Version %s)", glewGetString(GLEW_VERSION));
     }
     else
     {
-        K15_LOG_ERROR("Could not initialize glew. Error: \"%s\"", glewGetString(initState));
+        K15_LOG_ERROR_MESSAGE("Could not initialize glew. Error: \"%s\"", glewGetString(initState));
     }
 
     //if we want a >= 3.0context, we need to do a bit more...
@@ -96,7 +96,7 @@ GLboolean K15_Engine::Rendering::OpenGL::_glxInit(GLint p_ColorBits, GLint p_Dep
       (gl_major == K15_MIN_GL_VERSION_MAJOR &&
        gl_minor < K15_MIN_GL_VERSION_MINOR))
     {
-        K15_LOG_NORMAL("Trying to create %d.%d OpenGL context...",
+        K15_LOG_NORMAL_MESSAGE("Trying to create %d.%d OpenGL context...",
                        K15_MIN_GL_VERSION_MAJOR,
                        K15_MIN_GL_VERSION_MINOR);
 
@@ -123,7 +123,7 @@ GLboolean K15_Engine::Rendering::OpenGL::_glxInit(GLint p_ColorBits, GLint p_Dep
 
         if(!kglXCreateContextAttribARB || !kglXChooseFBConfig)
         {
-            K15_LOG_ERROR("OpenGL Version %d.%d is not supported.",
+            K15_LOG_ERROR_MESSAGE("OpenGL Version %d.%d is not supported.",
                           K15_MIN_GL_VERSION_MAJOR,
                           K15_MIN_GL_VERSION_MINOR);
 
@@ -140,7 +140,7 @@ GLboolean K15_Engine::Rendering::OpenGL::_glxInit(GLint p_ColorBits, GLint p_Dep
 
         if(!(framebufferCfg = kglXChooseFBConfig(display, DefaultScreen(display), attribList, &fbcount)))
         {
-            K15_LOG_ERROR("Could not aquire GLXFBConifg via glXChooseFBConfig.");
+            K15_LOG_ERROR_MESSAGE("Could not aquire GLXFBConifg via glXChooseFBConfig.");
             K15_LOG_WARNING("Sticking with %d.%d legacy context. Trying to emulate as much functionality as possible.",
                             gl_major, gl_minor);
 
@@ -155,13 +155,13 @@ GLboolean K15_Engine::Rendering::OpenGL::_glxInit(GLint p_ColorBits, GLint p_Dep
             glGetIntegerv(GL_MAJOR_VERSION, &gl_major);
             glGetIntegerv(GL_MINOR_VERSION, &gl_minor);
 
-            K15_LOG_SUCCESS("Successfully created GLX %d.%d context.",
+            K15_LOG_SUCCESS_MESSAGE("Successfully created GLX %d.%d context.",
                             gl_major, gl_minor);
 
             return GL_TRUE;
         }
 
-        K15_LOG_ERROR("Could not create GLX %d.%d context.",
+        K15_LOG_ERROR_MESSAGE("Could not create GLX %d.%d context.",
                       gl_major, gl_minor);
 
         K15_LOG_WARNING("Sticking with %d.%d legacy context. Trying to emulate as much functionality as possible.",

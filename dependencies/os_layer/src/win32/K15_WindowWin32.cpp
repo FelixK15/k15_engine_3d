@@ -1,5 +1,3 @@
-#define internal static
-
 #include <K15_Logging.h>
 #include "K15_OSLayer_Window.h"
 #include "K15_OSLayer_OSContext.h"
@@ -8,7 +6,7 @@
 #include "win32/K15_EnvironmentWin32.h"
 
 /*********************************************************************************/
-internal const char* K15_Win32GetError()
+intern const char* K15_Win32GetError()
 {
 	DWORD lastErrorCode = GetLastError();
 	char* messageBuffer = 0;
@@ -29,7 +27,7 @@ internal const char* K15_Win32GetError()
 	return messageBuffer;
 }
 /*********************************************************************************/
-internal BOOL CALLBACK K15_Win32EnumMonitorProc(HMONITOR p_HMONITOR, HDC p_HDC, LPRECT p_Rect, LPARAM p_lParam)
+intern BOOL CALLBACK K15_Win32EnumMonitorProc(HMONITOR p_HMONITOR, HDC p_HDC, LPRECT p_Rect, LPARAM p_lParam)
 {
 	static int index = 0;
 	HMONITOR* hm = (HMONITOR*)p_lParam;

@@ -1,7 +1,7 @@
 #include "K15_OSLayer_OSContext.h"
 
-internal K15_OSLayerContext g_InternalOSContext = {};
-internal uint8 g_InternalOSContextInitialized = FALSE;
+intern K15_OSLayerContext g_InternalOSContext = {};
+intern uint8 g_InternalOSContextInitialized = FALSE;
 
 /*********************************************************************************/
 K15_OSLayerContext* K15_GetOSLayerContext()

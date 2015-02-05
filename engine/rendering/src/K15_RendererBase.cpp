@@ -161,7 +161,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				K15_LOG_ERROR("Error setting render target. %s",getLastError().c_str());
+				K15_LOG_ERROR_MESSAGE("Error setting render target. %s",getLastError().c_str());
 				return false;
 			}
 		}
@@ -182,7 +182,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				K15_LOG_ERROR("Error setting active camera. %s",getLastError().c_str());
+				K15_LOG_ERROR_MESSAGE("Error setting active camera. %s",getLastError().c_str());
 				return false;
 			}
 		}
@@ -201,7 +201,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				K15_LOG_ERROR("Error setting culling mode to %s. %s",eCullingModeStr[p_CullingMode],getLastError().c_str());
+				K15_LOG_ERROR_MESSAGE("Error setting culling mode to %s. %s",eCullingModeStr[p_CullingMode],getLastError().c_str());
 				return false;
 			}
 		}
@@ -220,7 +220,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				K15_LOG_ERROR("Error setting topology to %s. %s",eTopologyStr[p_Topology],getLastError().c_str());
+				K15_LOG_ERROR_MESSAGE("Error setting topology to %s. %s",eTopologyStr[p_Topology],getLastError().c_str());
 				return false;
 			}
 		}
@@ -239,7 +239,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				K15_LOG_ERROR("Error setting fill mode to %s. %s",eFillModeStr[p_FillMode],getLastError().c_str());
+				K15_LOG_ERROR_MESSAGE("Error setting fill mode to %s. %s",eFillModeStr[p_FillMode],getLastError().c_str());
 				return false;
 			}
 		}
@@ -256,7 +256,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				K15_LOG_ERROR("Error %s backface culling. %s.",p_Enabled ? "enabling" : "disabling",getLastError().c_str());
+				K15_LOG_ERROR_MESSAGE("Error %s backface culling. %s.",p_Enabled ? "enabling" : "disabling",getLastError().c_str());
 				return false;
 			}
 		}
@@ -275,7 +275,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				K15_LOG_ERROR("Error setting frame buffer pixelformat. %s",getLastError().c_str());
+				K15_LOG_ERROR_MESSAGE("Error setting frame buffer pixelformat. %s",getLastError().c_str());
 				return false;
 			}
 		}
@@ -294,7 +294,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				K15_LOG_ERROR("Error setting depth buffer format. %s",getLastError().c_str());
+				K15_LOG_ERROR_MESSAGE("Error setting depth buffer format. %s",getLastError().c_str());
 				return false;
 			}
 		}
@@ -313,7 +313,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				K15_LOG_ERROR("Error setting stencil buffer format. %s",getLastError().c_str());
+				K15_LOG_ERROR_MESSAGE("Error setting stencil buffer format. %s",getLastError().c_str());
 				return false;
 			}
 		}
@@ -330,7 +330,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				K15_LOG_ERROR("Error setting clear color to %d %d %d %d (RGBA). %s",
+				K15_LOG_ERROR_MESSAGE("Error setting clear color to %d %d %d %d (RGBA). %s",
 					p_ClearColor.R,p_ClearColor.G,p_ClearColor.B,p_ClearColor.A,
 					getLastError().c_str());
 
@@ -396,7 +396,7 @@ namespace K15_Engine { namespace Rendering {
 
 				if(errorOccured())
 				{
-					K15_LOG_ERROR("Error during buffer binding. Buffer type \"%s\". %s",
+					K15_LOG_ERROR_MESSAGE("Error during buffer binding. Buffer type \"%s\". %s",
 						eBufferTypeStr[p_BufferType],
 						getLastError().c_str());
 
@@ -576,7 +576,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				K15_LOG_ERROR("Error setting alpha state. %s",getLastError().c_str());
+				K15_LOG_ERROR_MESSAGE("Error setting alpha state. %s",getLastError().c_str());
 				return false;
 			}
 		}
@@ -593,7 +593,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				K15_LOG_ERROR("Error setting depth state. %s",getLastError().c_str());
+				K15_LOG_ERROR_MESSAGE("Error setting depth state. %s",getLastError().c_str());
 				return false;
 			}
     }
@@ -615,7 +615,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				K15_LOG_ERROR("Error setting vertex declaration \"%s\".%s",
+				K15_LOG_ERROR_MESSAGE("Error setting vertex declaration \"%s\".%s",
 					p_Declaration->getDeclarationNameAsString().c_str(),getLastError().c_str());
 
 				return false;
@@ -659,7 +659,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				K15_LOG_ERROR("Error binding texture \"%s\".%s",
+				K15_LOG_ERROR_MESSAGE("Error binding texture \"%s\".%s",
 					p_Texture ? p_Texture->getName().c_str() : "",getLastError().c_str());
 
 				return false;
@@ -698,7 +698,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				K15_LOG_ERROR("Error binding texture sampler.%s",getLastError().c_str());
+				K15_LOG_ERROR_MESSAGE("Error binding texture sampler.%s",getLastError().c_str());
 
 				return false;
 			}
@@ -730,7 +730,7 @@ namespace K15_Engine { namespace Rendering {
 
 			if(errorOccured())
 			{
-				K15_LOG_ERROR("Error binding GpuProgramBatch. Error:\"%s\".",getLastError().c_str());
+				K15_LOG_ERROR_MESSAGE("Error binding GpuProgramBatch. Error:\"%s\".",getLastError().c_str());
 
 				return false;
 			}

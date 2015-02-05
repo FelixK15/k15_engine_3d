@@ -17,35 +17,92 @@ int CALLBACK WinMain(
 {
 	int returnValue = 0;
 
-	if (K15_Win32InitializeOSLayer(hInstance) != K15_SUCCESS)
-	{
+	uint8 result = K15_Win32InitializeOSLayer(hInstance);
 
+	if (result == K15_ERROR_OUT_OF_MEMORY)
+	{
+		K15_LOG_ERROR_MESSAGE("Out of memory!");
+	}
+	else if(result == K15_ERROR_SYSTEM)
+	{
+		char* errorMessage = K15_Win32GetError();
+		K15_LOG_ERROR_MESSAGE(errorMessage);
+		free(errorMessage);
 	}
 
 	K15_Window* window = K15_CreateWindow(K15_WINDOW_FLAG_BORDERLESS | K15_WINDOW_FLAG_NO_BUTTONS | K15_WINDOW_FLAG_DEFAULT_DIMENISON, 1);
+	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
 
 	K15_SetWindowDimension(window, 1024, 768);
 	
+	K15_InitializeCore(osContext);
+	K15_RenderContext* renderContext = K15_InitializeRenderer();
+
+	K15_RenderCommandQueue* renderCommandQueue = K15_CreateRenderCommandQueue(renderContext);
+
+	K15_BeginRenderCommand(renderCommandQueue, K15_COMMAND_DRAW_INSTANCES);
+	K15_AddRenderInt32Parameter(renderCommandQueue, 32);
+	K15_EndRenderCommand(renderCommandQueue);
+
 	bool running = true;
-	while(running)
+
+	K15_SystemEvent event = {};
+
+	while (running)
 	{
 		K15_PumpSystemEvents();
-		K15_SystemEvent event;
 
-		while(K15_GetSystemEventFromQueue(&event, K15_REMOVE_SYSTEM_EVENT_FLAG) != K15_SYSTEM_EVENT_QUEUE_EMPTY)
+		while (K15_GetSystemEventFromQueue(&event, K15_REMOVE_SYSTEM_EVENT_FLAG) != K15_SYSTEM_EVENT_QUEUE_EMPTY)
 		{
-			if (event.event == K15_APPLICATION_QUIT)
+			switch(event.event)
 			{
-				running = false;
+			case K15_APPLICATION_QUIT:
+				{
+					running = false;
+					break;
+				}
+
+			case K15_KEY_PRESSED:
+				{
+					K15_KeyPressedCore();
+					break;
+				}
+
+			case K15_KEY_RELEASED:
+				{
+					K15_KeyReleasedCore();
+					break;
+				}
+
+			case K15_MOUSE_MOVED:
+				{
+					K15_MouseMoveCore();
+					break;
+				}
+
+			case K15_MOUSE_BUTTON_PRESSED:
+				{
+					K15_MousePressedCore();
+					break;
+				}
+
+			case K15_WINDOW_FOCUS_GAINED:
+				{
+					K15_WindowFocusGainedCore();
+					break;
+				}
+
+			case K15_WINDOW_FOCUS_LOST:
+				{
+					//K15_WindowFocusLost
+				}
 			}
-			K15_LOG_NORMAL_MESSAGE("%u\n", event.event);
-			K15_LOG_NORMAL_MESSAGE("%.3f\n", event.thumbValue);
 		}
 
-		K15_SynchronizeSystemEventQueues();
+		K15_TickCore();
 	}
 
-
+	K15_ShutdownCore();
 
 // 	K15_Engine::Application application;
 // 	application.initialize(__argc, __argv);

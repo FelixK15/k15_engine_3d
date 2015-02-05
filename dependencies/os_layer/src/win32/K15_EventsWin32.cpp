@@ -9,7 +9,7 @@
 #ifdef K15_OS_WINDOWS
 
 /*********************************************************************************/
-internal void K15_Win32WindowCreated(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+intern void K15_Win32WindowCreated(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	K15_SystemEvent win32Event = {};
 
@@ -19,7 +19,7 @@ internal void K15_Win32WindowCreated(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 	K15_AddSystemEventToQueue(&win32Event);
 }
 /*********************************************************************************/
-internal void K15_Win32WindowClosed(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+intern void K15_Win32WindowClosed(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	PostQuitMessage(0);
 
@@ -31,7 +31,7 @@ internal void K15_Win32WindowClosed(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 	K15_AddSystemEventToQueue(&win32Event);
 }
 /*********************************************************************************/
-internal void K15_Win32WindowActivated(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+intern void K15_Win32WindowActivated(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	//low order word = window activated or deactivated?
 	WORD reason = LOWORD(wParam);
@@ -62,7 +62,7 @@ internal void K15_Win32WindowActivated(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	}
 }
 /*********************************************************************************/
-internal void K15_Win32WindowResized(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+intern void K15_Win32WindowResized(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (wParam == SIZE_RESTORED)
 	{
@@ -78,15 +78,17 @@ internal void K15_Win32WindowResized(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 			K15_SetWindowDimension(window, newHeight, newWidth);
 
-			win32Event.event = K15_WINDOW_MOVED;
+			win32Event.event = K15_WINDOW_RESIZED;
 			win32Event.eventFlags = K15_WINDOW_EVENT_FLAG;
+			win32Event.params.size.width = newWidth;
+			win32Event.params.size.height = newHeight;
 
 			K15_AddSystemEventToQueue(&win32Event);
 		}
 	}
 }
 /*********************************************************************************/
-internal void K15_Win32KeyInputReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+intern void K15_Win32KeyInputReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	K15_SystemEvent win32Event = {};
 
@@ -113,7 +115,7 @@ internal void K15_Win32KeyInputReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 	}
 
 	win32Event.eventFlags |= K15_INPUT_EVENT_FLAG;
-	win32Event.key = wParam;//K15_Win32ConvertKeyCode(wParam);
+	win32Event.params.key = wParam;//K15_Win32ConvertKeyCode(wParam);
 
 	if (win32Event.event > 0)
 	{
@@ -121,12 +123,12 @@ internal void K15_Win32KeyInputReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 	}
 }
 /*********************************************************************************/
-internal void K15_Win32MouseInputReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+intern void K15_Win32MouseInputReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	K15_SystemEvent win32Event = {};
 
 	win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
-	win32Event.mouseButton = wParam;//K15_Win32ConvertKeyCode(wParam);
+	win32Event.params.mouseButton = wParam;//K15_Win32ConvertKeyCode(wParam);
 
 	switch(uMsg)
 	{
@@ -145,24 +147,24 @@ internal void K15_Win32MouseInputReceived(HWND hWnd, UINT uMsg, WPARAM wParam, L
 	K15_AddSystemEventToQueue(&win32Event);
 }
 /*********************************************************************************/
-internal void K15_Win32MouseMovementReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+intern void K15_Win32MouseMovementReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	K15_SystemEvent win32Event = {};
 
 	win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
-	win32Event.position.x = GET_X_LPARAM(lParam);
-	win32Event.position.y = GET_Y_LPARAM(lParam);
+	win32Event.params.position.x = GET_X_LPARAM(lParam);
+	win32Event.params.position.y = GET_Y_LPARAM(lParam);
 	win32Event.event = K15_MOUSE_MOVED;
 
 	K15_AddSystemEventToQueue(&win32Event);
 }
 /*********************************************************************************/
-internal void K15_Win32MouseWheelInputReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+intern void K15_Win32MouseWheelInputReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	K15_SystemEvent win32Event = {};
 
 	win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
-	win32Event.wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA;
+	win32Event.params.wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA;
 	win32Event.event = K15_WHEEL_MOVED;
 
 	K15_AddSystemEventToQueue(&win32Event);
@@ -237,7 +239,7 @@ void K15_Win32EvaluateControllerConnectivity(DWORD* p_CurrentControllerStates, D
 		if (currentControllerState != previousControllerState)
 		{
 			K15_SystemEvent win32Event = {};
-			win32Event.controllerIndex = controllerIndex;
+			win32Event.params.controllerIndex = controllerIndex;
 			win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 			if (currentControllerState == ERROR_DEVICE_NOT_CONNECTED)
@@ -276,7 +278,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 					K15_SystemEvent win32Event;
 					//A pressed or released
 					win32Event.event = (currentState.Gamepad.wButtons & XINPUT_GAMEPAD_A) > 0 ? K15_CONTROLLER_BUTTON_PRESSED : K15_CONTROLLER_BUTTON_RELEASED;
-					win32Event.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_FACE_DOWN_BUTTON;
+					win32Event.params.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_FACE_DOWN_BUTTON;
 					win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 					K15_AddSystemEventToQueue(&win32Event);
@@ -288,7 +290,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 					K15_SystemEvent win32Event;
 					//A pressed or released
 					win32Event.event = (currentState.Gamepad.wButtons & XINPUT_GAMEPAD_B) > 0 ? K15_CONTROLLER_BUTTON_PRESSED : K15_CONTROLLER_BUTTON_RELEASED;
-					win32Event.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_FACE_RIGHT_BUTTON;
+					win32Event.params.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_FACE_RIGHT_BUTTON;
 					win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 					K15_AddSystemEventToQueue(&win32Event);
@@ -300,7 +302,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 					K15_SystemEvent win32Event;
 					//A pressed or released
 					win32Event.event = (currentState.Gamepad.wButtons & XINPUT_GAMEPAD_X) > 0 ? K15_CONTROLLER_BUTTON_PRESSED : K15_CONTROLLER_BUTTON_RELEASED;
-					win32Event.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_FACE_LEFT_BUTTON;
+					win32Event.params.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_FACE_LEFT_BUTTON;
 					win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 					K15_AddSystemEventToQueue(&win32Event);
@@ -312,7 +314,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 					K15_SystemEvent win32Event;
 					//A pressed or released
 					win32Event.event = (currentState.Gamepad.wButtons & XINPUT_GAMEPAD_Y) > 0 ? K15_CONTROLLER_BUTTON_PRESSED : K15_CONTROLLER_BUTTON_RELEASED;
-					win32Event.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_FACE_UP_BUTTON;
+					win32Event.params.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_FACE_UP_BUTTON;
 					win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 					K15_AddSystemEventToQueue(&win32Event);
@@ -324,7 +326,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 					K15_SystemEvent win32Event;
 					//A pressed or released
 					win32Event.event = (currentState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP) > 0 ? K15_CONTROLLER_BUTTON_PRESSED : K15_CONTROLLER_BUTTON_RELEASED;
-					win32Event.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_DPAD_UP;
+					win32Event.params.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_DPAD_UP;
 					win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 					K15_AddSystemEventToQueue(&win32Event);
@@ -336,7 +338,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 					K15_SystemEvent win32Event;
 					//A pressed or released
 					win32Event.event = (currentState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT) > 0 ? K15_CONTROLLER_BUTTON_PRESSED : K15_CONTROLLER_BUTTON_RELEASED;
-					win32Event.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_DPAD_LEFT;
+					win32Event.params.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_DPAD_LEFT;
 					win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 					K15_AddSystemEventToQueue(&win32Event);
@@ -348,7 +350,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 					K15_SystemEvent win32Event;
 					//A pressed or released
 					win32Event.event = (currentState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN) > 0 ? K15_CONTROLLER_BUTTON_PRESSED : K15_CONTROLLER_BUTTON_RELEASED;
-					win32Event.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_DPAD_DOWN;
+					win32Event.params.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_DPAD_DOWN;
 					win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 					K15_AddSystemEventToQueue(&win32Event);
@@ -360,7 +362,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 					K15_SystemEvent win32Event;
 					//A pressed or released
 					win32Event.event = (currentState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) > 0 ? K15_CONTROLLER_BUTTON_PRESSED : K15_CONTROLLER_BUTTON_RELEASED;
-					win32Event.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_DPAD_RIGHT;
+					win32Event.params.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_DPAD_RIGHT;
 					win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 					K15_AddSystemEventToQueue(&win32Event);
@@ -372,7 +374,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 					K15_SystemEvent win32Event;
 					//A pressed or released
 					win32Event.event = (currentState.Gamepad.wButtons & XINPUT_GAMEPAD_START) > 0 ? K15_CONTROLLER_BUTTON_PRESSED : K15_CONTROLLER_BUTTON_RELEASED;
-					win32Event.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_START;
+					win32Event.params.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_START;
 					win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 					K15_AddSystemEventToQueue(&win32Event);
@@ -384,7 +386,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 					K15_SystemEvent win32Event;
 					//A pressed or released
 					win32Event.event = (currentState.Gamepad.wButtons & XINPUT_GAMEPAD_BACK) > 0 ? K15_CONTROLLER_BUTTON_PRESSED : K15_CONTROLLER_BUTTON_RELEASED;
-					win32Event.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_SELECT;
+					win32Event.params.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_SELECT;
 					win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 					K15_AddSystemEventToQueue(&win32Event);
@@ -396,7 +398,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 					K15_SystemEvent win32Event;
 					//A pressed or released
 					win32Event.event = (currentState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER) > 0 ? K15_CONTROLLER_BUTTON_PRESSED : K15_CONTROLLER_BUTTON_RELEASED;
-					win32Event.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_LEFT_SHOULDER_BUTTON;
+					win32Event.params.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_LEFT_SHOULDER_BUTTON;
 					win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 					K15_AddSystemEventToQueue(&win32Event);
@@ -408,7 +410,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 					K15_SystemEvent win32Event;
 					//A pressed or released
 					win32Event.event = (currentState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) > 0 ? K15_CONTROLLER_BUTTON_PRESSED : K15_CONTROLLER_BUTTON_RELEASED;
-					win32Event.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_RIGHT_SHOULDER_BUTTON;
+					win32Event.params.controllerButton = (controllerIndex << 16) | K15_CONTROLLER_RIGHT_SHOULDER_BUTTON;
 					win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 					K15_AddSystemEventToQueue(&win32Event);
@@ -420,7 +422,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 			{
 				K15_SystemEvent win32Event;
 				win32Event.event = K15_LEFT_SHOULDER_TRIGGER;
-				win32Event.triggerValue = (float)currentState.Gamepad.bLeftTrigger / 255.f;
+				win32Event.params.triggerValue = (float)currentState.Gamepad.bLeftTrigger / 255.f;
 				win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 				K15_AddSystemEventToQueue(&win32Event);
@@ -430,7 +432,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 			{
 				K15_SystemEvent win32Event;
 				win32Event.event = K15_LEFT_SHOULDER_TRIGGER;
-				win32Event.triggerValue = (float)currentState.Gamepad.bRightTrigger / 255.f;
+				win32Event.params.triggerValue = (float)currentState.Gamepad.bRightTrigger / 255.f;
 				win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 				K15_AddSystemEventToQueue(&win32Event);
@@ -443,7 +445,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 			{
 				K15_SystemEvent win32Event;
 				win32Event.event = K15_LEFT_THUMB_X;
-				win32Event.thumbValue = (float)currentState.Gamepad.sThumbLX / 32768.f; 
+				win32Event.params.thumbValue = (float)currentState.Gamepad.sThumbLX / 32768.f; 
 				win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 				K15_AddSystemEventToQueue(&win32Event);
@@ -455,7 +457,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 			{
 				K15_SystemEvent win32Event;
 				win32Event.event = K15_LEFT_THUMB_Y;
-				win32Event.thumbValue = (float)currentState.Gamepad.sThumbLY / 32768.f; 
+				win32Event.params.thumbValue = (float)currentState.Gamepad.sThumbLY / 32768.f; 
 				win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 				K15_AddSystemEventToQueue(&win32Event);
@@ -468,7 +470,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 			{
 				K15_SystemEvent win32Event;
 				win32Event.event = K15_RIGHT_THUMB_X;
-				win32Event.thumbValue = (float)currentState.Gamepad.sThumbRX / 32768.f; 
+				win32Event.params.thumbValue = (float)currentState.Gamepad.sThumbRX / 32768.f; 
 				win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 				K15_AddSystemEventToQueue(&win32Event);
@@ -480,7 +482,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 			{
 				K15_SystemEvent win32Event;
 				win32Event.event = K15_RIGHT_THUMB_Y;
-				win32Event.thumbValue = (float)currentState.Gamepad.sThumbRY / 32768.f; 
+				win32Event.params.thumbValue = (float)currentState.Gamepad.sThumbRY / 32768.f; 
 				win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 
 				K15_AddSystemEventToQueue(&win32Event);

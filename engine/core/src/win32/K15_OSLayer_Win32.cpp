@@ -25,7 +25,7 @@
 #include "K15_Mouse.h"
 #include "K15_Keyboard.h"
 #include "K15_RenderWindow.h"
-#include "K15_LogManager.h"
+
 #include "K15_Application.h"
 #include "K15_StringUtil.h"
 
@@ -68,7 +68,7 @@ namespace K15_Engine { namespace Core {
    bool OSLayer_Win32::initialize()
    {
       if(QueryPerformanceFrequency(&ms_PCF) == FALSE) {
-         K15_LOG_ERROR("Could not get performance counter frequency. Error:%s",Application::getInstance()->getLastError().c_str());
+         K15_LOG_ERROR_MESSAGE("Could not get performance counter frequency. Error:%s",Application::getInstance()->getLastError().c_str());
          return false;
       }
 

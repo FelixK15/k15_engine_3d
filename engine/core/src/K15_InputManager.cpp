@@ -23,7 +23,7 @@
 #include "K15_Mouse.h"
 #include "K15_Keyboard.h"
 
-#include "K15_LogManager.h"
+
 #include "K15_IniFileParser.h"
 
 #include "K15_RenderWindow.h"
@@ -297,11 +297,11 @@ namespace K15_Engine { namespace Core {
 			
 			if(!(m_InputManager = OIS::InputManager::createInputSystem(params)))
 			{
-				K15_LOG_ERROR("Could not initialize OIS InputManager.");
+				K15_LOG_ERROR_MESSAGE("Could not initialize OIS InputManager.");
 				return false;
 			}
 
-			K15_LOG_SUCCESS("Successfully initialized OIS InputManager (Version: %s)",
+			K15_LOG_SUCCESS_MESSAGE("Successfully initialized OIS InputManager (Version: %s)",
 				m_InputManager->getVersionName().c_str());
 
 			#ifndef K15_PLATFORM_MOBILE
@@ -711,7 +711,7 @@ namespace K15_Engine { namespace Core {
 	/*********************************************************************************/
 	void InputManager::parseInputConfig()
 	{
-		K15_LOG_NORMAL("Trying to open input file \"%s\".", Application::InputFileName.c_str());
+		K15_LOG_NORMAL_MESSAGE("Trying to open input file \"%s\".", Application::InputFileName.c_str());
 
 		ObjectName actionName;
 		String bindingComplete;
@@ -774,7 +774,7 @@ namespace K15_Engine { namespace Core {
 									}
 									else
 									{
-										K15_LOG_ERROR("Could not find input \"%s\".",binding.c_str());
+										K15_LOG_ERROR_MESSAGE("Could not find input \"%s\".",binding.c_str());
 									}
 
 								}
@@ -798,17 +798,17 @@ namespace K15_Engine { namespace Core {
 									}
 									else
 									{
-										K15_LOG_ERROR("Could not find input \"%s\".",binding.c_str());
+										K15_LOG_ERROR_MESSAGE("Could not find input \"%s\".",binding.c_str());
 									}
 								}
 								else
 								{
-									K15_LOG_ERROR("Invalid input device \"%s\"",device.c_str());
+									K15_LOG_ERROR_MESSAGE("Invalid input device \"%s\"",device.c_str());
 								}
 							}
 							else
 							{
-								K15_LOG_ERROR("invalid binding \"%s\"",bindingComplete.c_str());
+								K15_LOG_ERROR_MESSAGE("invalid binding \"%s\"",bindingComplete.c_str());
 							}
 						}
 					} while(!bindingComplete.empty());
@@ -817,7 +817,7 @@ namespace K15_Engine { namespace Core {
 		}
 		else
 		{
-			K15_LOG_ERROR("Could not open input file.");
+			K15_LOG_ERROR_MESSAGE("Could not open input file.");
 		}
 
 	}

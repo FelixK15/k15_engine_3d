@@ -11,11 +11,12 @@ typedef uint8 (*setWindowDimensionFnc)(K15_OSLayerContext*, K15_Window*, uint32,
 typedef uint8 (*setWindowFullscreenFnc)(K15_OSLayerContext*, K15_Window*, bool8);
 typedef uint8 (*setWindowTitleFnc)(K15_OSLayerContext*, K15_Window*, char*);
 typedef uint8 (*closeWindowFnc)(K15_OSLayerContext*, K15_Window*);
+typedef float (*getTicksFnc)();
 
 ///Events
 typedef uint8 (*pumpSystemEventsFnc)(K15_OSLayerContext*);
-typedef uint8 (*sleepFnc)(float);
-typedef uint8 (*getErrorFnc)(char*);
+typedef void (*sleepFnc)(float);
+typedef char* (*getErrorFnc)();
 
 enum OSIdentifier
 {
@@ -23,28 +24,43 @@ enum OSIdentifier
 	OS_LINUX,
 	OS_ANDROID,
 	OS_MAC_OS,
-	OS_RASPERRY
+	OS_RASPERRY,
+
+	OS_COUNT
 };
 
 struct K15_OSLayerContext
 {
 	///Window Management
-	createWindowFnc createWindow;
-	setWindowDimensionFnc setWindowDimension;
-	setWindowFullscreenFnc setWindowFullscreen;
-	setWindowTitleFnc setWindowTitle;
-	closeWindowFnc closeWindow;
+	struct
+	{
+		createWindowFnc createWindow;
+		setWindowDimensionFnc setWindowDimension;
+		setWindowFullscreenFnc setWindowFullscreen;
+		setWindowTitleFnc setWindowTitle;
+		closeWindowFnc closeWindow;
+		K15_Window* window;
+	} window;
 
 	///Event management
-	pumpSystemEventsFnc pumpSystemEvents;
+	struct  
+	{
+		pumpSystemEventsFnc pumpSystemEvents;
+	} events;
+	
+	/// System
+	struct  
+	{
+		char* homeDir;
+		sleepFnc sleep;
+		getErrorFnc getError;
+		getTicksFnc getTicks;
+		OSIdentifier systemIdentifier;
+	} system;
 
-	sleepFnc sleep;
-	getErrorFnc getError;
-
-	OSIdentifier systemIdentifier;
-
+	uint32 commandLineArgCount;
+	char** commandLineArgs;
 	void* userData;
-	K15_Window* window;
 };
 
 K15_OSLayerContext* K15_GetOSLayerContext();

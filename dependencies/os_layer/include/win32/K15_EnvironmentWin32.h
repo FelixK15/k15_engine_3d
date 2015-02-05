@@ -13,7 +13,7 @@ const DWORD K15_WIN32_MAX_CONTROLLER = 4;
 struct K15_Win32Context
 {
 	HINSTANCE hInstance;
-
+	LARGE_INTEGER performanceFrequency;
 	struct XInput
 	{
 		HMODULE module;
@@ -30,6 +30,9 @@ struct K15_Win32Context
 };
 
 uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance);
+char* K15_Win32GetError();
+void K15_Win32Sleep(float p_SleepTimeInSeconds);
 void K15_Win32ShutdownOSLayer();
+float K15_Win32GetTicks();
 
 #endif //_K15_OSLayer_Environment_Win32_h_

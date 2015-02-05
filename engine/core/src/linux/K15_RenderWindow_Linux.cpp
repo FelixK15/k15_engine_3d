@@ -95,14 +95,14 @@ namespace K15_Engine { namespace Core {
         if(!ms_Display ||
           (ms_Window == BadMatch || ms_Window == BadValue || ms_Window == BadWindow))
         {
-            K15_LOG_ERROR("Could not create X11 window. Error:\"%s\" (%d)",
+            K15_LOG_ERROR_MESSAGE("Could not create X11 window. Error:\"%s\" (%d)",
                           OSLayer::getError().c_str(), errno);
 
             return false;
         }
 
         XFlush(ms_Display);
-        K15_LOG_SUCCESS("Succesfully created X11 window.");
+        K15_LOG_SUCCESS_MESSAGE("Succesfully created X11 window.");
 
         return true;
     }

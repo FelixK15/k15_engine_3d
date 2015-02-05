@@ -18,6 +18,7 @@ set(ENGINE_SRC "${CORE_SRC}"
 "${CORE_WIN32_INC}"
 "${CORE_ANDROID_INC}"
 "${CORE_LINUX_INC}"
+"${CORE_API}"
 "${RENDERING_SRC}"
 "${RENDERING_INC}"
 "${RESOURCE_SRC}"
@@ -40,13 +41,13 @@ include_directories(./serialization/include)
 
 include_directories(../dependencies/math/include)
 include_directories(../dependencies/enet/include)
+include_directories(../dependencies/rendering/include)
+include_directories(../dependencies/os_layer/include)
+include_directories(../dependencies/logging/include)
 include_directories(../dependencies/detour/include)
 include_directories(../dependencies/jsoncpp/include)
-include_directories(../dependencies/libtiff/include)
 include_directories(../dependencies/minizip/include)
 include_directories(../dependencies/zlib/include)
-include_directories(../dependencies/tinyobjloader/include)
-include_directories(../dependencies/ois/include)
 include_directories(../dependencies/resourceformats/include)
 include_directories(../dependencies/stb)
 
@@ -73,6 +74,8 @@ if(COMPILER_IS_MSVC)
 	
 	set_source_files_properties("./core/src/K15_PrecompiledHeader.cpp" PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} /YcK15_PrecompiledHeader.h")
 endif()
+
+source_group("core" FILES ${CORE_API})
 
 source_group("core\\include" FILES ${CORE_INC})
 source_group("core\\src" FILES ${CORE_SRC})
