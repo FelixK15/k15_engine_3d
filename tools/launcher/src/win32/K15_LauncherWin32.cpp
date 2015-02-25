@@ -10,37 +10,6 @@
 #include <K15_Logging.h>
 #include <win32/K15_EnvironmentWin32.h>
 
-#include <thread>
-
-void renderThreadFunc(K15_RenderContext* renderContext, K15_RenderCommandQueue* renderCommandQueue, K15_OSLayerContext* p_OSContext)
-{
-	K15_CreateRenderContext(renderContext, p_OSContext);
-	K15_CreateRenderCommandQueue(renderCommandQueue, renderContext);
-
-	K15_GpuBufferHandle vbo, ibo;
-	int32 vboType = K15_GPU_BUFFER_TYPE_VERTEX;
-	int32 iboType = K15_GPU_BUFFER_TYPE_INDEX;
-
-	uint32 vboSize = size_megabyte(2);
-
-	K15_BeginRenderCommand(renderCommandQueue, K15_RENDER_COMMAND_CREATE_BUFFER);
-	K15_AddRenderBufferHandleParameter(renderCommandQueue, &vbo);
-	K15_AddRenderInt32Parameter(renderCommandQueue, &vboType);
-	K15_AddRenderUInt32Parameter(renderCommandQueue, &vboSize);
-	K15_EndRenderCommand(renderCommandQueue);
-
-	K15_BeginRenderCommand(renderCommandQueue, K15_RENDER_COMMAND_CREATE_BUFFER);
-	K15_AddRenderBufferHandleParameter(renderCommandQueue, &ibo);
-	K15_AddRenderInt32Parameter(renderCommandQueue, &iboType);
-	K15_AddRenderUInt32Parameter(renderCommandQueue, &vboSize);
-	K15_EndRenderCommand(renderCommandQueue);
-
-	while(true)
-	{
-		K15_ProcessRenderCommandQueue(renderContext, renderCommandQueue);
-	}
-}
-
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -67,16 +36,14 @@ int CALLBACK WinMain(
 
 	K15_SetWindowDimension(window, 1024, 768);
 	
-	K15_RenderContext renderContext;
-	K15_RenderCommandQueue renderCommandQueue;
+	K15_RenderContext* renderContext = K15_CreateRenderContext(osContext);
+	K15_RenderCommandQueue* renderCommandQueue = K15_CreateRenderCommandQueue(renderContext);
 
-	std::thread renderThread(renderThreadFunc, &renderContext, &renderCommandQueue, osContext);
+	//std::thread renderThread(renderThreadFunc, &renderContext, &renderCommandQueue, osContext);
 
 	bool running = true;
 
 	K15_SystemEvent event = {};
-
-	Sleep(2000);
 
 	while (running)
 	{
@@ -87,13 +54,11 @@ int CALLBACK WinMain(
 	
 		}
 
-		K15_BeginRenderCommand(&renderCommandQueue, K15_RENDER_COMMAND_CLEAR_SCREEN);
-		K15_EndRenderCommand(&renderCommandQueue);
+		K15_BeginRenderCommand(renderCommandQueue, K15_RENDER_COMMAND_CLEAR_SCREEN);
+		K15_EndRenderCommand(renderCommandQueue);
 
 
-		K15_UnlockRenderCommandQueue(&renderCommandQueue);
-
-		printf("bla\n");
+		K15_UnlockRenderCommandQueue(renderCommandQueue);
 	}
 
 // 	K15_Engine::Application application;

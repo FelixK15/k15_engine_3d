@@ -35,6 +35,11 @@ enum K15_CommandBufferFlags : uint32
 	K15_CBF_LOCKED = 0x01
 };
 
+enum K15_RenderContextFlags : uint32
+{
+	K15_RCF_INITIALIZED = 0x01
+};
+
 struct K15_RenderCommandInstance
 {
 	K15_RenderCommand type;
@@ -71,13 +76,16 @@ struct K15_RenderContext
 
 	void* userData;
 
-	uint8 amountCommandQueues;
+	K15_Thread* renderThread;
+
+	uint32 amountCommandQueues;
+	uint32 flags;
 };
 
 uint8 K15_ProcessRenderCommandQueue(K15_RenderContext* p_RenderContext, K15_RenderCommandQueue* p_RenderCommandQueue);
 
-uint8 K15_CreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerContext* p_OSContext);
-uint8 K15_CreateRenderCommandQueue(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderContext* p_RenderContext);
+K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext);
+K15_RenderCommandQueue* K15_CreateRenderCommandQueue(K15_RenderContext* p_RenderContext);
 
 uint8 K15_BeginRenderCommand(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderCommand p_RenderCommand);
 uint8 K15_EndRenderCommand(K15_RenderCommandQueue* p_RenderCommandQueue);

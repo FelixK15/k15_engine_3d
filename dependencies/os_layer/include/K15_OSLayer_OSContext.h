@@ -18,6 +18,10 @@ typedef uint8 (*pumpSystemEventsFnc)(K15_OSLayerContext*);
 typedef void (*sleepFnc)(float);
 typedef char* (*getErrorFnc)();
 
+///Threads
+typedef uint8 (*createThreadFnc)(K15_OSLayerContext*, K15_Thread*, K15_ThreadFnc, void*);
+typedef uint8 (*setThreadNameFnc)(K15_Thread*);
+
 enum OSIdentifier
 {
 	OS_WINDOWS = 0,
@@ -57,6 +61,15 @@ struct K15_OSLayerContext
 		getTicksFnc getTicks;
 		OSIdentifier systemIdentifier;
 	} system;
+
+	/// Threading
+	struct  
+	{
+		createThreadFnc createThread;
+		setThreadNameFnc setThreadName;
+
+		K15_Thread** threads;
+	} threading;
 
 	uint32 commandLineArgCount;
 	char** commandLineArgs;

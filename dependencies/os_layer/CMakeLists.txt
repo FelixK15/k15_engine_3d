@@ -1,13 +1,16 @@
 set(K15_OS_LAYER_SRC "src/K15_OSLayer_SystemEvents.cpp"
 					 "src/K15_OSLayer_Window.cpp"
+					 "src/K15_OSLayer_Thread.cpp"
 					 "src/K15_OSLayer_OSContext.cpp")
 
 set(K15_OS_LAYER_WIN32_SRC  "src/win32/K15_EventsWin32.cpp"
 							"src/win32/K15_WindowWin32.cpp"
+							"src/win32/K15_ThreadWin32.cpp"
 							"src/win32/K15_EnvironmentWin32.cpp")
 
 set(K15_OS_LAYER_INC "include/K15_OSLayer_EventTypes.h"
 					 "include/K15_OSLayer_ErrorCodes.h"
+					 "include/K15_OSLayer_Thread.h"
 					 "include/K15_OSLayer_Prerequisites.h"
 					 "include/K15_OSLayer_Window.h"
 					 "include/K15_OSLayer_SystemEvents.h"
@@ -15,6 +18,7 @@ set(K15_OS_LAYER_INC "include/K15_OSLayer_EventTypes.h"
 
 set(K15_OS_LAYER_WIN32_INC 	"include/win32/K15_EventsWin32.h"
 							"include/win32/K15_WindowWin32.h"
+							"include/win32/K15_ThreadWin32.h"
 							"include/win32/K15_EnvironmentWin32.h")
 
 include_directories(include)

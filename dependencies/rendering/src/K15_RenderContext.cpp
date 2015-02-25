@@ -2,13 +2,62 @@
 
 #include <K15_OSLayer_OSContext.h>
 #include <K15_OSLayer_ErrorCodes.h>
+#include <K15_OSLayer_Thread.h>
 
 #include "GL/K15_RenderGLContext.h"
 
 #include "GL/K15_RenderGLBuffer.cpp"
 
 /*********************************************************************************/
-static uint8 K15_InternalAddCommandQueueParameter(K15_RenderCommandQueue* p_RenderCommandQueue, uint32 p_ParameterSize, void* p_Parameter)
+intern uint8 K15_InternalRenderThreadFunction(void* p_Parameter)
+{
+	//extract parameter from buffer
+	K15_OSLayerContext* osContext = 0;
+	K15_RenderContext* renderContext = 0;
+	byte* parameterBuffer = (byte*)p_Parameter;
+
+	memcpy(&osContext, parameterBuffer, K15_PTR_SIZE);
+	memcpy(&renderContext, parameterBuffer + K15_PTR_SIZE, K15_PTR_SIZE);
+	
+	//we don't need that anymore
+	free(parameterBuffer);
+
+	//create actual context
+	uint8 createGLRenderContext = TRUE;
+
+	//TODO: DX 11/10/9
+
+	if (createGLRenderContext == TRUE)
+	{
+		uint8 result = K15_GLCreateRenderContext(renderContext, osContext);
+
+		if (result != K15_SUCCESS)
+		{
+			return result;
+		}
+	}
+
+	renderContext->flags |= K15_RCF_INITIALIZED;
+
+	while(true)
+	{
+		//iterate through command queues and execute them
+		for (uint32 renderCommandQueueIndex = 0;
+			renderCommandQueueIndex < renderContext->amountCommandQueues;
+			++renderCommandQueueIndex)
+		{
+			K15_ProcessRenderCommandQueue(renderContext, &renderContext->commandQueues[renderCommandQueueIndex]);
+		}
+	}
+
+
+	return K15_SUCCESS;
+}
+/*********************************************************************************/
+
+
+/*********************************************************************************/
+intern uint8 K15_InternalAddCommandQueueParameter(K15_RenderCommandQueue* p_RenderCommandQueue, uint32 p_ParameterSize, void* p_Parameter)
 {
 	assert(p_RenderCommandQueue && p_Parameter);
 	assert(p_ParameterSize > 0);
@@ -98,23 +147,26 @@ uint8 K15_ProcessRenderCommandQueue(K15_RenderContext* p_RenderContext, K15_Rend
 	return result;
 }
 /*********************************************************************************/
-uint8 K15_CreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerContext* p_OSContext)
+K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext)
 {
-	assert(p_RenderContext && p_OSContext);
+	assert(p_OSContext);
 
 	K15_RenderContext* renderContext = (K15_RenderContext*)malloc(sizeof(K15_RenderContext));
 
 	if (!renderContext)
 	{
-		return K15_ERROR_OUT_OF_MEMORY;
+		return 0;
 	}
+
+	//clear flags
+	renderContext->flags = 0;
 
 	//create command queues
 	K15_RenderCommandQueue* renderCommandQueues = (K15_RenderCommandQueue*)malloc(sizeof(K15_RenderCommandQueue) * K15_RENDERING_MAX_COMMAND_QUEUES);
 	
 	if (!renderCommandQueues)
 	{
-		return K15_ERROR_OUT_OF_MEMORY;
+		return 0;
 	}
 
 	renderContext->commandQueues = renderCommandQueues;
@@ -122,40 +174,40 @@ uint8 K15_CreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerCon
 	renderContext->userData = 0;
 	renderContext->processRenderCommand = 0;
 
-	uint8 createGLRenderContext = TRUE;
+	// allocate memory for 2 pointer
+	byte* threadParameterBuffer = (byte*)malloc(K15_PTR_SIZE * 2);
 
-	//TODO: DX 11/10/9
+	//1. parameter : os context
+	memcpy(threadParameterBuffer, &p_OSContext, K15_PTR_SIZE);
 
-	if (createGLRenderContext == TRUE)
+	//2. parameter : render context
+	memcpy(threadParameterBuffer + K15_PTR_SIZE, &renderContext, K15_PTR_SIZE);
+
+	K15_Thread* renderThread = K15_CreateThread(K15_InternalRenderThreadFunction, (void*)threadParameterBuffer);
+	K15_SetThreadName(renderThread, "K15_RenderThread");
+
+	if (renderThread)
 	{
-		uint8 result = K15_GLCreateRenderContext(renderContext, p_OSContext);
-		
-		if (result != K15_SUCCESS)
-		{
-			return result;
-		}
+		renderContext->renderThread = renderThread;
 	}
 
-	*p_RenderContext = *renderContext;
-
-	return K15_SUCCESS;
+	return renderContext;
 }
 /*********************************************************************************/
-uint8 K15_CreateRenderCommandQueue(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderContext* p_RenderContext)
+K15_RenderCommandQueue* K15_CreateRenderCommandQueue( K15_RenderContext* p_RenderContext)
 {
-	assert(p_RenderCommandQueue && p_RenderContext);
+	K15_CHECK_RENDER_CONTEXT_INITIALIZED(p_RenderContext);
+
 	assert(p_RenderContext->amountCommandQueues < K15_RENDERING_MAX_COMMAND_QUEUES);
 	
-	uint8 result = K15_SUCCESS;
-
 	if (p_RenderContext->amountCommandQueues >= K15_RENDERING_MAX_COMMAND_QUEUES)
 	{
-		return K15_ERROR_MAX_RENDER_COMMAND_QUEUE_REACHED;
+		return 0;
 	}
 
-	uint32 commandQueueIndex = p_RenderContext->amountCommandQueues++;
+	uint32 commandQueueIndex = p_RenderContext->amountCommandQueues;
 
-	*p_RenderCommandQueue = p_RenderContext->commandQueues[commandQueueIndex];
+	K15_RenderCommandQueue* renderCommandQueue = &p_RenderContext->commandQueues[commandQueueIndex];
 
 	for (commandQueueIndex = 0;
 		 commandQueueIndex < K15_RENDERING_COMMAND_BUFFER_COUNT;
@@ -164,38 +216,45 @@ uint8 K15_CreateRenderCommandQueue(K15_RenderCommandQueue* p_RenderCommandQueue,
 		K15_RenderCommandInstance* commandBuffer = (K15_RenderCommandInstance*)malloc(sizeof(K15_RenderCommandInstance) * K15_RENDERING_MAX_COMMANDS);
 		byte* parameterBuffer = (byte*)malloc(K15_RENDERING_MAX_PARAMETER_BUFFER_SIZE);
 
-		p_RenderCommandQueue->commandBuffers[commandQueueIndex] = (K15_RenderCommandBuffer*)malloc(sizeof(K15_RenderCommandBuffer));
-		p_RenderCommandQueue->parameterBuffer[commandQueueIndex] = (K15_RenderCommandParameterBuffer*)malloc(sizeof(K15_RenderCommandParameterBuffer));
-		if (!p_RenderCommandQueue->commandBuffers[commandQueueIndex]
-			|| !p_RenderCommandQueue->parameterBuffer[commandQueueIndex]
+		renderCommandQueue->commandBuffers[commandQueueIndex] = (K15_RenderCommandBuffer*)malloc(sizeof(K15_RenderCommandBuffer));
+		renderCommandQueue->parameterBuffer[commandQueueIndex] = (K15_RenderCommandParameterBuffer*)malloc(sizeof(K15_RenderCommandParameterBuffer));
+
+		if (!renderCommandQueue->commandBuffers[commandQueueIndex]
+			|| !renderCommandQueue->parameterBuffer[commandQueueIndex]
 			|| !commandBuffer
 			|| !parameterBuffer)
 		{
-			result = K15_ERROR_OUT_OF_MEMORY;
-			break;
+			return 0;
 		}
 		
 		//initialize command buffer data
-		p_RenderCommandQueue->commandBuffers[commandQueueIndex]->commandBuffer = commandBuffer;
-		p_RenderCommandQueue->commandBuffers[commandQueueIndex]->amountCommands = 0;
-		p_RenderCommandQueue->commandBuffers[commandQueueIndex]->flags = 0;
+		renderCommandQueue->commandBuffers[commandQueueIndex]->commandBuffer = commandBuffer;
+		renderCommandQueue->commandBuffers[commandQueueIndex]->amountCommands = 0;
+		renderCommandQueue->commandBuffers[commandQueueIndex]->flags = 0;
 
 		//initialize parameter buffer data
-		p_RenderCommandQueue->parameterBuffer[commandQueueIndex]->parameterBuffer = parameterBuffer;
-		p_RenderCommandQueue->parameterBuffer[commandQueueIndex]->parameterBufferOffset = 0;
+		renderCommandQueue->parameterBuffer[commandQueueIndex]->parameterBuffer = parameterBuffer;
+		renderCommandQueue->parameterBuffer[commandQueueIndex]->parameterBufferOffset = 0;
 
-		p_RenderCommandQueue->lastCommand = 0;
+		renderCommandQueue->lastCommand = 0;
 	}
 
 	//lock back buffer
-	p_RenderCommandQueue->commandBuffers[K15_RENDERING_COMMAND_BACK_BUFFER_INDEX]->flags |= K15_CBF_LOCKED;
+	renderCommandQueue->commandBuffers[K15_RENDERING_COMMAND_BACK_BUFFER_INDEX]->flags |= K15_CBF_LOCKED;
 	
-	return result;
+	//increasing the command queue count should be the last operation
+	++p_RenderContext->amountCommandQueues;
+
+	return renderCommandQueue;
 }
 /*********************************************************************************/
 uint8 K15_BeginRenderCommand(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderCommand p_RenderCommand)
 {
 	assert(p_RenderCommandQueue);
+
+	//only write into locked buffers
+	K15_CHECK_RENDER_BACK_BUFFER_UNLOCKED(p_RenderCommandQueue);
+
 	assert(p_RenderCommandQueue->commandBuffers[K15_RENDERING_COMMAND_BACK_BUFFER_INDEX]->amountCommands < K15_RENDERING_MAX_COMMANDS);
 	assert(!p_RenderCommandQueue->lastCommand);
 

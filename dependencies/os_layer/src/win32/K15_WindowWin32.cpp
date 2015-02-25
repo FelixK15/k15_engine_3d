@@ -68,6 +68,10 @@ uint8 K15_Win32CreateWindow(K15_OSLayerContext* p_OSContext, K15_Window* p_Windo
 		{
 			style |= WS_BORDER;
 		}
+		else
+		{
+			style |= WS_POPUP;
+		}
 
 		if ((p_Flags & K15_WINDOW_FLAG_NO_BUTTONS) == 0)
 		{

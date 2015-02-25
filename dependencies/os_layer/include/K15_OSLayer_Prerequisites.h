@@ -50,6 +50,8 @@
 	#define K15_DEBUG
 #endif //_DEBUG
 
+#define K15_PTR_SIZE sizeof(void*)
+
 #if defined (K15_CPP11_SUPPORT)
 	#define OVERRIDE override
 #else
@@ -69,6 +71,8 @@
 
 #define K15_Search bsearch
 #define K15_Sort qsort
+
+#define K15_MAX_THREADS 64
 
 #ifdef K15_OS_WINDOWS
 	#define _WINSOCKAPI_    // stops windows.h including winsock.h
@@ -112,6 +116,10 @@ typedef uint8 byte;
 
 // forward declaration
 struct K15_Window;
+struct K15_Thread;
+struct K15_ThreadContext;
 struct K15_OSLayerContext;
+
+typedef uint8 (*K15_ThreadFnc)(void*);
 
 #endif //_K15_OSLayer_Prerequisites_h_

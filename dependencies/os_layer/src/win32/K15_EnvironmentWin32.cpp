@@ -1,9 +1,11 @@
 #include "win32/K15_EnvironmentWin32.h"
 
 #include "K15_OSLayer_OSContext.h"
+#include "K15_OSLayer_Thread.h"
 
 #include "win32/K15_WindowWin32.h"
 #include "win32/K15_EventsWin32.h"
+#include "win32/K15_ThreadWin32.h"
 
 #include <K15_Logging.h>
 
@@ -91,6 +93,13 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 
 	//events
 	win32OSContext.events.pumpSystemEvents = K15_Win32PumpSystemEvents;
+
+	//threading
+	win32OSContext.threading.createThread = K15_Win32CreateThread;
+	win32OSContext.threading.setThreadName = K15_Win32SetThreadName;
+	win32OSContext.threading.threads = (K15_Thread**)malloc(sizeof(K15_Thread*) * K15_MAX_THREADS);
+
+	memset(win32OSContext.threading.threads, 0, sizeof(K15_Thread*) * K15_MAX_THREADS);
 
 	//get current dir
 	LPSTR currentDirectoryBuffer = (LPSTR)malloc(MAX_PATH);

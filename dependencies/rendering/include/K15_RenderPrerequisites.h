@@ -32,6 +32,12 @@
 #define K15_ERROR_LAST_COMMAND_NOT_FINISHED						217
 #define K15_ERROR_RENDER_BUFFER_LOCKED							218
 
+#define K15_CHECK_RENDER_CONTEXT_INITIALIZED(context) \
+	while((context->flags & K15_RCF_INITIALIZED) == 0)
+
+#define K15_CHECK_RENDER_BACK_BUFFER_UNLOCKED(renderQueue) \
+	while((renderQueue->commandBuffers[K15_RENDERING_COMMAND_BACK_BUFFER_INDEX]->flags & K15_CBF_LOCKED) == 0)
+
 typedef uint32 K15_GpuBufferHandle;
 
 struct K15_RenderContext;
