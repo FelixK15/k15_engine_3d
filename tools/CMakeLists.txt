@@ -13,4 +13,4 @@ add_subdirectory(launcher)
 
 set_target_properties(lua_standalone PROPERTIES FOLDER tools)
 set_target_properties(resourcecompiler PROPERTIES FOLDER tools)
-set_target_properties(launcher PROPERTIES FOLDER tools)
+set_target_properties(launcher PROPERTIES FOLDER engine)

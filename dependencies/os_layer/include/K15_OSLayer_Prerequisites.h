@@ -67,6 +67,9 @@
 #define intern static
 #define global static
 
+#define K15_Search bsearch
+#define K15_Sort qsort
+
 #ifdef K15_OS_WINDOWS
 	#define _WINSOCKAPI_    // stops windows.h including winsock.h
 	#define WIN32_LEAN_AND_MEAN
@@ -105,6 +108,7 @@
 #endif // K15_OS_WINDOWS
 
 typedef uint8 bool8;
+typedef uint8 byte;
 
 // forward declaration
 struct K15_Window;

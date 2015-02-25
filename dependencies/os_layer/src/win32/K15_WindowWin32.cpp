@@ -6,27 +6,6 @@
 #include "win32/K15_EnvironmentWin32.h"
 
 /*********************************************************************************/
-intern const char* K15_Win32GetError()
-{
-	DWORD lastErrorCode = GetLastError();
-	char* messageBuffer = 0;
-
-	if (lastErrorCode > 0)
-	{
-		if (FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM
-			, 0, lastErrorCode, LANG_ENGLISH, (LPSTR)&messageBuffer, 0, 0) == 0)
-		{
-			const char* defaultError = "Could not retrieve error";
-			void* errorBufferMemory = LocalAlloc(0, strlen(defaultError));
-			memcpy(errorBufferMemory, defaultError, strlen(defaultError));
-
-			return (const char*)errorBufferMemory;
-		}
-	}
-
-	return messageBuffer;
-}
-/*********************************************************************************/
 intern BOOL CALLBACK K15_Win32EnumMonitorProc(HMONITOR p_HMONITOR, HDC p_HDC, LPRECT p_Rect, LPARAM p_lParam)
 {
 	static int index = 0;
@@ -97,10 +76,14 @@ uint8 K15_Win32CreateWindow(K15_OSLayerContext* p_OSContext, K15_Window* p_Windo
 		}
 	}
 
+	RECT winRect = {monitorInfo.rcMonitor.left, monitorInfo.rcMonitor.top, width + monitorInfo.rcMonitor.left, height + monitorInfo.rcMonitor.top};
+	AdjustWindowRect(&winRect, style, FALSE);
+
 	//create window with default settings
 	HWND handle = CreateWindow("K15_Win32WindowClass", "", style,
-									 monitorInfo.rcMonitor.left, monitorInfo.rcMonitor.top, 
-									 width, height, 0, 0, hInstance, 0);
+								winRect.left + (width / 2), winRect.top + (height / 2), 
+								winRect.right - winRect.left, winRect.bottom - winRect.top,
+								0, 0, hInstance, 0);
 
 	if (handle == INVALID_HANDLE_VALUE)
 	{

@@ -6,11 +6,11 @@ K15_Window* K15_CreateWindow(uint32 p_Flags, uint8 p_MonitorIndex)
 {
 	K15_OSLayerContext* OSContext = K15_GetOSLayerContext();
 
-	assert(OSContext->window == 0);
+	assert(OSContext->window.window == 0);
 
 	K15_Window* window = (K15_Window*)malloc(sizeof(K15_Window));
 
-	uint8 result = OSContext->createWindow(OSContext, window, p_Flags, p_MonitorIndex);
+	uint8 result = OSContext->window.createWindow(OSContext, window, p_Flags, p_MonitorIndex);
 
 	if (result != K15_SUCCESS)
 	{
@@ -20,7 +20,7 @@ K15_Window* K15_CreateWindow(uint32 p_Flags, uint8 p_MonitorIndex)
 
 	window->monitorIndex = p_MonitorIndex;
 
-	OSContext->window = window;
+	OSContext->window.window = window;
 
 	return window;
 }
@@ -31,7 +31,7 @@ uint8 K15_SetWindowDimension(K15_Window* p_Window, uint32 p_Height, uint32 p_Wid
 
 	K15_OSLayerContext* OSContext = K15_GetOSLayerContext();
 
-	uint8 result = OSContext->setWindowDimension(OSContext, p_Window, p_Height, p_Width);
+	uint8 result = OSContext->window.setWindowDimension(OSContext, p_Window, p_Height, p_Width);
 
 	if (result == K15_SUCCESS)
 	{
@@ -48,7 +48,7 @@ uint8 K15_SetWindowFullscreen(K15_Window* p_Window, bool8 p_Fullscreen)
 
 	K15_OSLayerContext* OSContext = K15_GetOSLayerContext();
 
-	uint8 result = OSContext->setWindowFullscreen(OSContext, p_Window, p_Fullscreen);
+	uint8 result = OSContext->window.setWindowFullscreen(OSContext, p_Window, p_Fullscreen);
 
 	if (result == K15_SUCCESS)
 	{
@@ -81,7 +81,7 @@ uint8 K15_SetWindowTitle(K15_Window* p_Window, char* p_Title)
 
 	memcpy(copiedTitle, p_Title, titleLength);
 
-	uint8 result = OSContext->setWindowTitle(OSContext, p_Window, copiedTitle);
+	uint8 result = OSContext->window.setWindowTitle(OSContext, p_Window, copiedTitle);
 
 	if (result == K15_SUCCESS)
 	{
@@ -97,12 +97,12 @@ void K15_CloseWindow(K15_Window* p_Window)
 
 	K15_OSLayerContext* OSContext = K15_GetOSLayerContext();
 
-	assert(OSContext->window);
+	assert(OSContext->window.window);
 
-	OSContext->closeWindow(OSContext, p_Window);
+	OSContext->window.closeWindow(OSContext, p_Window);
 
 	free(p_Window);
 
-	OSContext->window = 0;
+	OSContext->window.window = 0;
 }
 /*********************************************************************************/

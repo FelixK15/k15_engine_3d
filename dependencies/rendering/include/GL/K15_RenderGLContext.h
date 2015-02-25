@@ -3,12 +3,9 @@
 
 #include "K15_RenderPrerequisites.h"
 
-#include <glew.h>
+#include <gl/GL.h>
 
-struct K15_RenderContext;
-
-typedef GLvoid*	  (*PFNKGLGETPROCADDRESS)(GLchar*);
-typedef GLboolean (*PFNKGLSWAPBUFFERS)(K15_GLRenderContext*);
+#include "K15_RenderGLTypes.h"
 
 struct K15_GLRenderContext
 {
@@ -29,9 +26,6 @@ struct K15_GLRenderContext
 		const GLubyte* vendorString;
 		const GLubyte* rendererString;
 	};
-
-	PFNKGLSWAPBUFFERS kglSwapBuffers;
-	PFNKGLGETPROCADDRESS kglGetProcAddress;
 
 	void* userData;
 };

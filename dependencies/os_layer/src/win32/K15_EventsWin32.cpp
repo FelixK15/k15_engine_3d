@@ -37,7 +37,7 @@ intern void K15_Win32WindowActivated(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 	WORD reason = LOWORD(wParam);
 	K15_OSLayerContext* osLayerContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osLayerContext->userData;
-	K15_Window* window = osLayerContext->window;
+	K15_Window* window = osLayerContext->window.window;
 
 	if (window)
 	{
@@ -69,7 +69,7 @@ intern void K15_Win32WindowResized(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 		K15_SystemEvent win32Event = {};
 
 		K15_OSLayerContext* osLayerContext = K15_GetOSLayerContext();
-		K15_Window* window = osLayerContext->window;
+		K15_Window* window = osLayerContext->window.window;
 
 		if (window)
 		{
@@ -493,7 +493,7 @@ void K15_Win32EvaluateControllerStates(XINPUT_STATE* p_CurrentControllerStates, 
 /*********************************************************************************/
 uint8 K15_Win32PumpSystemEvents(K15_OSLayerContext* p_OSContext)
 {
-	K15_Window* window = p_OSContext->window;
+	K15_Window* window = p_OSContext->window.window;
 	K15_Win32Context* win32Context = (K15_Win32Context*)p_OSContext->userData;
 	K15_Win32Window* win32WindowData = (K15_Win32Window*)window->userData;
 	HWND hwnd = win32WindowData->hwnd;

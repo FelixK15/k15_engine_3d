@@ -1,7 +1,6 @@
 #include "GL/WGL/K15_Win32RenderWGLContext.h"
 #include "GL/K15_RenderGLContext.h"
-
-#include <wglew.h>
+#include "GL/WGL/wglext.h"
 
 #include <K15_OSLayer_OSContext.h>
 #include <K15_OSLayer_Window.h>
@@ -38,6 +37,8 @@ intern uint8 K15_Win32CreateDummyContext(HWND hwnd, HDC dc, HGLRC* p_Context)
 
 		context = wglCreateContext(dc);
 		wglMakeCurrent(dc, context);
+
+		*p_Context = context;
 	}
 
 	return context != 0 ? K15_SUCCESS : K15_ERROR_SYSTEM;
@@ -73,21 +74,22 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSLayer
 
 	HGLRC context = 0;
 
-	uint8 result = K15_Win32CreateDummyContext(hwnd, dc, &context);
+ 	uint8 result = K15_Win32CreateDummyContext(hwnd, dc, &context);
 
 	if (result != K15_SUCCESS)
 	{
 		return result;
 	}
 
-	GLenum error = glewInit();
-	if (error != GLEW_OK)
-	{
-		return K15_ERROR_SYSTEM;
-	}
+
+	kwglChoosePixelFormatARB = (PFNWGLCHOOSEPIXELFORMATARBPROC)wglGetProcAddress("wglChoosePixelFormatARB");
+	kwglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
+
+	assert(kwglChoosePixelFormatARB);
+	assert(kwglCreateContextAttribsARB);
 
 	//unbind and delete dummy context
-	wglMakeCurrent(0, 0);
+	wglMakeCurrent(dc, 0);
 	wglDeleteContext(context);
 
 	//create real context
@@ -105,7 +107,7 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSLayer
 	int pixelFormatIndex = 0;
 	unsigned int formatCount = 1;
 
-	wglChoosePixelFormatARB(dc, pixelFormatAttributes, 0, 1, &pixelFormatIndex, &formatCount);
+	kwglChoosePixelFormatARB(dc, pixelFormatAttributes, 0, 1, &pixelFormatIndex, &formatCount);
 
 	if (!pixelFormatIndex)
 	{
@@ -114,16 +116,20 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSLayer
 
 	SetPixelFormat(dc, pixelFormatIndex, 0);
 
+	int contextFlags = WGL_CONTEXT_CORE_PROFILE_BIT_ARB;
+
+#ifdef K15_DEBUG
+	contextFlags |= WGL_CONTEXT_DEBUG_BIT_ARB;
+#endif //K15_DEBUG
+
 	const int contextAttributes[] = {
 		WGL_CONTEXT_MAJOR_VERSION_ARB, K15_MIN_GL_VERSION_MAJOR,
 		WGL_CONTEXT_MINOR_VERSION_ARB, K15_MIN_GL_VERSION_MINOR,
-#ifdef K15_DEBUG
-		WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB,
-#endif //K15_DEBUG
+		WGL_CONTEXT_FLAGS_ARB, contextFlags,
 		0 //END
 	};
 
-	context = wglCreateContextAttribsARB(dc, 0, contextAttributes);
+	context = kwglCreateContextAttribsARB(dc, 0, contextAttributes);
 
 	if (!context)
 	{
@@ -147,8 +153,8 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSLayer
 
 	p_RenderContext->userData = (void*)win32GLContext;
 
-	p_RenderContext->kglSwapBuffers = K15_Win32SwapBuffers;
-	p_RenderContext->kglGetProcAddress = K15_Win32GetProcAddress;
+	kglSwapBuffers = K15_Win32SwapBuffers;
+	kglGetProcAddress = K15_Win32GetProcAddress;
 
 	return K15_SUCCESS;
 }
