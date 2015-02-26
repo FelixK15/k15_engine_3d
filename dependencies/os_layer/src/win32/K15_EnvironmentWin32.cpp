@@ -197,7 +197,7 @@ char* K15_Win32GetError()
 void K15_Win32Sleep(float p_SleepTimeInSeconds)
 {
 	DWORD milliSeconds = (DWORD)(p_SleepTimeInSeconds * 1000.f);
-	Sleep(milliSeconds);
+	SleepEx(milliSeconds, TRUE);
 }
 /*********************************************************************************/
 void K15_Win32ShutdownOSLayer()

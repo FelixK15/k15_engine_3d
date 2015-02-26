@@ -31,7 +31,7 @@ int CALLBACK WinMain(
 		free(errorMessage);
 	}
 
-	K15_Window* window = K15_CreateWindow(K15_WINDOW_FLAG_BORDERLESS | K15_WINDOW_FLAG_NO_BUTTONS | K15_WINDOW_FLAG_DEFAULT_DIMENISON, 0);
+	K15_Window* window = K15_CreateWindow(0, 0);
 	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
 
 	K15_SetWindowDimension(window, 1024, 768);
@@ -51,7 +51,10 @@ int CALLBACK WinMain(
 
 		while (K15_GetSystemEventFromQueue(&event, K15_REMOVE_SYSTEM_EVENT_FLAG) != K15_SYSTEM_EVENT_QUEUE_EMPTY)
 		{
-	
+			if (event.event == K15_APPLICATION_QUIT)
+			{
+				running = false;
+			}
 		}
 
 		K15_BeginRenderCommand(renderCommandQueue, K15_RENDER_COMMAND_CLEAR_SCREEN);
@@ -59,6 +62,8 @@ int CALLBACK WinMain(
 
 
 		K15_UnlockRenderCommandQueue(renderCommandQueue);
+	
+		osContext->system.sleep(0.016f);
 	}
 
 // 	K15_Engine::Application application;

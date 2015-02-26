@@ -122,6 +122,13 @@ uint8 K15_ProcessRenderCommandQueue(K15_RenderContext* p_RenderContext, K15_Rend
 	*parameterFrontBuffer = *parameterBackBuffer;
 	*parameterBackBuffer = tempParameterBuffer;
 
+	//commands and params have been processed
+	(*parameterBackBuffer)->parameterBufferOffset = 0;
+	(*commandBackBuffer)->amountCommands = 0;
+
+	//lock back buffer
+	(*commandBackBuffer)->flags |= K15_CBF_LOCKED;
+
 	//process front buffer
 	for(uint32 renderCommandIndex = 0;
 		renderCommandIndex < (*commandFrontBuffer)->amountCommands;
@@ -136,13 +143,6 @@ uint8 K15_ProcessRenderCommandQueue(K15_RenderContext* p_RenderContext, K15_Rend
 			break;
 		}
 	}
-
-	//commands and params have been processed
-	(*parameterBackBuffer)->parameterBufferOffset = 0;
-	(*commandBackBuffer)->amountCommands = 0;
-
-	//lock back buffer
-	(*commandBackBuffer)->flags |= K15_CBF_LOCKED;
 
 	return result;
 }
