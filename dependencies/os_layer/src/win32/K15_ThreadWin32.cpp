@@ -3,6 +3,8 @@
 
 #include "K15_OSLayer_Thread.h"
 
+#ifdef K15_OS_WINDOWS
+
 /*********************************************************************************/
 intern DWORD WINAPI K15_Win32ThreadWrapper(LPVOID p_Parameter)
 {
@@ -91,3 +93,5 @@ uint8 K15_Win32SetThreadName(K15_Thread* p_Thread)
 	return K15_ERROR_SYSTEM;
 }
 /*********************************************************************************/
+
+#endif //K15_OS_WINDOWS

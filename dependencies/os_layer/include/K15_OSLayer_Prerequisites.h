@@ -77,11 +77,11 @@
 #ifdef K15_OS_WINDOWS
 	#define _WINSOCKAPI_    // stops windows.h including winsock.h
 	#define WIN32_LEAN_AND_MEAN
-	#include "windows.h"
-	#include "windowsx.h"
-	#include "winnt.h"
-	#include "xinput.h"
-	#include "stdlib.h"
+	#include <windows.h>
+	#include <windowsx.h>
+	#include <winnt.h>
+	#include <xinput.h>
+	#include <stdlib.h>
 	#include <io.h>
 
 	//8 bit types
@@ -110,6 +110,25 @@
 	typedef signed		long long	int64;
 	typedef unsigned	long long	uint64;
 #endif // K15_OS_WINDOWS
+
+#ifdef K15_OS_ANDROID
+	#include <android/log.h>
+	#include <pthread.h>
+	#include <time.h>
+	#include <jni.h>
+	#include <stdlib.h>
+
+	#define TRUE 1
+	#define FALSE 0
+#endif //K15_OS_ANDROID
+
+#ifdef K15_OS_LINUX
+	#include <pthread.h>
+	#include <time.h>
+
+	#define TRUE 1
+	#define FALSE 0
+#endif //K15_OS_LINUX
 
 typedef uint8 bool8;
 typedef uint8 byte;

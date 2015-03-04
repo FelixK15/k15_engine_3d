@@ -1,5 +1,7 @@
 #include "win32/K15_EnvironmentWin32.h"
 
+#ifdef K15_OS_WINDOWS 
+
 #include "K15_OSLayer_OSContext.h"
 #include "K15_OSLayer_Thread.h"
 
@@ -52,14 +54,14 @@ void K15_Win32LogConsole(const char* p_Message, LogPriority p_Priority)
 			colorCode = FOREGROUND_RED | FOREGROUND_BLUE;
 			break;
 		}
-
-		//set output color
-		SetConsoleTextAttribute(consoleHandle,colorCode);
-		printf("%s\n", p_Message);
-
-		//set color back to white
-		SetConsoleTextAttribute(consoleHandle, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN); 
 	}
+
+	//set output color
+	SetConsoleTextAttribute(consoleHandle,colorCode);
+	printf("%s\n", p_Message);
+
+	//set color back to white
+	SetConsoleTextAttribute(consoleHandle, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN); 
 }
 /*********************************************************************************/
 #endif //K15_DEBUG
@@ -223,3 +225,5 @@ float K15_Win32GetTicks()
 	return (float)(counts.QuadPart / win32Context->performanceFrequency.QuadPart);
 }
 /*********************************************************************************/
+
+#endif //K15_OS_WINDOWS

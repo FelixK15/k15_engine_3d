@@ -19,19 +19,30 @@
 
 #include "K15_RenderPrerequisites.h"
 
-#include "GL/glcorearb.h"
-
 #ifdef K15_OS_WINDOWS
+	#include <gl/GL.h>
 	#include "GL/WGL/wglext.h"
-#elif K15_OS_LINUX
+	#include "GL/glcorearb.h"
+#elif defined K15_OS_LINUX
 	#include "GL/GLX/glxext.h"
+#elif defined K15_OS_ANDROID
+	#include <GLES2/gl2.h>
+	#include <GLES2/gl2ext.h>
+	#include <GLES2/gl2platform.h>
+#ifndef APIENTRY
+	#define APIENTRY
+#endif //APIENTRY
+	//#define APIENTRY GL_APIENTRYP
 #endif // K15_OS_WINDOWS
 
+#include "K15_RenderGLEmulation.h"
+
 typedef char GLchar;
+struct K15_GLRenderContext;
 
 //custom gl function typedefs
 typedef GLboolean(*PFNKGLSWAPBUFFERS)(K15_GLRenderContext*);
-typedef GLvoid*(*PFNKGLGETPROCADDRESS)(char*);
+typedef GLvoid*(*PFNKGLGETPROCADDRESS)(const char*);
 
 //GL_AMD_debug_output typedefs
 typedef void(APIENTRY *GLDEBUGPROCAMD)(GLuint, GLenum, GLenum, GLsizei, const GLchar*, GLvoid*);
@@ -59,9 +70,6 @@ typedef GLboolean (APIENTRY *PFNGLUNMAPNAMEDBUFFEREXTPROC) (GLuint buffer);
 extern PFNWGLCHOOSEPIXELFORMATARBPROC kwglChoosePixelFormatARB;
 extern PFNWGLCREATECONTEXTATTRIBSARBPROC kwglCreateContextAttribsARB;
 #endif //K15_OS_WINDOWS
-
-//default gl functions
-extern PFNGLGENBUFFERSPROC kglGenBuffers;
 
 //GL_ARB_debug_output
 extern PFNGLDEBUGMESSAGECALLBACKPROC kglDebugMessageCallback;

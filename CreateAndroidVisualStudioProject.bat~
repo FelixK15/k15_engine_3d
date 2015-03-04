@@ -1,0 +1,8 @@
+@echo off
+
+mkdir build\android
+cd build\android
+
+cmake ../../. -G "Visual Studio 11" -DCMAKE_SYSTEM_NAME=Android -DK15_PLATFORM=Android -DCMAKE_ANDROID_API=14 -DCMAKE_ANDROID_API_MIN=14
+
+cd ../..

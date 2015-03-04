@@ -39,7 +39,7 @@ K15_Thread* K15_CreateThread(K15_ThreadFnc p_ThreadFunction, void* p_ThreadParam
 	return thread;
 }
 /*********************************************************************************/
-uint8 K15_SetThreadName(K15_Thread* p_Thread, char* p_ThreadName)
+uint8 K15_SetThreadName(K15_Thread* p_Thread, const char* p_ThreadName)
 {
 	assert(p_Thread && p_ThreadName);
 

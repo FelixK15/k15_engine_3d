@@ -1,13 +1,10 @@
 #include "GL/K15_RenderGLTypes.h"
 
 #ifdef K15_OS_WINDOWS
-//wgl
-PFNWGLCHOOSEPIXELFORMATARBPROC		kwglChoosePixelFormatARB		= 0;
-PFNWGLCREATECONTEXTATTRIBSARBPROC	kwglCreateContextAttribsARB		= 0;
+	//wgl
+	PFNWGLCHOOSEPIXELFORMATARBPROC		kwglChoosePixelFormatARB		= 0;
+	PFNWGLCREATECONTEXTATTRIBSARBPROC	kwglCreateContextAttribsARB		= 0;
 #endif //K15_OS_WINDOWS
-
-//default gl functions
-PFNGLGENBUFFERSPROC					kglGenBuffers					= 0;
 
 
 //GL_ARB_debug_output

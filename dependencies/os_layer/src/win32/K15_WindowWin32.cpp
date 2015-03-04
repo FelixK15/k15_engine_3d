@@ -2,6 +2,9 @@
 #include "K15_OSLayer_Window.h"
 #include "K15_OSLayer_OSContext.h"
 #include "win32/K15_WindowWin32.h"
+
+#ifdef K15_OS_WINDOWS
+
 #include "win32/K15_EventsWin32.h"
 #include "win32/K15_EnvironmentWin32.h"
 
@@ -164,3 +167,4 @@ uint8 K15_Win32CloseWindow(K15_OSLayerContext* p_OSContext, K15_Window* p_Window
 }
 /*********************************************************************************/
 
+#endif //K15_OS_WINDOWS

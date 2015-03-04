@@ -1,5 +1,6 @@
 #include "GL/K15_RenderGLContext.h"
 #include "GL/WGL/K15_Win32RenderWGLContext.h"
+#include "GL/EGL/K15_AndroidRenderEGLContext.h"
 
 #include "K15_RenderContext.h"
 
@@ -16,7 +17,9 @@ typedef uint8 (*K15_CreatePlatformContextFnc)(K15_GLRenderContext*, K15_OSLayerC
 intern K15_CreatePlatformContextFnc ContextCreation[OS_COUNT] = {
 #ifdef K15_OS_WINDOWS
 	K15_Win32CreateGLContext,
-#elif
+#elif defined K15_OS_ANDROID
+
+#else
 	0,
 #endif //K15_OS_WINDOWS
 };
@@ -25,7 +28,7 @@ intern K15_CreatePlatformContextFnc ContextCreation[OS_COUNT] = {
 /*********************************************************************************/
 intern void APIENTRY K15_DebugProcAMD(GLuint id, GLenum category, GLenum severity, GLsizei length, const GLchar* message, GLvoid* userParam)
 {
-	char* categoryName = 0;
+	const char* categoryName = 0;
 	switch(category)
 	{
 		case GL_DEBUG_CATEGORY_API_ERROR_AMD:
@@ -70,8 +73,8 @@ intern void APIENTRY K15_DebugProcAMD(GLuint id, GLenum category, GLenum severit
 /*********************************************************************************/
 intern void APIENTRY K15_DebugProcARB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const GLvoid* userParam)
 {
-	char* sourceName = 0;
-	char* typeName = 0;
+	const char* sourceName = 0;
+	const char* typeName = 0;
 
 	switch(source)
 	{
@@ -215,10 +218,10 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 		kglTextureSubImage1DEXT = (PFNGLTEXTURESUBIMAGE1DEXTPROC)kglGetProcAddress("glTextureSubImage1DEXT");
 		kglTextureSubImage2DEXT = (PFNGLTEXTURESUBIMAGE2DEXTPROC)kglGetProcAddress("glTextureSubImage2DEXT");
 		kglTextureSubImage3DEXT = (PFNGLTEXTURESUBIMAGE3DEXTPROC)kglGetProcAddress("glTextureSubImage3DEXT");
-		kglNamedBufferDataEXT = (PFNGLNAMEDBUFFERDATAPROC)kglGetProcAddress("glNamedBufferDataEXT");
-		kglNamedBufferSubDataEXT = (PFNGLNAMEDBUFFERSUBDATAPROC)kglGetProcAddress("glNamedBufferSubDataEXT");
-		kglMapNamedBufferEXT = (PFNGLMAPNAMEDBUFFERPROC)kglGetProcAddress("glMapNamedBufferEXT");
-		kglUnmapNamedBufferEXT = (PFNGLUNMAPNAMEDBUFFERPROC)kglGetProcAddress("glUnmapNamedBufferEXT");
+		kglNamedBufferDataEXT = (PFNGLNAMEDBUFFERDATAEXTPROC)kglGetProcAddress("glNamedBufferDataEXT");
+		kglNamedBufferSubDataEXT = (PFNGLNAMEDBUFFERSUBDATAEXTPROC)kglGetProcAddress("glNamedBufferSubDataEXT");
+		kglMapNamedBufferEXT = (PFNGLMAPNAMEDBUFFEREXTPROC)kglGetProcAddress("glMapNamedBufferEXT");
+		kglUnmapNamedBufferEXT = (PFNGLUNMAPNAMEDBUFFEREXTPROC)kglGetProcAddress("glUnmapNamedBufferEXT");
 	}
 
 	if(K15_Search("GL_ARB_sampler_objects", p_GLRenderContext->extensions.names,
@@ -302,11 +305,6 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 		kglGetProgramPipelineInfoLog = (PFNGLGETPROGRAMPIPELINEINFOLOGPROC)kglGetProcAddress("glGetProgramPipelineInfoLog");
 	}
 
-	//default functions
-	{
-		kglGenBuffers = (PFNGLGENBUFFERSPROC)kglGetProcAddress("glGenBuffers");
-	}
-
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
@@ -372,6 +370,23 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 	
 	glGetIntegerv(GL_MINOR_VERSION, &glContext->version.minor);
 	glGetIntegerv(GL_MINOR_VERSION, &glContext->version.major);
+
+	//glGetIntegerv fails for OpenGL ES 2.0
+	GLenum versionRetrieveError = glGetError();
+
+	if(versionRetrieveError == GL_INVALID_ENUM)
+	{
+		const GLubyte* versionString = glGetString(GL_VERSION);
+		char* token = strtok((char*)versionString, ".");
+		
+		glContext->version.major = atoi(token);
+
+		token = strtok(0, ".");
+
+		glContext->version.minor = atoi(token);
+
+	}
+	
 
 	if (glContext->version.major != K15_MIN_GL_VERSION_MAJOR ||
 		glContext->version.minor != K15_MIN_GL_VERSION_MINOR)

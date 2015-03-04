@@ -2,9 +2,6 @@
 #define _K15_Rendering_GLContext_h_
 
 #include "K15_RenderPrerequisites.h"
-
-#include <gl/GL.h>
-
 #include "K15_RenderGLTypes.h"
 
 struct K15_GLRenderContext

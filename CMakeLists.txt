@@ -5,15 +5,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_LIST_DIR})
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 #Configuration Parameters	
-option(BUILD_ANDROID OFF "Build Android Binaries")
 option(BUILD_STATIC_CORE OFF "Build Static Libraries")
-
-#If build for android has been selected,
-#set BUILD_STATIC_CORE to 1 
-#(android doesn't work well with shared libs)
-if(BUILD_ANDROID)
-	set(BUILD_STATIC_CORE 1)
-endif()
 
 #Project Name
 project(k15_engine_3d)

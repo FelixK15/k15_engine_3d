@@ -1,4 +1,7 @@
 #include "GL/WGL/K15_Win32RenderWGLContext.h"
+
+#ifdef K15_OS_WINDOWS
+
 #include "GL/K15_RenderGLContext.h"
 #include "GL/WGL/wglext.h"
 
@@ -159,3 +162,5 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSLayer
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
+
+#endif //K15_OS_WINDOWS

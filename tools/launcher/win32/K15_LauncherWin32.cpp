@@ -8,6 +8,9 @@
 #include <K15_OSLayer_Window.h>
 #include <K15_OSLayer_SystemEvents.h>
 #include <K15_Logging.h>
+
+#ifdef K15_OS_WINDOWS
+
 #include <win32/K15_EnvironmentWin32.h>
 
 int CALLBACK WinMain(
@@ -73,3 +76,5 @@ int CALLBACK WinMain(
 
 	return 0;
 }
+
+#endif //K15_OS_WINDOWS

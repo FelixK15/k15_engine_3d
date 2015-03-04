@@ -3,6 +3,8 @@
 
 #include "K15_OSLayer_Prerequisites.h"
 
+#ifdef K15_OS_WINDOWS
+
 typedef void (WINAPI *XInputEnableFnc)(BOOL);
 typedef DWORD (WINAPI *XInputGetCapabilitiesFnc)(DWORD, DWORD, XINPUT_CAPABILITIES*);
 typedef DWORD (WINAPI *XInputGetStateFnc)(DWORD, XINPUT_STATE*);
@@ -34,5 +36,7 @@ char* K15_Win32GetError();
 void K15_Win32Sleep(float p_SleepTimeInSeconds);
 void K15_Win32ShutdownOSLayer();
 float K15_Win32GetTicks();
+
+#endif //K15_OS_WINDOWS
 
 #endif //_K15_OSLayer_Environment_Win32_h_
