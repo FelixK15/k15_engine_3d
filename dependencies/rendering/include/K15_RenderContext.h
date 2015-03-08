@@ -11,6 +11,7 @@
 #define K15_RENDERING_DISPATCH_BACK_BUFFER_INDEX 1
 #define K15_RENDERING_DISPATCH_FRONT_BUFFER_INDEX 0
 
+
 #define K15_RENDERING_MAX_COMMANDS 128
 #define K15_RENDERING_MAX_COMMAND_QUEUES 8
 #define K15_RENDERING_MAX_COMMAND_QUEUES_TO_PROCESS K15_RENDERING_MAX_COMMAND_QUEUES * 2
@@ -82,9 +83,11 @@ struct K15_RenderCommandQueue
 	K15_RenderCommandInstance* lastCommand;
 
 	K15_RenderContext* renderContext;
+	K15_Semaphore* processingSemaphore;
+	K15_Semaphore* swappingSemaphore;
 	K15_Mutex* processingMutex;
 
-	uint32 flags;
+	volatile uint32 flags;
 
 #ifdef K15_DEBUG
 	struct 

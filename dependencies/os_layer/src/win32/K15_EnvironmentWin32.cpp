@@ -168,8 +168,13 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 
 	//win32 context as userdata
 	win32SpecificContext->hInstance = p_hInstance;
-	QueryPerformanceFrequency(&win32SpecificContext->performanceFrequency);
+
+	//frequency of performance timer
+	LARGE_INTEGER performanceFrequency;
+	QueryPerformanceFrequency(&performanceFrequency);
 	
+	win32SpecificContext->performanceFrequency = (float)performanceFrequency.QuadPart;
+
 	win32OSContext.userData = (void*)win32SpecificContext;
 
 	//Register Window Class
@@ -189,7 +194,7 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	LARGE_INTEGER counts;
 	QueryPerformanceCounter(&counts);
 
-	win32OSContext.timeStarted = (float)(counts.QuadPart / win32SpecificContext->performanceFrequency.QuadPart);
+	win32OSContext.timeStarted = (float)(counts.QuadPart / performanceFrequency.QuadPart);
 
 	K15_InternalSetOSLayerContext(win32OSContext);
 
@@ -228,7 +233,7 @@ void K15_Win32ShutdownOSLayer()
 	}
 }
 /*********************************************************************************/
-double K15_Win32GetElapsedSeconds()
+float K15_Win32GetElapsedSeconds()
 {
 	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
@@ -236,7 +241,9 @@ double K15_Win32GetElapsedSeconds()
 	LARGE_INTEGER counts;
 	QueryPerformanceCounter(&counts);
 
-	return (double)(counts.QuadPart / win32Context->performanceFrequency.QuadPart);
+	float seconds = counts.QuadPart / win32Context->performanceFrequency;
+
+	return seconds;
 }
 /*********************************************************************************/
 

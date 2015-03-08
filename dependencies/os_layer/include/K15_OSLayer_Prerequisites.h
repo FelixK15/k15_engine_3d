@@ -74,6 +74,8 @@
 
 #define K15_MAX_THREADS 64
 
+#define K15_FUNCTION_DEBUG_PRINTF(func) printf("Before "#func"\n"); func; printf("After "#func"\n")
+
 #ifdef K15_OS_WINDOWS
 	#define _WINSOCKAPI_    // stops windows.h including winsock.h
 	#define WIN32_LEAN_AND_MEAN

@@ -164,7 +164,12 @@ uint8 K15_Win32SetThreadName(K15_Thread* p_Thread)
 	return K15_ERROR_SYSTEM;
 }
 /*********************************************************************************/
-K15_Semaphore* K15_CreateSemaphore(uint32 p_InitialValue)
+K15_Semaphore* K15_CreateSemaphore()
+{
+	return K15_CreateSemaphoreWithInitialValue(0);
+}
+/*********************************************************************************/
+K15_Semaphore* K15_CreateSemaphoreWithInitialValue(uint32 p_InitialValue)
 {
 	K15_Semaphore* win32Semaphore = (K15_Semaphore*)malloc(sizeof(K15_Semaphore));
 

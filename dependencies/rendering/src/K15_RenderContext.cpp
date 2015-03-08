@@ -32,7 +32,8 @@ intern uint8 K15_InternalProcessRenderCommandQueue(K15_RenderContext* p_RenderCo
 	}
 
 	//command queue has been processed. Remove dispatched flag
-	p_RenderCommandQueue->flags &= ~K15_CBF_DISPATCHED;
+	K15_PostSemaphore(p_RenderCommandQueue->processingSemaphore);
+	//p_RenderCommandQueue->flags &= ~K15_CBF_DISPATCHED;
 
 	return result;
 }
@@ -227,8 +228,11 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext)
 	renderContext->processRenderCommand = 0;
 	renderContext->commandQueueDispatcher = renderCommandQueueDispatcher;
 	renderContext->createCommandQueueMutex = K15_CreateMutex();
-	renderContext->renderThreadSync = K15_CreateSemaphore(0);
+	renderContext->renderThreadSync = K15_CreateSemaphore();
+
+#ifdef K15_DEBUG
 	renderContext->debugging.assignedThread = K15_GetCurrentThread();
+#endif //K15_DEBUG
 
 	// allocate memory for 2 pointer
 	byte* threadParameterBuffer = (byte*)malloc(K15_PTR_SIZE * 2);
@@ -303,6 +307,8 @@ K15_RenderCommandQueue* K15_CreateRenderCommandQueue(K15_RenderContext* p_Render
 	renderCommandQueue->flags = 0;
 	renderCommandQueue->renderContext = p_RenderContext;
 	renderCommandQueue->processingMutex = K15_CreateMutex();
+	renderCommandQueue->processingSemaphore = K15_CreateSemaphoreWithInitialValue(1);
+	renderCommandQueue->swappingSemaphore = K15_CreateSemaphoreWithInitialValue(1);
 	renderCommandQueue->lastCommand = 0;
 
 #ifdef K15_DEBUG
@@ -322,9 +328,6 @@ K15_RenderCommandQueue* K15_CreateRenderCommandQueue(K15_RenderContext* p_Render
 uint8 K15_BeginRenderCommand(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderCommand p_RenderCommand)
 {
 	assert(p_RenderCommandQueue);
-
-	while((p_RenderCommandQueue->flags & K15_CBF_SWAPPING) > 0); //busy wait in case the render command queue is current getting swapped
-
 	assert(p_RenderCommandQueue->commandBuffers[K15_RENDERING_COMMAND_BACK_BUFFER_INDEX]->amountCommands < K15_RENDERING_MAX_COMMANDS);
 	assert(p_RenderCommandQueue->debugging.assignedThread == K15_GetCurrentThread());
 	assert(!p_RenderCommandQueue->lastCommand);
@@ -405,11 +408,13 @@ void K15_DispatchRenderCommandQueue(K15_RenderCommandQueue* p_RenderCommandQueue
 {
 	assert(p_RenderCommandQueue);
 	assert(!p_RenderCommandQueue->lastCommand);
+	assert(p_RenderCommandQueue->debugging.assignedThread == K15_GetCurrentThread());
 
 	K15_RenderContext* renderContext = p_RenderCommandQueue->renderContext;
 	K15_RenderCommandQueueDispatcher* renderDispatcher = renderContext->commandQueueDispatcher;
 	
-	while((p_RenderCommandQueue->flags & K15_CBF_DISPATCHED) > 0); //busy wait until the command queue has been processed
+	//Wait until the render thread has processed the render queue
+	K15_WaitSemaphore(p_RenderCommandQueue->processingSemaphore);
 
 	//the caller thread tries to get the swap mutex so the render thread can not swap the dispatcher 
 	//when we try to add a command queue
@@ -428,15 +433,13 @@ void K15_DispatchRenderCommandQueue(K15_RenderCommandQueue* p_RenderCommandQueue
 
 	//unclock swap mutex so the renderthread can swap the dispatcher.
 	K15_UnlockMutex(renderDispatcher->swapMutex);
-
-	//set the dispatched flag to communicate that this command queue has been dispatched. (dispatched flag will get removed once the command queue has been processed);
-	p_RenderCommandQueue->flags |= K15_CBF_DISPATCHED;
 }
 /*********************************************************************************/
 void K15_ProcessDispatchedRenderCommandQueues(K15_RenderContext* p_RenderContext)
 {
 	assert(p_RenderContext);
 
+	//signal the render thread to start processing the dispatched render buffers
 	K15_PostSemaphore(p_RenderContext->renderThreadSync);
 }
 /*********************************************************************************/

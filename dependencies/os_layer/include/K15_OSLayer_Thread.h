@@ -5,7 +5,7 @@
 
 #ifdef K15_OS_WINDOWS
 	#include "win32/K15_ThreadWin32.h"
-#elif K15_OS_LINUX || K15_OS_ANDROID
+#elif defined K15_OS_LINUX || defined K15_OS_ANDROID
 	#include "posix/K15_ThreadPosix.h"
 #endif 
 

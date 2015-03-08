@@ -34,7 +34,8 @@ K15_Mutex* K15_CreateMutex();
 uint8 K15_LockMutex(K15_Mutex* p_Mutex);
 uint8 K15_UnlockMutex(K15_Mutex* p_Mutex);
 
-K15_Semaphore* K15_CreateSemaphore(uint32 p_InitialValue);
+K15_Semaphore* K15_CreateSemaphore();
+K15_Semaphore* K15_CreateSemaphoreWithInitialValue(uint32 p_InitialValue);
 uint8 K15_PostSemaphore(K15_Semaphore* p_Semaphore);
 uint8 K15_WaitSemaphore(K15_Semaphore* p_Semaphore);
 

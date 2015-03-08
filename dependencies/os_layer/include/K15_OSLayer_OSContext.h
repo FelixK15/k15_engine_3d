@@ -11,7 +11,7 @@ typedef uint8 (*setWindowDimensionFnc)(K15_OSLayerContext*, K15_Window*, uint32,
 typedef uint8 (*setWindowFullscreenFnc)(K15_OSLayerContext*, K15_Window*, bool8);
 typedef uint8 (*setWindowTitleFnc)(K15_OSLayerContext*, K15_Window*, char*);
 typedef uint8 (*closeWindowFnc)(K15_OSLayerContext*, K15_Window*);
-typedef double (*getElapsedSecondsFnc)();
+typedef float (*getElapsedSecondsFnc)();
 
 ///Events
 typedef uint8 (*pumpSystemEventsFnc)(K15_OSLayerContext*);
