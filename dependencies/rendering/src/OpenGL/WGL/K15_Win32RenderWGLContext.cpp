@@ -1,7 +1,7 @@
-#include "GL/WGL/K15_Win32RenderWGLContext.h"
+#include "OpenGL/WGL/K15_Win32RenderWGLContext.h"
 
-#include "GL/K15_RenderGLContext.h"
-#include "GL/WGL/wglext.h"
+#include "OpenGL/K15_RenderGLContext.h"
+#include "OpenGL/WGL/wglext.h"
 
 #include <K15_OSLayer_OSContext.h>
 #include <K15_OSLayer_Window.h>

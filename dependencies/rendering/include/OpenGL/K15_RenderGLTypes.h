@@ -21,8 +21,8 @@
 
 #ifdef K15_OS_WINDOWS
 	#include <gl/GL.h>
-	#include "GL/WGL/wglext.h"
-	#include "GL/glcorearb.h"
+	#include "OpenGL/WGL/wglext.h"
+	#include "OpenGL/glcorearb.h"
 #elif defined K15_OS_LINUX
 	#include "GL/GLX/glxext.h"
 #elif defined K15_OS_ANDROID
@@ -177,7 +177,7 @@ extern PFNGLPROGRAMUNIFORMMATRIX4DVPROC	kglProgramUniformMatrix4dv;
 extern PFNGLVALIDATEPROGRAMPIPELINEPROC	kglValidateProgramPipeline;
 extern PFNGLGETPROGRAMPIPELINEINFOLOGPROC kglGetProgramPipelineInfoLog;
 
-/*
+
 
 //GL_EXT_direct_state_access
 extern PFNGLTEXTUREIMAGE1DEXTPROC kglTextureImage1DEXT;

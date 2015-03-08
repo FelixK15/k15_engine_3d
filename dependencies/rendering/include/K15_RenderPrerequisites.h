@@ -4,7 +4,7 @@
 #include <K15_OSLayer_Prerequisites.h>
 
 #ifdef K15_OS_WINDOWS
-	#include "GL/WGL/K15_Win32RenderWGLContext.h"	
+	#include "OpenGL/WGL/K15_Win32RenderWGLContext.h"	
 	#define K15_DESKTOP_GL
 #elif defined K15_OS_LINUX
 	#define K15_DESKTOP_GL
