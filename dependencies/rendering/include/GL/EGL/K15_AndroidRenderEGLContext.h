@@ -3,8 +3,6 @@
 
 #include "K15_RenderPrerequisites.h"
 
-#ifdef K15_OS_ANDROID
-
 typedef void* EGLDisplay;
 typedef void* EGLSurface;
 typedef void* EGLContext;
@@ -19,7 +17,5 @@ struct K15_AndroidGLContext
 };
 
 uint8 K15_AndroidCreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSLayerContext* p_OSContext);
-
-#endif //K15_OS_ANDROID
 
 #endif //_K15_Rendering_GL_EGLContext_h_

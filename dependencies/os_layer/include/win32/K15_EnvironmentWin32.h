@@ -35,7 +35,7 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance);
 char* K15_Win32GetError();
 void K15_Win32Sleep(float p_SleepTimeInSeconds);
 void K15_Win32ShutdownOSLayer();
-float K15_Win32GetTicks();
+double K15_Win32GetElapsedSeconds();
 
 #endif //K15_OS_WINDOWS
 

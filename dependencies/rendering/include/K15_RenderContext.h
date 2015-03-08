@@ -3,11 +3,17 @@
 
 #include "K15_RenderPrerequisites.h"
 
+#define K15_RENDERING_COMMAND_BUFFER_COUNT 2
 #define K15_RENDERING_COMMAND_BACK_BUFFER_INDEX 1
 #define K15_RENDERING_COMMAND_FRONT_BUFFER_INDEX 0
-#define K15_RENDERING_COMMAND_BUFFER_COUNT 2
+
+#define K15_RENDERING_COMMAND_DISPATCH_BUFFER_COUNT 2
+#define K15_RENDERING_DISPATCH_BACK_BUFFER_INDEX 1
+#define K15_RENDERING_DISPATCH_FRONT_BUFFER_INDEX 0
+
 #define K15_RENDERING_MAX_COMMANDS 128
 #define K15_RENDERING_MAX_COMMAND_QUEUES 8
+#define K15_RENDERING_MAX_COMMAND_QUEUES_TO_PROCESS K15_RENDERING_MAX_COMMAND_QUEUES * 2
 #define K15_RENDERING_MAX_PARAMETER_BUFFER_SIZE size_kilobyte(64)
 
 typedef uint8 (*K15_ProcessRenderCommandFnc)(K15_RenderContext* p_RenderContext, 
@@ -32,7 +38,14 @@ enum K15_GpuBufferType : int32
 
 enum K15_CommandBufferFlags : uint32
 {
-	K15_CBF_LOCKED = 0x01
+	K15_CBF_SWAPPING = 0x01,
+	K15_CBF_DISPATCHED = 0x02
+};
+
+enum K15_CommandDispatcherFlags : uint32
+{
+	K15_CDF_SWAPPING = 0x01,
+	K15_CDF_PROCESSING = 0x02
 };
 
 enum K15_RenderContextFlags : uint32
@@ -67,22 +80,52 @@ struct K15_RenderCommandQueue
 	K15_RenderCommandBuffer* commandBuffers[K15_RENDERING_COMMAND_BUFFER_COUNT];
 	K15_RenderCommandParameterBuffer* parameterBuffer[K15_RENDERING_COMMAND_BUFFER_COUNT];
 	K15_RenderCommandInstance* lastCommand;
+
+	K15_RenderContext* renderContext;
+	K15_Mutex* processingMutex;
+
+	uint32 flags;
+
+#ifdef K15_DEBUG
+	struct 
+	{
+		K15_Thread* assignedThread;
+	} debugging;
+#endif //K15_DEBUG
+
+};
+
+struct K15_RenderCommandQueueDispatcher
+{
+	K15_RenderCommandQueue** renderCommandQueuesToProcess[K15_RENDERING_COMMAND_DISPATCH_BUFFER_COUNT];
+	uint32 amountCommandQueuesToProcess[K15_RENDERING_COMMAND_DISPATCH_BUFFER_COUNT];
+
+	K15_Mutex* swapMutex;
+	uint32 flags;
 };
 
 struct K15_RenderContext
 {
+	K15_RenderCommandQueueDispatcher* commandQueueDispatcher;
 	K15_RenderCommandQueue* commandQueues;
 	K15_ProcessRenderCommandFnc processRenderCommand;
 
 	void* userData;
 
 	K15_Thread* renderThread;
+	K15_Mutex* createCommandQueueMutex;
+	K15_Semaphore* renderThreadSync;
 
 	uint32 amountCommandQueues;
 	uint32 flags;
-};
 
-uint8 K15_ProcessRenderCommandQueue(K15_RenderContext* p_RenderContext, K15_RenderCommandQueue* p_RenderCommandQueue);
+#ifdef K15_DEBUG
+	struct 
+	{
+		K15_Thread* assignedThread;
+	} debugging;
+#endif //K15_DEBUG
+};
 
 K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext);
 K15_RenderCommandQueue* K15_CreateRenderCommandQueue(K15_RenderContext* p_RenderContext);
@@ -94,5 +137,6 @@ uint8 K15_AddRenderUInt32Parameter(K15_RenderCommandQueue* p_RenderCommandQueue,
 uint8 K15_AddRenderInt32Parameter(K15_RenderCommandQueue* p_RenderCommandQueue, int32* p_Parameter);
 uint8 K15_AddRenderBufferHandleParameter(K15_RenderCommandQueue* p_RenderCommandQueue, K15_GpuBufferHandle* p_GpuBufferHandle);
 
-void K15_UnlockRenderCommandQueue(K15_RenderCommandQueue* p_RenderCommandQueue);
+void K15_DispatchRenderCommandQueue(K15_RenderCommandQueue* p_RenderCommandQueue);
+void K15_ProcessDispatchedRenderCommandQueues(K15_RenderContext* p_RenderContext);
 #endif 

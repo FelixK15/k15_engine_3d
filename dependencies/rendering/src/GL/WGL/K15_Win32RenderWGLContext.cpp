@@ -1,7 +1,5 @@
 #include "GL/WGL/K15_Win32RenderWGLContext.h"
 
-#ifdef K15_OS_WINDOWS
-
 #include "GL/K15_RenderGLContext.h"
 #include "GL/WGL/wglext.h"
 
@@ -47,7 +45,7 @@ intern uint8 K15_Win32CreateDummyContext(HWND hwnd, HDC dc, HGLRC* p_Context)
 	return context != 0 ? K15_SUCCESS : K15_ERROR_SYSTEM;
 }
 /*********************************************************************************/
-intern GLvoid* K15_Win32GetProcAddress(char* p_ProcName)
+intern GLvoid* K15_Win32GetProcAddress(const char* p_ProcName)
 {
 	return (GLvoid*)wglGetProcAddress(p_ProcName);
 }
@@ -162,5 +160,3 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSLayer
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-
-#endif //K15_OS_WINDOWS

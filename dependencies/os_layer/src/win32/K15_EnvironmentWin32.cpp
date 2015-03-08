@@ -99,6 +99,7 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	//threading
 	win32OSContext.threading.createThread = K15_Win32CreateThread;
 	win32OSContext.threading.setThreadName = K15_Win32SetThreadName;
+	win32OSContext.threading.getCurrentThread = K15_Win32GetCurrentThread;
 	win32OSContext.threading.threads = (K15_Thread**)malloc(sizeof(K15_Thread*) * K15_MAX_THREADS);
 
 	memset(win32OSContext.threading.threads, 0, sizeof(K15_Thread*) * K15_MAX_THREADS);
@@ -112,6 +113,7 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	win32OSContext.system.sleep = K15_Win32Sleep;
 	win32OSContext.system.getError = K15_Win32GetError;
 	win32OSContext.system.homeDir = currentDirectoryBuffer;
+	win32OSContext.system.getElapsedSeconds = K15_Win32GetElapsedSeconds;
 
 	win32OSContext.commandLineArgCount = __argc;
 	win32OSContext.commandLineArgs = __argv;
@@ -133,8 +135,14 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 		return K15_ERROR_OUT_OF_MEMORY;
 	}
 
-	//try to load xinput (1.3 should be supported for all necessary windows versions including windows xp)
-	HMODULE xinput = LoadLibraryA("xinput1_3");
+	//try to load xinput (1.4)
+	HMODULE xinput = LoadLibraryA("xinput1_4");
+
+	if (!xinput)
+	{
+		//try to load xinput (1.3)
+		xinput = LoadLibraryA("xinput1_3");
+	}
 
 	if (!xinput)
 	{
@@ -177,6 +185,12 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 		return K15_ERROR_SYSTEM;
 	}
 
+	//get time the os layer got initialized
+	LARGE_INTEGER counts;
+	QueryPerformanceCounter(&counts);
+
+	win32OSContext.timeStarted = (float)(counts.QuadPart / win32SpecificContext->performanceFrequency.QuadPart);
+
 	K15_InternalSetOSLayerContext(win32OSContext);
 
 	return K15_SUCCESS;
@@ -214,7 +228,7 @@ void K15_Win32ShutdownOSLayer()
 	}
 }
 /*********************************************************************************/
-float K15_Win32GetTicks()
+double K15_Win32GetElapsedSeconds()
 {
 	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
@@ -222,7 +236,7 @@ float K15_Win32GetTicks()
 	LARGE_INTEGER counts;
 	QueryPerformanceCounter(&counts);
 
-	return (float)(counts.QuadPart / win32Context->performanceFrequency.QuadPart);
+	return (double)(counts.QuadPart / win32Context->performanceFrequency.QuadPart);
 }
 /*********************************************************************************/
 

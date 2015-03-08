@@ -136,7 +136,10 @@ typedef uint8 byte;
 // forward declaration
 struct K15_Window;
 struct K15_Thread;
+struct K15_Mutex;
+struct K15_ConditionVariable;
 struct K15_ThreadContext;
+struct K15_Semaphore;
 struct K15_OSLayerContext;
 
 typedef uint8 (*K15_ThreadFnc)(void*);

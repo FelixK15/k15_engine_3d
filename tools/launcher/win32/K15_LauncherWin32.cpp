@@ -7,6 +7,8 @@
 #include <K15_OSLayer_OSContext.h>
 #include <K15_OSLayer_Window.h>
 #include <K15_OSLayer_SystemEvents.h>
+#include <K15_OSLayer_Thread.h>
+#include <K15_OSLayer_System.h>
 #include <K15_Logging.h>
 
 #ifdef K15_OS_WINDOWS
@@ -48,6 +50,14 @@ int CALLBACK WinMain(
 
 	K15_SystemEvent event = {};
 
+	double fpsTimeCounter = 0.0f;
+	int fpsCounter = 0;
+	double fpsAverage = 0;
+	int fps = 0;
+	int seconds = 0;
+	double last = 0.f;
+	double now = 0.f;
+	double delta = 0.f;
 	while (running)
 	{
 		K15_PumpSystemEvents();
@@ -62,11 +72,33 @@ int CALLBACK WinMain(
 
 		K15_BeginRenderCommand(renderCommandQueue, K15_RENDER_COMMAND_CLEAR_SCREEN);
 		K15_EndRenderCommand(renderCommandQueue);
-
-
-		K15_UnlockRenderCommandQueue(renderCommandQueue);
 	
-		osContext->system.sleep(0.016f);
+		
+		K15_DispatchRenderCommandQueue(renderCommandQueue);
+		K15_ProcessDispatchedRenderCommandQueues(renderContext);
+
+		//K15_SleepThreadForMilliseconds(16);
+	
+		fpsCounter += 1;
+
+		last = now;
+		now = K15_GetElapsedSeconds();
+		delta = last - now;
+
+		fpsTimeCounter += delta;
+
+		if (fpsTimeCounter > 1.0f)
+		{
+			fpsTimeCounter = 0.f;
+			++seconds;
+			fps = fpsCounter / seconds;
+		}
+
+		char* bla = (char*)alloca(10);
+
+		itoa(fps, bla, 10);
+
+		K15_SetWindowTitle(window, bla);
 	}
 
 // 	K15_Engine::Application application;

@@ -11,7 +11,7 @@ typedef uint8 (*setWindowDimensionFnc)(K15_OSLayerContext*, K15_Window*, uint32,
 typedef uint8 (*setWindowFullscreenFnc)(K15_OSLayerContext*, K15_Window*, bool8);
 typedef uint8 (*setWindowTitleFnc)(K15_OSLayerContext*, K15_Window*, char*);
 typedef uint8 (*closeWindowFnc)(K15_OSLayerContext*, K15_Window*);
-typedef float (*getTicksFnc)();
+typedef double (*getElapsedSecondsFnc)();
 
 ///Events
 typedef uint8 (*pumpSystemEventsFnc)(K15_OSLayerContext*);
@@ -20,6 +20,7 @@ typedef char* (*getErrorFnc)();
 
 ///Threads
 typedef uint8 (*createThreadFnc)(K15_OSLayerContext*, K15_Thread*, K15_ThreadFnc, void*);
+typedef K15_Thread* (*getCurrentThreadFnc)();
 typedef uint8 (*setThreadNameFnc)(K15_Thread*);
 
 enum OSIdentifier
@@ -58,7 +59,7 @@ struct K15_OSLayerContext
 		char* homeDir;
 		sleepFnc sleep;
 		getErrorFnc getError;
-		getTicksFnc getTicks;
+		getElapsedSecondsFnc getElapsedSeconds;
 		OSIdentifier systemIdentifier;
 	} system;
 
@@ -67,10 +68,12 @@ struct K15_OSLayerContext
 	{
 		createThreadFnc createThread;
 		setThreadNameFnc setThreadName;
+		getCurrentThreadFnc getCurrentThread;
 
 		K15_Thread** threads;
 	} threading;
 
+	float timeStarted;
 	uint32 commandLineArgCount;
 	char** commandLineArgs;
 	void* userData;

@@ -1,6 +1,10 @@
 #include "GL/K15_RenderGLContext.h"
-#include "GL/WGL/K15_Win32RenderWGLContext.h"
-#include "GL/EGL/K15_AndroidRenderEGLContext.h"
+
+#ifdef K15_OS_WINDOWS
+	#include "GL/WGL/K15_Win32RenderWGLContext.h"
+#elif defined K15_OS_ANDROID
+	#include "GL/EGL/K15_AndroidRenderEGLContext.h"
+#endif 
 
 #include "K15_RenderContext.h"
 
@@ -14,15 +18,13 @@
 
 typedef uint8 (*K15_CreatePlatformContextFnc)(K15_GLRenderContext*, K15_OSLayerContext*);
 
-intern K15_CreatePlatformContextFnc ContextCreation[OS_COUNT] = {
 #ifdef K15_OS_WINDOWS
-	K15_Win32CreateGLContext,
+	intern K15_CreatePlatformContextFnc K15_CreateContext = K15_Win32CreateGLContext;
 #elif defined K15_OS_ANDROID
-
+	intern K15_CreatePlatformContextFnc K15_CreateContext = K15_AndroidCreateGLContext;
 #else
-	0,
-#endif //K15_OS_WINDOWS
-};
+	intern K15_CreatePlatformContextFnc K15_CreateContext = 0;
+#endif //K15_OS_WINDWOS
 
 
 /*********************************************************************************/
@@ -349,14 +351,12 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 		return K15_ERROR_OUT_OF_MEMORY;
 	}
 
-	K15_CreatePlatformContextFnc K15_CreatePlatformContext = ContextCreation[p_OSLayerContext->system.systemIdentifier];
-
-	if (!K15_CreatePlatformContext)
+	if (!K15_CreateContext)
 	{
 		return K15_ERROR_SYSTEM;
 	}
 
-	uint8 result = K15_CreatePlatformContext(glContext, p_OSLayerContext);
+	uint8 result = K15_CreateContext(glContext, p_OSLayerContext);
 
 	if (result != K15_SUCCESS)
 	{

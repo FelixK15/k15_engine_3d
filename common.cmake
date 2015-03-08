@@ -1,11 +1,13 @@
+cmake_policy(SET CMP0054 OLD)
+
 #Check Which Compiler will be used
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 	#GCC
 	set(COMPILER_IS_GCC 1)
-elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
 	#Clang
 	set(COMPILER_IS_CLANG 1)
-elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
 	#MSVC
 	set(COMPILER_IS_MSVC 1)
 endif()

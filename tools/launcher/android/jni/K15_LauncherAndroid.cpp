@@ -1,4 +1,4 @@
-#include "java/jni/K15_AndroidGlue.h"
+//#include "java/jni/K15_AndroidGlue.h"
 
 #include <android/K15_EnvironmentAndroid.h>
 

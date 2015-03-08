@@ -1,6 +1,7 @@
 #include "win32/K15_ThreadWin32.h"
 #include "win32/K15_EnvironmentWin32.h"
 
+#include "K15_OSLayer_OSContext.h"
 #include "K15_OSLayer_Thread.h"
 
 #ifdef K15_OS_WINDOWS
@@ -50,6 +51,14 @@ uint8 K15_Win32CreateThread(K15_OSLayerContext* p_OSContext, K15_Thread* p_Threa
 	DWORD threadIdentifier = 0;
 	HANDLE threadHandle = CreateThread(0, size_megabyte(1), K15_Win32ThreadWrapper, (LPVOID)win32ThreadParameterBuffer, 0, &threadIdentifier);
 
+	if (threadHandle == INVALID_HANDLE_VALUE)
+	{
+		free(win32Thread);
+		free(win32ThreadParameterBuffer);
+
+		return K15_ERROR_SYSTEM;
+	}
+
 	win32Thread->handle = threadHandle;
 	win32Thread->identifier = threadIdentifier;
 	win32Thread->parameterBuffer = win32ThreadParameterBuffer;
@@ -57,6 +66,68 @@ uint8 K15_Win32CreateThread(K15_OSLayerContext* p_OSContext, K15_Thread* p_Threa
 	p_Thread->userData = (void*)win32Thread;
 
 	return K15_SUCCESS;
+}
+/*********************************************************************************/
+K15_Thread* K15_Win32GetCurrentThread()
+{
+	HANDLE threadHandle = GetCurrentThread();
+	K15_Win32Thread* win32Thread = 0;
+	K15_Thread* currentThread = 0;
+	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
+
+	//iterate through all threads and check the thread handle
+	for (uint32 threadIndex = 0;
+		 threadIndex < K15_MAX_THREADS;
+		 ++threadIndex)
+	{
+		currentThread = osContext->threading.threads[threadIndex];
+
+		if (!currentThread)
+		{
+			break;
+		}
+
+		win32Thread = (K15_Win32Thread*)currentThread->userData;
+
+		if (win32Thread->handle == threadHandle)
+		{
+			return currentThread;
+		}
+	}
+
+	return 0;
+}
+/*********************************************************************************/
+K15_Mutex* K15_CreateMutex()
+{
+	K15_Mutex* win32Mutex = (K15_Mutex*)malloc(sizeof(K15_Mutex));
+
+	assert(win32Mutex);
+
+	InitializeCriticalSection(&win32Mutex->criticalSection);
+	win32Mutex->locked = 0;
+
+	return win32Mutex;
+}
+/*********************************************************************************/
+uint8 K15_LockMutex(K15_Mutex* p_Mutex)
+{
+	uint8 returnValue = K15_SUCCESS;
+
+	EnterCriticalSection(&p_Mutex->criticalSection);
+	InterlockedIncrement(&p_Mutex->locked);
+
+	return returnValue;
+}
+/*********************************************************************************/
+uint8 K15_UnlockMutex(K15_Mutex* p_Mutex)
+{
+	uint8 returnValue = K15_SUCCESS;
+
+	LeaveCriticalSection(&p_Mutex->criticalSection);
+	InterlockedDecrement(&p_Mutex->locked);
+
+	return returnValue;
 }
 /*********************************************************************************/
 uint8 K15_Win32SetThreadName(K15_Thread* p_Thread)
@@ -83,7 +154,7 @@ uint8 K15_Win32SetThreadName(K15_Thread* p_Thread)
 
 	__try
 	{
-		RaiseException( 0x406D1388, 0, sizeof(info)/sizeof(DWORD), (DWORD*)&info );
+		RaiseException( 0x406D1388, 0, sizeof(info)/sizeof(DWORD), (const ULONG_PTR*)&info );
 	}
 	__except(EXCEPTION_CONTINUE_EXECUTION)
 	{
@@ -91,6 +162,48 @@ uint8 K15_Win32SetThreadName(K15_Thread* p_Thread)
 	}
 
 	return K15_ERROR_SYSTEM;
+}
+/*********************************************************************************/
+K15_Semaphore* K15_CreateSemaphore(uint32 p_InitialValue)
+{
+	K15_Semaphore* win32Semaphore = (K15_Semaphore*)malloc(sizeof(K15_Semaphore));
+
+	assert(win32Semaphore);
+
+	HANDLE semaphoreHandle = CreateSemaphore(0, p_InitialValue, 100, 0);
+
+	assert(semaphoreHandle != INVALID_HANDLE_VALUE);
+
+	win32Semaphore->handle = semaphoreHandle;
+	win32Semaphore->count = p_InitialValue;
+
+	return win32Semaphore;
+}
+/*********************************************************************************/
+uint8 K15_PostSemaphore(K15_Semaphore* p_Semaphore)
+{
+	assert(p_Semaphore);
+
+	uint8 returnValue = K15_SUCCESS;
+
+	if (ReleaseSemaphore(p_Semaphore->handle, 1, 0) != FALSE)
+	{
+		returnValue = K15_ERROR_SYSTEM;
+	}
+
+	InterlockedIncrement(&p_Semaphore->count);
+
+	return returnValue;
+}
+/*********************************************************************************/
+uint8 K15_WaitSemaphore(K15_Semaphore* p_Semaphore)
+{
+	assert(p_Semaphore);
+
+	DWORD returnValue = WaitForSingleObject(p_Semaphore->handle, INFINITE);
+	InterlockedDecrement(&p_Semaphore->count);
+
+	return K15_SUCCESS;
 }
 /*********************************************************************************/
 

@@ -71,7 +71,7 @@ uint8 K15_SetWindowTitle(K15_Window* p_Window, char* p_Title)
 	
 	K15_OSLayerContext* OSContext = K15_GetOSLayerContext();
 
-	uint32 titleLength = strlen(p_Title);
+	size_t titleLength = strlen(p_Title);
 	char* copiedTitle = (char*)malloc(titleLength);
 
 	if (!copiedTitle)

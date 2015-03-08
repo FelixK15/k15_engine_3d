@@ -33,7 +33,7 @@ inline uint8 K15_GLCreateBuffer(K15_RenderContext* p_RenderContext, K15_RenderCo
 	else
 	{
 		GLuint buffer = 0;
-		glGenBuffers(1, &buffer);
+		kglGenBuffers(1, &buffer);
 		kglNamedBufferDataEXT(buffer, buffersize, 0, GL_STATIC_DRAW);
 
 		*bufferHandle = buffer;

@@ -33,10 +33,19 @@ K15_Thread* K15_CreateThread(K15_ThreadFnc p_ThreadFunction, void* p_ThreadParam
 		if (!osContext->threading.threads[threadIndex])
 		{
 			osContext->threading.threads[threadIndex] = thread;
+			break;
 		}
 	}
 
 	return thread;
+}
+/*********************************************************************************/
+K15_Thread* K15_GetCurrentThread()
+{
+	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
+	K15_Thread* currentThread = osContext->threading.getCurrentThread();
+
+	return currentThread;
 }
 /*********************************************************************************/
 uint8 K15_SetThreadName(K15_Thread* p_Thread, const char* p_ThreadName)
@@ -45,7 +54,7 @@ uint8 K15_SetThreadName(K15_Thread* p_Thread, const char* p_ThreadName)
 
 	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
 	K15_ThreadContext* threadContext = p_Thread->context;
-	uint32 newThreadNameLength = strlen(p_ThreadName);
+	size_t newThreadNameLength = strlen(p_ThreadName);
 
 	if (threadContext->nameLength < newThreadNameLength)
 	{

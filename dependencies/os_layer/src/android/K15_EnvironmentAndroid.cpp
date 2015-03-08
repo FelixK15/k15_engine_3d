@@ -1,7 +1,5 @@
 #include "android/K15_EnvironmentAndroid.h"
 
-#ifdef K15_OS_ANDROID
-
 #include "linux/K15_ThreadLinux.h"
 #include "linux/K15_EnvironmentLinux.h"
 
@@ -83,5 +81,3 @@ uint8 K15_AndroidInitializeOSLayer(JNIEnv* p_JNIEnvironment)
 	K15_LogRegisterLogFnc(K15_AndroidLogLogcat, K15_LOG_PRIORITY_DEFAULT);
 }
 /*********************************************************************************/
-
-#endif //K15_OS_ANDROID

@@ -35,10 +35,11 @@
 	//#define APIENTRY GL_APIENTRYP
 #endif // K15_OS_WINDOWS
 
-#include "K15_RenderGLEmulation.h"
-
 typedef char GLchar;
 struct K15_GLRenderContext;
+
+//default gl functions
+typedef void (APIENTRY *PFNGLGENBUFFERSPROC) (GLsizei n, GLuint *buffers);
 
 //custom gl function typedefs
 typedef GLboolean(*PFNKGLSWAPBUFFERS)(K15_GLRenderContext*);
@@ -70,6 +71,9 @@ typedef GLboolean (APIENTRY *PFNGLUNMAPNAMEDBUFFEREXTPROC) (GLuint buffer);
 extern PFNWGLCHOOSEPIXELFORMATARBPROC kwglChoosePixelFormatARB;
 extern PFNWGLCREATECONTEXTATTRIBSARBPROC kwglCreateContextAttribsARB;
 #endif //K15_OS_WINDOWS
+
+//default gl functions
+extern PFNGLGENBUFFERSPROC kglGenBuffers; 
 
 //GL_ARB_debug_output
 extern PFNGLDEBUGMESSAGECALLBACKPROC kglDebugMessageCallback;
