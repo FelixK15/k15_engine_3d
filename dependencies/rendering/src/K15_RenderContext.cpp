@@ -4,9 +4,7 @@
 #include <K15_OSLayer_ErrorCodes.h>
 #include <K15_OSLayer_Thread.h>
 
-#include "GL/K15_RenderGLContext.h"
-
-#include "GL/K15_RenderGLBuffer.cpp"
+#include "OpenGL/K15_RenderGLContext.h"
 
 /*********************************************************************************/
 intern uint8 K15_InternalProcessRenderCommandQueue(K15_RenderContext* p_RenderContext, K15_RenderCommandQueue* p_RenderCommandQueue)
