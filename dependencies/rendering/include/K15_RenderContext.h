@@ -17,14 +17,23 @@
 #define K15_RENDERING_MAX_COMMAND_QUEUES_TO_PROCESS K15_RENDERING_MAX_COMMAND_QUEUES * 2
 #define K15_RENDERING_MAX_PARAMETER_BUFFER_SIZE size_kilobyte(64)
 
-typedef uint8 (*K15_ProcessRenderCommandFnc)(K15_RenderContext* p_RenderContext, 
-											 K15_RenderCommandQueue* p_RenderQueue, 
-											 K15_RenderCommandInstance* p_RenderCommand);
+// typedef uint8 (*K15_ProcessRenderCommandFnc)(K15_RenderContext* p_RenderContext, 
+// 											 K15_RenderCommandQueue* p_RenderQueue, 
+// 											 K15_RenderCommandInstance* p_RenderCommand);
+
+typedef uint8 (*K15_ClearScreenCommandFnc)(K15_RenderContext* p_RenderContext);
+
+typedef uint8 (*K15_CreateBufferCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderBufferDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr);
+typedef uint8 (*K15_UpdateBufferCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderBufferDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr);
+typedef uint8 (*K15_DeleteBufferCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderBufferDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr);
+
 
 enum K15_RenderCommand
 {
 	K15_RENDER_COMMAND_CLEAR_SCREEN = 0,
 	K15_RENDER_COMMAND_CREATE_BUFFER,
+	K15_RENDER_COMMAND_UPDATE_BUFFER,
+	K15_RENDER_COMMAND_DELETE_BUFFER,
 	K15_RENDER_COMMAND_COUNT
 };
 
@@ -111,14 +120,35 @@ struct K15_RenderContext
 {
 	K15_RenderCommandQueueDispatcher* commandQueueDispatcher;
 	K15_RenderCommandQueue* commandQueues;
-	K15_ProcessRenderCommandFnc processRenderCommand;
-
-	void* userData;
-
+	
 	K15_Thread* renderThread;
 	K15_Mutex* createCommandQueueMutex;
 	K15_Semaphore* renderThreadSync;
 
+	void* userData;
+
+	struct 
+	{
+		struct K15_ScreenManangementCommands
+		{
+			K15_ClearScreenCommandFnc clearScreen;
+		} screenManagement;
+
+		struct K15_BufferManagementCommands
+		{
+			K15_CreateBufferCommandFnc createBuffer;
+			K15_UpdateBufferCommandFnc updateBuffer;
+			K15_DeleteBufferCommandFnc deleteBuffer;
+		} bufferManagement;
+	} commandProcessing;
+
+	struct 
+	{
+		K15_RenderBufferDesc* buffers;
+		uint32 amountBuffers;
+	} gpuBuffer;
+
+	
 	uint32 amountCommandQueues;
 	uint32 flags;
 
@@ -138,7 +168,8 @@ uint8 K15_EndRenderCommand(K15_RenderCommandQueue* p_RenderCommandQueue);
 
 uint8 K15_AddRenderUInt32Parameter(K15_RenderCommandQueue* p_RenderCommandQueue, uint32* p_Parameter);
 uint8 K15_AddRenderInt32Parameter(K15_RenderCommandQueue* p_RenderCommandQueue, int32* p_Parameter);
-uint8 K15_AddRenderBufferHandleParameter(K15_RenderCommandQueue* p_RenderCommandQueue, K15_GpuBufferHandle* p_GpuBufferHandle);
+uint8 K15_AddRenderBufferDescParameter(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderBufferDesc* p_RenderBufferDesc);
+uint8 K15_AddRenderBufferHandleParameter(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderBufferHandle* p_RenderBufferHandle);
 
 void K15_DispatchRenderCommandQueue(K15_RenderCommandQueue* p_RenderCommandQueue);
 void K15_ProcessDispatchedRenderCommandQueues(K15_RenderContext* p_RenderContext);

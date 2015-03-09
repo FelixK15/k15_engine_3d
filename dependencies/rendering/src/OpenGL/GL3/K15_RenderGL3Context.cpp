@@ -7,6 +7,7 @@
 #endif 
 
 #include "K15_RenderContext.h"
+#include "K15_RenderBufferDesc.h"
 
 #include <K15_Logging.h>
 
@@ -190,6 +191,8 @@ intern void K15_GLGetExtensions(K15_GLRenderContext* p_GLRenderContext)
 /*********************************************************************************/
 intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 {
+	kglGenBuffers = (PFNGLGENBUFFERSPROC)kglGetProcAddress("glGenBuffers");
+
 	if(K15_Search("GL_AMD_debug_output", p_GLRenderContext->extensions.names, 
 		p_GLRenderContext->extensions.count, sizeof(char*), K15_CmpStrings) != 0)
 	{
@@ -310,35 +313,6 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-intern uint8 K15_GLProcessRenderCommand(K15_RenderContext* p_RenderContext, K15_RenderCommandQueue* p_RenderQueue, K15_RenderCommandInstance* p_RenderCommand)
-{
-	assert(p_RenderQueue && p_RenderContext && p_RenderCommand);
-
-	uint8 result = K15_SUCCESS;
-
-	switch(p_RenderCommand->type)
-	{
-	case K15_RENDER_COMMAND_CREATE_BUFFER:
-		{
-			result = K15_GLCreateBuffer(p_RenderContext, p_RenderQueue, p_RenderCommand);
-			break;
-		}
-
-	case K15_RENDER_COMMAND_CLEAR_SCREEN:
-		{
-			result = K15_GLClearScreen(p_RenderContext);
-		}
-
-	default:
-		{
-			result = K15_ERROR_RENDER_COMMAND_NOT_IMPLEMENTED;
-		}
-	}
-
-	return result;
-}
-/*********************************************************************************/
-
 
 
 /*********************************************************************************/
@@ -363,7 +337,12 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 		return result;
 	}
 
-	p_RenderContext->processRenderCommand = K15_GLProcessRenderCommand;
+	//screen management
+	p_RenderContext->commandProcessing.screenManagement.clearScreen = K15_GLClearScreen;
+
+	//buffer management
+	p_RenderContext->commandProcessing.bufferManagement.createBuffer = K15_GLCreateBuffer;
+	//p_RenderContext->processRenderCommand = K15_GLProcessRenderCommand;
 
 	glContext->vendorString = glGetString(GL_VENDOR);
 	glContext->rendererString = glGetString(GL_RENDERER);

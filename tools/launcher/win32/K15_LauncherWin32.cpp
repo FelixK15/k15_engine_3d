@@ -11,6 +11,9 @@
 #include <K15_OSLayer_System.h>
 #include <K15_Logging.h>
 
+
+#include <K15_RenderBufferDesc.h>
+
 #ifdef K15_OS_WINDOWS
 
 #include <win32/K15_EnvironmentWin32.h>
@@ -62,7 +65,21 @@ int CALLBACK WinMain(
 			}
 		}
 
-		K15_BeginRenderCommand(renderCommandQueue, K15_RENDER_COMMAND_CLEAR_SCREEN);
+		
+		K15_RenderBufferDesc vertexBufferDesc;
+		K15_RenderBufferHandle vertexBufferHandle;
+
+
+		vertexBufferDesc.data = 0;
+		vertexBufferDesc.size = 100;
+		vertexBufferDesc.usage = K15_RENDER_BUFFER_USAGE_STATIC_DRAW;
+		vertexBufferDesc.type = K15_RENDER_BUFFER_TYPE_VERTEX;
+		vertexBufferDesc.access = K15_RENDER_BUFFER_ACCESS_ALL;
+		vertexBufferDesc.userData = 0;
+
+		K15_BeginRenderCommand(renderCommandQueue, K15_RENDER_COMMAND_CREATE_BUFFER);
+		K15_AddRenderBufferDescParameter(renderCommandQueue, &vertexBufferDesc);
+		K15_AddRenderBufferHandleParameter(renderCommandQueue, &vertexBufferHandle);
 		K15_EndRenderCommand(renderCommandQueue);
 	
 		K15_DispatchRenderCommandQueue(renderCommandQueue);

@@ -6,7 +6,8 @@ include_directories(./../logging/include)
 set(RENDERER_SRC ./src/K15_RenderContext.cpp)
 set(RENDERER_INC ./include/K15_RenderContext.h
 				 ./include/K15_RenderPrerequisites.h
-				 ./include/K15_RenderCommands.h)
+				 ./include/K15_RenderCommands.h
+				 ./include/K15_RenderBufferDesc.h)
 
 set(RENDERER_LIBS k15math logging)
 

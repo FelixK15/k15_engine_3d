@@ -8,6 +8,8 @@
 
 //default gl functions
 PFNGLGENBUFFERSPROC					kglGenBuffers					= 0;
+PFNGLBINDBUFFERPROC					kglBindBuffer					= 0;
+PFNGLDELETEBUFFERSPROC				kglDeleteBuffers				= 0;
 
 //GL_ARB_debug_output
 PFNGLDEBUGMESSAGECALLBACKPROC		kglDebugMessageCallback			= 0;

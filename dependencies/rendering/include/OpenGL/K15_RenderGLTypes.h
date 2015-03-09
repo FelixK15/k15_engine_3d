@@ -39,7 +39,9 @@ typedef char GLchar;
 struct K15_GLRenderContext;
 
 //default gl functions
-typedef void (APIENTRY *PFNGLGENBUFFERSPROC) (GLsizei n, GLuint *buffers);
+typedef void (APIENTRY *PFNGLGENBUFFERSPROC)	(GLsizei n, GLuint *buffers);
+typedef void (APIENTRY *PFNGLBINDBUFFERPROC)	(GLenum target, GLuint buffer);
+typedef void (APIENTRY *PFNGLDELETEBUFFERSPROC) (GLsizei n, const GLuint* buffers);
 
 //custom gl function typedefs
 typedef GLboolean(*PFNKGLSWAPBUFFERS)(K15_GLRenderContext*);
@@ -73,7 +75,9 @@ extern PFNWGLCREATECONTEXTATTRIBSARBPROC kwglCreateContextAttribsARB;
 #endif //K15_OS_WINDOWS
 
 //default gl functions
-extern PFNGLGENBUFFERSPROC kglGenBuffers; 
+extern PFNGLGENBUFFERSPROC		kglGenBuffers; 
+extern PFNGLBINDBUFFERPROC		kglBindBuffer;
+extern PFNGLDELETEBUFFERSPROC	kglDeleteBuffers;
 
 //GL_ARB_debug_output
 extern PFNGLDEBUGMESSAGECALLBACKPROC kglDebugMessageCallback;

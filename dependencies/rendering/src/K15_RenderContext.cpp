@@ -4,8 +4,85 @@
 #include <K15_OSLayer_ErrorCodes.h>
 #include <K15_OSLayer_Thread.h>
 
+#include "K15_RenderBufferDesc.h"
 #include "OpenGL/K15_RenderGLContext.h"
 
+/*********************************************************************************/
+intern inline K15_RenderBufferHandle K15_InternalAddRenderBufferDesc(K15_RenderContext* p_RenderContext, K15_RenderBufferDesc* p_RenderBufferDesc)
+{
+	//get current buffer index and assign amount
+	uint32 gpuBufferIndex = p_RenderContext->gpuBuffer.amountBuffers++;
+
+	assert(gpuBufferIndex < K15_RENDER_MAX_GPU_BUFFER);
+
+	p_RenderContext->gpuBuffer.buffers[gpuBufferIndex] = *p_RenderBufferDesc;
+
+	return (K15_RenderBufferHandle)gpuBufferIndex;
+}
+/*********************************************************************************/
+intern inline uint8 K15_InternalReadParameter(K15_RenderCommandParameterBuffer* p_ParameterFrontBuffer, K15_RenderCommandInstance* p_RenderCommand, uint32 p_ParameterSize, uint32 p_ParameterOffset, void* p_ParameterDestiny)
+{
+	assert(p_ParameterFrontBuffer);	
+	assert(p_ParameterDestiny);		
+	assert(p_ParameterOffset + p_ParameterSize <= p_ParameterFrontBuffer->parameterBufferOffset);
+
+	uint32 offset = p_ParameterOffset + p_RenderCommand->parameterOffset;
+
+	memcpy(p_ParameterDestiny, p_ParameterFrontBuffer->parameterBuffer + offset, p_ParameterSize);
+
+	return K15_SUCCESS;
+}
+/*********************************************************************************/
+intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_RenderContext, K15_RenderCommandParameterBuffer* p_ParameterFrontBuffer, K15_RenderCommandInstance* p_RenderCommand)
+{
+	uint8 result = K15_SUCCESS;
+
+	switch(p_RenderCommand->type)
+	{
+		case K15_RENDER_COMMAND_CLEAR_SCREEN:
+		{
+			result = p_RenderContext->commandProcessing.screenManagement.clearScreen(p_RenderContext);
+			break;
+		}
+
+		case K15_RENDER_COMMAND_CREATE_BUFFER:
+		{
+			assert(p_RenderCommand->parameterSize == sizeof(K15_RenderBufferDesc) + K15_PTR_SIZE);
+			
+			K15_RenderBufferDesc renderBufferDesc;
+			K15_RenderBufferHandle* renderBufferHandle;
+				
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderBufferDesc), 0, &renderBufferDesc);
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, sizeof(K15_RenderBufferDesc), &renderBufferHandle);
+
+			*renderBufferHandle = K15_InternalAddRenderBufferDesc(p_RenderContext, &renderBufferDesc);
+
+			result = p_RenderContext->commandProcessing.bufferManagement.createBuffer(p_RenderContext, &renderBufferDesc, renderBufferHandle);
+
+			break;
+		}
+
+		case K15_RENDER_COMMAND_UPDATE_BUFFER:
+		{
+// 			K15_RenderBufferHandle** renderBufferHandle;
+// 
+// 			K15_InternalReadParameter(p_RenderCommandQueue, p_RenderCommand, K15_PTR_SIZE, renderBufferHandle);
+			break;
+		}
+
+		case K15_RENDER_COMMAND_DELETE_BUFFER:
+		{
+			break;
+		}
+
+		default:
+		{
+			assert(false);
+		}
+	}
+
+	return result;
+}
 /*********************************************************************************/
 intern uint8 K15_InternalProcessRenderCommandQueue(K15_RenderContext* p_RenderContext, K15_RenderCommandQueue* p_RenderCommandQueue)
 {
@@ -24,9 +101,11 @@ intern uint8 K15_InternalProcessRenderCommandQueue(K15_RenderContext* p_RenderCo
 	{
 		currentCommand = &(*commandFrontBuffer)->commandBuffer[renderCommandIndex];
 
-		result = p_RenderContext->processRenderCommand(p_RenderContext, p_RenderCommandQueue, currentCommand);
+		result = K15_InternalProcessRenderCommand(p_RenderContext, *parameterFrontBuffer, currentCommand);
 
-		assert(result != K15_SUCCESS);
+		//result = p_RenderContext->processRenderCommand(p_RenderContext, p_RenderCommandQueue, currentCommand);
+
+		assert(result == K15_SUCCESS);
 	}
 
 	//command queue has been processed. Remove dispatched flag
@@ -62,7 +141,6 @@ intern uint8 K15_InternalAddCommandQueueParameter(K15_RenderCommandQueue* p_Rend
 	lastCommand->parameterSize = newParameterBufferOffset;
 
 	commandParameterBackBuffer->parameterBufferOffset = newParameterBufferOffset;
-
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
@@ -219,11 +297,20 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext)
 		return 0;
 	}
 
+	K15_RenderBufferDesc* gpuBuffers = (K15_RenderBufferDesc*)malloc(sizeof(K15_RenderBufferDesc) * K15_RENDER_MAX_GPU_BUFFER);
+
+	if(!gpuBuffers)
+	{
+		return 0;
+	}
+
+	renderContext->gpuBuffer.buffers = gpuBuffers;
+	renderContext->gpuBuffer.amountBuffers = 0;
+
 	renderContext->flags = 0;
 	renderContext->commandQueues = renderCommandQueues;
 	renderContext->amountCommandQueues = 0;
 	renderContext->userData = 0;
-	renderContext->processRenderCommand = 0;
 	renderContext->commandQueueDispatcher = renderCommandQueueDispatcher;
 	renderContext->createCommandQueueMutex = K15_CreateMutex();
 	renderContext->renderThreadSync = K15_CreateSemaphore();
@@ -391,13 +478,22 @@ uint8 K15_AddRenderInt32Parameter(K15_RenderCommandQueue* p_RenderCommandQueue, 
 	return result;
 }
 /*********************************************************************************/
-uint8 K15_AddRenderBufferHandleParameter(K15_RenderCommandQueue* p_RenderCommandQueue, K15_GpuBufferHandle* p_GpuBufferHandle)
+uint8 K15_AddRenderBufferDescParameter(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderBufferDesc* p_RenderBufferDesc)
 {
-	uint8 result = K15_InternalAddCommandQueueParameter(p_RenderCommandQueue, 
-														sizeof(ptrdiff_t), 
-														&p_GpuBufferHandle);
+	uint8 result = K15_InternalAddCommandQueueParameter(p_RenderCommandQueue,
+														sizeof(K15_RenderBufferDesc),
+														p_RenderBufferDesc);
 
-	*p_GpuBufferHandle = K15_INVALID_GPU_HANDLE;
+	return result;
+}
+/*********************************************************************************/
+uint8 K15_AddRenderBufferHandleParameter(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderBufferHandle* p_RenderBufferHandle)
+{
+	uint8 result = K15_InternalAddCommandQueueParameter(p_RenderCommandQueue,
+														K15_PTR_SIZE,
+														&p_RenderBufferHandle);
+
+	*p_RenderBufferHandle = K15_INVALID_GPU_HANDLE;
 
 	return result;
 }
