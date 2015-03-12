@@ -2,11 +2,13 @@ set(K15_OS_LAYER_SRC 	"src/K15_OSLayer_SystemEvents.cpp"
 			"src/K15_OSLayer_Window.cpp"
 			"src/K15_OSLayer_Thread.cpp"
 			"src/K15_OSLayer_OSContext.cpp"
+			"src/K15_OSLayer_FileSystem.cpp"
 			"src/K15_OSLayer_System.cpp")
 
 set(K15_OS_LAYER_WIN32_SRC  	"src/win32/K15_EventsWin32.cpp"
 				"src/win32/K15_WindowWin32.cpp"
 				"src/win32/K15_ThreadWin32.cpp"
+				"src/win32/K15_FileSystemWin32.cpp"
 				"src/win32/K15_EnvironmentWin32.cpp")
 
 set(K15_OS_LAYER_LINUX_SRC	"src/linux/K15_ThreadLinux.cpp"
@@ -23,11 +25,13 @@ set(K15_OS_LAYER_INC 	"include/K15_OSLayer_EventTypes.h"
 			"include/K15_OSLayer_Window.h"
 			"include/K15_OSLayer_SystemEvents.h"
 			"include/K15_OSLayer_OSContext.h"
+			"include/K15_OSLayer_FileSystem.h"
 			"include/K15_OSLayer_System.h")
 
 set(K15_OS_LAYER_WIN32_INC 	"include/win32/K15_EventsWin32.h"
 				"include/win32/K15_WindowWin32.h"
 				"include/win32/K15_ThreadWin32.h"
+				"include/win32/K15_FileSystemWin32.h"
 				"include/win32/K15_EnvironmentWin32.h")
 
 set(K15_OS_LAYER_LINUX_INC	"include/linux/K15_ThreadLinux.h"

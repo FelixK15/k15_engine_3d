@@ -24,6 +24,8 @@ struct K15_GLRenderContext
 		const GLubyte* rendererString;
 	};
 
+	GLuint programPipelineHandle;
+
 	void* userData;
 };
 

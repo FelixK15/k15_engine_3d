@@ -76,6 +76,8 @@
 
 #define K15_FUNCTION_DEBUG_PRINTF(func) printf("Before "#func"\n"); func; printf("After "#func"\n")
 
+#define K15_ARRAY_COUNT(arr) (sizeof(arr)/sizeof(arr[0]))
+
 #ifdef K15_OS_WINDOWS
 	#define _WINSOCKAPI_    // stops windows.h including winsock.h
 	#define WIN32_LEAN_AND_MEAN

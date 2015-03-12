@@ -18,6 +18,15 @@
 #define GL_DEBUG_CATEGORY_OTHER_AMD 0x9150
 
 #include "K15_RenderPrerequisites.h"
+#include "K15_RenderGLConfig.h"
+
+#define K15_INVALID_GL_BUFFER_INDEX 0xffffffff
+
+#ifdef K15_OPENGL_ENABLE_ERROR_CHECK_CALLS
+	#define K15_OPENGL_CALL(x) {x; GLenum errorEnum = glGetError(); assert(errorEnum == GL_NO_ERROR && #x);}
+#else
+	#define K15_OPENGL_CALL(x)
+#endif //K15_OPENGL_ENABLE_ERROR_CHECK_CALLS
 
 #ifdef K15_OS_WINDOWS
 	#include <gl/GL.h>
@@ -38,10 +47,10 @@
 typedef char GLchar;
 struct K15_GLRenderContext;
 
-//default gl functions
-typedef void (APIENTRY *PFNGLGENBUFFERSPROC)	(GLsizei n, GLuint *buffers);
-typedef void (APIENTRY *PFNGLBINDBUFFERPROC)	(GLenum target, GLuint buffer);
-typedef void (APIENTRY *PFNGLDELETEBUFFERSPROC) (GLsizei n, const GLuint* buffers);
+// default gl functions
+// typedef void (APIENTRY *PFNGLGENBUFFERSPROC)	(GLsizei n, GLuint *buffers);
+// typedef void (APIENTRY *PFNGLBINDBUFFERPROC)	(GLenum target, GLuint buffer);
+// typedef void (APIENTRY *PFNGLDELETEBUFFERSPROC) (GLsizei n, const GLuint* buffers);
 
 //custom gl function typedefs
 typedef GLboolean(*PFNKGLSWAPBUFFERS)(K15_GLRenderContext*);
@@ -75,9 +84,16 @@ extern PFNWGLCREATECONTEXTATTRIBSARBPROC kwglCreateContextAttribsARB;
 #endif //K15_OS_WINDOWS
 
 //default gl functions
-extern PFNGLGENBUFFERSPROC		kglGenBuffers; 
-extern PFNGLBINDBUFFERPROC		kglBindBuffer;
-extern PFNGLDELETEBUFFERSPROC	kglDeleteBuffers;
+extern PFNGLGENBUFFERSPROC			kglGenBuffers; 
+extern PFNGLBINDBUFFERPROC			kglBindBuffer;
+extern PFNGLDELETEBUFFERSPROC		kglDeleteBuffers;
+extern PFNGLGETPROGRAMIVPROC		kglGetProgramiv;
+extern PFNGLGETPROGRAMINFOLOGPROC	kglGetProgramInfoLog;
+extern PFNGLDELETEPROGRAMPROC		kglDeleteProgram;
+extern PFNGLGETACTIVEUNIFORMPROC	kglGetActiveUniform;
+extern PFNGLGETACTIVEATTRIBPROC		kglGetActiveAttrib;
+extern PFNGLGETUNIFORMLOCATIONPROC	kglGetUniformLocation;
+extern PFNGLGETATTRIBLOCATIONPROC	kglGetAttribLocation;
 
 //GL_ARB_debug_output
 extern PFNGLDEBUGMESSAGECALLBACKPROC kglDebugMessageCallback;
@@ -100,6 +116,7 @@ extern PFNGLTEXTURESUBIMAGE3DEXTPROC kglTextureSubImage3DEXT;
 extern PFNGLNAMEDBUFFERDATAEXTPROC kglNamedBufferDataEXT;
 extern PFNGLNAMEDBUFFERSUBDATAEXTPROC kglNamedBufferSubDataEXT;
 extern PFNGLMAPNAMEDBUFFEREXTPROC kglMapNamedBufferEXT;
+extern PFNGLMAPNAMEDBUFFERRANGEEXTPROC kglMapNamedBufferRangeEXT;
 extern PFNGLUNMAPNAMEDBUFFEREXTPROC kglUnmapNamedBufferEXT;
 
 //custom gl functions

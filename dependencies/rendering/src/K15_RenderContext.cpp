@@ -5,8 +5,22 @@
 #include <K15_OSLayer_Thread.h>
 
 #include "K15_RenderBufferDesc.h"
+#include "K15_RenderProgramDesc.h"
+
 #include "OpenGL/K15_RenderGLContext.h"
 
+/*********************************************************************************/
+intern inline K15_RenderProgramHandle K15_InternalAddRenderProgramDesc(K15_RenderContext* p_RenderContext, K15_RenderProgramDesc* p_RenderProgramDesc)
+{
+	//get current program index
+	uint32 gpuProgramIndex = p_RenderContext->gpuProgram.amountPrograms++;
+
+	assert(gpuProgramIndex < K15_RENDER_MAX_GPU_PROGRAMS);
+
+	p_RenderContext->gpuProgram.programs[gpuProgramIndex] = *p_RenderProgramDesc;
+
+	return (K15_RenderProgramHandle)gpuProgramIndex;
+}
 /*********************************************************************************/
 intern inline K15_RenderBufferHandle K15_InternalAddRenderBufferDesc(K15_RenderContext* p_RenderContext, K15_RenderBufferDesc* p_RenderBufferDesc)
 {
@@ -49,11 +63,11 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 		{
 			assert(p_RenderCommand->parameterSize == sizeof(K15_RenderBufferDesc) + K15_PTR_SIZE);
 			
-			K15_RenderBufferDesc renderBufferDesc;
-			K15_RenderBufferHandle* renderBufferHandle;
+			K15_RenderBufferDesc renderBufferDesc = {0};
+			K15_RenderBufferHandle* renderBufferHandle = 0;
 				
-			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderBufferDesc), 0, &renderBufferDesc);
-			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, sizeof(K15_RenderBufferDesc), &renderBufferHandle);
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderBufferHandle);
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderBufferDesc), K15_PTR_SIZE, &renderBufferDesc);
 
 			*renderBufferHandle = K15_InternalAddRenderBufferDesc(p_RenderContext, &renderBufferDesc);
 
@@ -64,16 +78,68 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 
 		case K15_RENDER_COMMAND_UPDATE_BUFFER:
 		{
-// 			K15_RenderBufferHandle** renderBufferHandle;
-// 
-// 			K15_InternalReadParameter(p_RenderCommandQueue, p_RenderCommand, K15_PTR_SIZE, renderBufferHandle);
+			K15_RenderBufferUpdateDesc renderBufferUpdateDesc = {0};
+			K15_RenderBufferHandle* renderBufferHandle = 0;
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderBufferHandle);
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderBufferUpdateDesc), K15_PTR_SIZE, &renderBufferUpdateDesc);
+
+			result = p_RenderContext->commandProcessing.bufferManagement.updateBuffer(p_RenderContext, &renderBufferUpdateDesc, renderBufferHandle);
+
 			break;
 		}
 
 		case K15_RENDER_COMMAND_DELETE_BUFFER:
 		{
+			K15_RenderBufferHandle* renderBufferHandle = 0;
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderBufferHandle);
+
+			result = p_RenderContext->commandProcessing.bufferManagement.deleteBuffer(p_RenderContext, renderBufferHandle);
 			break;
 		}
+
+		case K15_RENDER_COMMAND_CREATE_PROGRAM:
+		{
+			K15_RenderProgramDesc renderProgramDesc = {0};
+			K15_RenderProgramHandle* renderProgramHandle = 0;
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderProgramHandle);
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderProgramDesc), K15_PTR_SIZE, &renderProgramDesc);
+
+			*renderProgramHandle = K15_InternalAddRenderProgramDesc(p_RenderContext, &renderProgramDesc);
+
+			result = p_RenderContext->commandProcessing.programManagement.createProgram(p_RenderContext, &renderProgramDesc, renderProgramHandle);
+			break;
+		}
+
+		/*case K15_RENDER_COMMAND_DRAW_INDEXED:
+		{
+			K15_RenderBufferHandle* vertexBufferHandle = 0;
+			K15_RenderBufferHandle* indexBufferHandle = 0;
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &vertexBufferHandle);
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, K15_PTR_SIZE, &indexBufferHandle);
+
+			result = p_RenderContext->commandProcessing.renderMangement.drawIndexed(p_RenderContext, vertexBufferHandle, indexBufferHandle);
+
+			break;
+		}
+
+		case K15_RENDER_COMMAND_DRAW_INDEXED_INSTANCED:
+		{
+			break;
+		}
+
+		case K15_RENDER_COMMAND_DRAW_INSTANCED:
+		{
+			break;
+		}
+
+		case K15_RENDER_COMMAND_DRAW:
+		{
+			break;
+		}*/
 
 		default:
 		{
@@ -248,6 +314,8 @@ intern uint8 K15_InternalRenderThreadFunction(void* p_Parameter)
 			K15_RenderCommandQueue** renderCommandQueuesToProcess = renderContext->commandQueueDispatcher->renderCommandQueuesToProcess[K15_RENDERING_DISPATCH_FRONT_BUFFER_INDEX];
 			K15_InternalProcessRenderCommandQueue(renderContext, renderCommandQueuesToProcess[renderCommandQueueIndex]);
 		}
+
+		renderContext->commandProcessing.screenManagement.clearScreen(renderContext);
 	}
 
 
@@ -257,7 +325,38 @@ intern uint8 K15_InternalRenderThreadFunction(void* p_Parameter)
 
 
 
+/*********************************************************************************/
+void K15_SetRenderContextError(K15_RenderContext* p_RenderContext, const char* p_ErrorMessage, uint32 p_ErrorMessageLength)
+{
+	if (p_RenderContext->lastError.message)
+	{
+		if (p_RenderContext->lastError.length <= p_ErrorMessageLength)
+		{
+			free((void*)p_RenderContext->lastError.message);
+			p_RenderContext->lastError.message = (char*)malloc(p_ErrorMessageLength + 1); //+1 for 0 terminator
+			p_RenderContext->lastError.length = p_ErrorMessageLength;
+		}
+	}
 
+	memcpy(p_RenderContext->lastError.message, p_ErrorMessage, p_ErrorMessageLength);
+
+	p_RenderContext->lastError.message[p_ErrorMessageLength] = 0;
+}
+/*********************************************************************************/
+const char* K15_GetLastRenderErrorMessage(K15_RenderContext* p_RenderContext)
+{
+	return p_RenderContext->lastError.message;
+}
+/*********************************************************************************/
+const char* K15_GetLastRenderErrorMessageWithSize(K15_RenderContext* p_RenderContext, uint32* p_ErrorMessageSize)
+{
+	if (p_ErrorMessageSize)
+	{
+		*p_ErrorMessageSize = p_RenderContext->lastError.length;
+	}
+
+	return p_RenderContext->lastError.message;
+}
 /*********************************************************************************/
 K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext)
 {
@@ -267,6 +366,7 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext)
 
 	if (!renderContext)
 	{
+		assert(false);
 		return 0;
 	}
 
@@ -275,6 +375,7 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext)
 
 	if (!renderCommandQueueDispatcher)
 	{
+		assert(false);
 		return 0;
 	}
 	
@@ -294,18 +395,40 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext)
 
 	if (!renderCommandQueues)
 	{
+		assert(false);
 		return 0;
 	}
-
+	
+	/*********************************************************************************/
+	//gpu buffers
 	K15_RenderBufferDesc* gpuBuffers = (K15_RenderBufferDesc*)malloc(sizeof(K15_RenderBufferDesc) * K15_RENDER_MAX_GPU_BUFFER);
 
 	if(!gpuBuffers)
 	{
+		assert(false);
 		return 0;
 	}
 
 	renderContext->gpuBuffer.buffers = gpuBuffers;
 	renderContext->gpuBuffer.amountBuffers = 0;
+	/*********************************************************************************/
+
+	/*********************************************************************************/
+	//gpu programs
+	K15_RenderProgramDesc* gpuPrograms = (K15_RenderProgramDesc*)malloc(sizeof(K15_RenderProgramDesc) * K15_RENDER_MAX_GPU_PROGRAMS);
+
+	if(!gpuPrograms)
+	{
+		assert(false);
+		return 0;
+	}
+
+	renderContext->gpuProgram.programs = gpuPrograms;
+	renderContext->gpuProgram.amountPrograms = 0;
+	/*********************************************************************************/
+
+	renderContext->lastError.length = 0;
+	renderContext->lastError.message = 0;
 
 	renderContext->flags = 0;
 	renderContext->commandQueues = renderCommandQueues;
@@ -487,13 +610,42 @@ uint8 K15_AddRenderBufferDescParameter(K15_RenderCommandQueue* p_RenderCommandQu
 	return result;
 }
 /*********************************************************************************/
+uint8 K15_AddRenderBufferUpdateDescParameter(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderBufferUpdateDesc* p_RenderBufferUpdateDesc)
+{
+	uint8 result = K15_InternalAddCommandQueueParameter(p_RenderCommandQueue,
+														sizeof(K15_RenderBufferUpdateDesc),
+														p_RenderBufferUpdateDesc);
+
+	return result;
+}
+/*********************************************************************************/
 uint8 K15_AddRenderBufferHandleParameter(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderBufferHandle* p_RenderBufferHandle)
 {
 	uint8 result = K15_InternalAddCommandQueueParameter(p_RenderCommandQueue,
 														K15_PTR_SIZE,
 														&p_RenderBufferHandle);
 
-	*p_RenderBufferHandle = K15_INVALID_GPU_HANDLE;
+	*p_RenderBufferHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
+
+	return result;
+}
+/*********************************************************************************/
+uint8 K15_AddRenderProgramHandleParameter(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderProgramHandle* p_RenderProgramHandle)
+{
+	uint8 result = K15_InternalAddCommandQueueParameter(p_RenderCommandQueue,
+														K15_PTR_SIZE,
+														&p_RenderProgramHandle);
+
+	*p_RenderProgramHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
+
+	return result;
+}
+/*********************************************************************************/
+uint8 K15_AddRenderProgramDescParameter(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderProgramDesc* p_RenderProgramDesc)
+{
+	uint8 result = K15_InternalAddCommandQueueParameter(p_RenderCommandQueue,
+														sizeof(K15_RenderProgramDesc),
+														p_RenderProgramDesc);
 
 	return result;
 }

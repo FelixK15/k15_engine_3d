@@ -36,4 +36,11 @@ struct K15_RenderBufferDesc
 	K15_RenderBufferAccess access;
 };
 
+struct K15_RenderBufferUpdateDesc
+{
+	byte* data;
+	uint32 size;
+	uint32 offset;
+};
+
 #endif //_K15_Rendering_RenderBufferDesc_h_

@@ -21,7 +21,7 @@
 	#define K15_MIN_GL_VERSION_MINOR 0
 #endif
 
-#define K15_INVALID_GPU_HANDLE 0xffffffff
+#define K15_INVALID_GPU_RESOURCE_HANDLE 0xffffffff
 
 #define K15_ERROR_MAX_RENDER_COMMAND_QUEUE_REACHED				210
 #define K15_ERROR_MAX_RENDER_COMMANDS_REACHED					211
@@ -32,14 +32,20 @@
 #define K15_ERROR_INVALID_BUFFER_TYPE							216
 #define K15_ERROR_LAST_COMMAND_NOT_FINISHED						217
 #define K15_ERROR_RENDER_BUFFER_LOCKED							218
+#define K15_ERROR_RENDER_API									219
+#define K15_ERROR_RENDER_PROGRAM_COMPILATION					220
 
-#define K15_RENDER_MAX_GPU_BUFFER								512
+#define K15_RENDER_MAX_GPU_BUFFER								4096
+#define K15_RENDER_MAX_GPU_PROGRAMS								4096
 
 typedef uint32 K15_RenderBufferHandle;
+typedef uint32 K15_RenderProgramHandle;
 
 struct K15_RenderContext;
 struct K15_RenderCommandQueue;
 struct K15_RenderCommandInstance;
 struct K15_RenderBufferDesc;
+struct K15_RenderBufferUpdateDesc;
+struct K15_RenderProgramDesc;
 
 #endif //K15_Render_Prerequisties_h_

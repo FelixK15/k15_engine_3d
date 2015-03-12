@@ -13,6 +13,7 @@
 
 
 #include <K15_RenderBufferDesc.h>
+#include <K15_RenderProgramDesc.h>
 
 #ifdef K15_OS_WINDOWS
 
@@ -53,6 +54,19 @@ int CALLBACK WinMain(
 
 	K15_SystemEvent event = {};
 
+	K15_RenderProgramDesc shaderDesc = {0};
+	K15_RenderProgramHandle shaderHandle;
+
+	shaderDesc.file = "bla/bla.vert";
+	shaderDesc.code = "code";
+	shaderDesc.type = K15_RENDER_PROGRAM_TYPE_VERTEX;
+	shaderDesc.source = K15_RENDER_PROGRAM_SOURCE_FILE;
+
+	K15_BeginRenderCommand(renderCommandQueue, K15_RENDER_COMMAND_CREATE_PROGRAM);
+	K15_AddRenderProgramHandleParameter(renderCommandQueue, &shaderHandle);
+	K15_AddRenderProgramDescParameter(renderCommandQueue, &shaderDesc);
+	K15_EndRenderCommand(renderCommandQueue);
+
 	while (running)
 	{
 		K15_PumpSystemEvents();
@@ -63,24 +77,7 @@ int CALLBACK WinMain(
 			{
 				running = false;
 			}
-		}
-
-		
-		K15_RenderBufferDesc vertexBufferDesc;
-		K15_RenderBufferHandle vertexBufferHandle;
-
-
-		vertexBufferDesc.data = 0;
-		vertexBufferDesc.size = 100;
-		vertexBufferDesc.usage = K15_RENDER_BUFFER_USAGE_STATIC_DRAW;
-		vertexBufferDesc.type = K15_RENDER_BUFFER_TYPE_VERTEX;
-		vertexBufferDesc.access = K15_RENDER_BUFFER_ACCESS_ALL;
-		vertexBufferDesc.userData = 0;
-
-		K15_BeginRenderCommand(renderCommandQueue, K15_RENDER_COMMAND_CREATE_BUFFER);
-		K15_AddRenderBufferDescParameter(renderCommandQueue, &vertexBufferDesc);
-		K15_AddRenderBufferHandleParameter(renderCommandQueue, &vertexBufferHandle);
-		K15_EndRenderCommand(renderCommandQueue);
+		}		
 	
 		K15_DispatchRenderCommandQueue(renderCommandQueue);
 

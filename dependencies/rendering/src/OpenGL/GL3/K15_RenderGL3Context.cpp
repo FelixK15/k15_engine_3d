@@ -8,14 +8,19 @@
 
 #include "K15_RenderContext.h"
 #include "K15_RenderBufferDesc.h"
+#include "K15_RenderProgramDesc.h"
 
 #include <K15_Logging.h>
 
 #include <K15_OSLayer_OSContext.h>
 #include <K15_OSLayer_Window.h>
+#include <K15_OSLayer_FileSystem.h>
 
+#include "OpenGL/GL3/K15_RenderGL3Conversion.cpp"
 #include "OpenGL/GL3/K15_RenderGL3Buffer.cpp"
 #include "OpenGL/GL3/K15_RenderGL3Frame.cpp"
+#include "OpenGL/GL3/K15_RenderGL3Draw.cpp"
+#include "OpenGL/GL3/K15_RenderGL3Program.cpp"
 
 typedef uint8 (*K15_CreatePlatformContextFnc)(K15_GLRenderContext*, K15_OSLayerContext*);
 
@@ -192,6 +197,13 @@ intern void K15_GLGetExtensions(K15_GLRenderContext* p_GLRenderContext)
 intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 {
 	kglGenBuffers = (PFNGLGENBUFFERSPROC)kglGetProcAddress("glGenBuffers");
+	kglDeleteBuffers = (PFNGLDELETEBUFFERSPROC)kglGetProcAddress("glDeleteBuffers");
+	kglGetProgramiv = (PFNGLGETPROGRAMIVPROC)kglGetProcAddress("glGetProgramiv");
+	kglDeleteProgram = (PFNGLDELETEPROGRAMPROC)kglGetProcAddress("glDeleteProgram");
+	kglGetActiveUniform = (PFNGLGETACTIVEUNIFORMPROC)kglGetProcAddress("glGetActiveUniform");
+	kglGetActiveAttrib = (PFNGLGETACTIVEATTRIBPROC)kglGetProcAddress("glGetActiveAttrib");
+	kglGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)kglGetProcAddress("glGetUniformLocation");
+	kglGetAttribLocation = (PFNGLGETATTRIBLOCATIONPROC)kglGetProcAddress("glGetAttribLocation");
 
 	if(K15_Search("GL_AMD_debug_output", p_GLRenderContext->extensions.names, 
 		p_GLRenderContext->extensions.count, sizeof(char*), K15_CmpStrings) != 0)
@@ -226,6 +238,7 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 		kglNamedBufferDataEXT = (PFNGLNAMEDBUFFERDATAEXTPROC)kglGetProcAddress("glNamedBufferDataEXT");
 		kglNamedBufferSubDataEXT = (PFNGLNAMEDBUFFERSUBDATAEXTPROC)kglGetProcAddress("glNamedBufferSubDataEXT");
 		kglMapNamedBufferEXT = (PFNGLMAPNAMEDBUFFEREXTPROC)kglGetProcAddress("glMapNamedBufferEXT");
+		kglMapNamedBufferRangeEXT = (PFNGLMAPNAMEDBUFFERRANGEEXTPROC)kglGetProcAddress("glMapNamedBufferRangeEXT");
 		kglUnmapNamedBufferEXT = (PFNGLUNMAPNAMEDBUFFEREXTPROC)kglGetProcAddress("glUnmapNamedBufferEXT");
 	}
 
@@ -330,19 +343,26 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 		return K15_ERROR_SYSTEM;
 	}
 
+	glContext->programPipelineHandle = 0;
+
 	uint8 result = K15_CreateContext(glContext, p_OSLayerContext);
 
 	if (result != K15_SUCCESS)
 	{
 		return result;
 	}
-
+	
 	//screen management
 	p_RenderContext->commandProcessing.screenManagement.clearScreen = K15_GLClearScreen;
 
 	//buffer management
 	p_RenderContext->commandProcessing.bufferManagement.createBuffer = K15_GLCreateBuffer;
-	//p_RenderContext->processRenderCommand = K15_GLProcessRenderCommand;
+	p_RenderContext->commandProcessing.bufferManagement.updateBuffer = K15_GLUpdateBuffer;
+	p_RenderContext->commandProcessing.bufferManagement.deleteBuffer = K15_GLDeleteBuffer;
+
+	//program management
+	p_RenderContext->commandProcessing.programManagement.createProgram = K15_GLCreateProgram;
+	p_RenderContext->commandProcessing.programManagement.deleteProgram = K15_GLDeleteProgram;
 
 	glContext->vendorString = glGetString(GL_VENDOR);
 	glContext->rendererString = glGetString(GL_RENDERER);
@@ -384,6 +404,8 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 
 	p_RenderContext->userData = (void*)glContext;
 
+	K15_GLCreateBuffers();
+
 	K15_Window* window = p_OSLayerContext->window.window;
 
 	//set initiale viewport
@@ -395,6 +417,13 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 	glEnable(GL_POLYGON_OFFSET_FILL);
 
 	glClearColor(0.f, 0.f, 0.f, 1.f);
+
+	//Create program pipeline
+	GLuint programPipeline;
+	K15_OPENGL_CALL(kglGenProgramPipelines(1, &programPipeline));
+	K15_OPENGL_CALL(kglBindProgramPipeline(programPipeline));
+
+	glContext->programPipelineHandle = programPipeline;
 
 	return K15_SUCCESS;
 }

@@ -20,16 +20,18 @@ if (${RENDERER_FOUND})
 
 	if (${K15_RENDERER_VERSION} STREQUAL "2")
 		set(RENDERER_API_SRC 	./src/OpenGL/GL2/K15_RenderGL2Context.cpp
-		   						./src/OpenGL/GL2/K15_RenderGL2Types.cpp)
+					./src/OpenGL/GL2/K15_RenderGL2Types.cpp)
 
 		set(RENDERER_API_INC 	./include/OpenGL/K15_RenderGLContext.h
-		   						./include/OpenGL/K15_RenderGLTypes.h)
+					./include/OpenGL/K15_RenderGLConfig.h
+					./include/OpenGL/K15_RenderGLTypes.h)
 	elseif (${K15_RENDERER_VERSION} STREQUAL "3")
 		set(RENDERER_API_SRC 	./src/OpenGL/GL3/K15_RenderGL3Context.cpp
-		   						./src/OpenGL/GL3/K15_RenderGL3Types.cpp)
+					./src/OpenGL/GL3/K15_RenderGL3Types.cpp)
 
 		set(RENDERER_API_INC 	./include/OpenGL/K15_RenderGLContext.h
-		   						./include/OpenGL/K15_RenderGLTypes.h)
+					./include/OpenGL/K15_RenderGLConfig.h
+					./include/OpenGL/K15_RenderGLTypes.h)
 	endif()
 endif()
 
