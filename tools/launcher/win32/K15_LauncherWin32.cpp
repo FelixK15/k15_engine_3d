@@ -57,7 +57,7 @@ int CALLBACK WinMain(
 	K15_RenderProgramDesc shaderDesc = {0};
 	K15_RenderProgramHandle shaderHandle;
 
-	shaderDesc.file = "bla/bla.vert";
+	shaderDesc.file = "../../../../test/res/default.vert";
 	shaderDesc.code = "code";
 	shaderDesc.type = K15_RENDER_PROGRAM_TYPE_VERTEX;
 	shaderDesc.source = K15_RENDER_PROGRAM_SOURCE_FILE;

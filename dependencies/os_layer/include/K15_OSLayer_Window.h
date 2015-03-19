@@ -33,6 +33,13 @@ struct K15_Window
 	uint32 flags;
 	uint8 monitorIndex;
 	void* userData;
+
+#ifdef K15_DEBUG_MRT
+	struct 
+	{
+		K15_Thread* assignedThread;
+	} debugging;
+#endif //K15_DEBUG_MRT
 };
 
 /*********************************************************************************/

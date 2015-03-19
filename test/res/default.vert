@@ -1,3 +1,4 @@
+#define bla
 #include "light.glsl"
 
 in vec3 a_Position;

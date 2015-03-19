@@ -1,6 +1,8 @@
 #include "K15_OSLayer_Window.h"
 #include "K15_OSLayer_OSContext.h"
 
+#include "K15_OSLayer_Thread.h"
+
 /*********************************************************************************/
 K15_Window* K15_CreateWindow(uint32 p_Flags, uint8 p_MonitorIndex)
 {
@@ -19,6 +21,10 @@ K15_Window* K15_CreateWindow(uint32 p_Flags, uint8 p_MonitorIndex)
 	}
 
 	window->monitorIndex = p_MonitorIndex;
+
+#ifdef K15_DEBUG_MRT
+	window->debugging.assignedThread = K15_GetCurrentThread();
+#endif //K15_DEBUG_MRT
 
 	OSContext->window.window = window;
 

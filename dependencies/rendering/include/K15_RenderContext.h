@@ -107,12 +107,12 @@ struct K15_RenderCommandQueue
 
 	uint32 flags;
 
-#ifdef K15_DEBUG
+#ifdef K15_DEBUG_MRT
 	struct 
 	{
 		K15_Thread* assignedThread;
 	} debugging;
-#endif //K15_DEBUG
+#endif //K15_DEBUG_MRT
 
 };
 
@@ -130,7 +130,7 @@ struct K15_RenderContext
 	K15_RenderCommandQueueDispatcher* commandQueueDispatcher;
 	K15_RenderCommandQueue* commandQueues;
 	
-	K15_Thread* renderThread;
+	//K15_Thread* renderThread;
 	K15_Mutex* createCommandQueueMutex;
 	K15_Semaphore* renderThreadSync;
 
@@ -179,12 +179,12 @@ struct K15_RenderContext
 	uint32 amountCommandQueues;
 	uint32 flags;
 
-#ifdef K15_DEBUG
+#ifdef K15_DEBUG_MRT
 	struct 
 	{
 		K15_Thread* assignedThread;
 	} debugging;
-#endif //K15_DEBUG
+#endif //K15_DEBUG_MRT
 };
 
 //mostly used internally

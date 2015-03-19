@@ -9,6 +9,7 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <fcntl.h>
+#include <stdio.h>
 
 #ifdef __ANDROID__
 	#define K15_OS_ANDROID
@@ -48,6 +49,7 @@
 
 #if defined _DEBUG || defined DEBUG
 	#define K15_DEBUG
+	#define K15_DEBUG_MRT //Multithreaded debugging
 #endif //_DEBUG
 
 #define K15_PTR_SIZE sizeof(void*)

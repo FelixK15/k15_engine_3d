@@ -263,30 +263,16 @@ intern void K15_InternalSwapRenderDispatcherBuffers(K15_RenderCommandQueueDispat
 	K15_UnlockMutex(p_RenderCommandQueueDispatcher->swapMutex);
 }
 /*********************************************************************************/
-
-
-/*********************************************************************************/
-intern uint8 K15_InternalRenderThreadFunction(void* p_Parameter)
+intern uint8 K15_InternalInitializeRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerContext* p_OSContext)
 {
-	//extract parameter from buffer
-	K15_OSLayerContext* osContext = 0;
-	K15_RenderContext* renderContext = 0;
-	byte* parameterBuffer = (byte*)p_Parameter;
-
-	memcpy(&osContext, parameterBuffer, K15_PTR_SIZE);
-	memcpy(&renderContext, parameterBuffer + K15_PTR_SIZE, K15_PTR_SIZE);
-	
-	//we don't need that anymore
-	free(parameterBuffer);
-
-	//create actual context
-	uint8 createGLRenderContext = TRUE;
+	assert(p_RenderContext && p_OSContext);
 
 	//TODO: DX 11/10/9
+	uint8 createGLRenderContext = TRUE;
 
 	if (createGLRenderContext == TRUE)
 	{
-		uint8 result = K15_GLCreateRenderContext(renderContext, osContext);
+		uint8 result = K15_GLCreateRenderContext(p_RenderContext, p_OSContext);
 
 		if (result != K15_SUCCESS)
 		{
@@ -295,32 +281,58 @@ intern uint8 K15_InternalRenderThreadFunction(void* p_Parameter)
 	}
 
 	//set render context initialized flag
-	renderContext->flags |= K15_RCF_INITIALIZED;
-
-	while(true)
-	{
-		//wait for signal...
-		K15_WaitSemaphore(renderContext->renderThreadSync);
-
-		//swap dispatching buffer so the threads that are dispatching command queues can immediately start to fill the back buffer again
-		K15_InternalSwapRenderDispatcherBuffers(renderContext->commandQueueDispatcher);
-
-		int renderCommandQueuesToProcess = renderContext->commandQueueDispatcher->amountCommandQueuesToProcess[K15_RENDERING_DISPATCH_FRONT_BUFFER_INDEX];
-
-		for (int renderCommandQueueIndex = 0;
-			renderCommandQueueIndex < renderCommandQueuesToProcess;
-			++renderCommandQueueIndex)
-		{
-			K15_RenderCommandQueue** renderCommandQueuesToProcess = renderContext->commandQueueDispatcher->renderCommandQueuesToProcess[K15_RENDERING_DISPATCH_FRONT_BUFFER_INDEX];
-			K15_InternalProcessRenderCommandQueue(renderContext, renderCommandQueuesToProcess[renderCommandQueueIndex]);
-		}
-
-		renderContext->commandProcessing.screenManagement.clearScreen(renderContext);
-	}
-
+	p_RenderContext->flags |= K15_RCF_INITIALIZED;
 
 	return K15_SUCCESS;
 }
+/*********************************************************************************/
+intern void K15_InternalProcessRenderCommandBuffer(K15_RenderContext* p_RenderContext)
+{
+	//swap dispatching buffer so the threads that are dispatching command queues can immediately start to fill the back buffer again
+	K15_InternalSwapRenderDispatcherBuffers(p_RenderContext->commandQueueDispatcher);
+
+	int renderCommandQueuesToProcess = p_RenderContext->commandQueueDispatcher->amountCommandQueuesToProcess[K15_RENDERING_DISPATCH_FRONT_BUFFER_INDEX];
+
+	for (int renderCommandQueueIndex = 0;
+		renderCommandQueueIndex < renderCommandQueuesToProcess;
+		++renderCommandQueueIndex)
+	{
+		K15_RenderCommandQueue** renderCommandQueuesToProcess = p_RenderContext->commandQueueDispatcher->renderCommandQueuesToProcess[K15_RENDERING_DISPATCH_FRONT_BUFFER_INDEX];
+		K15_InternalProcessRenderCommandQueue(p_RenderContext, renderCommandQueuesToProcess[renderCommandQueueIndex]);
+	}
+
+	p_RenderContext->commandProcessing.screenManagement.clearScreen(p_RenderContext);
+}
+/*********************************************************************************/
+
+
+/*********************************************************************************/
+// intern uint8 K15_InternalRenderThreadFunction(void* p_Parameter)
+// {
+// 	while(true)
+// 	{
+// 		//wait for signal...
+// 		K15_WaitSemaphore(renderContext->renderThreadSync);
+// 
+// 		//swap dispatching buffer so the threads that are dispatching command queues can immediately start to fill the back buffer again
+// 		K15_InternalSwapRenderDispatcherBuffers(renderContext->commandQueueDispatcher);
+// 
+// 		int renderCommandQueuesToProcess = renderContext->commandQueueDispatcher->amountCommandQueuesToProcess[K15_RENDERING_DISPATCH_FRONT_BUFFER_INDEX];
+// 
+// 		for (int renderCommandQueueIndex = 0;
+// 			renderCommandQueueIndex < renderCommandQueuesToProcess;
+// 			++renderCommandQueueIndex)
+// 		{
+// 			K15_RenderCommandQueue** renderCommandQueuesToProcess = renderContext->commandQueueDispatcher->renderCommandQueuesToProcess[K15_RENDERING_DISPATCH_FRONT_BUFFER_INDEX];
+// 			K15_InternalProcessRenderCommandQueue(renderContext, renderCommandQueuesToProcess[renderCommandQueueIndex]);
+// 		}
+// 
+// 		renderContext->commandProcessing.screenManagement.clearScreen(renderContext);
+// 	}
+// 
+// 
+// 	return K15_SUCCESS;
+// }
 /*********************************************************************************/
 
 
@@ -336,6 +348,10 @@ void K15_SetRenderContextError(K15_RenderContext* p_RenderContext, const char* p
 			p_RenderContext->lastError.message = (char*)malloc(p_ErrorMessageLength + 1); //+1 for 0 terminator
 			p_RenderContext->lastError.length = p_ErrorMessageLength;
 		}
+	}
+	else
+	{
+		p_RenderContext->lastError.message = (char*)malloc(p_ErrorMessageLength);
 	}
 
 	memcpy(p_RenderContext->lastError.message, p_ErrorMessage, p_ErrorMessageLength);
@@ -438,27 +454,29 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext)
 	renderContext->createCommandQueueMutex = K15_CreateMutex();
 	renderContext->renderThreadSync = K15_CreateSemaphore();
 
-#ifdef K15_DEBUG
+#ifdef K15_DEBUG_MRT
 	renderContext->debugging.assignedThread = K15_GetCurrentThread();
-#endif //K15_DEBUG
+#endif //K15_DEBUG_MRT
 
 	// allocate memory for 2 pointer
-	byte* threadParameterBuffer = (byte*)malloc(K15_PTR_SIZE * 2);
-
-	//1. parameter : os context
-	memcpy(threadParameterBuffer, &p_OSContext, K15_PTR_SIZE);
-
-	//2. parameter : render context
-	memcpy(threadParameterBuffer + K15_PTR_SIZE, &renderContext, K15_PTR_SIZE);
+// 	byte* threadParameterBuffer = (byte*)malloc(K15_PTR_SIZE * 2);
+// 
+// 	//1. parameter : os context
+// 	memcpy(threadParameterBuffer, &p_OSContext, K15_PTR_SIZE);
+// 
+// 	//2. parameter : render context
+// 	memcpy(threadParameterBuffer + K15_PTR_SIZE, &renderContext, K15_PTR_SIZE);
 
 	//create render thread
-	K15_Thread* renderThread = K15_CreateThread(K15_InternalRenderThreadFunction, (void*)threadParameterBuffer);
-	K15_SetThreadName(renderThread, "K15_RenderThread");
+// 	K15_Thread* renderThread = K15_CreateThread(K15_InternalRenderThreadFunction, (void*)threadParameterBuffer);
+// 	K15_SetThreadName(renderThread, "K15_RenderThread");
+// 
+// 	if (renderThread)
+// 	{
+// 		renderContext->renderThread = renderThread;
+// 	}
 
-	if (renderThread)
-	{
-		renderContext->renderThread = renderThread;
-	}
+	uint8 contextCreateResult = K15_InternalInitializeRenderContext(renderContext, p_OSContext);
 
 	return renderContext;
 }
@@ -466,9 +484,9 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext)
 K15_RenderCommandQueue* K15_CreateRenderCommandQueue(K15_RenderContext* p_RenderContext)
 {
 	//only continue when the rendercontext has been initialized
-	uint32 renderContextFlags = p_RenderContext->flags;
-
-	while ((renderContextFlags & K15_RCF_INITIALIZED) > 0); //busy wait until render context is initialized
+// 	uint32 renderContextFlags = p_RenderContext->flags;
+// 
+// 	while ((renderContextFlags & K15_RCF_INITIALIZED) > 0); //busy wait until render context is initialized
 
 	assert(p_RenderContext->amountCommandQueues < K15_RENDERING_MAX_COMMAND_QUEUES);
 	
@@ -519,9 +537,9 @@ K15_RenderCommandQueue* K15_CreateRenderCommandQueue(K15_RenderContext* p_Render
 	renderCommandQueue->swappingSemaphore = K15_CreateSemaphoreWithInitialValue(1);
 	renderCommandQueue->lastCommand = 0;
 
-#ifdef K15_DEBUG
+#ifdef K15_DEBUG_MRT
 	renderCommandQueue->debugging.assignedThread = K15_GetCurrentThread();
-#endif //K15_DEBUG
+#endif //K15_DEBUG_MRT
 	//renderCommandQueue->swapSection = K15_CreateNamedMutex("RenderCommandQueue Swap");
 	
 	//increasing the command queue count should be the last operation
@@ -684,8 +702,10 @@ void K15_DispatchRenderCommandQueue(K15_RenderCommandQueue* p_RenderCommandQueue
 void K15_ProcessDispatchedRenderCommandQueues(K15_RenderContext* p_RenderContext)
 {
 	assert(p_RenderContext);
-
+	assert(p_RenderContext->debugging.assignedThread == K15_GetCurrentThread());
 	//signal the render thread to start processing the dispatched render buffers
-	K15_PostSemaphore(p_RenderContext->renderThreadSync);
+	//K15_PostSemaphore(p_RenderContext->renderThreadSync);
+
+	K15_InternalProcessRenderCommandBuffer(p_RenderContext);
 }
 /*********************************************************************************/

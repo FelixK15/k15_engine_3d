@@ -204,6 +204,7 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 	kglGetActiveAttrib = (PFNGLGETACTIVEATTRIBPROC)kglGetProcAddress("glGetActiveAttrib");
 	kglGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)kglGetProcAddress("glGetUniformLocation");
 	kglGetAttribLocation = (PFNGLGETATTRIBLOCATIONPROC)kglGetProcAddress("glGetAttribLocation");
+	kglGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC)kglGetProcAddress("glGetProgramInfoLog");
 
 	if(K15_Search("GL_AMD_debug_output", p_GLRenderContext->extensions.names, 
 		p_GLRenderContext->extensions.count, sizeof(char*), K15_CmpStrings) != 0)
@@ -405,6 +406,7 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 	p_RenderContext->userData = (void*)glContext;
 
 	K15_GLCreateBuffers();
+	K15_GLInitPrograms();
 
 	K15_Window* window = p_OSLayerContext->window.window;
 
