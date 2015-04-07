@@ -1,12 +1,10 @@
-#define bla
-#include "light.glsl"
-
 in vec3 a_Position;
 in vec3 a_Normal;
 in vec2 a_TexCoord;
 in vec3 a_Tangent;
 in vec3 a_Bitangent;
 
+uniform vec2 g_Viewport;
 uniform mat4 g_ModelMatrix;
 uniform mat4 g_ProjMatrix;
 uniform mat4 g_ViewMatrix;
@@ -23,7 +21,8 @@ void main(void)
 	mat4 mv = g_ViewMatrix * g_ModelMatrix;
 	mat4 mvp = g_ProjMatrix * g_ViewMatrix * g_ModelMatrix;
 	vec4 transformedPosition = mvp * vec4(a_Position, 1.0);
-	v_UV = a_TexCoord;
+	//v_UV = a_TexCoord;
+	v_UV = g_Viewport;
 	v_Normal = normalize(g_NormalMatrix * vec4(a_Normal, 0.0));
 	v_Position = transformedPosition;
 	v_PositionES = mv * vec4(a_Position, 1.0);

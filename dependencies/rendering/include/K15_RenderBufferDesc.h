@@ -34,6 +34,8 @@ struct K15_RenderBufferDesc
 	K15_RenderBufferUsage usage;
 	K15_RenderBufferType type;
 	K15_RenderBufferAccess access;
+
+	uint32 flags;
 };
 
 struct K15_RenderBufferUpdateDesc
@@ -41,6 +43,7 @@ struct K15_RenderBufferUpdateDesc
 	byte* data;
 	uint32 size;
 	uint32 offset;
+	uint32 flags;
 };
 
 #endif //_K15_Rendering_RenderBufferDesc_h_

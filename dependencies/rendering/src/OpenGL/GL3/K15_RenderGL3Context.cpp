@@ -51,7 +51,7 @@ intern void APIENTRY K15_DebugProcAMD(GLuint id, GLenum category, GLenum severit
 		}
 		case GL_DEBUG_CATEGORY_DEPRECATION_AMD:
 		{
-			categoryName = "Deprecation";
+			categoryName = "Depre1cation";
 			break;
 		}
 		case GL_DEBUG_CATEGORY_UNDEFINED_BEHAVIOR_AMD:
@@ -364,6 +364,7 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 	//program management
 	p_RenderContext->commandProcessing.programManagement.createProgram = K15_GLCreateProgram;
 	p_RenderContext->commandProcessing.programManagement.deleteProgram = K15_GLDeleteProgram;
+	p_RenderContext->commandProcessing.programManagement.updateUniform = K15_GLUpdateUniform;
 
 	glContext->vendorString = glGetString(GL_VENDOR);
 	glContext->rendererString = glGetString(GL_RENDERER);
@@ -384,7 +385,6 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 		token = strtok(0, ".");
 
 		glContext->version.minor = atoi(token);
-
 	}
 	
 

@@ -120,7 +120,8 @@ namespace K15_Engine { namespace Test {
 		{
 			m_Bunny->scale(0.2f, 0.0f, 0.2f);
 		}
-
+		if(InputDevices::Keyboard::isPressed(InputDevices::Keybaord::KEY_LEFT))
+		{
 		if(InputDevices::Keyboard::isPressed(InputDevices::Keyboard::KEY_LEFT))
 		{
 			m_Light1->translate(-1.0f, 0.0f, 0.0f);

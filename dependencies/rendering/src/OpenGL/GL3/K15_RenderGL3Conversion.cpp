@@ -96,3 +96,178 @@ inline GLenum K15_GLConvertBufferUsage(K15_RenderBufferUsage p_BufferUsage)
 	return nativeBufferUsage;
 }
 /*********************************************************************************/
+GLenum K15_GLConvertUniformTypeToGLType(K15_UniformType p_UniformType)
+{
+	GLenum nativeUniformType = GL_INVALID_ENUM;
+
+	switch(p_UniformType)
+	{
+		case K15_UNIFORM_TYPE_INT8:
+		case K15_UNIFORM_TYPE_INT16:
+		case K15_UNIFORM_TYPE_INT32:
+		{
+			nativeUniformType = GL_INT;
+			break;
+		}
+
+		case K15_UNIFORM_TYPE_UINT8:
+		case K15_UNIFORM_TYPE_UINT16:
+		case K15_UNIFORM_TYPE_UINT32:
+		{
+			nativeUniformType = GL_UNSIGNED_INT;
+			break;
+		}
+
+		case K15_UNIFORM_TYPE_FLOAT:
+		{
+			nativeUniformType = GL_FLOAT;
+			break;
+		}
+
+		case K15_UNIFORM_TYPE_FLOAT2:
+		{
+			nativeUniformType = GL_FLOAT_VEC2;
+			break;
+		}
+
+		case K15_UNIFORM_TYPE_FLOAT3:
+		{
+			nativeUniformType = GL_FLOAT_VEC3;
+			break;
+		}
+
+		case K15_UNIFORM_TYPE_FLOAT4:
+		{
+			nativeUniformType = GL_FLOAT_VEC4;
+			break;
+		}
+
+		case K15_UNIFORM_TYPE_FLOAT2x2:
+		{
+			nativeUniformType = GL_FLOAT_MAT2;
+			break;
+		}
+
+		case K15_UNIFORM_TYPE_FLOAT3x3:
+		{
+			nativeUniformType = GL_FLOAT_MAT3;
+			break;
+		}
+
+		case K15_UNIFORM_TYPE_FLOAT4x4:
+		{
+			nativeUniformType = GL_FLOAT_MAT4;
+			break;
+		}
+
+		default:
+		{
+			assert(false);
+		}
+	}
+
+
+	return nativeUniformType;
+}
+/*********************************************************************************/
+K15_UniformType K15_GLConvertGLTypeToUniformType(GLenum p_GLType, GLint p_TypeSizeInBytes)
+{
+	K15_UniformType uniformType = K15_UNIFORM_TYPE_INVALID;
+
+	switch(p_GLType)
+	{
+		case GL_INT:
+		{
+			if (p_TypeSizeInBytes == sizeof(int8))
+			{
+				uniformType = K15_UNIFORM_TYPE_INT8;
+			}
+			else if(p_TypeSizeInBytes == sizeof(int16))
+			{
+				uniformType = K15_UNIFORM_TYPE_INT16;
+			}
+			else if(p_TypeSizeInBytes == sizeof(int32))
+			{
+				uniformType = K15_UNIFORM_TYPE_INT32;
+			}
+			else
+			{
+				assert(false);
+			}
+
+			break;
+		}
+
+		case GL_UNSIGNED_INT:
+		{
+			if (p_TypeSizeInBytes == sizeof(uint8))
+			{
+				uniformType = K15_UNIFORM_TYPE_UINT8;
+			}
+			else if(p_TypeSizeInBytes == sizeof(uint16))
+			{
+				uniformType = K15_UNIFORM_TYPE_UINT16;
+			}
+			else if(p_TypeSizeInBytes == sizeof(uint32))
+			{
+				uniformType = K15_UNIFORM_TYPE_UINT32;
+			}
+			else
+			{
+				assert(false);
+			}
+
+			break;
+		}
+
+		case GL_FLOAT:
+		{
+			uniformType = K15_UNIFORM_TYPE_FLOAT;
+			break;
+		}
+
+		case GL_FLOAT_VEC2:
+		{
+			uniformType = K15_UNIFORM_TYPE_FLOAT2;
+			break;
+		}
+
+		case GL_FLOAT_VEC3:
+		{
+			uniformType = K15_UNIFORM_TYPE_FLOAT3;
+			break;
+		}
+
+		case GL_FLOAT_VEC4:
+		{
+			uniformType = K15_UNIFORM_TYPE_FLOAT4;
+			break;
+		}
+
+		case GL_FLOAT_MAT2:
+		{
+			uniformType = K15_UNIFORM_TYPE_FLOAT2x2;
+			break;
+		}
+
+		case GL_FLOAT_MAT3:
+		{
+			uniformType = K15_UNIFORM_TYPE_FLOAT3x3;
+			break;
+		}
+
+		case GL_FLOAT_MAT4:
+		{
+			uniformType = K15_UNIFORM_TYPE_FLOAT4x4;
+			break;
+		}
+
+		default:
+		{
+			assert(false);
+		}
+	}
+
+	return uniformType;
+}
+/*********************************************************************************/

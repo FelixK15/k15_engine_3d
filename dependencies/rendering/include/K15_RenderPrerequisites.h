@@ -34,18 +34,26 @@
 #define K15_ERROR_RENDER_BUFFER_LOCKED							218
 #define K15_ERROR_RENDER_API									219
 #define K15_ERROR_RENDER_PROGRAM_COMPILATION					220
+#define K15_ERROR_RENDER_UNIFORM_NOT_FOUND						221
 
 #define K15_RENDER_MAX_GPU_BUFFER								4096
 #define K15_RENDER_MAX_GPU_PROGRAMS								4096
+
+enum K15_RenderDescFlags
+{
+	K15_RENDER_DESC_NO_FLAGS		  = 0x000,
+	K15_RENDER_DESC_AUTO_CLEANUP_FLAG = 0x001
+};
 
 typedef uint32 K15_RenderBufferHandle;
 typedef uint32 K15_RenderProgramHandle;
 
 struct K15_RenderContext;
-struct K15_RenderCommandQueue;
+struct K15_RenderCommandBuffer;
 struct K15_RenderCommandInstance;
 struct K15_RenderBufferDesc;
 struct K15_RenderBufferUpdateDesc;
 struct K15_RenderProgramDesc;
+struct K15_RenderUniformUpdateDesc;
 
 #endif //K15_Render_Prerequisties_h_

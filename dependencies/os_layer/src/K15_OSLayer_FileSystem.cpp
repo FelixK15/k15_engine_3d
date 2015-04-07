@@ -40,7 +40,7 @@ char* K15_GetPathWithoutFileName(const char* p_FilePath)
 	const char* fileNameOnly = strrchr(convertedFilePath, K15_DIR_SEPARATOR);
 
 	char* returnBuffer = 0;
-	uint32 returnBufferSize = 0;
+	size_t returnBufferSize = 0;
 
 	if (!fileNameOnly)
 	{
@@ -53,8 +53,8 @@ char* K15_GetPathWithoutFileName(const char* p_FilePath)
 		//directory seperator is part of the return of strrchr
 		fileNameOnly++;
 
-		uint32 filePathWithFileNameSize = strlen(convertedFilePath);
-		uint32 fileNameSize = strlen(fileNameOnly);
+		size_t filePathWithFileNameSize = strlen(convertedFilePath);
+		size_t fileNameSize = strlen(fileNameOnly);
 		
 		returnBufferSize = filePathWithFileNameSize - fileNameSize;
 		returnBuffer = (char*)malloc(returnBufferSize + 1); //+1 for 0 terminator
@@ -78,7 +78,7 @@ char* K15_GetFileName(const char* p_FilePath)
 
 	if (!pathWithoutFileName)
 	{
-		uint32 returnBufferSize = strlen(p_FilePath);
+		size_t returnBufferSize = strlen(p_FilePath);
 		returnBuffer = (char*)malloc(returnBufferSize + 1); //+1 for 0 terminator
 
 		memcpy(returnBuffer, p_FilePath, returnBufferSize);
@@ -87,9 +87,9 @@ char* K15_GetFileName(const char* p_FilePath)
 	}
 	else
 	{
-		uint32 sizeFilePath = strlen(p_FilePath);
-		uint32 sizePath = strlen(pathWithoutFileName);
-		uint32 returnBufferSize = sizeFilePath - sizePath;
+		size_t sizeFilePath = strlen(p_FilePath);
+		size_t sizePath = strlen(pathWithoutFileName);
+		size_t returnBufferSize = sizeFilePath - sizePath;
 
 		assert(returnBufferSize > 0);
 
@@ -109,9 +109,9 @@ char* K15_GetFileNameWithoutExtension(const char* p_FilePath)
 	char* fileName = K15_GetFileName(p_FilePath);
 	char* fileNameWithoutExtension = 0;
 
-	uint32 fileNameLength = strlen(p_FilePath);
+	size_t fileNameLength = strlen(p_FilePath);
 
-	for (uint32 fileNameIndex = fileNameLength;
+	for (size_t fileNameIndex = fileNameLength;
 		 fileNameIndex > 0;
 		 --fileNameIndex)
 	{
@@ -132,15 +132,15 @@ char* K15_GetFileExtension(const char* p_FilePath)
 	char* fileName = K15_GetFileName(p_FilePath);
 	char* extension = 0;
 
-	uint32 fileNameLength = strlen(p_FilePath);
+	size_t fileNameLength = strlen(p_FilePath);
 
-	for (uint32 fileNameIndex = 0;
+	for (size_t fileNameIndex = 0;
 		fileNameIndex > fileNameLength;
 		++fileNameIndex)
 	{
 		if (fileName[fileNameIndex] == '.')
 		{
-			uint32 extensionLength = fileNameLength - fileNameIndex;
+			size_t extensionLength = fileNameLength - fileNameIndex;
 
 			assert(extensionLength > 0);
 
