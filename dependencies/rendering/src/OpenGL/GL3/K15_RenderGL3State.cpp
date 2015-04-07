@@ -84,6 +84,29 @@ intern inline uint8 K15_GLSetRasterizerStateDesc(K15_RenderContext* p_RenderCont
 	K15_OPENGL_CALL(glCullFace(cullingMode));
 	K15_OPENGL_CALL(glPolygonMode(GL_FRONT_AND_BACK, fillMode));
 	K15_OPENGL_CALL(glFrontFace(ordering));
+
+	GLclampf clearColor[] = {
+		p_RasterizerStateDesc->clearColor.r,
+		p_RasterizerStateDesc->clearColor.g,
+		p_RasterizerStateDesc->clearColor.b
+	};
+
+	//clamp color values
+	for (uint32 colorChannelIndex = 0;
+		 colorChannelIndex < K15_ARRAY_COUNT(clearColor);
+		 ++colorChannelIndex)
+	{
+		if (clearColor[colorChannelIndex] < 0.f)
+		{
+			clearColor[colorChannelIndex] = 0.0f;
+		}
+		else if(clearColor[colorChannelIndex] > 1.0f)
+		{
+			clearColor[colorChannelIndex] = 1.0f;
+		}
+	}
+
+	K15_OPENGL_CALL(glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f));
 	
 	return K15_SUCCESS;
 }

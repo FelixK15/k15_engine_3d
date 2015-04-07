@@ -26,6 +26,9 @@ intern inline uint8 K15_InternalDiffRasterizerState(K15_RenderRasterizerStateDes
 		&& K15_CHECK_MEMBERS(p_RasterizerState1, p_RasterizerState2, vertexOrder)
 		&& K15_CHECK_MEMBERS(p_RasterizerState1, p_RasterizerState2, depthBias)
 		&& K15_CHECK_MEMBERS(p_RasterizerState1, p_RasterizerState2, depthBiasClamp)
+		&& K15_CHECK_MEMBERS(p_RasterizerState1, p_RasterizerState2, clearColor.r)
+		&& K15_CHECK_MEMBERS(p_RasterizerState1, p_RasterizerState2, clearColor.g)
+		&& K15_CHECK_MEMBERS(p_RasterizerState1, p_RasterizerState2, clearColor.b)
 		&& K15_CHECK_MEMBERS(p_RasterizerState1, p_RasterizerState2, scissoringEnabled))
 	{
 		result = FALSE;

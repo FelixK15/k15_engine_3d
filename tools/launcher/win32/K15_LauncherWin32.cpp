@@ -98,6 +98,8 @@ void K15_InternalSetRasterizerState(K15_RenderCommandBuffer* p_RenderCommandBuff
 	rasterizerState.vertexOrder = K15_VERTEX_ORDER_CLOCKWISE;
 	rasterizerState.scissoringEnabled = FALSE;
 
+	rasterizerState.clearColor.r = 1.0f;
+
 	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_SET_RASTERIZER_STATE);
 	K15_AddRenderRasterizerStateDescParameter(p_RenderCommandBuffer, &rasterizerState);
 	K15_EndRenderCommand(p_RenderCommandBuffer);
