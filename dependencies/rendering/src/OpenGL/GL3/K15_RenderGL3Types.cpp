@@ -17,6 +17,8 @@ PFNGLGETACTIVEUNIFORMPROC			kglGetActiveUniform				= 0;
 PFNGLGETACTIVEATTRIBPROC			kglGetActiveAttrib				= 0;
 PFNGLGETUNIFORMLOCATIONPROC			kglGetUniformLocation			= 0;
 PFNGLGETATTRIBLOCATIONPROC			kglGetAttribLocation			= 0;
+PFNGLBLENDEQUATIONSEPARATEPROC		kglBlendEquationSeparate		= 0;
+PFNGLBLENDFUNCSEPARATEPROC			kglBlendFuncSeparate			= 0;
 
 //GL_ARB_debug_output
 PFNGLDEBUGMESSAGECALLBACKPROC		kglDebugMessageCallback			= 0;

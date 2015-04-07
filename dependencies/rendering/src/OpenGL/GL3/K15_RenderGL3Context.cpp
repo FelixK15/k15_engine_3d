@@ -9,6 +9,7 @@
 #include "K15_RenderContext.h"
 #include "K15_RenderBufferDesc.h"
 #include "K15_RenderProgramDesc.h"
+#include "K15_RenderStateDesc.h"
 
 #include <K15_Logging.h>
 
@@ -21,6 +22,7 @@
 #include "OpenGL/GL3/K15_RenderGL3Frame.cpp"
 #include "OpenGL/GL3/K15_RenderGL3Draw.cpp"
 #include "OpenGL/GL3/K15_RenderGL3Program.cpp"
+#include "OpenGL/GL3/K15_RenderGL3State.cpp"
 
 typedef uint8 (*K15_CreatePlatformContextFnc)(K15_GLRenderContext*, K15_OSLayerContext*);
 
@@ -205,6 +207,8 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 	kglGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)kglGetProcAddress("glGetUniformLocation");
 	kglGetAttribLocation = (PFNGLGETATTRIBLOCATIONPROC)kglGetProcAddress("glGetAttribLocation");
 	kglGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC)kglGetProcAddress("glGetProgramInfoLog");
+	kglBlendEquationSeparate = (PFNGLBLENDEQUATIONSEPARATEPROC)kglGetProcAddress("glBlendEquationSeparate");
+	kglBlendFuncSeparate = (PFNGLBLENDFUNCSEPARATEPROC)kglGetProcAddress("glBlendFuncSeparate");
 
 	if(K15_Search("GL_AMD_debug_output", p_GLRenderContext->extensions.names, 
 		p_GLRenderContext->extensions.count, sizeof(char*), K15_CmpStrings) != 0)
@@ -365,6 +369,13 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 	p_RenderContext->commandProcessing.programManagement.createProgram = K15_GLCreateProgram;
 	p_RenderContext->commandProcessing.programManagement.deleteProgram = K15_GLDeleteProgram;
 	p_RenderContext->commandProcessing.programManagement.updateUniform = K15_GLUpdateUniform;
+
+	//state management
+	p_RenderContext->commandProcessing.stateManagement.setDepthState = K15_GLSetDepthStateDesc;
+	p_RenderContext->commandProcessing.stateManagement.setBlendState = K15_GLSetBlendStateDesc;
+	p_RenderContext->commandProcessing.stateManagement.setRasterizerState = K15_GLSetRasterizerStateDesc;
+	p_RenderContext->commandProcessing.stateManagement.setStencilState = K15_GLSetStencilStateDesc;
+
 
 	glContext->vendorString = glGetString(GL_VENDOR);
 	glContext->rendererString = glGetString(GL_RENDERER);

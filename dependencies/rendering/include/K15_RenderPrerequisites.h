@@ -55,5 +55,9 @@ struct K15_RenderBufferDesc;
 struct K15_RenderBufferUpdateDesc;
 struct K15_RenderProgramDesc;
 struct K15_RenderUniformUpdateDesc;
+struct K15_RenderBlendStateDesc;
+struct K15_RenderStencilStateDesc;
+struct K15_RenderDepthStateDesc;
+struct K15_RenderRasterizerStateDesc;
 
 #endif //K15_Render_Prerequisties_h_

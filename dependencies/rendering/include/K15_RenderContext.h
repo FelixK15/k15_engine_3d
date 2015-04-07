@@ -28,6 +28,12 @@ typedef uint8 (*K15_CreateProgramCommandFnc)(K15_RenderContext* p_RenderContext,
 typedef uint8 (*K15_DeleteProgramCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderProgramHandle* p_RenderProgramHandlePtr);
 typedef uint8 (*K15_UpdateUniformCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc, K15_RenderProgramHandle* p_RenderProgramHandlePtr);
 
+//states
+typedef uint8 (*K15_SetDepthStateCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderDepthStateDesc* p_RenderDepthStateDesc);
+typedef uint8 (*K15_SetStencilStateCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderStencilStateDesc* p_RenderStencilStateDesc);
+typedef uint8 (*K15_SetRasterizerStateCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderRasterizerStateDesc* p_RenderRasterizerStateDesc);
+typedef uint8 (*K15_SetBlendStateCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderBlendStateDesc* p_RenderDepthStateDesc);
+
 enum K15_RenderCommand
 {
 	K15_RENDER_COMMAND_CLEAR_SCREEN = 0,
@@ -44,6 +50,11 @@ enum K15_RenderCommand
 	//uniforms
 	K15_RENDER_COMMAND_UPDATE_UNIFORM,
 	
+	//render states
+	K15_RENDER_COMMAND_SET_BLEND_STATE,
+	K15_RENDER_COMMAND_SET_DEPTH_STATE,
+	K15_RENDER_COMMAND_SET_STENCIL_STATE,
+	K15_RENDER_COMMAND_SET_RASTERIZER_STATE,
 
 	K15_RENDER_COMMAND_COUNT
 };
@@ -165,6 +176,14 @@ struct K15_RenderContext
 			K15_DeleteProgramCommandFnc deleteProgram;
 			K15_UpdateUniformCommandFnc updateUniform;
 		} programManagement;
+
+		struct K15_StateManagementCommands
+		{
+			K15_SetDepthStateCommandFnc setDepthState;
+			K15_SetStencilStateCommandFnc setStencilState;
+			K15_SetRasterizerStateCommandFnc setRasterizerState;
+			K15_SetBlendStateCommandFnc setBlendState;
+		} stateManagement;
 	} commandProcessing;
 
 	struct 
@@ -178,6 +197,14 @@ struct K15_RenderContext
 		K15_RenderProgramDesc* programs;
 		uint32 amountPrograms;
 	} gpuProgram;
+
+	struct 
+	{
+		K15_RenderBlendStateDesc* blendStateDesc;
+		K15_RenderStencilStateDesc* stencilStateDesc;
+		K15_RenderDepthStateDesc* depthStateDesc;
+		K15_RenderRasterizerStateDesc* rasterizerStateDesc;
+	} renderState;
 
 	uint32 amountCommandBuffers;
 	uint32 flags;
@@ -216,6 +243,12 @@ uint8 K15_AddRenderProgramDescParameter(K15_RenderCommandBuffer* p_RenderCommand
 
 //Uniform Parameter
 uint8 K15_AddRenderUniformUpdateDescParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc);
+
+//State Parameter
+uint8 K15_AddRenderDepthStateDescParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderDepthStateDesc* p_RenderDepthStateDesc);
+uint8 K15_AddRenderStencilStateDescParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderStencilStateDesc* p_RenderStencilStateDesc);
+uint8 K15_AddRenderRasterizerStateDescParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderRasterizerStateDesc* p_RenderRasterizerStateDesc);
+uint8 K15_AddRenderBlendStateDescParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderBlendStateDesc* p_RenderBlendStateDesc);
 
 void K15_DispatchRenderCommandBuffer(K15_RenderCommandBuffer* p_RenderCommandBuffer);
 void K15_ProcessDispatchedRenderCommandBuffers(K15_RenderContext* p_RenderContext);

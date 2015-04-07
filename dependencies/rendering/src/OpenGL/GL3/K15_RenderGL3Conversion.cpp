@@ -96,6 +96,249 @@ inline GLenum K15_GLConvertBufferUsage(K15_RenderBufferUsage p_BufferUsage)
 	return nativeBufferUsage;
 }
 /*********************************************************************************/
+GLenum K15_GLConvertCullingMode(K15_CullingMode p_CullingMode)
+{
+	GLenum nativeCullingMode = GL_INVALID_ENUM;
+
+	switch(p_CullingMode)
+	{
+		case K15_CULLING_MODE_FRONT:
+		{
+			nativeCullingMode = GL_FRONT;
+			break;
+		}
+
+		case K15_CULLING_MODE_BACK:
+		{
+			nativeCullingMode = GL_BACK;
+			break;
+		}
+	}
+
+	return nativeCullingMode;
+}
+/*********************************************************************************/
+GLenum K15_GLConvertFillMode(K15_FillMode p_FillMode)
+{
+	GLenum nativeFillMode = GL_INVALID_ENUM;
+
+	switch (p_FillMode)
+	{
+		case K15_FILLMODE_SOLID:
+		{
+			nativeFillMode = GL_FILL;
+			break;
+		}
+
+		case K15_FILLMODE_WIREFRAME:
+		{
+			nativeFillMode = GL_LINE;
+			break;
+		}
+	}
+
+	return nativeFillMode;
+}
+/*********************************************************************************/
+GLenum K15_GLConvertVertexOrdering(K15_VertexOrder p_VertexOrder)
+{
+	GLenum nativeVertexOrder = GL_INVALID_ENUM;
+
+	switch(p_VertexOrder)
+	{
+		case K15_VERTEX_ORDER_CLOCKWISE:
+		{
+			nativeVertexOrder = GL_CW;
+			break;
+		}
+
+		case K15_VERTEX_ORDER_COUNTER_CLOCKWISE:
+		{
+			nativeVertexOrder = GL_CCW;
+			break;
+		}
+	}
+
+	return nativeVertexOrder;
+}
+/*********************************************************************************/
+GLenum K15_GLConvertBlendOperation(K15_BlendOperation p_BlendOperation)
+{
+	GLenum nativeBlendOperator = GL_INVALID_ENUM;
+
+	switch(p_BlendOperation)
+	{
+		case K15_BLEND_OPERATION_ADD:
+		{
+			nativeBlendOperator = GL_FUNC_ADD;
+			break;
+		}
+		
+		case K15_BLEND_OPERATION_SUBTRACT:
+		{
+			nativeBlendOperator = GL_FUNC_SUBTRACT;
+			break;
+		}
+
+		case K15_BLEND_OPERATION_REVERSE_SUBTRACT:
+		{
+			nativeBlendOperator = GL_FUNC_REVERSE_SUBTRACT;
+			break;
+		}
+
+		case K15_BLEND_OPERATION_MAX:
+		{
+			nativeBlendOperator = GL_MAX;
+			break;
+		}
+
+		case K15_BLEND_OPERATION_MIN:
+		{
+			nativeBlendOperator = GL_MIN;
+			break;
+		}
+
+		default:
+		{
+			assert(false);
+		}
+	}
+
+	return nativeBlendOperator;
+}
+/*********************************************************************************/
+GLenum K15_GLConvertBlend(K15_Blend p_Blend)
+{
+	GLenum nativeBlend = GL_INVALID_ENUM;
+
+	switch(p_Blend)
+	{
+		case K15_BLEND_ZERO:
+		{
+			nativeBlend = GL_ZERO;
+			break;
+		}
+
+		case K15_BLEND_ONE:
+		{
+			nativeBlend = GL_ONE;
+			break;
+		}
+
+		case K15_BLEND_SRC_COLOR:
+		{
+			nativeBlend = GL_SRC_COLOR;
+			break;
+		}
+
+		case K15_BLEND_INVERSE_SRC_COLOR:
+		{
+			nativeBlend = GL_ONE_MINUS_SRC_COLOR;
+			break;
+		}
+
+		case K15_BLEND_DESC_COLOR:
+		{
+			nativeBlend = GL_DST_COLOR;
+			break;
+		}
+
+		case K15_BLEND_INVERSE_DESC_COLOR:
+		{
+			nativeBlend = GL_ONE_MINUS_DST_COLOR;
+			break;
+		}
+
+		case K15_BLEND_SRC_ALPHA:
+		{
+			nativeBlend = GL_SRC_ALPHA;
+			break;
+		}
+
+		case K15_BLEND_INVERSE_SRC_ALPHA:
+		{
+			nativeBlend = GL_ONE_MINUS_SRC_ALPHA;
+			break;
+		}
+
+		case K15_BLEND_DEST_ALPHA:
+		{
+			nativeBlend = GL_DST_ALPHA;
+			break;
+		}
+
+		case K15_BLEND_INVERSE_DEST_ALPHA:
+		{
+			nativeBlend = GL_ONE_MINUS_DST_ALPHA;
+			break;
+		}
+
+		default:
+		{
+			assert(false);
+		}
+	}
+
+	return nativeBlend;
+}
+/*********************************************************************************/
+GLenum K15_GLConvertCompareFunction(K15_Comparison p_Comparison)
+{
+	GLenum nativeCompareFunc = GL_INVALID_ENUM;
+
+	switch(p_Comparison)
+	{
+		case K15_COMPARISON_ALWAYS:
+		{
+			nativeCompareFunc = GL_ALWAYS;
+			break;
+		}
+
+		case K15_COMPARISON_EQUAL:
+		{
+			nativeCompareFunc = GL_EQUAL;
+			break;
+		}
+
+		case K15_COMPARISON_GREATER:
+		{
+			nativeCompareFunc = GL_GREATER;
+			break;
+		}
+
+		case K15_COMPARISON_GREATER_EQUAL:
+		{
+			nativeCompareFunc = GL_GEQUAL;
+			break;
+		}
+
+		case K15_COMPARISON_LESS:
+		{
+			nativeCompareFunc = GL_LESS;
+			break;
+		}
+
+		case K15_COMPARISON_LESS_EQUAL:
+		{
+			nativeCompareFunc = GL_LEQUAL;
+			break;
+		}
+
+		case K15_COMPARISON_NEVER:
+		{
+			nativeCompareFunc = GL_NEVER;
+			break;
+		}
+
+		default:
+		{
+			assert(false);		
+		}
+	}
+
+	return nativeCompareFunc;
+}
+/*********************************************************************************/
 GLenum K15_GLConvertUniformTypeToGLType(K15_UniformType p_UniformType)
 {
 	GLenum nativeUniformType = GL_INVALID_ENUM;

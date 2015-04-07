@@ -84,16 +84,18 @@ extern PFNWGLCREATECONTEXTATTRIBSARBPROC kwglCreateContextAttribsARB;
 #endif //K15_OS_WINDOWS
 
 //default gl functions
-extern PFNGLGENBUFFERSPROC			kglGenBuffers; 
-extern PFNGLBINDBUFFERPROC			kglBindBuffer;
-extern PFNGLDELETEBUFFERSPROC		kglDeleteBuffers;
-extern PFNGLGETPROGRAMIVPROC		kglGetProgramiv;
-extern PFNGLGETPROGRAMINFOLOGPROC	kglGetProgramInfoLog;
-extern PFNGLDELETEPROGRAMPROC		kglDeleteProgram;
-extern PFNGLGETACTIVEUNIFORMPROC	kglGetActiveUniform;
-extern PFNGLGETACTIVEATTRIBPROC		kglGetActiveAttrib;
-extern PFNGLGETUNIFORMLOCATIONPROC	kglGetUniformLocation;
-extern PFNGLGETATTRIBLOCATIONPROC	kglGetAttribLocation;
+extern PFNGLGENBUFFERSPROC				kglGenBuffers; 
+extern PFNGLBINDBUFFERPROC				kglBindBuffer;
+extern PFNGLDELETEBUFFERSPROC			kglDeleteBuffers;
+extern PFNGLGETPROGRAMIVPROC			kglGetProgramiv;
+extern PFNGLGETPROGRAMINFOLOGPROC		kglGetProgramInfoLog;
+extern PFNGLDELETEPROGRAMPROC			kglDeleteProgram;
+extern PFNGLGETACTIVEUNIFORMPROC		kglGetActiveUniform;
+extern PFNGLGETACTIVEATTRIBPROC			kglGetActiveAttrib;
+extern PFNGLGETUNIFORMLOCATIONPROC		kglGetUniformLocation;
+extern PFNGLGETATTRIBLOCATIONPROC		kglGetAttribLocation;
+extern PFNGLBLENDEQUATIONSEPARATEPROC	kglBlendEquationSeparate;
+extern PFNGLBLENDFUNCSEPARATEPROC		kglBlendFuncSeparate;
 
 //GL_ARB_debug_output
 extern PFNGLDEBUGMESSAGECALLBACKPROC kglDebugMessageCallback;

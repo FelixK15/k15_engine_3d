@@ -12,6 +12,7 @@
 
 #include <K15_RenderBufferDesc.h>
 #include <K15_RenderProgramDesc.h>
+#include <K15_RenderStateDesc.h>
 
 #ifdef K15_OS_WINDOWS
 
@@ -75,6 +76,61 @@ void K15_InternalFillViewportUniform(K15_RenderCommandBuffer* p_RenderCommandBuf
 	K15_AddRenderUniformUpdateDescParameter(p_RenderCommandBuffer, &uniformUpdateDesc);
 	K15_EndRenderCommand(p_RenderCommandBuffer);
 }
+/*********************************************************************************/
+void K15_InternalSetDepthState(K15_RenderCommandBuffer* p_RenderCommandBuffer)
+{
+	K15_RenderDepthStateDesc depthStateDesc;
+
+	depthStateDesc.compareFunction = K15_COMPARISON_GREATER_EQUAL;
+	depthStateDesc.enabled = TRUE;
+
+	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_SET_DEPTH_STATE);
+	K15_AddRenderDepthStateDescParameter(p_RenderCommandBuffer, &depthStateDesc);
+	K15_EndRenderCommand(p_RenderCommandBuffer);
+}
+/*********************************************************************************/
+void K15_InternalSetRasterizerState(K15_RenderCommandBuffer* p_RenderCommandBuffer)
+{
+	K15_RenderRasterizerStateDesc rasterizerState = {};
+
+	rasterizerState.cullingMode = K15_CULLING_MODE_BACK;
+	rasterizerState.fillMode = K15_FILLMODE_WIREFRAME;
+	rasterizerState.vertexOrder = K15_VERTEX_ORDER_CLOCKWISE;
+	rasterizerState.scissoringEnabled = FALSE;
+
+	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_SET_RASTERIZER_STATE);
+	K15_AddRenderRasterizerStateDescParameter(p_RenderCommandBuffer, &rasterizerState);
+	K15_EndRenderCommand(p_RenderCommandBuffer);
+}
+/*********************************************************************************/
+void K15_InternalSetStencilState(K15_RenderCommandBuffer* p_RenderCommandBuffer)
+{
+	K15_RenderStencilStateDesc stencilStateDesc = {};
+
+	stencilStateDesc.enabled = TRUE;
+	stencilStateDesc.readMask = 0xff;
+	stencilStateDesc.writeMask = 0xff;
+
+	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_SET_STENCIL_STATE);
+	K15_AddRenderStencilStateDescParameter(p_RenderCommandBuffer, &stencilStateDesc);
+	K15_EndRenderCommand(p_RenderCommandBuffer);
+}
+/*********************************************************************************/
+void K15_InternalSetBlendState(K15_RenderCommandBuffer* p_RenderCommandBuffer)
+{
+	K15_RenderBlendStateDesc blendStateDesc = {};
+
+	blendStateDesc.blendOperationAlpha = K15_BLEND_OPERATION_ADD;
+	blendStateDesc.blendOperationRGB = K15_BLEND_OPERATION_ADD;
+
+	blendStateDesc.destinationBlendAlpha = K15_BLEND_ONE;
+
+	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_SET_BLEND_STATE);
+	K15_AddRenderBlendStateDescParameter(p_RenderCommandBuffer, &blendStateDesc);
+	K15_EndRenderCommand(p_RenderCommandBuffer);
+}
+/*********************************************************************************/
+
 
 
 int CALLBACK WinMain(
@@ -116,11 +172,17 @@ int CALLBACK WinMain(
 // 	K15_InternalCreateTriangleBuffer(renderCommandBuffer, &triangleVertexBuffer);
 
 	// Test 2: Load Shader
-	K15_RenderProgramHandle programHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
-	K15_InternalCreateVertexShader(renderCommandBuffer, &programHandle);
+// 	K15_RenderProgramHandle programHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
+// 	K15_InternalCreateVertexShader(renderCommandBuffer, &programHandle);
 
 	// Test 3: Fill Uniforms
-	K15_InternalFillViewportUniform(renderCommandBuffer, &programHandle);
+//	K15_InternalFillViewportUniform(renderCommandBuffer, &programHandle);
+	
+	// Test 3: Set Render States
+	K15_InternalSetDepthState(renderCommandBuffer);
+	K15_InternalSetRasterizerState(renderCommandBuffer);
+	K15_InternalSetBlendState(renderCommandBuffer);
+	K15_InternalSetStencilState(renderCommandBuffer);
 
 	while (running)
 	{
