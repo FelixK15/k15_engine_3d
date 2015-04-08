@@ -18,7 +18,7 @@ intern inline void K15_InternalCheckRenderBufferDescFlags(K15_RenderBufferDesc* 
 {
 	assert(p_RenderBufferDesc);
 
-	if ((p_RenderBufferDesc->flags | K15_RENDER_DESC_AUTO_CLEANUP_FLAG) > 0
+	if ((p_RenderBufferDesc->flags & K15_RENDER_DESC_AUTO_CLEANUP_FLAG) > 0
 		&& p_RenderBufferDesc->data)
 	{
 		free(p_RenderBufferDesc->data);
@@ -29,7 +29,7 @@ intern inline void K15_InternalCheckRenderBufferUpdateDescFlags(K15_RenderBuffer
 {
 	assert(p_RenderBufferUpdateDesc);
 
-	if ((p_RenderBufferUpdateDesc->flags | K15_RENDER_DESC_AUTO_CLEANUP_FLAG) > 0
+	if ((p_RenderBufferUpdateDesc->flags & K15_RENDER_DESC_AUTO_CLEANUP_FLAG) > 0
 		&& p_RenderBufferUpdateDesc->data)
 	{
 		free(p_RenderBufferUpdateDesc->data);
@@ -40,7 +40,7 @@ intern inline void K15_InternalCheckRenderUniformUpdateDescFlags(K15_RenderUnifo
 {
 	assert(p_RenderUniformUpdateDesc);
 
-	if ((p_RenderUniformUpdateDesc->flags | K15_RENDER_DESC_AUTO_CLEANUP_FLAG) > 0
+	if ((p_RenderUniformUpdateDesc->flags & K15_RENDER_DESC_AUTO_CLEANUP_FLAG) > 0
 		&& p_RenderUniformUpdateDesc->data)
 	{
 		free(p_RenderUniformUpdateDesc->data);
@@ -51,7 +51,7 @@ intern inline void K15_InternalCheckRenderTextureDescFlags(K15_RenderTextureDesc
 {
 	assert(p_RenderTextureDesc);
 
-	if ((p_RenderTextureDesc->flags | K15_RENDER_DESC_AUTO_CLEANUP_FLAG) > 0
+	if ((p_RenderTextureDesc->flags & K15_RENDER_DESC_AUTO_CLEANUP_FLAG) > 0
 		&& p_RenderTextureDesc->data)
 	{
 		free(p_RenderTextureDesc->data);
@@ -62,7 +62,7 @@ intern inline void K15_InternalCheckRenderTextureUpdateDescFlags(K15_RenderTextu
 {
 	assert(p_RenderTextureUpdateDesc);
 
-	if ((p_RenderTextureUpdateDesc->flags | K15_RENDER_DESC_AUTO_CLEANUP_FLAG) > 0
+	if ((p_RenderTextureUpdateDesc->flags & K15_RENDER_DESC_AUTO_CLEANUP_FLAG) > 0
 		&& p_RenderTextureUpdateDesc->data)
 	{
 		free(p_RenderTextureUpdateDesc->data);

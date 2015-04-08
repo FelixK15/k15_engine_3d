@@ -28,13 +28,12 @@ void K15_InternalCreateTriangleBuffer(K15_RenderCommandBuffer* p_RenderCommandBu
 		0.5f, .5f, 0.f
 	};
 
-	K15_RenderBufferDesc desc;
+	K15_RenderBufferDesc desc = {};
 	desc.access = K15_RENDER_BUFFER_ACCESS_ALL;
 	desc.data = (byte*)triangle;
 	desc.size = sizeof(float) * 9;
 	desc.type = K15_RENDER_BUFFER_TYPE_VERTEX;
 	desc.usage = K15_RENDER_BUFFER_USAGE_STATIC_DRAW;
-	desc.flags = K15_RENDER_DESC_AUTO_CLEANUP_FLAG;
 	
 	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_CREATE_BUFFER);
 	K15_AddRenderBufferHandleParameter(p_RenderCommandBuffer, p_BufferHandle);
@@ -84,7 +83,7 @@ void K15_InternalSetDepthState(K15_RenderCommandBuffer* p_RenderCommandBuffer)
 	K15_RenderDepthStateDesc depthStateDesc;
 
 	depthStateDesc.compareFunction = K15_COMPARISON_GREATER_EQUAL;
-	depthStateDesc.enabled = TRUE;
+	depthStateDesc.enabled = FALSE;
 
 	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_SET_DEPTH_STATE);
 	K15_AddRenderDepthStateDescParameter(p_RenderCommandBuffer, &depthStateDesc);
@@ -224,21 +223,21 @@ int CALLBACK WinMain(
 
 
 	//Test 1: Create Vertex Buffer
-// 	K15_RenderBufferHandle triangleVertexBuffer = K15_INVALID_GPU_RESOURCE_HANDLE;
-// 	K15_InternalCreateTriangleBuffer(renderCommandBuffer, &triangleVertexBuffer);
+ 	K15_RenderBufferHandle triangleVertexBuffer = K15_INVALID_GPU_RESOURCE_HANDLE;
+ 	K15_InternalCreateTriangleBuffer(renderCommandBuffer, &triangleVertexBuffer);
 
 	// Test 2: Load Shader
-// 	K15_RenderProgramHandle programHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
-// 	K15_InternalCreateVertexShader(renderCommandBuffer, &programHandle);
+ 	K15_RenderProgramHandle programHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
+ 	K15_InternalCreateVertexShader(renderCommandBuffer, &programHandle);
 
 	// Test 3: Fill Uniforms
-//	K15_InternalFillViewportUniform(renderCommandBuffer, &programHandle);
+	K15_InternalFillViewportUniform(renderCommandBuffer, &programHandle);
 	
 	// Test 3: Set Render States
-// 	K15_InternalSetDepthState(renderCommandBuffer);
-// 	K15_InternalSetRasterizerState(renderCommandBuffer);
-// 	K15_InternalSetBlendState(renderCommandBuffer);
-// 	K15_InternalSetStencilState(renderCommandBuffer);
+ 	K15_InternalSetDepthState(renderCommandBuffer);
+ 	K15_InternalSetRasterizerState(renderCommandBuffer);
+ 	K15_InternalSetBlendState(renderCommandBuffer);
+ 	K15_InternalSetStencilState(renderCommandBuffer);
 
 	// Test 4: Set Create Texture
 	K15_RenderTextureHandle textureHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
