@@ -6,87 +6,13 @@
 
 #include "K15_RenderBufferDesc.h"
 #include "K15_RenderProgramDesc.h"
+#include "K15_RenderTextureDesc.h"
 #include "K15_RenderStateDesc.h"
 
 #include "OpenGL/K15_RenderGLContext.h"
 
 #define K15_RENDERING_MAX_RESCHEDULE_COMMAND_COUNT 32
 
-#define K15_CHECK_MEMBERS(x1, x2, attribute) (x1->attribute == x2->attribute)
-
-/*********************************************************************************/
-intern inline uint8 K15_InternalDiffRasterizerState(K15_RenderRasterizerStateDesc* p_RasterizerState1, K15_RenderRasterizerStateDesc* p_RasterizerState2)
-{
-	assert(p_RasterizerState1 && p_RasterizerState2);
-
-	uint8 result = TRUE;
-	
-	if (K15_CHECK_MEMBERS(p_RasterizerState1, p_RasterizerState2, cullingMode) 
-		&& K15_CHECK_MEMBERS(p_RasterizerState1, p_RasterizerState2, fillMode)
-		&& K15_CHECK_MEMBERS(p_RasterizerState1, p_RasterizerState2, vertexOrder)
-		&& K15_CHECK_MEMBERS(p_RasterizerState1, p_RasterizerState2, depthBias)
-		&& K15_CHECK_MEMBERS(p_RasterizerState1, p_RasterizerState2, depthBiasClamp)
-		&& K15_CHECK_MEMBERS(p_RasterizerState1, p_RasterizerState2, clearColor.r)
-		&& K15_CHECK_MEMBERS(p_RasterizerState1, p_RasterizerState2, clearColor.g)
-		&& K15_CHECK_MEMBERS(p_RasterizerState1, p_RasterizerState2, clearColor.b)
-		&& K15_CHECK_MEMBERS(p_RasterizerState1, p_RasterizerState2, scissoringEnabled))
-	{
-		result = FALSE;
-	}
-
-	return result;
-}
-/*********************************************************************************/
-intern inline uint8 K15_InternalDiffDepthState(K15_RenderDepthStateDesc* p_DepthState1, K15_RenderDepthStateDesc* p_DepthState2)
-{
-	assert(p_DepthState1 && p_DepthState2);
-
-	uint8 result = TRUE;
-
-	if (K15_CHECK_MEMBERS(p_DepthState1, p_DepthState2, compareFunction)
-		&& K15_CHECK_MEMBERS(p_DepthState1, p_DepthState2, enabled))
-	{
-		result = FALSE;
-	}
-
-	return result;
-}
-/*********************************************************************************/
-intern inline uint8 K15_InternalDiffStencilState(K15_RenderStencilStateDesc* p_StencilState1, K15_RenderStencilStateDesc* p_StencilState2)
-{
-	assert(p_StencilState1 && p_StencilState2);
-
-	uint8 result = TRUE;
-
-	if (K15_CHECK_MEMBERS(p_StencilState1, p_StencilState2, writeMask)
-		&& K15_CHECK_MEMBERS(p_StencilState1, p_StencilState2, readMask)
-		&& K15_CHECK_MEMBERS(p_StencilState1, p_StencilState2, enabled))
-	{
-		result = FALSE;
-	}
-
-	return result;
-}
-/*********************************************************************************/
-intern inline uint8 K15_InternalDiffBlendState(K15_RenderBlendStateDesc* p_BlendState1, K15_RenderBlendStateDesc* p_BlendState2)
-{
-	assert(p_BlendState1 && p_BlendState2);
-
-	uint8 result = TRUE;
-
-	if (K15_CHECK_MEMBERS(p_BlendState1, p_BlendState2, sourceBlendRGB)
-		&& K15_CHECK_MEMBERS(p_BlendState1, p_BlendState2, destinationBlendRGB)
-		&& K15_CHECK_MEMBERS(p_BlendState1, p_BlendState2, blendOperationRGB)
-		&& K15_CHECK_MEMBERS(p_BlendState1, p_BlendState2, sourceBlendAlpha)
-		&& K15_CHECK_MEMBERS(p_BlendState1, p_BlendState2, destinationBlendAlpha)
-		&& K15_CHECK_MEMBERS(p_BlendState1, p_BlendState2, blendOperationAlpha)
-		&& K15_CHECK_MEMBERS(p_BlendState1, p_BlendState2, enabled))
-	{
-		result = FALSE;
-	}
-
-	return result;
-}
 /*********************************************************************************/
 intern inline void K15_InternalCheckRenderBufferDescFlags(K15_RenderBufferDesc* p_RenderBufferDesc)
 {
@@ -119,6 +45,40 @@ intern inline void K15_InternalCheckRenderUniformUpdateDescFlags(K15_RenderUnifo
 	{
 		free(p_RenderUniformUpdateDesc->data);
 	}
+}
+/*********************************************************************************/
+intern inline void K15_InternalCheckRenderTextureDescFlags(K15_RenderTextureDesc* p_RenderTextureDesc)
+{
+	assert(p_RenderTextureDesc);
+
+	if ((p_RenderTextureDesc->flags | K15_RENDER_DESC_AUTO_CLEANUP_FLAG) > 0
+		&& p_RenderTextureDesc->data)
+	{
+		free(p_RenderTextureDesc->data);
+	}
+}
+/*********************************************************************************/
+intern inline void K15_InternalCheckRenderTextureUpdateDescFlags(K15_RenderTextureUpdateDesc* p_RenderTextureUpdateDesc)
+{
+	assert(p_RenderTextureUpdateDesc);
+
+	if ((p_RenderTextureUpdateDesc->flags | K15_RENDER_DESC_AUTO_CLEANUP_FLAG) > 0
+		&& p_RenderTextureUpdateDesc->data)
+	{
+		free(p_RenderTextureUpdateDesc->data);
+	}
+}
+/*********************************************************************************/
+intern inline K15_RenderTextureHandle K15_InternalAddRenderTextureDesc(K15_RenderContext* p_RenderContext, K15_RenderTextureDesc* p_RenderTextureDesc)
+{
+	//get current texture index
+	uint32 gpuTextureIndex = p_RenderContext->gpuTexture.amountTextures++;
+
+	assert(gpuTextureIndex < K15_RENDER_MAX_GPU_PROGRAMS);
+
+	p_RenderContext->gpuTexture.textures[gpuTextureIndex] = *p_RenderTextureDesc;
+
+	return (K15_RenderTextureHandle)gpuTextureIndex;
 }
 /*********************************************************************************/
 intern inline K15_RenderProgramHandle K15_InternalAddRenderProgramDesc(K15_RenderContext* p_RenderContext, K15_RenderProgramDesc* p_RenderProgramDesc)
@@ -240,6 +200,48 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 			break;
 		}
 
+		case K15_RENDER_COMMAND_CREATE_TEXTURE:
+		{
+			K15_RenderTextureHandle* renderTextureHandle = 0;
+			K15_RenderTextureDesc renderTextureDesc = {};
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderTextureHandle);
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderTextureDesc), K15_PTR_SIZE, &renderTextureDesc);
+
+			*renderTextureHandle = K15_InternalAddRenderTextureDesc(p_RenderContext, &renderTextureDesc);
+
+			result = p_RenderContext->commandProcessing.textureManagement.createTexture(p_RenderContext, &renderTextureDesc, renderTextureHandle);
+
+			K15_InternalCheckRenderTextureDescFlags(&renderTextureDesc);
+
+			break;
+		}
+
+		case K15_RENDER_COMMAND_UPDATE_TEXTURE:
+		{
+			K15_RenderTextureHandle* renderTextureHandle = 0;
+			K15_RenderTextureUpdateDesc renderTextureUpdateDesc = {};
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderTextureHandle);
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderTextureUpdateDesc), K15_PTR_SIZE, &renderTextureUpdateDesc);
+			
+			result = p_RenderContext->commandProcessing.textureManagement.updateTexture(p_RenderContext, &renderTextureUpdateDesc, renderTextureHandle);
+
+			K15_InternalCheckRenderTextureUpdateDescFlags(&renderTextureUpdateDesc);
+
+			break;
+		}
+
+		case K15_RENDER_COMMAND_DELETE_TEXTURE:
+		{
+			K15_RenderTextureHandle* renderTextureHandle = 0;
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderTextureHandle);
+
+			result = p_RenderContext->commandProcessing.textureManagement.deleteTexture(p_RenderContext, renderTextureHandle);
+			break;
+		}
+
 		case K15_RENDER_COMMAND_UPDATE_UNIFORM:
 		{
 			K15_RenderProgramHandle* renderProgramHandle = 0;
@@ -262,7 +264,7 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderBlendStateDesc), 0, &renderBlendStateDesc);
 
 			//Check if the new blend state differs from the old blend state. Don't issue a GPU command if they dont differ
-			if (K15_InternalDiffBlendState(&renderBlendStateDesc, p_RenderContext->renderState.blendStateDesc) == TRUE)
+			if (memcmp(&renderBlendStateDesc, p_RenderContext->renderState.blendStateDesc, sizeof(renderBlendStateDesc)) == 0)
 			{
 				result = p_RenderContext->commandProcessing.stateManagement.setBlendState(p_RenderContext, &renderBlendStateDesc);
 
@@ -283,7 +285,7 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderStencilStateDesc), 0, &renderStencilStateDesc);
 
 			//Check if the new stencil state differs from the old stencil state. Don't issue a GPU command if they dont differ
-			if (K15_InternalDiffStencilState(&renderStencilStateDesc, p_RenderContext->renderState.stencilStateDesc) == TRUE)
+			if (memcmp(&renderStencilStateDesc, p_RenderContext->renderState.stencilStateDesc, sizeof(renderStencilStateDesc)) == 0)
 			{
 				result = p_RenderContext->commandProcessing.stateManagement.setStencilState(p_RenderContext, &renderStencilStateDesc);
 
@@ -304,7 +306,7 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderDepthStateDesc), 0, &renderDepthStateDesc);
 
 			//Check if the new depth state differs from the old depth state. Don't issue a GPU command if they dont differ
-			if (K15_InternalDiffDepthState(&renderDepthStateDesc, p_RenderContext->renderState.depthStateDesc) == TRUE)
+			if (memcmp(&renderDepthStateDesc, p_RenderContext->renderState.depthStateDesc, sizeof(renderDepthStateDesc)) == 0)
 			{
 				result = p_RenderContext->commandProcessing.stateManagement.setDepthState(p_RenderContext, &renderDepthStateDesc);
 
@@ -325,7 +327,7 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderRasterizerStateDesc), 0, &renderRasterizerStateDesc);
 			
 			//Check if the new rasterizer state differs from the old rasterizer state. Don't issue a GPU command if they dont differ
-			if (K15_InternalDiffRasterizerState(&renderRasterizerStateDesc, p_RenderContext->renderState.rasterizerStateDesc) == TRUE)
+			if (memcmp(&renderRasterizerStateDesc, p_RenderContext->renderState.rasterizerStateDesc, sizeof(renderRasterizerStateDesc)) == 0)
 			{
 				result = p_RenderContext->commandProcessing.stateManagement.setRasterizerState(p_RenderContext, &renderRasterizerStateDesc);
 
@@ -642,6 +644,18 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext)
 	/*********************************************************************************/
 
 	/*********************************************************************************/
+	//gpu textures
+	K15_RenderTextureDesc* gpuTextures = (K15_RenderTextureDesc*)malloc(sizeof(K15_RenderTextureDesc) * K15_RENDER_MAX_GPU_TEXTURES);
+
+	if (!gpuTextures)
+	{
+		assert(false);
+		return 0;
+	}
+
+	renderContext->gpuTexture.textures = gpuTextures;
+	renderContext->gpuTexture.amountTextures = 0;
+	/*********************************************************************************/
 	//states
 	renderContext->renderState.blendStateDesc = (K15_RenderBlendStateDesc*)malloc(sizeof(K15_RenderBlendStateDesc));
 	renderContext->renderState.depthStateDesc = (K15_RenderDepthStateDesc*)malloc(sizeof(K15_RenderDepthStateDesc));
@@ -908,6 +922,33 @@ uint8 K15_AddRenderBlendStateDescParameter(K15_RenderCommandBuffer* p_RenderComm
 	uint8 result = K15_InternalAddCommandBufferParameter(p_RenderCommandBuffer,
 		sizeof(K15_RenderBlendStateDesc),
 		p_RenderBlendStateDesc);
+
+	return result;
+}
+/*********************************************************************************/
+uint8 K15_AddRenderTextureHandleParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTextureHandle* p_RenderTextureHandle)
+{
+	uint8 result = K15_InternalAddCommandBufferParameter(p_RenderCommandBuffer,
+		K15_PTR_SIZE,
+		&p_RenderTextureHandle);
+
+	return result;
+}
+/*********************************************************************************/
+uint8 K15_AddRenderTextureDescParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTextureDesc* p_RenderTextureDesc)
+{
+	uint8 result = K15_InternalAddCommandBufferParameter(p_RenderCommandBuffer,
+		sizeof(K15_RenderTextureDesc),
+		p_RenderTextureDesc);
+
+	return result;
+}
+/*********************************************************************************/
+uint8 K15_AddRenderTextureUpdateDescParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTextureUpdateDesc* p_RenderTextureUpdateDesc)
+{
+	uint8 result = K15_InternalAddCommandBufferParameter(p_RenderCommandBuffer,
+		sizeof(K15_RenderTextureUpdateDesc),
+		p_RenderTextureUpdateDesc);
 
 	return result;
 }

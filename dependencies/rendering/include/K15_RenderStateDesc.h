@@ -96,13 +96,6 @@ struct K15_RenderRasterizerStateDesc
 	int32 depthBias;
 	float depthBiasClamp;
 
-	struct  
-	{
-		float r;
-		float g;
-		float b;
-	} clearColor;
-
 	uint8 scissoringEnabled;
 };
 

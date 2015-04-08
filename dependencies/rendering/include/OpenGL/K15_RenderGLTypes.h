@@ -17,6 +17,12 @@
 #define GL_DEBUG_CATEGORY_APPLICATION_AMD 0x914F
 #define GL_DEBUG_CATEGORY_OTHER_AMD 0x9150
 
+//GL_EXT_texture_compression_s3tc
+#define GL_COMPRESSED_RGB_S3TC_DXT1_EXT 0x83F0
+#define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT 0x83F1
+#define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT 0x83F2
+#define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT 0x83F3
+
 #include "K15_RenderPrerequisites.h"
 #include "K15_RenderGLConfig.h"
 
@@ -68,6 +74,7 @@ typedef void (APIENTRY *PFNGLTEXTUREIMAGE3DEXTPROC) (GLuint texture, GLenum targ
 typedef void (APIENTRY *PFNGLTEXTURESUBIMAGE1DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels);
 typedef void (APIENTRY *PFNGLTEXTURESUBIMAGE2DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels);
 typedef void (APIENTRY *PFNGLTEXTURESUBIMAGE3DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const GLvoid *pixels);
+typedef void (APIENTRY *PFNGLGENERATETEXTUREMIPMAPEXTPROC) (GLuint texture, GLenum target);
 typedef void (APIENTRY *PFNGLNAMEDBUFFERDATAEXTPROC) (GLuint buffer, GLsizeiptr size, const GLvoid *data, GLenum usage);
 typedef void (APIENTRY *PFNGLNAMEDBUFFERSUBDATAEXTPROC) (GLuint buffer, GLintptr offset, GLsizeiptr size, const GLvoid *data);
 typedef GLvoid* (APIENTRY *PFNGLMAPNAMEDBUFFEREXTPROC) (GLuint buffer, GLenum access);
@@ -115,6 +122,7 @@ extern PFNGLTEXTUREIMAGE3DEXTPROC kglTextureImage3DEXT;
 extern PFNGLTEXTURESUBIMAGE1DEXTPROC kglTextureSubImage1DEXT;
 extern PFNGLTEXTURESUBIMAGE2DEXTPROC kglTextureSubImage2DEXT;
 extern PFNGLTEXTURESUBIMAGE3DEXTPROC kglTextureSubImage3DEXT;
+extern PFNGLGENERATETEXTUREMIPMAPEXTPROC kglGenerateTextureMipmapEXT;
 extern PFNGLNAMEDBUFFERDATAEXTPROC kglNamedBufferDataEXT;
 extern PFNGLNAMEDBUFFERSUBDATAEXTPROC kglNamedBufferSubDataEXT;
 extern PFNGLMAPNAMEDBUFFEREXTPROC kglMapNamedBufferEXT;

@@ -12,12 +12,14 @@
 
 #include <K15_RenderBufferDesc.h>
 #include <K15_RenderProgramDesc.h>
+#include <K15_RenderTextureDesc.h>
 #include <K15_RenderStateDesc.h>
 
 #ifdef K15_OS_WINDOWS
 
 #include <win32/K15_EnvironmentWin32.h>
 
+/*********************************************************************************/
 void K15_InternalCreateTriangleBuffer(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderBufferHandle* p_BufferHandle)
 {
 	float triangle[] = {
@@ -39,7 +41,7 @@ void K15_InternalCreateTriangleBuffer(K15_RenderCommandBuffer* p_RenderCommandBu
 	K15_AddRenderBufferDescParameter(p_RenderCommandBuffer, &desc);
 	K15_EndRenderCommand(p_RenderCommandBuffer);
 }
-
+/*********************************************************************************/
 void K15_InternalCreateVertexShader(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderProgramHandle* p_ProgramHandle)
 {
 	K15_RenderProgramDesc programDesc;
@@ -52,7 +54,7 @@ void K15_InternalCreateVertexShader(K15_RenderCommandBuffer* p_RenderCommandBuff
 	K15_AddRenderProgramDescParameter(p_RenderCommandBuffer, &programDesc);
 	K15_EndRenderCommand(p_RenderCommandBuffer);
 }
-
+/*********************************************************************************/
 void K15_InternalFillViewportUniform(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderProgramHandle* p_ProgramHandle)
 {
 	K15_RenderUniformUpdateDesc uniformUpdateDesc;
@@ -98,8 +100,6 @@ void K15_InternalSetRasterizerState(K15_RenderCommandBuffer* p_RenderCommandBuff
 	rasterizerState.vertexOrder = K15_VERTEX_ORDER_CLOCKWISE;
 	rasterizerState.scissoringEnabled = FALSE;
 
-	rasterizerState.clearColor.r = 1.0f;
-
 	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_SET_RASTERIZER_STATE);
 	K15_AddRenderRasterizerStateDescParameter(p_RenderCommandBuffer, &rasterizerState);
 	K15_EndRenderCommand(p_RenderCommandBuffer);
@@ -132,8 +132,62 @@ void K15_InternalSetBlendState(K15_RenderCommandBuffer* p_RenderCommandBuffer)
 	K15_EndRenderCommand(p_RenderCommandBuffer);
 }
 /*********************************************************************************/
+void K15_InternalCreateDiffuseTexture(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTextureHandle* p_RenderTextureHandle)
+{
+	K15_RenderTextureDesc textureDesc = {};
 
+	textureDesc.type = K15_RENDER_TEXTURE_TYPE_2D;
+	textureDesc.data = (byte*)malloc(256 * 256 * 3);
+	textureDesc.format = K15_RENDER_FORMAT_R8G8B8_UINT;
+	textureDesc.createMipChain = TRUE;
 
+	srand(time(0));
+	for (int y = 0;
+		 y < 256;
+		 ++y)
+	{
+		for (int x = 0;
+			x < 256;
+			++x)
+		{
+			uint32 offset = (x + (y * 256)) * 3;
+			byte* pixel = textureDesc.data + offset;
+
+			pixel[0] = rand() % 256;
+			pixel[1] = rand() % 256;
+			pixel[2] = rand() % 256;
+		}
+	}
+
+	textureDesc.dimension.width = 256;
+	textureDesc.dimension.height = 256;
+
+	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_CREATE_TEXTURE);
+	K15_AddRenderTextureHandleParameter(p_RenderCommandBuffer, p_RenderTextureHandle);
+	K15_AddRenderTextureDescParameter(p_RenderCommandBuffer, &textureDesc);
+	K15_EndRenderCommand(p_RenderCommandBuffer);
+
+	/*********************************************************************************/
+
+	K15_RenderTextureUpdateDesc textureUpdate = {};
+
+	textureUpdate.data = (byte*)malloc(50 * 50 * 3);
+
+	memset(textureUpdate.data, 0, (50 * 50 * 3));
+
+	textureUpdate.dimension.width = 20;
+	textureUpdate.dimension.height= 20;
+	textureUpdate.offset.x = 20;
+	textureUpdate.offset.y = 30;
+
+	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_UPDATE_TEXTURE);
+	K15_AddRenderTextureHandleParameter(p_RenderCommandBuffer, p_RenderTextureHandle);
+	K15_AddRenderTextureUpdateDescParameter(p_RenderCommandBuffer, &textureUpdate);
+	K15_EndRenderCommand(p_RenderCommandBuffer);
+
+	/*********************************************************************************/
+}
+/*********************************************************************************/
 
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
@@ -181,10 +235,14 @@ int CALLBACK WinMain(
 //	K15_InternalFillViewportUniform(renderCommandBuffer, &programHandle);
 	
 	// Test 3: Set Render States
-	K15_InternalSetDepthState(renderCommandBuffer);
-	K15_InternalSetRasterizerState(renderCommandBuffer);
-	K15_InternalSetBlendState(renderCommandBuffer);
-	K15_InternalSetStencilState(renderCommandBuffer);
+// 	K15_InternalSetDepthState(renderCommandBuffer);
+// 	K15_InternalSetRasterizerState(renderCommandBuffer);
+// 	K15_InternalSetBlendState(renderCommandBuffer);
+// 	K15_InternalSetStencilState(renderCommandBuffer);
+
+	// Test 4: Set Create Texture
+	K15_RenderTextureHandle textureHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
+	K15_InternalCreateDiffuseTexture(renderCommandBuffer, &textureHandle);
 
 	while (running)
 	{

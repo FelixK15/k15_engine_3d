@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <time.h>
 
 #ifdef __ANDROID__
 	#define K15_OS_ANDROID

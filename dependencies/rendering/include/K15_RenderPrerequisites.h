@@ -38,6 +38,8 @@
 
 #define K15_RENDER_MAX_GPU_BUFFER								4096
 #define K15_RENDER_MAX_GPU_PROGRAMS								4096
+#define K15_RENDER_MAX_GPU_TEXTURES								4096
+
 
 enum K15_RenderDescFlags
 {
@@ -46,6 +48,7 @@ enum K15_RenderDescFlags
 };
 
 typedef uint32 K15_RenderBufferHandle;
+typedef uint32 K15_RenderTextureHandle;
 typedef uint32 K15_RenderProgramHandle;
 
 struct K15_RenderContext;
@@ -54,6 +57,8 @@ struct K15_RenderCommandInstance;
 struct K15_RenderBufferDesc;
 struct K15_RenderBufferUpdateDesc;
 struct K15_RenderProgramDesc;
+struct K15_RenderTextureDesc;
+struct K15_RenderTextureUpdateDesc;
 struct K15_RenderUniformUpdateDesc;
 struct K15_RenderBlendStateDesc;
 struct K15_RenderStencilStateDesc;

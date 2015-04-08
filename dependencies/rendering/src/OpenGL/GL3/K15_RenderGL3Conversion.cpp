@@ -413,6 +413,225 @@ GLenum K15_GLConvertUniformTypeToGLType(K15_UniformType p_UniformType)
 	return nativeUniformType;
 }
 /*********************************************************************************/
+GLenum K15_GLConvertTextureType(K15_RenderTextureType p_TextureType)
+{
+	GLenum nativeTextureFormat = GL_INVALID_ENUM;
+
+	switch(p_TextureType)
+	{
+		case K15_RENDER_TEXTURE_TYPE_1D:
+		{
+			nativeTextureFormat = GL_TEXTURE_1D;
+			break;
+		}
+
+		case K15_RENDER_TEXTURE_TYPE_2D:
+		{
+			nativeTextureFormat = GL_TEXTURE_2D;
+			break;
+		}
+
+		case K15_RENDER_TEXTURE_TYPE_3D:
+		{
+			nativeTextureFormat = GL_TEXTURE_3D;
+			break;
+		}
+
+		case K15_RENDER_TEXTURE_TYPE_CUBE:
+		{
+			nativeTextureFormat = GL_TEXTURE_CUBE_MAP;
+			break;
+		}
+
+		default:
+		{
+			assert(false);
+		}
+	}
+
+	return nativeTextureFormat;
+}
+/*********************************************************************************/
+GLenum K15_GLConvertRenderFormatType(K15_RenderFormat p_RenderFormat)
+{
+	GLenum nativeRenderFormatType = GL_INVALID_ENUM;
+
+	switch(p_RenderFormat)
+	{
+		case K15_RENDER_FORMAT_R8G8B8A8_INT:
+		case K15_RENDER_FORMAT_R8G8B8_INT:
+		{
+			nativeRenderFormatType = GL_BYTE;
+			break;
+		}
+
+		case K15_RENDER_FORMAT_R16G16B16A16_INT:
+		case K15_RENDER_FORMAT_R16G16B16_INT:
+		{
+			nativeRenderFormatType = GL_SHORT;
+			break;
+		}
+
+		case K15_RENDER_FORMAT_R32G32B32_INT:
+		case K15_RENDER_FORMAT_R32G32B32A32_INT:
+		{
+			nativeRenderFormatType = GL_INT;
+			break;
+		}	
+
+		case K15_RENDER_FORMAT_R8G8B8_UINT:
+		case K15_RENDER_FORMAT_R8G8B8A8_UINT:
+		{
+			nativeRenderFormatType = GL_UNSIGNED_BYTE;
+			break;
+		}
+
+		case K15_RENDER_FORMAT_R16G16B16_UINT:
+		case K15_RENDER_FORMAT_R16G16B16A16_UINT:
+		{
+			nativeRenderFormatType = GL_UNSIGNED_SHORT;
+			break;
+		}
+
+		case K15_RENDER_FORMAT_R32G32B32_UINT:
+		case K15_RENDER_FORMAT_R32G32B32A32_UINT:
+		{
+			nativeRenderFormatType = GL_UNSIGNED_INT;
+			break;
+		}
+
+		case K15_RENDER_FORMAT_R16G16B16_FLOAT:
+		case K15_RENDER_FORMAT_R16G16B16A16_FLOAT:
+		{
+			nativeRenderFormatType = GL_HALF_FLOAT;
+		}
+
+		case K15_RENDER_FORMAT_R32G32B32_FLOAT:
+		case K15_RENDER_FORMAT_R32G32B32A32_FLOAT:
+		{
+			nativeRenderFormatType = GL_FLOAT;
+			break;
+		}
+	}
+
+	return nativeRenderFormatType;
+}
+/*********************************************************************************/
+GLenum K15_GLConvertRenderFormat(K15_RenderFormat p_RenderFormat)
+{
+	GLenum nativeRenderFormat = GL_INVALID_ENUM;
+
+	switch(p_RenderFormat)
+	{
+		case K15_RENDER_FORMAT_R8G8B8_INT:
+		case K15_RENDER_FORMAT_R8G8B8_UINT:
+		case K15_RENDER_FORMAT_R16G16B16_INT:
+		case K15_RENDER_FORMAT_R16G16B16_UINT:
+		case K15_RENDER_FORMAT_R16G16B16_FLOAT:
+		case K15_RENDER_FORMAT_R32G32B32_INT:
+		case K15_RENDER_FORMAT_R32G32B32_UINT:
+		case K15_RENDER_FORMAT_R32G32B32_FLOAT:
+		case K15_RENDER_FORMAT_RGB_DXT_1:
+		{
+			nativeRenderFormat = GL_RGB;
+			break;
+		}
+
+		case K15_RENDER_FORMAT_R8G8B8A8_INT:
+		case K15_RENDER_FORMAT_R8G8B8A8_UINT:
+		case K15_RENDER_FORMAT_R16G16B16A16_INT:
+		case K15_RENDER_FORMAT_R16G16B16A16_UINT:
+		case K15_RENDER_FORMAT_R16G16B16A16_FLOAT:
+		case K15_RENDER_FORMAT_R32G32B32A32_INT:
+		case K15_RENDER_FORMAT_R32G32B32A32_UINT:
+		case K15_RENDER_FORMAT_R32G32B32A32_FLOAT:
+		case K15_RENDER_FORMAT_RGBA_DXT_1:
+		case K15_RENDER_FORMAT_RGBA_DXT_3:
+		case K15_RENDER_FORMAT_RGBA_DXT_5:
+		{
+			nativeRenderFormat = GL_RGBA;
+			break;
+		}
+	
+		default:
+		{
+			assert(false);
+		}
+	}
+
+	return nativeRenderFormat;
+}
+/*********************************************************************************/
+GLenum K15_GLConvertInternalRenderFormat(K15_RenderFormat p_RenderFormat)
+{
+	GLenum nativeRenderFormat = GL_INVALID_ENUM;
+
+	switch(p_RenderFormat)
+	{
+		case K15_RENDER_FORMAT_R8G8B8_INT:
+		case K15_RENDER_FORMAT_R8G8B8_UINT:
+		{
+			nativeRenderFormat = GL_RGB8;
+			break;
+		}
+
+		case K15_RENDER_FORMAT_R16G16B16_UINT:
+		case K15_RENDER_FORMAT_R16G16B16_INT:
+		case K15_RENDER_FORMAT_R16G16B16_FLOAT:
+		{
+			nativeRenderFormat = GL_RGB16;
+			break;
+		}
+
+		case K15_RENDER_FORMAT_R8G8B8A8_INT:
+		case K15_RENDER_FORMAT_R8G8B8A8_UINT:
+		{
+			nativeRenderFormat = GL_RGBA8;
+			break;
+		}
+
+		case K15_RENDER_FORMAT_R16G16B16A16_INT:
+		case K15_RENDER_FORMAT_R16G16B16A16_UINT:
+		case K15_RENDER_FORMAT_R16G16B16A16_FLOAT:
+		{
+			nativeRenderFormat = GL_RGBA16;
+			break;
+		}
+
+		case K15_RENDER_FORMAT_RGB_DXT_1:
+		{
+			nativeRenderFormat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+			break;
+		}
+
+		case K15_RENDER_FORMAT_RGBA_DXT_1:
+		{
+			nativeRenderFormat = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+			break;
+		}
+
+		case K15_RENDER_FORMAT_RGBA_DXT_3:
+		{
+			nativeRenderFormat = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+			break;
+		}
+
+		case K15_RENDER_FORMAT_RGBA_DXT_5:
+		{
+			nativeRenderFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+			break;
+		}
+
+		default:
+		{
+			assert(false);
+			break;
+		}
+	}
+
+	return nativeRenderFormat;
+}
+/*********************************************************************************/
 K15_UniformType K15_GLConvertGLTypeToUniformType(GLenum p_GLType, GLint p_TypeSizeInBytes)
 {
 	K15_UniformType uniformType = K15_UNIFORM_TYPE_INVALID;

@@ -6,10 +6,13 @@
 	#include "OpenGL/EGL/K15_AndroidRenderEGLContext.h"
 #endif 
 
+#define K15_OPENGL_ERROR_MISSING_EXTENSION 10
+
 #include "K15_RenderContext.h"
 #include "K15_RenderBufferDesc.h"
 #include "K15_RenderProgramDesc.h"
 #include "K15_RenderStateDesc.h"
+#include "K15_RenderTextureDesc.h"
 
 #include <K15_Logging.h>
 
@@ -23,6 +26,7 @@
 #include "OpenGL/GL3/K15_RenderGL3Draw.cpp"
 #include "OpenGL/GL3/K15_RenderGL3Program.cpp"
 #include "OpenGL/GL3/K15_RenderGL3State.cpp"
+#include "OpenGL/GL3/K15_RenderGL3Texture.cpp"
 
 typedef uint8 (*K15_CreatePlatformContextFnc)(K15_GLRenderContext*, K15_OSLayerContext*);
 
@@ -198,6 +202,8 @@ intern void K15_GLGetExtensions(K15_GLRenderContext* p_GLRenderContext)
 /*********************************************************************************/
 intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 {
+	uint8 result = K15_SUCCESS;
+
 	kglGenBuffers = (PFNGLGENBUFFERSPROC)kglGetProcAddress("glGenBuffers");
 	kglDeleteBuffers = (PFNGLDELETEBUFFERSPROC)kglGetProcAddress("glDeleteBuffers");
 	kglGetProgramiv = (PFNGLGETPROGRAMIVPROC)kglGetProcAddress("glGetProgramiv");
@@ -222,6 +228,10 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 		kglDebugMessageCallback = (PFNGLDEBUGMESSAGECALLBACKPROC)kglGetProcAddress("glDebugMessageCallback");
 		kglDebugMessageCallback(K15_DebugProcARB, 0);
 	}
+	else
+	{
+		result = K15_OPENGL_ERROR_MISSING_EXTENSION;
+	}
 
 	if(K15_Search("GL_ARB_vertex_array_object", p_GLRenderContext->extensions.names,
 		p_GLRenderContext->extensions.count, sizeof(char*), K15_CmpStrings) != 0)
@@ -229,6 +239,10 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 		kglGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)kglGetProcAddress("glGenVertexArrays");
 		kglBindVertexArray = (PFNGLBINDVERTEXARRAYPROC)kglGetProcAddress("glBindVertexArray");
 		kglDeleteVertexArrays = (PFNGLDELETEVERTEXARRAYSPROC)kglGetProcAddress("glDeleteVertexArrays");
+	}
+	else
+	{
+		result = K15_OPENGL_ERROR_MISSING_EXTENSION;
 	}
 
 	if(K15_Search("GL_EXT_direct_state_access", p_GLRenderContext->extensions.names,
@@ -240,11 +254,16 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 		kglTextureSubImage1DEXT = (PFNGLTEXTURESUBIMAGE1DEXTPROC)kglGetProcAddress("glTextureSubImage1DEXT");
 		kglTextureSubImage2DEXT = (PFNGLTEXTURESUBIMAGE2DEXTPROC)kglGetProcAddress("glTextureSubImage2DEXT");
 		kglTextureSubImage3DEXT = (PFNGLTEXTURESUBIMAGE3DEXTPROC)kglGetProcAddress("glTextureSubImage3DEXT");
+		kglGenerateTextureMipmapEXT = (PFNGLGENERATETEXTUREMIPMAPEXTPROC)kglGetProcAddress("glGenerateTextureMipmapEXT");
 		kglNamedBufferDataEXT = (PFNGLNAMEDBUFFERDATAEXTPROC)kglGetProcAddress("glNamedBufferDataEXT");
 		kglNamedBufferSubDataEXT = (PFNGLNAMEDBUFFERSUBDATAEXTPROC)kglGetProcAddress("glNamedBufferSubDataEXT");
 		kglMapNamedBufferEXT = (PFNGLMAPNAMEDBUFFEREXTPROC)kglGetProcAddress("glMapNamedBufferEXT");
 		kglMapNamedBufferRangeEXT = (PFNGLMAPNAMEDBUFFERRANGEEXTPROC)kglGetProcAddress("glMapNamedBufferRangeEXT");
 		kglUnmapNamedBufferEXT = (PFNGLUNMAPNAMEDBUFFEREXTPROC)kglGetProcAddress("glUnmapNamedBufferEXT");
+	}
+	else
+	{
+		result = K15_OPENGL_ERROR_MISSING_EXTENSION;
 	}
 
 	if(K15_Search("GL_ARB_sampler_objects", p_GLRenderContext->extensions.names,
@@ -263,6 +282,16 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 		kglGetSamplerParameteriv = (PFNGLGETSAMPLERPARAMETERIVPROC)kglGetProcAddress("glGetSamplerParameteriv");
 		kglGetSamplerParameterfv = (PFNGLGETSAMPLERPARAMETERFVPROC)kglGetProcAddress("glGetSamplerParameterfv");
 		kglGetSamplerParameterIuiv = (PFNGLGETSAMPLERPARAMETERIUIVPROC)kglGetProcAddress("glGetSamplerParameterIuiv");
+	}
+	else
+	{
+		result = K15_OPENGL_ERROR_MISSING_EXTENSION;
+	}
+
+	if (K15_Search("GL_EXT_texture_compression_s3tc", p_GLRenderContext->extensions.names,
+		p_GLRenderContext->extensions.count, sizeof(char*), K15_CmpStrings) == 0)
+	{
+		result = K15_OPENGL_ERROR_MISSING_EXTENSION;
 	}
 
 	if(K15_Search("GL_ARB_separate_shader_objects", p_GLRenderContext->extensions.names,
@@ -327,8 +356,12 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 		kglValidateProgramPipeline = (PFNGLVALIDATEPROGRAMPIPELINEPROC)kglGetProcAddress("glValidateProgramPipeline");
 		kglGetProgramPipelineInfoLog = (PFNGLGETPROGRAMPIPELINEINFOLOGPROC)kglGetProcAddress("glGetProgramPipelineInfoLog");
 	}
+	else
+	{
+		result = K15_OPENGL_ERROR_MISSING_EXTENSION;
+	}
 
-	return K15_SUCCESS;
+	return result;
 }
 /*********************************************************************************/
 
@@ -369,6 +402,11 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 	p_RenderContext->commandProcessing.programManagement.createProgram = K15_GLCreateProgram;
 	p_RenderContext->commandProcessing.programManagement.deleteProgram = K15_GLDeleteProgram;
 	p_RenderContext->commandProcessing.programManagement.updateUniform = K15_GLUpdateUniform;
+
+	//texture management
+	p_RenderContext->commandProcessing.textureManagement.createTexture = K15_GLCreateTexture;
+	p_RenderContext->commandProcessing.textureManagement.updateTexture = K15_GLUpdateTexture;
+	p_RenderContext->commandProcessing.textureManagement.deleteTexture = K15_GLDeleteTexture;
 
 	//state management
 	p_RenderContext->commandProcessing.stateManagement.setDepthState = K15_GLSetDepthStateDesc;
@@ -411,6 +449,9 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 
 	if (result != K15_SUCCESS)
 	{
+		const char* errorMessage = "Missing OpenGL Extensions.";
+		K15_SetRenderContextError(p_RenderContext, errorMessage, strlen(errorMessage));
+
 		return result;
 	}
 
