@@ -140,7 +140,7 @@ void K15_InternalCreateDiffuseTexture(K15_RenderCommandBuffer* p_RenderCommandBu
 	textureDesc.format = K15_RENDER_FORMAT_R8G8B8_UINT;
 	textureDesc.createMipChain = TRUE;
 
-	srand(time(0));
+	srand((unsigned int)time(0));
 	for (int y = 0;
 		 y < 256;
 		 ++y)

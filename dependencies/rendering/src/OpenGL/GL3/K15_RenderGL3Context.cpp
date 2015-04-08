@@ -450,7 +450,8 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 	if (result != K15_SUCCESS)
 	{
 		const char* errorMessage = "Missing OpenGL Extensions.";
-		K15_SetRenderContextError(p_RenderContext, errorMessage, strlen(errorMessage));
+		uint32 errorMessageLength = (uint32)strlen(errorMessage);
+		K15_SetRenderContextError(p_RenderContext, errorMessage, errorMessageLength);
 
 		return result;
 	}
