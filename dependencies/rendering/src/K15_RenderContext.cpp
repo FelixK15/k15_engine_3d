@@ -11,8 +11,6 @@
 
 #include "OpenGL/K15_RenderGLContext.h"
 
-#define K15_RENDERING_MAX_RESCHEDULE_COMMAND_COUNT 32
-
 /*********************************************************************************/
 intern inline void K15_InternalCheckRenderBufferDescFlags(K15_RenderBufferDesc* p_RenderBufferDesc)
 {
