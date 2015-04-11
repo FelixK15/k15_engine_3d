@@ -1,5 +1,5 @@
 /*********************************************************************************/
-inline GLenum K15_GLConvertBufferType(K15_RenderBufferType p_BufferType)
+intern inline GLenum K15_GLConvertBufferType(K15_RenderBufferType p_BufferType)
 {
 	GLenum nativeBufferType = GL_INVALID_ENUM;
 
@@ -30,7 +30,7 @@ inline GLenum K15_GLConvertBufferType(K15_RenderBufferType p_BufferType)
 	return nativeBufferType;
 }
 /*********************************************************************************/
-inline GLenum K15_GLConvertProgramType(K15_RenderProgramType p_ProgramType)
+intern inline GLenum K15_GLConvertProgramType(K15_RenderProgramType p_ProgramType)
 {
 	GLenum glProgramType = GL_INVALID_ENUM;
 
@@ -63,7 +63,7 @@ inline GLenum K15_GLConvertProgramType(K15_RenderProgramType p_ProgramType)
 	return glProgramType;
 }
 /*********************************************************************************/
-inline GLenum K15_GLConvertBufferUsage(K15_RenderBufferUsage p_BufferUsage)
+intern inline GLenum K15_GLConvertBufferUsage(K15_RenderBufferUsage p_BufferUsage)
 {
 	GLenum nativeBufferUsage = GL_INVALID_ENUM;
 
@@ -96,7 +96,7 @@ inline GLenum K15_GLConvertBufferUsage(K15_RenderBufferUsage p_BufferUsage)
 	return nativeBufferUsage;
 }
 /*********************************************************************************/
-GLenum K15_GLConvertCullingMode(K15_CullingMode p_CullingMode)
+intern inline GLenum K15_GLConvertCullingMode(K15_CullingMode p_CullingMode)
 {
 	GLenum nativeCullingMode = GL_INVALID_ENUM;
 
@@ -118,7 +118,7 @@ GLenum K15_GLConvertCullingMode(K15_CullingMode p_CullingMode)
 	return nativeCullingMode;
 }
 /*********************************************************************************/
-GLenum K15_GLConvertFillMode(K15_FillMode p_FillMode)
+intern inline GLenum K15_GLConvertFillMode(K15_FillMode p_FillMode)
 {
 	GLenum nativeFillMode = GL_INVALID_ENUM;
 
@@ -140,7 +140,7 @@ GLenum K15_GLConvertFillMode(K15_FillMode p_FillMode)
 	return nativeFillMode;
 }
 /*********************************************************************************/
-GLenum K15_GLConvertVertexOrdering(K15_VertexOrder p_VertexOrder)
+intern inline GLenum K15_GLConvertVertexOrdering(K15_VertexOrder p_VertexOrder)
 {
 	GLenum nativeVertexOrder = GL_INVALID_ENUM;
 
@@ -162,7 +162,7 @@ GLenum K15_GLConvertVertexOrdering(K15_VertexOrder p_VertexOrder)
 	return nativeVertexOrder;
 }
 /*********************************************************************************/
-GLenum K15_GLConvertBlendOperation(K15_BlendOperation p_BlendOperation)
+intern inline GLenum K15_GLConvertBlendOperation(K15_BlendOperation p_BlendOperation)
 {
 	GLenum nativeBlendOperator = GL_INVALID_ENUM;
 
@@ -207,7 +207,7 @@ GLenum K15_GLConvertBlendOperation(K15_BlendOperation p_BlendOperation)
 	return nativeBlendOperator;
 }
 /*********************************************************************************/
-GLenum K15_GLConvertBlend(K15_Blend p_Blend)
+intern inline GLenum K15_GLConvertBlend(K15_Blend p_Blend)
 {
 	GLenum nativeBlend = GL_INVALID_ENUM;
 
@@ -282,7 +282,7 @@ GLenum K15_GLConvertBlend(K15_Blend p_Blend)
 	return nativeBlend;
 }
 /*********************************************************************************/
-GLenum K15_GLConvertCompareFunction(K15_Comparison p_Comparison)
+intern inline GLenum K15_GLConvertCompareFunction(K15_Comparison p_Comparison)
 {
 	GLenum nativeCompareFunc = GL_INVALID_ENUM;
 
@@ -339,7 +339,7 @@ GLenum K15_GLConvertCompareFunction(K15_Comparison p_Comparison)
 	return nativeCompareFunc;
 }
 /*********************************************************************************/
-GLenum K15_GLConvertUniformTypeToGLType(K15_UniformType p_UniformType)
+intern inline GLenum K15_GLConvertUniformTypeToGLType(K15_UniformType p_UniformType)
 {
 	GLenum nativeUniformType = GL_INVALID_ENUM;
 
@@ -413,7 +413,7 @@ GLenum K15_GLConvertUniformTypeToGLType(K15_UniformType p_UniformType)
 	return nativeUniformType;
 }
 /*********************************************************************************/
-GLenum K15_GLConvertTextureType(K15_RenderTextureType p_TextureType)
+intern inline GLenum K15_GLConvertTextureType(K15_RenderTextureType p_TextureType)
 {
 	GLenum nativeTextureFormat = GL_INVALID_ENUM;
 
@@ -452,7 +452,7 @@ GLenum K15_GLConvertTextureType(K15_RenderTextureType p_TextureType)
 	return nativeTextureFormat;
 }
 /*********************************************************************************/
-GLenum K15_GLConvertRenderFormatType(K15_RenderFormat p_RenderFormat)
+intern inline GLenum K15_GLConvertRenderFormatType(K15_RenderFormat p_RenderFormat)
 {
 	GLenum nativeRenderFormatType = GL_INVALID_ENUM;
 
@@ -517,7 +517,7 @@ GLenum K15_GLConvertRenderFormatType(K15_RenderFormat p_RenderFormat)
 	return nativeRenderFormatType;
 }
 /*********************************************************************************/
-GLenum K15_GLConvertRenderFormat(K15_RenderFormat p_RenderFormat)
+intern inline GLenum K15_GLConvertRenderFormat(K15_RenderFormat p_RenderFormat)
 {
 	GLenum nativeRenderFormat = GL_INVALID_ENUM;
 
@@ -562,7 +562,7 @@ GLenum K15_GLConvertRenderFormat(K15_RenderFormat p_RenderFormat)
 	return nativeRenderFormat;
 }
 /*********************************************************************************/
-GLenum K15_GLConvertInternalRenderFormat(K15_RenderFormat p_RenderFormat)
+intern inline GLenum K15_GLConvertInternalRenderFormat(K15_RenderFormat p_RenderFormat)
 {
 	GLenum nativeRenderFormat = GL_INVALID_ENUM;
 
@@ -632,7 +632,7 @@ GLenum K15_GLConvertInternalRenderFormat(K15_RenderFormat p_RenderFormat)
 	return nativeRenderFormat;
 }
 /*********************************************************************************/
-K15_UniformType K15_GLConvertGLTypeToUniformType(GLenum p_GLType, GLint p_TypeSizeInBytes)
+intern inline K15_UniformType K15_GLConvertGLTypeToUniformType(GLenum p_GLType, GLint p_TypeSizeInBytes)
 {
 	K15_UniformType uniformType = K15_UNIFORM_TYPE_INVALID;
 
@@ -731,5 +731,83 @@ K15_UniformType K15_GLConvertGLTypeToUniformType(GLenum p_GLType, GLint p_TypeSi
 	}
 
 	return uniformType;
+}
+/*********************************************************************************/
+intern inline GLenum K15_GLConvertRenderFilterMode(K15_RenderFilterMode p_FilterMode)
+{
+	GLenum nativeRenderFilterMode = GL_INVALID_ENUM;
+	
+	switch(p_FilterMode)
+	{
+		case K15_RENDER_FILTER_MODE_LINEAR:
+		{
+			nativeRenderFilterMode = GL_LINEAR;
+			break;
+		}
+
+		case K15_RENDER_FILTER_MODE_NEAREST:
+		{
+			nativeRenderFilterMode = GL_NEAREST;
+			break;
+		}
+
+		case K15_RENDER_FILTER_MODE_LINEAR_MIPMAP:
+		{
+			nativeRenderFilterMode = GL_LINEAR_MIPMAP_LINEAR;
+			break;
+		}
+
+		case K15_RENDER_FILTER_MODE_NEAREST_MIPMAP:
+		{
+			nativeRenderFilterMode = GL_NEAREST_MIPMAP_NEAREST;
+			break;
+		}
+
+		case K15_RENDER_FILTER_MODE_ANISOTROPIC:
+		{
+			//will be handled separately
+			break;
+		}
+
+		default:
+		{
+			assert(false);
+		}
+	}
+
+	return nativeRenderFilterMode;
+}
+/*********************************************************************************/
+intern inline GLenum K15_GLConvertFilterAddressMode(K15_RenderFilterAddressMode p_FilterAddressMode)
+{
+	GLenum nativeFilterAddressMode = GL_INVALID_ENUM;
+
+	switch(p_FilterAddressMode)
+	{
+		case K15_RENDER_FILTER_ADDRESS_MODE_CLAMP:
+		{
+			nativeFilterAddressMode = GL_CLAMP_TO_EDGE;
+			break;
+		}
+
+		case K15_RENDER_FILTER_ADDRESS_MODE_MIRROR:
+		{
+			nativeFilterAddressMode = GL_MIRRORED_REPEAT;
+			break;
+		}
+
+		case K15_RENDER_FILTER_ADDRESS_MODE_REPEAT:
+		{
+			nativeFilterAddressMode = GL_REPEAT;
+			break;
+		}
+
+		default:
+		{
+			assert(false);
+		}
+	}
+
+	return nativeFilterAddressMode;
 }
 /*********************************************************************************/

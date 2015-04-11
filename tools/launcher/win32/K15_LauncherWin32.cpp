@@ -13,6 +13,7 @@
 #include <K15_RenderBufferDesc.h>
 #include <K15_RenderProgramDesc.h>
 #include <K15_RenderTextureDesc.h>
+#include <K15_RenderSamplerDesc.h>
 #include <K15_RenderStateDesc.h>
 
 #ifdef K15_OS_WINDOWS
@@ -187,6 +188,24 @@ void K15_InternalCreateDiffuseTexture(K15_RenderCommandBuffer* p_RenderCommandBu
 	/*********************************************************************************/
 }
 /*********************************************************************************/
+void K15_InternalCreateLineareSampler(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderSamplerHandle* p_Handle)
+{
+	K15_RenderSamplerDesc desc;
+
+	desc.filtering.magnification = K15_RENDER_FILTER_MODE_NEAREST;
+	desc.filtering.minification = K15_RENDER_FILTER_MODE_NEAREST;
+
+	desc.address.u = K15_RENDER_FILTER_ADDRESS_MODE_REPEAT;
+	desc.address.v = K15_RENDER_FILTER_ADDRESS_MODE_REPEAT;
+	desc.address.w = K15_RENDER_FILTER_ADDRESS_MODE_REPEAT;
+
+	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_CREATE_SAMPLER);
+	K15_AddRenderSamplerHandleParameter(p_RenderCommandBuffer, p_Handle);
+	K15_AddRenderSamplerDescParameter(p_RenderCommandBuffer, &desc);
+	K15_EndRenderCommand(p_RenderCommandBuffer);
+
+}
+/*********************************************************************************/
 
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
@@ -233,15 +252,20 @@ int CALLBACK WinMain(
 	// Test 3: Fill Uniforms
 	K15_InternalFillViewportUniform(renderCommandBuffer, &programHandle);
 	
-	// Test 3: Set Render States
+	// Test 4: Set Render States
  	K15_InternalSetDepthState(renderCommandBuffer);
  	K15_InternalSetRasterizerState(renderCommandBuffer);
  	K15_InternalSetBlendState(renderCommandBuffer);
  	K15_InternalSetStencilState(renderCommandBuffer);
 
-	// Test 4: Set Create Texture
+	// Test 5: Set Create Texture
 	K15_RenderTextureHandle textureHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
 	K15_InternalCreateDiffuseTexture(renderCommandBuffer, &textureHandle);
+
+
+	// Test 6: Create Sampler
+	K15_RenderSamplerHandle samplerHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
+	K15_InternalCreateLineareSampler(renderCommandBuffer, &samplerHandle);
 
 	while (running)
 	{

@@ -11,6 +11,7 @@ set(RENDERER_INC ./include/K15_RenderContext.h
 		 ./include/K15_RenderBufferDesc.h
 		 ./include/K15_RenderStateDesc.h
 		 ./include/K15_RenderTextureDesc.h
+		 ./include/K15_RenderSamplerDesc.h
 		 ./include/K15_RenderFormats.h)
 
 set(RENDERER_LIBS k15math logging)

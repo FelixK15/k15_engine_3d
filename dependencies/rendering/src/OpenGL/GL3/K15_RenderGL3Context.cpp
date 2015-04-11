@@ -13,6 +13,7 @@
 #include "K15_RenderProgramDesc.h"
 #include "K15_RenderStateDesc.h"
 #include "K15_RenderTextureDesc.h"
+#include "K15_RenderSamplerDesc.h"
 
 #include <K15_Logging.h>
 
@@ -27,6 +28,7 @@
 #include "OpenGL/GL3/K15_RenderGL3Program.cpp"
 #include "OpenGL/GL3/K15_RenderGL3State.cpp"
 #include "OpenGL/GL3/K15_RenderGL3Texture.cpp"
+#include "OpenGL/GL3/K15_RenderGL3Sampler.cpp"
 
 typedef uint8 (*K15_CreatePlatformContextFnc)(K15_GLRenderContext*, K15_OSLayerContext*);
 
@@ -150,6 +152,37 @@ intern void APIENTRY K15_DebugProcARB(GLenum source, GLenum type, GLuint id, GLe
 	K15_LOG_ERROR_MESSAGE("OpenGL %s Warning. Category: %s Message: %s", typeName, sourceName, message);
 }
 /*********************************************************************************/
+intern inline void K15_InternalGLSetFunctionPointers(K15_RenderContext* p_RenderContext)
+{
+	//screen management
+	p_RenderContext->commandProcessing.screenManagement.clearScreen = K15_GLClearScreen;
+
+	//buffer management
+	p_RenderContext->commandProcessing.bufferManagement.createBuffer = K15_GLCreateBuffer;
+	p_RenderContext->commandProcessing.bufferManagement.updateBuffer = K15_GLUpdateBuffer;
+	p_RenderContext->commandProcessing.bufferManagement.deleteBuffer = K15_GLDeleteBuffer;
+
+	//program management
+	p_RenderContext->commandProcessing.programManagement.createProgram = K15_GLCreateProgram;
+	p_RenderContext->commandProcessing.programManagement.deleteProgram = K15_GLDeleteProgram;
+	p_RenderContext->commandProcessing.programManagement.updateUniform = K15_GLUpdateUniform;
+
+	//texture management
+	p_RenderContext->commandProcessing.textureManagement.createTexture = K15_GLCreateTexture;
+	p_RenderContext->commandProcessing.textureManagement.updateTexture = K15_GLUpdateTexture;
+	p_RenderContext->commandProcessing.textureManagement.deleteTexture = K15_GLDeleteTexture;
+
+	//sampler management
+	p_RenderContext->commandProcessing.samplerManagement.createSampler = K15_GLCreateSampler;
+	p_RenderContext->commandProcessing.samplerManagement.deleteSampler = K15_GLDeleteSampler;
+
+	//state management
+	p_RenderContext->commandProcessing.stateManagement.setDepthState = K15_GLSetDepthStateDesc;
+	p_RenderContext->commandProcessing.stateManagement.setBlendState = K15_GLSetBlendStateDesc;
+	p_RenderContext->commandProcessing.stateManagement.setRasterizerState = K15_GLSetRasterizerStateDesc;
+	p_RenderContext->commandProcessing.stateManagement.setStencilState = K15_GLSetStencilStateDesc;
+}
+/*********************************************************************************/
 intern int K15_CmpStrings(const void* a, const void* b)
 {
 	const char* stringA = (char*)a;
@@ -269,7 +302,7 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 	if(K15_Search("GL_ARB_sampler_objects", p_GLRenderContext->extensions.names,
 		p_GLRenderContext->extensions.count, sizeof(char*), K15_CmpStrings) != 0)
 	{
-		kglGenSamplers = (PFNGLGENSAMPLERSPROC)kglGetProcAddress("glGetSamplers");
+		kglGenSamplers = (PFNGLGENSAMPLERSPROC)kglGetProcAddress("glGenSamplers");
 		kglDeleteSamplers = (PFNGLDELETESAMPLERSPROC)kglGetProcAddress("glDeleteSamplers");
 		kglBindSampler = (PFNGLBINDSAMPLERPROC)kglGetProcAddress("glBindSamplers");
 		kglSamplerParameteri = (PFNGLSAMPLERPARAMETERIPROC)kglGetProcAddress("glSamplerParameteri");
@@ -364,8 +397,16 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 	return result;
 }
 /*********************************************************************************/
+intern void K15_InternalGLGetRenderCapabilities(K15_RenderContext* p_RenderContext)
+{
+	K15_RenderCapabilities* capabilities = &p_RenderContext->capabilities;
 
+	GLfloat glMaxAnistropy = 1.0f;
 
+	K15_OPENGL_CALL(glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &glMaxAnistropy));
+
+	capabilities->maxAnisotropy = (float)glMaxAnistropy;
+}
 /*********************************************************************************/
 uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerContext* p_OSLayerContext)
 {
@@ -390,30 +431,7 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 		return result;
 	}
 	
-	//screen management
-	p_RenderContext->commandProcessing.screenManagement.clearScreen = K15_GLClearScreen;
-
-	//buffer management
-	p_RenderContext->commandProcessing.bufferManagement.createBuffer = K15_GLCreateBuffer;
-	p_RenderContext->commandProcessing.bufferManagement.updateBuffer = K15_GLUpdateBuffer;
-	p_RenderContext->commandProcessing.bufferManagement.deleteBuffer = K15_GLDeleteBuffer;
-
-	//program management
-	p_RenderContext->commandProcessing.programManagement.createProgram = K15_GLCreateProgram;
-	p_RenderContext->commandProcessing.programManagement.deleteProgram = K15_GLDeleteProgram;
-	p_RenderContext->commandProcessing.programManagement.updateUniform = K15_GLUpdateUniform;
-
-	//texture management
-	p_RenderContext->commandProcessing.textureManagement.createTexture = K15_GLCreateTexture;
-	p_RenderContext->commandProcessing.textureManagement.updateTexture = K15_GLUpdateTexture;
-	p_RenderContext->commandProcessing.textureManagement.deleteTexture = K15_GLDeleteTexture;
-
-	//state management
-	p_RenderContext->commandProcessing.stateManagement.setDepthState = K15_GLSetDepthStateDesc;
-	p_RenderContext->commandProcessing.stateManagement.setBlendState = K15_GLSetBlendStateDesc;
-	p_RenderContext->commandProcessing.stateManagement.setRasterizerState = K15_GLSetRasterizerStateDesc;
-	p_RenderContext->commandProcessing.stateManagement.setStencilState = K15_GLSetStencilStateDesc;
-
+	K15_InternalGLSetFunctionPointers(p_RenderContext);
 
 	glContext->vendorString = glGetString(GL_VENDOR);
 	glContext->rendererString = glGetString(GL_RENDERER);
@@ -460,6 +478,8 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 
 	K15_GLCreateBuffers();
 	K15_GLInitPrograms();
+
+	K15_InternalGLGetRenderCapabilities(p_RenderContext);
 
 	K15_Window* window = p_OSLayerContext->window.window;
 

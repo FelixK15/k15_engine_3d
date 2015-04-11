@@ -7,6 +7,7 @@
 #include "K15_RenderBufferDesc.h"
 #include "K15_RenderProgramDesc.h"
 #include "K15_RenderTextureDesc.h"
+#include "K15_RenderSamplerDesc.h"
 #include "K15_RenderStateDesc.h"
 
 #include "OpenGL/K15_RenderGLContext.h"
@@ -101,6 +102,18 @@ intern inline K15_RenderBufferHandle K15_InternalAddRenderBufferDesc(K15_RenderC
 	p_RenderContext->gpuBuffer.buffers[gpuBufferIndex] = *p_RenderBufferDesc;
 
 	return (K15_RenderBufferHandle)gpuBufferIndex;
+}
+/*********************************************************************************/
+intern inline K15_RenderSamplerHandle K15_InternalAddRenderSamplerDesc(K15_RenderContext* p_RenderContext, K15_RenderSamplerDesc* p_RenderSamplerDesc)
+{
+	//get current buffer index and assign amount
+	uint32 gpuSamplerIndex = p_RenderContext->gpuSampler.amountSamplers++;
+
+	assert(gpuSamplerIndex < K15_RENDER_MAX_GPU_SAMPLERS);
+
+	p_RenderContext->gpuSampler.samplers[gpuSamplerIndex] = *p_RenderSamplerDesc;
+
+	return (K15_RenderSamplerHandle)gpuSamplerIndex;
 }
 /*********************************************************************************/
 intern inline uint8 K15_InternalReadParameter(K15_RenderCommandParameterBuffer* p_ParameterFrontBuffer, K15_RenderCommandInstance* p_RenderCommand, uint32 p_ParameterSize, uint32 p_ParameterOffset, void* p_ParameterDestiny)
@@ -237,6 +250,32 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderTextureHandle);
 
 			result = p_RenderContext->commandProcessing.textureManagement.deleteTexture(p_RenderContext, renderTextureHandle);
+			break;
+		}
+
+		case K15_RENDER_COMMAND_CREATE_SAMPLER:
+		{
+			K15_RenderSamplerHandle* renderSamplerHandle = 0;
+			K15_RenderSamplerDesc renderSamplerDesc = {};
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderSamplerHandle);
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderSamplerDesc), K15_PTR_SIZE, &renderSamplerDesc);
+
+			*renderSamplerHandle = K15_InternalAddRenderSamplerDesc(p_RenderContext, &renderSamplerDesc);
+
+			result = p_RenderContext->commandProcessing.samplerManagement.createSampler(p_RenderContext, &renderSamplerDesc, renderSamplerHandle);
+
+			break;
+		}
+
+		case K15_RENDER_COMMAND_DELETE_SAMPLER:
+		{
+			K15_RenderSamplerHandle* renderSamplerHandle = 0;
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderSamplerHandle);
+
+			result = p_RenderContext->commandProcessing.samplerManagement.deleteSampler(p_RenderContext, renderSamplerHandle);
+
 			break;
 		}
 
@@ -654,6 +693,20 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext)
 	renderContext->gpuTexture.textures = gpuTextures;
 	renderContext->gpuTexture.amountTextures = 0;
 	/*********************************************************************************/
+
+	/*********************************************************************************/
+	//gpu samplers
+	K15_RenderSamplerDesc* gpuSamplers = (K15_RenderSamplerDesc*)malloc(sizeof(K15_RenderSamplerDesc) * K15_RENDER_MAX_GPU_SAMPLERS);
+
+	if (!gpuSamplers)
+	{
+		assert(false);
+		return 0;
+	}
+
+	renderContext->gpuSampler.samplers = gpuSamplers;
+	renderContext->gpuSampler.amountSamplers = 0;
+	/*********************************************************************************/
 	//states
 	renderContext->renderState.blendStateDesc = (K15_RenderBlendStateDesc*)malloc(sizeof(K15_RenderBlendStateDesc));
 	renderContext->renderState.depthStateDesc = (K15_RenderDepthStateDesc*)malloc(sizeof(K15_RenderDepthStateDesc));
@@ -947,6 +1000,24 @@ uint8 K15_AddRenderTextureUpdateDescParameter(K15_RenderCommandBuffer* p_RenderC
 	uint8 result = K15_InternalAddCommandBufferParameter(p_RenderCommandBuffer,
 		sizeof(K15_RenderTextureUpdateDesc),
 		p_RenderTextureUpdateDesc);
+
+	return result;
+}
+/*********************************************************************************/
+uint8 K15_AddRenderSamplerHandleParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderSamplerHandle* p_RenderSamplerHandler)
+{
+	uint8 result = K15_InternalAddCommandBufferParameter(p_RenderCommandBuffer,
+		K15_PTR_SIZE,
+		&p_RenderSamplerHandler);
+
+	return result;
+}
+/*********************************************************************************/
+uint8 K15_AddRenderSamplerDescParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderSamplerDesc* p_RenderSamplerDesc)
+{
+	uint8 result = K15_InternalAddCommandBufferParameter(p_RenderCommandBuffer,
+		sizeof(K15_RenderSamplerDesc),
+		p_RenderSamplerDesc);
 
 	return result;
 }

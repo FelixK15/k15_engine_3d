@@ -34,6 +34,11 @@ typedef uint8 (*K15_SetStencilStateCommandFnc)(K15_RenderContext* p_RenderContex
 typedef uint8 (*K15_SetRasterizerStateCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderRasterizerStateDesc* p_RenderRasterizerStateDesc);
 typedef uint8 (*K15_SetBlendStateCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderBlendStateDesc* p_RenderDepthStateDesc);
 
+//sampler
+typedef uint8 (*K15_CreateSamplerCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderSamplerDesc* p_RenderTextureDesc, K15_RenderSamplerHandle* p_RenderTextureHandle);
+typedef uint8 (*K15_DeleteSamplerCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderSamplerHandle* p_RenderTextureHandle);
+
+
 //textures
 typedef uint8 (*K15_CreateTextureCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTextureDesc* p_RenderTextureDesc, K15_RenderTextureHandle* p_RenderTextureHandle);
 typedef uint8 (*K15_UpdateTextureCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTextureUpdateDesc* p_RenderTextureDesc, K15_RenderTextureHandle* p_RenderTextureHandle);
@@ -56,6 +61,10 @@ enum K15_RenderCommand
 	K15_RENDER_COMMAND_CREATE_TEXTURE,
 	K15_RENDER_COMMAND_UPDATE_TEXTURE,
 	K15_RENDER_COMMAND_DELETE_TEXTURE,
+
+	//sampler
+	K15_RENDER_COMMAND_CREATE_SAMPLER,
+	K15_RENDER_COMMAND_DELETE_SAMPLER,
 
 	//uniforms
 	K15_RENDER_COMMAND_UPDATE_UNIFORM,
@@ -148,8 +157,15 @@ struct K15_RenderCommandBufferDispatcher
 	uint32 flags;
 };
 
+struct K15_RenderCapabilities
+{
+	float maxAnisotropy;
+};
+
 struct K15_RenderContext
 {
+	K15_RenderCapabilities capabilities;
+
 	K15_RenderCommandBufferDispatcher* commandBufferDispatcher;
 	K15_RenderCommandBuffer* commandBuffers;
 	
@@ -194,6 +210,12 @@ struct K15_RenderContext
 			K15_DeleteTextureCommandFnc deleteTexture;
 		} textureManagement;
 
+		struct K15_SamplerManagementCommands
+		{
+			K15_CreateSamplerCommandFnc createSampler;
+			K15_DeleteSamplerCommandFnc deleteSampler;
+		} samplerManagement;
+
 		struct K15_StateManagementCommands
 		{
 			K15_SetDepthStateCommandFnc setDepthState;
@@ -220,6 +242,12 @@ struct K15_RenderContext
 		K15_RenderTextureDesc* textures;
 		uint32 amountTextures;
 	} gpuTexture;
+
+	struct  
+	{
+		K15_RenderSamplerDesc* samplers;
+		uint32 amountSamplers;
+	} gpuSampler;
 
 	struct 
 	{
@@ -278,6 +306,10 @@ uint8 K15_AddRenderTextureHandleParameter(K15_RenderCommandBuffer* p_RenderComma
 uint8 K15_AddRenderTextureDescParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTextureDesc* p_RenderTextureDesc);
 uint8 K15_AddRenderTextureUpdateDescParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTextureUpdateDesc* p_RenderTextureDesc);
 
+
+//Sampler Parameter
+uint8 K15_AddRenderSamplerHandleParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderSamplerHandle* p_RenderSamplerHandler);
+uint8 K15_AddRenderSamplerDescParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderSamplerDesc* p_RenderSamplerDesc);
 
 void K15_DispatchRenderCommandBuffer(K15_RenderCommandBuffer* p_RenderCommandBuffer);
 void K15_ProcessDispatchedRenderCommandBuffers(K15_RenderContext* p_RenderContext);
