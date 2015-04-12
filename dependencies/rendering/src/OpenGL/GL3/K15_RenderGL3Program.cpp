@@ -411,7 +411,7 @@ uint8 K15_GLCreateProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramD
 	{
 		if (K15_FileExists(programFilePath) != K15_SUCCESS)
 		{
-			result = K15_ERROR_FILE_NOT_FOUND;
+			result = K15_OS_ERROR_FILE_NOT_FOUND;
 		}
 		else
 		{

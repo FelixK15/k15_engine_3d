@@ -51,9 +51,16 @@ intern inline void K15_InternalCheckRenderTextureDescFlags(K15_RenderTextureDesc
 	assert(p_RenderTextureDesc);
 
 	if ((p_RenderTextureDesc->flags & K15_RENDER_DESC_AUTO_CLEANUP_FLAG) > 0
-		&& p_RenderTextureDesc->data)
+		&& p_RenderTextureDesc->mipmaps.data)
 	{
-		free(p_RenderTextureDesc->data);
+		for (uint32 mipmapIndex = 0;
+			mipmapIndex < p_RenderTextureDesc->mipmaps.count;
+			++mipmapIndex)
+		{
+			free(p_RenderTextureDesc->mipmaps.data[mipmapIndex]);
+		}
+		
+		free(p_RenderTextureDesc->mipmaps.data);
 	}
 }
 /*********************************************************************************/

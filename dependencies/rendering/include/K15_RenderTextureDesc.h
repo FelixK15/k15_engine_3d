@@ -24,7 +24,13 @@ struct K15_RenderTextureDesc
 		uint32 depth;
 	} dimension;
 
-	byte* data;
+	struct  
+	{
+		byte** data;
+		uint32* dataSize;
+		uint32 count;
+	} mipmaps;
+
 	uint32 flags;
 
 	uint8 createMipChain;

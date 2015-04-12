@@ -41,6 +41,7 @@
 #define K15_RENDER_MAX_GPU_TEXTURES								4096
 #define K15_RENDER_MAX_GPU_SAMPLERS								32
 
+#define K15_IS_POW2(x) ((x != 0) && !(x & (x - 1))
 
 enum K15_RenderDescFlags
 {

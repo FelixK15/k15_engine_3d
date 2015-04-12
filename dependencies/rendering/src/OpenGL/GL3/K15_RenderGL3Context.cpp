@@ -59,7 +59,7 @@ intern void APIENTRY K15_DebugProcAMD(GLuint id, GLenum category, GLenum severit
 		}
 		case GL_DEBUG_CATEGORY_DEPRECATION_AMD:
 		{
-			categoryName = "Depre1cation";
+			categoryName = "Deprecation";
 			break;
 		}
 		case GL_DEBUG_CATEGORY_UNDEFINED_BEHAVIOR_AMD:
@@ -287,6 +287,12 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 		kglTextureSubImage1DEXT = (PFNGLTEXTURESUBIMAGE1DEXTPROC)kglGetProcAddress("glTextureSubImage1DEXT");
 		kglTextureSubImage2DEXT = (PFNGLTEXTURESUBIMAGE2DEXTPROC)kglGetProcAddress("glTextureSubImage2DEXT");
 		kglTextureSubImage3DEXT = (PFNGLTEXTURESUBIMAGE3DEXTPROC)kglGetProcAddress("glTextureSubImage3DEXT");
+		kglCompressedTextureImage1DEXT = (PFNGLCOMPRESSEDTEXTUREIMAGE1DEXTPROC)kglGetProcAddress("glCompressedTextureImage1DEXT");
+		kglCompressedTextureImage2DEXT = (PFNGLCOMPRESSEDTEXTUREIMAGE2DEXTPROC)kglGetProcAddress("glCompressedTextureImage2DEXT");
+		kglCompressedTextureImage3DEXT = (PFNGLCOMPRESSEDTEXTUREIMAGE3DEXTPROC)kglGetProcAddress("glCompressedTextureImage3DEXT");
+		kglCompressedTextureSubImage1DEXT = (PFNGLCOMPRESSEDTEXTURESUBIMAGE1DEXTPROC)kglGetProcAddress("glCompressedTextureSubImage1DEXT");
+		kglCompressedTextureSubImage2DEXT = (PFNGLCOMPRESSEDTEXTURESUBIMAGE2DEXTPROC)kglGetProcAddress("glCompressedTextureSubImage2DEXT");
+		kglCompressedTextureSubImage3DEXT = (PFNGLCOMPRESSEDTEXTURESUBIMAGE3DEXTPROC)kglGetProcAddress("glCompressedTextureSubImage3DEXT");
 		kglGenerateTextureMipmapEXT = (PFNGLGENERATETEXTUREMIPMAPEXTPROC)kglGetProcAddress("glGenerateTextureMipmapEXT");
 		kglNamedBufferDataEXT = (PFNGLNAMEDBUFFERDATAEXTPROC)kglGetProcAddress("glNamedBufferDataEXT");
 		kglNamedBufferSubDataEXT = (PFNGLNAMEDBUFFERSUBDATAEXTPROC)kglGetProcAddress("glNamedBufferSubDataEXT");
@@ -414,12 +420,12 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 
 	if (!glContext)
 	{
-		return K15_ERROR_OUT_OF_MEMORY;
+		return K15_OS_ERROR_OUT_OF_MEMORY;
 	}
 
 	if (!K15_CreateContext)
 	{
-		return K15_ERROR_SYSTEM;
+		return K15_OS_ERROR_SYSTEM;
 	}
 
 	glContext->programPipelineHandle = 0;
@@ -458,7 +464,7 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 	if (glContext->version.major != K15_MIN_GL_VERSION_MAJOR ||
 		glContext->version.minor != K15_MIN_GL_VERSION_MINOR)
 	{
-		return K15_ERROR_SYSTEM;
+		return K15_OS_ERROR_SYSTEM;
 	}
 
 	K15_GLGetExtensions(glContext);

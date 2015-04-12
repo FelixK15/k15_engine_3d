@@ -137,7 +137,8 @@ void K15_InternalCreateDiffuseTexture(K15_RenderCommandBuffer* p_RenderCommandBu
 	K15_RenderTextureDesc textureDesc = {};
 
 	textureDesc.type = K15_RENDER_TEXTURE_TYPE_2D;
-	textureDesc.data = (byte*)malloc(256 * 256 * 3);
+	textureDesc.mipmaps.data = (byte**)malloc(sizeof(byte*));
+	textureDesc.mipmaps.data[0] = (byte*)malloc(128 * 256 * 3);
 	textureDesc.format = K15_RENDER_FORMAT_R8G8B8_UINT;
 	textureDesc.createMipChain = TRUE;
 
@@ -147,11 +148,11 @@ void K15_InternalCreateDiffuseTexture(K15_RenderCommandBuffer* p_RenderCommandBu
 		 ++y)
 	{
 		for (int x = 0;
-			x < 256;
+			x < 128;
 			++x)
 		{
-			uint32 offset = (x + (y * 256)) * 3;
-			byte* pixel = textureDesc.data + offset;
+			uint32 offset = (x + (y * 128)) * 3;
+			byte* pixel = textureDesc.mipmaps.data[0] + offset;
 
 			pixel[0] = rand() % 256;
 			pixel[1] = rand() % 256;
@@ -159,7 +160,7 @@ void K15_InternalCreateDiffuseTexture(K15_RenderCommandBuffer* p_RenderCommandBu
 		}
 	}
 
-	textureDesc.dimension.width = 256;
+	textureDesc.dimension.width = 128;
 	textureDesc.dimension.height = 256;
 
 	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_CREATE_TEXTURE);
@@ -217,11 +218,11 @@ int CALLBACK WinMain(
 
 	uint8 result = K15_Win32InitializeOSLayer(hInstance);
 
-	if (result == K15_ERROR_OUT_OF_MEMORY)
+	if (result == K15_OS_ERROR_OUT_OF_MEMORY)
 	{
 		K15_LOG_ERROR_MESSAGE("Out of memory!");
 	}
-	else if(result == K15_ERROR_SYSTEM)
+	else if(result == K15_OS_ERROR_SYSTEM)
 	{
 		char* errorMessage = K15_Win32GetError();
 		K15_LOG_ERROR_MESSAGE(errorMessage);
@@ -261,7 +262,6 @@ int CALLBACK WinMain(
 	// Test 5: Set Create Texture
 	K15_RenderTextureHandle textureHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
 	K15_InternalCreateDiffuseTexture(renderCommandBuffer, &textureHandle);
-
 
 	// Test 6: Create Sampler
 	K15_RenderSamplerHandle samplerHandle = K15_INVALID_GPU_RESOURCE_HANDLE;

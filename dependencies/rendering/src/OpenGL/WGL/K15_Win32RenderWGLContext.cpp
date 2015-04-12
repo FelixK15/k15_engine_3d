@@ -31,7 +31,7 @@ intern uint8 K15_Win32CreateDummyContext(HWND hwnd, HDC dc, HGLRC* p_Context)
 
 		if((pixelFormatIndex = ChoosePixelFormat(dc, &px)) == 0)
 		{
-			return K15_ERROR_SYSTEM;
+			return K15_OS_ERROR_SYSTEM;
 		}
 
 		SetPixelFormat(dc, pixelFormatIndex, &px);
@@ -42,7 +42,7 @@ intern uint8 K15_Win32CreateDummyContext(HWND hwnd, HDC dc, HGLRC* p_Context)
 		*p_Context = context;
 	}
 
-	return context != 0 ? K15_SUCCESS : K15_ERROR_SYSTEM;
+	return context != 0 ? K15_SUCCESS : K15_OS_ERROR_SYSTEM;
 }
 /*********************************************************************************/
 intern GLvoid* K15_Win32GetProcAddress(const char* p_ProcName)
@@ -66,7 +66,7 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSLayer
 
 	if (!p_OSContext->window.window)
 	{
-		return K15_ERROR_NO_WINDOW;
+		return K15_OS_ERROR_NO_WINDOW;
 	}
 
 	K15_Win32Window* win32Window = (K15_Win32Window*)p_OSContext->window.window->userData;
@@ -112,7 +112,7 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSLayer
 
 	if (!pixelFormatIndex)
 	{
-		return K15_ERROR_SYSTEM;
+		return K15_OS_ERROR_SYSTEM;
 	}
 
 	SetPixelFormat(dc, pixelFormatIndex, 0);
@@ -134,19 +134,19 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSLayer
 
 	if (!context)
 	{
-		return K15_ERROR_SYSTEM;
+		return K15_OS_ERROR_SYSTEM;
 	}
 
 	if (wglMakeCurrent(dc, context) == FALSE)
 	{
-		return K15_ERROR_SYSTEM;
+		return K15_OS_ERROR_SYSTEM;
 	}
 
 	K15_Win32GLContext* win32GLContext = (K15_Win32GLContext*)malloc(sizeof(K15_Win32GLContext));
 
 	if (!win32GLContext)
 	{
-		return K15_ERROR_OUT_OF_MEMORY;
+		return K15_OS_ERROR_OUT_OF_MEMORY;
 	}
 
 	win32GLContext->context = context;

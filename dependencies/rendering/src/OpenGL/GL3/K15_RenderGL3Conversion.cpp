@@ -751,18 +751,6 @@ intern inline GLenum K15_GLConvertRenderFilterMode(K15_RenderFilterMode p_Filter
 			break;
 		}
 
-		case K15_RENDER_FILTER_MODE_LINEAR_MIPMAP:
-		{
-			nativeRenderFilterMode = GL_LINEAR_MIPMAP_LINEAR;
-			break;
-		}
-
-		case K15_RENDER_FILTER_MODE_NEAREST_MIPMAP:
-		{
-			nativeRenderFilterMode = GL_NEAREST_MIPMAP_NEAREST;
-			break;
-		}
-
 		case K15_RENDER_FILTER_MODE_ANISOTROPIC:
 		{
 			//will be handled separately

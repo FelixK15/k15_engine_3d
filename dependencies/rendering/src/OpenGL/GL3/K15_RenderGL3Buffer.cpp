@@ -91,7 +91,7 @@ inline uint8 K15_GLCreateBuffers()
 
 		if (!currentBufferDesc.data)
 		{
-			returnValue = K15_ERROR_OUT_OF_MEMORY;
+			returnValue = K15_OS_ERROR_OUT_OF_MEMORY;
 			break;
 		}
 
