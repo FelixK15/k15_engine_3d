@@ -6,7 +6,7 @@ namespace K15_ResourceCompiler
 	void Help::printHelp()
 	{
 		static const char* HELP_MESSAGE = ""
-		"K15 Resource Compiler Version %d.%d\n"
+		"K15 Resource Compiler Version %s.%s\n"
 		"====================================\n"
 		"Usage:\n"
 		"k15_resourcecompiler -i [file|dir] -o [dir] -q [high|medium|low]\n"
@@ -17,6 +17,7 @@ namespace K15_ResourceCompiler
 		"-o   -   Ouput [dir] directory where to put compiled resources\n"
 		"-q   -   Quality of the resources. **Not yet used**\n"
 		"         DEFAULT: medium\n"
+		"-u	  -   Replace old compiled file with new compiled file.\n"
 		"-f   -   Filter types of assets that get processed **Not yet used**\n"
 		"         DEFAULT: all\n"
 		"-r   -   Recursively search directory if input is a directory\n"
@@ -25,7 +26,7 @@ namespace K15_ResourceCompiler
 		"The K15 Resourcecompiler is a commandline which compiled specific\n"
 		"resource like textures (png, tga, tiff, pds) or meshes (fbx, dae)\n"
 		"into specific binary formats which can be used by the 3D game\n"
-		"engine \"K15 Engine 3D\".";
+		"engine \"K15 Engine 3D\".\n\n";
 
 		printf(HELP_MESSAGE, VERSION_MAJOR, VERSION_MINOR);
 	}

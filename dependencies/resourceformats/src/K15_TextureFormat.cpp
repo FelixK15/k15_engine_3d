@@ -104,6 +104,33 @@ uint8 K15_SetTextureMipMapCount(K15_TextureFormat* p_TextureFormat, uint8 p_MipM
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
+uint32 K15_GetTextureMipMapSize(K15_TextureFormat* p_TextureFormat, uint8 p_MipMapIndex)
+{
+	assert(p_TextureFormat);
+
+	if (p_MipMapIndex > p_TextureFormat->mipMapCount)
+	{
+		return 0;
+	}
+
+	uint32 width = p_TextureFormat->width;
+	uint32 height = p_TextureFormat->height;
+
+	for (uint32 mipmapIndex = 0;
+		mipmapIndex < p_MipMapIndex;
+		++mipmapIndex)
+	{
+		width *= 0.5f;
+		height *= 0.5f;
+	}
+	
+	uint32 blockCount = ((width + 3) / 4) * ((height + 3) / 4);
+	uint32 blockSize = 16;
+	uint32 mipmapSize = blockCount * blockSize;
+
+	return mipmapSize;
+}
+/*********************************************************************************/
 byte* K15_GetTextureMipMap(K15_TextureFormat* p_TextureFormat, uint8 p_MipmapIndex)
 {
 	assert(p_TextureFormat);
@@ -274,6 +301,8 @@ uint8 K15_InternalLoadTextureFormat(K15_DataAccessContext* p_DataAccessContext, 
 
 	//read texture name
 	K15_ReadData(p_DataAccessContext, nameLength, nameBuffer);
+	nameBuffer[nameLength] = 0;
+	p_TextureFormat->textureName = nameBuffer;
 
 	//read width
 	K15_ReadData(p_DataAccessContext, sizeof(uint32), &p_TextureFormat->width);

@@ -24,6 +24,7 @@ int main(int argc, char** argv)
 	if(arguments.hasCommand("-help"))
 	{
 		Help::printHelp();
+		return 0;
 	}
 
 	if(arguments.hasCommand("-o"))

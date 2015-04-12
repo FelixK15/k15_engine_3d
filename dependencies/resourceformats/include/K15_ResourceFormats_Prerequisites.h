@@ -4,8 +4,9 @@
 #include <cstring>
 #include <cstdlib>
 #include <cassert>
-#include <string>
-#include <fstream>
+#include <cstdio>
+//#include <string>
+//#include <fstream>
 
 #include "enums\K15_ReturnValues.h"
 
@@ -26,7 +27,7 @@
 //Save Flags
 #define K15_SAVE_FLAG_FREE_DATA 0x01
 
-typedef std::string String;
+//typedef std::string String;
 
 typedef unsigned char byte;
 

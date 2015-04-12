@@ -59,13 +59,13 @@ namespace K15_ResourceCompiler
 				mipmapIndex < mipmapCount;
 				++mipmapIndex)
 			{
-				memoryNeeded += p_Width * p_Height * p_ComponentsCount;
+				memoryNeeded += p_Width * p_Height;
 
 				p_Width /= 2;
 				p_Height /= 2;
 			}
 
-			return memoryNeeded;
+			return memoryNeeded * p_ComponentsCount;
 		}
 		/*********************************************************************************/
 
@@ -192,10 +192,9 @@ namespace K15_ResourceCompiler
 		stbi_image_free(imageData);
 
 		uint32 mipMapCount = internal::getMipMapCount(width, height);
-		byte* previousImageBlock = uncompressedTextureMemory;
 		byte* currentImageBlock = uncompressedTextureMemory + (width * height * colorComponents);
-		uint32 previousImageWidth = width;
-		uint32 previousImageHeight = height;
+		uint32 imageWidth = width;
+		uint32 imageHeight = height;
 		uint32 currentImageWidth = width / 2;
 		uint32 currentImageHeight = height / 2;
 
@@ -204,17 +203,13 @@ namespace K15_ResourceCompiler
 			mipMapIndex < mipMapCount;
 			++mipMapIndex)
 		{
-			stbir_resize_uint8(previousImageBlock, previousImageWidth, previousImageHeight, 0,
+			stbir_resize_uint8(uncompressedTextureMemory, imageWidth, imageHeight, 0,
 								currentImageBlock, currentImageWidth, currentImageHeight, 0, colorComponents);
 
-			previousImageBlock = currentImageBlock;
-			previousImageHeight = currentImageHeight;
-			previousImageWidth = currentImageWidth;
-
-			currentImageHeight = previousImageHeight / 2;
-			currentImageWidth = previousImageWidth / 2;
-
 			currentImageBlock += (currentImageHeight * currentImageWidth * colorComponents);
+
+			currentImageHeight = currentImageHeight / 2;
+			currentImageWidth = currentImageWidth / 2;
 		}
 		
 		//texture data for each mip map are now tightly packed into uncompressedTextureMemory variable
@@ -232,9 +227,11 @@ namespace K15_ResourceCompiler
 			mipMapIndex < mipMapCount + 1; //+1 because we also need to compress the actual image
 			++mipMapIndex)
 		{
-			squish::CompressImage(uncompressedTextureMemory, currentImageWidth, currentImageHeight, currentCompressedImageBlock, compressionUsed);
+			squish::CompressImage(currentImageBlock, currentImageWidth, currentImageHeight, currentCompressedImageBlock, compressionUsed);
 
 			currentCompressedImageBlock += squish::GetStorageRequirements(currentImageWidth, currentImageHeight, compressionUsed);
+
+			currentImageBlock += (currentImageHeight * currentImageWidth * colorComponents);
 
 			currentImageHeight /= 2;
 			currentImageWidth /= 2;
