@@ -82,7 +82,7 @@ uint8 K15_SetWindowTitle(K15_Window* p_Window, char* p_Title)
 
 	if (!copiedTitle)
 	{
-		return K15_ERROR_OUT_OF_MEMORY;
+		return K15_OS_ERROR_OUT_OF_MEMORY;
 	}
 
 	memcpy(copiedTitle, p_Title, titleLength);

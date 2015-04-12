@@ -26,7 +26,7 @@ uint8 K15_Win32FileExists(const char* p_FilePath)
 
 	HANDLE fileHandle = CreateFile(p_FilePath, GENERIC_READ, FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
-	result = fileHandle == INVALID_HANDLE_VALUE ? K15_ERROR_FILE_NOT_FOUND : K15_SUCCESS;
+	result = fileHandle == INVALID_HANDLE_VALUE ? K15_OS_ERROR_FILE_NOT_FOUND : K15_SUCCESS;
 
 	CloseHandle(fileHandle);
 	

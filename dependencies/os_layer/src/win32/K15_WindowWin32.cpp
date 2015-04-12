@@ -56,7 +56,7 @@ uint8 K15_Win32CreateWindow(K15_OSLayerContext* p_OSContext, K15_Window* p_Windo
 	monitorInfo.cbSize = sizeof(MONITORINFOEX);
 	if (GetMonitorInfoA(monitorHandles[monitorID], &monitorInfo) == 0)
 	{
-		return K15_ERROR_MONITOR_NOT_FOUND;
+		return K15_OS_ERROR_MONITOR_NOT_FOUND;
 	}
 
 	DWORD style = WS_VISIBLE;
@@ -94,7 +94,7 @@ uint8 K15_Win32CreateWindow(K15_OSLayerContext* p_OSContext, K15_Window* p_Windo
 
 	if (handle == INVALID_HANDLE_VALUE)
 	{
-		return K15_ERROR_SYSTEM;
+		return K15_OS_ERROR_SYSTEM;
 	}
 
 	K15_Win32Window* win32Window = (K15_Win32Window*)malloc(sizeof(K15_Win32Window));
@@ -119,13 +119,13 @@ uint8 K15_Win32SetWindowDimension(K15_OSLayerContext* p_OSContext, K15_Window* p
 
 	if (EnumDisplayDevices(0, p_Window->monitorIndex, &displayDevice, 0) == 0)
 	{
-		return K15_ERROR_MONITOR_NOT_FOUND;
+		return K15_OS_ERROR_MONITOR_NOT_FOUND;
 	}
 
 	DEVMODE deviceSettings;
 	if (EnumDisplaySettings(displayDevice.DeviceName, ENUM_CURRENT_SETTINGS, &deviceSettings) == 0)
 	{
-		return K15_ERROR_SYSTEM;
+		return K15_OS_ERROR_SYSTEM;
 	}
 
 	deviceSettings.dmPelsWidth = p_Width;
@@ -135,7 +135,7 @@ uint8 K15_Win32SetWindowDimension(K15_OSLayerContext* p_OSContext, K15_Window* p
 	//CDS_RESET = always change settings
 	if (ChangeDisplaySettings(&deviceSettings, CDS_TEST) != DISP_CHANGE_SUCCESSFUL)
 	{
-		return K15_ERROR_RESOLUTION_NOT_SUPPORTED;
+		return K15_OS_ERROR_RESOLUTION_NOT_SUPPORTED;
 	}
 
 	ChangeDisplaySettings(&deviceSettings, CDS_RESET);
@@ -155,7 +155,7 @@ uint8 K15_Win32SetWindowTitle(K15_OSLayerContext* p_OSContext, K15_Window* p_Win
 
 	if (SetWindowTextA(hwnd, p_Title) != 0)
 	{
-		return K15_ERROR_SYSTEM;
+		return K15_OS_ERROR_SYSTEM;
 	}
 
 	return K15_SUCCESS;

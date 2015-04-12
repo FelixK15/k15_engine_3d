@@ -132,7 +132,7 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 
 	if (!win32SpecificContext)
 	{
-		return K15_ERROR_OUT_OF_MEMORY;
+		return K15_OS_ERROR_OUT_OF_MEMORY;
 	}
 
 	//try to load xinput (1.4)
@@ -146,7 +146,7 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 
 	if (!xinput)
 	{
-		return K15_ERROR_SYSTEM;
+		return K15_OS_ERROR_SYSTEM;
 	}
 
 	win32SpecificContext->XInput.module = xinput;
@@ -160,7 +160,7 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	if (!win32SpecificContext->XInput.enable || !win32SpecificContext->XInput.getCapabilities 
 		|| !win32SpecificContext->XInput.getState || !win32SpecificContext->XInput.setState)
 	{
-		return K15_ERROR_SYSTEM;
+		return K15_OS_ERROR_SYSTEM;
 	}
 
 	//enable XInput
@@ -187,7 +187,7 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 
 	if (RegisterClass(&win32Class) == 0)
 	{
-		return K15_ERROR_SYSTEM;
+		return K15_OS_ERROR_SYSTEM;
 	}
 
 	//get time the os layer got initialized

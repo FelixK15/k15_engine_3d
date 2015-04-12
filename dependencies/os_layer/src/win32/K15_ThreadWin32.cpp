@@ -19,7 +19,7 @@ intern DWORD WINAPI K15_Win32ThreadWrapper(LPVOID p_Parameter)
 	uint8 threadFunctionResult = threadFunction(threadParameter);
 
 	if (threadFunctionResult != K15_SUCCESS
-		&& threadFunctionResult == K15_ERROR_SYSTEM)
+		&& threadFunctionResult == K15_OS_ERROR_SYSTEM)
 	{
 		result = GetLastError();
 	}
@@ -42,7 +42,7 @@ uint8 K15_Win32CreateThread(K15_OSLayerContext* p_OSContext, K15_Thread* p_Threa
 	
 	if (!win32Thread || ! win32ThreadParameterBuffer)
 	{
-		return K15_ERROR_OUT_OF_MEMORY;
+		return K15_OS_ERROR_OUT_OF_MEMORY;
 	}
 	
 	memcpy(win32ThreadParameterBuffer, &p_ThreadFunction, K15_PTR_SIZE);
@@ -56,7 +56,7 @@ uint8 K15_Win32CreateThread(K15_OSLayerContext* p_OSContext, K15_Thread* p_Threa
 		free(win32Thread);
 		free(win32ThreadParameterBuffer);
 
-		return K15_ERROR_SYSTEM;
+		return K15_OS_ERROR_SYSTEM;
 	}
 
 	win32Thread->handle = threadHandle;
@@ -161,7 +161,7 @@ uint8 K15_Win32SetThreadName(K15_Thread* p_Thread)
 		return K15_SUCCESS;
 	}
 
-	return K15_ERROR_SYSTEM;
+	return K15_OS_ERROR_SYSTEM;
 }
 /*********************************************************************************/
 K15_Semaphore* K15_CreateSemaphore()
@@ -193,7 +193,7 @@ uint8 K15_PostSemaphore(K15_Semaphore* p_Semaphore)
 
 	if (ReleaseSemaphore(p_Semaphore->handle, 1, 0) != FALSE)
 	{
-		returnValue = K15_ERROR_SYSTEM;
+		returnValue = K15_OS_ERROR_SYSTEM;
 	}
 
 	InterlockedIncrement(&p_Semaphore->count);
