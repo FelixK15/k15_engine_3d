@@ -34,7 +34,7 @@
 #ifdef K15_OPENGL_ENABLE_ERROR_CHECK_CALLS
 	#define K15_OPENGL_CALL(x) {x; GLenum errorEnum = glGetError(); assert(errorEnum == GL_NO_ERROR && #x);}
 #else
-	#define K15_OPENGL_CALL(x)
+	#define K15_OPENGL_CALL(x) x;
 #endif //K15_OPENGL_ENABLE_ERROR_CHECK_CALLS
 
 #ifdef K15_OS_WINDOWS
