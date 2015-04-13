@@ -9,7 +9,8 @@ set(RF_INC 		"./include/K15_MeshFormat.h"
 				"./include/K15_TextureFormat.h"
 				"./include/K15_HeaderFormat.h"
 				"./include/K15_DataAccessHelper.h"
-				"./include/K15_ResourceFormats_Prerequisites.h")
+				"./include/K15_ResourceFormats_Prerequisites.h"
+				"./include/K15_ResourceFormats_Config.h")
 
 set(RF_ENUMS	"./include/enums/K15_FormatValues.h"
 				"./include/enums/K15_ReturnValues.h")

@@ -10,8 +10,8 @@ uint8 K15_SetMaterialName(K15_MaterialFormat* p_MaterialFormat, const char* p_Na
 {
 	assert(p_MaterialFormat && p_Name);
 
-	uint32 nameLength = strlen(p_Name);
-	char* nameBuffer = (char*)malloc(nameLength);
+	size_t nameLength = strlen(p_Name);
+	char* nameBuffer = (char*)K15_RF_MALLOC(nameLength);
 	
 	if (!nameBuffer)
 	{
@@ -20,7 +20,7 @@ uint8 K15_SetMaterialName(K15_MaterialFormat* p_MaterialFormat, const char* p_Na
 
 	memcpy(nameBuffer, p_Name, nameLength);
 
-	p_MaterialFormat->materialNameLength = nameLength;
+	p_MaterialFormat->materialNameLength = (uint32)nameLength;
 	p_MaterialFormat->materialName = nameBuffer;
 
 	return K15_SUCCESS;
@@ -30,7 +30,7 @@ uint8 K15_SetSubMaterialCount(K15_MaterialFormat* p_MaterialFormat, uint16 p_Sub
 {
 	assert(p_MaterialFormat && p_SubMaterialCount > 0);
 
-	K15_SubMaterialFormat* subMaterialMemory = (K15_SubMaterialFormat*)malloc(sizeof(K15_SubMaterialFormat) * p_SubMaterialCount);
+	K15_SubMaterialFormat* subMaterialMemory = (K15_SubMaterialFormat*)K15_RF_MALLOC(sizeof(K15_SubMaterialFormat) * p_SubMaterialCount);
 
 	if(!subMaterialMemory)
 	{
@@ -47,7 +47,7 @@ uint8 K15_SetSubMaterialTextureCount(K15_SubMaterialFormat* p_SubMaterialFormat,
 {
 	assert(p_SubMaterialFormat && p_TextureCount > 0 && p_TextureIdentifier > 0);
 
-	K15_SubMaterialTextureFormat* textureFormatMemory = (K15_SubMaterialTextureFormat*)malloc(p_TextureCount * sizeof(K15_SubMaterialTextureFormat));
+	K15_SubMaterialTextureFormat* textureFormatMemory = (K15_SubMaterialTextureFormat*)K15_RF_MALLOC(p_TextureCount * sizeof(K15_SubMaterialTextureFormat));
 
 	if(!textureFormatMemory)
 	{
@@ -66,7 +66,7 @@ uint8 K15_SetSubMaterialTextureCount(K15_SubMaterialFormat* p_SubMaterialFormat,
 		{
 			if(textureFormatMemory)
 			{
-				free(textureFormatMemory);
+				K15_RF_FREE(textureFormatMemory);
 			}
 
 			return K15_ERROR_WRONG_DATA_IDENTIFIER;
@@ -80,8 +80,8 @@ uint8 K15_SetSubMaterialTextureFormatTextureName(K15_SubMaterialTextureFormat* p
 {
 	assert(p_SubMaterialTextureFormat && p_TextureName);
 
-	uint32 lengthName = strlen(p_TextureName);
-	char* nameBuffer = (char*)malloc(lengthName);
+	size_t lengthName = strlen(p_TextureName);
+	char* nameBuffer = (char*)K15_RF_MALLOC(lengthName);
 
 	if(!nameBuffer)
 	{
@@ -90,7 +90,7 @@ uint8 K15_SetSubMaterialTextureFormatTextureName(K15_SubMaterialTextureFormat* p
 
 	memcpy(nameBuffer, p_TextureName, lengthName);
 
-	p_SubMaterialTextureFormat->textureNameLength = lengthName;
+	p_SubMaterialTextureFormat->textureNameLength = (uint32)lengthName;
 	p_SubMaterialTextureFormat->textureName = nameBuffer;
 
 	return K15_SUCCESS;
@@ -129,16 +129,16 @@ void K15_FreeMaterialFormat(K15_MaterialFormat p_MaterialFormat)
 			++submaterialDiffuseTextureIndex)
 		{
 			K15_SubMaterialTextureFormat submaterialDiffuseTextureFormat = submaterialFormat.diffuseTextureFormat[submaterialDiffuseTextureIndex];
-			free(submaterialDiffuseTextureFormat.textureName);
+			K15_RF_FREE(submaterialDiffuseTextureFormat.textureName);
 			submaterialDiffuseTextureFormat.textureName = 0;
 		}
 
-		free(submaterialFormat.diffuseTextureFormat);
+		K15_RF_FREE(submaterialFormat.diffuseTextureFormat);
 		submaterialFormat.diffuseTextureFormat = 0;
 	}
 
-	free(p_MaterialFormat.materialName);
-	free(p_MaterialFormat.subMaterials);
+	K15_RF_FREE(p_MaterialFormat.materialName);
+	K15_RF_FREE(p_MaterialFormat.subMaterials);
 	p_MaterialFormat.subMaterials = 0;
 }
 /*********************************************************************************/
@@ -197,7 +197,7 @@ uint8 K15_InternalLoadMaterialFormat(K15_DataAccessContext* p_DataAcessContext, 
 	//name length
 	K15_ReadData(p_DataAcessContext, sizeof(uint32), &nameLength);
 
-	nameBuffer = (char*)malloc(nameLength + 1); //+1 for 0 terminator
+	nameBuffer = (char*)K15_RF_MALLOC(nameLength + 1); //+1 for 0 terminator
 
 	if(!nameBuffer)
 	{
@@ -215,7 +215,7 @@ uint8 K15_InternalLoadMaterialFormat(K15_DataAccessContext* p_DataAcessContext, 
 	//submaterial count
 	K15_ReadData(p_DataAcessContext, sizeof(uint16), &p_MaterialFormat->submaterialCount);
 
-	K15_SubMaterialFormat* submaterialMemory = (K15_SubMaterialFormat*)malloc(sizeof(K15_SubMaterialFormat) * p_MaterialFormat->submaterialCount);
+	K15_SubMaterialFormat* submaterialMemory = (K15_SubMaterialFormat*)K15_RF_MALLOC(sizeof(K15_SubMaterialFormat) * p_MaterialFormat->submaterialCount);
 
 	if(!submaterialMemory)
 	{
@@ -248,10 +248,10 @@ uint8 K15_InternalLoadMaterialFormat(K15_DataAccessContext* p_DataAcessContext, 
 		//diffuse texture count
 		K15_ReadData(p_DataAcessContext, sizeof(uint8), &currentSubmaterial->diffuseTextureCount);
 
-		K15_SubMaterialTextureFormat* textureFormatMemory = (K15_SubMaterialTextureFormat*)malloc(sizeof(K15_SubMaterialTextureFormat) * currentSubmaterial->diffuseTextureCount);
+		K15_SubMaterialTextureFormat* textureFormatMemory = (K15_SubMaterialTextureFormat*)K15_RF_MALLOC(sizeof(K15_SubMaterialTextureFormat) * currentSubmaterial->diffuseTextureCount);
 		if(!textureFormatMemory)
 		{
-			free(submaterialMemory);
+			K15_RF_FREE(submaterialMemory);
 			return K15_ERROR_OUT_OF_MEMORY;
 		}
 
@@ -267,7 +267,7 @@ uint8 K15_InternalLoadMaterialFormat(K15_DataAccessContext* p_DataAcessContext, 
 			K15_ReadData(p_DataAcessContext, sizeof(uint32), &submaterialTextureFormat->textureNameLength);
 
 			//create buffer for texture name
-			char* textureName = (char*)malloc(submaterialTextureFormat->textureNameLength + 1); //+1 for null terminator
+			char* textureName = (char*)K15_RF_MALLOC(submaterialTextureFormat->textureNameLength + 1); //+1 for null terminator
 
 			//texture name
 			K15_ReadData(p_DataAcessContext, submaterialTextureFormat->textureNameLength, textureName);

@@ -33,7 +33,7 @@ uint8 K15_Win32CreateWindow(K15_OSLayerContext* p_OSContext, K15_Window* p_Windo
 
 	//get monitors
 	int amountMonitors = GetSystemMetrics(SM_CMONITORS);
-	HMONITOR* monitorHandles = (HMONITOR*)malloc(sizeof(HMONITOR) * amountMonitors);
+	HMONITOR* monitorHandles = (HMONITOR*)K15_OS_MALLOC(sizeof(HMONITOR) * amountMonitors);
 	
 	//clamp monitorindex if needed
 	if (monitorID > amountMonitors-1)
@@ -97,7 +97,7 @@ uint8 K15_Win32CreateWindow(K15_OSLayerContext* p_OSContext, K15_Window* p_Windo
 		return K15_OS_ERROR_SYSTEM;
 	}
 
-	K15_Win32Window* win32Window = (K15_Win32Window*)malloc(sizeof(K15_Win32Window));
+	K15_Win32Window* win32Window = (K15_Win32Window*)K15_OS_MALLOC(sizeof(K15_Win32Window));
 
 	win32Window->hwnd = handle;
 	win32Window->style = style;

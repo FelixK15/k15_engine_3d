@@ -100,12 +100,12 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	win32OSContext.threading.createThread = K15_Win32CreateThread;
 	win32OSContext.threading.setThreadName = K15_Win32SetThreadName;
 	win32OSContext.threading.getCurrentThread = K15_Win32GetCurrentThread;
-	win32OSContext.threading.threads = (K15_Thread**)malloc(sizeof(K15_Thread*) * K15_MAX_THREADS);
+	win32OSContext.threading.threads = (K15_Thread**)K15_OS_MALLOC(sizeof(K15_Thread*) * K15_MAX_THREADS);
 
 	memset(win32OSContext.threading.threads, 0, sizeof(K15_Thread*) * K15_MAX_THREADS);
 
 	//get current dir
-	LPSTR currentDirectoryBuffer = (LPSTR)malloc(MAX_PATH);
+	LPSTR currentDirectoryBuffer = (LPSTR)K15_OS_MALLOC(MAX_PATH);
 	GetCurrentDirectoryA(MAX_PATH, currentDirectoryBuffer);
 
 	//system
@@ -127,7 +127,7 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	K15_LogRegisterLogFnc(K15_Win32LogConsole, K15_LOG_PRIORITY_DEFAULT);
 #endif //K15_DEBUG
 
-	K15_Win32Context* win32SpecificContext = (K15_Win32Context*)malloc(sizeof(K15_Win32Context));
+	K15_Win32Context* win32SpecificContext = (K15_Win32Context*)K15_OS_MALLOC(sizeof(K15_Win32Context));
 	memset(win32SpecificContext, 0, sizeof(K15_Win32Context));
 
 	if (!win32SpecificContext)
@@ -204,11 +204,11 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 char* K15_Win32GetError()
 {
 	DWORD errorNo = GetLastError();
-	char* messageBuffer = (char*)malloc(256);
+	char* messageBuffer = (char*)K15_OS_MALLOC(256);
 
 	if (FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, 0, errorNo, LANG_ENGLISH, messageBuffer, 256, 0) == 0)
 	{
-		free(messageBuffer);
+		K15_OS_FREE(messageBuffer);
 		messageBuffer = "Unkown Error";
 	}
 	

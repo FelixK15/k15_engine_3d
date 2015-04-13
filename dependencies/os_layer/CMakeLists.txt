@@ -26,7 +26,8 @@ set(K15_OS_LAYER_INC 	"include/K15_OSLayer_EventTypes.h"
 			"include/K15_OSLayer_SystemEvents.h"
 			"include/K15_OSLayer_OSContext.h"
 			"include/K15_OSLayer_FileSystem.h"
-			"include/K15_OSLayer_System.h")
+			"include/K15_OSLayer_System.h"
+			"include/K15_OSLayer_Config.h")
 
 set(K15_OS_LAYER_WIN32_INC 	"include/win32/K15_EventsWin32.h"
 				"include/win32/K15_WindowWin32.h"

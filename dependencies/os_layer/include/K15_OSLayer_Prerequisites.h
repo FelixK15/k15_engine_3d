@@ -2,6 +2,7 @@
 #define _K15_OSLayer_Prerequisites_h_
 
 #include "K15_OSLayer_ErrorCodes.h"
+#include "K15_OSLayer_Config.h"
 
 #include <assert.h>
 #include <memory.h>

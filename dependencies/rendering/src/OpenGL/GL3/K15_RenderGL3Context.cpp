@@ -8,12 +8,15 @@
 
 #define K15_OPENGL_ERROR_MISSING_EXTENSION 10
 
+#define K15_CHECK_ASSIGNMENT(variable, value) {variable = value; assert(variable);}
+
 #include "K15_RenderContext.h"
 #include "K15_RenderBufferDesc.h"
 #include "K15_RenderProgramDesc.h"
 #include "K15_RenderStateDesc.h"
 #include "K15_RenderTextureDesc.h"
 #include "K15_RenderSamplerDesc.h"
+#include "K15_RenderTargetDesc.h"
 
 #include <K15_Logging.h>
 
@@ -29,6 +32,7 @@
 #include "OpenGL/GL3/K15_RenderGL3State.cpp"
 #include "OpenGL/GL3/K15_RenderGL3Texture.cpp"
 #include "OpenGL/GL3/K15_RenderGL3Sampler.cpp"
+#include "OpenGL/GL3/K15_RenderGL3RenderTarget.cpp"
 
 typedef uint8 (*K15_CreatePlatformContextFnc)(K15_GLRenderContext*, K15_OSLayerContext*);
 
@@ -181,6 +185,11 @@ intern inline void K15_InternalGLSetFunctionPointers(K15_RenderContext* p_Render
 	p_RenderContext->commandProcessing.stateManagement.setBlendState = K15_GLSetBlendStateDesc;
 	p_RenderContext->commandProcessing.stateManagement.setRasterizerState = K15_GLSetRasterizerStateDesc;
 	p_RenderContext->commandProcessing.stateManagement.setStencilState = K15_GLSetStencilStateDesc;
+
+	//render target management
+	p_RenderContext->commandProcessing.renderTargetManagement.createRenderTarget = K15_GLCreateRenderTarget;
+	p_RenderContext->commandProcessing.renderTargetManagement.deleteRenderTarget = K15_GLDeleteRenderTarget;
+
 }
 /*********************************************************************************/
 intern int K15_CmpStrings(const void* a, const void* b)
@@ -237,28 +246,41 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 {
 	uint8 result = K15_SUCCESS;
 
-	kglGenBuffers = (PFNGLGENBUFFERSPROC)kglGetProcAddress("glGenBuffers");
-	kglDeleteBuffers = (PFNGLDELETEBUFFERSPROC)kglGetProcAddress("glDeleteBuffers");
-	kglGetProgramiv = (PFNGLGETPROGRAMIVPROC)kglGetProcAddress("glGetProgramiv");
-	kglDeleteProgram = (PFNGLDELETEPROGRAMPROC)kglGetProcAddress("glDeleteProgram");
-	kglGetActiveUniform = (PFNGLGETACTIVEUNIFORMPROC)kglGetProcAddress("glGetActiveUniform");
-	kglGetActiveAttrib = (PFNGLGETACTIVEATTRIBPROC)kglGetProcAddress("glGetActiveAttrib");
-	kglGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)kglGetProcAddress("glGetUniformLocation");
-	kglGetAttribLocation = (PFNGLGETATTRIBLOCATIONPROC)kglGetProcAddress("glGetAttribLocation");
-	kglGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC)kglGetProcAddress("glGetProgramInfoLog");
-	kglBlendEquationSeparate = (PFNGLBLENDEQUATIONSEPARATEPROC)kglGetProcAddress("glBlendEquationSeparate");
-	kglBlendFuncSeparate = (PFNGLBLENDFUNCSEPARATEPROC)kglGetProcAddress("glBlendFuncSeparate");
+	K15_CHECK_ASSIGNMENT(kglGenBuffers, (PFNGLGENBUFFERSPROC)kglGetProcAddress("glGenBuffers"));
+	K15_CHECK_ASSIGNMENT(kglDeleteBuffers, (PFNGLDELETEBUFFERSPROC)kglGetProcAddress("glDeleteBuffers"));
+	K15_CHECK_ASSIGNMENT(kglGetProgramiv, (PFNGLGETPROGRAMIVPROC)kglGetProcAddress("glGetProgramiv"));
+	K15_CHECK_ASSIGNMENT(kglDeleteProgram, (PFNGLDELETEPROGRAMPROC)kglGetProcAddress("glDeleteProgram"));
+	K15_CHECK_ASSIGNMENT(kglGetActiveUniform, (PFNGLGETACTIVEUNIFORMPROC)kglGetProcAddress("glGetActiveUniform"));
+	K15_CHECK_ASSIGNMENT(kglGetActiveAttrib, (PFNGLGETACTIVEATTRIBPROC)kglGetProcAddress("glGetActiveAttrib"));
+	K15_CHECK_ASSIGNMENT(kglGetUniformLocation, (PFNGLGETUNIFORMLOCATIONPROC)kglGetProcAddress("glGetUniformLocation"));
+	K15_CHECK_ASSIGNMENT(kglGetAttribLocation, (PFNGLGETATTRIBLOCATIONPROC)kglGetProcAddress("glGetAttribLocation"));
+	K15_CHECK_ASSIGNMENT(kglBlendEquationSeparate, (PFNGLBLENDEQUATIONSEPARATEPROC)kglGetProcAddress("glBlendEquationSeparate"));
+	K15_CHECK_ASSIGNMENT(kglBlendFuncSeparate, (PFNGLBLENDFUNCSEPARATEPROC)kglGetProcAddress("glBlendFuncSeparate"));
+	K15_CHECK_ASSIGNMENT(kglGenFramebuffers, (PFNGLGENFRAMEBUFFERSPROC)kglGetProcAddress("glGenFramebuffers"));
+	K15_CHECK_ASSIGNMENT(kglBindFramebuffer, (PFNGLBINDFRAMEBUFFERPROC)kglGetProcAddress("glBindFramebuffer"));
+	K15_CHECK_ASSIGNMENT(kglDeleteFramebuffers, (PFNGLDELETEFRAMEBUFFERSPROC)kglGetProcAddress("glDeleteFramebuffers"));
+	K15_CHECK_ASSIGNMENT(kglGenRenderbuffers, (PFNGLGENRENDERBUFFERSPROC)kglGetProcAddress("glGenRenderbuffers"));
+	K15_CHECK_ASSIGNMENT(kglBindRenderbuffer, (PFNGLBINDRENDERBUFFERPROC)kglGetProcAddress("glBindRenderbuffer"));
+	K15_CHECK_ASSIGNMENT(kglDeleteRenderbuffers, (PFNGLDELETERENDERBUFFERSPROC)kglGetProcAddress("glDeleteRenderbuffers"));
+	K15_CHECK_ASSIGNMENT(kglRenderbufferStorage, (PFNGLRENDERBUFFERSTORAGEPROC)kglGetProcAddress("glRenderbufferStorage"));
+	K15_CHECK_ASSIGNMENT(kglFramebufferRenderbuffer, (PFNGLFRAMEBUFFERRENDERBUFFERPROC)kglGetProcAddress("glFramebufferRenderbuffer"));
+	K15_CHECK_ASSIGNMENT(kglFramebufferTexture, (PFNGLFRAMEBUFFERTEXTUREPROC)kglGetProcAddress("glFramebufferTexture"));
+	K15_CHECK_ASSIGNMENT(kglCheckFramebufferStatus, (PFNGLCHECKFRAMEBUFFERSTATUSPROC)kglGetProcAddress("glCheckFramebufferStatus"));
+	K15_CHECK_ASSIGNMENT(kglRenderbufferStorageMultisample, (PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC)kglGetProcAddress("glRenderbufferStorageMultisample"));
+	K15_CHECK_ASSIGNMENT(kglDrawBuffers, (PFNGLDRAWBUFFERSPROC)kglGetProcAddress("glDrawBuffers"));
 
 	if(K15_Search("GL_AMD_debug_output", p_GLRenderContext->extensions.names, 
 		p_GLRenderContext->extensions.count, sizeof(char*), K15_CmpStrings) != 0)
 	{
-		kglDebugMessageCallbackAMD = (PFNGLDEBUGMESSAGECALLBACKAMDPROC)kglGetProcAddress("glDebugMessageCallbackAMD");
+		K15_CHECK_ASSIGNMENT(kglDebugMessageCallbackAMD, (PFNGLDEBUGMESSAGECALLBACKAMDPROC)kglGetProcAddress("glDebugMessageCallbackAMD"));
+
 		kglDebugMessageCallbackAMD(K15_DebugProcAMD, 0);
 	}
 	else if(K15_Search("GL_ARB_debug_output", p_GLRenderContext->extensions.names, 
 		p_GLRenderContext->extensions.count, sizeof(char*), K15_CmpStrings) != 0)
 	{
-		kglDebugMessageCallback = (PFNGLDEBUGMESSAGECALLBACKPROC)kglGetProcAddress("glDebugMessageCallback");
+		K15_CHECK_ASSIGNMENT(kglDebugMessageCallback, (PFNGLDEBUGMESSAGECALLBACKPROC)kglGetProcAddress("glDebugMessageCallback"));
+
 		kglDebugMessageCallback(K15_DebugProcARB, 0);
 	}
 	else
@@ -269,9 +291,9 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 	if(K15_Search("GL_ARB_vertex_array_object", p_GLRenderContext->extensions.names,
 		p_GLRenderContext->extensions.count, sizeof(char*), K15_CmpStrings) != 0)
 	{
-		kglGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)kglGetProcAddress("glGenVertexArrays");
-		kglBindVertexArray = (PFNGLBINDVERTEXARRAYPROC)kglGetProcAddress("glBindVertexArray");
-		kglDeleteVertexArrays = (PFNGLDELETEVERTEXARRAYSPROC)kglGetProcAddress("glDeleteVertexArrays");
+		K15_CHECK_ASSIGNMENT(kglGenVertexArrays, (PFNGLGENVERTEXARRAYSPROC)kglGetProcAddress("glGenVertexArrays"));
+		K15_CHECK_ASSIGNMENT(kglBindVertexArray, (PFNGLBINDVERTEXARRAYPROC)kglGetProcAddress("glBindVertexArray"));
+		K15_CHECK_ASSIGNMENT(kglDeleteVertexArrays, (PFNGLDELETEVERTEXARRAYSPROC)kglGetProcAddress("glDeleteVertexArrays"));
 	}
 	else
 	{
@@ -281,24 +303,24 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 	if(K15_Search("GL_EXT_direct_state_access", p_GLRenderContext->extensions.names,
 		p_GLRenderContext->extensions.count, sizeof(char*), K15_CmpStrings) != 0)
 	{
-		kglTextureImage1DEXT = (PFNGLTEXTUREIMAGE1DEXTPROC)kglGetProcAddress("glTextureImage1DEXT");
-		kglTextureImage2DEXT = (PFNGLTEXTUREIMAGE2DEXTPROC)kglGetProcAddress("glTextureImage2DEXT");
-		kglTextureImage3DEXT = (PFNGLTEXTUREIMAGE3DEXTPROC)kglGetProcAddress("glTextureImage3DEXT");
-		kglTextureSubImage1DEXT = (PFNGLTEXTURESUBIMAGE1DEXTPROC)kglGetProcAddress("glTextureSubImage1DEXT");
-		kglTextureSubImage2DEXT = (PFNGLTEXTURESUBIMAGE2DEXTPROC)kglGetProcAddress("glTextureSubImage2DEXT");
-		kglTextureSubImage3DEXT = (PFNGLTEXTURESUBIMAGE3DEXTPROC)kglGetProcAddress("glTextureSubImage3DEXT");
-		kglCompressedTextureImage1DEXT = (PFNGLCOMPRESSEDTEXTUREIMAGE1DEXTPROC)kglGetProcAddress("glCompressedTextureImage1DEXT");
-		kglCompressedTextureImage2DEXT = (PFNGLCOMPRESSEDTEXTUREIMAGE2DEXTPROC)kglGetProcAddress("glCompressedTextureImage2DEXT");
-		kglCompressedTextureImage3DEXT = (PFNGLCOMPRESSEDTEXTUREIMAGE3DEXTPROC)kglGetProcAddress("glCompressedTextureImage3DEXT");
-		kglCompressedTextureSubImage1DEXT = (PFNGLCOMPRESSEDTEXTURESUBIMAGE1DEXTPROC)kglGetProcAddress("glCompressedTextureSubImage1DEXT");
-		kglCompressedTextureSubImage2DEXT = (PFNGLCOMPRESSEDTEXTURESUBIMAGE2DEXTPROC)kglGetProcAddress("glCompressedTextureSubImage2DEXT");
-		kglCompressedTextureSubImage3DEXT = (PFNGLCOMPRESSEDTEXTURESUBIMAGE3DEXTPROC)kglGetProcAddress("glCompressedTextureSubImage3DEXT");
-		kglGenerateTextureMipmapEXT = (PFNGLGENERATETEXTUREMIPMAPEXTPROC)kglGetProcAddress("glGenerateTextureMipmapEXT");
-		kglNamedBufferDataEXT = (PFNGLNAMEDBUFFERDATAEXTPROC)kglGetProcAddress("glNamedBufferDataEXT");
-		kglNamedBufferSubDataEXT = (PFNGLNAMEDBUFFERSUBDATAEXTPROC)kglGetProcAddress("glNamedBufferSubDataEXT");
-		kglMapNamedBufferEXT = (PFNGLMAPNAMEDBUFFEREXTPROC)kglGetProcAddress("glMapNamedBufferEXT");
-		kglMapNamedBufferRangeEXT = (PFNGLMAPNAMEDBUFFERRANGEEXTPROC)kglGetProcAddress("glMapNamedBufferRangeEXT");
-		kglUnmapNamedBufferEXT = (PFNGLUNMAPNAMEDBUFFEREXTPROC)kglGetProcAddress("glUnmapNamedBufferEXT");
+		K15_CHECK_ASSIGNMENT(kglTextureImage1DEXT, (PFNGLTEXTUREIMAGE1DEXTPROC)kglGetProcAddress("glTextureImage1DEXT"));
+		K15_CHECK_ASSIGNMENT(kglTextureImage2DEXT, (PFNGLTEXTUREIMAGE2DEXTPROC)kglGetProcAddress("glTextureImage2DEXT"));
+		K15_CHECK_ASSIGNMENT(kglTextureImage3DEXT, (PFNGLTEXTUREIMAGE3DEXTPROC)kglGetProcAddress("glTextureImage3DEXT"));
+		K15_CHECK_ASSIGNMENT(kglTextureSubImage1DEXT, (PFNGLTEXTURESUBIMAGE1DEXTPROC)kglGetProcAddress("glTextureSubImage1DEXT"));
+		K15_CHECK_ASSIGNMENT(kglTextureSubImage2DEXT, (PFNGLTEXTURESUBIMAGE2DEXTPROC)kglGetProcAddress("glTextureSubImage2DEXT"));
+		K15_CHECK_ASSIGNMENT(kglTextureSubImage3DEXT, (PFNGLTEXTURESUBIMAGE3DEXTPROC)kglGetProcAddress("glTextureSubImage3DEXT"));
+		K15_CHECK_ASSIGNMENT(kglCompressedTextureImage1DEXT, (PFNGLCOMPRESSEDTEXTUREIMAGE1DEXTPROC)kglGetProcAddress("glCompressedTextureImage1DEXT"));
+		K15_CHECK_ASSIGNMENT(kglCompressedTextureImage2DEXT, (PFNGLCOMPRESSEDTEXTUREIMAGE2DEXTPROC)kglGetProcAddress("glCompressedTextureImage2DEXT"));
+		K15_CHECK_ASSIGNMENT(kglCompressedTextureImage3DEXT, (PFNGLCOMPRESSEDTEXTUREIMAGE3DEXTPROC)kglGetProcAddress("glCompressedTextureImage3DEXT"));
+		K15_CHECK_ASSIGNMENT(kglCompressedTextureSubImage1DEXT, (PFNGLCOMPRESSEDTEXTURESUBIMAGE1DEXTPROC)kglGetProcAddress("glCompressedTextureSubImage1DEXT"));
+		K15_CHECK_ASSIGNMENT(kglCompressedTextureSubImage2DEXT, (PFNGLCOMPRESSEDTEXTURESUBIMAGE2DEXTPROC)kglGetProcAddress("glCompressedTextureSubImage2DEXT"));
+		K15_CHECK_ASSIGNMENT(kglCompressedTextureSubImage3DEXT, (PFNGLCOMPRESSEDTEXTURESUBIMAGE3DEXTPROC)kglGetProcAddress("glCompressedTextureSubImage3DEXT"));
+		K15_CHECK_ASSIGNMENT(kglGenerateTextureMipmapEXT, (PFNGLGENERATETEXTUREMIPMAPEXTPROC)kglGetProcAddress("glGenerateTextureMipmapEXT"));
+		K15_CHECK_ASSIGNMENT(kglNamedBufferDataEXT, (PFNGLNAMEDBUFFERDATAEXTPROC)kglGetProcAddress("glNamedBufferDataEXT"));
+		K15_CHECK_ASSIGNMENT(kglNamedBufferSubDataEXT, (PFNGLNAMEDBUFFERSUBDATAEXTPROC)kglGetProcAddress("glNamedBufferSubDataEXT"));
+		K15_CHECK_ASSIGNMENT(kglMapNamedBufferEXT, (PFNGLMAPNAMEDBUFFEREXTPROC)kglGetProcAddress("glMapNamedBufferEXT"));
+		K15_CHECK_ASSIGNMENT(kglMapNamedBufferRangeEXT, (PFNGLMAPNAMEDBUFFERRANGEEXTPROC)kglGetProcAddress("glMapNamedBufferRangeEXT"));
+		K15_CHECK_ASSIGNMENT(kglUnmapNamedBufferEXT, (PFNGLUNMAPNAMEDBUFFEREXTPROC)kglGetProcAddress("glUnmapNamedBufferEXT"));
 	}
 	else
 	{
@@ -308,19 +330,19 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 	if(K15_Search("GL_ARB_sampler_objects", p_GLRenderContext->extensions.names,
 		p_GLRenderContext->extensions.count, sizeof(char*), K15_CmpStrings) != 0)
 	{
-		kglGenSamplers = (PFNGLGENSAMPLERSPROC)kglGetProcAddress("glGenSamplers");
-		kglDeleteSamplers = (PFNGLDELETESAMPLERSPROC)kglGetProcAddress("glDeleteSamplers");
-		kglBindSampler = (PFNGLBINDSAMPLERPROC)kglGetProcAddress("glBindSamplers");
-		kglSamplerParameteri = (PFNGLSAMPLERPARAMETERIPROC)kglGetProcAddress("glSamplerParameteri");
-		kglSamplerParameterf = (PFNGLSAMPLERPARAMETERFPROC)kglGetProcAddress("glSamplerParameterf");
-		kglSamplerParameteriv = (PFNGLSAMPLERPARAMETERIVPROC)kglGetProcAddress("glSamplerParameteriv");
-		kglSamplerParameterfv = (PFNGLSAMPLERPARAMETERFVPROC)kglGetProcAddress("glSamplerParameterfv");
-		kglSamplerParameterIiv = (PFNGLSAMPLERPARAMETERIIVPROC)kglGetProcAddress("glSamplerParameterIiv");
-		kglSamplerParameterIuiv = (PFNGLSAMPLERPARAMETERIUIVPROC)kglGetProcAddress("glSamplerParameterIuiv");
-		kglGetSamplerParameterIiv = (PFNGLGETSAMPLERPARAMETERIIVPROC)kglGetProcAddress("glGetSamplerParameterIiv");
-		kglGetSamplerParameteriv = (PFNGLGETSAMPLERPARAMETERIVPROC)kglGetProcAddress("glGetSamplerParameteriv");
-		kglGetSamplerParameterfv = (PFNGLGETSAMPLERPARAMETERFVPROC)kglGetProcAddress("glGetSamplerParameterfv");
-		kglGetSamplerParameterIuiv = (PFNGLGETSAMPLERPARAMETERIUIVPROC)kglGetProcAddress("glGetSamplerParameterIuiv");
+		K15_CHECK_ASSIGNMENT(kglGenSamplers, (PFNGLGENSAMPLERSPROC)kglGetProcAddress("glGenSamplers"));
+		K15_CHECK_ASSIGNMENT(kglDeleteSamplers, (PFNGLDELETESAMPLERSPROC)kglGetProcAddress("glDeleteSamplers"));
+		K15_CHECK_ASSIGNMENT(kglBindSampler, (PFNGLBINDSAMPLERPROC)kglGetProcAddress("glBindSamplers"));
+		K15_CHECK_ASSIGNMENT(kglSamplerParameteri, (PFNGLSAMPLERPARAMETERIPROC)kglGetProcAddress("glSamplerParameteri"));
+		K15_CHECK_ASSIGNMENT(kglSamplerParameterf, (PFNGLSAMPLERPARAMETERFPROC)kglGetProcAddress("glSamplerParameterf"));
+		K15_CHECK_ASSIGNMENT(kglSamplerParameteriv, (PFNGLSAMPLERPARAMETERIVPROC)kglGetProcAddress("glSamplerParameteriv"));
+		K15_CHECK_ASSIGNMENT(kglSamplerParameterfv, (PFNGLSAMPLERPARAMETERFVPROC)kglGetProcAddress("glSamplerParameterfv"));
+		K15_CHECK_ASSIGNMENT(kglSamplerParameterIiv, (PFNGLSAMPLERPARAMETERIIVPROC)kglGetProcAddress("glSamplerParameterIiv"));
+		K15_CHECK_ASSIGNMENT(kglSamplerParameterIuiv, (PFNGLSAMPLERPARAMETERIUIVPROC)kglGetProcAddress("glSamplerParameterIuiv"));
+		K15_CHECK_ASSIGNMENT(kglGetSamplerParameterIiv, (PFNGLGETSAMPLERPARAMETERIIVPROC)kglGetProcAddress("glGetSamplerParameterIiv"));
+		K15_CHECK_ASSIGNMENT(kglGetSamplerParameteriv, (PFNGLGETSAMPLERPARAMETERIVPROC)kglGetProcAddress("glGetSamplerParameteriv"));
+		K15_CHECK_ASSIGNMENT(kglGetSamplerParameterfv, (PFNGLGETSAMPLERPARAMETERFVPROC)kglGetProcAddress("glGetSamplerParameterfv"));
+		K15_CHECK_ASSIGNMENT(kglGetSamplerParameterIuiv, (PFNGLGETSAMPLERPARAMETERIUIVPROC)kglGetProcAddress("glGetSamplerParameterIuiv"));
 	}
 	else
 	{
@@ -336,64 +358,64 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 	if(K15_Search("GL_ARB_separate_shader_objects", p_GLRenderContext->extensions.names,
 		p_GLRenderContext->extensions.count, sizeof(char*), K15_CmpStrings) != 0)
 	{
-		kglGenProgramPipelines = (PFNGLGENPROGRAMPIPELINESPROC)kglGetProcAddress("glGenProgramPipelines");
-		kglBindProgramPipeline = (PFNGLBINDPROGRAMPIPELINEPROC)kglGetProcAddress("glBindProgramPipeline");
-		kglDeleteProgramPipelines = (PFNGLDELETEPROGRAMPIPELINESPROC)kglGetProcAddress("glDeleteProgramPipelines");
-		kglUseProgramStages = (PFNGLUSEPROGRAMSTAGESPROC)kglGetProcAddress("glUseProgramStages");
-		kglActiveShaderProgram = (PFNGLACTIVESHADERPROGRAMPROC)kglGetProcAddress("glActiveShaderProgram");
-		kglCreateShaderProgramv = (PFNGLCREATESHADERPROGRAMVPROC)kglGetProcAddress("glCreateShaderProgramv");
-		kglProgramParameteri = (PFNGLPROGRAMPARAMETERIPROC)kglGetProcAddress("glProgramParameteri");
+		K15_CHECK_ASSIGNMENT(kglGenProgramPipelines, (PFNGLGENPROGRAMPIPELINESPROC)kglGetProcAddress("glGenProgramPipelines"));
+		K15_CHECK_ASSIGNMENT(kglBindProgramPipeline, (PFNGLBINDPROGRAMPIPELINEPROC)kglGetProcAddress("glBindProgramPipeline"));
+		K15_CHECK_ASSIGNMENT(kglDeleteProgramPipelines, (PFNGLDELETEPROGRAMPIPELINESPROC)kglGetProcAddress("glDeleteProgramPipelines"));
+		K15_CHECK_ASSIGNMENT(kglUseProgramStages, (PFNGLUSEPROGRAMSTAGESPROC)kglGetProcAddress("glUseProgramStages"));
+		K15_CHECK_ASSIGNMENT(kglActiveShaderProgram, (PFNGLACTIVESHADERPROGRAMPROC)kglGetProcAddress("glActiveShaderProgram"));
+		K15_CHECK_ASSIGNMENT(kglCreateShaderProgramv, (PFNGLCREATESHADERPROGRAMVPROC)kglGetProcAddress("glCreateShaderProgramv"));
+		K15_CHECK_ASSIGNMENT(kglProgramParameteri, (PFNGLPROGRAMPARAMETERIPROC)kglGetProcAddress("glProgramParameteri"));
 	
-		kglProgramUniform1i = (PFNGLPROGRAMUNIFORM1IPROC)kglGetProcAddress("glProgramUniform1i");
-		kglProgramUniform2i = (PFNGLPROGRAMUNIFORM2IPROC)kglGetProcAddress("glProgramUniform2i");
-		kglProgramUniform3i = (PFNGLPROGRAMUNIFORM3IPROC)kglGetProcAddress("glProgramUniform3i");
-		kglProgramUniform4i = (PFNGLPROGRAMUNIFORM4IPROC)kglGetProcAddress("glProgramUniform4i");
+		K15_CHECK_ASSIGNMENT(kglProgramUniform1i, (PFNGLPROGRAMUNIFORM1IPROC)kglGetProcAddress("glProgramUniform1i"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform2i, (PFNGLPROGRAMUNIFORM2IPROC)kglGetProcAddress("glProgramUniform2i"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform3i, (PFNGLPROGRAMUNIFORM3IPROC)kglGetProcAddress("glProgramUniform3i"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform4i, (PFNGLPROGRAMUNIFORM4IPROC)kglGetProcAddress("glProgramUniform4i"));
 
-		kglProgramUniform1ui = (PFNGLPROGRAMUNIFORM1UIPROC)kglGetProcAddress("glProgramUniform1ui");
-		kglProgramUniform2ui = (PFNGLPROGRAMUNIFORM2UIPROC)kglGetProcAddress("glProgramUniform2ui");
-		kglProgramUniform3ui = (PFNGLPROGRAMUNIFORM3UIPROC)kglGetProcAddress("glProgramUniform3ui");
-		kglProgramUniform4ui = (PFNGLPROGRAMUNIFORM4UIPROC)kglGetProcAddress("glProgramUniform4ui");
+		K15_CHECK_ASSIGNMENT(kglProgramUniform1ui, (PFNGLPROGRAMUNIFORM1UIPROC)kglGetProcAddress("glProgramUniform1ui"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform2ui, (PFNGLPROGRAMUNIFORM2UIPROC)kglGetProcAddress("glProgramUniform2ui"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform3ui, (PFNGLPROGRAMUNIFORM3UIPROC)kglGetProcAddress("glProgramUniform3ui"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform4ui, (PFNGLPROGRAMUNIFORM4UIPROC)kglGetProcAddress("glProgramUniform4ui"));
 
-		kglProgramUniform1f = (PFNGLPROGRAMUNIFORM1FPROC)kglGetProcAddress("glProgramUniform1f");
-		kglProgramUniform2f = (PFNGLPROGRAMUNIFORM2FPROC)kglGetProcAddress("glProgramUniform2f");
-		kglProgramUniform3f = (PFNGLPROGRAMUNIFORM3FPROC)kglGetProcAddress("glProgramUniform3f");
-		kglProgramUniform4f = (PFNGLPROGRAMUNIFORM4FPROC)kglGetProcAddress("glProgramUniform4f");
+		K15_CHECK_ASSIGNMENT(kglProgramUniform1f, (PFNGLPROGRAMUNIFORM1FPROC)kglGetProcAddress("glProgramUniform1f"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform2f, (PFNGLPROGRAMUNIFORM2FPROC)kglGetProcAddress("glProgramUniform2f"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform3f, (PFNGLPROGRAMUNIFORM3FPROC)kglGetProcAddress("glProgramUniform3f"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform4f, (PFNGLPROGRAMUNIFORM4FPROC)kglGetProcAddress("glProgramUniform4f"));
 
-		kglProgramUniform1d = (PFNGLPROGRAMUNIFORM1DPROC)kglGetProcAddress("glProgramUniform1d");
-		kglProgramUniform2d = (PFNGLPROGRAMUNIFORM2DPROC)kglGetProcAddress("glProgramUniform2d");
-		kglProgramUniform3d = (PFNGLPROGRAMUNIFORM3DPROC)kglGetProcAddress("glProgramUniform3d");
-		kglProgramUniform4d = (PFNGLPROGRAMUNIFORM4DPROC)kglGetProcAddress("glProgramUniform4d");
+		K15_CHECK_ASSIGNMENT(kglProgramUniform1d, (PFNGLPROGRAMUNIFORM1DPROC)kglGetProcAddress("glProgramUniform1d"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform2d, (PFNGLPROGRAMUNIFORM2DPROC)kglGetProcAddress("glProgramUniform2d"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform3d, (PFNGLPROGRAMUNIFORM3DPROC)kglGetProcAddress("glProgramUniform3d"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform4d, (PFNGLPROGRAMUNIFORM4DPROC)kglGetProcAddress("glProgramUniform4d"));
 
-		kglProgramUniform1iv = (PFNGLPROGRAMUNIFORM1IVPROC)kglGetProcAddress("glProgramUniform1iv");
-		kglProgramUniform2iv = (PFNGLPROGRAMUNIFORM2IVPROC)kglGetProcAddress("glProgramUniform2iv");
-		kglProgramUniform3iv = (PFNGLPROGRAMUNIFORM3IVPROC)kglGetProcAddress("glProgramUniform3iv");
-		kglProgramUniform4iv = (PFNGLPROGRAMUNIFORM4IVPROC)kglGetProcAddress("glProgramUniform4iv");
+		K15_CHECK_ASSIGNMENT(kglProgramUniform1iv, (PFNGLPROGRAMUNIFORM1IVPROC)kglGetProcAddress("glProgramUniform1iv"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform2iv, (PFNGLPROGRAMUNIFORM2IVPROC)kglGetProcAddress("glProgramUniform2iv"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform3iv, (PFNGLPROGRAMUNIFORM3IVPROC)kglGetProcAddress("glProgramUniform3iv"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform4iv, (PFNGLPROGRAMUNIFORM4IVPROC)kglGetProcAddress("glProgramUniform4iv"));
 
-		kglProgramUniform1uiv = (PFNGLPROGRAMUNIFORM1UIVPROC)kglGetProcAddress("glProgramUniform1uiv");
-		kglProgramUniform2uiv = (PFNGLPROGRAMUNIFORM2UIVPROC)kglGetProcAddress("glProgramUniform2uiv");
-		kglProgramUniform3uiv = (PFNGLPROGRAMUNIFORM3UIVPROC)kglGetProcAddress("glProgramUniform3uiv");
-		kglProgramUniform4uiv = (PFNGLPROGRAMUNIFORM4UIVPROC)kglGetProcAddress("glProgramUniform4uiv");
+		K15_CHECK_ASSIGNMENT(kglProgramUniform1uiv, (PFNGLPROGRAMUNIFORM1UIVPROC)kglGetProcAddress("glProgramUniform1uiv"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform2uiv, (PFNGLPROGRAMUNIFORM2UIVPROC)kglGetProcAddress("glProgramUniform2uiv"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform3uiv, (PFNGLPROGRAMUNIFORM3UIVPROC)kglGetProcAddress("glProgramUniform3uiv"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform4uiv, (PFNGLPROGRAMUNIFORM4UIVPROC)kglGetProcAddress("glProgramUniform4uiv"));
 
-		kglProgramUniform1fv = (PFNGLPROGRAMUNIFORM1FVPROC)kglGetProcAddress("glProgramUniform1fv");
-		kglProgramUniform2fv = (PFNGLPROGRAMUNIFORM2FVPROC)kglGetProcAddress("glProgramUniform2fv");
-		kglProgramUniform3fv = (PFNGLPROGRAMUNIFORM3FVPROC)kglGetProcAddress("glProgramUniform3fv");
-		kglProgramUniform4fv = (PFNGLPROGRAMUNIFORM4FVPROC)kglGetProcAddress("glProgramUniform4fv");
+		K15_CHECK_ASSIGNMENT(kglProgramUniform1fv, (PFNGLPROGRAMUNIFORM1FVPROC)kglGetProcAddress("glProgramUniform1fv"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform2fv, (PFNGLPROGRAMUNIFORM2FVPROC)kglGetProcAddress("glProgramUniform2fv"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform3fv, (PFNGLPROGRAMUNIFORM3FVPROC)kglGetProcAddress("glProgramUniform3fv"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform4fv, (PFNGLPROGRAMUNIFORM4FVPROC)kglGetProcAddress("glProgramUniform4fv"));
 
-		kglProgramUniform1dv = (PFNGLPROGRAMUNIFORM1DVPROC)kglGetProcAddress("glProgramUniform1dv");
-		kglProgramUniform2dv = (PFNGLPROGRAMUNIFORM2DVPROC)kglGetProcAddress("glProgramUniform2dv");
-		kglProgramUniform3dv = (PFNGLPROGRAMUNIFORM3DVPROC)kglGetProcAddress("glProgramUniform3dv");
-		kglProgramUniform4dv = (PFNGLPROGRAMUNIFORM4DVPROC)kglGetProcAddress("glProgramUniform4dv");
+		K15_CHECK_ASSIGNMENT(kglProgramUniform1dv, (PFNGLPROGRAMUNIFORM1DVPROC)kglGetProcAddress("glProgramUniform1dv"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform2dv, (PFNGLPROGRAMUNIFORM2DVPROC)kglGetProcAddress("glProgramUniform2dv"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform3dv, (PFNGLPROGRAMUNIFORM3DVPROC)kglGetProcAddress("glProgramUniform3dv"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniform4dv, (PFNGLPROGRAMUNIFORM4DVPROC)kglGetProcAddress("glProgramUniform4dv"));
 
-		kglProgramUniformMatrix2fv = (PFNGLPROGRAMUNIFORMMATRIX2FVPROC)kglGetProcAddress("glProgramUniformMatrix2fv");
-		kglProgramUniformMatrix3fv = (PFNGLPROGRAMUNIFORMMATRIX3FVPROC)kglGetProcAddress("glProgramUniformMatrix3fv");
-		kglProgramUniformMatrix4fv = (PFNGLPROGRAMUNIFORMMATRIX4FVPROC)kglGetProcAddress("glProgramUniformMatrix4fv");
+		K15_CHECK_ASSIGNMENT(kglProgramUniformMatrix2fv, (PFNGLPROGRAMUNIFORMMATRIX2FVPROC)kglGetProcAddress("glProgramUniformMatrix2fv"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniformMatrix3fv, (PFNGLPROGRAMUNIFORMMATRIX3FVPROC)kglGetProcAddress("glProgramUniformMatrix3fv"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniformMatrix4fv, (PFNGLPROGRAMUNIFORMMATRIX4FVPROC)kglGetProcAddress("glProgramUniformMatrix4fv"));
 
-		kglProgramUniformMatrix2dv = (PFNGLPROGRAMUNIFORMMATRIX2DVPROC)kglGetProcAddress("glProgramUniformMatrix2dv");
-		kglProgramUniformMatrix3dv = (PFNGLPROGRAMUNIFORMMATRIX3DVPROC)kglGetProcAddress("glProgramUniformMatrix3dv");
-		kglProgramUniformMatrix4dv = (PFNGLPROGRAMUNIFORMMATRIX4DVPROC)kglGetProcAddress("glProgramUniformMatrix4dv");
+		K15_CHECK_ASSIGNMENT(kglProgramUniformMatrix2dv, (PFNGLPROGRAMUNIFORMMATRIX2DVPROC)kglGetProcAddress("glProgramUniformMatrix2dv"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniformMatrix3dv, (PFNGLPROGRAMUNIFORMMATRIX3DVPROC)kglGetProcAddress("glProgramUniformMatrix3dv"));
+		K15_CHECK_ASSIGNMENT(kglProgramUniformMatrix4dv, (PFNGLPROGRAMUNIFORMMATRIX4DVPROC)kglGetProcAddress("glProgramUniformMatrix4dv"));
 
-		kglValidateProgramPipeline = (PFNGLVALIDATEPROGRAMPIPELINEPROC)kglGetProcAddress("glValidateProgramPipeline");
-		kglGetProgramPipelineInfoLog = (PFNGLGETPROGRAMPIPELINEINFOLOGPROC)kglGetProcAddress("glGetProgramPipelineInfoLog");
+		K15_CHECK_ASSIGNMENT(kglValidateProgramPipeline, (PFNGLVALIDATEPROGRAMPIPELINEPROC)kglGetProcAddress("glValidateProgramPipeline"));
+		K15_CHECK_ASSIGNMENT(kglGetProgramPipelineInfoLog, (PFNGLGETPROGRAMPIPELINEINFOLOGPROC)kglGetProcAddress("glGetProgramPipelineInfoLog"));
 	}
 	else
 	{
@@ -408,10 +430,16 @@ intern void K15_InternalGLGetRenderCapabilities(K15_RenderContext* p_RenderConte
 	K15_RenderCapabilities* capabilities = &p_RenderContext->capabilities;
 
 	GLfloat glMaxAnistropy = 1.0f;
+	GLint glMaxColorAttachments = 1;
+	GLint glMaxSamples = 0;
 
 	K15_OPENGL_CALL(glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &glMaxAnistropy));
+	K15_OPENGL_CALL(glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &glMaxColorAttachments));
+	K15_OPENGL_CALL(glGetIntegerv(GL_MAX_SAMPLES, &glMaxSamples));
 
 	capabilities->maxAnisotropy = (float)glMaxAnistropy;
+	capabilities->maxRenderTargets = (uint32)glMaxColorAttachments;
+	capabilities->maxSamples = (uint32)glMaxSamples;
 }
 /*********************************************************************************/
 uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerContext* p_OSLayerContext)

@@ -100,18 +100,30 @@ extern PFNWGLCREATECONTEXTATTRIBSARBPROC kwglCreateContextAttribsARB;
 #endif //K15_OS_WINDOWS
 
 //default gl functions
-extern PFNGLGENBUFFERSPROC				kglGenBuffers; 
-extern PFNGLBINDBUFFERPROC				kglBindBuffer;
-extern PFNGLDELETEBUFFERSPROC			kglDeleteBuffers;
-extern PFNGLGETPROGRAMIVPROC			kglGetProgramiv;
-extern PFNGLGETPROGRAMINFOLOGPROC		kglGetProgramInfoLog;
-extern PFNGLDELETEPROGRAMPROC			kglDeleteProgram;
-extern PFNGLGETACTIVEUNIFORMPROC		kglGetActiveUniform;
-extern PFNGLGETACTIVEATTRIBPROC			kglGetActiveAttrib;
-extern PFNGLGETUNIFORMLOCATIONPROC		kglGetUniformLocation;
-extern PFNGLGETATTRIBLOCATIONPROC		kglGetAttribLocation;
-extern PFNGLBLENDEQUATIONSEPARATEPROC	kglBlendEquationSeparate;
-extern PFNGLBLENDFUNCSEPARATEPROC		kglBlendFuncSeparate;
+extern PFNGLGENBUFFERSPROC						kglGenBuffers; 
+extern PFNGLBINDBUFFERPROC						kglBindBuffer;
+extern PFNGLDELETEBUFFERSPROC					kglDeleteBuffers;
+extern PFNGLGETPROGRAMIVPROC					kglGetProgramiv;
+extern PFNGLGETPROGRAMINFOLOGPROC				kglGetProgramInfoLog;
+extern PFNGLDELETEPROGRAMPROC					kglDeleteProgram;
+extern PFNGLGETACTIVEUNIFORMPROC				kglGetActiveUniform;
+extern PFNGLGETACTIVEATTRIBPROC					kglGetActiveAttrib;
+extern PFNGLGETUNIFORMLOCATIONPROC				kglGetUniformLocation;
+extern PFNGLGETATTRIBLOCATIONPROC				kglGetAttribLocation;
+extern PFNGLBLENDEQUATIONSEPARATEPROC			kglBlendEquationSeparate;
+extern PFNGLBLENDFUNCSEPARATEPROC				kglBlendFuncSeparate;
+extern PFNGLGENFRAMEBUFFERSPROC					kglGenFramebuffers;
+extern PFNGLBINDFRAMEBUFFERPROC					kglBindFramebuffer;	
+extern PFNGLDELETEFRAMEBUFFERSPROC				kglDeleteFramebuffers;	
+extern PFNGLGENRENDERBUFFERSPROC				kglGenRenderbuffers;		
+extern PFNGLBINDRENDERBUFFERPROC				kglBindRenderbuffer;		
+extern PFNGLDELETERENDERBUFFERSPROC				kglDeleteRenderbuffers;	
+extern PFNGLRENDERBUFFERSTORAGEPROC				kglRenderbufferStorage;	
+extern PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC	kglRenderbufferStorageMultisample;
+extern PFNGLFRAMEBUFFERRENDERBUFFERPROC			kglFramebufferRenderbuffer;
+extern PFNGLFRAMEBUFFERTEXTUREPROC				kglFramebufferTexture;	
+extern PFNGLCHECKFRAMEBUFFERSTATUSPROC			kglCheckFramebufferStatus;
+extern PFNGLDRAWBUFFERSPROC						kglDrawBuffers;
 
 //GL_ARB_debug_output
 extern PFNGLDEBUGMESSAGECALLBACKPROC kglDebugMessageCallback;

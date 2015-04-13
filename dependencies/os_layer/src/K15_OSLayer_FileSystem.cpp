@@ -15,7 +15,7 @@ char* K15_GetWholeFileContentWithFileSize(const char* p_FilePath, uint32* p_File
 
 	if (fileSize > 0)
 	{
-		fileContent = (char*)malloc(fileSize + 1); //+1 for 0 terminator
+		fileContent = (char*)K15_OS_MALLOC(fileSize + 1); //+1 for 0 terminator
 		
 		FILE* file = fopen(p_FilePath, "rb");
 		size_t amountRead = fread(fileContent, sizeof(char), fileSize, file);
@@ -45,7 +45,7 @@ char* K15_GetPathWithoutFileName(const char* p_FilePath)
 	if (!fileNameOnly)
 	{
 		returnBufferSize = strlen(convertedFilePath); //+1 for 0 terminator
-		returnBuffer = (char*)malloc(returnBufferSize);
+		returnBuffer = (char*)K15_OS_MALLOC(returnBufferSize);
 		memcpy(returnBuffer, convertedFilePath, returnBufferSize);
 	}
 	else
@@ -57,13 +57,13 @@ char* K15_GetPathWithoutFileName(const char* p_FilePath)
 		size_t fileNameSize = strlen(fileNameOnly);
 		
 		returnBufferSize = filePathWithFileNameSize - fileNameSize;
-		returnBuffer = (char*)malloc(returnBufferSize + 1); //+1 for 0 terminator
+		returnBuffer = (char*)K15_OS_MALLOC(returnBufferSize + 1); //+1 for 0 terminator
 		memcpy(returnBuffer, convertedFilePath, returnBufferSize);
 	}
 
 	returnBuffer[returnBufferSize] = 0; //0 terminator
 
-	free((void*)convertedFilePath);
+	K15_OS_FREE((void*)convertedFilePath);
 
 	return returnBuffer;
 }
@@ -79,7 +79,7 @@ char* K15_GetFileName(const char* p_FilePath)
 	if (!pathWithoutFileName)
 	{
 		size_t returnBufferSize = strlen(p_FilePath);
-		returnBuffer = (char*)malloc(returnBufferSize + 1); //+1 for 0 terminator
+		returnBuffer = (char*)K15_OS_MALLOC(returnBufferSize + 1); //+1 for 0 terminator
 
 		memcpy(returnBuffer, p_FilePath, returnBufferSize);
 
@@ -93,7 +93,7 @@ char* K15_GetFileName(const char* p_FilePath)
 
 		assert(returnBufferSize > 0);
 
-		returnBuffer = (char*)malloc(returnBufferSize + 1); //+1 for 0 terminator
+		returnBuffer = (char*)K15_OS_MALLOC(returnBufferSize + 1); //+1 for 0 terminator
 
 		memcpy(returnBuffer, p_FilePath + sizePath, returnBufferSize);
 
@@ -117,7 +117,7 @@ char* K15_GetFileNameWithoutExtension(const char* p_FilePath)
 	{
 		if (fileName[fileNameIndex] == '.')
 		{
-			fileNameWithoutExtension = (char*)malloc(fileNameIndex + 1); //+1 for 0 terminator
+			fileNameWithoutExtension = (char*)K15_OS_MALLOC(fileNameIndex + 1); //+1 for 0 terminator
 			memcpy(fileNameWithoutExtension, p_FilePath, fileNameIndex);
 			fileNameWithoutExtension[fileNameIndex] = 0;
 			break;
@@ -144,7 +144,7 @@ char* K15_GetFileExtension(const char* p_FilePath)
 
 			assert(extensionLength > 0);
 
-			extension = (char*)malloc(extensionLength + 1); //+1 for 0 terminator
+			extension = (char*)K15_OS_MALLOC(extensionLength + 1); //+1 for 0 terminator
 			memcpy(extension, fileName + fileNameIndex, extensionLength);
 			extension[extensionLength] = 0;
 			break;

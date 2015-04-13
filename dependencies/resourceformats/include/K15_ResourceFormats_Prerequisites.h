@@ -5,11 +5,15 @@
 #include <cstdlib>
 #include <cassert>
 #include <cstdio>
+#include <cmath>
 //#include <string>
 //#include <fstream>
 
+#include "K15_ResourceFormats_Config.h"
+
 #include "enums\K15_ReturnValues.h"
 
+#define K15_MAX(x, y) x > y ? x : y
 
 //Format specifier
 #define K15_RESOURCE_IDENTIFIER "K15_RES"

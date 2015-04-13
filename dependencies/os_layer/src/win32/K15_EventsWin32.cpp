@@ -115,7 +115,7 @@ intern void K15_Win32KeyInputReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 	}
 
 	win32Event.eventFlags |= K15_INPUT_EVENT_FLAG;
-	win32Event.params.key = wParam;//K15_Win32ConvertKeyCode(wParam);
+	win32Event.params.key = (uint32)wParam;//K15_Win32ConvertKeyCode(wParam);
 
 	if (win32Event.event > 0)
 	{
@@ -128,7 +128,7 @@ intern void K15_Win32MouseInputReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 	K15_SystemEvent win32Event = {};
 
 	win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
-	win32Event.params.mouseButton = wParam;//K15_Win32ConvertKeyCode(wParam);
+	win32Event.params.mouseButton = (uint32)wParam;//K15_Win32ConvertKeyCode(wParam);
 
 	switch(uMsg)
 	{

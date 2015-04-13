@@ -54,7 +54,7 @@ uint8 K15_ReadDataFile(K15_DataAccessContext* p_DataAccessContext, uint32 p_Size
 {
 	FILE* sourceFile = p_DataAccessContext->accessFile;
 
-	uint32 elementsRead = fread(p_Destination, 1, p_Size, sourceFile);
+	size_t elementsRead = fread(p_Destination, 1, p_Size, sourceFile);
 	assert(elementsRead == p_Size);
 
 	if(elementsRead != p_Size)

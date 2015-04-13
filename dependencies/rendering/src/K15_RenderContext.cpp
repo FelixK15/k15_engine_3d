@@ -3,12 +3,14 @@
 #include <K15_OSLayer_OSContext.h>
 #include <K15_OSLayer_ErrorCodes.h>
 #include <K15_OSLayer_Thread.h>
+#include <K15_OSLayer_Window.h>
 
 #include "K15_RenderBufferDesc.h"
 #include "K15_RenderProgramDesc.h"
 #include "K15_RenderTextureDesc.h"
 #include "K15_RenderSamplerDesc.h"
 #include "K15_RenderStateDesc.h"
+#include "K15_RenderTargetDesc.h"
 
 #include "OpenGL/K15_RenderGLContext.h"
 
@@ -121,6 +123,18 @@ intern inline K15_RenderSamplerHandle K15_InternalAddRenderSamplerDesc(K15_Rende
 	p_RenderContext->gpuSampler.samplers[gpuSamplerIndex] = *p_RenderSamplerDesc;
 
 	return (K15_RenderSamplerHandle)gpuSamplerIndex;
+}
+/*********************************************************************************/
+intern inline K15_RenderTargetHandle K15_InternalAddRenderTargetDesc(K15_RenderContext* p_RenderContext, K15_RenderTargetDesc* p_RenderTargetDesc)
+{
+	//get current render target index and assign amount
+	uint32 gpuRenderTargetIndex = p_RenderContext->gpuRenderTargets.amountRenderTargets++;
+
+	assert(gpuRenderTargetIndex < K15_RENDER_MAX_GPU_RENDER_TARGETS);
+
+	p_RenderContext->gpuRenderTargets.renderTargets[gpuRenderTargetIndex] = *p_RenderTargetDesc;
+
+	return (K15_RenderTargetHandle)gpuRenderTargetIndex;
 }
 /*********************************************************************************/
 intern inline uint8 K15_InternalReadParameter(K15_RenderCommandParameterBuffer* p_ParameterFrontBuffer, K15_RenderCommandInstance* p_RenderCommand, uint32 p_ParameterSize, uint32 p_ParameterOffset, void* p_ParameterDestiny)
@@ -382,6 +396,30 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 				}
 			}
 
+			break;
+		}
+
+		case K15_RENDER_COMMAND_CREATE_RENDER_TARGET:
+		{
+			K15_RenderTargetDesc renderTargetDesc = {};
+			K15_RenderTargetHandle* renderTargetHandle = 0;
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderTargetHandle);
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderTargetDesc), K15_PTR_SIZE, &renderTargetDesc);
+
+			*renderTargetHandle = K15_InternalAddRenderTargetDesc(p_RenderContext, &renderTargetDesc);
+
+			result = p_RenderContext->commandProcessing.renderTargetManagement.createRenderTarget(p_RenderContext, &renderTargetDesc, renderTargetHandle);
+			break;
+		}
+
+		case K15_RENDER_COMMAND_DELETE_RENDER_TARGET:
+		{
+			K15_RenderTargetHandle* renderTargetHandle = 0;
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderTargetHandle);
+
+			result = p_RenderContext->commandProcessing.renderTargetManagement.deleteRenderTarget(p_RenderContext, renderTargetHandle);
 			break;
 		}
 
@@ -714,6 +752,21 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext)
 	renderContext->gpuSampler.samplers = gpuSamplers;
 	renderContext->gpuSampler.amountSamplers = 0;
 	/*********************************************************************************/
+
+	/*********************************************************************************/
+	//gpu render targets
+	K15_RenderTargetDesc* gpuRenderTargets = (K15_RenderTargetDesc*)malloc(sizeof(K15_RenderTargetDesc) * K15_RENDER_MAX_GPU_RENDER_TARGETS);
+	
+	if (!gpuRenderTargets)
+	{
+		assert(false);
+		return 0;
+	}
+
+	renderContext->gpuRenderTargets.renderTargets = gpuRenderTargets;
+	renderContext->gpuRenderTargets.amountRenderTargets = 0;
+	/*********************************************************************************/
+
 	//states
 	renderContext->renderState.blendStateDesc = (K15_RenderBlendStateDesc*)malloc(sizeof(K15_RenderBlendStateDesc));
 	renderContext->renderState.depthStateDesc = (K15_RenderDepthStateDesc*)malloc(sizeof(K15_RenderDepthStateDesc));
@@ -734,6 +787,28 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext)
 #ifdef K15_DEBUG_MRT
 	renderContext->debugging.assignedThread = K15_GetCurrentThread();
 #endif //K15_DEBUG_MRT
+
+	//mainwindow
+	K15_Window* window = p_OSContext->window.window;
+
+	//set first viewport manually
+	renderContext->viewports[0].x = 0;
+	renderContext->viewports[0].y = 0;
+	renderContext->viewports[0].width = window->width;
+	renderContext->viewports[0].height = window->height;;
+
+	for(uint32 viewportIndex = 1;
+		viewportIndex < K15_RENDER_MAX_VIEWPORT_COUNT;
+		++viewportIndex)
+	{
+		renderContext->viewports[viewportIndex].x = 0;
+		renderContext->viewports[viewportIndex].y = 0;
+		renderContext->viewports[viewportIndex].width = 0;
+		renderContext->viewports[viewportIndex].height = 0;
+	}
+
+	renderContext->viewportCount = 1;
+	renderContext->activeViewportIndex = 0;
 
 	// allocate memory for 2 pointer
 // 	byte* threadParameterBuffer = (byte*)malloc(K15_PTR_SIZE * 2);
@@ -1025,6 +1100,24 @@ uint8 K15_AddRenderSamplerDescParameter(K15_RenderCommandBuffer* p_RenderCommand
 	uint8 result = K15_InternalAddCommandBufferParameter(p_RenderCommandBuffer,
 		sizeof(K15_RenderSamplerDesc),
 		p_RenderSamplerDesc);
+
+	return result;
+}
+/*********************************************************************************/
+uint8 K15_AddRenderTargetHandleParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTargetHandle* p_RenderTargetHandle)
+{
+	uint8 result = K15_InternalAddCommandBufferParameter(p_RenderCommandBuffer,
+		K15_PTR_SIZE,
+		&p_RenderTargetHandle);
+
+	return result;
+}
+/*********************************************************************************/
+uint8 K15_AddRenderTargetDescParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTargetDesc* p_RenderTargetDesc)
+{
+	uint8 result = K15_InternalAddCommandBufferParameter(p_RenderCommandBuffer,
+		sizeof(K15_RenderTargetDesc),
+		p_RenderTargetDesc);
 
 	return result;
 }

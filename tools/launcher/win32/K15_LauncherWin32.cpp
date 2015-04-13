@@ -15,6 +15,7 @@
 #include <K15_RenderTextureDesc.h>
 #include <K15_RenderSamplerDesc.h>
 #include <K15_RenderStateDesc.h>
+#include <K15_RenderTargetDesc.h>
 
 #ifdef K15_OS_WINDOWS
 
@@ -207,6 +208,30 @@ void K15_InternalCreateLineareSampler(K15_RenderCommandBuffer* p_RenderCommandBu
 
 }
 /*********************************************************************************/
+void K15_InternalCreateRenderTarget(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTargetHandle* p_RenderTargetHandle)
+{
+	K15_RenderTargetDesc desc = {};
+
+	desc.dimension = K15_RENDER_TARGET_DIMENSION_FULL_RESOLUTION;
+	desc.outputFlags = K15_RENDER_TARGET_OUTPUT_COLOR_0_BIT |
+					   K15_RENDER_TARGET_OUTPUT_COLOR_1_BIT |
+					   K15_RENDER_TARGET_OUTPUT_COLOR_2_BIT |
+					   K15_RENDER_TARGET_OUTPUT_COLOR_3_BIT |
+					   K15_RENDER_TARGET_OUTPUT_COLOR_4_BIT |
+					   K15_RENDER_TARGET_OUTPUT_COLOR_5_BIT |
+					   K15_RENDER_TARGET_OUTPUT_COLOR_6_BIT |
+					   K15_RENDER_TARGET_OUTPUT_COLOR_7_BIT |
+					   K15_RENDER_TARGET_OUTPUT_DEPTH_BIT |
+					   K15_RENDER_TARGET_OUTPUT_STENCIL_BIT;
+
+	desc.format = K15_RENDER_FORMAT_R8G8B8_UINT;
+
+	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_CREATE_RENDER_TARGET);
+	K15_AddRenderTargetHandleParameter(p_RenderCommandBuffer, p_RenderTargetHandle);
+	K15_AddRenderTargetDescParameter(p_RenderCommandBuffer, &desc);
+	K15_EndRenderCommand(p_RenderCommandBuffer);
+}
+/*********************************************************************************/
 
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
@@ -266,6 +291,10 @@ int CALLBACK WinMain(
 	// Test 6: Create Sampler
 	K15_RenderSamplerHandle samplerHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
 	K15_InternalCreateLineareSampler(renderCommandBuffer, &samplerHandle);
+
+	// Test 7: Create RenderTarget
+	K15_RenderTargetHandle renderTargetHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
+	K15_InternalCreateRenderTarget(renderCommandBuffer, &renderTargetHandle);
 
 	while (running)
 	{

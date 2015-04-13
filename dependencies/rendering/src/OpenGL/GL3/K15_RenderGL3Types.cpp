@@ -2,23 +2,35 @@
 
 #ifdef K15_OS_WINDOWS
 	//wgl
-	PFNWGLCHOOSEPIXELFORMATARBPROC		kwglChoosePixelFormatARB		= 0;
-	PFNWGLCREATECONTEXTATTRIBSARBPROC	kwglCreateContextAttribsARB		= 0;
+	PFNWGLCHOOSEPIXELFORMATARBPROC		kwglChoosePixelFormatARB			= 0;
+	PFNWGLCREATECONTEXTATTRIBSARBPROC	kwglCreateContextAttribsARB			= 0;
 #endif //K15_OS_WINDOWS
 
 //default gl functions
-PFNGLGENBUFFERSPROC					kglGenBuffers					= 0;
-PFNGLBINDBUFFERPROC					kglBindBuffer					= 0;
-PFNGLDELETEBUFFERSPROC				kglDeleteBuffers				= 0;
-PFNGLGETPROGRAMIVPROC				kglGetProgramiv					= 0;
-PFNGLGETPROGRAMINFOLOGPROC			kglGetProgramInfoLog			= 0;
-PFNGLDELETEPROGRAMPROC				kglDeleteProgram				= 0;
-PFNGLGETACTIVEUNIFORMPROC			kglGetActiveUniform				= 0;
-PFNGLGETACTIVEATTRIBPROC			kglGetActiveAttrib				= 0;
-PFNGLGETUNIFORMLOCATIONPROC			kglGetUniformLocation			= 0;
-PFNGLGETATTRIBLOCATIONPROC			kglGetAttribLocation			= 0;
-PFNGLBLENDEQUATIONSEPARATEPROC		kglBlendEquationSeparate		= 0;
-PFNGLBLENDFUNCSEPARATEPROC			kglBlendFuncSeparate			= 0;
+PFNGLGENBUFFERSPROC						kglGenBuffers						= 0;
+PFNGLBINDBUFFERPROC						kglBindBuffer						= 0;
+PFNGLDELETEBUFFERSPROC					kglDeleteBuffers					= 0;
+PFNGLGETPROGRAMIVPROC					kglGetProgramiv						= 0;
+PFNGLGETPROGRAMINFOLOGPROC				kglGetProgramInfoLog				= 0;
+PFNGLDELETEPROGRAMPROC					kglDeleteProgram					= 0;
+PFNGLGETACTIVEUNIFORMPROC				kglGetActiveUniform					= 0;
+PFNGLGETACTIVEATTRIBPROC				kglGetActiveAttrib					= 0;
+PFNGLGETUNIFORMLOCATIONPROC				kglGetUniformLocation				= 0;
+PFNGLGETATTRIBLOCATIONPROC				kglGetAttribLocation				= 0;
+PFNGLBLENDEQUATIONSEPARATEPROC			kglBlendEquationSeparate			= 0;
+PFNGLBLENDFUNCSEPARATEPROC				kglBlendFuncSeparate				= 0;
+PFNGLGENFRAMEBUFFERSPROC				kglGenFramebuffers					= 0;
+PFNGLBINDFRAMEBUFFERPROC				kglBindFramebuffer					= 0;
+PFNGLDELETEFRAMEBUFFERSPROC				kglDeleteFramebuffers				= 0;
+PFNGLGENRENDERBUFFERSPROC				kglGenRenderbuffers					= 0;
+PFNGLBINDRENDERBUFFERPROC				kglBindRenderbuffer					= 0;
+PFNGLDELETERENDERBUFFERSPROC			kglDeleteRenderbuffers				= 0;
+PFNGLRENDERBUFFERSTORAGEPROC			kglRenderbufferStorage				= 0;
+PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC	kglRenderbufferStorageMultisample	= 0;
+PFNGLFRAMEBUFFERRENDERBUFFERPROC		kglFramebufferRenderbuffer			= 0;
+PFNGLFRAMEBUFFERTEXTUREPROC				kglFramebufferTexture				= 0;
+PFNGLCHECKFRAMEBUFFERSTATUSPROC			kglCheckFramebufferStatus			= 0;
+PFNGLDRAWBUFFERSPROC					kglDrawBuffers						= 0;
 
 //GL_ARB_debug_output
 PFNGLDEBUGMESSAGECALLBACKPROC		kglDebugMessageCallback			= 0;

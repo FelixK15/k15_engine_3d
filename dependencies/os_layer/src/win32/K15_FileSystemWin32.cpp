@@ -38,7 +38,7 @@ char* K15_Win32ConvertToSystemPath(const char* p_FilePath)
 	assert(p_FilePath);
 
 	size_t filePathSize = strlen(p_FilePath);
-	char* convertedFilePath = (char*)malloc(filePathSize + 1); //+1 for 0 terminator
+	char* convertedFilePath = (char*)K15_OS_MALLOC(filePathSize + 1); //+1 for 0 terminator
 	const char* filePath = p_FilePath;
 
 	for (size_t fileNameIndex = 0;

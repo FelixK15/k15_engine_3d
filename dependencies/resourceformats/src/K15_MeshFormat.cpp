@@ -26,7 +26,7 @@ uint8 K15_SetMeshSubmeshCount(K15_MeshFormat* p_MeshFormat, uint32 p_SubmeshCoun
 {
 	assert(p_SubmeshCount && p_MeshFormat);
 
-	K15_SubMeshFormat* submeshes = (K15_SubMeshFormat*)malloc(sizeof(K15_SubMeshFormat) * p_SubmeshCount);
+	K15_SubMeshFormat* submeshes = (K15_SubMeshFormat*)K15_RF_MALLOC(sizeof(K15_SubMeshFormat) * p_SubmeshCount);
 
 	if(!submeshes)
 	{
@@ -64,8 +64,8 @@ uint8 K15_SetMeshName(K15_MeshFormat* p_MeshFormat, const char* p_Name)
 	assert(p_MeshFormat && p_Name);
 
 	
-	uint32 nameLength = strlen(p_Name);
-	char* nameBuffer = (char*)malloc(nameLength);
+	size_t nameLength = strlen(p_Name);
+	char* nameBuffer = (char*)K15_RF_MALLOC(nameLength);
 
 	if(!nameBuffer)
 	{
@@ -74,7 +74,7 @@ uint8 K15_SetMeshName(K15_MeshFormat* p_MeshFormat, const char* p_Name)
 
 	memcpy(nameBuffer, p_Name, nameLength);
 
-	p_MeshFormat->meshNameLength = nameLength;
+	p_MeshFormat->meshNameLength = (uint32)nameLength;
 	p_MeshFormat->meshName = nameBuffer;
 
 	return K15_SUCCESS;
@@ -96,7 +96,7 @@ uint8 K15_SetSubmeshTriangleCount(K15_SubMeshFormat* p_SubmeshFormat, uint32 p_T
 {
 	assert(p_SubmeshFormat && p_TriangleCount);
 
-	K15_TriangleFormat* triangleData = (K15_TriangleFormat*)malloc(sizeof(K15_TriangleFormat) * p_TriangleCount);
+	K15_TriangleFormat* triangleData = (K15_TriangleFormat*)K15_RF_MALLOC(sizeof(K15_TriangleFormat) * p_TriangleCount);
 
 	if(!triangleData)
 	{
@@ -172,7 +172,7 @@ uint8 K15_SetSubmeshData(K15_SubMeshFormat* p_SubmeshFormat, float* p_Data, uint
 	uint32 dataSize = componentCount * sizeof(float) * vertexCount;
 
 	// allocate memory
-	byte* memory = (byte*)malloc(dataSize);
+	byte* memory = (byte*)K15_RF_MALLOC(dataSize);
 
 	if(!memory)
 	{
@@ -262,7 +262,7 @@ uint8 K15_SetSubmeshChannelCount(K15_SubMeshFormat* p_SubmeshFormat, uint8 p_Cha
 			memorySlot = &p_SubmeshFormat->helper.colorChannels;
 			componentCount = K15_RESOURCE_DESC_NUM_COLOR_VALUES;
 			p_SubmeshFormat->colorChannelCount = p_ChannelCount;
-			//memory = (float**)malloc(p_ChannelCount * K15_RESOURCE_DESC_NUM_COLOR_VALUES);
+			//memory = (float**)K15_RF_MALLOC(p_ChannelCount * K15_RESOURCE_DESC_NUM_COLOR_VALUES);
 			break;
 		}
 
@@ -271,7 +271,7 @@ uint8 K15_SetSubmeshChannelCount(K15_SubMeshFormat* p_SubmeshFormat, uint8 p_Cha
 			memorySlot = &p_SubmeshFormat->helper.texcoordChannels;
 			componentCount = K15_RESOURCE_DESC_NUM_TEXCOORD_VALUES;
 			p_SubmeshFormat->textureChannelCount = p_ChannelCount;
-			//memory = (float**)malloc(p_ChannelCount * K15_RESOURCE_DESC_NUM_TEXCOORD_VALUES);
+			//memory = (float**)K15_RF_MALLOC(p_ChannelCount * K15_RESOURCE_DESC_NUM_TEXCOORD_VALUES);
 			break;
 		}
 
@@ -282,7 +282,7 @@ uint8 K15_SetSubmeshChannelCount(K15_SubMeshFormat* p_SubmeshFormat, uint8 p_Cha
 		}
 	}
 
-	memory = (float**)malloc(p_ChannelCount * sizeof(float*));
+	memory = (float**)K15_RF_MALLOC(p_ChannelCount * sizeof(float*));
 
 	if(!memory)
 	{
@@ -294,7 +294,7 @@ uint8 K15_SetSubmeshChannelCount(K15_SubMeshFormat* p_SubmeshFormat, uint8 p_Cha
 		channelIndex < p_ChannelCount;
 		++channelIndex)
 	{
-		memory[channelIndex] = (float*)malloc(sizeof(float) * vertexCount * componentCount);
+		memory[channelIndex] = (float*)K15_RF_MALLOC(sizeof(float) * vertexCount * componentCount);
 	}
 
 	(*memorySlot) = memory;
@@ -356,13 +356,13 @@ void K15_FreeMeshFormat(K15_MeshFormat p_MeshFormat)
 	{
 		K15_SubMeshFormat submeshFormat = p_MeshFormat.submeshes[submeshIndex];
 
-		//free(submeshFormat.vertexData);
-		free(submeshFormat.triangleData);
+		//K15_RF_FREE(submeshFormat.vertexData);
+		K15_RF_FREE(submeshFormat.triangleData);
 		submeshFormat.triangleData = 0;
 	}
 
-	free(p_MeshFormat.meshName);
-	free(p_MeshFormat.submeshes);
+	K15_RF_FREE(p_MeshFormat.meshName);
+	K15_RF_FREE(p_MeshFormat.submeshes);
 	p_MeshFormat.submeshes = 0;
 }
 /*********************************************************************************/
@@ -391,7 +391,7 @@ uint8 K15_InternalLoadMeshFormat(K15_MeshFormat* p_MeshFormat, K15_DataAccessCon
 	//mesh name
 	K15_ReadData(p_DataAccessContext, sizeof(uint32), &nameBufferLength);
 
-	nameBuffer = (char*)malloc(nameBufferLength + 1); //+1 for null terminator
+	nameBuffer = (char*)K15_RF_MALLOC(nameBufferLength + 1); //+1 for null terminator
 
 	if(!nameBuffer)
 	{
@@ -409,7 +409,7 @@ uint8 K15_InternalLoadMeshFormat(K15_MeshFormat* p_MeshFormat, K15_DataAccessCon
 	K15_ReadData(p_DataAccessContext, sizeof(uint16), &meshFormat.submeshCount);
 
 	//allocate submesh memory
-	meshFormat.submeshes = (K15_SubMeshFormat*)malloc(sizeof(K15_SubMeshFormat) * meshFormat.submeshCount);
+	meshFormat.submeshes = (K15_SubMeshFormat*)K15_RF_MALLOC(sizeof(K15_SubMeshFormat) * meshFormat.submeshCount);
 
 	for(uint32 submeshIndex = 0;
 		submeshIndex < meshFormat.submeshCount;
@@ -442,7 +442,7 @@ uint8 K15_InternalLoadMeshFormat(K15_MeshFormat* p_MeshFormat, K15_DataAccessCon
 		assert(vertexDataSizeInBytes % sizeof(float) == 0);
 
 		//allocate memory for vertex data
-		float* vertexData = (float*)malloc(vertexDataSizeInBytes);
+		float* vertexData = (float*)K15_RF_MALLOC(vertexDataSizeInBytes);
 
 		if(!vertexData)
 		{
@@ -464,12 +464,12 @@ uint8 K15_InternalLoadMeshFormat(K15_MeshFormat* p_MeshFormat, K15_DataAccessCon
 		assert(triangleDataSizeInBytes % sizeof(K15_TriangleFormat) == 0);
 
 		//allocate memory for triangle data
-		K15_TriangleFormat* triangleData = (K15_TriangleFormat*)malloc(triangleDataSizeInBytes);
+		K15_TriangleFormat* triangleData = (K15_TriangleFormat*)K15_RF_MALLOC(triangleDataSizeInBytes);
 
 		if(!triangleData)
 		{
 			//log error
-			free(vertexData);
+			K15_RF_FREE(vertexData);
 			currentSubmesh->vertexData = 0;
 			return K15_ERROR_OUT_OF_MEMORY;
 		}

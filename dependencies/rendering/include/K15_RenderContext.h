@@ -16,6 +16,8 @@
 #define K15_RENDERING_MAX_COMMAND_BUFFERS_TO_PROCESS K15_RENDERING_MAX_COMMAND_BUFFERS * 2
 #define K15_RENDERING_MAX_PARAMETER_BUFFER_SIZE size_kilobyte(64)
 
+#define K15_RENDER_MAX_VIEWPORT_COUNT 4
+
 typedef uint8 (*K15_ClearScreenCommandFnc)(K15_RenderContext* p_RenderContext);
 
 //buffer
@@ -38,6 +40,9 @@ typedef uint8 (*K15_SetBlendStateCommandFnc)(K15_RenderContext* p_RenderContext,
 typedef uint8 (*K15_CreateSamplerCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderSamplerDesc* p_RenderTextureDesc, K15_RenderSamplerHandle* p_RenderTextureHandle);
 typedef uint8 (*K15_DeleteSamplerCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderSamplerHandle* p_RenderTextureHandle);
 
+//render target
+typedef uint8 (*K15_CreateRenderTargetCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTargetDesc* p_RenderTargetDesc, K15_RenderTargetHandle* p_RenderTargetHandle);
+typedef uint8 (*K15_DeleteRenderTargetCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTargetHandle* p_RenderTargetHandle);
 
 //textures
 typedef uint8 (*K15_CreateTextureCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTextureDesc* p_RenderTextureDesc, K15_RenderTextureHandle* p_RenderTextureHandle);
@@ -74,6 +79,10 @@ enum K15_RenderCommand
 	K15_RENDER_COMMAND_SET_DEPTH_STATE,
 	K15_RENDER_COMMAND_SET_STENCIL_STATE,
 	K15_RENDER_COMMAND_SET_RASTERIZER_STATE,
+
+	//render targets
+	K15_RENDER_COMMAND_CREATE_RENDER_TARGET,
+	K15_RENDER_COMMAND_DELETE_RENDER_TARGET,
 
 	K15_RENDER_COMMAND_COUNT
 };
@@ -160,6 +169,8 @@ struct K15_RenderCommandBufferDispatcher
 struct K15_RenderCapabilities
 {
 	float maxAnisotropy;
+	uint32 maxRenderTargets;
+	uint32 maxSamples;
 };
 
 struct K15_RenderContext
@@ -181,6 +192,16 @@ struct K15_RenderContext
 		uint32 length;
 	} lastError;
 
+	struct  
+	{
+		uint32 x;
+		uint32 y;
+		uint32 width;
+		uint32 height;
+	} viewports[K15_RENDER_MAX_VIEWPORT_COUNT];
+
+	uint32 viewportCount;
+	uint32 activeViewportIndex;
 
 	struct 
 	{
@@ -209,6 +230,12 @@ struct K15_RenderContext
 			K15_UpdateTextureCommandFnc updateTexture;
 			K15_DeleteTextureCommandFnc deleteTexture;
 		} textureManagement;
+
+		struct K15_RenderTargetManagementCommands
+		{
+			K15_CreateRenderTargetCommandFnc createRenderTarget;
+			K15_DeleteRenderTargetCommandFnc deleteRenderTarget;
+		} renderTargetManagement;
 
 		struct K15_SamplerManagementCommands
 		{
@@ -248,6 +275,12 @@ struct K15_RenderContext
 		K15_RenderSamplerDesc* samplers;
 		uint32 amountSamplers;
 	} gpuSampler;
+
+	struct 
+	{
+		K15_RenderTargetDesc* renderTargets;
+		uint32 amountRenderTargets;
+	} gpuRenderTargets;
 
 	struct 
 	{
@@ -306,10 +339,13 @@ uint8 K15_AddRenderTextureHandleParameter(K15_RenderCommandBuffer* p_RenderComma
 uint8 K15_AddRenderTextureDescParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTextureDesc* p_RenderTextureDesc);
 uint8 K15_AddRenderTextureUpdateDescParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTextureUpdateDesc* p_RenderTextureDesc);
 
-
 //Sampler Parameter
 uint8 K15_AddRenderSamplerHandleParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderSamplerHandle* p_RenderSamplerHandler);
 uint8 K15_AddRenderSamplerDescParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderSamplerDesc* p_RenderSamplerDesc);
+
+//Render Target Parameter
+uint8 K15_AddRenderTargetHandleParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTargetHandle* p_RenderTargetHandle);
+uint8 K15_AddRenderTargetDescParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTargetDesc* p_RenderTargetDesc);
 
 void K15_DispatchRenderCommandBuffer(K15_RenderCommandBuffer* p_RenderCommandBuffer);
 void K15_ProcessDispatchedRenderCommandBuffers(K15_RenderContext* p_RenderContext);

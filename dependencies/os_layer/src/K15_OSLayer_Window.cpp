@@ -10,13 +10,13 @@ K15_Window* K15_CreateWindow(uint32 p_Flags, uint8 p_MonitorIndex)
 
 	assert(OSContext->window.window == 0);
 
-	K15_Window* window = (K15_Window*)malloc(sizeof(K15_Window));
+	K15_Window* window = (K15_Window*)K15_OS_MALLOC(sizeof(K15_Window));
 
 	uint8 result = OSContext->window.createWindow(OSContext, window, p_Flags, p_MonitorIndex);
 
 	if (result != K15_SUCCESS)
 	{
-		free(window);
+		K15_OS_FREE(window);
 		window = 0;
 	}
 
@@ -78,7 +78,7 @@ uint8 K15_SetWindowTitle(K15_Window* p_Window, char* p_Title)
 	K15_OSLayerContext* OSContext = K15_GetOSLayerContext();
 
 	size_t titleLength = strlen(p_Title);
-	char* copiedTitle = (char*)malloc(titleLength);
+	char* copiedTitle = (char*)K15_OS_MALLOC(titleLength);
 
 	if (!copiedTitle)
 	{
@@ -107,7 +107,7 @@ void K15_CloseWindow(K15_Window* p_Window)
 
 	OSContext->window.closeWindow(OSContext, p_Window);
 
-	free(p_Window);
+	K15_OS_FREE(p_Window);
 
 	OSContext->window.window = 0;
 }

@@ -37,8 +37,8 @@ intern DWORD WINAPI K15_Win32ThreadWrapper(LPVOID p_Parameter)
 /*********************************************************************************/
 uint8 K15_Win32CreateThread(K15_OSLayerContext* p_OSContext, K15_Thread* p_Thread, K15_ThreadFnc p_ThreadFunction, void* p_ThreadParameter)
 {
-	K15_Win32Thread* win32Thread = (K15_Win32Thread*)malloc(sizeof(K15_Win32Thread));
-	byte* win32ThreadParameterBuffer = (byte*)malloc(K15_PTR_SIZE * 2);
+	K15_Win32Thread* win32Thread = (K15_Win32Thread*)K15_OS_MALLOC(sizeof(K15_Win32Thread));
+	byte* win32ThreadParameterBuffer = (byte*)K15_OS_MALLOC(K15_PTR_SIZE * 2);
 	
 	if (!win32Thread || ! win32ThreadParameterBuffer)
 	{
@@ -53,8 +53,8 @@ uint8 K15_Win32CreateThread(K15_OSLayerContext* p_OSContext, K15_Thread* p_Threa
 
 	if (threadHandle == INVALID_HANDLE_VALUE)
 	{
-		free(win32Thread);
-		free(win32ThreadParameterBuffer);
+		K15_OS_FREE(win32Thread);
+		K15_OS_FREE(win32ThreadParameterBuffer);
 
 		return K15_OS_ERROR_SYSTEM;
 	}
@@ -100,7 +100,7 @@ K15_Thread* K15_Win32GetCurrentThread()
 /*********************************************************************************/
 K15_Mutex* K15_CreateMutex()
 {
-	K15_Mutex* win32Mutex = (K15_Mutex*)malloc(sizeof(K15_Mutex));
+	K15_Mutex* win32Mutex = (K15_Mutex*)K15_OS_MALLOC(sizeof(K15_Mutex));
 
 	assert(win32Mutex);
 
@@ -171,7 +171,7 @@ K15_Semaphore* K15_CreateSemaphore()
 /*********************************************************************************/
 K15_Semaphore* K15_CreateSemaphoreWithInitialValue(uint32 p_InitialValue)
 {
-	K15_Semaphore* win32Semaphore = (K15_Semaphore*)malloc(sizeof(K15_Semaphore));
+	K15_Semaphore* win32Semaphore = (K15_Semaphore*)K15_OS_MALLOC(sizeof(K15_Semaphore));
 
 	assert(win32Semaphore);
 

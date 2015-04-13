@@ -83,7 +83,7 @@ uint32 K15_CreateHash(const char* p_Identifier)
 
 	uint32 hash = 0;
 	uint32 i;
-	uint32 length = strlen(p_Identifier);
+	size_t length = strlen(p_Identifier);
 
 	for (i = 0; 
 		i < length; 

@@ -31,8 +31,8 @@ uint8 K15_SetTextureName(K15_TextureFormat* p_TextureFormat, const char* p_Name)
 {
 	assert(p_TextureFormat && p_Name);
 
-	uint32 nameLength = strlen(p_Name);
-	char* nameBuffer = (char*)malloc(nameLength);
+	size_t nameLength = strlen(p_Name);
+	char* nameBuffer = (char*)K15_RF_MALLOC(nameLength);
 
 	if(!nameBuffer)
 	{
@@ -41,7 +41,7 @@ uint8 K15_SetTextureName(K15_TextureFormat* p_TextureFormat, const char* p_Name)
 
 	memcpy(nameBuffer, p_Name, nameLength);
 
-	p_TextureFormat->textureNameLength = nameLength;
+	p_TextureFormat->textureNameLength = (uint32)nameLength;
 	p_TextureFormat->textureName = nameBuffer;
 
 	return K15_SUCCESS;
@@ -92,7 +92,7 @@ uint8 K15_SetTextureMipMapCount(K15_TextureFormat* p_TextureFormat, uint8 p_MipM
 
 	//get total memory size for compressed memory
 	uint32 memoryNeeded = K15_Internal_CalculateCompressedMemorySize(width, height, p_MipMapCount);
-	byte* textureMemory = (byte*)malloc(memoryNeeded);
+	byte* textureMemory = (byte*)K15_RF_MALLOC(memoryNeeded);
 
 	if(!textureMemory)
 	{
@@ -113,16 +113,8 @@ uint32 K15_GetTextureMipMapSize(K15_TextureFormat* p_TextureFormat, uint8 p_MipM
 		return 0;
 	}
 
-	uint32 width = p_TextureFormat->width;
-	uint32 height = p_TextureFormat->height;
-
-	for (uint32 mipmapIndex = 0;
-		mipmapIndex < p_MipMapIndex;
-		++mipmapIndex)
-	{
-		width *= 0.5f;
-		height *= 0.5f;
-	}
+	uint32 width = K15_MAX(1, p_TextureFormat->width / (uint32)pow(2.0, p_MipMapIndex - 1));
+	uint32 height = K15_MAX(1, p_TextureFormat->height / (uint32)pow(2.0, p_MipMapIndex - 1));
 	
 	uint32 blockCount = ((width + 3) / 4) * ((height + 3) / 4);
 	uint32 blockSize = 16;
@@ -222,8 +214,8 @@ uint8 K15_LoadTextureFormatFromFile(K15_TextureFormat* p_TextureFormat, const ch
 /*********************************************************************************/
 void K15_FreeTextureFormat(K15_TextureFormat p_TextureFormat)
 {
-	free(p_TextureFormat.textureName);
-	free(p_TextureFormat.textureMemory);
+	K15_RF_FREE(p_TextureFormat.textureName);
+	K15_RF_FREE(p_TextureFormat.textureMemory);
 }
 /*********************************************************************************/
 uint8 K15_InternalSaveTextureFormat(K15_DataAccessContext* p_DataAccessContext, K15_TextureFormat* p_TextureFormat, uint32 p_SaveFlags)
@@ -292,7 +284,7 @@ uint8 K15_InternalLoadTextureFormat(K15_DataAccessContext* p_DataAccessContext, 
 	//read texture name length
 	K15_ReadData(p_DataAccessContext, sizeof(uint32), &nameLength);
 
-	nameBuffer = (char*)malloc(nameLength + 1); // +1 for 0 terminator
+	nameBuffer = (char*)K15_RF_MALLOC(nameLength + 1); // +1 for 0 terminator
 
 	if (!nameBuffer)
 	{
@@ -325,7 +317,7 @@ uint8 K15_InternalLoadTextureFormat(K15_DataAccessContext* p_DataAccessContext, 
 		p_TextureFormat->mipMapCount);
 
 	//allocate memory for texturedata
-	byte* textureData = (byte*)malloc(textureMemorySize);
+	byte* textureData = (byte*)K15_RF_MALLOC(textureMemorySize);
 
 	if(!textureData)
 	{

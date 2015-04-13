@@ -6,8 +6,8 @@
 K15_Thread* K15_CreateThread(K15_ThreadFnc p_ThreadFunction, void* p_ThreadParameter)
 {
 	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
-	K15_Thread* thread = (K15_Thread*)malloc(sizeof(K15_Thread));
-	K15_ThreadContext* threadContext = (K15_ThreadContext*)malloc(sizeof(K15_ThreadContext));
+	K15_Thread* thread = (K15_Thread*)K15_OS_MALLOC(sizeof(K15_Thread));
+	K15_ThreadContext* threadContext = (K15_ThreadContext*)K15_OS_MALLOC(sizeof(K15_ThreadContext));
 
 	threadContext->function = p_ThreadFunction;
 	threadContext->parameter = p_ThreadParameter;
@@ -20,8 +20,8 @@ K15_Thread* K15_CreateThread(K15_ThreadFnc p_ThreadFunction, void* p_ThreadParam
 
 	if (result != K15_SUCCESS)
 	{
-		free(thread);
-		free(threadContext);
+		K15_OS_FREE(thread);
+		K15_OS_FREE(threadContext);
 
 		thread = 0;
 	}
@@ -59,8 +59,8 @@ uint8 K15_SetThreadName(K15_Thread* p_Thread, const char* p_ThreadName)
 	if (threadContext->nameLength < newThreadNameLength)
 	{
 		//delete existing name buffer
-		free(threadContext->name);
-		threadContext->name = (char*)malloc(newThreadNameLength + 1); //+1 for null terminator
+		K15_OS_FREE(threadContext->name);
+		threadContext->name = (char*)K15_OS_MALLOC(newThreadNameLength + 1); //+1 for null terminator
 	}
 
 	memcpy(threadContext->name, p_ThreadName, newThreadNameLength);
