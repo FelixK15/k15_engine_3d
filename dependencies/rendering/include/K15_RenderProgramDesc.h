@@ -3,20 +3,20 @@
 
 #include "K15_RenderPrerequisites.h"
 
-enum K15_RenderProgramType
+enum K15_RenderProgramType : uint32
 {
 	K15_RENDER_PROGRAM_TYPE_VERTEX = 0,
 	K15_RENDER_PROGRAM_TYPE_FRAGMENT,
 	K15_RENDER_PROGRAM_TYPE_GEOMETRY
 };
 
-enum K15_RenderProgramSource
+enum K15_RenderProgramSource : uint32
 {
 	K15_RENDER_PROGRAM_SOURCE_FILE = 0,
 	K15_RENDER_PROGRAM_SOURCE_CODE
 };
 
-enum K15_UniformType
+enum K15_UniformType : uint32
 {
 	K15_UNIFORM_TYPE_INVALID = 0,
 

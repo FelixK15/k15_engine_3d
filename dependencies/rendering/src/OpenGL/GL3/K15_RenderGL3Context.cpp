@@ -237,9 +237,6 @@ intern void K15_GLGetExtensions(K15_GLRenderContext* p_GLRenderContext)
 			++extensionsString;
 		}
 	}
-
-	//sort extensions
-	//K15_Sort(p_GLRenderContext->extensions.names, p_GLRenderContext->extensions.count, sizeof(char*), K15_CmpStrings);
 }
 /*********************************************************************************/
 intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
@@ -456,7 +453,7 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 		return K15_OS_ERROR_SYSTEM;
 	}
 
-	glContext->programPipelineHandle = 0;
+	glContext->gl3.programPipelineHandle = 0;
 
 	uint8 result = K15_CreateContext(glContext, p_OSLayerContext);
 
@@ -510,8 +507,8 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 
 	p_RenderContext->userData = (void*)glContext;
 
-	K15_GLCreateBuffers();
-	K15_GLInitPrograms();
+	K15_GLCreateBuffers(glContext);
+	K15_GLInitPrograms(glContext);
 
 	K15_InternalGLGetRenderCapabilities(p_RenderContext);
 
@@ -532,7 +529,7 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 	K15_OPENGL_CALL(kglGenProgramPipelines(1, &programPipeline));
 	K15_OPENGL_CALL(kglBindProgramPipeline(programPipeline));
 
-	glContext->programPipelineHandle = programPipeline;
+	glContext->gl3.programPipelineHandle = programPipeline;
 
 	return K15_SUCCESS;
 }

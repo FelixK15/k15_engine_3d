@@ -1,6 +1,8 @@
 #ifndef _K15_Logging_h_
 #define _K15_Logging_h_
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #define K15_LOG_NORMAL_MESSAGE(msg, ...) K15_LogWrite(msg, K15_LOG_PRIORITY_NORMAL, ##__VA_ARGS__)
 #define K15_LOG_WARNING_MESSAGE(msg, ...) K15_LogWrite(msg, K15_LOG_PRIORITY_WARNING, ##__VA_ARGS__)
 #define K15_LOG_ERROR_MESSAGE(msg, ...) K15_LogWrite(msg, K15_LOG_PRIORITY_ERROR, ##__VA_ARGS__)

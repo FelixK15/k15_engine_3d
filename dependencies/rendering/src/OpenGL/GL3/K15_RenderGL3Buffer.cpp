@@ -1,38 +1,18 @@
-#define K15_RENDER_GL_MAX_BUFFER_COUNT 32
-#define K15_RENDER_GL_BUFFER_SIZE size_megabyte(10)
-
-struct K15_GLBufferDesc
-{
-	byte* data;
-	uint32 size;
-	GLuint buffer;
-};
-
-struct K15_GLBufferAccessData
-{
-	uint32 glBufferIndex;
-	uint32 offset;
-	uint32 size;
-};
-
-intern K15_GLBufferDesc internOpenGLBuffers[K15_RENDER_GL_MAX_BUFFER_COUNT] = {0};
-intern K15_GLBufferAccessData internBufferAccessDatas[K15_RENDER_MAX_GPU_BUFFER] = {0xffffffff};
-
 /*********************************************************************************/
-intern inline uint8 K15_InternGLAddToBuffer(K15_RenderBufferDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr)
+intern inline uint8 K15_InternGLAddToBuffer(K15_GLRenderContext* p_GLContext, K15_RenderBufferDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr)
 {
 	uint8 result = K15_SUCCESS;
 	uint32 size = p_RenderBufferDesc->size;
 	byte* data = p_RenderBufferDesc->data;
 	GLuint glBufferHandle = 0;
 
-	K15_GLBufferDesc* currentBuffer = 0;
+	K15_GLBuffer* currentBuffer = 0;
 
 	for (uint32 bufferIndex = 0;
 		 bufferIndex < K15_RENDER_GL_MAX_BUFFER_COUNT;
 		 ++bufferIndex)
 	{
-		currentBuffer = &internOpenGLBuffers[bufferIndex];
+		currentBuffer = &p_GLContext->gl3.buffers[bufferIndex];
 
 		if (currentBuffer->size >= size)
 		{
@@ -59,7 +39,7 @@ intern inline uint8 K15_InternGLAddToBuffer(K15_RenderBufferDesc* p_RenderBuffer
 				memcpy(bufferData + offset, data, size);
 			}
 
-			internBufferAccessDatas[*p_RenderBufferHandlePtr] = accessData;
+			p_GLContext->gl3.accessData[*p_RenderBufferHandlePtr] = accessData;
 
 			break;
 		}
@@ -70,7 +50,7 @@ intern inline uint8 K15_InternGLAddToBuffer(K15_RenderBufferDesc* p_RenderBuffer
 /*********************************************************************************/
 
 /*********************************************************************************/
-inline uint8 K15_GLCreateBuffers()
+inline uint8 K15_GLCreateBuffers(K15_GLRenderContext* p_GLContext)
 {
 	uint8 returnValue = K15_SUCCESS;
 
@@ -84,7 +64,7 @@ inline uint8 K15_GLCreateBuffers()
 	{
 		K15_OPENGL_CALL(kglNamedBufferDataEXT(buffers[bufferIndex], K15_RENDER_GL_BUFFER_SIZE, 0, GL_DYNAMIC_DRAW));
 
-		K15_GLBufferDesc currentBufferDesc = {};
+		K15_GLBuffer currentBufferDesc = {};
 		currentBufferDesc.buffer = buffers[bufferIndex];
 		currentBufferDesc.size = K15_RENDER_GL_BUFFER_SIZE;
 		currentBufferDesc.data = (byte*)malloc(K15_RENDER_GL_BUFFER_SIZE);
@@ -95,7 +75,7 @@ inline uint8 K15_GLCreateBuffers()
 			break;
 		}
 
-		internOpenGLBuffers[bufferIndex] = currentBufferDesc;
+		p_GLContext->gl3.buffers[bufferIndex] = currentBufferDesc;
 	}
 
 	return returnValue;
@@ -103,6 +83,7 @@ inline uint8 K15_GLCreateBuffers()
 /*********************************************************************************/
 inline uint8 K15_GLCreateBuffer(K15_RenderContext* p_RenderContext, K15_RenderBufferDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr)
 {
+	K15_GLRenderContext* gl3Context = (K15_GLRenderContext*)p_RenderContext->userData;
 	uint8 result = K15_SUCCESS;
 
 	K15_RenderBufferType renderBufferType = p_RenderBufferDesc->type;
@@ -119,7 +100,7 @@ inline uint8 K15_GLCreateBuffer(K15_RenderContext* p_RenderContext, K15_RenderBu
 	}
 	else
 	{
-		result = K15_InternGLAddToBuffer(p_RenderBufferDesc, p_RenderBufferHandlePtr);
+		result = K15_InternGLAddToBuffer(gl3Context, p_RenderBufferDesc, p_RenderBufferHandlePtr);
 	}
 
 	return result;
@@ -128,6 +109,7 @@ inline uint8 K15_GLCreateBuffer(K15_RenderContext* p_RenderContext, K15_RenderBu
 inline uint8 K15_GLUpdateBuffer(K15_RenderContext* p_RenderContext, K15_RenderBufferUpdateDesc* p_RenderBufferUpdateDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr)
 {
 	uint8 result = K15_SUCCESS;
+	K15_GLRenderContext* gl3Context = (K15_GLRenderContext*)p_RenderContext->userData;
 
 	uint32 glBufferIndex = *p_RenderBufferHandlePtr;
 
@@ -135,11 +117,11 @@ inline uint8 K15_GLUpdateBuffer(K15_RenderContext* p_RenderContext, K15_RenderBu
 	assert(glBufferIndex < K15_RENDER_MAX_GPU_BUFFER);
 	assert(p_RenderBufferUpdateDesc->data != 0);
 
-	K15_GLBufferAccessData* glBufferAccess = &internBufferAccessDatas[glBufferIndex];
+	K15_GLBufferAccessData* glBufferAccess = &gl3Context->gl3.accessData[glBufferIndex];
 
 	assert(glBufferAccess->glBufferIndex != K15_INVALID_GL_BUFFER_INDEX);
 
-	K15_GLBufferDesc* glBuffer = &internOpenGLBuffers[glBufferAccess->glBufferIndex];
+	K15_GLBuffer* glBuffer = &gl3Context->gl3.buffers[glBufferAccess->glBufferIndex];
 
 	void* updateData = p_RenderBufferUpdateDesc->data;
 
@@ -178,17 +160,18 @@ inline uint8 K15_GLUpdateBuffer(K15_RenderContext* p_RenderContext, K15_RenderBu
 inline uint8 K15_GLDeleteBuffer(K15_RenderContext* p_RenderContext, K15_RenderBufferHandle* p_RenderBufferHandlePtr)
 {
 	uint8 result = K15_SUCCESS;
+	K15_GLRenderContext* gl3Context = (K15_GLRenderContext*)p_RenderContext->userData;
 
 	uint32 glBufferIndex = *p_RenderBufferHandlePtr;
 
 	assert(glBufferIndex != K15_INVALID_GPU_RESOURCE_HANDLE);
 	assert(glBufferIndex < K15_RENDER_MAX_GPU_BUFFER);
 
-	K15_GLBufferAccessData* glBufferAccess = &internBufferAccessDatas[glBufferIndex];
+	K15_GLBufferAccessData* glBufferAccess = &gl3Context->gl3.accessData[glBufferIndex];
 
 	assert(glBufferAccess->glBufferIndex != K15_INVALID_GL_BUFFER_INDEX);
 
-	K15_GLBufferDesc* glBuffer = &internOpenGLBuffers[glBufferAccess->glBufferIndex];
+	K15_GLBuffer* glBuffer = &gl3Context->gl3.buffers[glBufferAccess->glBufferIndex];
 
 	//invalidate the buffer access struct
 	glBufferAccess->glBufferIndex = K15_INVALID_GL_BUFFER_INDEX;

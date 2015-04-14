@@ -30,6 +30,7 @@
 #include "K15_RenderGLConfig.h"
 
 #define K15_INVALID_GL_BUFFER_INDEX 0xffffffff
+#define K15_INVALID_GL_PROGRAM_INDEX 0xffffffff
 
 #ifdef K15_OPENGL_ENABLE_ERROR_CHECK_CALLS
 	#define K15_OPENGL_CALL(x) {x; GLenum errorEnum = glGetError(); assert(errorEnum == GL_NO_ERROR && #x);}
@@ -55,6 +56,73 @@
 
 typedef char GLchar;
 struct K15_GLRenderContext;
+
+/*********************************************************************************/
+enum K15_GLUniformUsage
+{
+	K15_GL_UNIFORM_USAGE_ATTRIBUTE = 0,
+	K15_GL_UNIFORM_USAGE_UNIFORM,
+	K15_GL_UNIFORM_USAGE_UNKNOWN
+};
+/*********************************************************************************/
+struct K15_GLBuffer
+{
+	byte* data;
+	uint32 size;
+	GLuint buffer;
+};
+/*********************************************************************************/
+struct K15_GLBufferAccessData
+{
+	uint32 glBufferIndex;
+	uint32 offset;
+	uint32 size;
+};
+/*********************************************************************************/
+struct K15_GLRenderTarget
+{
+	GLuint glFramebuffer;
+	GLuint glTextures[K15_RENDER_GL_MAX_COLOR_ATTACHMENTS];
+	GLuint glRenderbuffer;
+
+	uint32 textureCount;
+};
+/*********************************************************************************/
+struct K15_GLUniform
+{
+	K15_GLUniformUsage uniformUsage;
+	K15_UniformType uniformType;
+	GLenum internalGLType;
+	GLint size;
+	GLint registerIndex; 
+	GLchar* name;
+};
+/*********************************************************************************/
+struct K15_GLProgram
+{
+	K15_GLUniform uniforms[K15_RENDER_GL_MAX_PROGRAM_UNIFORMS];
+	uint32 uniformCount;
+	GLuint program;
+};
+/*********************************************************************************/
+struct K15_GLTexture
+{
+	uint32 width;
+	uint32 height;
+	uint32 depth;
+
+	GLenum glTextureTarget;
+	GLenum glFormat;
+	GLenum glInternalFormat;
+	GLenum glFormatType;
+	GLuint glTexture;
+};
+/*********************************************************************************/
+struct K15_GLSampler
+{
+	GLuint glSampler;
+};
+/*********************************************************************************/
 
 // default gl functions
 // typedef void (APIENTRY *PFNGLGENBUFFERSPROC)	(GLsizei n, GLuint *buffers);

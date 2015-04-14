@@ -70,7 +70,8 @@ uint8 K15_Win32CreateThread(K15_OSLayerContext* p_OSContext, K15_Thread* p_Threa
 /*********************************************************************************/
 K15_Thread* K15_Win32GetCurrentThread()
 {
-	HANDLE threadHandle = GetCurrentThread();
+	//HANDLE threadHandle = GetCurrentThread();
+	DWORD threadIdentifier = GetCurrentThreadId();
 	K15_Win32Thread* win32Thread = 0;
 	K15_Thread* currentThread = 0;
 	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
@@ -89,7 +90,7 @@ K15_Thread* K15_Win32GetCurrentThread()
 
 		win32Thread = (K15_Win32Thread*)currentThread->userData;
 
-		if (win32Thread->handle == threadHandle)
+		if (win32Thread->identifier == threadIdentifier)
 		{
 			return currentThread;
 		}
@@ -101,11 +102,9 @@ K15_Thread* K15_Win32GetCurrentThread()
 K15_Mutex* K15_CreateMutex()
 {
 	K15_Mutex* win32Mutex = (K15_Mutex*)K15_OS_MALLOC(sizeof(K15_Mutex));
-
 	assert(win32Mutex);
 
-	InitializeCriticalSection(&win32Mutex->criticalSection);
-	win32Mutex->locked = 0;
+	InitializeCriticalSectionAndSpinCount(&win32Mutex->criticalSection, 2000);
 
 	return win32Mutex;
 }
@@ -115,7 +114,6 @@ uint8 K15_LockMutex(K15_Mutex* p_Mutex)
 	uint8 returnValue = K15_SUCCESS;
 
 	EnterCriticalSection(&p_Mutex->criticalSection);
-	InterlockedIncrement(&p_Mutex->locked);
 
 	return returnValue;
 }
@@ -125,7 +123,6 @@ uint8 K15_UnlockMutex(K15_Mutex* p_Mutex)
 	uint8 returnValue = K15_SUCCESS;
 
 	LeaveCriticalSection(&p_Mutex->criticalSection);
-	InterlockedDecrement(&p_Mutex->locked);
 
 	return returnValue;
 }

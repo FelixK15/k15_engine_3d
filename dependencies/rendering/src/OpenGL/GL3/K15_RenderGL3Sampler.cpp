@@ -1,10 +1,9 @@
-#define K15_RENDER_GL_MAX_SAMPLER_COUNT 32
-
-intern GLuint internOpenGLSampler[K15_RENDER_GL_MAX_SAMPLER_COUNT] = {0};
-
 /*********************************************************************************/
 intern uint8 K15_GLCreateSampler(K15_RenderContext* p_RenderContext, K15_RenderSamplerDesc* p_RenderSamplerDesc, K15_RenderSamplerHandle* p_RenderSamplerHandle)
 {
+	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
+
+	K15_GLSampler glSampler;
 	GLuint glSamplerHandle;
 
 	GLenum minifactionFilter = K15_GLConvertRenderFilterMode(p_RenderSamplerDesc->filtering.minification);
@@ -34,16 +33,20 @@ intern uint8 K15_GLCreateSampler(K15_RenderContext* p_RenderContext, K15_RenderS
 	K15_OPENGL_CALL(kglSamplerParameteri(glSamplerHandle, GL_TEXTURE_WRAP_T, VAdressing));
 	K15_OPENGL_CALL(kglSamplerParameteri(glSamplerHandle, GL_TEXTURE_WRAP_R, WAdressing));
 
-	internOpenGLSampler[*p_RenderSamplerHandle] = glSamplerHandle;
+	glSampler.glSampler = glSamplerHandle;
+
+	glContext->gl3.samplers[*p_RenderSamplerHandle] = glSampler;
 
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
 intern uint8 K15_GLDeleteSampler(K15_RenderContext* p_RenderContext, K15_RenderSamplerHandle* p_RenderSamplerHandle)
 {
-	GLuint glSamplerHandle = internOpenGLSampler[*p_RenderSamplerHandle];
+	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
 
-	K15_OPENGL_CALL(kglDeleteSamplers(1, &glSamplerHandle));
+	K15_GLSampler* glSampler = &glContext->gl3.samplers[*p_RenderSamplerHandle];
+
+	K15_OPENGL_CALL(kglDeleteSamplers(1, &glSampler->glSampler));
 
 	return K15_SUCCESS;
 }

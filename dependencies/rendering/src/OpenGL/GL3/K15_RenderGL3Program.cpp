@@ -1,38 +1,3 @@
-
-#define K15_INVALID_GL_PROGRAM_INDEX 0xffffffff
-#define K15_RENDER_GL_MAX_PROGRAM_UNIFORMS 64
-#define K15_RENDER_GL_MAX_INCLUDE_FILE_SIZE 32
-#define K15_RENDER_GL_MAX_SHADER_CODE_SIZE size_kilobyte(512)
-#define K15_RENDER_GL_MAX_INCLUDE_FILES 64
-#define K15_RENDER_GL_MAX_DEFINES 64
-#define K15_RENDER_GL_MAX_DEFINE_NAME_SIZE 128
-
-#define K15_GL_TRANSPOSE_MATRIX GL_FALSE
-
-enum K15_GLUniformUsage
-{
-	K15_GL_UNIFORM_USAGE_ATTRIBUTE = 0,
-	K15_GL_UNIFORM_USAGE_UNIFORM,
-	K15_GL_UNIFORM_USAGE_UNKNOWN
-};
-
-struct K15_GLUniform
-{
-	K15_GLUniformUsage uniformUsage;
-	K15_UniformType uniformType;
-	GLenum internalGLType;
-	GLint size;
-	GLint registerIndex; 
-	GLchar* name;
-};
-
-struct K15_GLProgramDesc
-{
-	K15_GLUniform uniforms[K15_RENDER_GL_MAX_PROGRAM_UNIFORMS];
-	uint32 uniformCount;
-	GLuint program;
-};
-
 struct K15_GLProgramInclude
 {
 	uint32 line;
@@ -53,8 +18,6 @@ struct K15_GLProgramPreprocessor
 	uint32 amountIncludes;
 };
 
-K15_GLProgramDesc internOpenGLPrograms[K15_RENDER_MAX_GPU_PROGRAMS] = {};
-
 /*********************************************************************************/
 intern void K15_InternalGLUpdateUniform(uint32 p_TargetSize, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc, void* p_UniformData)
 {
@@ -66,10 +29,10 @@ intern void K15_InternalGLUpdateUniform(uint32 p_TargetSize, K15_RenderUniformUp
 	memcpy(p_UniformData, uniformData, uniformDataSize);
 }
 /*********************************************************************************/
-intern uint8 K15_InternalGLUpdateIntUniform(K15_GLProgramDesc* p_GLProgramDesc, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc)
+intern uint8 K15_InternalGLUpdateIntUniform(K15_GLProgram* p_GLProgram, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc)
 {
-	GLuint glProgramHandle = p_GLProgramDesc->program;
-	K15_GLUniform* glUniform = &p_GLProgramDesc->uniforms[p_UniformIndex];
+	GLuint glProgramHandle = p_GLProgram->program;
+	K15_GLUniform* glUniform = &p_GLProgram->uniforms[p_UniformIndex];
 
 	int32 uniformValue = 0;
 
@@ -80,10 +43,10 @@ intern uint8 K15_InternalGLUpdateIntUniform(K15_GLProgramDesc* p_GLProgramDesc, 
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-intern uint8 K15_InternalGLUpdateUIntUniform(K15_GLProgramDesc* p_GLProgramDesc, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc)
+intern uint8 K15_InternalGLUpdateUIntUniform(K15_GLProgram* p_GLProgram, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc)
 {
-	GLuint glProgramHandle = p_GLProgramDesc->program;
-	K15_GLUniform* glUniform = &p_GLProgramDesc->uniforms[p_UniformIndex];
+	GLuint glProgramHandle = p_GLProgram->program;
+	K15_GLUniform* glUniform = &p_GLProgram->uniforms[p_UniformIndex];
 
 	uint32 uniformValue = 0;
 
@@ -94,10 +57,10 @@ intern uint8 K15_InternalGLUpdateUIntUniform(K15_GLProgramDesc* p_GLProgramDesc,
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-intern uint8 K15_InternalGLUpdateFloatUniform(K15_GLProgramDesc* p_GLProgramDesc, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc)
+intern uint8 K15_InternalGLUpdateFloatUniform(K15_GLProgram* p_GLProgram, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc)
 {
-	GLuint glProgramHandle = p_GLProgramDesc->program;
-	K15_GLUniform* glUniform = &p_GLProgramDesc->uniforms[p_UniformIndex];
+	GLuint glProgramHandle = p_GLProgram->program;
+	K15_GLUniform* glUniform = &p_GLProgram->uniforms[p_UniformIndex];
 
 	float uniformValue = 0.f;
 
@@ -108,10 +71,10 @@ intern uint8 K15_InternalGLUpdateFloatUniform(K15_GLProgramDesc* p_GLProgramDesc
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-intern uint8 K15_InternalGLUpdateFloat2Uniform(K15_GLProgramDesc* p_GLProgramDesc, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc)
+intern uint8 K15_InternalGLUpdateFloat2Uniform(K15_GLProgram* p_GLProgram, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc)
 {
-	GLuint glProgramHandle = p_GLProgramDesc->program;
-	K15_GLUniform* glUniform = &p_GLProgramDesc->uniforms[p_UniformIndex];
+	GLuint glProgramHandle = p_GLProgram->program;
+	K15_GLUniform* glUniform = &p_GLProgram->uniforms[p_UniformIndex];
 
 	float uniformValues[2] = {0.f};
 
@@ -122,10 +85,10 @@ intern uint8 K15_InternalGLUpdateFloat2Uniform(K15_GLProgramDesc* p_GLProgramDes
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-intern uint8 K15_InternalGLUpdateFloat3Uniform(K15_GLProgramDesc* p_GLProgramDesc, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc)
+intern uint8 K15_InternalGLUpdateFloat3Uniform(K15_GLProgram* p_GLProgram, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc)
 {
-	GLuint glProgramHandle = p_GLProgramDesc->program;
-	K15_GLUniform* glUniform = &p_GLProgramDesc->uniforms[p_UniformIndex];
+	GLuint glProgramHandle = p_GLProgram->program;
+	K15_GLUniform* glUniform = &p_GLProgram->uniforms[p_UniformIndex];
 
 	float uniformValues[3] = {0.f};
 
@@ -136,10 +99,10 @@ intern uint8 K15_InternalGLUpdateFloat3Uniform(K15_GLProgramDesc* p_GLProgramDes
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-intern uint8 K15_InternalGLUpdateFloat4Uniform(K15_GLProgramDesc* p_GLProgramDesc, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc)
+intern uint8 K15_InternalGLUpdateFloat4Uniform(K15_GLProgram* p_GLProgram, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc)
 {
-	GLuint glProgramHandle = p_GLProgramDesc->program;
-	K15_GLUniform* glUniform = &p_GLProgramDesc->uniforms[p_UniformIndex];
+	GLuint glProgramHandle = p_GLProgram->program;
+	K15_GLUniform* glUniform = &p_GLProgram->uniforms[p_UniformIndex];
 
 	float uniformValues[4] = {0.f};
 
@@ -150,10 +113,10 @@ intern uint8 K15_InternalGLUpdateFloat4Uniform(K15_GLProgramDesc* p_GLProgramDes
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-intern uint8 K15_InternalGLUpdateFloat2x2Uniform(K15_GLProgramDesc* p_GLProgramDesc, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc)
+intern uint8 K15_InternalGLUpdateFloat2x2Uniform(K15_GLProgram* p_GLProgram, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc)
 {
-	GLuint glProgramHandle = p_GLProgramDesc->program;
-	K15_GLUniform* glUniform = &p_GLProgramDesc->uniforms[p_UniformIndex];
+	GLuint glProgramHandle = p_GLProgram->program;
+	K15_GLUniform* glUniform = &p_GLProgram->uniforms[p_UniformIndex];
 
 	float uniformValues[2*2] = {0.f};
 
@@ -164,10 +127,10 @@ intern uint8 K15_InternalGLUpdateFloat2x2Uniform(K15_GLProgramDesc* p_GLProgramD
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-intern uint8 K15_InternalGLUpdateFloat3x3Uniform(K15_GLProgramDesc* p_GLProgramDesc, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc)
+intern uint8 K15_InternalGLUpdateFloat3x3Uniform(K15_GLProgram* p_GLProgram, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc)
 {
-	GLuint glProgramHandle = p_GLProgramDesc->program;
-	K15_GLUniform* glUniform = &p_GLProgramDesc->uniforms[p_UniformIndex];
+	GLuint glProgramHandle = p_GLProgram->program;
+	K15_GLUniform* glUniform = &p_GLProgram->uniforms[p_UniformIndex];
 
 	float uniformValues[3*3] = {0.f};
 
@@ -178,10 +141,10 @@ intern uint8 K15_InternalGLUpdateFloat3x3Uniform(K15_GLProgramDesc* p_GLProgramD
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-intern uint8 K15_InternalGLUpdateFloat4x4Uniform(K15_GLProgramDesc* p_GLProgramDesc, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc)
+intern uint8 K15_InternalGLUpdateFloat4x4Uniform(K15_GLProgram* p_GLProgram, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc)
 {
-	GLuint glProgramHandle = p_GLProgramDesc->program;
-	K15_GLUniform* glUniform = &p_GLProgramDesc->uniforms[p_UniformIndex];
+	GLuint glProgramHandle = p_GLProgram->program;
+	K15_GLUniform* glUniform = &p_GLProgram->uniforms[p_UniformIndex];
 
 	float uniformValues[4*4] = {0.f};
 
@@ -284,7 +247,7 @@ intern char* K15_InternalGLPreprocessProgramCode(const char* p_FilePath, const c
 	return preprocessedCode;
 }
 /*********************************************************************************/
-intern void K15_InternGLReflectProgram(K15_GLProgramDesc* p_Program)
+intern void K15_InternGLReflectProgram(K15_GLProgram* p_Program)
 {
 	uint32 uniformCounter = 0;
 	GLuint glProgram = p_Program->program;
@@ -370,9 +333,9 @@ intern void K15_InternGLReflectProgram(K15_GLProgramDesc* p_Program)
 
 }
 /*********************************************************************************/
-void K15_GLInitPrograms()
+void K15_GLInitPrograms(K15_GLRenderContext* p_GLContext)
 {
-	K15_GLProgramDesc* currentProgramDesc = 0;
+	K15_GLProgram* currentProgram = 0;
 	K15_GLUniform* currentUniform = 0;
 
 	//initialize internal structures
@@ -380,13 +343,13 @@ void K15_GLInitPrograms()
 		 programIndex < K15_RENDER_MAX_GPU_PROGRAMS;
 		 ++programIndex)
 	{
-		currentProgramDesc = &internOpenGLPrograms[programIndex];
+		currentProgram = &p_GLContext->gl3.programs[programIndex];
 
 		for (uint32 uniformIndex = 0;
 			 uniformIndex < K15_RENDER_GL_MAX_PROGRAM_UNIFORMS;
 			 ++uniformIndex)
 		{
-			currentUniform = &currentProgramDesc->uniforms[uniformIndex];
+			currentUniform = &currentProgram->uniforms[uniformIndex];
 
 			currentUniform->registerIndex = -1;
 			currentUniform->size = -1;
@@ -399,7 +362,7 @@ void K15_GLInitPrograms()
 uint8 K15_GLCreateProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramDesc* p_RenderProgramDesc, K15_RenderProgramHandle* p_RenderProgramHandle)
 {
 	uint8 result = K15_SUCCESS;
-
+	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
 	K15_RenderProgramType renderProgramType = p_RenderProgramDesc->type;
 
 	GLenum glProgramType = K15_GLConvertProgramType(renderProgramType);
@@ -451,8 +414,8 @@ uint8 K15_GLCreateProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramD
 	K15_OPENGL_CALL(glProgram = kglCreateShaderProgramv(glProgramType, K15_ARRAY_COUNT(glslProgramCode), glslProgramCode));
 	K15_OPENGL_CALL(kglGetProgramiv(glProgram, GL_LINK_STATUS, &linkStatus));
 
-	K15_GLProgramDesc* programDesc = &internOpenGLPrograms[*p_RenderProgramHandle];
-	programDesc->program = glProgram;
+	K15_GLProgram* program = &glContext->gl3.programs[*p_RenderProgramHandle];
+	program->program = glProgram;
 
 	if (linkStatus == GL_FALSE)
 	{
@@ -478,7 +441,7 @@ uint8 K15_GLCreateProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramD
 	//if everything went smooth so far, try to reflect the program
 	if (result == K15_SUCCESS)
 	{
-		K15_InternGLReflectProgram(programDesc);
+		K15_InternGLReflectProgram(program);
 	}
 
 	return result;
@@ -487,11 +450,13 @@ uint8 K15_GLCreateProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramD
 uint8 K15_GLDeleteProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramHandle* p_RenderProgramHandle)
 {
 	uint8 result = K15_SUCCESS;
-	K15_GLProgramDesc* glProgramDesc = &internOpenGLPrograms[*p_RenderProgramHandle];
+	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
 
-	K15_OPENGL_CALL(kglDeleteProgram(glProgramDesc->program));
+	K15_GLProgram* glProgram = &glContext->gl3.programs[*p_RenderProgramHandle];
 
-	internOpenGLPrograms[*p_RenderProgramHandle].program = K15_INVALID_GL_PROGRAM_INDEX;
+	K15_OPENGL_CALL(kglDeleteProgram(glProgram->program));
+
+	glContext->gl3.programs[*p_RenderProgramHandle].program = K15_INVALID_GL_PROGRAM_INDEX;
 
 	return result;
 }
@@ -499,17 +464,19 @@ uint8 K15_GLDeleteProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramH
 uint8 K15_GLUpdateUniform(K15_RenderContext* p_RenderContext, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc, K15_RenderProgramHandle* p_RenderProgramHandle)
 {
 	uint8 result = K15_ERROR_RENDER_UNIFORM_NOT_FOUND;
-	K15_GLProgramDesc* glProgramDesc = &internOpenGLPrograms[*p_RenderProgramHandle];
+	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
+
+	K15_GLProgram* glProgram = &glContext->gl3.programs[*p_RenderProgramHandle];
 
 	GLenum uniformType = K15_GLConvertUniformTypeToGLType(p_RenderUniformUpdateDesc->type);
 
-	uint32 uniformCount = glProgramDesc->uniformCount;
+	uint32 uniformCount = glProgram->uniformCount;
 
 	for (uint32 uniformIndex = 0;
 		uniformIndex < uniformCount;
 		++uniformIndex)
 	{
-		GLchar* uniformName = glProgramDesc->uniforms[uniformIndex].name;
+		GLchar* uniformName = glProgram->uniforms[uniformIndex].name;
 
 		if (strcmp(uniformName, p_RenderUniformUpdateDesc->name) == 0)
 		{
@@ -517,55 +484,55 @@ uint8 K15_GLUpdateUniform(K15_RenderContext* p_RenderContext, K15_RenderUniformU
 			{
 				case GL_INT:
 				{
-					result = K15_InternalGLUpdateIntUniform(glProgramDesc, uniformIndex, p_RenderUniformUpdateDesc);
+					result = K15_InternalGLUpdateIntUniform(glProgram, uniformIndex, p_RenderUniformUpdateDesc);
 					break;
 				}
 
 				case GL_UNSIGNED_INT:
 				{
-					result = K15_InternalGLUpdateUIntUniform(glProgramDesc, uniformIndex, p_RenderUniformUpdateDesc);
+					result = K15_InternalGLUpdateUIntUniform(glProgram, uniformIndex, p_RenderUniformUpdateDesc);
 					break;
 				}
 
 				case GL_FLOAT:
 				{
-					result = K15_InternalGLUpdateFloatUniform(glProgramDesc, uniformIndex, p_RenderUniformUpdateDesc);
+					result = K15_InternalGLUpdateFloatUniform(glProgram, uniformIndex, p_RenderUniformUpdateDesc);
 					break;
 				}
 
 				case GL_FLOAT_VEC2:
 				{
-					result = K15_InternalGLUpdateFloat2Uniform(glProgramDesc, uniformIndex, p_RenderUniformUpdateDesc);
+					result = K15_InternalGLUpdateFloat2Uniform(glProgram, uniformIndex, p_RenderUniformUpdateDesc);
 					break;
 				}
 
 				case GL_FLOAT_VEC3:
 				{
-					result = K15_InternalGLUpdateFloat3Uniform(glProgramDesc, uniformIndex, p_RenderUniformUpdateDesc);
+					result = K15_InternalGLUpdateFloat3Uniform(glProgram, uniformIndex, p_RenderUniformUpdateDesc);
 					break;
 				}
 
 				case GL_FLOAT_VEC4:
 				{
-					result = K15_InternalGLUpdateFloat4Uniform(glProgramDesc, uniformIndex, p_RenderUniformUpdateDesc);
+					result = K15_InternalGLUpdateFloat4Uniform(glProgram, uniformIndex, p_RenderUniformUpdateDesc);
 					break;
 				}
 
 				case GL_FLOAT_MAT2:
 				{
-					result = K15_InternalGLUpdateFloat2x2Uniform(glProgramDesc, uniformIndex, p_RenderUniformUpdateDesc);
+					result = K15_InternalGLUpdateFloat2x2Uniform(glProgram, uniformIndex, p_RenderUniformUpdateDesc);
 					break;
 				}
 
 				case GL_FLOAT_MAT3:
 				{
-					result = K15_InternalGLUpdateFloat3x3Uniform(glProgramDesc, uniformIndex, p_RenderUniformUpdateDesc);
+					result = K15_InternalGLUpdateFloat3x3Uniform(glProgram, uniformIndex, p_RenderUniformUpdateDesc);
 					break;
 				}
 
 				case GL_FLOAT_MAT4:
 				{
-					result = K15_InternalGLUpdateFloat4x4Uniform(glProgramDesc, uniformIndex, p_RenderUniformUpdateDesc);
+					result = K15_InternalGLUpdateFloat4x4Uniform(glProgram, uniformIndex, p_RenderUniformUpdateDesc);
 					break;
 				}
 

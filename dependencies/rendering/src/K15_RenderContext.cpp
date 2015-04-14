@@ -174,7 +174,7 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 
 			*renderBufferHandle = K15_InternalAddRenderBufferDesc(p_RenderContext, &renderBufferDesc);
 
-			result = p_RenderContext->commandProcessing.bufferManagement.createBuffer(p_RenderContext, &renderBufferDesc, renderBufferHandle);
+			//result = p_RenderContext->commandProcessing.bufferManagement.createBuffer(p_RenderContext, &renderBufferDesc, renderBufferHandle);
 
 			K15_InternalCheckRenderBufferDescFlags(&renderBufferDesc);
 
@@ -480,14 +480,11 @@ intern uint8 K15_InternalProcessRenderCommandBuffer(K15_RenderContext* p_RenderC
 
 		result = K15_InternalProcessRenderCommand(p_RenderContext, *parameterFrontBuffer, currentCommand);
 
-		//result = p_RenderContext->processRenderCommand(p_RenderContext, p_RenderCommandQueue, currentCommand);
-
 		assert(result == K15_SUCCESS);
 	}
 
 	//command queue has been processed. Remove dispatched flag
 	K15_PostSemaphore(p_RenderCommandBuffer->processingSemaphore);
-	//p_RenderCommandQueue->flags &= ~K15_CBF_DISPATCHED;
 
 	return result;
 }

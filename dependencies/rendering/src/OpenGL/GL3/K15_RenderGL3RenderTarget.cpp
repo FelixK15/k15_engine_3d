@@ -1,23 +1,8 @@
-#define K15_RENDER_GL_MAX_RENDER_TARGET_COUNT 32
-#define K15_RENDER_GL_MAX_COLOR_ATTACHMENTS 8
-
-/*********************************************************************************/
-struct K15_GLRenderTarget
-{
-	GLuint glFramebuffer;
-	GLuint glTextures[K15_RENDER_GL_MAX_COLOR_ATTACHMENTS];
-	GLuint glRenderbuffer;
-
-	uint32 textureCount;
-};
-/*********************************************************************************/
-
-
-intern K15_GLRenderTarget internalGLRenderTargets[K15_RENDER_GL_MAX_RENDER_TARGET_COUNT] = {};
-
 /*********************************************************************************/
 intern inline uint8 K15_GLCreateRenderTarget(K15_RenderContext* p_RenderContext, K15_RenderTargetDesc* p_RenderTargetDesc, K15_RenderTargetHandle* p_RenderTargetHandle)
 {
+	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
+
 	GLuint glFramebuffer = 0;
 	GLuint glRenderTexture = 0;
 	GLuint glDepthRenderbuffer = 0;
@@ -28,7 +13,7 @@ intern inline uint8 K15_GLCreateRenderTarget(K15_RenderContext* p_RenderContext,
 	uint32 width = p_RenderContext->viewports[activeViewport].width;
 	uint32 height = p_RenderContext->viewports[activeViewport].height;
 
-	K15_GLRenderTarget* glRenderTargetStruct = &internalGLRenderTargets[*p_RenderTargetHandle];
+	K15_GLRenderTarget* glRenderTargetStruct = &glContext->gl3.renderTargets[*p_RenderTargetHandle];
 
 	glRenderTargetStruct->textureCount = 0;
 	glRenderTargetStruct->glFramebuffer = GL_INVALID_VALUE;
@@ -134,7 +119,9 @@ intern inline uint8 K15_GLCreateRenderTarget(K15_RenderContext* p_RenderContext,
 /*********************************************************************************/
 intern inline uint8 K15_GLDeleteRenderTarget(K15_RenderContext* p_RenderContext, K15_RenderTargetHandle* p_RenderTargetHandle)
 {
-	K15_GLRenderTarget* glRenderTargetStruct = &internalGLRenderTargets[*p_RenderTargetHandle];
+	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
+
+	K15_GLRenderTarget* glRenderTargetStruct = &glContext->gl3.renderTargets[*p_RenderTargetHandle];
 
 	K15_OPENGL_CALL(glDeleteTextures(glRenderTargetStruct->textureCount, glRenderTargetStruct->glTextures));
 	

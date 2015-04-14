@@ -17,7 +17,6 @@ struct K15_Mutex
 {
 	//HANDLE handle;
 	CRITICAL_SECTION criticalSection;
-	LONG locked;
 };
 
 struct K15_Semaphore

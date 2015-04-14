@@ -221,7 +221,7 @@ void K15_InternalCreateRenderTarget(K15_RenderCommandBuffer* p_RenderCommandBuff
 					   K15_RENDER_TARGET_OUTPUT_COLOR_5_BIT |
 					   K15_RENDER_TARGET_OUTPUT_COLOR_6_BIT |
 					   K15_RENDER_TARGET_OUTPUT_COLOR_7_BIT |
-					   K15_RENDER_TARGET_OUTPUT_DEPTH_BIT |
+					   K15_RENDER_TARGET_OUTPUT_DEPTH_BIT	|
 					   K15_RENDER_TARGET_OUTPUT_STENCIL_BIT;
 
 	desc.format = K15_RENDER_FORMAT_R8G8B8_UINT;
@@ -232,7 +232,6 @@ void K15_InternalCreateRenderTarget(K15_RenderCommandBuffer* p_RenderCommandBuff
 	K15_EndRenderCommand(p_RenderCommandBuffer);
 }
 /*********************************************************************************/
-
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -260,41 +259,45 @@ int CALLBACK WinMain(
 	K15_SetWindowDimension(window, 1024, 768);
 	
 	K15_RenderContext* renderContext = K15_CreateRenderContext(osContext);
+
 	K15_RenderCommandBuffer* renderCommandBuffer = K15_CreateRenderCommandBuffer(renderContext);
+
+	//Test 1: Create Vertex Buffer
+	K15_RenderBufferHandle* triangleVertexBuffer = (K15_RenderBufferHandle*)malloc(sizeof(K15_RenderBufferHandle));;
+	K15_InternalCreateTriangleBuffer(renderCommandBuffer, triangleVertexBuffer);
+
+	// Test 2: Load Shader
+	K15_RenderProgramHandle* programHandle = (K15_RenderProgramHandle*)malloc(sizeof(K15_RenderProgramHandle));;
+	K15_InternalCreateVertexShader(renderCommandBuffer, programHandle);
+
+	// Test 3: Fill Uniforms
+	K15_InternalFillViewportUniform(renderCommandBuffer, programHandle);
+
+	// Test 4: Set Render States
+	K15_InternalSetDepthState(renderCommandBuffer);
+	K15_InternalSetRasterizerState(renderCommandBuffer);
+	K15_InternalSetBlendState(renderCommandBuffer);
+	K15_InternalSetStencilState(renderCommandBuffer);
+
+	// Test 5: Set Create Texture
+	K15_RenderTextureHandle* textureHandle = (K15_RenderTextureHandle*)malloc(sizeof(K15_RenderTextureHandle));;
+	K15_InternalCreateDiffuseTexture(renderCommandBuffer, textureHandle);
+
+	// Test 6: Create Sampler
+	K15_RenderSamplerHandle* samplerHandle = (K15_RenderSamplerHandle*)malloc(sizeof(K15_RenderSamplerHandle));;
+	K15_InternalCreateLineareSampler(renderCommandBuffer, samplerHandle);
+
+	// Test 7: Create RenderTarget
+	K15_RenderTargetHandle* renderTargetHandle = (K15_RenderTargetHandle*)malloc(sizeof(K15_RenderTargetHandle));;
+	K15_InternalCreateRenderTarget(renderCommandBuffer, renderTargetHandle);
+
+	//Dispatch
+	K15_DispatchRenderCommandBuffer(renderCommandBuffer);
 
 	bool running = true;
 
 	K15_SystemEvent event = {};
 
-
-	//Test 1: Create Vertex Buffer
- 	K15_RenderBufferHandle triangleVertexBuffer = K15_INVALID_GPU_RESOURCE_HANDLE;
- 	K15_InternalCreateTriangleBuffer(renderCommandBuffer, &triangleVertexBuffer);
-
-	// Test 2: Load Shader
- 	K15_RenderProgramHandle programHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
- 	K15_InternalCreateVertexShader(renderCommandBuffer, &programHandle);
-
-	// Test 3: Fill Uniforms
-	K15_InternalFillViewportUniform(renderCommandBuffer, &programHandle);
-	
-	// Test 4: Set Render States
- 	K15_InternalSetDepthState(renderCommandBuffer);
- 	K15_InternalSetRasterizerState(renderCommandBuffer);
- 	K15_InternalSetBlendState(renderCommandBuffer);
- 	K15_InternalSetStencilState(renderCommandBuffer);
-
-	// Test 5: Set Create Texture
-	K15_RenderTextureHandle textureHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
-	K15_InternalCreateDiffuseTexture(renderCommandBuffer, &textureHandle);
-
-	// Test 6: Create Sampler
-	K15_RenderSamplerHandle samplerHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
-	K15_InternalCreateLineareSampler(renderCommandBuffer, &samplerHandle);
-
-	// Test 7: Create RenderTarget
-	K15_RenderTargetHandle renderTargetHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
-	K15_InternalCreateRenderTarget(renderCommandBuffer, &renderTargetHandle);
 
 	while (running)
 	{
@@ -307,8 +310,6 @@ int CALLBACK WinMain(
 				running = false;
 			}
 		}		
-	
-		K15_DispatchRenderCommandBuffer(renderCommandBuffer);
 
 		K15_ProcessDispatchedRenderCommandBuffers(renderContext);
 

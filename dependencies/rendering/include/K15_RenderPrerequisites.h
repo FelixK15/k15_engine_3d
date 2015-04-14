@@ -56,6 +56,8 @@ typedef uint32 K15_RenderProgramHandle;
 typedef uint32 K15_RenderSamplerHandle;
 typedef uint32 K15_RenderTargetHandle;
 
+enum K15_UniformType : uint32;
+
 struct K15_RenderContext;
 struct K15_RenderCommandBuffer;
 struct K15_RenderCommandInstance;

@@ -1,6 +1,8 @@
 #ifndef _K15_OSLayer_Prerequisites_h_
 #define _K15_OSLayer_Prerequisites_h_
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "K15_OSLayer_ErrorCodes.h"
 #include "K15_OSLayer_Config.h"
 
