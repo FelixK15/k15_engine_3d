@@ -170,6 +170,9 @@ extern PFNWGLCREATECONTEXTATTRIBSARBPROC kwglCreateContextAttribsARB;
 //default gl functions
 extern PFNGLGENBUFFERSPROC						kglGenBuffers; 
 extern PFNGLBINDBUFFERPROC						kglBindBuffer;
+extern PFNGLVERTEXATTRIBPOINTERPROC				kglVertexAttribPointer;
+extern PFNGLENABLEVERTEXATTRIBARRAYPROC			kglEnableVertexAttribArray;	
+extern PFNGLDISABLEVERTEXATTRIBARRAYPROC		kglDisableVertexAttribArray;
 extern PFNGLDELETEBUFFERSPROC					kglDeleteBuffers;
 extern PFNGLGETPROGRAMIVPROC					kglGetProgramiv;
 extern PFNGLGETPROGRAMINFOLOGPROC				kglGetProgramInfoLog;

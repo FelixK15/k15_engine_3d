@@ -41,7 +41,7 @@ enum K15_UniformType : uint32
 struct K15_RenderProgramDesc
 {
 	const char* file;
-	const char* code;
+	char* code;
 	K15_RenderProgramType type;
 	K15_RenderProgramSource source;
 };

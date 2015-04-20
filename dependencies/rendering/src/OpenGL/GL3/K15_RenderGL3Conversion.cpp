@@ -207,67 +207,67 @@ intern inline GLenum K15_GLConvertBlendOperation(K15_BlendOperation p_BlendOpera
 	return nativeBlendOperator;
 }
 /*********************************************************************************/
-intern inline GLenum K15_GLConvertBlend(K15_Blend p_Blend)
+intern inline GLenum K15_GLConvertBlend(K15_BlendFactor p_Blend)
 {
 	GLenum nativeBlend = GL_INVALID_ENUM;
 
 	switch(p_Blend)
 	{
-		case K15_BLEND_ZERO:
+		case K15_BLEND_FACTOR_ZERO:
 		{
 			nativeBlend = GL_ZERO;
 			break;
 		}
 
-		case K15_BLEND_ONE:
+		case K15_BLEND_FACTOR_ONE:
 		{
 			nativeBlend = GL_ONE;
 			break;
 		}
 
-		case K15_BLEND_SRC_COLOR:
+		case K15_BLEND_FACTOR_SRC_COLOR:
 		{
 			nativeBlend = GL_SRC_COLOR;
 			break;
 		}
 
-		case K15_BLEND_INVERSE_SRC_COLOR:
+		case K15_BLEND_FACTOR_INVERSE_SRC_COLOR:
 		{
 			nativeBlend = GL_ONE_MINUS_SRC_COLOR;
 			break;
 		}
 
-		case K15_BLEND_DESC_COLOR:
+		case K15_BLEND_FACTOR_DESC_COLOR:
 		{
 			nativeBlend = GL_DST_COLOR;
 			break;
 		}
 
-		case K15_BLEND_INVERSE_DESC_COLOR:
+		case K15_BLEND_FACTOR_INVERSE_DESC_COLOR:
 		{
 			nativeBlend = GL_ONE_MINUS_DST_COLOR;
 			break;
 		}
 
-		case K15_BLEND_SRC_ALPHA:
+		case K15_BLEND_FACTOR_SRC_ALPHA:
 		{
 			nativeBlend = GL_SRC_ALPHA;
 			break;
 		}
 
-		case K15_BLEND_INVERSE_SRC_ALPHA:
+		case K15_BLEND_FACTOR_INVERSE_SRC_ALPHA:
 		{
 			nativeBlend = GL_ONE_MINUS_SRC_ALPHA;
 			break;
 		}
 
-		case K15_BLEND_DEST_ALPHA:
+		case K15_BLEND_FACTOR_DEST_ALPHA:
 		{
 			nativeBlend = GL_DST_ALPHA;
 			break;
 		}
 
-		case K15_BLEND_INVERSE_DEST_ALPHA:
+		case K15_BLEND_FACTOR_INVERSE_DEST_ALPHA:
 		{
 			nativeBlend = GL_ONE_MINUS_DST_ALPHA;
 			break;

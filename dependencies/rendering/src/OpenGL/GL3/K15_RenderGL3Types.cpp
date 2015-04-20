@@ -9,6 +9,9 @@
 //default gl functions
 PFNGLGENBUFFERSPROC						kglGenBuffers						= 0;
 PFNGLBINDBUFFERPROC						kglBindBuffer						= 0;
+PFNGLVERTEXATTRIBPOINTERPROC			kglVertexAttribPointer				= 0;
+PFNGLENABLEVERTEXATTRIBARRAYPROC		kglEnableVertexAttribArray			= 0;
+PFNGLDISABLEVERTEXATTRIBARRAYPROC		kglDisableVertexAttribArray			= 0;
 PFNGLDELETEBUFFERSPROC					kglDeleteBuffers					= 0;
 PFNGLGETPROGRAMIVPROC					kglGetProgramiv						= 0;
 PFNGLGETPROGRAMINFOLOGPROC				kglGetProgramInfoLog				= 0;

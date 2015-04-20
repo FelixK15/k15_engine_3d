@@ -38,6 +38,10 @@ struct K15_GLRenderContext
 			GLuint programPipelineHandle;
 			GLuint vertexArrayHandle;
 			GLuint framebufferHandle;
+			GLuint fullscreenQuadPPL;
+			GLuint fullscreenQuadVBO;
+			GLuint fullscreenQuadIBO;
+			GLuint fullscreenQuadVAO;
 		} gl3;
 
 	};

@@ -27,12 +27,12 @@
 #include "OpenGL/GL3/K15_RenderGL3Conversion.cpp"
 #include "OpenGL/GL3/K15_RenderGL3Buffer.cpp"
 #include "OpenGL/GL3/K15_RenderGL3Frame.cpp"
-#include "OpenGL/GL3/K15_RenderGL3Draw.cpp"
 #include "OpenGL/GL3/K15_RenderGL3Program.cpp"
 #include "OpenGL/GL3/K15_RenderGL3State.cpp"
 #include "OpenGL/GL3/K15_RenderGL3Texture.cpp"
 #include "OpenGL/GL3/K15_RenderGL3Sampler.cpp"
 #include "OpenGL/GL3/K15_RenderGL3RenderTarget.cpp"
+#include "OpenGL/GL3/K15_RenderGL3Draw.cpp"
 
 typedef uint8 (*K15_CreatePlatformContextFnc)(K15_GLRenderContext*, K15_OSLayerContext*);
 
@@ -192,6 +192,8 @@ intern inline void K15_InternalGLSetFunctionPointers(K15_RenderContext* p_Render
 	p_RenderContext->commandProcessing.renderTargetManagement.unbindRenderTarget = K15_GLUnbindRenderTarget;
 	p_RenderContext->commandProcessing.renderTargetManagement.deleteRenderTarget = K15_GLDeleteRenderTarget;
 
+	//drawing
+	p_RenderContext->commandProcessing.drawManagement.drawFullscreenQuad = K15_GLDrawFullscreenQuad;
 }
 /*********************************************************************************/
 intern int K15_CmpStrings(const void* a, const void* b)
@@ -246,6 +248,10 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 	uint8 result = K15_SUCCESS;
 
 	K15_CHECK_ASSIGNMENT(kglGenBuffers, (PFNGLGENBUFFERSPROC)kglGetProcAddress("glGenBuffers"));
+	K15_CHECK_ASSIGNMENT(kglVertexAttribPointer, (PFNGLVERTEXATTRIBPOINTERPROC)kglGetProcAddress("glVertexAttribPointer"));
+	K15_CHECK_ASSIGNMENT(kglEnableVertexAttribArray, (PFNGLENABLEVERTEXATTRIBARRAYPROC)kglGetProcAddress("glEnableVertexAttribArray"));
+	K15_CHECK_ASSIGNMENT(kglDisableVertexAttribArray, (PFNGLDISABLEVERTEXATTRIBARRAYPROC)kglGetProcAddress("glDisableVertexAttribArray"));
+	K15_CHECK_ASSIGNMENT(kglBindBuffer, (PFNGLBINDBUFFERPROC)kglGetProcAddress("glBindBuffer"));
 	K15_CHECK_ASSIGNMENT(kglDeleteBuffers, (PFNGLDELETEBUFFERSPROC)kglGetProcAddress("glDeleteBuffers"));
 	K15_CHECK_ASSIGNMENT(kglGetProgramiv, (PFNGLGETPROGRAMIVPROC)kglGetProcAddress("glGetProgramiv"));
 	K15_CHECK_ASSIGNMENT(kglDeleteProgram, (PFNGLDELETEPROGRAMPROC)kglGetProcAddress("glDeleteProgram"));
@@ -441,6 +447,100 @@ intern void K15_InternalGLGetRenderCapabilities(K15_RenderContext* p_RenderConte
 	capabilities->maxSamples = (uint32)glMaxSamples;
 }
 /*********************************************************************************/
+intern inline void K15_InternalGLCreateFullscreenQuadVBO(K15_GLRenderContext* p_GlContext)
+{
+	GLfloat glQuadVertices[] = {
+		//pos vertex 1
+		-1.f, -1.f, 1.f,
+		//UV vertex 1
+		0.f, 0.f,
+
+		//pos vertex 2
+		-1.f, 1.f, 1.f,
+		//UV vertex 2
+		0.f, 1.f,
+
+		//pos vertex 3
+		1.f, 1.f, 1.f,
+		//UV vertex 3
+		1.f, 1.f,
+
+		//pos vertex 4
+		1.f, -1.f, 1.f,
+		//UV vertex 4
+		1.f, 0.f
+	};
+
+	GLshort glQuadIndices[] = {
+		0, 1, 2,
+
+		2, 3, 0
+	};
+
+	GLuint glVBO = 0;
+	GLuint glIBO = 0;
+	GLuint glVAO = 0;
+	GLuint glPPL = 0;
+	GLuint glVS = 0;
+
+	const char* glVertexShaderCode[] = {
+		K15_GLGenerateGLSLHeaderCode(GL_VERTEX_SHADER),
+		"in vec3 position;\n"
+		"in vec2 uv;\n"
+		"out vec2 v_Color;\n"
+		"void main(void) {\n"
+		"v_Color = uv;\n"
+		"gl_Position = vec4(position, 1.0f); }\n"
+	};
+
+	GLint activeAttributes = 0;
+	GLint maxActiveAttributesNameLength = 0;
+
+	GLint vsPositionRegister = 0;
+	GLint vsTexcoordRegister = 0;
+
+	K15_OPENGL_CALL(glVS = kglCreateShaderProgramv(GL_VERTEX_SHADER, 2, glVertexShaderCode));
+
+	K15_OPENGL_CALL(kglGetProgramiv(glVS, GL_ACTIVE_ATTRIBUTES, &activeAttributes));
+	K15_OPENGL_CALL(kglGetProgramiv(glVS, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxActiveAttributesNameLength));
+
+	//ensure uv & position are present
+	assert(activeAttributes == 2);
+
+	K15_OPENGL_CALL(vsPositionRegister = kglGetAttribLocation(glVS, "position"));
+	K15_OPENGL_CALL(vsTexcoordRegister = kglGetAttribLocation(glVS, "uv"));
+
+	K15_OPENGL_CALL(kglGenProgramPipelines(1, &glPPL));
+	K15_OPENGL_CALL(kglGenVertexArrays(1, &glVAO));
+	K15_OPENGL_CALL(kglGenBuffers(1, &glVBO));
+	K15_OPENGL_CALL(kglGenBuffers(1, &glIBO));
+
+	K15_OPENGL_CALL(kglBindBuffer(GL_ARRAY_BUFFER, glVBO));
+	K15_OPENGL_CALL(kglBindVertexArray(glVAO));
+	K15_OPENGL_CALL(kglBindProgramPipeline(glPPL));
+
+
+	K15_OPENGL_CALL(kglUseProgramStages(glPPL, GL_VERTEX_SHADER_BIT, glVS));
+	K15_OPENGL_CALL(kglNamedBufferDataEXT(glVBO, sizeof(glQuadVertices), glQuadVertices, GL_STATIC_DRAW));
+	K15_OPENGL_CALL(kglNamedBufferDataEXT(glIBO, sizeof(glQuadIndices), glQuadIndices, GL_STATIC_DRAW));
+
+	//Enable attributes (0 = position, 1 = UV)
+	K15_OPENGL_CALL(kglEnableVertexAttribArray(vsPositionRegister));
+	K15_OPENGL_CALL(kglEnableVertexAttribArray(vsTexcoordRegister));
+	K15_OPENGL_CALL(kglVertexAttribPointer(vsPositionRegister, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5, 0));
+	K15_OPENGL_CALL(kglVertexAttribPointer(vsTexcoordRegister, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5, (const void*)(sizeof(GLfloat) * 3)));
+
+	K15_OPENGL_CALL(kglBindProgramPipeline(0));
+	K15_OPENGL_CALL(kglBindBuffer(GL_ARRAY_BUFFER, 0));
+	K15_OPENGL_CALL(kglBindVertexArray(0));
+
+
+	p_GlContext->gl3.fullscreenQuadVBO = glVBO;
+	p_GlContext->gl3.fullscreenQuadIBO = glIBO;
+	p_GlContext->gl3.fullscreenQuadPPL = glPPL;
+	p_GlContext->gl3.fullscreenQuadVAO = glVAO;
+}
+/*********************************************************************************/
 uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerContext* p_OSLayerContext)
 {
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)malloc(sizeof(K15_GLRenderContext));
@@ -513,6 +613,7 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 	K15_GLInitPrograms(glContext);
 
 	K15_InternalGLGetRenderCapabilities(p_RenderContext);
+	K15_InternalGLCreateFullscreenQuadVBO(glContext);
 
 	K15_Window* window = p_OSLayerContext->window.window;
 
@@ -531,6 +632,12 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 	K15_OPENGL_CALL(kglGenProgramPipelines(1, &programPipeline));
 	K15_OPENGL_CALL(kglBindProgramPipeline(programPipeline));
 
+	//Create vertex array object
+	GLuint vertexArrayObject;
+	K15_OPENGL_CALL(kglGenVertexArrays(1, &vertexArrayObject));
+	K15_OPENGL_CALL(kglBindVertexArray(vertexArrayObject));
+
+	glContext->gl3.vertexArrayHandle = vertexArrayObject;
 	glContext->gl3.programPipelineHandle = programPipeline;
 	glContext->gl3.framebufferHandle = 0; //no framebuffer currently bound
 

@@ -119,7 +119,7 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSLayer
 
 	int contextFlags = WGL_CONTEXT_CORE_PROFILE_BIT_ARB;
 
-#ifdef K15_DEBUG
+#ifdef K15_OPENGL_CREATE_DEBUG_CONTEXT
 	contextFlags |= WGL_CONTEXT_DEBUG_BIT_ARB;
 #endif //K15_DEBUG
 

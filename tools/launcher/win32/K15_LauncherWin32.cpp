@@ -126,7 +126,7 @@ void K15_InternalSetBlendState(K15_RenderCommandBuffer* p_RenderCommandBuffer)
 	blendStateDesc.blendOperationAlpha = K15_BLEND_OPERATION_ADD;
 	blendStateDesc.blendOperationRGB = K15_BLEND_OPERATION_ADD;
 
-	blendStateDesc.destinationBlendAlpha = K15_BLEND_ONE;
+	blendStateDesc.destinationBlendFactorAlpha = K15_BLEND_FACTOR_ONE;
 
 	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_SET_BLEND_STATE);
 	K15_AddRenderBlendStateDescParameter(p_RenderCommandBuffer, &blendStateDesc);
@@ -232,6 +232,37 @@ void K15_InternalCreateRenderTarget(K15_RenderCommandBuffer* p_RenderCommandBuff
 	K15_EndRenderCommand(p_RenderCommandBuffer);
 }
 /*********************************************************************************/
+void K15_InternalCreateFullscreenFragmentShader(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderProgramHandle* p_RenderProgramHandle)
+{
+	K15_RenderProgramHandle* programHandle = p_RenderProgramHandle;
+	K15_RenderProgramDesc programDesc = {};
+
+	const char* programCode = "in vec2 v_Color;\n"
+		"void main(void){\n"
+		"gl_FragColor = vec4(v_Color, 0.0f, 1.0f); }";
+
+	uint32 programCodeLength = strlen(programCode);
+
+	programDesc.source = K15_RENDER_PROGRAM_SOURCE_CODE;
+	programDesc.code = (char*)malloc(programCodeLength + 1);
+	memcpy((void*)programDesc.code, programCode, programCodeLength + 1);
+	programDesc.code[programCodeLength] = 0;
+
+	programDesc.type = K15_RENDER_PROGRAM_TYPE_FRAGMENT;
+
+	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_CREATE_PROGRAM);
+	K15_AddRenderProgramHandleParameter(p_RenderCommandBuffer, programHandle);
+	K15_AddRenderProgramDescParameter(p_RenderCommandBuffer, &programDesc);
+	K15_EndRenderCommand(p_RenderCommandBuffer);
+}
+/*********************************************************************************/
+void K15_InternalDrawFullscreenQuad(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderProgramHandle* p_RenderProgramHandle)
+{
+	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_DRAW_FULLSCREEN_QUAD);
+	K15_AddRenderProgramHandleParameter(p_RenderCommandBuffer, p_RenderProgramHandle);
+	K15_EndRenderCommand(p_RenderCommandBuffer);
+}
+/*********************************************************************************/
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -274,10 +305,10 @@ int CALLBACK WinMain(
 	K15_InternalFillViewportUniform(renderCommandBuffer, programHandle);
 
 	// Test 4: Set Render States
-	K15_InternalSetDepthState(renderCommandBuffer);
-	K15_InternalSetRasterizerState(renderCommandBuffer);
-	K15_InternalSetBlendState(renderCommandBuffer);
-	K15_InternalSetStencilState(renderCommandBuffer);
+// 	K15_InternalSetDepthState(renderCommandBuffer);
+// 	K15_InternalSetRasterizerState(renderCommandBuffer);
+ //	K15_InternalSetBlendState(renderCommandBuffer);
+// 	K15_InternalSetStencilState(renderCommandBuffer);
 
 	// Test 5: Set Create Texture
 	K15_RenderTextureHandle* textureHandle = (K15_RenderTextureHandle*)malloc(sizeof(K15_RenderTextureHandle));;
@@ -290,6 +321,11 @@ int CALLBACK WinMain(
 	// Test 7: Create RenderTarget
 	K15_RenderTargetHandle* renderTargetHandle = (K15_RenderTargetHandle*)malloc(sizeof(K15_RenderTargetHandle));;
 	K15_InternalCreateRenderTarget(renderCommandBuffer, renderTargetHandle);
+
+	// Test 8: Draw Fullscreen Quad
+	K15_RenderProgramHandle* renderFullscreenShaderHandle = (K15_RenderProgramHandle*)malloc(sizeof(K15_RenderProgramHandle));
+	K15_InternalCreateFullscreenFragmentShader(renderCommandBuffer, renderFullscreenShaderHandle);
+	K15_InternalDrawFullscreenQuad(renderCommandBuffer, renderFullscreenShaderHandle);
 
 	//Dispatch
 	K15_DispatchRenderCommandBuffer(renderCommandBuffer);
@@ -311,6 +347,9 @@ int CALLBACK WinMain(
 		}		
 
 		K15_ProcessDispatchedRenderCommandBuffers(renderContext);
+
+		K15_InternalDrawFullscreenQuad(renderCommandBuffer, renderFullscreenShaderHandle);
+		K15_DispatchRenderCommandBuffer(renderCommandBuffer);
 
 		K15_SleepThreadForSeconds(0.014f);
 	}

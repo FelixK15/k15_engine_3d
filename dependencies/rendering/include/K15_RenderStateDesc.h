@@ -12,18 +12,18 @@ enum K15_BlendOperation : uint32
 	K15_BLEND_OPERATION_MAX
 };
 
-enum K15_Blend : uint32
+enum K15_BlendFactor : uint32
 {
-	K15_BLEND_ZERO = 0,
-	K15_BLEND_ONE,
-	K15_BLEND_SRC_COLOR,
-	K15_BLEND_INVERSE_SRC_COLOR,
-	K15_BLEND_SRC_ALPHA,
-	K15_BLEND_INVERSE_SRC_ALPHA,
-	K15_BLEND_DEST_ALPHA,
-	K15_BLEND_INVERSE_DEST_ALPHA,
-	K15_BLEND_DESC_COLOR,
-	K15_BLEND_INVERSE_DESC_COLOR
+	K15_BLEND_FACTOR_ZERO = 0,
+	K15_BLEND_FACTOR_ONE,
+	K15_BLEND_FACTOR_SRC_COLOR,
+	K15_BLEND_FACTOR_INVERSE_SRC_COLOR,
+	K15_BLEND_FACTOR_SRC_ALPHA,
+	K15_BLEND_FACTOR_INVERSE_SRC_ALPHA,
+	K15_BLEND_FACTOR_DEST_ALPHA,
+	K15_BLEND_FACTOR_INVERSE_DEST_ALPHA,
+	K15_BLEND_FACTOR_DESC_COLOR,
+	K15_BLEND_FACTOR_INVERSE_DESC_COLOR
 };
 
 enum K15_Comparison : uint32
@@ -61,13 +61,13 @@ struct K15_RenderBlendStateDesc
 {
 	//Render Target ID?
 
-	K15_Blend sourceBlendRGB;
-	K15_Blend destinationBlendRGB;
+	K15_BlendFactor sourceBlendFactorRGB;
+	K15_BlendFactor destinationBlendFactorRGB;
 
 	K15_BlendOperation blendOperationRGB;
 
-	K15_Blend sourceBlendAlpha;
-	K15_Blend destinationBlendAlpha;
+	K15_BlendFactor sourceBlendFactorAlpha;
+	K15_BlendFactor destinationBlendFactorAlpha;
 
 	K15_BlendOperation blendOperationAlpha;
 

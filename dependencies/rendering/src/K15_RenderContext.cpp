@@ -141,13 +141,140 @@ intern inline uint8 K15_InternalReadParameter(K15_RenderCommandParameterBuffer* 
 {
 	assert(p_ParameterFrontBuffer);	
 	assert(p_ParameterDestiny);		
-	assert(p_ParameterOffset + p_ParameterSize <= p_ParameterFrontBuffer->parameterBufferOffset);
 
 	uint32 offset = p_ParameterOffset + p_RenderCommand->parameterOffset;
+
+	assert(offset + p_ParameterSize <= p_ParameterFrontBuffer->parameterBufferOffset);
 
 	memcpy(p_ParameterDestiny, p_ParameterFrontBuffer->parameterBuffer + offset, p_ParameterSize);
 
 	return K15_SUCCESS;
+}
+/*********************************************************************************/
+intern inline uint8 K15_InternalSetRasterizerStateDesc(K15_RenderContext* p_RenderContext, K15_RenderRasterizerStateDesc* p_RasterizerStateDesc)
+{
+	assert(p_RenderContext && p_RasterizerStateDesc);
+
+	uint8 result = K15_SUCCESS;
+
+	//Check if the new rasterizer state differs from the old rasterizer state. Don't issue a GPU command if they dont differ
+	if (memcmp(p_RasterizerStateDesc, p_RenderContext->renderState.rasterizerStateDesc, sizeof(K15_RenderRasterizerStateDesc)) != 0)
+	{
+		result = p_RenderContext->commandProcessing.stateManagement.setRasterizerState(p_RenderContext, p_RasterizerStateDesc);
+
+		if (result == K15_SUCCESS)
+		{
+			//overwrite old rasterizer state
+			memcpy(p_RenderContext->renderState.rasterizerStateDesc, p_RasterizerStateDesc, sizeof(K15_RenderRasterizerStateDesc));
+		}
+	}
+
+	return result;
+}
+/*********************************************************************************/
+intern inline uint8 K15_InternalSetDepthStateDesc(K15_RenderContext* p_RenderContext, K15_RenderDepthStateDesc* p_RenderDepthStateDesc)
+{
+	assert(p_RenderContext && p_RenderDepthStateDesc);
+
+	uint8 result = K15_SUCCESS;
+
+	//Check if the new depth state differs from the old depth state. Don't issue a GPU command if they dont differ
+	if (memcmp(p_RenderDepthStateDesc, p_RenderContext->renderState.depthStateDesc, sizeof(K15_RenderDepthStateDesc)) != 0)
+	{
+		result = p_RenderContext->commandProcessing.stateManagement.setDepthState(p_RenderContext, p_RenderDepthStateDesc);
+
+		if (result == K15_SUCCESS)
+		{
+			//overwrite old depth state
+			memcpy(p_RenderContext->renderState.depthStateDesc, p_RenderDepthStateDesc, sizeof(K15_RenderDepthStateDesc));
+		}
+	}
+
+	return result;
+}
+/*********************************************************************************/
+intern inline uint8 K15_InternalSetBlendStateDesc(K15_RenderContext* p_RenderContext, K15_RenderBlendStateDesc* p_RenderBlendStateDesc)
+{
+	assert(p_RenderContext && p_RenderBlendStateDesc);
+	
+	uint8 result = K15_SUCCESS;
+
+	//Check if the new blend state differs from the old blend state. Don't issue a GPU command if they dont differ
+	if (memcmp(p_RenderBlendStateDesc, p_RenderContext->renderState.blendStateDesc, sizeof(K15_RenderBlendStateDesc)) != 0)
+	{
+		result = p_RenderContext->commandProcessing.stateManagement.setBlendState(p_RenderContext, p_RenderBlendStateDesc);
+
+		if (result == K15_SUCCESS)
+		{
+			//overwrite old blend state
+			memcpy(p_RenderContext->renderState.blendStateDesc, p_RenderBlendStateDesc, sizeof(K15_RenderBlendStateDesc));
+		}
+	}
+
+	return result;
+}
+
+/*********************************************************************************/
+intern inline uint8 K15_InternalSetStencilStateDesc(K15_RenderContext* p_RenderContext, K15_RenderStencilStateDesc* p_RenderStencilStateDesc)
+{
+	assert(p_RenderContext && p_RenderStencilStateDesc);
+
+	uint8 result = K15_SUCCESS;
+
+	//Check if the new stencil state differs from the old stencil state. Don't issue a GPU command if they dont differ
+	if (memcmp(p_RenderStencilStateDesc, p_RenderContext->renderState.stencilStateDesc, sizeof(K15_RenderStencilStateDesc)) != 0)
+	{
+		result = p_RenderContext->commandProcessing.stateManagement.setStencilState(p_RenderContext, p_RenderStencilStateDesc);
+
+		if (result == K15_SUCCESS)
+		{
+			//overwrite old stencil state
+			memcpy(p_RenderContext->renderState.stencilStateDesc, p_RenderStencilStateDesc, sizeof(K15_RenderStencilStateDesc));
+		}
+	}
+
+	return result;
+}
+/*********************************************************************************/
+intern void K15_InternalSetDefaultRenderStates(K15_RenderContext* p_RenderContext)
+{
+	assert(p_RenderContext);
+
+	K15_RenderRasterizerStateDesc rasterizerState = {};
+	K15_RenderDepthStateDesc depthState = {};
+	K15_RenderStencilStateDesc stencilState = {};
+	K15_RenderBlendStateDesc blendState = {};
+
+	/*********************************************************************************/
+	rasterizerState.cullingMode = K15_CULLING_MODE_BACK;
+	rasterizerState.fillMode = K15_FILLMODE_SOLID;
+	rasterizerState.scissoringEnabled = FALSE;
+	rasterizerState.vertexOrder = K15_VERTEX_ORDER_COUNTER_CLOCKWISE;
+	/*********************************************************************************/
+
+	/*********************************************************************************/
+	depthState.compareFunction = K15_COMPARISON_GREATER_EQUAL;
+	depthState.enabled = TRUE;
+	/*********************************************************************************/
+
+	/*********************************************************************************/
+	stencilState.enabled = FALSE;
+	/*********************************************************************************/
+
+	/*********************************************************************************/
+	blendState.enabled = TRUE;
+	blendState.sourceBlendFactorRGB = K15_BLEND_FACTOR_SRC_ALPHA;
+	blendState.sourceBlendFactorAlpha = K15_BLEND_FACTOR_ONE;
+	blendState.blendOperationRGB = K15_BLEND_OPERATION_ADD;
+	blendState.blendOperationAlpha = K15_BLEND_OPERATION_ADD;
+	blendState.destinationBlendFactorRGB = K15_BLEND_FACTOR_INVERSE_SRC_ALPHA;
+	blendState.destinationBlendFactorAlpha = K15_BLEND_FACTOR_ONE;
+	/*********************************************************************************/
+	K15_InternalSetBlendStateDesc(p_RenderContext, &blendState);
+	K15_InternalSetDepthStateDesc(p_RenderContext, &depthState);
+	K15_InternalSetStencilStateDesc(p_RenderContext, &stencilState);
+	K15_InternalSetRasterizerStateDesc(p_RenderContext, &rasterizerState);
+	/*********************************************************************************/
 }
 /*********************************************************************************/
 intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_RenderContext, K15_RenderCommandParameterBuffer* p_ParameterFrontBuffer, K15_RenderCommandInstance* p_RenderCommand)
@@ -321,17 +448,7 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 
 			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderBlendStateDesc), 0, &renderBlendStateDesc);
 
-			//Check if the new blend state differs from the old blend state. Don't issue a GPU command if they dont differ
-			if (memcmp(&renderBlendStateDesc, p_RenderContext->renderState.blendStateDesc, sizeof(renderBlendStateDesc)) == 0)
-			{
-				result = p_RenderContext->commandProcessing.stateManagement.setBlendState(p_RenderContext, &renderBlendStateDesc);
-
-				if (result == K15_SUCCESS)
-				{
-					//overwrite old blend state
-					memcpy(p_RenderContext->renderState.blendStateDesc, &renderBlendStateDesc, sizeof(K15_RenderBlendStateDesc));
-				}
-			}
+			result = K15_InternalSetBlendStateDesc(p_RenderContext, &renderBlendStateDesc);
 			
 			break;
 		}
@@ -342,17 +459,7 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 
 			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderStencilStateDesc), 0, &renderStencilStateDesc);
 
-			//Check if the new stencil state differs from the old stencil state. Don't issue a GPU command if they dont differ
-			if (memcmp(&renderStencilStateDesc, p_RenderContext->renderState.stencilStateDesc, sizeof(renderStencilStateDesc)) == 0)
-			{
-				result = p_RenderContext->commandProcessing.stateManagement.setStencilState(p_RenderContext, &renderStencilStateDesc);
-
-				if (result == K15_SUCCESS)
-				{
-					//overwrite old stencil state
-					memcpy(p_RenderContext->renderState.stencilStateDesc, &renderStencilStateDesc, sizeof(K15_RenderStencilStateDesc));
-				}
-			}
+			result = K15_InternalSetStencilStateDesc(p_RenderContext, &renderStencilStateDesc);
 			
 			break;
 		}
@@ -363,17 +470,7 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 
 			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderDepthStateDesc), 0, &renderDepthStateDesc);
 
-			//Check if the new depth state differs from the old depth state. Don't issue a GPU command if they dont differ
-			if (memcmp(&renderDepthStateDesc, p_RenderContext->renderState.depthStateDesc, sizeof(renderDepthStateDesc)) == 0)
-			{
-				result = p_RenderContext->commandProcessing.stateManagement.setDepthState(p_RenderContext, &renderDepthStateDesc);
-
-				if (result == K15_SUCCESS)
-				{
-					//overwrite old depth state
-					memcpy(p_RenderContext->renderState.depthStateDesc, &renderDepthStateDesc, sizeof(K15_RenderDepthStateDesc));
-				}
-			}
+			result = K15_InternalSetDepthStateDesc(p_RenderContext, &renderDepthStateDesc);
 			
 			break;
 		}
@@ -384,17 +481,7 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 
 			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderRasterizerStateDesc), 0, &renderRasterizerStateDesc);
 			
-			//Check if the new rasterizer state differs from the old rasterizer state. Don't issue a GPU command if they dont differ
-			if (memcmp(&renderRasterizerStateDesc, p_RenderContext->renderState.rasterizerStateDesc, sizeof(renderRasterizerStateDesc)) == 0)
-			{
-				result = p_RenderContext->commandProcessing.stateManagement.setRasterizerState(p_RenderContext, &renderRasterizerStateDesc);
-
-				if (result == K15_SUCCESS)
-				{
-					//overwrite old rasterizer state
-					memcpy(p_RenderContext->renderState.rasterizerStateDesc, &renderRasterizerStateDesc, sizeof(K15_RenderRasterizerStateDesc));
-				}
-			}
+			result = K15_InternalSetRasterizerStateDesc(p_RenderContext, &renderRasterizerStateDesc);
 
 			break;
 		}
@@ -431,6 +518,17 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderTargetHandle);
 
 			result = p_RenderContext->commandProcessing.renderTargetManagement.deleteRenderTarget(p_RenderContext, renderTargetHandle);
+			break;
+		}
+
+		case K15_RENDER_COMMAND_DRAW_FULLSCREEN_QUAD:
+		{
+			K15_RenderProgramHandle* renderProgramHandle = 0;
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderProgramHandle);
+
+			result = p_RenderContext->commandProcessing.drawManagement.drawFullscreenQuad(p_RenderContext, renderProgramHandle);
+
 			break;
 		}
 
@@ -502,6 +600,8 @@ intern uint8 K15_InternalProcessRenderCommandBuffer(K15_RenderContext* p_RenderC
 /*********************************************************************************/
 intern void K15_InternalSwapRenderCommandQueueBuffers(K15_RenderCommandBuffer* p_RenderCommandBuffer)
 {
+	assert(p_RenderCommandBuffer);
+
 	K15_RenderCommandBufferInstance* tempBuffer = 0;
 	K15_RenderCommandParameterBuffer* tempParameterBuffer = 0;
 
@@ -527,6 +627,8 @@ intern void K15_InternalSwapRenderCommandQueueBuffers(K15_RenderCommandBuffer* p
 /*********************************************************************************/
 intern void K15_InternalSwapRenderDispatcherBuffers(K15_RenderCommandBufferDispatcher* p_RenderCommandBufferDispatcher)
 {
+	assert(p_RenderCommandBufferDispatcher);
+
 	//render thread tries to get the swap mutex lock
 	K15_LockMutex(p_RenderCommandBufferDispatcher->swapMutex);
 
@@ -593,9 +695,6 @@ intern void K15_InternalProcessRenderCommandBuffer(K15_RenderContext* p_RenderCo
 
 	p_RenderContext->commandProcessing.screenManagement.clearScreen(p_RenderContext);
 }
-/*********************************************************************************/
-
-
 /*********************************************************************************/
 // intern uint8 K15_InternalRenderThreadFunction(void* p_Parameter)
 // {
@@ -837,6 +936,9 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext)
 // 	}
 
 	uint8 contextCreateResult = K15_InternalInitializeRenderContext(renderContext, p_OSContext);
+
+	//Set default render states
+	K15_InternalSetDefaultRenderStates(renderContext);
 
 	return renderContext;
 }

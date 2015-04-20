@@ -23,10 +23,10 @@ intern inline uint8 K15_GLSetBlendStateDesc(K15_RenderContext* p_RenderContext, 
 {
 	assert(p_BlendStateDesc);
 
-	GLenum srcBlendAlpha = K15_GLConvertBlend(p_BlendStateDesc->sourceBlendAlpha);
-	GLenum srcBlendRGB = K15_GLConvertBlend(p_BlendStateDesc->sourceBlendRGB);
-	GLenum dstBlendRGB = K15_GLConvertBlend(p_BlendStateDesc->destinationBlendRGB);
-	GLenum dstBlendAlpha = K15_GLConvertBlend(p_BlendStateDesc->destinationBlendAlpha);
+	GLenum srcBlendAlpha = K15_GLConvertBlend(p_BlendStateDesc->sourceBlendFactorAlpha);
+	GLenum srcBlendRGB = K15_GLConvertBlend(p_BlendStateDesc->sourceBlendFactorRGB);
+	GLenum dstBlendRGB = K15_GLConvertBlend(p_BlendStateDesc->destinationBlendFactorRGB);
+	GLenum dstBlendAlpha = K15_GLConvertBlend(p_BlendStateDesc->destinationBlendFactorAlpha);
 	GLenum blendOPAlpha = K15_GLConvertBlendOperation(p_BlendStateDesc->blendOperationAlpha);
 	GLenum blendOPRGB = K15_GLConvertBlendOperation(p_BlendStateDesc->blendOperationRGB);
 

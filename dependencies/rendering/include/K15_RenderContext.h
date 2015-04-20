@@ -51,6 +51,9 @@ typedef uint8 (*K15_CreateTextureCommandFnc)(K15_RenderContext* p_RenderContext,
 typedef uint8 (*K15_UpdateTextureCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTextureUpdateDesc* p_RenderTextureDesc, K15_RenderTextureHandle* p_RenderTextureHandle);
 typedef uint8 (*K15_DeleteTextureCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTextureHandle* p_RenderTextureHandle);
 
+//drawing
+typedef uint8 (*K15_DrawFullscreenQuadCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderProgramHandle* p_RenderProgramHandle);
+
 enum K15_RenderCommand
 {
 	K15_RENDER_COMMAND_CLEAR_SCREEN = 0,
@@ -87,6 +90,9 @@ enum K15_RenderCommand
 	K15_RENDER_COMMAND_BIND_RENDER_TARGET,
 	K15_RENDER_COMMAND_UNBIND_RENDER_TARGET,
 	K15_RENDER_COMMAND_DELETE_RENDER_TARGET,
+
+	//drawing
+	K15_RENDER_COMMAND_DRAW_FULLSCREEN_QUAD,
 
 	K15_RENDER_COMMAND_COUNT
 };
@@ -256,6 +262,11 @@ struct K15_RenderContext
 			K15_SetRasterizerStateCommandFnc setRasterizerState;
 			K15_SetBlendStateCommandFnc setBlendState;
 		} stateManagement;
+
+		struct K15_DrawManagementCommandS
+		{
+			K15_DrawFullscreenQuadCommandFnc drawFullscreenQuad;
+		} drawManagement;
 	} commandProcessing;
 
 	struct 

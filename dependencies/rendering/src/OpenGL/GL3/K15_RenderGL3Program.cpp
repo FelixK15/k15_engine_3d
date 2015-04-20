@@ -274,7 +274,7 @@ intern void K15_InternGLReflectProgram(K15_GLProgram* p_Program)
 		 activeUniformIndex < amountActiveUniforms;
 		 ++activeUniformIndex)
 	{
-		kglGetActiveUniform(glProgram, activeUniformIndex, nameBufferSize, 0, &currentValueSize, &currentValueType, nameBuffer);
+		K15_OPENGL_CALL(kglGetActiveUniform(glProgram, activeUniformIndex, nameBufferSize, 0, &currentValueSize, &currentValueType, nameBuffer));
 
 		//copy name for later use
 		size_t nameLength = strlen(nameBuffer);
@@ -285,7 +285,7 @@ intern void K15_InternGLReflectProgram(K15_GLProgram* p_Program)
 		name[nameLength] = 0;
 
 		//get register location using uniform name
-		uniformRegister = kglGetUniformLocation(glProgram, nameBuffer);
+		K15_OPENGL_CALL(uniformRegister = kglGetUniformLocation(glProgram, nameBuffer));
 
 		p_Program->uniforms[activeUniformIndex].registerIndex = uniformRegister;
 		p_Program->uniforms[activeUniformIndex].size = currentValueSize;
@@ -305,7 +305,7 @@ intern void K15_InternGLReflectProgram(K15_GLProgram* p_Program)
 		activeAttributeIndex < amountActiveAttributes;
 		++activeAttributeIndex)
 	{
-		kglGetActiveAttrib(glProgram, activeAttributeIndex, nameBufferSize, 0, &currentValueSize, &currentValueType, nameBuffer);
+		K15_OPENGL_CALL(kglGetActiveAttrib(glProgram, activeAttributeIndex, nameBufferSize, 0, &currentValueSize, &currentValueType, nameBuffer));
 
 		//copy name for later use
 		size_t nameLength = strlen(nameBuffer);
@@ -316,7 +316,7 @@ intern void K15_InternGLReflectProgram(K15_GLProgram* p_Program)
 		name[nameLength] = 0;
 
 		//get register location using uniform name
-		uniformRegister = kglGetAttribLocation(glProgram, nameBuffer);
+		K15_OPENGL_CALL(uniformRegister = kglGetAttribLocation(glProgram, nameBuffer));
 
 		p_Program->uniforms[activeAttributeIndex + amountActiveUniforms].registerIndex = uniformRegister;
 		p_Program->uniforms[activeAttributeIndex + amountActiveUniforms].size = currentValueSize;
@@ -331,6 +331,35 @@ intern void K15_InternGLReflectProgram(K15_GLProgram* p_Program)
 
 	p_Program->uniformCount = (uint32)(amountActiveUniforms + amountActiveAttributes);
 
+}
+/*********************************************************************************/
+int K15_GLUniformNameCompare(const void* p_UniformName, const void* p_Uniform)
+{
+	K15_GLUniform* glUniform = (K15_GLUniform*)(p_Uniform);
+	const char* uniformName = *(const char**)(p_UniformName);
+
+	return strcmp(glUniform->name, uniformName);
+}
+/*********************************************************************************/
+const char* K15_GLGenerateGLSLHeaderCode(GLenum p_GLProgramType)
+{
+	const char* glslHeaderCode = 0;
+
+	if (p_GLProgramType == GL_VERTEX_SHADER)
+	{
+		glslHeaderCode = "#version 330\n"
+			"out gl_PerVertex{\n"
+			"vec4 gl_Position;\n"
+			"float gl_PointSize;\n"
+			"float gl_ClipDistance[];\n"
+			"};\n";
+	}
+	else
+	{
+		glslHeaderCode = "#version 330\n";
+	}
+	
+	return glslHeaderCode;
 }
 /*********************************************************************************/
 void K15_GLInitPrograms(K15_GLRenderContext* p_GLContext)
@@ -368,6 +397,12 @@ uint8 K15_GLCreateProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramD
 	GLenum glProgramType = K15_GLConvertProgramType(renderProgramType);
 	const char* programCode = 0;
 	const char* programFilePath = p_RenderProgramDesc->file;
+
+	//if no path was supplied, just take the root directory
+	if (!programFilePath)
+	{
+		programFilePath = "./";
+	}
 	
 	//check where we have to get the shader code from
 	if (p_RenderProgramDesc->source == K15_RENDER_PROGRAM_SOURCE_FILE)
@@ -393,20 +428,9 @@ uint8 K15_GLCreateProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramD
 	free((void*)programCode); //free programcode after it got preprocessed
 
 	const char* glslProgramCode[] = {
-		"#version 330\n",
-		0, //maybe filled later based on the program type
+		K15_GLGenerateGLSLHeaderCode(glProgramType),
 		parsedProgramCode
 	};
-
-	if (glProgramType == GL_VERTEX_SHADER)
-	{
-		//needs to be manually added for separate vertex OpenGL shader
-		glslProgramCode[1] = "out gl_PerVertex {\n"
-			"vec4 gl_Position;\n"
-			"float gl_PointSize;\n"
-			"float gl_ClipDistance[];\n"
-			"};\n";
-	}
 
 	GLuint glProgram = 0;
 	GLint linkStatus = GL_FALSE;
