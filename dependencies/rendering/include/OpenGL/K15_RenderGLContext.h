@@ -37,6 +37,7 @@ struct K15_GLRenderContext
 
 			GLuint programPipelineHandle;
 			GLuint vertexArrayHandle;
+			GLuint framebufferHandle;
 		} gl3;
 
 	};

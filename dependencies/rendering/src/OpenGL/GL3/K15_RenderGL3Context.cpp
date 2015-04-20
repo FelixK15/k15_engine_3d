@@ -188,6 +188,8 @@ intern inline void K15_InternalGLSetFunctionPointers(K15_RenderContext* p_Render
 
 	//render target management
 	p_RenderContext->commandProcessing.renderTargetManagement.createRenderTarget = K15_GLCreateRenderTarget;
+	p_RenderContext->commandProcessing.renderTargetManagement.bindRenderTarget = K15_GLBindRenderTarget;
+	p_RenderContext->commandProcessing.renderTargetManagement.unbindRenderTarget = K15_GLUnbindRenderTarget;
 	p_RenderContext->commandProcessing.renderTargetManagement.deleteRenderTarget = K15_GLDeleteRenderTarget;
 
 }
@@ -530,6 +532,7 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 	K15_OPENGL_CALL(kglBindProgramPipeline(programPipeline));
 
 	glContext->gl3.programPipelineHandle = programPipeline;
+	glContext->gl3.framebufferHandle = 0; //no framebuffer currently bound
 
 	return K15_SUCCESS;
 }

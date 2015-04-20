@@ -413,6 +413,17 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 			break;
 		}
 
+		case K15_RENDER_COMMAND_BIND_RENDER_TARGET:
+		{
+			K15_RenderTargetHandle* renderTargetHandle = 0;
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderTargetHandle);
+
+			result = p_RenderContext->commandProcessing.renderTargetManagement.bindRenderTarget(p_RenderContext, renderTargetHandle);
+
+			break;
+		}
+
 		case K15_RENDER_COMMAND_DELETE_RENDER_TARGET:
 		{
 			K15_RenderTargetHandle* renderTargetHandle = 0;

@@ -42,6 +42,8 @@ typedef uint8 (*K15_DeleteSamplerCommandFnc)(K15_RenderContext* p_RenderContext,
 
 //render target
 typedef uint8 (*K15_CreateRenderTargetCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTargetDesc* p_RenderTargetDesc, K15_RenderTargetHandle* p_RenderTargetHandle);
+typedef uint8 (*K15_BindRenderTargetCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTargetHandle* p_RenderTargetHandle);
+typedef uint8 (*K15_UnbindRenderTargetCommandFnc)(K15_RenderContext* p_RenderContext);
 typedef uint8 (*K15_DeleteRenderTargetCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTargetHandle* p_RenderTargetHandle);
 
 //textures
@@ -82,6 +84,8 @@ enum K15_RenderCommand
 
 	//render targets
 	K15_RENDER_COMMAND_CREATE_RENDER_TARGET,
+	K15_RENDER_COMMAND_BIND_RENDER_TARGET,
+	K15_RENDER_COMMAND_UNBIND_RENDER_TARGET,
 	K15_RENDER_COMMAND_DELETE_RENDER_TARGET,
 
 	K15_RENDER_COMMAND_COUNT
@@ -234,6 +238,8 @@ struct K15_RenderContext
 		struct K15_RenderTargetManagementCommands
 		{
 			K15_CreateRenderTargetCommandFnc createRenderTarget;
+			K15_BindRenderTargetCommandFnc bindRenderTarget;
+			K15_UnbindRenderTargetCommandFnc unbindRenderTarget;
 			K15_DeleteRenderTargetCommandFnc deleteRenderTarget;
 		} renderTargetManagement;
 

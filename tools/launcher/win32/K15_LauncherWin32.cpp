@@ -298,7 +298,6 @@ int CALLBACK WinMain(
 
 	K15_SystemEvent event = {};
 
-
 	while (running)
 	{
 		K15_PumpSystemEvents();

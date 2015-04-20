@@ -117,11 +117,45 @@ intern inline uint8 K15_GLCreateRenderTarget(K15_RenderContext* p_RenderContext,
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
+intern inline uint8 K15_GLBindRenderTarget(K15_RenderContext* p_RenderContext, K15_RenderTargetHandle* p_RenderTargetHandle)
+{
+	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
+
+	K15_GLRenderTarget* glRenderTargetStruct = &glContext->gl3.renderTargets[*p_RenderTargetHandle];
+	GLuint glFramebufferHandle = glRenderTargetStruct->glFramebuffer;
+
+	K15_OPENGL_CALL(kglBindFramebuffer(GL_FRAMEBUFFER, glFramebufferHandle));
+
+	glContext->gl3.framebufferHandle = glFramebufferHandle;
+
+	return K15_SUCCESS;
+}
+/*********************************************************************************/
+intern inline uint8 K15_GLUnbindRenderTarget(K15_RenderContext* p_RenderContext)
+{
+	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
+
+	K15_OPENGL_CALL(kglBindFramebuffer(GL_FRAMEBUFFER, 0));
+
+	glContext->gl3.framebufferHandle = 0;
+
+	return K15_SUCCESS;
+}
+/*********************************************************************************/
 intern inline uint8 K15_GLDeleteRenderTarget(K15_RenderContext* p_RenderContext, K15_RenderTargetHandle* p_RenderTargetHandle)
 {
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
 
 	K15_GLRenderTarget* glRenderTargetStruct = &glContext->gl3.renderTargets[*p_RenderTargetHandle];
+	GLuint glFramebufferHandle = glRenderTargetStruct->glFramebuffer;
+
+	//Check if framebuffer is currently bound
+	if (glContext->gl3.framebufferHandle == glFramebufferHandle)
+	{
+		//unbind
+		K15_OPENGL_CALL(kglBindFramebuffer(GL_FRAMEBUFFER, 0));
+		glContext->gl3.framebufferHandle = 0;
+	}
 
 	K15_OPENGL_CALL(glDeleteTextures(glRenderTargetStruct->textureCount, glRenderTargetStruct->glTextures));
 	
