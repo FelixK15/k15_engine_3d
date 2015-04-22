@@ -8,11 +8,15 @@ import android.view.MotionEvent;
 import android.view.InputDevice;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.os.Bundle;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.ArrayList;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.lang.InterruptedException;
 
 /*********************************************************************************/
 final class SystemEvent
@@ -21,6 +25,13 @@ final class SystemEvent
 	public byte[] param = null;
 	public int inputFlag = 0;
 	
+	/*********************************************************************************/
+	public static final int getByteSize()
+	{
+		int sizeInBytes = 12; // eventType(4 bytes) + inputFlag(4 bytes) + param(4 bytes);
+
+		return sizeInBytes;
+	}
 	/*********************************************************************************/
 	static class EventType
 	{
@@ -77,6 +88,7 @@ final class SystemEvent
 		public static final int SystemEventFlag = 0x002;
 		public static final int InputEventFlag = 0x004;
 	};
+	/*********************************************************************************/
 }
 /*********************************************************************************/
 
@@ -88,42 +100,173 @@ class LauncherThread extends Thread
 	private final float NANOSECONDS_TO_MILLISECONDS = 1 / 1000000;
 	private boolean m_Running = true;
 	private LauncherContentView m_ContentView = null;
+	private LauncherMainActivity m_Activity = null;
 	
-	public LauncherThread(LauncherContentView p_ContentView)
+	/*********************************************************************************/
+	public LauncherThread(LauncherContentView p_ContentView, LauncherMainActivity p_Activity)
 	{
 		m_ContentView = p_ContentView;
+		m_Activity = p_Activity;
 	}
-
+	/*********************************************************************************/
 	@Override
 	public void run() 
 	{
+		boolean engineRunning = true;
+		ArrayDeque<SystemEvent> systemEvents = null;
+		ByteBuffer systemEventByteBuffer = null;
+
 		K15_InitEngine();
-		K15_RunEngine(); //blocks until engine shutdown
+
+		while(engineRunning)
+		{
+			SystemEventQueue eventQueue = m_ContentView.GetSystemEventQueue();
+			eventQueue.FlipBuffers();
+			systemEvents = eventQueue.GetFrontBuffer();
+
+			int systemEventByteBufferSize = systemEvents.size() * SystemEvent.getByteSize(); //+4 byte for extra integer parameter indicating the offset
+			systemEventByteBuffer = ByteBuffer.allocate(systemEventByteBufferSize);
+			systemEventByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+			
+			for (SystemEvent currentSystemEvent : systemEvents)
+			{
+				systemEventByteBuffer.putInt(currentSystemEvent.eventType);
+				systemEventByteBuffer.putInt(currentSystemEvent.inputFlag);
+				systemEventByteBuffer.put(currentSystemEvent.param);
+			}
+
+			engineRunning = K15_TickEngine(systemEventByteBuffer.array());			
+		}
+
 		K15_ShutdownEngine();
+
+		m_Activity.exitLauncher();
 	}
+	/*********************************************************************************/
 	
-	public native void K15_RunEngine();
+	public native boolean K15_TickEngine(byte[] p_SystemEventByteBuffer);
 	public native void K15_InitEngine();
 	public native void K15_ShutdownEngine();
 }
 /*********************************************************************************/
 
+class SystemEventQueue
+{
+	private final int SYSTEM_EVENT_CAPACITY = 64;
+	private Object m_InputQueueLock = new Object();
+	private int m_ActiveInputDeque = 0;
+	private ArrayList<ArrayDeque<SystemEvent>> m_InputDeques = new ArrayList<ArrayDeque<SystemEvent>>(2);
+	
+	/*********************************************************************************/
+	public SystemEventQueue()
+	{
+		//Intantiate double bufferd input deques
+		m_InputDeques.add(new ArrayDeque<SystemEvent>(SYSTEM_EVENT_CAPACITY));
+		m_InputDeques.add(new ArrayDeque<SystemEvent>(SYSTEM_EVENT_CAPACITY));
+	}
+	/*********************************************************************************/
+	public ArrayDeque<SystemEvent> GetFrontBuffer()
+	{
+		ArrayDeque<SystemEvent> frontBuffer = null;
 
+		synchronized(m_InputQueueLock)
+		{
+			int inputDequeIndex = m_ActiveInputDeque == 0 ? 1 : 0;
+
+			frontBuffer = m_InputDeques.get(inputDequeIndex); 
+		}
+		return frontBuffer;
+	}
+	/*********************************************************************************/
+	public void FlipBuffers()
+	{
+		synchronized(m_InputQueueLock)
+		{
+			m_ActiveInputDeque = m_ActiveInputDeque == 0 ? 1 : 0;
+			m_InputDeques.get(m_ActiveInputDeque).clear();
+		}
+	}
+	/*********************************************************************************/
+	public void AddSystemEvent(int p_EventType, int p_Flags, float p_FloatParam)
+	{
+		SystemEvent systemEvent = new SystemEvent();
+		ByteBuffer paramByteBuffer = ByteBuffer.allocate(4);
+
+		paramByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		paramByteBuffer.putFloat(p_FloatParam);
+
+		systemEvent.eventType = p_EventType;
+		systemEvent.inputFlag = p_Flags;
+		systemEvent.param = paramByteBuffer.array();
+
+		synchronized(m_InputQueueLock)
+		{
+			m_InputDeques.get(m_ActiveInputDeque).add(systemEvent);
+		}
+	}
+	/*********************************************************************************/
+	public void AddSystemEvent(int p_EventType, int p_Flags, short p_ShortParam1, short p_ShortParam2)
+	{
+		SystemEvent systemEvent = new SystemEvent();
+		ByteBuffer paramByteBuffer = ByteBuffer.allocate(4);
+
+		paramByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		paramByteBuffer.putShort(p_ShortParam1);
+		paramByteBuffer.putShort(p_ShortParam2);
+
+		systemEvent.eventType = p_EventType;
+		systemEvent.inputFlag = p_Flags;
+		systemEvent.param = paramByteBuffer.array();
+
+		synchronized(m_InputQueueLock)
+		{
+			m_InputDeques.get(m_ActiveInputDeque).add(systemEvent);
+		}
+	}
+	/*********************************************************************************/
+	public void AddSystemEvent(int p_EventType, int p_Flags, int p_IntParam)
+	{
+		SystemEvent systemEvent = new SystemEvent();
+		ByteBuffer paramByteBuffer = ByteBuffer.allocate(4);
+
+		paramByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		paramByteBuffer.putInt(p_IntParam);
+
+		systemEvent.eventType = p_EventType;
+		systemEvent.inputFlag = p_Flags;
+		systemEvent.param = paramByteBuffer.array();
+
+		synchronized(m_InputQueueLock)
+		{
+			m_InputDeques.get(m_ActiveInputDeque).add(systemEvent);
+		}
+	}
+	/*********************************************************************************/
+	public void AddSystemEvent(int p_EventType, int p_Flags)
+	{
+		SystemEvent systemEvent = new SystemEvent();
+		ByteBuffer paramByteBuffer = ByteBuffer.allocate(4);
+
+		paramByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		paramByteBuffer.putInt(0);
+
+		systemEvent.eventType = p_EventType;
+		systemEvent.inputFlag = p_Flags;
+		systemEvent.param = paramByteBuffer.array();
+
+		synchronized(m_InputQueueLock)
+		{
+			m_InputDeques.get(m_ActiveInputDeque).add(systemEvent);
+		}
+	}
+	/*********************************************************************************/
+}
 
 /*********************************************************************************/
 class LauncherContentView extends View
 {	
 	private LauncherMainActivity m_LauncherMainActivty = null;
-	private Deque<SystemEvent> m_InputDeque = new ArrayDeque<SystemEvent>();
-	
-	/*********************************************************************************/
-	public Deque<SystemEvent> GetInputDeque()
-	{
-		return m_InputDeque;
-	}
-	/*********************************************************************************/
-	
-	
+	private SystemEventQueue m_SystemEventQueue = new SystemEventQueue();
 	
 	/*********************************************************************************/
 	public LauncherContentView(LauncherMainActivity p_LauncherMainActivty)
@@ -137,82 +280,89 @@ class LauncherContentView extends View
 		setFocusableInTouchMode(true);
 	}
 	/*********************************************************************************/
+	public SystemEventQueue GetSystemEventQueue()
+	{
+		return m_SystemEventQueue;
+	}
+	/*********************************************************************************/
 	//internal function to process key events
 	private boolean onKeyEvent_Internal(KeyEvent p_KeyEvent, int p_KeyCode, int p_KeyEventType)
 	{
-		SystemEvent inputEvent = new SystemEvent();
-		
 		int inputSource = p_KeyEvent.getSource();
 		boolean handled = false;
 		
+		int eventType = 0;
+		int inputFlag = 0;
+		int param = 0;
+
 		if ((inputSource & InputDevice.SOURCE_GAMEPAD) > 0 ||
 		(inputSource & InputDevice.SOURCE_JOYSTICK) > 0)
 		{
-			inputEvent.eventType = p_KeyEventType;
-			inputEvent.inputFlag = SystemEvent.InputFlags.InputEventFlag;
+			eventType = p_KeyEventType;
+			inputFlag = SystemEvent.InputFlags.InputEventFlag;
 			
 			switch(p_KeyCode)
 			{
 				case KeyEvent.KEYCODE_BUTTON_X:
-					inputEvent.param = ByteBuffer.allocate(4).putInt((1 << 16) | SystemEvent.ButtonIdentifier.ControllerFaceLeftButton).array();
+					param = ((1 << 16) | SystemEvent.ButtonIdentifier.ControllerFaceLeftButton);
 					break;
 					
 				case KeyEvent.KEYCODE_BUTTON_Y:
-					inputEvent.param = ByteBuffer.allocate(4).putInt((1 << 16) | SystemEvent.ButtonIdentifier.ControllerFaceUpButton).array();
+					param = ((1 << 16) | SystemEvent.ButtonIdentifier.ControllerFaceUpButton);
 					break;
 					
 				case KeyEvent.KEYCODE_BUTTON_A:
-					inputEvent.param = ByteBuffer.allocate(4).putInt((1 << 16) | SystemEvent.ButtonIdentifier.ControllerFaceDownButton).array();
+					param = ((1 << 16) | SystemEvent.ButtonIdentifier.ControllerFaceDownButton);
 					break;
 					
 				case KeyEvent.KEYCODE_BUTTON_B:
-					inputEvent.param = ByteBuffer.allocate(4).putInt((1 << 16) | SystemEvent.ButtonIdentifier.ControllerFaceRightButton).array();
+					param = ((1 << 16) | SystemEvent.ButtonIdentifier.ControllerFaceRightButton);
 					break;
 					
 				case KeyEvent.KEYCODE_BUTTON_START:
-					inputEvent.param = ByteBuffer.allocate(4).putInt((1 << 16) | SystemEvent.ButtonIdentifier.ControllerStart).array();
+					param = ((1 << 16) | SystemEvent.ButtonIdentifier.ControllerStart);
 					break;
 					
 				case KeyEvent.KEYCODE_BUTTON_SELECT:
-					inputEvent.param = ByteBuffer.allocate(4).putInt((1 << 16) | SystemEvent.ButtonIdentifier.ControllerBack).array();
+					param = ((1 << 16) | SystemEvent.ButtonIdentifier.ControllerBack);
 					break;
 					
 				case KeyEvent.KEYCODE_BUTTON_THUMBL:
-					inputEvent.param = ByteBuffer.allocate(4).putInt((1 << 16) | SystemEvent.ButtonIdentifier.ControllerLeftThumbButton).array();
+					param = ((1 << 16) | SystemEvent.ButtonIdentifier.ControllerLeftThumbButton);
 					break;
 					
 				case KeyEvent.KEYCODE_BUTTON_THUMBR:
-					inputEvent.param = ByteBuffer.allocate(4).putInt((1 << 16) | SystemEvent.ButtonIdentifier.ControllerRightThumbButton).array();
+					param = ((1 << 16) | SystemEvent.ButtonIdentifier.ControllerRightThumbButton);
 					break;
 					
 				case KeyEvent.KEYCODE_BUTTON_R1:
-					inputEvent.param = ByteBuffer.allocate(4).putInt((1 << 16) | SystemEvent.ButtonIdentifier.ControllerRightShoulderButton).array();
+					param = ((1 << 16) | SystemEvent.ButtonIdentifier.ControllerRightShoulderButton);
 					break;
 					
 				case KeyEvent.KEYCODE_BUTTON_L1:
-					inputEvent.param = ByteBuffer.allocate(4).putInt((1 << 16) | SystemEvent.ButtonIdentifier.ControllerLeftShoulderButton).array();
+					param = ((1 << 16) | SystemEvent.ButtonIdentifier.ControllerLeftShoulderButton);
 					break;
 					
 				case KeyEvent.KEYCODE_DPAD_LEFT:
-					inputEvent.param = ByteBuffer.allocate(4).putInt((1 << 16) | SystemEvent.ButtonIdentifier.ControllerDPadLeft).array();
+					param = ((1 << 16) | SystemEvent.ButtonIdentifier.ControllerDPadLeft);
 					break;
 					
 				case KeyEvent.KEYCODE_DPAD_RIGHT:
-					inputEvent.param = ByteBuffer.allocate(4).putInt((1 << 16) | SystemEvent.ButtonIdentifier.ControllerDPadRight).array();
+					param = ((1 << 16) | SystemEvent.ButtonIdentifier.ControllerDPadRight);
 					break;
 					
 				case KeyEvent.KEYCODE_DPAD_UP:
-					inputEvent.param = ByteBuffer.allocate(4).putInt((1 << 16) | SystemEvent.ButtonIdentifier.ControllerDPadUp).array();
+					param = ((1 << 16) | SystemEvent.ButtonIdentifier.ControllerDPadUp);
 					break;
 					
 				case KeyEvent.KEYCODE_DPAD_DOWN:
-					inputEvent.param = ByteBuffer.allocate(4).putInt((1 << 16) | SystemEvent.ButtonIdentifier.ControllerDPadDown).array();
+					param = ((1 << 16) | SystemEvent.ButtonIdentifier.ControllerDPadDown);
 					break;
 					
 			}
 			handled = true;
 			
-			m_InputDeque.add(inputEvent);
+			m_SystemEventQueue.AddSystemEvent(eventType, inputFlag, param);
 		}
 		
 		return handled;
@@ -221,34 +371,22 @@ class LauncherContentView extends View
 	//internal function to process touch movement events
 	private boolean onTouchMoveEvent_Internal(MotionEvent p_MotionEvent)
 	{
-		SystemEvent inputEvent = new SystemEvent();
-		
 		short x = (short)(p_MotionEvent.getY() * p_MotionEvent.getYPrecision());
 		short y = (short)(p_MotionEvent.getX() * p_MotionEvent.getXPrecision());
 		
-		inputEvent.eventType = SystemEvent.EventType.TouchMotion;
-		inputEvent.param = ByteBuffer.allocate(4).putShort(0, x).putShort(1, y).array();
-		inputEvent.inputFlag = SystemEvent.InputFlags.InputEventFlag;
-		
-		m_InputDeque.add(inputEvent);
-		
+		m_SystemEventQueue.AddSystemEvent(SystemEvent.EventType.TouchMotion, SystemEvent.InputFlags.InputEventFlag, y, x);
+
 		return true; //always handled
 	}
 	/*********************************************************************************/
 	//internal function to process touch events
 	private boolean onTouchEvent_Internal(MotionEvent p_MotionEvent)
 	{
-		SystemEvent inputEvent = new SystemEvent();
-		
 		short x = (short)(p_MotionEvent.getY() * p_MotionEvent.getYPrecision());
 		short y = (short)(p_MotionEvent.getX() * p_MotionEvent.getXPrecision());
 		
-		inputEvent.eventType = SystemEvent.EventType.TouchInput;
-		inputEvent.param = ByteBuffer.allocate(4).putShort(0, x).putShort(1, y).array();
-		inputEvent.inputFlag = SystemEvent.InputFlags.InputEventFlag;
-		
-		m_InputDeque.add(inputEvent);
-		
+		m_SystemEventQueue.AddSystemEvent(SystemEvent.EventType.TouchInput, SystemEvent.InputFlags.InputEventFlag, y, x);
+
 		return true; //always handled
 	}
 	/*********************************************************************************/
@@ -266,50 +404,44 @@ class LauncherContentView extends View
 		float triggerRight = p_MotionEvent.getAxisValue(MotionEvent.AXIS_RTRIGGER);
 		float triggerLeft = p_MotionEvent.getAxisValue(MotionEvent.AXIS_LTRIGGER);
 		
-		SystemEvent inputEvent = null;
-		
+		int eventType = 0;
+		float param = 0.0f;
+
 		if (Math.abs(leftAxisX) > THUMBSTICK_DEADZONE)
 		{
-			inputEvent = new SystemEvent();
-			inputEvent.eventType = SystemEvent.EventType.ControllerLeftThumbX;
-			inputEvent.param = ByteBuffer.allocate(4).putFloat(leftAxisX).array();
+			eventType = SystemEvent.EventType.ControllerLeftThumbX;
+			param = leftAxisX;
 		}
 		else if(Math.abs(leftAxisY) > THUMBSTICK_DEADZONE)
 		{
-			inputEvent = new SystemEvent();
-			inputEvent.eventType = SystemEvent.EventType.ControllerLeftThumbY;
-			inputEvent.param = ByteBuffer.allocate(4).putFloat(leftAxisY).array();
+			eventType = SystemEvent.EventType.ControllerLeftThumbY;
+			param = leftAxisY;
 		}
 		else if(Math.abs(rightAxisX) > THUMBSTICK_DEADZONE)
 		{
-			inputEvent = new SystemEvent();
-			inputEvent.eventType = SystemEvent.EventType.ControllerRightThumbX;
-			inputEvent.param = ByteBuffer.allocate(4).putFloat(rightAxisX).array();
+			eventType = SystemEvent.EventType.ControllerRightThumbX;
+			param = rightAxisX;
 		}
 		else if(Math.abs(rightAxisY) > THUMBSTICK_DEADZONE)
 		{
-			inputEvent = new SystemEvent();
-			inputEvent.eventType = SystemEvent.EventType.ControllerRightThumbY;
-			inputEvent.param = ByteBuffer.allocate(4).putFloat(rightAxisY).array();
+			eventType = SystemEvent.EventType.ControllerRightThumbY;
+			param = rightAxisY;
 		}
 		else if(Math.abs(triggerRight) > TRIGGER_DEADZONE)
 		{
-			inputEvent = new SystemEvent();
-			inputEvent.eventType = SystemEvent.EventType.ControllerRightShoulderTrigger;
-			inputEvent.param = ByteBuffer.allocate(4).putFloat(triggerRight).array();
+			eventType = SystemEvent.EventType.ControllerRightShoulderTrigger;
+			param = triggerRight;
 		}
 		else if(Math.abs(triggerLeft) > TRIGGER_DEADZONE)
 		{
-			inputEvent = new SystemEvent();
-			inputEvent.eventType = SystemEvent.EventType.ControllerLeftShoulderTrigger;
-			inputEvent.param = ByteBuffer.allocate(4).putFloat(triggerLeft).array();
+			eventType = SystemEvent.EventType.ControllerLeftShoulderTrigger;
+			param = triggerLeft;
 		}
 		
-		if (inputEvent != null)
+		if (eventType != 0)
 		{
-			inputEvent.inputFlag = SystemEvent.InputFlags.InputEventFlag;
-			m_InputDeque.add(inputEvent);
-			
+			m_SystemEventQueue.AddSystemEvent(eventType, SystemEvent.InputFlags.InputEventFlag, param);
+
 			handled = true;
 		}
 		
@@ -318,12 +450,7 @@ class LauncherContentView extends View
 	/*********************************************************************************/
 	public void onSystemEvent(int p_EventType)
 	{
-		SystemEvent systemEvent = new SystemEvent();
-		
-		systemEvent.eventType = p_EventType;
-		systemEvent.inputFlag = SystemEvent.InputFlags.SystemEventFlag | SystemEvent.InputFlags.WindowEventFlag;
-		
-		m_InputDeque.add(systemEvent);
+		m_SystemEventQueue.AddSystemEvent(p_EventType, SystemEvent.InputFlags.SystemEventFlag | SystemEvent.InputFlags.WindowEventFlag);
 	}
 	/*********************************************************************************/
     @Override
@@ -400,6 +527,12 @@ public class LauncherMainActivity extends Activity
 	private static String LAUNCHER_LIBRARY = "launcher";
 
 	/*********************************************************************************/
+	public void exitLauncher()
+	{
+		finish();
+		System.exit(0);
+	}
+	/*********************************************************************************/
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -422,10 +555,12 @@ public class LauncherMainActivity extends Activity
 
         if (libraryLoaded)
         {
-			showMessageBox("Library loaded!");
+			//showMessageBox("Library loaded!");
 	       	m_ContentView = new LauncherContentView(this);
-	       	m_LauncherThread = new LauncherThread(m_ContentView);
+	       	m_LauncherThread = new LauncherThread(m_ContentView, this);
         	setContentView(m_ContentView);
+
+			m_LauncherThread.start();
         }
     }
     /*********************************************************************************/
