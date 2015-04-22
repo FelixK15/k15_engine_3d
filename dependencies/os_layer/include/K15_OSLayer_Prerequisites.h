@@ -51,10 +51,10 @@
 	#define K15_CPP11_SUPPORT
 #endif //__cplusplus > 199711L || _MSC_VER >= 1700 || K15_GCC_VERSION > 40800
 
-#if defined _DEBUG || defined DEBUG
+//#if defined _DEBUG || defined DEBUG
 	#define K15_DEBUG
 	#define K15_DEBUG_MRT //Multithreaded debugging
-#endif //_DEBUG
+//#endif //_DEBUG
 
 #define K15_PTR_SIZE sizeof(void*)
 
@@ -123,9 +123,15 @@
 
 #ifdef K15_OS_ANDROID
 	#include <android/log.h>
+	#include <sys/stat.h>
+	#include <sys/types.h>
+	#include <unistd.h>
 	#include <pthread.h>
 	#include <time.h>
 	#include <jni.h>
+	#include <pthread.h>
+	#include <semaphore.h>	
+	#include <errno.h>
 	#include <stdlib.h>
 
 	#define TRUE 1

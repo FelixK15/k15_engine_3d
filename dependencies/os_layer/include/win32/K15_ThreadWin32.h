@@ -3,7 +3,13 @@
 
 #include "K15_OSLayer_Prerequisites.h"
 
-#ifdef K15_OS_WINDOWS
+#define K15_CreateMutex K15_Win32CreateMutex
+#define K15_LockMutex K15_Win32LockMutex
+#define K15_UnlockMutex K15_Win32UnlockMutex
+#define K15_CreateSemaphore K15_Win32CreateSemaphore
+#define K15_CreateSemaphoreWithInitialValue K15_Win32CreateSemaphoreWithInitialValue
+#define K15_PostSemaphore K15_Win32PostSemaphore
+#define K15_WaitSemaphore K15_Win32WaitSemaphore
 
 struct K15_Win32Thread
 {
@@ -29,16 +35,13 @@ uint8 K15_Win32CreateThread(K15_OSLayerContext* p_OSContext, K15_Thread* p_Threa
 uint8 K15_Win32SetThreadName(K15_Thread* p_Thread);
 K15_Thread* K15_Win32GetCurrentThread();
 
-K15_Mutex* K15_CreateMutex();
-uint8 K15_LockMutex(K15_Mutex* p_Mutex);
-uint8 K15_UnlockMutex(K15_Mutex* p_Mutex);
+K15_Mutex* K15_Win32CreateMutex();
+uint8 K15_Win32LockMutex(K15_Mutex* p_Mutex);
+uint8 K15_Win32UnlockMutex(K15_Mutex* p_Mutex);
 
-K15_Semaphore* K15_CreateSemaphore();
-K15_Semaphore* K15_CreateSemaphoreWithInitialValue(uint32 p_InitialValue);
-uint8 K15_PostSemaphore(K15_Semaphore* p_Semaphore);
-uint8 K15_WaitSemaphore(K15_Semaphore* p_Semaphore);
-
-
-#endif //K15_OS_WINDOWS
+K15_Semaphore* K15_Win32CreateSemaphore();
+K15_Semaphore* K15_Win32CreateSemaphoreWithInitialValue(uint32 p_InitialValue);
+uint8 K15_Win32PostSemaphore(K15_Semaphore* p_Semaphore);
+uint8 K15_Win32WaitSemaphore(K15_Semaphore* p_Semaphore);
 
 #endif //_K15_OSLayer_Thread_Win32_h_

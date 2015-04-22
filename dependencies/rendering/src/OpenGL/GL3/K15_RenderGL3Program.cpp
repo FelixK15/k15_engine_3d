@@ -468,6 +468,11 @@ uint8 K15_GLCreateProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramD
 		K15_InternGLReflectProgram(program);
 	}
 
+	if (glProgramType == GL_FRAGMENT_SHADER)
+	{
+		K15_OPENGL_CALL(kglBindFragDataLocation(glProgram, 0, "outColor0"));
+	}
+
 	return result;
 }
 /*********************************************************************************/

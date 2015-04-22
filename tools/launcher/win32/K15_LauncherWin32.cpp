@@ -230,6 +230,10 @@ void K15_InternalCreateRenderTarget(K15_RenderCommandBuffer* p_RenderCommandBuff
 	K15_AddRenderTargetHandleParameter(p_RenderCommandBuffer, p_RenderTargetHandle);
 	K15_AddRenderTargetDescParameter(p_RenderCommandBuffer, &desc);
 	K15_EndRenderCommand(p_RenderCommandBuffer);
+
+	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_BIND_RENDER_TARGET);
+	K15_AddRenderTargetHandleParameter(p_RenderCommandBuffer, p_RenderTargetHandle);
+	K15_EndRenderCommand(p_RenderCommandBuffer);
 }
 /*********************************************************************************/
 void K15_InternalCreateFullscreenFragmentShader(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderProgramHandle* p_RenderProgramHandle)
@@ -238,8 +242,9 @@ void K15_InternalCreateFullscreenFragmentShader(K15_RenderCommandBuffer* p_Rende
 	K15_RenderProgramDesc programDesc = {};
 
 	const char* programCode = "in vec2 v_Color;\n"
+		"out vec4 outColor0;\n"
 		"void main(void){\n"
-		"gl_FragColor = vec4(v_Color, 0.0f, 1.0f); }";
+		"outColor0 = vec4(v_Color, 0.0f, 1.0f); }";
 
 	uint32 programCodeLength = strlen(programCode);
 

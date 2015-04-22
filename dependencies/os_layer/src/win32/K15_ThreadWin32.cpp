@@ -99,7 +99,7 @@ K15_Thread* K15_Win32GetCurrentThread()
 	return 0;
 }
 /*********************************************************************************/
-K15_Mutex* K15_CreateMutex()
+K15_Mutex* K15_Win32CreateMutex()
 {
 	K15_Mutex* win32Mutex = (K15_Mutex*)K15_OS_MALLOC(sizeof(K15_Mutex));
 	assert(win32Mutex);
@@ -109,7 +109,7 @@ K15_Mutex* K15_CreateMutex()
 	return win32Mutex;
 }
 /*********************************************************************************/
-uint8 K15_LockMutex(K15_Mutex* p_Mutex)
+uint8 K15_Win32LockMutex(K15_Mutex* p_Mutex)
 {
 	uint8 returnValue = K15_SUCCESS;
 
@@ -118,7 +118,7 @@ uint8 K15_LockMutex(K15_Mutex* p_Mutex)
 	return returnValue;
 }
 /*********************************************************************************/
-uint8 K15_UnlockMutex(K15_Mutex* p_Mutex)
+uint8 K15_Win32UnlockMutex(K15_Mutex* p_Mutex)
 {
 	uint8 returnValue = K15_SUCCESS;
 
@@ -161,12 +161,12 @@ uint8 K15_Win32SetThreadName(K15_Thread* p_Thread)
 	return K15_OS_ERROR_SYSTEM;
 }
 /*********************************************************************************/
-K15_Semaphore* K15_CreateSemaphore()
+K15_Semaphore* K15_Win32CreateSemaphore()
 {
 	return K15_CreateSemaphoreWithInitialValue(0);
 }
 /*********************************************************************************/
-K15_Semaphore* K15_CreateSemaphoreWithInitialValue(uint32 p_InitialValue)
+K15_Semaphore* K15_Win32CreateSemaphoreWithInitialValue(uint32 p_InitialValue)
 {
 	K15_Semaphore* win32Semaphore = (K15_Semaphore*)K15_OS_MALLOC(sizeof(K15_Semaphore));
 
@@ -182,7 +182,7 @@ K15_Semaphore* K15_CreateSemaphoreWithInitialValue(uint32 p_InitialValue)
 	return win32Semaphore;
 }
 /*********************************************************************************/
-uint8 K15_PostSemaphore(K15_Semaphore* p_Semaphore)
+uint8 K15_Win32PostSemaphore(K15_Semaphore* p_Semaphore)
 {
 	assert(p_Semaphore);
 
@@ -198,7 +198,7 @@ uint8 K15_PostSemaphore(K15_Semaphore* p_Semaphore)
 	return returnValue;
 }
 /*********************************************************************************/
-uint8 K15_WaitSemaphore(K15_Semaphore* p_Semaphore)
+uint8 K15_Win32WaitSemaphore(K15_Semaphore* p_Semaphore)
 {
 	assert(p_Semaphore);
 

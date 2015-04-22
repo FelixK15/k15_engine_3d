@@ -11,12 +11,14 @@ set(K15_OS_LAYER_WIN32_SRC  	"src/win32/K15_EventsWin32.cpp"
 				"src/win32/K15_FileSystemWin32.cpp"
 				"src/win32/K15_EnvironmentWin32.cpp")
 
-set(K15_OS_LAYER_LINUX_SRC	"src/linux/K15_ThreadLinux.cpp"
+set(K15_OS_LAYER_LINUX_SRC	"src/posix/K15_ThreadPosix.cpp"
 				"src/linux/K15_EnvironmentLinux.cpp"
 				"src/linux/K15_WindowLinux.cpp"
 				"src/linux/K15_EventsLinux.cpp")
 
-set(K15_OS_LAYER_ANDROID_SRC "src/android/K15_EnvironmentAndroid.cpp")
+set(K15_OS_LAYER_ANDROID_SRC "src/android/K15_EnvironmentAndroid.cpp"
+				"src/posix/K15_ThreadPosix.cpp"
+				"src/posix/K15_FileSystemPosix.cpp")
 
 set(K15_OS_LAYER_INC 	"include/K15_OSLayer_EventTypes.h"
 			"include/K15_OSLayer_ErrorCodes.h"
@@ -40,7 +42,9 @@ set(K15_OS_LAYER_LINUX_INC	"include/linux/K15_ThreadLinux.h"
 				"include/linux/K15_WindowLinux.h"
 				"include/linux/K15_EventsLinux.h")
 
-set(K15_OS_LAYER_ANDROID_INC "include/android/K15_EnvironmentAndroid.h")
+set(K15_OS_LAYER_ANDROID_INC "include/android/K15_EnvironmentAndroid.h"
+				"include/posix/K15_ThreadPosix.h"
+				"include/posix/K15_FileSystemPosix.h")
 
 include_directories(include)
 include_directories(../logging/include)

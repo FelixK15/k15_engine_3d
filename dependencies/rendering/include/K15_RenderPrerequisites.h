@@ -9,7 +9,7 @@
 #elif defined K15_OS_LINUX
 	#define K15_DESKTOP_GL
 #elif defined K15_OS_ANDROID || defined K15_OS_IOS
-	#include "GL/EGL/K15_AndroidRenderEGLContext.h"
+	#include "OpenGL/EGL/K15_AndroidRenderEGLContext.h"
 	#define K15_EMBEDDED_GL
 #endif //K15_OS_WINDOWS
 

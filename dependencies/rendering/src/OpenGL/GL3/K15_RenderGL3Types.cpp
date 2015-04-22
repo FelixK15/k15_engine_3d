@@ -15,6 +15,7 @@ PFNGLDISABLEVERTEXATTRIBARRAYPROC		kglDisableVertexAttribArray			= 0;
 PFNGLDELETEBUFFERSPROC					kglDeleteBuffers					= 0;
 PFNGLGETPROGRAMIVPROC					kglGetProgramiv						= 0;
 PFNGLGETPROGRAMINFOLOGPROC				kglGetProgramInfoLog				= 0;
+PFNGLBINDFRAGDATALOCATIONPROC			kglBindFragDataLocation				= 0;
 PFNGLDELETEPROGRAMPROC					kglDeleteProgram					= 0;
 PFNGLGETACTIVEUNIFORMPROC				kglGetActiveUniform					= 0;
 PFNGLGETACTIVEATTRIBPROC				kglGetActiveAttrib					= 0;

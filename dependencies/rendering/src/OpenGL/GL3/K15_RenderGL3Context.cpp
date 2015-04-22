@@ -260,6 +260,8 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 	K15_CHECK_ASSIGNMENT(kglGetUniformLocation, (PFNGLGETUNIFORMLOCATIONPROC)kglGetProcAddress("glGetUniformLocation"));
 	K15_CHECK_ASSIGNMENT(kglGetAttribLocation, (PFNGLGETATTRIBLOCATIONPROC)kglGetProcAddress("glGetAttribLocation"));
 	K15_CHECK_ASSIGNMENT(kglBlendEquationSeparate, (PFNGLBLENDEQUATIONSEPARATEPROC)kglGetProcAddress("glBlendEquationSeparate"));
+	K15_CHECK_ASSIGNMENT(kglBindFragDataLocation, (PFNGLBINDFRAGDATALOCATIONPROC)kglGetProcAddress("glBindFragDataLocation"));
+	K15_CHECK_ASSIGNMENT(kglGetProgramInfoLog, (PFNGLGETPROGRAMINFOLOGPROC)kglGetProcAddress("glGetProgramInfoLog"));
 	K15_CHECK_ASSIGNMENT(kglBlendFuncSeparate, (PFNGLBLENDFUNCSEPARATEPROC)kglGetProcAddress("glBlendFuncSeparate"));
 	K15_CHECK_ASSIGNMENT(kglGenFramebuffers, (PFNGLGENFRAMEBUFFERSPROC)kglGetProcAddress("glGenFramebuffers"));
 	K15_CHECK_ASSIGNMENT(kglBindFramebuffer, (PFNGLBINDFRAMEBUFFERPROC)kglGetProcAddress("glBindFramebuffer"));

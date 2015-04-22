@@ -8,8 +8,8 @@
 
 struct K15_SystemEvent		// 96 Bits
 {
-	uint32 event;		//32 bit
-	uint32 eventFlags;  //32 bit
+	int32 event;		//32 bit
+	int32 eventFlags;  //32 bit
 
 	union 
 	{

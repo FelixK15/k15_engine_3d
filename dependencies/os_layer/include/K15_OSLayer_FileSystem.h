@@ -6,11 +6,16 @@
 #ifdef K15_OS_WINDOWS
 	#include "win32/K15_FileSystemWin32.h"
 
-	#define K15_GetFileSize(filePath) K15_Win32GetFileSize(filePath)
-	#define K15_FileExists(filePath) K15_Win32FileExists(filePath)
-	#define K15_ConvertToSystemPath(filePath) K15_Win32ConvertToSystemPath(filePath)
+	#define K15_GetFileSize K15_Win32GetFileSize
+	#define K15_FileExists K15_Win32FileExists
+	#define K15_ConvertToSystemPath K15_Win32ConvertToSystemPath
 	#define K15_DIR_SEPARATOR '\\'
 #elif defined K15_OS_ANDROID || defined K15_OS_LINUX
+	#include "posix/K15_FileSystemPosix.h"
+
+	#define K15_GetFileSize K15_PosixGetFileSize
+	#define K15_FileExists K15_PosixFileExists
+	#define K15_ConvertToSystemPath K15_PosixConvertToSystemPath
 	#define K15_DIR_SEPARATOR '/'
 #endif //K15_OS_WINDWS
 
