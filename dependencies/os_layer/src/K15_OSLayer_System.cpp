@@ -3,7 +3,7 @@
 #include "K15_OSLayer_OSContext.h"
 
 /*********************************************************************************/
-void K15_SleepThreadForSeconds(float p_Seconds)
+void K15_SleepThreadForSeconds(double p_Seconds)
 {
 	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
 
@@ -14,7 +14,7 @@ void K15_SleepThreadForMilliseconds(uint32 p_Milliseconds)
 {
 	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
 
-	float seconds = (float)p_Milliseconds / 1000.f;
+	double seconds = (double)p_Milliseconds / 1000.f;
 
 	osContext->system.sleep(seconds);
 }
@@ -31,7 +31,6 @@ double K15_GetElapsedSeconds()
 	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
 
 	double seconds = osContext->system.getElapsedSeconds();
-
 	seconds -= osContext->timeStarted;
 
 	return seconds;

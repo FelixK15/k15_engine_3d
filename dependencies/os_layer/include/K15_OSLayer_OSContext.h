@@ -11,11 +11,11 @@ typedef uint8 (*setWindowDimensionFnc)(K15_OSLayerContext*, K15_Window*, uint32,
 typedef uint8 (*setWindowFullscreenFnc)(K15_OSLayerContext*, K15_Window*, bool8);
 typedef uint8 (*setWindowTitleFnc)(K15_OSLayerContext*, K15_Window*, char*);
 typedef uint8 (*closeWindowFnc)(K15_OSLayerContext*, K15_Window*);
-typedef float (*getElapsedSecondsFnc)();
+typedef double (*getElapsedSecondsFnc)();
 
 ///Events
 typedef uint8 (*pumpSystemEventsFnc)(K15_OSLayerContext*);
-typedef void (*sleepFnc)(float);
+typedef void (*sleepFnc)(double);
 typedef char* (*getErrorFnc)();
 
 ///Threads
@@ -73,7 +73,7 @@ struct K15_OSLayerContext
 		K15_Thread** threads;
 	} threading;
 
-	float timeStarted;
+	double timeStarted;
 	uint32 commandLineArgCount;
 	char** commandLineArgs;
 	void* userData;

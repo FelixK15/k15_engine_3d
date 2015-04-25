@@ -6,8 +6,6 @@
 #include "K15_OSLayer_SystemEvents.h"
 #include "K15_OSLayer_OSContext.h"
 
-#ifdef K15_OS_WINDOWS
-
 /*********************************************************************************/
 intern void K15_Win32WindowCreated(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -539,5 +537,3 @@ uint8 K15_Win32PumpSystemEvents(K15_OSLayerContext* p_OSContext)
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-
-#endif //K15_OS_WINDOWS

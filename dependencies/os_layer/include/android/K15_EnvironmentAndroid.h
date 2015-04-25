@@ -5,9 +5,13 @@
 
 struct K15_AndroidContext
 {
-	JNIEnv* jniEnvironment;
+	JavaVM* javaVM;
+	jobject activityHandle;
+	jmethodID pollEventsHandle;
+
+	K15_Thread* mainThread;
 };
 
-uint8 K15_AndroidInitializeOSLayer(JNIEnv* p_JNIEnvironment);
+uint8 K15_AndroidInitializeOSLayer(JNIEnv* p_JNIEnvironment, jobject p_ActivityHandle, int p_WidthInPixels, int p_HeightInPixels, const char* p_AppDirectory);
 
 #endif //_K15_OSLayer_Environment_Android_h_

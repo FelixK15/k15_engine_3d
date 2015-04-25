@@ -41,7 +41,6 @@
 #define K15_RIGHT_THUMB_X 328
 #define K15_RIGHT_THUMB_Y 329
 
-#define K15_TOUCH_MOTION 340
 #define K15_TOUCH_INPUT 341
 
 // EVENT FLAGS
@@ -60,7 +59,7 @@
 //CONTROLLER BUTTONS
 
 
-#define K15_EVENTS_PER_BUCKET 128  //12 Kbyte 
+#define K15_EVENTS_PER_BUCKET 32 //128 byte
 
 #define K15_GET_CONTROLLER_INDEX(event)(short)(event.controllerButton >> 16)
 

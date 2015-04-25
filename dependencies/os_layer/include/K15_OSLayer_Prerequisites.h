@@ -130,6 +130,7 @@
 	#include <time.h>
 	#include <jni.h>
 	#include <pthread.h>
+	#include <alloca.h>
 	#include <semaphore.h>	
 	#include <errno.h>
 	#include <stdlib.h>

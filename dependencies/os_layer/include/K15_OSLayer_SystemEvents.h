@@ -9,7 +9,7 @@
 struct K15_SystemEvent		// 96 Bits
 {
 	int32 event;		//32 bit
-	int32 eventFlags;  //32 bit
+	int32 eventFlags;   //32 bit
 
 	union 
 	{
@@ -36,7 +36,5 @@ struct K15_SystemEvent		// 96 Bits
 
 uint8 K15_PumpSystemEvents();
 uint8 K15_GetSystemEventFromQueue(K15_SystemEvent* p_SystemEvent, uint32 p_Flags);
-uint8 K15_GetSystemEventFromQueueFiltered(K15_SystemEvent* p_SystemEvent, uint32 p_Flags, uint32 p_EventFilterFlag);
 uint8 K15_AddSystemEventToQueue(K15_SystemEvent* p_SystemEvent);
-void K15_SynchronizeSystemEventQueues();
 #endif //_K15_OSLayer_SystemEvent_h_

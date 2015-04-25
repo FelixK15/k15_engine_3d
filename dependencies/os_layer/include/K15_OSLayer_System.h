@@ -3,7 +3,7 @@
 
 #include "K15_OSLayer_Prerequisites.h"
 
-void K15_SleepThreadForSeconds(float p_Seconds);
+void K15_SleepThreadForSeconds(double p_Seconds);
 void K15_SleepThreadForMilliseconds(uint32 p_Milliseconds);
 
 double K15_GetElapsedSeconds();

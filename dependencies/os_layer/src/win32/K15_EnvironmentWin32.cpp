@@ -194,7 +194,7 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	LARGE_INTEGER counts;
 	QueryPerformanceCounter(&counts);
 
-	win32OSContext.timeStarted = (float)(counts.QuadPart / performanceFrequency.QuadPart);
+	win32OSContext.timeStarted = (double)(counts.QuadPart / performanceFrequency.QuadPart);
 
 	K15_InternalSetOSLayerContext(win32OSContext);
 
@@ -215,9 +215,9 @@ char* K15_Win32GetError()
 	return messageBuffer;
 }
 /*********************************************************************************/
-void K15_Win32Sleep(float p_SleepTimeInSeconds)
+void K15_Win32Sleep(double p_SleepTimeInSeconds)
 {
-	DWORD milliSeconds = (DWORD)(p_SleepTimeInSeconds * 1000.f);
+	DWORD milliSeconds = (DWORD)(p_SleepTimeInSeconds * 1000.0);
 	SleepEx(milliSeconds, TRUE);
 }
 /*********************************************************************************/
@@ -233,7 +233,7 @@ void K15_Win32ShutdownOSLayer()
 	}
 }
 /*********************************************************************************/
-float K15_Win32GetElapsedSeconds()
+double K15_Win32GetElapsedSeconds()
 {
 	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
@@ -241,7 +241,7 @@ float K15_Win32GetElapsedSeconds()
 	LARGE_INTEGER counts;
 	QueryPerformanceCounter(&counts);
 
-	float seconds = counts.QuadPart / win32Context->performanceFrequency;
+	double seconds = counts.QuadPart / win32Context->performanceFrequency;
 
 	return seconds;
 }

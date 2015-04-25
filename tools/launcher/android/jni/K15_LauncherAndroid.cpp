@@ -1,59 +1,115 @@
-#include "K15_AndroidGlue.h"
+#include <jni.h>
 
-#include <K15_Logging.h>
-#include <K15_OSLayer_SystemEvents.h>
 #include <android/K15_EnvironmentAndroid.h>
+#include <K15_OSLayer_SystemEvents.h>
+#include <K15_OSLayer_System.h>
+#include <K15_OSLayer_Thread.h>
+#include <K15_OSLayer_OSContext.h>
+#include <K15_Logging.h>
 
 /*********************************************************************************/
-JNIEXPORT void JNICALL Java_k15games_engine_launcher_LauncherThread_K15_1InitEngine(JNIEnv* p_JNIEnvironment, jobject p_This)
+intern inline void K15_InternalGetThreadSpecificJNIHandles(K15_AndroidContext* p_AndroidContext)
 {
-	uint8 result = K15_AndroidInitializeOSLayer(p_JNIEnvironment);
+	K15_Thread* mainThread = p_AndroidContext->mainThread;
+	K15_PosixThread* posixThread = (K15_PosixThread*)mainThread->userData;
+
+	JNIEnv* jniEnv = posixThread->jniEnv;
+
+	jobject activityHandle = p_AndroidContext->activityHandle;
+	//jniEnv->
+	jclass activityClass = jniEnv->GetObjectClass(activityHandle);
+	jmethodID pollEventsFunctionHandle = jniEnv->GetMethodID(activityClass, "getSystemEventsAsByteBuffer", "()[B");
+
+	assert(pollEventsFunctionHandle);
+
+	p_AndroidContext->pollEventsHandle = pollEventsFunctionHandle;
 }
 /*********************************************************************************/
-JNIEXPORT jboolean JNICALL Java_k15games_engine_launcher_LauncherThread_K15_1TickEngine(JNIEnv* p_JNIEnvironment, jobject p_This, jbyteArray p_SystemEventArray)
+intern uint8 K15_AndroidMainThread(void* p_ThreadParameter)
 {
-	static uint32 SYSTEM_EVENT_BYTE_SIZE = 12;
+	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
+	K15_AndroidContext* androidContext = (K15_AndroidContext*)osContext->userData;
 
-	jboolean continueTicking = TRUE;
+	androidContext->mainThread = K15_GetCurrentThread();
 
-	jsize byteCount = p_JNIEnvironment->GetArrayLength(p_SystemEventArray);
-	jbyte* systemEventBytes = p_JNIEnvironment->GetByteArrayElements(p_SystemEventArray, 0);
+	K15_InternalGetThreadSpecificJNIHandles(androidContext);
 
-	uint32 amountSystemEvents = byteCount / SYSTEM_EVENT_BYTE_SIZE;
-	uint32 offset = 0;
+	K15_SystemEvent systemEvent;
 
-	for (uint32 systemEventIndex = 0;
-		 systemEventIndex < amountSystemEvents;
-		 ++systemEventIndex)
+	uint8 engineRunning = TRUE;
+	double now = 0.0;
+	double then = K15_GetElapsedSeconds();
+	double delta = 0.0;
+	double targetFrame = 0.016;
+	while(engineRunning)
 	{
-		K15_SystemEvent systemEvent = {};
+		K15_PumpSystemEvents();
 
-		memcpy(&systemEvent.event, systemEventBytes + offset, sizeof(uint32));
-		memcpy(&systemEvent.eventFlags, systemEventBytes + offset + sizeof(uint32), sizeof(uint32));
-		memcpy(&systemEvent.params.key, systemEventBytes + offset + sizeof(uint32) + sizeof(uint32), sizeof(uint32));
+		now = K15_GetElapsedSeconds();
 
-		K15_AddSystemEventToQueue(&systemEvent);
-
-		offset += SYSTEM_EVENT_BYTE_SIZE;
-	}
-
-	p_JNIEnvironment->ReleaseByteArrayElements(p_SystemEventArray, systemEventBytes, 0);
-
-	K15_SystemEvent systemEvent = {};
-
-	while(K15_GetSystemEventFromQueue(&systemEvent, K15_REMOVE_SYSTEM_EVENT_FLAG) != K15_SYSTEM_EVENT_QUEUE_EMPTY)
-	{
-		if (systemEvent.event == K15_APPLICATION_QUIT)
+		while (K15_GetSystemEventFromQueue(&systemEvent, K15_REMOVE_SYSTEM_EVENT_FLAG) != K15_SYSTEM_EVENT_QUEUE_EMPTY)
 		{
-			continueTicking = FALSE;
+			if (systemEvent.event == K15_APPLICATION_QUIT)
+			{
+				engineRunning = FALSE;
+			}
 		}
+
+		delta = now - then;
+
+		if (delta < targetFrame)
+		{
+			K15_SleepThreadForSeconds(targetFrame - delta);
+		}
+
+		then = now;
 	}
 
-	return continueTicking;
+	return K15_SUCCESS;
 }
 /*********************************************************************************/
-JNIEXPORT void JNICALL Java_k15games_engine_launcher_LauncherThread_K15_1ShutdownEngine(JNIEnv* p_JNIEnvironment, jobject p_This)
+
+
+#ifndef _Included_k15games_engine_launcher_LauncherMainActivity
+#define _Included_k15games_engine_launcher_LauncherMainActivity
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*********************************************************************************/
+JNIEXPORT jboolean JNICALL Java_k15games_engine_launcher_LauncherMainActivity_K15_1TryInitializeEngine
+  (JNIEnv *jniEnv, jobject thisObj, jint width, jint height, jstring appDir)
 {
+	const char* appDirAsChar = jniEnv->GetStringUTFChars(appDir, 0);
 	
+	uint8 result = K15_AndroidInitializeOSLayer(jniEnv, thisObj, width, height, appDirAsChar);
+
+	jniEnv->ReleaseStringUTFChars(appDir, appDirAsChar);
+
+	return result == K15_SUCCESS ? TRUE : FALSE;
 }
 /*********************************************************************************/
+JNIEXPORT void JNICALL Java_k15games_engine_launcher_LauncherMainActivity_K15_1StartEngineLoop
+  (JNIEnv *jniEnv, jobject thisObj)
+{
+	K15_Thread* mainThread = K15_CreateThread(K15_AndroidMainThread, 0);
+	K15_SetThreadName(mainThread, "K15_AndroidMainThread");
+}
+/*********************************************************************************/
+JNIEXPORT void JNICALL Java_k15games_engine_launcher_LauncherMainActivity_K15_1ShutdownEngine
+  (JNIEnv *jniEnv, jobject thisObj)
+{
+
+}
+/*********************************************************************************/
+JNIEXPORT jcharArray JNICALL Java_k15games_engine_launcher_LauncherMainActivity_K15_1GetErrorMessage
+  (JNIEnv *jniEnv, jobject thisObj)
+{
+
+}
+/*********************************************************************************/
+
+#ifdef __cplusplus
+}
+#endif
+#endif

@@ -1,9 +1,14 @@
+#ifndef _K15_OSLayer_Thread_Android_h_
+#define _K15_OSLayer_Thread_Android_h_
+
+#include "K15_OSLayer_Prerequisites.h"
+
 #ifndef _K15_OSLayer_Thread_Posix_h_
 #define _K15_OSLayer_Thread_Posix_h_
 
 #include "K15_OSLayer_Prerequisites.h"
 
-#define K15_CreateMutex K15_PosixCreateMutex
+#define K15_CreateMutex K15_AndroidCreateMutex
 #define K15_LockMutex K15_PosixLockMutex
 #define K15_UnlockMutex K15_PosixUnlockMutex
 #define K15_CreateSemaphore K15_PosixCreateSemaphore
@@ -11,13 +16,10 @@
 #define K15_PostSemaphore K15_PosixPostSemaphore
 #define K15_WaitSemaphore K15_PosixWaitSemaphore
 
-struct K15_PosixThread
+struct K15_AndroidThread
 {
 	pthread_t handle;
-
-#ifdef K15_OS_ANDROID
-	JNIEnv* jniEnv;
-#endif //K15_OS_ANDROID
+	JNIEnv* jniEnvironment;
 };
 
 struct K15_Mutex
@@ -44,3 +46,6 @@ uint8 K15_PosixPostSemaphore(K15_Semaphore* p_Semaphore);
 uint8 K15_PosixWaitSemaphore(K15_Semaphore* p_Semaphore);
 
 #endif //_K15_OSLayer_Thread_Posix_h_
+
+
+#endif //_K15_OSLayer_Thread_Android_h_

@@ -2,18 +2,30 @@ package k15games.engine.launcher;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+
+import android.view.Display;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.MotionEvent;
 import android.view.InputDevice;
+
+import android.view.View;
+import android.view.View.OnGenericMotionListener;
+import android.view.View.OnTouchListener;
+import android.view.View.OnKeyListener;
+
 import android.content.Context;
 import android.content.DialogInterface;
+
+import android.graphics.Point;
+
 import android.util.Log;
 import android.os.Bundle;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.lang.InterruptedException;
@@ -49,7 +61,6 @@ final class SystemEvent
 		public static final int ControllerRightShoulderTrigger = 325;
 		
 		//Touch Input
-		public static final int TouchMotion = 340;
 		public static final int TouchInput = 341;
 		
 		//Window
@@ -93,68 +104,11 @@ final class SystemEvent
 /*********************************************************************************/
 
 
-
 /*********************************************************************************/
-class LauncherThread extends Thread
-{
-	private final float NANOSECONDS_TO_MILLISECONDS = 1 / 1000000;
-	private boolean m_Running = true;
-	private LauncherContentView m_ContentView = null;
-	private LauncherMainActivity m_Activity = null;
-	
-	/*********************************************************************************/
-	public LauncherThread(LauncherContentView p_ContentView, LauncherMainActivity p_Activity)
-	{
-		m_ContentView = p_ContentView;
-		m_Activity = p_Activity;
-	}
-	/*********************************************************************************/
-	@Override
-	public void run() 
-	{
-		boolean engineRunning = true;
-		ArrayDeque<SystemEvent> systemEvents = null;
-		ByteBuffer systemEventByteBuffer = null;
-
-		K15_InitEngine();
-
-		while(engineRunning)
-		{
-			SystemEventQueue eventQueue = m_ContentView.GetSystemEventQueue();
-			eventQueue.FlipBuffers();
-			systemEvents = eventQueue.GetFrontBuffer();
-
-			int systemEventByteBufferSize = systemEvents.size() * SystemEvent.getByteSize(); //+4 byte for extra integer parameter indicating the offset
-			systemEventByteBuffer = ByteBuffer.allocate(systemEventByteBufferSize);
-			systemEventByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-			
-			for (SystemEvent currentSystemEvent : systemEvents)
-			{
-				systemEventByteBuffer.putInt(currentSystemEvent.eventType);
-				systemEventByteBuffer.putInt(currentSystemEvent.inputFlag);
-				systemEventByteBuffer.put(currentSystemEvent.param);
-			}
-
-			engineRunning = K15_TickEngine(systemEventByteBuffer.array());			
-		}
-
-		K15_ShutdownEngine();
-
-		m_Activity.exitLauncher();
-	}
-	/*********************************************************************************/
-	
-	public native boolean K15_TickEngine(byte[] p_SystemEventByteBuffer);
-	public native void K15_InitEngine();
-	public native void K15_ShutdownEngine();
-}
-/*********************************************************************************/
-
-class SystemEventQueue
+final class SystemEventQueue implements View.OnKeyListener, View.OnGenericMotionListener, View.OnTouchListener
 {
 	private final int SYSTEM_EVENT_CAPACITY = 64;
-	private Object m_InputQueueLock = new Object();
-	private int m_ActiveInputDeque = 0;
+	private AtomicInteger m_ActiveInputDeque = new AtomicInteger();
 	private ArrayList<ArrayDeque<SystemEvent>> m_InputDeques = new ArrayList<ArrayDeque<SystemEvent>>(2);
 	
 	/*********************************************************************************/
@@ -165,29 +119,31 @@ class SystemEventQueue
 		m_InputDeques.add(new ArrayDeque<SystemEvent>(SYSTEM_EVENT_CAPACITY));
 	}
 	/*********************************************************************************/
-	public ArrayDeque<SystemEvent> GetFrontBuffer()
+	public ArrayDeque<SystemEvent> GetBackBuffer()
 	{
-		ArrayDeque<SystemEvent> frontBuffer = null;
+		ArrayDeque<SystemEvent> backBuffer = null;
 
-		synchronized(m_InputQueueLock)
-		{
-			int inputDequeIndex = m_ActiveInputDeque == 0 ? 1 : 0;
+		int backBufferIndex = m_ActiveInputDeque.get() == 0 ? 1 : 0;
+		backBuffer = m_InputDeques.get(backBufferIndex); 
 
-			frontBuffer = m_InputDeques.get(inputDequeIndex); 
-		}
-		return frontBuffer;
+		return backBuffer;
 	}
 	/*********************************************************************************/
 	public void FlipBuffers()
 	{
-		synchronized(m_InputQueueLock)
+		if (m_ActiveInputDeque.get() == 0)
 		{
-			m_ActiveInputDeque = m_ActiveInputDeque == 0 ? 1 : 0;
-			m_InputDeques.get(m_ActiveInputDeque).clear();
+			m_ActiveInputDeque.incrementAndGet();
 		}
+		else
+		{
+			m_ActiveInputDeque.decrementAndGet();
+		}
+
+		m_InputDeques.get(m_ActiveInputDeque.get()).clear();
 	}
 	/*********************************************************************************/
-	public void AddSystemEvent(int p_EventType, int p_Flags, float p_FloatParam)
+	private void AddSystemEvent(int p_EventType, int p_Flags, float p_FloatParam)
 	{
 		SystemEvent systemEvent = new SystemEvent();
 		ByteBuffer paramByteBuffer = ByteBuffer.allocate(4);
@@ -199,13 +155,10 @@ class SystemEventQueue
 		systemEvent.inputFlag = p_Flags;
 		systemEvent.param = paramByteBuffer.array();
 
-		synchronized(m_InputQueueLock)
-		{
-			m_InputDeques.get(m_ActiveInputDeque).add(systemEvent);
-		}
+		m_InputDeques.get(m_ActiveInputDeque.get()).add(systemEvent);
 	}
 	/*********************************************************************************/
-	public void AddSystemEvent(int p_EventType, int p_Flags, short p_ShortParam1, short p_ShortParam2)
+	private void AddSystemEvent(int p_EventType, int p_Flags, short p_ShortParam1, short p_ShortParam2)
 	{
 		SystemEvent systemEvent = new SystemEvent();
 		ByteBuffer paramByteBuffer = ByteBuffer.allocate(4);
@@ -218,13 +171,10 @@ class SystemEventQueue
 		systemEvent.inputFlag = p_Flags;
 		systemEvent.param = paramByteBuffer.array();
 
-		synchronized(m_InputQueueLock)
-		{
-			m_InputDeques.get(m_ActiveInputDeque).add(systemEvent);
-		}
+		m_InputDeques.get(m_ActiveInputDeque.get()).add(systemEvent);
 	}
 	/*********************************************************************************/
-	public void AddSystemEvent(int p_EventType, int p_Flags, int p_IntParam)
+	private void AddSystemEvent(int p_EventType, int p_Flags, int p_IntParam)
 	{
 		SystemEvent systemEvent = new SystemEvent();
 		ByteBuffer paramByteBuffer = ByteBuffer.allocate(4);
@@ -236,13 +186,10 @@ class SystemEventQueue
 		systemEvent.inputFlag = p_Flags;
 		systemEvent.param = paramByteBuffer.array();
 
-		synchronized(m_InputQueueLock)
-		{
-			m_InputDeques.get(m_ActiveInputDeque).add(systemEvent);
-		}
+		m_InputDeques.get(m_ActiveInputDeque.get()).add(systemEvent);
 	}
 	/*********************************************************************************/
-	public void AddSystemEvent(int p_EventType, int p_Flags)
+	private void AddSystemEvent(int p_EventType, int p_Flags)
 	{
 		SystemEvent systemEvent = new SystemEvent();
 		ByteBuffer paramByteBuffer = ByteBuffer.allocate(4);
@@ -254,35 +201,7 @@ class SystemEventQueue
 		systemEvent.inputFlag = p_Flags;
 		systemEvent.param = paramByteBuffer.array();
 
-		synchronized(m_InputQueueLock)
-		{
-			m_InputDeques.get(m_ActiveInputDeque).add(systemEvent);
-		}
-	}
-	/*********************************************************************************/
-}
-
-/*********************************************************************************/
-class LauncherContentView extends View
-{	
-	private LauncherMainActivity m_LauncherMainActivty = null;
-	private SystemEventQueue m_SystemEventQueue = new SystemEventQueue();
-	
-	/*********************************************************************************/
-	public LauncherContentView(LauncherMainActivity p_LauncherMainActivty)
-	{
-		super((Context)p_LauncherMainActivty);
-
-		m_LauncherMainActivty = p_LauncherMainActivty;
-
-		//To get onGenericMotionEvent calls
-		setFocusable(true);
-		setFocusableInTouchMode(true);
-	}
-	/*********************************************************************************/
-	public SystemEventQueue GetSystemEventQueue()
-	{
-		return m_SystemEventQueue;
+		m_InputDeques.get(m_ActiveInputDeque.get()).add(systemEvent);
 	}
 	/*********************************************************************************/
 	//internal function to process key events
@@ -362,21 +281,10 @@ class LauncherContentView extends View
 			}
 			handled = true;
 			
-			m_SystemEventQueue.AddSystemEvent(eventType, inputFlag, param);
+			AddSystemEvent(eventType, inputFlag, param);
 		}
 		
 		return handled;
-	}
-	/*********************************************************************************/
-	//internal function to process touch movement events
-	private boolean onTouchMoveEvent_Internal(MotionEvent p_MotionEvent)
-	{
-		short x = (short)(p_MotionEvent.getY() * p_MotionEvent.getYPrecision());
-		short y = (short)(p_MotionEvent.getX() * p_MotionEvent.getXPrecision());
-		
-		m_SystemEventQueue.AddSystemEvent(SystemEvent.EventType.TouchMotion, SystemEvent.InputFlags.InputEventFlag, y, x);
-
-		return true; //always handled
 	}
 	/*********************************************************************************/
 	//internal function to process touch events
@@ -385,7 +293,7 @@ class LauncherContentView extends View
 		short x = (short)(p_MotionEvent.getY() * p_MotionEvent.getYPrecision());
 		short y = (short)(p_MotionEvent.getX() * p_MotionEvent.getXPrecision());
 		
-		m_SystemEventQueue.AddSystemEvent(SystemEvent.EventType.TouchInput, SystemEvent.InputFlags.InputEventFlag, y, x);
+		AddSystemEvent(SystemEvent.EventType.TouchInput, SystemEvent.InputFlags.InputEventFlag, y, x);
 
 		return true; //always handled
 	}
@@ -440,7 +348,7 @@ class LauncherContentView extends View
 		
 		if (eventType != 0)
 		{
-			m_SystemEventQueue.AddSystemEvent(eventType, SystemEvent.InputFlags.InputEventFlag, param);
+			AddSystemEvent(eventType, SystemEvent.InputFlags.InputEventFlag, param);
 
 			handled = true;
 		}
@@ -450,11 +358,11 @@ class LauncherContentView extends View
 	/*********************************************************************************/
 	public void onSystemEvent(int p_EventType)
 	{
-		m_SystemEventQueue.AddSystemEvent(p_EventType, SystemEvent.InputFlags.SystemEventFlag | SystemEvent.InputFlags.WindowEventFlag);
+		AddSystemEvent(p_EventType, SystemEvent.InputFlags.SystemEventFlag | SystemEvent.InputFlags.WindowEventFlag);
 	}
 	/*********************************************************************************/
     @Override
-	public boolean onGenericMotionEvent(MotionEvent p_MotionEvent) 
+	public boolean onGenericMotion(View p_View, MotionEvent p_MotionEvent) 
     {
     	int inputSource = p_MotionEvent.getSource();
     	boolean handled = false;
@@ -464,64 +372,78 @@ class LauncherContentView extends View
         {
         	handled = onGameAxisEvent_Internal(p_MotionEvent);
         }
-        else if((inputSource & InputDevice.SOURCE_TOUCHSCREEN) > 0)
+        /*else if((inputSource & InputDevice.SOURCE_TOUCHSCREEN) > 0)
         {
         	handled = onTouchMoveEvent_Internal(p_MotionEvent);
-        }
-        
-        if (!handled)
-        {
-        	handled = super.onGenericMotionEvent(p_MotionEvent);
-        }
+        }*/
 
         return handled;
 	}
 	/*********************************************************************************/
 	@Override
-	public boolean onKeyDown(int p_KeyCode, KeyEvent p_KeyEvent) 
+	public boolean onKey(View p_View, int p_KeyCode, KeyEvent p_KeyEvent) 
 	{
-		boolean handled = onKeyEvent_Internal(p_KeyEvent, p_KeyCode, SystemEvent.EventType.ControllerButtonPressed);
-		
-		if (!handled)
+		int actionIdentifier = p_KeyEvent.getAction();
+
+		if (actionIdentifier == KeyEvent.ACTION_DOWN ||
+			actionIdentifier == KeyEvent.ACTION_UP)
 		{
-			handled = super.onKeyDown(p_KeyCode, p_KeyEvent);
+			int eventIdentifier = actionIdentifier == KeyEvent.ACTION_DOWN ? SystemEvent.EventType.ControllerButtonPressed : SystemEvent.EventType.ControllerButtonReleased;
+
+			return onKeyEvent_Internal(p_KeyEvent, p_KeyCode, eventIdentifier);
 		}
-		
-		return handled;
+
+		return false;
 	}
 	/*********************************************************************************/
 	@Override
-	public boolean onKeyUp(int p_KeyCode, KeyEvent p_KeyEvent) 
-	{
-		boolean handled = onKeyEvent_Internal(p_KeyEvent, p_KeyCode, SystemEvent.EventType.ControllerButtonReleased);
-		
-		if (!handled)
-		{
-			handled = super.onKeyUp(p_KeyCode, p_KeyEvent);
-		}
-		
-		return handled;
-	}
-	/*********************************************************************************/
-	@Override
-    public boolean onTouchEvent(MotionEvent p_MotionEvent)
+    public boolean onTouch(View p_View, MotionEvent p_MotionEvent)
     {
-		boolean handled = onTouchEvent_Internal(p_MotionEvent);
+		//Log.w("bla", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
-		if (!handled)
-		{
-			handled = super.onTouchEvent(p_MotionEvent);
-		}
-		
-        return handled;
+        return onTouchEvent_Internal(p_MotionEvent);
     }
 	/*********************************************************************************/
 }
+/*********************************************************************************/
 
+
+/*********************************************************************************/
+class LauncherContentView extends View
+{	
+	private LauncherMainActivity m_LauncherMainActivty = null;
+	private SystemEventQueue m_SystemEventQueue = new SystemEventQueue();
+	
+	/*********************************************************************************/
+	public LauncherContentView(LauncherMainActivity p_LauncherMainActivty)
+	{
+		super((Context)p_LauncherMainActivty);
+
+		m_LauncherMainActivty = p_LauncherMainActivty;
+
+		setOnKeyListener(m_SystemEventQueue);
+		setOnTouchListener(m_SystemEventQueue);
+		setOnGenericMotionListener(m_SystemEventQueue);
+
+		//To get onGenericMotionEvent calls
+		setFocusable(true);
+		setFocusableInTouchMode(true);
+	}
+	/*********************************************************************************/
+	public SystemEventQueue GetSystemEventQueue()
+	{
+		return m_SystemEventQueue;
+	}
+	/*********************************************************************************/
+	
+}
+/*********************************************************************************/
+
+
+/*********************************************************************************/
 public class LauncherMainActivity extends Activity
 {
 	private LauncherContentView m_ContentView = null;
-	private LauncherThread m_LauncherThread = null;
 	private AlertDialog m_MessageBox = null;
 
 	private static String LAUNCHER_LIBRARY = "launcher";
@@ -557,11 +479,46 @@ public class LauncherMainActivity extends Activity
         {
 			//showMessageBox("Library loaded!");
 	       	m_ContentView = new LauncherContentView(this);
-	       	m_LauncherThread = new LauncherThread(m_ContentView, this);
         	setContentView(m_ContentView);
 
-			m_LauncherThread.start();
+        	if (TryInitializeEngine())
+        	{
+        		K15_StartEngineLoop();
+        	}
+        	else
+        	{
+        		String errorMessage = new String(K15_GetErrorMessage());
+        		showMessageBox(errorMessage);
+        		exitLauncher();
+        	}
         }
+    }
+    /*********************************************************************************/
+    public byte[] getSystemEventsAsByteBuffer()
+    {
+    	SystemEventQueue eventQueue = m_ContentView.GetSystemEventQueue();
+    	byte[] systemEventsAsBytes = null;
+
+		eventQueue.FlipBuffers();
+		ArrayDeque<SystemEvent> systemEvents = eventQueue.GetBackBuffer();
+
+		if (systemEvents.size() > 0)
+		{
+			int systemEventByteBufferSize = systemEvents.size() * SystemEvent.getByteSize(); //+4 byte for extra integer parameter indicating the offset
+			ByteBuffer systemEventByteBuffer = ByteBuffer.allocateDirect(systemEventByteBufferSize);
+			systemEventByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+			
+			for (SystemEvent currentSystemEvent : systemEvents)
+			{
+				systemEventByteBuffer.putInt(currentSystemEvent.eventType);
+				systemEventByteBuffer.putInt(currentSystemEvent.inputFlag);
+				systemEventByteBuffer.put(currentSystemEvent.param);
+			}
+
+			systemEventsAsBytes = systemEventByteBuffer.array();
+		}
+
+		return systemEventsAsBytes;
     }
     /*********************************************************************************/
 	@Override
@@ -569,7 +526,7 @@ public class LauncherMainActivity extends Activity
 	{
 		if (m_ContentView != null)
 		{
-			m_ContentView.onSystemEvent(SystemEvent.EventType.ApplicationQuit);	
+			//m_ContentView.onSystemEvent(SystemEvent.EventType.ApplicationQuit);	
 		}
 		
 		super.onPause();
@@ -591,4 +548,25 @@ public class LauncherMainActivity extends Activity
     	alertDialog.show();
     }
 	/*********************************************************************************/
+	private boolean TryInitializeEngine()
+	{
+		Display currentDisplay = getWindowManager().getDefaultDisplay();
+		Point displaySizeInPixels = new Point();
+
+		currentDisplay.getSize(displaySizeInPixels);
+
+		int widthInPixels = displaySizeInPixels.x;
+		int heightInPixels =  displaySizeInPixels.y;
+
+		String applicationDirectory = getApplicationInfo().dataDir;
+		
+		return K15_TryInitializeEngine(widthInPixels, heightInPixels, applicationDirectory);
+	}
+	/*********************************************************************************/
+	private native boolean K15_TryInitializeEngine(int p_ScreenWidthInPixels, int p_ScreenHeightInPixels, String p_ApplicationPath);
+	private native void K15_StartEngineLoop();
+	private native void K15_ShutdownEngine();
+	private native char[] K15_GetErrorMessage();
+	/*********************************************************************************/
 }
+/*********************************************************************************/

@@ -33,9 +33,9 @@ struct K15_Win32Context
 
 uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance);
 char* K15_Win32GetError();
-void K15_Win32Sleep(float p_SleepTimeInSeconds);
+void K15_Win32Sleep(double p_SleepTimeInSeconds);
 void K15_Win32ShutdownOSLayer();
-float K15_Win32GetElapsedSeconds();
+double K15_Win32GetElapsedSeconds();
 
 #endif //K15_OS_WINDOWS
 
