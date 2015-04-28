@@ -13,7 +13,7 @@ struct K15_AndroidGLContext
 {
 	EGLDisplay display;
 	EGLSurface surface;
-	EGLContext ms_Context;
+	EGLContext context;
 };
 
 uint8 K15_AndroidCreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSLayerContext* p_OSContext);

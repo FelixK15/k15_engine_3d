@@ -3,81 +3,6 @@
 #include "K15_OSLayer_OSContext.h"
 #include "K15_OSLayer_Thread.h"
 
-//Extra thread wrapper for android as new threads have to get registered to the VM
-#ifdef K15_OS_ANDROID
-#include "android/K15_EnvironmentAndroid.h"
-
-/*********************************************************************************/
-intern void* K15_PosixThreadWrapper(void* p_Parameter)
-{
-	int result = 0;
-	K15_ThreadFnc threadFunction = 0;
-	JavaVM* javaVM = 0;
-	JNIEnv* jniEnv = 0;
-	K15_Thread* thread = 0;
-	void* threadParameter = 0;
-
-	memcpy(&threadFunction, p_Parameter, K15_PTR_SIZE);
-	memcpy(&javaVM, ((byte*)p_Parameter + K15_PTR_SIZE), K15_PTR_SIZE);
-	memcpy(&thread, ((byte*)p_Parameter + K15_PTR_SIZE * 2), K15_PTR_SIZE);
-	memcpy(&threadParameter, ((byte*)p_Parameter + K15_PTR_SIZE * 3), K15_PTR_SIZE);
-
-	javaVM->AttachCurrentThread(&jniEnv, 0);
-
-	K15_PosixThread* posixThread = (K15_PosixThread*)thread->userData;
-	posixThread->jniEnv = jniEnv;
-
-	uint8 threadFunctionResult = threadFunction(threadParameter);
-
-	if (threadFunctionResult != K15_SUCCESS
-		&& threadFunctionResult == K15_OS_ERROR_SYSTEM)
-	{
-		result = errno;
-	}
-	else if (threadFunctionResult != K15_SUCCESS)
-	{
-		result = 1;
-	}
-
-	pthread_exit((void*)result);
-}
-/*********************************************************************************/
-uint8 K15_PosixCreateThread(K15_OSLayerContext* p_OSContext, K15_Thread* p_Thread, K15_ThreadFnc p_ThreadFunction, void* p_ThreadParameter)
-{
-	K15_AndroidContext* androidContext = (K15_AndroidContext*)p_OSContext->userData;
-	JavaVM* javaVM = androidContext->javaVM;
-	JNIEnv* jniEnv = 0;
-	K15_PosixThread* posixThread = (K15_PosixThread*)K15_OS_MALLOC(sizeof(K15_PosixThread));
-
-	byte* posixThreadParameterBuffer = (byte*)K15_OS_MALLOC(K15_PTR_SIZE * 4);
-
-	if (!posixThread || !posixThreadParameterBuffer)
-	{
-		return K15_OS_ERROR_OUT_OF_MEMORY;
-	}
-
-	memcpy(posixThreadParameterBuffer, &p_ThreadFunction, K15_PTR_SIZE);
-	memcpy(posixThreadParameterBuffer + K15_PTR_SIZE, &javaVM, K15_PTR_SIZE);
-	memcpy(posixThreadParameterBuffer + K15_PTR_SIZE * 2, &p_Thread, K15_PTR_SIZE);
-	memcpy(posixThreadParameterBuffer + K15_PTR_SIZE * 3, &p_ThreadParameter, K15_PTR_SIZE);
-
-	pthread_t threadHandle = 0;
-
-	int result = pthread_create(&threadHandle, 0, K15_PosixThreadWrapper, posixThreadParameterBuffer);
-
-	if (result != 0)
-	{
-		return K15_OS_ERROR_SYSTEM;
-	}
-
-	posixThread->handle = threadHandle;
-	posixThread->jniEnv = jniEnv;
-
-	p_Thread->userData = (void*)posixThread;
-
-	return K15_SUCCESS;
-}
-#else //normal posix functions
 /*********************************************************************************/
 intern void* K15_PosixThreadWrapper(void* p_Parameter)
 {
@@ -132,10 +57,6 @@ uint8 K15_PosixCreateThread(K15_OSLayerContext* p_OSContext, K15_Thread* p_Threa
 
 	return K15_SUCCESS;
 }
-/*********************************************************************************/
-#endif //K15_OS_ANDROID
-
-
 /*********************************************************************************/
 uint8 K15_PosixSetThreadName(K15_Thread* p_Thread)
 {

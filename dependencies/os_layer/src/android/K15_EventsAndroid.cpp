@@ -12,22 +12,26 @@
 uint8 K15_AndroidPumpSystemEvents(K15_OSLayerContext* p_OSContext)
 {
 	K15_AndroidContext* androidContext = (K15_AndroidContext*)p_OSContext->userData;
-	K15_PosixThread* posixMainThread = (K15_PosixThread*)androidContext->mainThread->userData;
-	JNIEnv* jniEnv = posixMainThread->jniEnv;
-	jobject activityObjectHandle = androidContext->activityHandle;
+	//K15_PosixThread* posixMainThread = (K15_PosixThread*)androidContext->mainThread->userData;
+	JNIEnv* jniEnv = androidContext->jniEnv;
+	jobject engineThreadObject = androidContext->engineThreadObjectHandle;
 	jmethodID pollSystemEventHandle = androidContext->pollEventsHandle;
 
- 	jbyteArray systemEventByteArray = (jbyteArray)jniEnv->CallObjectMethod(activityObjectHandle, pollSystemEventHandle);
+ 	jbyteArray systemEventByteArray = 0;
+	
+	K15_JNI_CALL(jniEnv, systemEventByteArray = (jbyteArray)jniEnv->CallObjectMethod(engineThreadObject, pollSystemEventHandle));
 
 	if (systemEventByteArray)
 	{
-		jsize systemEventByteSize = jniEnv->GetArrayLength(systemEventByteArray);
+		jsize systemEventByteSize = 0;
+		
+		K15_JNI_CALL(jniEnv, systemEventByteSize = jniEnv->GetArrayLength(systemEventByteArray));
 
 		jbyte* systemEventsByteData = (jbyte*)alloca(systemEventByteSize);
-		jniEnv->GetByteArrayRegion(systemEventByteArray, 0, systemEventByteSize, systemEventsByteData);
+
+		K15_JNI_CALL(jniEnv, jniEnv->GetByteArrayRegion(systemEventByteArray, 0, systemEventByteSize, systemEventsByteData));
  
 		uint32 systemEventCount = systemEventByteSize / sizeof(K15_SystemEvent);
-		K15_LOG_ERROR_MESSAGE("byteSize: %d Rest: %d sizeof(SystemEvent): %d" , systemEventByteSize, systemEventByteSize % sizeof(K15_SystemEvent), sizeof(K15_SystemEvent));
 		uint32 offset = 0;
 
 		for (uint32 systemEventIndex = 0;
@@ -49,7 +53,7 @@ uint8 K15_AndroidPumpSystemEvents(K15_OSLayerContext* p_OSContext)
 		}
 	}
 
-	jniEnv->DeleteLocalRef(systemEventByteArray);
+	K15_JNI_CALL(jniEnv, jniEnv->DeleteLocalRef(systemEventByteArray));
 
 	return K15_SUCCESS;
 }

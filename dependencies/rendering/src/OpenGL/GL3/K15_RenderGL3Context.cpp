@@ -8,8 +8,6 @@
 
 #define K15_OPENGL_ERROR_MISSING_EXTENSION 10
 
-#define K15_CHECK_ASSIGNMENT(variable, value) {variable = value; assert(variable);}
-
 #include "K15_RenderContext.h"
 #include "K15_RenderBufferDesc.h"
 #include "K15_RenderProgramDesc.h"
@@ -98,7 +96,7 @@ intern void APIENTRY K15_DebugProcARB(GLenum source, GLenum type, GLuint id, GLe
 
 	switch(source)
 	{
-		case GL_DEBUG_SOURCE_API_ARB:
+		case GL_DEBUG_SOURCE_API:
 		{
 			sourceName = "API";
 			break;
@@ -199,9 +197,17 @@ intern inline void K15_InternalGLSetFunctionPointers(K15_RenderContext* p_Render
 intern int K15_CmpStrings(const void* a, const void* b)
 {
 	const char* stringA = (char*)a;
-	const char* const *stringB = (char**)b; //why?
+	const char* const *stringB = (char**)b;
 
 	return strcmp(stringA, *stringB);
+}
+/*********************************************************************************/
+intern int K15_CmpStringsSort(const void* a, const void* b)
+{
+	const char* const *stringA = (char**)a;
+	const char* const *stringB = (char**)b;
+
+	return strcmp(*stringA, *stringB);
 }
 /*********************************************************************************/
 intern void K15_GLGetExtensions(K15_GLRenderContext* p_GLRenderContext)
@@ -231,16 +237,53 @@ intern void K15_GLGetExtensions(K15_GLRenderContext* p_GLRenderContext)
 	{
 		// ... didn't work...get extensions via glGetString
 		const char* separator = " ";
-		char* extensionsString = (char*)glGetString(GL_EXTENSIONS);
+		const GLubyte* extensionsString = glGetString(GL_EXTENSIONS);
 
-		p_GLRenderContext->extensions.names = (char**)strtok(extensionsString, separator);
+		size_t extensionStringLength = strlen((const char*)extensionsString);
+		char* extensionStringBuffer = (char*)alloca(extensionStringLength + 1); //+1 for 0 terminator
+		extensionStringBuffer[extensionStringLength] = 0;
 
-		while (extensionsString)
+		memcpy(extensionStringBuffer, extensionsString, extensionStringLength);
+
+		int numExtensions = 0;
+
+		/*********************************************************************************/
+		//count extension
+		int extensionStringIndex = 0;
+
+		while (extensionStringBuffer[extensionStringIndex])
 		{
-			++p_GLRenderContext->extensions.count;
-			++extensionsString;
+			if (isspace(extensionStringBuffer[extensionStringIndex++]))
+			{
+				numExtensions = numExtensions + 1;
+			}
 		}
+		/*********************************************************************************/
+
+		char** extensions = (char**)malloc(sizeof(char*) * numExtensions);
+
+		/*********************************************************************************/
+		//get extension
+		char* currentExtension = strtok(extensionStringBuffer, separator);
+		numExtensions = 0;
+
+		while (currentExtension)
+		{
+			size_t extensionLength = strlen(currentExtension); 
+			char* currentExtensionBuffer = (char*)malloc(extensionLength + 1); //+1 for 0 terminator
+			memcpy(currentExtensionBuffer, currentExtension, extensionLength);
+			currentExtensionBuffer[extensionLength] = 0;
+
+			extensions[numExtensions++] = currentExtensionBuffer;
+
+			currentExtension = strtok(0, separator);
+		}
+		/*********************************************************************************/
+		p_GLRenderContext->extensions.count = numExtensions;
+		p_GLRenderContext->extensions.names = extensions;
 	}
+
+	K15_Sort(p_GLRenderContext->extensions.names, p_GLRenderContext->extensions.count, sizeof(char*), K15_CmpStringsSort);
 }
 /*********************************************************************************/
 intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)

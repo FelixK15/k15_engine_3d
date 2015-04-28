@@ -51,10 +51,10 @@
 	#define K15_CPP11_SUPPORT
 #endif //__cplusplus > 199711L || _MSC_VER >= 1700 || K15_GCC_VERSION > 40800
 
-//#if defined _DEBUG || defined DEBUG
+#if defined _DEBUG || defined DEBUG
 	#define K15_DEBUG
 	#define K15_DEBUG_MRT //Multithreaded debugging
-//#endif //_DEBUG
+#endif //_DEBUG
 
 #define K15_PTR_SIZE sizeof(void*)
 
@@ -123,6 +123,7 @@
 
 #ifdef K15_OS_ANDROID
 	#include <android/log.h>
+	#include <android/native_window_jni.h>
 	#include <sys/stat.h>
 	#include <sys/types.h>
 	#include <unistd.h>
@@ -134,9 +135,17 @@
 	#include <semaphore.h>	
 	#include <errno.h>
 	#include <stdlib.h>
-
+	#include <ctype.h>
+	
 	#define TRUE 1
 	#define FALSE 0
+
+#ifdef K15_CHECK_JNI_CALLS
+	#define K15_JNI_CALL(jniEnv, call) {call; jthrowable ex = jniEnv->ExceptionOccurred(); if(ex){jniEnv->ExceptionDescribe(); jniEnv->ExceptionClear();}}
+#else
+	#define K15_JNI_CALL(jniEnv, call) {call;}
+#endif //K15_CHECK_JNI_CALLS
+
 #endif //K15_OS_ANDROID
 
 #ifdef K15_OS_LINUX

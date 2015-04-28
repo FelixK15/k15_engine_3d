@@ -372,7 +372,7 @@ void K15_GLInitPrograms(K15_GLRenderContext* p_GLContext)
 		 programIndex < K15_RENDER_MAX_GPU_PROGRAMS;
 		 ++programIndex)
 	{
-		currentProgram = &p_GLContext->gl3.programs[programIndex];
+		currentProgram = &p_GLContext->glObjects.programs[programIndex];
 
 		for (uint32 uniformIndex = 0;
 			 uniformIndex < K15_RENDER_GL_MAX_PROGRAM_UNIFORMS;
@@ -438,7 +438,7 @@ uint8 K15_GLCreateProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramD
 	K15_OPENGL_CALL(glProgram = kglCreateShaderProgramv(glProgramType, K15_ARRAY_COUNT(glslProgramCode), glslProgramCode));
 	K15_OPENGL_CALL(kglGetProgramiv(glProgram, GL_LINK_STATUS, &linkStatus));
 
-	K15_GLProgram* program = &glContext->gl3.programs[*p_RenderProgramHandle];
+	K15_GLProgram* program = &glContext->glObjects.programs[*p_RenderProgramHandle];
 	program->program = glProgram;
 
 	if (linkStatus == GL_FALSE)
@@ -481,11 +481,11 @@ uint8 K15_GLDeleteProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramH
 	uint8 result = K15_SUCCESS;
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
 
-	K15_GLProgram* glProgram = &glContext->gl3.programs[*p_RenderProgramHandle];
+	K15_GLProgram* glProgram = &glContext->glObjects.programs[*p_RenderProgramHandle];
 
 	K15_OPENGL_CALL(kglDeleteProgram(glProgram->program));
 
-	glContext->gl3.programs[*p_RenderProgramHandle].program = K15_INVALID_GL_PROGRAM_INDEX;
+	glContext->glObjects.programs[*p_RenderProgramHandle].program = K15_INVALID_GL_PROGRAM_INDEX;
 
 	return result;
 }
@@ -495,7 +495,7 @@ uint8 K15_GLUpdateUniform(K15_RenderContext* p_RenderContext, K15_RenderUniformU
 	uint8 result = K15_ERROR_RENDER_UNIFORM_NOT_FOUND;
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
 
-	K15_GLProgram* glProgram = &glContext->gl3.programs[*p_RenderProgramHandle];
+	K15_GLProgram* glProgram = &glContext->glObjects.programs[*p_RenderProgramHandle];
 
 	GLenum uniformType = K15_GLConvertUniformTypeToGLType(p_RenderUniformUpdateDesc->type);
 

@@ -26,14 +26,19 @@ struct K15_GLRenderContext
 
 	union
 	{
-		struct 
+		struct  
 		{
 			K15_GLBuffer buffers[K15_RENDER_GL_MAX_BUFFER_COUNT];
-			K15_GLBufferAccessData accessData[K15_RENDER_MAX_GPU_BUFFER];
-			K15_GLRenderTarget renderTargets[K15_RENDER_MAX_GPU_RENDER_TARGETS];
-			K15_GLProgram programs[K15_RENDER_MAX_GPU_PROGRAMS];
 			K15_GLTexture textures[K15_RENDER_MAX_GPU_TEXTURES];
 			K15_GLSampler samplers[K15_RENDER_MAX_GPU_SAMPLERS];
+			K15_GLProgram programs[K15_RENDER_MAX_GPU_PROGRAMS];
+		} glObjects;
+		
+
+		struct 
+		{
+			K15_GLBufferAccessData accessData[K15_RENDER_MAX_GPU_BUFFER];
+			K15_GLRenderTarget renderTargets[K15_RENDER_MAX_GPU_RENDER_TARGETS];
 
 			GLuint programPipelineHandle;
 			GLuint vertexArrayHandle;
@@ -43,6 +48,11 @@ struct K15_GLRenderContext
 			GLuint fullscreenQuadIBO;
 			GLuint fullscreenQuadVAO;
 		} gl3;
+
+		struct 
+		{
+			uint32 compressionMask;
+		} gl2;
 
 	};
 

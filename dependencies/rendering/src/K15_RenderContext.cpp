@@ -902,7 +902,7 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext)
 	renderContext->viewports[0].x = 0;
 	renderContext->viewports[0].y = 0;
 	renderContext->viewports[0].width = window->width;
-	renderContext->viewports[0].height = window->height;;
+	renderContext->viewports[0].height = window->height;
 
 	for(uint32 viewportIndex = 1;
 		viewportIndex < K15_RENDER_MAX_VIEWPORT_COUNT;
@@ -1017,7 +1017,11 @@ uint8 K15_BeginRenderCommand(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15
 {
 	assert(p_RenderCommandBuffer);
 	assert(p_RenderCommandBuffer->commandBuffers[K15_RENDERING_COMMAND_BACK_BUFFER_INDEX]->amountCommands < K15_RENDERING_MAX_COMMANDS);
+	
+#ifdef K15_DEBUG_MRT
 	assert(p_RenderCommandBuffer->debugging.assignedThread == K15_GetCurrentThread());
+#endif //K15_DEBUG_MRT
+
 	assert(!p_RenderCommandBuffer->lastCommand);
 
 	K15_RenderCommandBufferInstance* commandBackBuffer = p_RenderCommandBuffer->commandBuffers[K15_RENDERING_COMMAND_BACK_BUFFER_INDEX];
@@ -1236,7 +1240,10 @@ void K15_DispatchRenderCommandBuffer(K15_RenderCommandBuffer* p_RenderCommandQue
 {
 	assert(p_RenderCommandQueue);
 	assert(!p_RenderCommandQueue->lastCommand);
+
+#ifdef K15_DEBUG_MRT
 	assert(p_RenderCommandQueue->debugging.assignedThread == K15_GetCurrentThread());
+#endif //K15_DEBUG_MRT
 
 	K15_RenderContext* renderContext = p_RenderCommandQueue->renderContext;
 	K15_RenderCommandBufferDispatcher* renderDispatcher = renderContext->commandBufferDispatcher;
@@ -1266,7 +1273,10 @@ void K15_DispatchRenderCommandBuffer(K15_RenderCommandBuffer* p_RenderCommandQue
 void K15_ProcessDispatchedRenderCommandBuffers(K15_RenderContext* p_RenderContext)
 {
 	assert(p_RenderContext);
+#ifdef K15_DEBUG_MRT
 	assert(p_RenderContext->debugging.assignedThread == K15_GetCurrentThread());
+#endif //K15_DEBUG_MRT	
+	
 	//signal the render thread to start processing the dispatched render buffers
 	//K15_PostSemaphore(p_RenderContext->renderThreadSync);
 

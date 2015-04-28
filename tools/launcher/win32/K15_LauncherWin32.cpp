@@ -246,7 +246,7 @@ void K15_InternalCreateFullscreenFragmentShader(K15_RenderCommandBuffer* p_Rende
 		"void main(void){\n"
 		"outColor0 = vec4(v_Color, 0.0f, 1.0f); }";
 
-	uint32 programCodeLength = strlen(programCode);
+	size_t programCodeLength = strlen(programCode);
 
 	programDesc.source = K15_RENDER_PROGRAM_SOURCE_CODE;
 	programDesc.code = (char*)malloc(programCodeLength + 1);

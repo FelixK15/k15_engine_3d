@@ -8,9 +8,6 @@
 	//default gl functions
 	PFNGLGENBUFFERSPROC					kglGenBuffers					= 0;
 
-	//GL_ARB_debug_output
-	PFNGLDEBUGMESSAGECALLBACKPROC		kglDebugMessageCallback			= 0;
-
 	//GL_ARB_vertex_array_object//
 	PFNGLGENVERTEXARRAYSPROC			kglGenVertexArrays				= 0;
 	PFNGLBINDVERTEXARRAYPROC			kglBindVertexArray				= 0;
@@ -91,6 +88,10 @@
 	PFNGLVALIDATEPROGRAMPIPELINEPROC	kglValidateProgramPipeline		= 0;
 	PFNGLGETPROGRAMPIPELINEINFOLOGPROC	kglGetProgramPipelineInfoLog	= 0;
 #endif //K15_OS_WINDOWS
+
+
+//GL_KHR_debug
+PFNGLDEBUGMESSAGECALLBACKPROC		kglDebugMessageCallback			= 0;
 
 //GL_AMD_debug_output
 PFNGLDEBUGMESSAGECALLBACKAMDPROC	kglDebugMessageCallbackAMD		= 0;

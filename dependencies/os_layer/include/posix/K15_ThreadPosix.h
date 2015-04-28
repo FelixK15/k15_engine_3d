@@ -14,10 +14,6 @@
 struct K15_PosixThread
 {
 	pthread_t handle;
-
-#ifdef K15_OS_ANDROID
-	JNIEnv* jniEnv;
-#endif //K15_OS_ANDROID
 };
 
 struct K15_Mutex

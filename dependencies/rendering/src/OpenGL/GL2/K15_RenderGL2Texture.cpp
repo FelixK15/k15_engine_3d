@@ -5,10 +5,10 @@ intern inline uint8 K15_InternalIsCompressedRenderFormat(K15_RenderFormat p_Rend
 
 	switch (p_RenderFormat)
 	{
-		case K15_RENDER_FORMAT_RGB_DXT_1:
-		case K15_RENDER_FORMAT_RGBA_DXT_1:
-		case K15_RENDER_FORMAT_RGBA_DXT_3:
-		case K15_RENDER_FORMAT_RGBA_DXT_5:
+	case K15_RENDER_FORMAT_RGB_DXT_1:
+	case K15_RENDER_FORMAT_RGBA_DXT_1:
+	case K15_RENDER_FORMAT_RGBA_DXT_3:
+	case K15_RENDER_FORMAT_RGBA_DXT_5:
 		{
 			result = TRUE;
 			break;
@@ -107,7 +107,7 @@ intern inline void K15_InternalCreateAutomaticMipmapTexture(K15_GLTexture* p_GLT
 	GLenum glFormat = p_GLTexture->glFormat;
 	GLenum glInternalFormat = p_GLTexture->glInternalFormat;
 	GLenum glType = p_GLTexture->glFormatType;
-	
+
 	if (glTextureType == GL_TEXTURE_1D)
 	{
 		if (K15_InternalIsCompressedRenderFormat(p_Format) == TRUE)

@@ -43,6 +43,7 @@
 #define K15_RENDER_MAX_GPU_RENDER_TARGETS						32
 
 #define K15_IS_POW2(x) ((x != 0) && !(x & (x - 1))
+#define K15_CHECK_ASSIGNMENT(variable, value) {variable = value; assert(variable);}
 
 enum K15_RenderDescFlags
 {

@@ -18,6 +18,7 @@ set(K15_OS_LAYER_LINUX_SRC	"src/posix/K15_ThreadPosix.cpp"
 
 set(K15_OS_LAYER_ANDROID_SRC "src/android/K15_EnvironmentAndroid.cpp"
 				"src/android/K15_EventsAndroid.cpp"
+				"src/android/K15_WindowAndroid.cpp"
 				"src/posix/K15_ThreadPosix.cpp"
 				"src/posix/K15_SystemPosix.cpp"
 				"src/posix/K15_FileSystemPosix.cpp")
@@ -46,6 +47,7 @@ set(K15_OS_LAYER_LINUX_INC	"include/linux/K15_ThreadLinux.h"
 
 set(K15_OS_LAYER_ANDROID_INC "include/android/K15_EnvironmentAndroid.h"
 				"include/android/K15_EventsAndroid.h"
+				"include/android/K15_WindowAndroid.h"
 				"include/posix/K15_ThreadPosix.h"
 				"include/posix/K15_SystemPosix.h"
 				"include/posix/K15_FileSystemPosix.h")

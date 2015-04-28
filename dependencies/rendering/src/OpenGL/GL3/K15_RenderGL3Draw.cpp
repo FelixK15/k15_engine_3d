@@ -3,7 +3,7 @@ intern inline uint8 K15_GLDrawFullscreenQuad(K15_RenderContext* p_RenderContext,
 {
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
 
-	K15_GLProgram* glProgram = &glContext->gl3.programs[*p_RenderProgramHandle];
+	K15_GLProgram* glProgram = &glContext->glObjects.programs[*p_RenderProgramHandle];
 
 	//Get rasterizer state & enable counter clockwise vertex order to draw quad properly
 	K15_RenderRasterizerStateDesc* rasterizerState = p_RenderContext->renderState.rasterizerStateDesc;

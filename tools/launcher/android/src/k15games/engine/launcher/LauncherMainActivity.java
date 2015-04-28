@@ -7,6 +7,9 @@ import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.InputDevice;
+import android.view.Surface;
+import android.view.SurfaceView;
+import android.view.SurfaceHolder;
 
 import android.view.View;
 import android.view.View.OnGenericMotionListener;
@@ -17,6 +20,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 
 import android.graphics.Point;
+import android.graphics.Canvas;
 
 import android.util.Log;
 import android.os.Bundle;
@@ -34,8 +38,8 @@ import java.lang.InterruptedException;
 final class SystemEvent
 {
 	public int eventType = EventType.NoEvent;
-	public byte[] param = null;
 	public int inputFlag = 0;
+	public byte[] param = null;
 	
 	/*********************************************************************************/
 	public static final int getByteSize()
@@ -119,17 +123,34 @@ final class SystemEventQueue implements View.OnKeyListener, View.OnGenericMotion
 		m_InputDeques.add(new ArrayDeque<SystemEvent>(SYSTEM_EVENT_CAPACITY));
 	}
 	/*********************************************************************************/
-	public ArrayDeque<SystemEvent> GetBackBuffer()
+	public byte[] getBackBufferAsByteArray()
 	{
 		ArrayDeque<SystemEvent> backBuffer = null;
+		byte[] byteBuffer = null;
 
 		int backBufferIndex = m_ActiveInputDeque.get() == 0 ? 1 : 0;
 		backBuffer = m_InputDeques.get(backBufferIndex); 
 
-		return backBuffer;
+		int byteEventBufferSize = SystemEvent.getByteSize() * backBuffer.size();
+
+		if (byteEventBufferSize > 0)
+		{
+			ByteBuffer byteEventBuffer = ByteBuffer.allocateDirect(byteEventBufferSize);
+
+			for (SystemEvent currentEvent : backBuffer)
+			{
+				byteEventBuffer.putInt(currentEvent.eventType);
+				byteEventBuffer.putInt(currentEvent.inputFlag);
+				byteEventBuffer.put(currentEvent.param);
+			}
+
+			byteBuffer = byteEventBuffer.array();
+		}
+
+		return byteBuffer;
 	}
 	/*********************************************************************************/
-	public void FlipBuffers()
+	public void flipBuffers()
 	{
 		if (m_ActiveInputDeque.get() == 0)
 		{
@@ -399,8 +420,6 @@ final class SystemEventQueue implements View.OnKeyListener, View.OnGenericMotion
 	@Override
     public boolean onTouch(View p_View, MotionEvent p_MotionEvent)
     {
-		//Log.w("bla", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
         return onTouchEvent_Internal(p_MotionEvent);
     }
 	/*********************************************************************************/
@@ -409,42 +428,107 @@ final class SystemEventQueue implements View.OnKeyListener, View.OnGenericMotion
 
 
 /*********************************************************************************/
-class LauncherContentView extends View
+class EngineMainThread extends Thread
+{
+	private SystemEventQueue m_SystemEventQueue = null;
+	private Surface m_RenderSurface = null;
+	private int m_ScreenWidthInPixels = 0;
+	private int m_ScreenHeightInPixels = 0;
+	private String m_ApplicationDirectory = null;
+	/*********************************************************************************/
+	public EngineMainThread(SystemEventQueue p_SystemEventQueue, Surface p_RenderSurface, int p_ScreenWidthInPixels, int p_ScreenHeightInPixels, String p_ApplicationDirectory)
+	{
+		m_SystemEventQueue = p_SystemEventQueue;
+		m_RenderSurface = p_RenderSurface;
+
+		m_ScreenWidthInPixels = p_ScreenWidthInPixels;
+		m_ScreenHeightInPixels = p_ScreenHeightInPixels;
+		m_ApplicationDirectory = p_ApplicationDirectory;
+	}
+	/*********************************************************************************/
+	@Override
+	public void run()
+	{
+		boolean engineInitialized = K15_TryInitializeEngine(m_ScreenWidthInPixels, m_ScreenHeightInPixels, m_ApplicationDirectory, m_RenderSurface);
+		boolean continueLoop = true;
+		byte[] byteEventBuffer = null;
+
+		if (engineInitialized)
+		{	
+			K15_StartEngine();	//blocks
+			K15_ShutdownEngine();
+		}
+		else
+		{
+			//K15_GetErrorMessage();
+		}
+	}
+	/*********************************************************************************/
+	public byte[] getSystemEventsAsByteBuffer()
+	{
+		m_SystemEventQueue.flipBuffers();
+		
+		return m_SystemEventQueue.getBackBufferAsByteArray();
+	}
+	/*********************************************************************************/
+
+	/*********************************************************************************/
+	private native boolean K15_TryInitializeEngine(int p_ScreenWidthInPixels, int p_ScreenHeightInPixels, String p_ApplicationPath, Surface p_RenderSurface);
+	private native void K15_StartEngine();
+	private native void K15_ShutdownEngine();
+	private native char[] K15_GetErrorMessage();
+	/*********************************************************************************/
+}
+/*********************************************************************************/
+
+
+/*********************************************************************************/
+class LauncherContentView extends SurfaceView
 {	
 	private LauncherMainActivity m_LauncherMainActivty = null;
-	private SystemEventQueue m_SystemEventQueue = new SystemEventQueue();
 	
 	/*********************************************************************************/
-	public LauncherContentView(LauncherMainActivity p_LauncherMainActivty)
+	public LauncherContentView(LauncherMainActivity p_LauncherMainActivty, SystemEventQueue p_SystemEventQueue)
 	{
 		super((Context)p_LauncherMainActivty);
 
 		m_LauncherMainActivty = p_LauncherMainActivty;
 
-		setOnKeyListener(m_SystemEventQueue);
-		setOnTouchListener(m_SystemEventQueue);
-		setOnGenericMotionListener(m_SystemEventQueue);
+		setOnKeyListener(p_SystemEventQueue);
+		setOnTouchListener(p_SystemEventQueue);
+		setOnGenericMotionListener(p_SystemEventQueue);
 
 		//To get onGenericMotionEvent calls
 		setFocusable(true);
 		setFocusableInTouchMode(true);
 	}
 	/*********************************************************************************/
-	public SystemEventQueue GetSystemEventQueue()
+	public void onDraw(Canvas p_Canvas)
 	{
-		return m_SystemEventQueue;
+		//nope, drawing is done in native code
 	}
 	/*********************************************************************************/
-	
+	public Surface getSurface()
+	{
+		if (getHolder() != null)
+		{
+			return getHolder().getSurface();
+		}
+
+		return null;
+	}
+	/*********************************************************************************/
 }
 /*********************************************************************************/
 
 
 /*********************************************************************************/
-public class LauncherMainActivity extends Activity
+public class LauncherMainActivity extends Activity implements SurfaceHolder.Callback
 {
 	private LauncherContentView m_ContentView = null;
+	private EngineMainThread m_EngineThread = null;
 	private AlertDialog m_MessageBox = null;
+	private SystemEventQueue m_EventQueue = null;
 
 	private static String LAUNCHER_LIBRARY = "launcher";
 
@@ -453,6 +537,35 @@ public class LauncherMainActivity extends Activity
 	{
 		finish();
 		System.exit(0);
+	}
+	/*********************************************************************************/
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
+	{
+		Log.w("k15 games", "Format: " + format);
+	}
+	/*********************************************************************************/
+	@Override
+	public void surfaceCreated(SurfaceHolder holder)
+	{
+		if (m_EngineThread == null)
+		{
+			//screen size
+			Display defaultDisplay = getWindowManager().getDefaultDisplay();
+			Point defaultDisplayDimension = new Point();
+			defaultDisplay.getSize(defaultDisplayDimension);
+
+			Surface renderSurface = m_ContentView.getSurface();
+			String appDirectory = "";
+
+			m_EngineThread = new EngineMainThread(m_EventQueue, renderSurface, defaultDisplayDimension.x, defaultDisplayDimension.y, appDirectory);
+			m_EngineThread.start();
+		}
+	}
+	/*********************************************************************************/
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder)
+	{
 	}
 	/*********************************************************************************/
     @Override
@@ -477,48 +590,13 @@ public class LauncherMainActivity extends Activity
 
         if (libraryLoaded)
         {
+			SystemEventQueue eventQueue = new SystemEventQueue();
+			m_EventQueue = eventQueue;
 			//showMessageBox("Library loaded!");
-	       	m_ContentView = new LauncherContentView(this);
+	       	m_ContentView = new LauncherContentView(this, eventQueue);
+			m_ContentView.getHolder().addCallback(this);
         	setContentView(m_ContentView);
-
-        	if (TryInitializeEngine())
-        	{
-        		K15_StartEngineLoop();
-        	}
-        	else
-        	{
-        		String errorMessage = new String(K15_GetErrorMessage());
-        		showMessageBox(errorMessage);
-        		exitLauncher();
-        	}
         }
-    }
-    /*********************************************************************************/
-    public byte[] getSystemEventsAsByteBuffer()
-    {
-    	SystemEventQueue eventQueue = m_ContentView.GetSystemEventQueue();
-    	byte[] systemEventsAsBytes = null;
-
-		eventQueue.FlipBuffers();
-		ArrayDeque<SystemEvent> systemEvents = eventQueue.GetBackBuffer();
-
-		if (systemEvents.size() > 0)
-		{
-			int systemEventByteBufferSize = systemEvents.size() * SystemEvent.getByteSize(); //+4 byte for extra integer parameter indicating the offset
-			ByteBuffer systemEventByteBuffer = ByteBuffer.allocateDirect(systemEventByteBufferSize);
-			systemEventByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-			
-			for (SystemEvent currentSystemEvent : systemEvents)
-			{
-				systemEventByteBuffer.putInt(currentSystemEvent.eventType);
-				systemEventByteBuffer.putInt(currentSystemEvent.inputFlag);
-				systemEventByteBuffer.put(currentSystemEvent.param);
-			}
-
-			systemEventsAsBytes = systemEventByteBuffer.array();
-		}
-
-		return systemEventsAsBytes;
     }
     /*********************************************************************************/
 	@Override
@@ -547,26 +625,6 @@ public class LauncherMainActivity extends Activity
 
     	alertDialog.show();
     }
-	/*********************************************************************************/
-	private boolean TryInitializeEngine()
-	{
-		Display currentDisplay = getWindowManager().getDefaultDisplay();
-		Point displaySizeInPixels = new Point();
-
-		currentDisplay.getSize(displaySizeInPixels);
-
-		int widthInPixels = displaySizeInPixels.x;
-		int heightInPixels =  displaySizeInPixels.y;
-
-		String applicationDirectory = getApplicationInfo().dataDir;
-		
-		return K15_TryInitializeEngine(widthInPixels, heightInPixels, applicationDirectory);
-	}
-	/*********************************************************************************/
-	private native boolean K15_TryInitializeEngine(int p_ScreenWidthInPixels, int p_ScreenHeightInPixels, String p_ApplicationPath);
-	private native void K15_StartEngineLoop();
-	private native void K15_ShutdownEngine();
-	private native char[] K15_GetErrorMessage();
 	/*********************************************************************************/
 }
 /*********************************************************************************/
