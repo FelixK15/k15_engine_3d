@@ -36,7 +36,7 @@ void K15_InternalCreateTriangleBuffer(K15_RenderCommandBuffer* p_RenderCommandBu
 	desc.size = sizeof(float) * 9;
 	desc.type = K15_RENDER_BUFFER_TYPE_VERTEX;
 	desc.usage = K15_RENDER_BUFFER_USAGE_STATIC_DRAW;
-	
+
 	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_CREATE_BUFFER);
 	K15_AddRenderBufferHandleParameter(p_RenderCommandBuffer, p_BufferHandle);
 	K15_AddRenderBufferDescParameter(p_RenderCommandBuffer, &desc);
@@ -145,8 +145,8 @@ void K15_InternalCreateDiffuseTexture(K15_RenderCommandBuffer* p_RenderCommandBu
 
 	srand((unsigned int)time(0));
 	for (int y = 0;
-		 y < 256;
-		 ++y)
+		y < 256;
+		++y)
 	{
 		for (int x = 0;
 			x < 128;
@@ -214,15 +214,15 @@ void K15_InternalCreateRenderTarget(K15_RenderCommandBuffer* p_RenderCommandBuff
 
 	desc.dimension = K15_RENDER_TARGET_DIMENSION_FULL_RESOLUTION;
 	desc.outputFlags = K15_RENDER_TARGET_OUTPUT_COLOR_0_BIT |
-					   K15_RENDER_TARGET_OUTPUT_COLOR_1_BIT |
-					   K15_RENDER_TARGET_OUTPUT_COLOR_2_BIT |
-					   K15_RENDER_TARGET_OUTPUT_COLOR_3_BIT |
-					   K15_RENDER_TARGET_OUTPUT_COLOR_4_BIT |
-					   K15_RENDER_TARGET_OUTPUT_COLOR_5_BIT |
-					   K15_RENDER_TARGET_OUTPUT_COLOR_6_BIT |
-					   K15_RENDER_TARGET_OUTPUT_COLOR_7_BIT |
-					   K15_RENDER_TARGET_OUTPUT_DEPTH_BIT	|
-					   K15_RENDER_TARGET_OUTPUT_STENCIL_BIT;
+		K15_RENDER_TARGET_OUTPUT_COLOR_1_BIT |
+		K15_RENDER_TARGET_OUTPUT_COLOR_2_BIT |
+		K15_RENDER_TARGET_OUTPUT_COLOR_3_BIT |
+		K15_RENDER_TARGET_OUTPUT_COLOR_4_BIT |
+		K15_RENDER_TARGET_OUTPUT_COLOR_5_BIT |
+		K15_RENDER_TARGET_OUTPUT_COLOR_6_BIT |
+		K15_RENDER_TARGET_OUTPUT_COLOR_7_BIT |
+		K15_RENDER_TARGET_OUTPUT_DEPTH_BIT	|
+		K15_RENDER_TARGET_OUTPUT_STENCIL_BIT;
 
 	desc.format = K15_RENDER_FORMAT_R8G8B8_UINT;
 

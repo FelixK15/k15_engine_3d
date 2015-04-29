@@ -9,6 +9,11 @@ intern inline uint8 K15_InternalIsCompressedRenderFormat(K15_RenderFormat p_Rend
 	case K15_RENDER_FORMAT_RGBA_DXT_1:
 	case K15_RENDER_FORMAT_RGBA_DXT_3:
 	case K15_RENDER_FORMAT_RGBA_DXT_5:
+	case K15_RENDER_FORMAT_RGB_PVRTC:
+	case K15_RENDER_FORMAT_RGBA_PVRTC:
+	case K15_RENDER_FORMAT_RGB_ATC:
+	case K15_RENDER_FORMAT_RGBA_ATC:
+	case K15_RENDER_FORMAT_RGB_3DC:
 		{
 			result = TRUE;
 			break;
@@ -22,44 +27,28 @@ intern inline void K15_InternalCreateManualMipmapTexture(K15_GLTexture* p_GLText
 {
 	uint32 width = p_GLTexture->width;
 	uint32 height = p_GLTexture->height;
-	uint32 depth = p_GLTexture->depth;
 
+	GLenum glTextureHandle = p_GLTexture->glTexture;
 	GLenum glTextureType = p_GLTexture->glTextureTarget;
 	GLenum glFormat = p_GLTexture->glFormat;
 	GLenum glInternalFormat = p_GLTexture->glInternalFormat;
 	GLenum glType = p_GLTexture->glFormatType;;
 
+	K15_OPENGL_CALL(glBindTexture(glTextureType, glTextureHandle));
+
 	for (uint32 mipmapIndex = 0;
 		mipmapIndex < p_MipmapCount;
 		++mipmapIndex)
 	{
-		if (glTextureType == GL_TEXTURE_1D)
+		if (glTextureType == GL_TEXTURE_2D)
 		{
 			if (K15_InternalIsCompressedRenderFormat(p_RenderFormat))
 			{
-				K15_OPENGL_CALL(kglCompressedTextureImage1DEXT(p_GLTextureHandle, glTextureType, mipmapIndex, glInternalFormat, width, 0, p_CompressedMipmapDataSize[mipmapIndex], p_CompressedMipmapData[mipmapIndex]));
+				K15_OPENGL_CALL(glCompressedTexImage2D(glTextureType, mipmapIndex, glInternalFormat, width, height, 0, p_CompressedMipmapDataSize[mipmapIndex], p_CompressedMipmapData[mipmapIndex]));
 			}
 			else
 			{
-				K15_OPENGL_CALL(kglTextureImage1DEXT(p_GLTextureHandle, glTextureType, mipmapIndex, glFormat, width, 0, glFormat, glType, p_CompressedMipmapData[mipmapIndex]));
-			}
-
-			width = (uint32)((float)width * 0.5f);
-
-			if (width == 0)
-			{
-				break;
-			}
-		}
-		else if (glTextureType == GL_TEXTURE_2D)
-		{
-			if (K15_InternalIsCompressedRenderFormat(p_RenderFormat))
-			{
-				K15_OPENGL_CALL(kglCompressedTextureImage2DEXT(p_GLTextureHandle, glTextureType, mipmapIndex, glInternalFormat, width, height, 0, p_CompressedMipmapDataSize[mipmapIndex], p_CompressedMipmapData[mipmapIndex]));
-			}
-			else
-			{
-				K15_OPENGL_CALL(kglTextureImage2DEXT(p_GLTextureHandle, glTextureType, mipmapIndex, glFormat, width, height, 0, glFormat, glType, p_CompressedMipmapData[mipmapIndex]));
+				K15_OPENGL_CALL(glTexImage2D(glTextureType, mipmapIndex, glFormat, width, height, 0, glFormat, glType, p_CompressedMipmapData[mipmapIndex]));
 			}
 
 			width = (uint32)((float)width * 0.5f);
@@ -70,75 +59,39 @@ intern inline void K15_InternalCreateManualMipmapTexture(K15_GLTexture* p_GLText
 				break;
 			}
 		}
-		else if (glTextureType == GL_TEXTURE_3D)
-		{
-			if (K15_InternalIsCompressedRenderFormat(p_RenderFormat))
-			{
-				K15_OPENGL_CALL(kglCompressedTextureImage3DEXT(p_GLTextureHandle, glTextureType, mipmapIndex, glInternalFormat, width, height, depth, 0, p_CompressedMipmapDataSize[mipmapIndex], p_CompressedMipmapData[mipmapIndex]));
-			}
-			else
-			{
-				K15_OPENGL_CALL(kglTextureImage3DEXT(p_GLTextureHandle, glTextureType, mipmapIndex, glFormat, width, height, depth, 0, glFormat, glType, p_CompressedMipmapData[mipmapIndex]));
-			}
-
-			width = (uint32)((float)width * 0.5f);
-			height = (uint32)((float)height * 0.5f);
-			depth = (uint32)((float)depth * 0.5f);
-
-			if (height == 0 || width == 0 || depth == 0)
-			{
-				break;
-			}
-		}
 		else
 		{
 			assert(false);
 		}
 	}
+
+	K15_OPENGL_CALL(glBindTexture(glTextureType, 0));
+
 }
 /*********************************************************************************/
 intern inline void K15_InternalCreateAutomaticMipmapTexture(K15_GLTexture* p_GLTexture, K15_RenderFormat p_Format, GLuint p_GLTextureHandle, byte* p_Data, uint32 p_DataSize)
 {
 	uint32 width = p_GLTexture->width;
 	uint32 height = p_GLTexture->height;
-	uint32 depth = p_GLTexture->depth;
 
+	GLenum glTextureHandle = p_GLTexture->glTexture;
 	GLenum glTextureType = p_GLTexture->glTextureTarget;
 	GLenum glFormat = p_GLTexture->glFormat;
 	GLenum glInternalFormat = p_GLTexture->glInternalFormat;
 	GLenum glType = p_GLTexture->glFormatType;
 
-	if (glTextureType == GL_TEXTURE_1D)
+	K15_OPENGL_CALL(glBindTexture(glTextureType, glTextureHandle));
+
+	if(glTextureType == GL_TEXTURE_2D)
 	{
+
 		if (K15_InternalIsCompressedRenderFormat(p_Format) == TRUE)
 		{
-			K15_OPENGL_CALL(kglCompressedTextureImage1DEXT(p_GLTextureHandle, glTextureType, 0, glInternalFormat, width, 0, p_DataSize, p_Data));
+			K15_OPENGL_CALL(glCompressedTexImage2D(glTextureType, 0, glInternalFormat, width, height, 0, p_DataSize, p_Data));
 		}
 		else
 		{
-			K15_OPENGL_CALL(kglTextureImage1DEXT(p_GLTextureHandle, glTextureType, 0, glFormat, width, 0, glFormat, glType, p_Data));
-		}
-	}
-	else if(glTextureType == GL_TEXTURE_2D)
-	{
-		if (K15_InternalIsCompressedRenderFormat(p_Format) == TRUE)
-		{
-			K15_OPENGL_CALL(kglCompressedTextureImage2DEXT(p_GLTextureHandle, glTextureType, 0, glInternalFormat, width, height, 0, p_DataSize, p_Data));
-		}
-		else
-		{
-			K15_OPENGL_CALL(kglTextureImage2DEXT(p_GLTextureHandle, glTextureType, 0, glFormat, width, height, 0, glFormat, glType, p_Data));
-		}
-	}
-	else if(glTextureType == GL_TEXTURE_3D)
-	{
-		if (K15_InternalIsCompressedRenderFormat(p_Format) == TRUE)
-		{
-			K15_OPENGL_CALL(kglCompressedTextureImage3DEXT(p_GLTextureHandle, glTextureType, 0, glInternalFormat, width, height, depth, 0, p_DataSize, p_Data));
-		}
-		else
-		{
-			K15_OPENGL_CALL(kglTextureImage3DEXT(p_GLTextureHandle, glTextureType, 0, glFormat, width, height, depth, 0, glFormat, glType, p_Data));
+			K15_OPENGL_CALL(glTexImage2D(glTextureType, 0, glFormat, width, height, 0, glFormat, glType, p_Data));
 		}
 	}
 	else
@@ -146,7 +99,9 @@ intern inline void K15_InternalCreateAutomaticMipmapTexture(K15_GLTexture* p_GLT
 		assert(false);
 	}
 
-	K15_OPENGL_CALL(kglGenerateTextureMipmapEXT(p_GLTextureHandle, glTextureType));
+	K15_OPENGL_CALL(glGenerateMipmap(glTextureType));
+
+	K15_OPENGL_CALL(glBindTexture(glTextureType, 0));
 }
 /*********************************************************************************/
 intern inline uint8 K15_GLCreateTexture(K15_RenderContext* p_RenderContext, K15_RenderTextureDesc* p_RenderTextureDesc, K15_RenderTextureHandle* p_RenderTextureHandle)
@@ -226,18 +181,19 @@ intern inline uint8 K15_GLUpdateTexture(K15_RenderContext* p_RenderContext, K15_
 
 	GLuint glTextureHandle = glTexture->glTexture;
 
-	if (glTextureTarget == GL_TEXTURE_1D)
+	K15_OPENGL_CALL(glBindTexture(glTextureTarget, glTextureHandle));
+
+	if (glTextureTarget == GL_TEXTURE_2D)
 	{
-		K15_OPENGL_CALL(kglTextureSubImage1DEXT(glTextureHandle, glTextureTarget, 0, x, width, glFormat, glFormatType, p_RenderTextureUpdateDesc->data));
+		K15_OPENGL_CALL(glTexSubImage2D(glTextureTarget, 0, x, y, width, height, glFormat, glFormatType, p_RenderTextureUpdateDesc->data));
 	}
-	else if (glTextureTarget == GL_TEXTURE_2D)
+	else
 	{
-		K15_OPENGL_CALL(kglTextureSubImage2DEXT(glTextureHandle, glTextureTarget, 0, x, y, width, height, glFormat, glFormatType, p_RenderTextureUpdateDesc->data));
+		assert(false);
 	}
-	else if (glTextureTarget == GL_TEXTURE_3D)
-	{
-		K15_OPENGL_CALL(kglTextureSubImage3DEXT(glTextureHandle, glTextureTarget, 0, x, y, z, width, height, depth, glFormat, glFormatType, p_RenderTextureUpdateDesc->data));
-	}
+
+	K15_OPENGL_CALL(glBindTexture(glTextureTarget, 0));
+
 
 	return K15_SUCCESS;
 }

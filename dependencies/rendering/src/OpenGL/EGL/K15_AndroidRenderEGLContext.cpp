@@ -12,9 +12,6 @@
 #include <android/K15_EnvironmentAndroid.h>
 #include <android/K15_WindowAndroid.h>
 
-#define FORMAT_RGB_888 3
-#define FORMAT_RGB_565 4
-
 /*********************************************************************************/
 intern GLboolean K15_AndroidSwapBuffers(K15_GLRenderContext* p_RenderContext)
 {

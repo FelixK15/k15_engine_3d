@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #define K15_MAX_LOG_CONTEXT_COUNT 8
-#define K15_MAX_LOG_BUFFER_LENGTH 1024
+#define K15_MAX_LOG_BUFFER_LENGTH 2048
 
 /*********************************************************************************/
 struct K15_LogContext

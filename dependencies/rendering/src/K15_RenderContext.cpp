@@ -696,6 +696,45 @@ intern void K15_InternalProcessRenderCommandBuffer(K15_RenderContext* p_RenderCo
 	p_RenderContext->commandProcessing.screenManagement.clearScreen(p_RenderContext);
 }
 /*********************************************************************************/
+intern inline void K15_InternalSetRenderContextStubFunctions(K15_RenderContext* p_RenderContext)
+{
+	p_RenderContext->commandProcessing.screenManagement.clearScreen = K15_ClearScreenCommandFnc_stubFnc;
+
+	//buffer
+	p_RenderContext->commandProcessing.bufferManagement.createBuffer = K15_CreateBufferCommandFnc_stubFnc;
+	p_RenderContext->commandProcessing.bufferManagement.updateBuffer = K15_UpdateBufferCommandFnc_stubFnc;
+	p_RenderContext->commandProcessing.bufferManagement.deleteBuffer = K15_DeleteBufferCommandFnc_stubFnc;
+
+	//programs
+	p_RenderContext->commandProcessing.programManagement.createProgram = K15_CreateProgramCommandFnc_stubFnc;
+	p_RenderContext->commandProcessing.programManagement.deleteProgram = K15_DeleteProgramCommandFnc_stubFnc;
+	p_RenderContext->commandProcessing.programManagement.updateUniform = K15_UpdateUniformCommandFnc_stubFnc;
+
+	//states
+	p_RenderContext->commandProcessing.stateManagement.setBlendState = K15_SetBlendStateCommandFnc_stubFnc;
+	p_RenderContext->commandProcessing.stateManagement.setStencilState = K15_SetStencilStateCommandFnc_stubFnc;
+	p_RenderContext->commandProcessing.stateManagement.setRasterizerState = K15_SetRasterizerStateCommandFnc_stubFnc;
+	p_RenderContext->commandProcessing.stateManagement.setDepthState = K15_SetDepthStateCommandFnc_stubFnc;
+
+	//sampler
+	p_RenderContext->commandProcessing.samplerManagement.createSampler = K15_CreateSamplerCommandFnc_stubFnc;
+	p_RenderContext->commandProcessing.samplerManagement.deleteSampler = K15_DeleteSamplerCommandFnc_stubFnc;
+
+	//render target
+	p_RenderContext->commandProcessing.renderTargetManagement.createRenderTarget = K15_CreateRenderTargetCommandFnc_stubFnc;
+	p_RenderContext->commandProcessing.renderTargetManagement.bindRenderTarget = K15_BindRenderTargetCommandFnc_stubFnc;
+	p_RenderContext->commandProcessing.renderTargetManagement.unbindRenderTarget = K15_UnbindRenderTargetCommandFnc_stubFnc;
+	p_RenderContext->commandProcessing.renderTargetManagement.deleteRenderTarget = K15_DeleteSamplerCommandFnc_stubFnc;
+
+	//textures
+	p_RenderContext->commandProcessing.textureManagement.createTexture = K15_CreateTextureCommandFnc_stubFnc;
+	p_RenderContext->commandProcessing.textureManagement.updateTexture = K15_UpdateTextureCommandFnc_stubFnc;
+	p_RenderContext->commandProcessing.textureManagement.deleteTexture = K15_DeleteTextureCommandFnc_stubFnc;
+
+	//drawing
+	p_RenderContext->commandProcessing.drawManagement.drawFullscreenQuad = K15_DrawFullscreenQuadCommandFnc_stubFnc;
+}
+/*********************************************************************************/
 // intern uint8 K15_InternalRenderThreadFunction(void* p_Parameter)
 // {
 // 	while(true)
@@ -917,6 +956,8 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext)
 	renderContext->viewportCount = 1;
 	renderContext->activeViewportIndex = 0;
 
+	//set stub functions
+	K15_InternalSetRenderContextStubFunctions(renderContext);
 	// allocate memory for 2 pointer
 // 	byte* threadParameterBuffer = (byte*)malloc(K15_PTR_SIZE * 2);
 // 

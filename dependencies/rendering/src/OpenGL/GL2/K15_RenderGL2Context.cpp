@@ -21,9 +21,10 @@
 
 #include "OpenGL/GL2/K15_RenderGL2Conversion.cpp"
 #include "OpenGL/GL2/K15_RenderGL2Buffer.cpp"
-//#include "OpenGL/GL2/K15_RenderGL2Texture.cpp"
+#include "OpenGL/GL2/K15_RenderGL2Texture.cpp"
 #include "OpenGL/GL2/K15_RenderGL2Frame.cpp"
 #include "OpenGL/GL2/K15_RenderGL2State.cpp"
+#include "OpenGL/GL2/K15_RenderGL2Sampler.cpp"
 
 typedef uint8 (*K15_CreatePlatformContextFnc)(K15_GLRenderContext*, K15_OSLayerContext*);
 
@@ -330,6 +331,11 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 	p_RenderContext->commandProcessing.stateManagement.setDepthState = K15_GLSetDepthStateDesc;
 	p_RenderContext->commandProcessing.stateManagement.setRasterizerState = K15_GLSetRasterizerStateDesc;
 	p_RenderContext->commandProcessing.stateManagement.setStencilState = K15_GLSetStencilStateDesc;
+
+	//texture
+	p_RenderContext->commandProcessing.textureManagement.createTexture = K15_GLCreateTexture;
+	p_RenderContext->commandProcessing.textureManagement.updateTexture = K15_GLUpdateTexture;
+	p_RenderContext->commandProcessing.textureManagement.deleteTexture = K15_GLDeleteTexture;
 
 	//screen
 	p_RenderContext->commandProcessing.screenManagement.clearScreen = K15_GLClearScreen;

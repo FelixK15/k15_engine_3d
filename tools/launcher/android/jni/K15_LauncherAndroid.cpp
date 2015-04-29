@@ -4,6 +4,13 @@
 
 #include <K15_RenderContext.h>
 
+#include <K15_RenderBufferDesc.h>
+#include <K15_RenderProgramDesc.h>
+#include <K15_RenderTextureDesc.h>
+#include <K15_RenderSamplerDesc.h>
+#include <K15_RenderStateDesc.h>
+#include <K15_RenderTargetDesc.h>
+
 #include <K15_OSLayer_SystemEvents.h>
 #include <K15_OSLayer_System.h>
 #include <K15_OSLayer_Thread.h>
@@ -37,7 +44,7 @@ JNIEXPORT void JNICALL Java_k15games_engine_launcher_EngineMainThread_K15_1Start
 	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
 	K15_AndroidContext* androidContext = (K15_AndroidContext*)osContext->userData;
 	K15_RenderContext* renderContext = K15_CreateRenderContext(osContext);
-	K15_RenderCommandBuffer* commandBuffer = K15_CreateRenderCommandBuffer(renderContext);
+	K15_RenderCommandBuffer* renderCommandBuffer = K15_CreateRenderCommandBuffer(renderContext);
 
 	K15_SystemEvent systemEvent;
 

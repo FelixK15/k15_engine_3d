@@ -18,41 +18,77 @@
 
 #define K15_RENDER_MAX_VIEWPORT_COUNT 4
 
-typedef uint8 (*K15_ClearScreenCommandFnc)(K15_RenderContext* p_RenderContext);
+K15_FUNCTION_VARIABLE(uint8, K15_ClearScreenCommandFnc, (K15_RenderContext* p_RenderContext));
 
 //buffer
-typedef uint8 (*K15_CreateBufferCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderBufferDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr);
-typedef uint8 (*K15_UpdateBufferCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderBufferUpdateDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr);
-typedef uint8 (*K15_DeleteBufferCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderBufferHandle* p_RenderBufferHandlePtr);
+K15_FUNCTION_VARIABLE(uint8, K15_CreateBufferCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderBufferDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr));
+K15_FUNCTION_VARIABLE(uint8, K15_UpdateBufferCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderBufferUpdateDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr));
+K15_FUNCTION_VARIABLE(uint8, K15_DeleteBufferCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderBufferHandle* p_RenderBufferHandlePtr));
 
 //programs
-typedef uint8 (*K15_CreateProgramCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderProgramDesc* p_RenderProgramDesc, K15_RenderProgramHandle* p_RenderProgramHandlePtr);
-typedef uint8 (*K15_DeleteProgramCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderProgramHandle* p_RenderProgramHandlePtr);
-typedef uint8 (*K15_UpdateUniformCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc, K15_RenderProgramHandle* p_RenderProgramHandlePtr);
+K15_FUNCTION_VARIABLE(uint8, K15_CreateProgramCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderProgramDesc* p_RenderProgramDesc, K15_RenderProgramHandle* p_RenderProgramHandlePtr));
+K15_FUNCTION_VARIABLE(uint8, K15_DeleteProgramCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderProgramHandle* p_RenderProgramHandlePtr));
+K15_FUNCTION_VARIABLE(uint8, K15_UpdateUniformCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc, K15_RenderProgramHandle* p_RenderProgramHandlePtr));
 
 //states
-typedef uint8 (*K15_SetDepthStateCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderDepthStateDesc* p_RenderDepthStateDesc);
-typedef uint8 (*K15_SetStencilStateCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderStencilStateDesc* p_RenderStencilStateDesc);
-typedef uint8 (*K15_SetRasterizerStateCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderRasterizerStateDesc* p_RenderRasterizerStateDesc);
-typedef uint8 (*K15_SetBlendStateCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderBlendStateDesc* p_RenderDepthStateDesc);
+K15_FUNCTION_VARIABLE(uint8, K15_SetDepthStateCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderDepthStateDesc* p_RenderDepthStateDesc));
+K15_FUNCTION_VARIABLE(uint8, K15_SetStencilStateCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderStencilStateDesc* p_RenderStencilStateDesc));
+K15_FUNCTION_VARIABLE(uint8, K15_SetRasterizerStateCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderRasterizerStateDesc* p_RenderRasterizerStateDesc));
+K15_FUNCTION_VARIABLE(uint8, K15_SetBlendStateCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderBlendStateDesc* p_RenderDepthStateDesc));
 
 //sampler
-typedef uint8 (*K15_CreateSamplerCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderSamplerDesc* p_RenderTextureDesc, K15_RenderSamplerHandle* p_RenderTextureHandle);
-typedef uint8 (*K15_DeleteSamplerCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderSamplerHandle* p_RenderTextureHandle);
+K15_FUNCTION_VARIABLE(uint8, K15_CreateSamplerCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderSamplerDesc* p_RenderTextureDesc, K15_RenderSamplerHandle* p_RenderTextureHandle));
+K15_FUNCTION_VARIABLE(uint8, K15_DeleteSamplerCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderSamplerHandle* p_RenderTextureHandle));
 
 //render target
-typedef uint8 (*K15_CreateRenderTargetCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTargetDesc* p_RenderTargetDesc, K15_RenderTargetHandle* p_RenderTargetHandle);
-typedef uint8 (*K15_BindRenderTargetCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTargetHandle* p_RenderTargetHandle);
-typedef uint8 (*K15_UnbindRenderTargetCommandFnc)(K15_RenderContext* p_RenderContext);
-typedef uint8 (*K15_DeleteRenderTargetCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTargetHandle* p_RenderTargetHandle);
+K15_FUNCTION_VARIABLE(uint8, K15_CreateRenderTargetCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderTargetDesc* p_RenderTargetDesc, K15_RenderTargetHandle* p_RenderTargetHandle));
+K15_FUNCTION_VARIABLE(uint8, K15_BindRenderTargetCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderTargetHandle* p_RenderTargetHandle));
+K15_FUNCTION_VARIABLE(uint8, K15_UnbindRenderTargetCommandFnc, (K15_RenderContext* p_RenderContext));
+K15_FUNCTION_VARIABLE(uint8, K15_DeleteRenderTargetCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderTargetHandle* p_RenderTargetHandle));
 
 //textures
-typedef uint8 (*K15_CreateTextureCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTextureDesc* p_RenderTextureDesc, K15_RenderTextureHandle* p_RenderTextureHandle);
-typedef uint8 (*K15_UpdateTextureCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTextureUpdateDesc* p_RenderTextureDesc, K15_RenderTextureHandle* p_RenderTextureHandle);
-typedef uint8 (*K15_DeleteTextureCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTextureHandle* p_RenderTextureHandle);
+K15_FUNCTION_VARIABLE(uint8, K15_CreateTextureCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderTextureDesc* p_RenderTextureDesc, K15_RenderTextureHandle* p_RenderTextureHandle));
+K15_FUNCTION_VARIABLE(uint8, K15_UpdateTextureCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderTextureUpdateDesc* p_RenderTextureDesc, K15_RenderTextureHandle* p_RenderTextureHandle));
+K15_FUNCTION_VARIABLE(uint8, K15_DeleteTextureCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderTextureHandle* p_RenderTextureHandle));
 
 //drawing
-typedef uint8 (*K15_DrawFullscreenQuadCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderProgramHandle* p_RenderProgramHandle);
+K15_FUNCTION_VARIABLE(uint8, K15_DrawFullscreenQuadCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderProgramHandle* p_RenderProgramHandle));
+
+//typedef uint8 (*K15_ClearScreenCommandFnc)(K15_RenderContext* p_RenderContext);
+
+//buffer
+// typedef uint8 (*K15_CreateBufferCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderBufferDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr);
+// typedef uint8 (*K15_UpdateBufferCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderBufferUpdateDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr);
+// typedef uint8 (*K15_DeleteBufferCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderBufferHandle* p_RenderBufferHandlePtr);
+
+//programs
+// typedef uint8 (*K15_CreateProgramCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderProgramDesc* p_RenderProgramDesc, K15_RenderProgramHandle* p_RenderProgramHandlePtr);
+// typedef uint8 (*K15_DeleteProgramCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderProgramHandle* p_RenderProgramHandlePtr);
+// typedef uint8 (*K15_UpdateUniformCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc, K15_RenderProgramHandle* p_RenderProgramHandlePtr);
+
+//states
+// typedef uint8 (*K15_SetDepthStateCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderDepthStateDesc* p_RenderDepthStateDesc);
+// typedef uint8 (*K15_SetStencilStateCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderStencilStateDesc* p_RenderStencilStateDesc);
+// typedef uint8 (*K15_SetRasterizerStateCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderRasterizerStateDesc* p_RenderRasterizerStateDesc);
+// typedef uint8 (*K15_SetBlendStateCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderBlendStateDesc* p_RenderDepthStateDesc);
+
+//sampler
+// typedef uint8 (*K15_CreateSamplerCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderSamplerDesc* p_RenderTextureDesc, K15_RenderSamplerHandle* p_RenderTextureHandle);
+// typedef uint8 (*K15_DeleteSamplerCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderSamplerHandle* p_RenderTextureHandle);
+
+//render target
+// typedef uint8 (*K15_CreateRenderTargetCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTargetDesc* p_RenderTargetDesc, K15_RenderTargetHandle* p_RenderTargetHandle);
+// typedef uint8 (*K15_BindRenderTargetCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTargetHandle* p_RenderTargetHandle);
+// typedef uint8 (*K15_UnbindRenderTargetCommandFnc)(K15_RenderContext* p_RenderContext);
+// typedef uint8 (*K15_DeleteRenderTargetCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTargetHandle* p_RenderTargetHandle);
+
+//textures
+// typedef uint8 (*K15_CreateTextureCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTextureDesc* p_RenderTextureDesc, K15_RenderTextureHandle* p_RenderTextureHandle);
+// typedef uint8 (*K15_UpdateTextureCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTextureUpdateDesc* p_RenderTextureDesc, K15_RenderTextureHandle* p_RenderTextureHandle);
+// typedef uint8 (*K15_DeleteTextureCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTextureHandle* p_RenderTextureHandle);
+
+//drawing
+//typedef uint8 (*K15_DrawFullscreenQuadCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderProgramHandle* p_RenderProgramHandle);
 
 enum K15_RenderCommand
 {
