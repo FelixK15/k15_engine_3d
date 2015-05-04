@@ -1,6 +1,6 @@
 # README #
 
-The K15 Engine 3D is a 3D Game Engine which is currently in heavy development (5th September 2014).
+The K15 Engine 3D is a 3D Game Engine which is currently in heavy development.
 It is the successor to my 2D Game Engine the [K15 Engine](https://bitbucket.org/FelixK15/k15-engine).
 
 The engine is in development since late 2012 and has been refactored several times since then as this is a project I work on in my spare time to test various techniques related with game and engine design.
