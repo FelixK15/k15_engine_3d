@@ -1,9 +1,0 @@
-{
-  "Name" : "OuterFloor",
-  "Passes" : [
-	{
-	    "DiffuseMap":"img/outer_floor.tif",
-    	"ShaderBatch":"default"
-	}
-  ]
-}

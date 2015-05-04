@@ -1,9 +1,0 @@
-{
-  "Name" : "Start",
-  "Passes" : [
-  	{
-	    "DiffuseMap":"img/start.tif",
-    	"ShaderBatch":"default"
-  	}
-  ]
-}

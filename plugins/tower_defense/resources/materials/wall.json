@@ -1,9 +1,0 @@
-{
-  "Name" : "Wall",
-  "Passes" : [
-  	{
-	    "DiffuseMap":"img/wall.tif",
-    	"ShaderBatch":"default"
-	}
-  ]
-}

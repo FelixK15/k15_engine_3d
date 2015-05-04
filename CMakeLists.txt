@@ -17,14 +17,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 #Define Subdirectories
-add_subdirectory(engine)
+add_subdirectory(core)
 add_subdirectory(dependencies)
 add_subdirectory(tools)
-add_subdirectory(renderer_opengl)
-add_subdirectory(test)
-
-set_target_properties(k15core PROPERTIES FOLDER engine)
-set_target_properties(renderer_opengl PROPERTIES FOLDER engine)
 
 message(STATUS "Using Compiler: ${CMAKE_CXX_COMPILER_ID}")
 message(STATUS "Compiling with CXX_FLAGS: ${CMAKE_CXX_FLAGS}")

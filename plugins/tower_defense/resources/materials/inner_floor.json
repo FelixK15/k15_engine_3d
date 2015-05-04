@@ -1,9 +1,0 @@
-{
-  "Name" : "InnerFloor",
-  "Passes" : [
-  	{
-	    "DiffuseMap":"img/inner_floor.tif",
-    	"ShaderBatch":"default"
-  	}
-  ]
-}
