@@ -11,7 +11,7 @@
 #include "win32/K15_EventsWin32.h"
 #include "win32/K15_ThreadWin32.h"
 
-#include <K15_Logging.h>
+#include <K15_Logging.h>	
 
 #ifdef K15_DEBUG
 /*********************************************************************************/
@@ -68,6 +68,16 @@ void K15_Win32LogConsole(const char* p_Message, LogPriority p_Priority)
 /*********************************************************************************/
 #endif //K15_DEBUG
 
+// /*********************************************************************************/
+
+// /*********************************************************************************/
+// intern inline K15_Win32DirectInputController K15_InternalCreateInputDevice(LPDIRECTINPUTDEVICE p_DeviceInstance)
+// {
+// 	K15_Win32DirectInputController win32DirectInputController = {};
+// 	HRESULT result = p_DeviceInstance->EnumObjects(K15_InternalEnumDeviceObjectsCallback, &win32DirectInputController, DIDFT_AXIS | DIDFT_BUTTON);
+// 
+// 	return win32DirectInputController;
+// }
 /*********************************************************************************/
 intern inline uint8 K15_InternalTryLoadXInput(K15_Win32Context* p_Win32Context)
 {
@@ -107,33 +117,33 @@ intern inline uint8 K15_InternalTryLoadXInput(K15_Win32Context* p_Win32Context)
 /*********************************************************************************/
 intern inline uint8 K15_InternalTryLoadDirectInput(K15_Win32Context* p_Win32Context)
 {
-// 	HINSTANCE appInstance = p_Win32Context->hInstance;
-// 	HMODULE directInput = LoadLibraryA("dinput.dll");
-// 
-// 	if (!directInput)
-// 	{
-// 		//TODO: add hint (DX missing)
-// 		return K15_OS_ERROR_SYSTEM;
-// 	}
-// 
-// 	LPDIRECTINPUT directInputHandle = 0;
-// 
-// 	p_Win32Context->DirectInput.module = directInput;
-// 	p_Win32Context->DirectInput.directInputCreateEx = (DirectInputCreateExFnc)GetProcAddress(directInput, "DirectInputCreateEx");
-// 
-// 	assert(p_Win32Context->DirectInput.directInputCreateEx);
-// 	
-// 	HRESULT result = DirectInput8Create(appInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)&directInputHandle, 0);
-// 
-// 	if (SUCCEEDED(result))
-// 	{
-// 		p_Win32Context->DirectInput.directInputHandle = directInputHandle;
-// 	}
-// 	else
-// 	{
-// 		//Add Hint
-// 		return K15_OS_ERROR_SYSTEM;
-// 	}
+	HINSTANCE appInstance = p_Win32Context->hInstance;
+	HMODULE directInput = LoadLibraryA("dinput8.dll");
+
+	if (!directInput)
+	{
+		//TODO: add hint (DX missing)
+		return K15_OS_ERROR_SYSTEM;
+	}
+
+	LPDIRECTINPUT directInputHandle = 0;
+
+	p_Win32Context->DirectInput.module = directInput;
+	p_Win32Context->DirectInput.directInput8Create = (DirectInput8CreateFnc)GetProcAddress(directInput, "DirectInput8Create");
+
+	assert(p_Win32Context->DirectInput.directInput8Create);
+	
+	HRESULT result = p_Win32Context->DirectInput.directInput8Create(appInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)&directInputHandle, 0);
+
+	if (SUCCEEDED(result))
+	{
+		p_Win32Context->DirectInput.directInputHandle = directInputHandle;
+	}
+	else
+	{
+		//Add Hint
+		return K15_OS_ERROR_SYSTEM;
+	}
 
 
 	return K15_SUCCESS;
@@ -230,6 +240,19 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 		return K15_OS_ERROR_OUT_OF_MEMORY;
 	}
 
+	win32SpecificContext->hInstance = p_hInstance;
+	win32SpecificContext->connectedController = 0;
+
+	//assign controller index
+	for (uint32 controllerIndex = 0;
+		 controllerIndex < K15_MAX_CONTROLLER;
+		 ++controllerIndex)
+	{
+		win32SpecificContext->controller[controllerIndex].controllerIndex = controllerIndex;
+		win32SpecificContext->controller[controllerIndex].controllerState = K15_WIN32_CONTROLLER_STATE_NOT_CONNECTED;
+		win32SpecificContext->controller[controllerIndex].APIType = K15_WIN32_APITYPE_UNDEFINED;
+	}
+
 	uint8 xInputLoaded = K15_InternalTryLoadXInput(win32SpecificContext);
 	uint8 directInputLoaded = K15_InternalTryLoadDirectInput(win32SpecificContext);
 	uint8 directSoundLoaded = K15_InternalTryLoadDirectSound(win32SpecificContext);
@@ -241,15 +264,13 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 		return K15_OS_ERROR_SYSTEM;
 	}
 
-	//win32 context as userdata
-	win32SpecificContext->hInstance = p_hInstance;
-
 	//frequency of performance timer
 	LARGE_INTEGER performanceFrequency;
 	QueryPerformanceFrequency(&performanceFrequency);
 	
 	win32SpecificContext->performanceFrequency = (float)performanceFrequency.QuadPart;
 
+	//win32 context as userdata
 	win32OSContext.userData = (void*)win32SpecificContext;
 
 	//Register Window Class
@@ -305,6 +326,18 @@ void K15_Win32ShutdownOSLayer()
 	{
 		FreeLibrary(win32Context->XInput.module);
 		win32Context->XInput.module = 0;
+	}
+
+	if (win32Context->DirectInput.module)
+	{
+		FreeLibrary(win32Context->DirectInput.module);
+		win32Context->DirectInput.module = 0;
+	}
+
+	if (win32Context->DirectSound.module)
+	{
+		FreeLibrary(win32Context->DirectSound.module);
+		win32Context->DirectSound.module = 0;
 	}
 }
 /*********************************************************************************/

@@ -9,4 +9,6 @@
 //undef to disable jni exception checks after each jni call
 #define K15_CHECK_JNI_CALLS
 
+#define K15_MAX_CONTROLLER 4
+
 #endif //_K15_OSLayer_Config_h_

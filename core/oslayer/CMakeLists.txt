@@ -52,6 +52,7 @@ set(K15_OS_LAYER_ANDROID_INC "include/android/K15_EnvironmentAndroid.h"
 				"include/posix/K15_SystemPosix.h"
 				"include/posix/K15_FileSystemPosix.h")
 
+include_directories(src)
 include_directories(include)
 include_directories(../logging/include)
 

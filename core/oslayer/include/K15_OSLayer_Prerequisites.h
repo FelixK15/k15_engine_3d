@@ -16,6 +16,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <time.h>
+#include <intsafe.h>
 
 #ifdef __ANDROID__
 	#define K15_OS_ANDROID
@@ -98,12 +99,16 @@
 	//#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
 	#include <windowsx.h>
+	#include <Wbemidl.h>
+	#include <oleauto.h>
 	#include <winnt.h>
 	#include <xinput.h>
 	#include <dinput.h>
 	#include <dsound.h>
 	#include <stdlib.h>
 	#include <io.h>
+
+#define WIN32_COM_SAFE_RELEASE(ptr) if (ptr){ ptr->Release(); ptr = 0;}
 
 	//8 bit types
 	typedef signed    __int8  int8;
