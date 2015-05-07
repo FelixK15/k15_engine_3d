@@ -178,6 +178,18 @@ intern inline void K15_Win32MouseWheelInputReceived(HWND hWnd, UINT uMsg, WPARAM
 	K15_AddSystemEventToQueue(&win32Event);
 }
 /*********************************************************************************/
+intern inline void K15_Win32DeviceChangeReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
+	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
+
+	if (wParam == DBT_DEVNODES_CHANGED)
+	{
+		//reinitialize DirectInput devices on device arrival/removal
+		K15_Win32InitializeDirectInputDevices(win32Context, hWnd);
+	}
+}
+/*********************************************************************************/
 intern inline DWORD K15_Win32CheckControllerConnectivity(K15_Win32Context* p_Win32Context, K15_Win32Controller* p_Controller, uint32 p_NumController)
 {
 	DWORD connectedController = 0;
@@ -304,6 +316,10 @@ LRESULT CALLBACK K15_Win32WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 	case WM_MOUSEWHEEL:
 		K15_Win32MouseWheelInputReceived(hWnd, uMsg, wParam, lParam);
+		break;
+
+	case WM_DEVICECHANGE:
+		K15_Win32DeviceChangeReceived(hWnd, uMsg, wParam, lParam);
 		break;
 	}
 

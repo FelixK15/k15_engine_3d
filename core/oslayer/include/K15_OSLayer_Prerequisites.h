@@ -107,7 +107,7 @@
 	#include <dsound.h>
 	#include <stdlib.h>
 	#include <io.h>
-
+	#include <Dbt.h>
 #define WIN32_COM_SAFE_RELEASE(ptr) if (ptr){ ptr->Release(); ptr = 0;}
 
 	//8 bit types
