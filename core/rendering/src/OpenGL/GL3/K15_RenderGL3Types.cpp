@@ -4,6 +4,10 @@
 	//wgl
 	PFNWGLCHOOSEPIXELFORMATARBPROC		kwglChoosePixelFormatARB			= 0;
 	PFNWGLCREATECONTEXTATTRIBSARBPROC	kwglCreateContextAttribsARB			= 0;
+	PFNWGLGETPROCADDRESSPROC			kwglGetProcAddress					= 0;
+	PFNWGLCREATECONTEXTPROC				kwglCreateContext					= 0;
+	PFNWGLDELETECONTEXTPROC				kwglDeleteContext					= 0;
+	PFNWGLMAKECURRENTPROC				kwglMakeCurrent						= 0;
 #endif //K15_OS_WINDOWS
 
 //default gl functions
@@ -35,6 +39,24 @@ PFNGLFRAMEBUFFERRENDERBUFFERPROC		kglFramebufferRenderbuffer			= 0;
 PFNGLFRAMEBUFFERTEXTUREPROC				kglFramebufferTexture				= 0;
 PFNGLCHECKFRAMEBUFFERSTATUSPROC			kglCheckFramebufferStatus			= 0;
 PFNGLDRAWBUFFERSPROC					kglDrawBuffers						= 0;
+PFNGLBINDTEXTUREPROC					kglBindTexture						= 0;
+PFNGLCLEARPROC							kglClear							= 0;
+PFNGLCLEARCOLORPROC						kglClearColor						= 0;
+PFNGLCULLFACEPROC						kglCullFace							= 0;
+PFNGLDELETETEXTURESPROC					kglDeleteTextures					= 0;
+PFNGLDEPTHFUNCPROC						kglDepthFunc						= 0;
+PFNGLDISABLEPROC						kglDisable							= 0;
+PFNGLDRAWELEMENTSPROC					kglDrawElements						= 0;
+PFNGLENABLEPROC							kglEnable							= 0;
+PFNGLFRONTFACEPROC						kglFrontFace						= 0;
+PFNGLGENTEXTURESPROC					kglGenTextures						= 0;
+PFNGLGETERRORPROC						kglGetError							= 0;
+PFNGLGETFLOATVPROC						kglGetFloatv						= 0;
+PFNGLGETINTEGERVPROC					kglGetIntegerv						= 0;
+PFNGLGETSTRINGIPROC						kglGetStringi						= 0;
+PFNGLGETSTRINGPROC						kglGetString						= 0;
+PFNGLPOLYGONMODEPROC					kglPolygonMode						= 0;
+PFNGLVIEWPORTPROC						kglViewport							= 0;
 
 //GL_ARB_debug_output
 PFNGLDEBUGMESSAGECALLBACKPROC		kglDebugMessageCallback			= 0;
@@ -143,5 +165,5 @@ PFNGLVALIDATEPROGRAMPIPELINEPROC	kglValidateProgramPipeline		= 0;
 PFNGLGETPROGRAMPIPELINEINFOLOGPROC	kglGetProgramPipelineInfoLog	= 0;
 
 //custom gl functions
-PFNKGLSWAPBUFFERS					kglSwapBuffers					= 0;
-PFNKGLGETPROCADDRESS				kglGetProcAddress				= 0;
+PFNKGLSWAPBUFFERSPROC				kglSwapBuffers					= 0;
+PFNKGLGETPROCADDRESSPROC			kglGetProcAddress				= 0;

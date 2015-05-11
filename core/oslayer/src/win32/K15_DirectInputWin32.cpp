@@ -202,13 +202,16 @@ struct K15_InternalInputEnumerationResult
 
 	uint32 numSupportedDevices;
 	uint32 numUnsupportedDevices;
+// 
+// 	GUID xInputFilter[K15_MAX_CONTROLLER];
+// 	uint32 xInputFilterCounter;
 };
 /*********************************************************************************/
 
 
 //straight from MSDN (https://msdn.microsoft.com/en-us/library/windows/desktop/ee417014(v=vs.85).aspx)
 /*********************************************************************************/
-intern BOOL K15_InternalIsXInputDevice(const GUID* p_DirectInputGUID)
+intern BOOL K15_InternalIsXInputDevice(const GUID* p_DirectInputGUID/*, K15_InternalInputEnumerationResult* p_EnumerationResult*/)
 {
 	IWbemLocator*           pIWbemLocator  = NULL;
 	IEnumWbemClassObject*   pEnumDevices   = NULL;
@@ -312,8 +315,35 @@ LCleanup:
 	if( bCleanupCOM )
 		CoUninitialize();
 
+// 	if (bIsXinputDevice)
+// 	{
+// 		//add to filter if xinput guid
+// 		uint32 filterIndex = p_EnumerationResult->xInputFilterCounter;
+// 		p_EnumerationResult->xInputFilter[filterIndex++] = *p_DirectInputGUID;
+// 		p_EnumerationResult->xInputFilterCounter = filterIndex;
+// 	}
+
 	return bIsXinputDevice;
 }
+/*********************************************************************************/
+// intern inline BOOL K15_InternalCheckXInputGUIDFilter(GUID* p_ProductGUID, K15_InternalInputEnumerationResult* p_EnumerationResult)
+// {
+// 	uint32 productGUIDFilterCount = p_EnumerationResult->xInputFilterCounter;
+// 
+// 	for (uint32 productGUIDFilterIndex = 0;
+// 		productGUIDFilterIndex < productGUIDFilterCount;
+// 		++productGUIDFilterIndex)
+// 	{
+// 		GUID currentFilterGUID = p_EnumerationResult->xInputFilter[productGUIDFilterIndex];
+// 
+// 		if (currentFilterGUID == *p_ProductGUID)
+// 		{
+// 			return TRUE;
+// 		}
+// 	}
+// 
+// 	return FALSE;
+// }
 /*********************************************************************************/
 intern inline BOOL K15_Win32EnumDirectInputDeviceCallback(LPCDIDEVICEINSTANCEA p_DeviceInstance, LPVOID p_Ref)
 {
@@ -363,13 +393,9 @@ intern inline BOOL K15_Win32EnumDirectInputDeviceCallback(LPCDIDEVICEINSTANCEA p
 /*********************************************************************************/
 intern BOOL K15_InternalEnumDeviceObjectsCallback(LPCDIDEVICEOBJECTINSTANCEA p_DeviceObjectInstance, LPVOID p_Parameter)
 {
-// 	DWORD numInputObjects = win32DirectInputController->numInputObjects;
-// 	DWORD numButtons = win32DirectInputController->numButtons;
-// 	DWORD numAxis = win32DirectInputController->numAxis;
 	DWORD objectType = p_DeviceObjectInstance->dwType;
 	DWORD objectFlags = DIDOI_ASPECTACCEL | DIDOI_ASPECTVELOCITY | DIDOI_ASPECTPOSITION;
 	GUID objectGUID = p_DeviceObjectInstance->guidType;
-	//LPDIOBJECTDATAFORMAT currentFormat = p_DeviceObjectInstance->
 
 	LPDIRECTINPUTDEVICE deviceInstace = (LPDIRECTINPUTDEVICE)p_Parameter;
 
@@ -382,10 +408,6 @@ intern BOOL K15_InternalEnumDeviceObjectsCallback(LPCDIDEVICEOBJECTINSTANCEA p_D
 	dibRange.lMin              = 0;
 	dibRange.lMax              = SHORT_MAX;
 
-// 	currentFormat->pguid = &objectGUID;
-// 	currentFormat->dwOfs = 4 * numInputObjects;
-// 	currentFormat->dwFlags = objectFlags;
-
 	if ((objectType & DIDFT_AXIS) > 0)
 	{
 		HRESULT result = deviceInstace->SetProperty(DIPROP_RANGE, &dibRange.diph);
@@ -393,31 +415,47 @@ intern BOOL K15_InternalEnumDeviceObjectsCallback(LPCDIDEVICEOBJECTINSTANCEA p_D
 		result = result;
 	}
 
-	//only get here when a supported objecttype has been found
-// 	win32DirectInputController->numAxis = numAxis;
-// 	win32DirectInputController->numButtons = numButtons;
-// 	win32DirectInputController->numInputObjects += 1;
-
 	return DIENUM_CONTINUE;
 }
 /*********************************************************************************/
-intern void K15_Win32InitializeDirectInputDevices(K15_Win32Context* p_Win32Context, HWND p_HWND)
+intern void K15_Win32InitializeDirectInputDevices(K15_Win32Context* p_Win32Context, uint32 p_NumXinputDevices, HWND p_HWND)
 {
-	K15_InternalInputEnumerationResult enumerationResult = {};
+ 	K15_InternalInputEnumerationResult enumerationResult = {};
+// 	memcpy(enumerationResult.xInputFilter, p_Win32Context->DirectInput.xInputGUIDFilter, sizeof(p_Win32Context->DirectInput.xInputGUIDFilter));
+// 	enumerationResult.xInputFilterCounter = p_Win32Context->DirectInput.xInputGUIDFilterCounter;
 
 	HRESULT result;
 	
 	result = p_Win32Context->DirectInput.directInputHandle->EnumDevices(DI8DEVCLASS_GAMECTRL, K15_Win32EnumDirectInputDeviceCallback, (LPVOID)&enumerationResult, DIEDFL_ALLDEVICES);
-	
-	DWORD deviceCount = p_Win32Context->connectedController;
+
+	DWORD xInputDeviceCount = p_NumXinputDevices;
 
 	if (SUCCEEDED(result))
 	{
+		int32 numSupportedDevices = min(enumerationResult.numSupportedDevices, K15_MAX_CONTROLLER);
+
 		//save supported devices
-		for (uint32 supportedDeviceIndex = 0;
-			supportedDeviceIndex < enumerationResult.numSupportedDevices;
+		for (int32 supportedDeviceIndex = 0;
+			supportedDeviceIndex < numSupportedDevices;
 			++supportedDeviceIndex)
 		{
+			if ((supportedDeviceIndex + xInputDeviceCount) == K15_MAX_CONTROLLER)
+			{
+				int maxController = K15_MAX_CONTROLLER;
+				K15_LOG_ERROR_MESSAGE("Too many controller. Only a number of max %d is supported.", maxController);
+				break;
+			}
+
+			uint32 controllerIndex = xInputDeviceCount + supportedDeviceIndex;
+
+			//Check if the current device has been scanned before and is maybe a XInput device
+			K15_Win32Controller* controller = &p_Win32Context->controller[controllerIndex];
+			
+			if (controller->APIType == K15_WIN32_APITYPE_XINPUT)
+			{
+				continue;
+			}
+
 			LPCDIDEVICEINSTANCEA deviceInformationInstance = &enumerationResult.supportedDevices[supportedDeviceIndex];
 			LPDIRECTINPUTDEVICE deviceInstance = 0;
 			HRESULT result = 0;
@@ -428,6 +466,7 @@ intern void K15_Win32InitializeDirectInputDevices(K15_Win32Context* p_Win32Conte
 			dipBufferSize.diph.dwHeaderSize = sizeof(DIPROPHEADER);
 			dipBufferSize.diph.dwHow = DIPH_DEVICE;
 			dipBufferSize.dwData = K15_WIN32_DIRECT_INPUT_DEVICE_BUFFER_SIZE;
+
 
 			result = p_Win32Context->DirectInput.directInputHandle->CreateDevice(deviceInformationInstance->guidProduct, &deviceInstance, 0);
 
@@ -470,19 +509,15 @@ intern void K15_Win32InitializeDirectInputDevices(K15_Win32Context* p_Win32Conte
 
 			K15_LOG_DEBUG_MESSAGE("Found supported controller \"%s\".", deviceInformationInstance->tszProductName);
 
-			p_Win32Context->controller[deviceCount].APIType = K15_WIN32_APITYPE_DIRECTINPUT;
-			p_Win32Context->controller[deviceCount].controllerState = K15_WIN32_CONTROLLER_STATE_CONNECTED;
-			p_Win32Context->controller[deviceCount].directInputDevice = deviceInstance;
+			p_Win32Context->controller[xInputDeviceCount].APIType = K15_WIN32_APITYPE_DIRECTINPUT;
+			p_Win32Context->controller[xInputDeviceCount].controllerState = K15_WIN32_CONTROLLER_STATE_CONNECTED;
+			p_Win32Context->controller[xInputDeviceCount].directInputDevice = deviceInstance;
 
-			deviceCount += 1;
-
-			if (deviceCount == K15_MAX_CONTROLLER)
+			if (controllerIndex == K15_MAX_CONTROLLER)
 			{
 				break;
 			}
 		}
-
-		p_Win32Context->connectedController = deviceCount;
 
 		//list unsupported devices
 		for (uint32 unsupportedDeviceIndex = 0;
@@ -494,16 +529,24 @@ intern void K15_Win32InitializeDirectInputDevices(K15_Win32Context* p_Win32Conte
 			K15_LOG_WARNING_MESSAGE("Controller \"%s\" unsupported.", deviceInstance->tszProductName);
 		}
 	}
+
+// 	memcpy(p_Win32Context->DirectInput.xInputGUIDFilter, enumerationResult.xInputFilter, sizeof(p_Win32Context->DirectInput.xInputGUIDFilter));
+// 
+// 	p_Win32Context->DirectInput.xInputGUIDFilterCounter = enumerationResult.xInputFilterCounter;
 }
 /*********************************************************************************/
 intern inline BOOL K15_Win32CheckDirectInputConnectivity(K15_Win32Context* p_Win32Context, K15_Win32Controller* p_Controller)
 {
+
 	if (p_Controller->APIType == K15_WIN32_APITYPE_DIRECTINPUT)
 	{
 		LPDIRECTINPUTDEVICE currentDevice = p_Controller->directInputDevice;
-		HRESULT result = currentDevice->GetDeviceState(0, 0);
+		DIDEVICEOBJECTDATA dummyData = {};
+		DWORD dummySize = 0;
+		HRESULT result = currentDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), &dummyData, &dummySize ,DIGDD_PEEK);
+		BOOL connected = result == DI_OK ? TRUE : FALSE;
 
-		return result == DI_OK;
+		return connected;
 	}
 
 	return FALSE;

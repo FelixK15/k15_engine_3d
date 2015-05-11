@@ -213,12 +213,10 @@ intern int K15_CmpStringsSort(const void* a, const void* b)
 intern void K15_GLGetExtensions(K15_GLRenderContext* p_GLRenderContext)
 {
 	//try to get extensions via glGetStringi...
-	PFNGLGETSTRINGIPROC kglGetStringi = (PFNGLGETSTRINGIPROC)kglGetProcAddress("glGetStringi");
-
 	if (kglGetStringi)
 	{
 		GLint numExtensions = 0;
-		glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+		kglGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
 
 		p_GLRenderContext->extensions.count = numExtensions;
 		p_GLRenderContext->extensions.names = (char**)(malloc(sizeof(char*) * numExtensions));
@@ -237,7 +235,7 @@ intern void K15_GLGetExtensions(K15_GLRenderContext* p_GLRenderContext)
 	{
 		// ... didn't work...get extensions via glGetString
 		const char* separator = " ";
-		const GLubyte* extensionsString = glGetString(GL_EXTENSIONS);
+		const GLubyte* extensionsString = kglGetString(GL_EXTENSIONS);
 
 		size_t extensionStringLength = strlen((const char*)extensionsString);
 		char* extensionStringBuffer = (char*)alloca(extensionStringLength + 1); //+1 for 0 terminator
@@ -317,7 +315,6 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 	K15_CHECK_ASSIGNMENT(kglFramebufferTexture, (PFNGLFRAMEBUFFERTEXTUREPROC)kglGetProcAddress("glFramebufferTexture"));
 	K15_CHECK_ASSIGNMENT(kglCheckFramebufferStatus, (PFNGLCHECKFRAMEBUFFERSTATUSPROC)kglGetProcAddress("glCheckFramebufferStatus"));
 	K15_CHECK_ASSIGNMENT(kglRenderbufferStorageMultisample, (PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC)kglGetProcAddress("glRenderbufferStorageMultisample"));
-	K15_CHECK_ASSIGNMENT(kglDrawBuffers, (PFNGLDRAWBUFFERSPROC)kglGetProcAddress("glDrawBuffers"));
 
 	if(K15_Search("GL_AMD_debug_output", p_GLRenderContext->extensions.names, 
 		p_GLRenderContext->extensions.count, sizeof(char*), K15_CmpStrings) != 0)
@@ -483,9 +480,9 @@ intern void K15_InternalGLGetRenderCapabilities(K15_RenderContext* p_RenderConte
 	GLint glMaxColorAttachments = 1;
 	GLint glMaxSamples = 0;
 
-	K15_OPENGL_CALL(glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &glMaxAnistropy));
-	K15_OPENGL_CALL(glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &glMaxColorAttachments));
-	K15_OPENGL_CALL(glGetIntegerv(GL_MAX_SAMPLES, &glMaxSamples));
+	K15_OPENGL_CALL(kglGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &glMaxAnistropy));
+	K15_OPENGL_CALL(kglGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &glMaxColorAttachments));
+	K15_OPENGL_CALL(kglGetIntegerv(GL_MAX_SAMPLES, &glMaxSamples));
 
 	capabilities->maxAnisotropy = (float)glMaxAnistropy;
 	capabilities->maxRenderTargets = (uint32)glMaxColorAttachments;
@@ -608,21 +605,21 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 	{
 		return result;
 	}
-	
+
 	K15_InternalGLSetFunctionPointers(p_RenderContext);
 
-	glContext->vendorString = glGetString(GL_VENDOR);
-	glContext->rendererString = glGetString(GL_RENDERER);
+	glContext->vendorString = kglGetString(GL_VENDOR);
+	glContext->rendererString = kglGetString(GL_RENDERER);
 	
-	glGetIntegerv(GL_MINOR_VERSION, &glContext->version.minor);
-	glGetIntegerv(GL_MINOR_VERSION, &glContext->version.major);
+	kglGetIntegerv(GL_MINOR_VERSION, &glContext->version.minor);
+	kglGetIntegerv(GL_MAJOR_VERSION, &glContext->version.major);
 
 	//glGetIntegerv fails for OpenGL ES 2.0
-	GLenum versionRetrieveError = glGetError();
+	GLenum versionRetrieveError = kglGetError();
 
 	if(versionRetrieveError == GL_INVALID_ENUM)
 	{
-		const GLubyte* versionString = glGetString(GL_VERSION);
+		const GLubyte* versionString = kglGetString(GL_VERSION);
 		char* token = strtok((char*)versionString, ".");
 		
 		glContext->version.major = atoi(token);
@@ -663,14 +660,14 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerC
 	K15_Window* window = p_OSLayerContext->window.window;
 
 	//set initiale viewport
-	glViewport(0, 0, window->width, window->height);
+	kglViewport(0, 0, window->width, window->height);
 
-	glEnable(GL_STENCIL_TEST);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glEnable(GL_POLYGON_OFFSET_FILL);
+	kglEnable(GL_STENCIL_TEST);
+	kglEnable(GL_DEPTH_TEST);
+	kglEnable(GL_BLEND);
+	kglEnable(GL_POLYGON_OFFSET_FILL);
 
-	glClearColor(0.f, 0.f, 0.f, 1.f);
+	kglClearColor(0.f, 0.f, 0.f, 1.f);
 
 	//Create program pipeline
 	GLuint programPipeline;

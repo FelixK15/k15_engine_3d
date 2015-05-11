@@ -10,7 +10,7 @@
 #include <win32/K15_EnvironmentWin32.h>
 
 /*********************************************************************************/
-intern uint8 K15_Win32CreateDummyContext(HWND hwnd, HDC dc, HGLRC* p_Context)
+intern inline uint8 K15_Win32InternalCreateDummyContext(HWND hwnd, HDC dc, HGLRC* p_Context)
 {
 	HGLRC context = 0;
 	int pixelFormatIndex = 0;
@@ -36,8 +36,8 @@ intern uint8 K15_Win32CreateDummyContext(HWND hwnd, HDC dc, HGLRC* p_Context)
 
 		SetPixelFormat(dc, pixelFormatIndex, &px);
 
-		context = wglCreateContext(dc);
-		wglMakeCurrent(dc, context);
+		context = kwglCreateContext(dc);
+		kwglMakeCurrent(dc, context);
 
 		*p_Context = context;
 	}
@@ -45,9 +45,43 @@ intern uint8 K15_Win32CreateDummyContext(HWND hwnd, HDC dc, HGLRC* p_Context)
 	return context != 0 ? K15_SUCCESS : K15_OS_ERROR_SYSTEM;
 }
 /*********************************************************************************/
+intern inline void K15_Win32InternalGetWGLFunctionPointer(HMODULE p_LibModule)
+{
+	K15_CHECK_ASSIGNMENT(kwglGetProcAddress, (PFNWGLGETPROCADDRESSPROC)GetProcAddress(p_LibModule, "wglGetProcAddress"));
+	K15_CHECK_ASSIGNMENT(kwglCreateContext, (PFNWGLCREATECONTEXTPROC)GetProcAddress(p_LibModule, "wglCreateContext"));
+	K15_CHECK_ASSIGNMENT(kwglDeleteContext, (PFNWGLDELETECONTEXTPROC)GetProcAddress(p_LibModule, "wglDeleteContext"));
+	K15_CHECK_ASSIGNMENT(kwglMakeCurrent, (PFNWGLMAKECURRENTPROC)GetProcAddress(p_LibModule, "wglMakeCurrent"));
+}
+/*********************************************************************************/
+intern inline void K15_Win32InternalGetWGLContextFunctionPointer(HMODULE p_LibModule)
+{
+	//These function have to be loaded pre extension checking or directly from the opengl32.dll library
+	K15_CHECK_ASSIGNMENT(kwglChoosePixelFormatARB, (PFNWGLCHOOSEPIXELFORMATARBPROC)kwglGetProcAddress("wglChoosePixelFormatARB"));
+	K15_CHECK_ASSIGNMENT(kglGetStringi,	(PFNGLGETSTRINGIPROC)kwglGetProcAddress("glGetStringi"));
+	K15_CHECK_ASSIGNMENT(kwglCreateContextAttribsARB, (PFNWGLCREATECONTEXTATTRIBSARBPROC)kwglGetProcAddress("wglCreateContextAttribsARB"));
+
+	K15_CHECK_ASSIGNMENT(kglBindTexture, (PFNGLBINDTEXTUREPROC)GetProcAddress(p_LibModule, "glBindTexture"));
+	K15_CHECK_ASSIGNMENT(kglClear, (PFNGLCLEARPROC)GetProcAddress(p_LibModule, "glClear"));
+	K15_CHECK_ASSIGNMENT(kglClearColor, (PFNGLCLEARCOLORPROC)GetProcAddress(p_LibModule, "glClearColor"));
+	K15_CHECK_ASSIGNMENT(kglCullFace, (PFNGLCULLFACEPROC)GetProcAddress(p_LibModule, "glCullFace"));
+	K15_CHECK_ASSIGNMENT(kglDeleteTextures, (PFNGLDELETETEXTURESPROC)GetProcAddress(p_LibModule, "glDeleteTextures"));
+	K15_CHECK_ASSIGNMENT(kglDepthFunc, (PFNGLDEPTHFUNCPROC)GetProcAddress(p_LibModule, "glDepthFunc"));
+	K15_CHECK_ASSIGNMENT(kglDisable, (PFNGLDISABLEPROC)GetProcAddress(p_LibModule, "glDisable"));
+	K15_CHECK_ASSIGNMENT(kglDrawElements, (PFNGLDRAWELEMENTSPROC)GetProcAddress(p_LibModule, "glDrawElements"));
+	K15_CHECK_ASSIGNMENT(kglEnable, (PFNGLENABLEPROC)GetProcAddress(p_LibModule, "glEnable"));
+	K15_CHECK_ASSIGNMENT(kglFrontFace, (PFNGLFRONTFACEPROC)GetProcAddress(p_LibModule, "glFrontFace"));
+	K15_CHECK_ASSIGNMENT(kglGenTextures, (PFNGLGENTEXTURESPROC)GetProcAddress(p_LibModule, "glGenTextures"));
+	K15_CHECK_ASSIGNMENT(kglGetError, (PFNGLGETERRORPROC)GetProcAddress(p_LibModule, "glGetError"));
+	K15_CHECK_ASSIGNMENT(kglGetFloatv, (PFNGLGETFLOATVPROC)GetProcAddress(p_LibModule, "glGetFloatv"));
+	K15_CHECK_ASSIGNMENT(kglPolygonMode, (PFNGLPOLYGONMODEPROC)GetProcAddress(p_LibModule, "glPolygonMode"));
+	K15_CHECK_ASSIGNMENT(kglViewport, (PFNGLVIEWPORTPROC)GetProcAddress(p_LibModule, "glViewport"));
+	K15_CHECK_ASSIGNMENT(kglGetIntegerv, (PFNGLGETINTEGERVPROC)GetProcAddress(p_LibModule, "glGetIntegerv"));
+	K15_CHECK_ASSIGNMENT(kglGetString, (PFNGLGETSTRINGPROC)GetProcAddress(p_LibModule, "glGetString"));
+}
+/*********************************************************************************/
 intern GLvoid* K15_Win32GetProcAddress(const char* p_ProcName)
 {
-	return (GLvoid*)wglGetProcAddress(p_ProcName);
+	return (GLvoid*)kwglGetProcAddress(p_ProcName);
 }
 /*********************************************************************************/
 intern GLboolean K15_Win32SwapBuffers(K15_GLRenderContext* p_RenderContext)
@@ -69,29 +103,34 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSLayer
 		return K15_OS_ERROR_NO_WINDOW;
 	}
 
+	HMODULE libModule = LoadLibraryA("opengl32.dll");
+
+	if (!libModule)
+	{
+		return K15_OS_ERROR_SYSTEM;
+	}
+
+	K15_Win32InternalGetWGLFunctionPointer(libModule);
+
 	K15_Win32Window* win32Window = (K15_Win32Window*)p_OSContext->window.window->userData;
 	HWND hwnd = win32Window->hwnd;
 	HDC dc = GetDC(hwnd);
 
 	HGLRC context = 0;
 
- 	uint8 result = K15_Win32CreateDummyContext(hwnd, dc, &context);
+ 	uint8 result = K15_Win32InternalCreateDummyContext(hwnd, dc, &context);
 
 	if (result != K15_SUCCESS)
 	{
 		return result;
 	}
 
-
-	kwglChoosePixelFormatARB = (PFNWGLCHOOSEPIXELFORMATARBPROC)wglGetProcAddress("wglChoosePixelFormatARB");
-	kwglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
-
-	assert(kwglChoosePixelFormatARB);
-	assert(kwglCreateContextAttribsARB);
+	//context got created. retrieve function pointer
+	K15_Win32InternalGetWGLContextFunctionPointer(libModule);
 
 	//unbind and delete dummy context
-	wglMakeCurrent(dc, 0);
-	wglDeleteContext(context);
+	kwglMakeCurrent(dc, 0);
+	kwglDeleteContext(context);
 
 	//create real context
 	const int pixelFormatAttributes[] = {
@@ -137,7 +176,7 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSLayer
 		return K15_OS_ERROR_SYSTEM;
 	}
 
-	if (wglMakeCurrent(dc, context) == FALSE)
+	if (kwglMakeCurrent(dc, context) == FALSE)
 	{
 		return K15_OS_ERROR_SYSTEM;
 	}

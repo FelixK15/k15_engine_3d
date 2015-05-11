@@ -9,6 +9,7 @@ set(K15_OS_LAYER_WIN32_SRC  	"src/win32/K15_EventsWin32.cpp"
 				"src/win32/K15_WindowWin32.cpp"
 				"src/win32/K15_ThreadWin32.cpp"
 				"src/win32/K15_FileSystemWin32.cpp"
+				"src/win32/K15_HelperWin32.cpp"
 				"src/win32/K15_EnvironmentWin32.cpp")
 
 set(K15_OS_LAYER_LINUX_SRC	"src/posix/K15_ThreadPosix.cpp"
@@ -38,6 +39,7 @@ set(K15_OS_LAYER_WIN32_INC 	"include/win32/K15_EventsWin32.h"
 				"include/win32/K15_WindowWin32.h"
 				"include/win32/K15_ThreadWin32.h"
 				"include/win32/K15_FileSystemWin32.h"
+				"include/win32/K15_HelperWin32.h"
 				"include/win32/K15_EnvironmentWin32.h")
 
 set(K15_OS_LAYER_LINUX_INC	"include/linux/K15_ThreadLinux.h"

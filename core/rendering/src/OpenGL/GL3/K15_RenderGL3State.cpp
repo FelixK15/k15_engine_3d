@@ -7,14 +7,14 @@ intern inline uint8 K15_GLSetDepthStateDesc(K15_RenderContext* p_RenderContext, 
 
 	if (p_DepthStateDesc->enabled == TRUE)
 	{
-		K15_OPENGL_CALL(glEnable(GL_DEPTH_TEST));
+		K15_OPENGL_CALL(kglEnable(GL_DEPTH_TEST));
 	}
 	else
 	{
-		K15_OPENGL_CALL(glDisable(GL_DEPTH_TEST));
+		K15_OPENGL_CALL(kglDisable(GL_DEPTH_TEST));
 	}
 
-	K15_OPENGL_CALL(glDepthFunc(depthFunc));
+	K15_OPENGL_CALL(kglDepthFunc(depthFunc));
 
 	return K15_SUCCESS;
 }
@@ -32,11 +32,11 @@ intern inline uint8 K15_GLSetBlendStateDesc(K15_RenderContext* p_RenderContext, 
 
 	if (p_BlendStateDesc->enabled == TRUE)
 	{
-		K15_OPENGL_CALL(glEnable(GL_BLEND));
+		K15_OPENGL_CALL(kglEnable(GL_BLEND));
 	}
 	else
 	{
-		K15_OPENGL_CALL(glDisable(GL_BLEND));
+		K15_OPENGL_CALL(kglDisable(GL_BLEND));
 	}
 
 	K15_OPENGL_CALL(kglBlendEquationSeparate(blendOPRGB, blendOPAlpha));
@@ -51,11 +51,11 @@ intern inline uint8 K15_GLSetStencilStateDesc(K15_RenderContext* p_RenderContext
 
 	if (p_StencilStateDesc->enabled == TRUE)
 	{
-		K15_OPENGL_CALL(glEnable(GL_STENCIL_TEST));
+		K15_OPENGL_CALL(kglEnable(GL_STENCIL_TEST));
 	}
 	else
 	{
-		K15_OPENGL_CALL(glDisable(GL_STENCIL_TEST));
+		K15_OPENGL_CALL(kglDisable(GL_STENCIL_TEST));
 	}
 
 // 	GLuint stencilMask = 
@@ -74,16 +74,16 @@ intern inline uint8 K15_GLSetRasterizerStateDesc(K15_RenderContext* p_RenderCont
 
 	if (p_RasterizerStateDesc->scissoringEnabled == TRUE)
 	{
-		K15_OPENGL_CALL(glEnable(GL_SCISSOR_TEST));
+		K15_OPENGL_CALL(kglEnable(GL_SCISSOR_TEST));
 	}
 	else
 	{
-		K15_OPENGL_CALL(glDisable(GL_SCISSOR_TEST));
+		K15_OPENGL_CALL(kglDisable(GL_SCISSOR_TEST));
 	}
 
-	K15_OPENGL_CALL(glCullFace(cullingMode));
-	K15_OPENGL_CALL(glPolygonMode(GL_FRONT_AND_BACK, fillMode));
-	K15_OPENGL_CALL(glFrontFace(ordering));
+	K15_OPENGL_CALL(kglCullFace(cullingMode));
+	K15_OPENGL_CALL(kglPolygonMode(GL_FRONT_AND_BACK, fillMode));
+	K15_OPENGL_CALL(kglFrontFace(ordering));
 	
 	return K15_SUCCESS;
 }

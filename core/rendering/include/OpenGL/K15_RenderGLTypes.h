@@ -89,7 +89,7 @@
 #define K15_INVALID_GL_PROGRAM_INDEX 0xffffffff
 
 #ifdef K15_OPENGL_ENABLE_ERROR_CHECK_CALLS
-	#define K15_OPENGL_CALL(x) {x; GLenum errorEnum = glGetError(); assert(errorEnum == GL_NO_ERROR && #x);}
+	#define K15_OPENGL_CALL(x) {x; GLenum errorEnum = kglGetError(); assert(errorEnum == GL_NO_ERROR && #x);}
 #else
 	#define K15_OPENGL_CALL(x) x;
 #endif //K15_OPENGL_ENABLE_ERROR_CHECK_CALLS
@@ -183,49 +183,60 @@ struct K15_GLSampler
 /*********************************************************************************/
 
 // default gl functions
-// typedef void (APIENTRY *PFNGLGENBUFFERSPROC)	(GLsizei n, GLuint *buffers);
-// typedef void (APIENTRY *PFNGLBINDBUFFERPROC)	(GLenum target, GLuint buffer);
-// typedef void (APIENTRY *PFNGLDELETEBUFFERSPROC) (GLsizei n, const GLuint* buffers);
+typedef GLvoid (APIENTRY *PFNGLBINDTEXTUREPROC)(GLenum, GLuint);
+typedef GLvoid (APIENTRY *PFNGLDELETETEXTURESPROC)(GLsizei, const GLuint*);
+typedef GLvoid (APIENTRY *PFNGLDRAWELEMENTSPROC)(GLenum, GLsizei, GLenum, const GLvoid*);
+typedef GLvoid (APIENTRY *PFNGLGENTEXTURESPROC)(GLsizei, GLuint*);
+
+//windows gl
+typedef GLvoid* (WINAPI *PFNWGLGETPROCADDRESSPROC)(const char*);
+typedef HGLRC	(WINAPI *PFNWGLCREATECONTEXTPROC)(HDC);
+typedef BOOL	(WINAPI *PFNWGLDELETECONTEXTPROC)(HGLRC);
+typedef BOOL	(WINAPI *PFNWGLMAKECURRENTPROC)(HDC, HGLRC);
 
 //custom gl function typedefs
-typedef GLboolean(*PFNKGLSWAPBUFFERS)(K15_GLRenderContext*);
-typedef GLvoid*(*PFNKGLGETPROCADDRESS)(const char*);
+typedef GLboolean(*PFNKGLSWAPBUFFERSPROC)(K15_GLRenderContext*);
+typedef GLvoid*(*PFNKGLGETPROCADDRESSPROC)(const char*);
 
 //GL_AMD_debug_output typedefs
 typedef void(APIENTRY *GLDEBUGPROCAMD)(GLuint, GLenum, GLenum, GLsizei, const GLchar*, GLvoid*);
 typedef void(APIENTRY *PFNGLDEBUGMESSAGECALLBACKAMDPROC) (GLDEBUGPROCAMD callback, GLvoid *userParam);
 
 //GL_ARB_direct_state_access
-typedef void (APIENTRY *PFNGLTEXTUREBUFFEREXTPROC) (GLuint texture, GLenum target, GLenum internalformat, GLuint buffer);
-typedef void (APIENTRY *PFNGLTEXTUREIMAGE1DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
-typedef void (APIENTRY *PFNGLTEXTUREIMAGE2DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
-typedef void (APIENTRY *PFNGLTEXTUREIMAGE3DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
-typedef void (APIENTRY *PFNGLCOMPRESSEDTEXTUREIMAGE1DEXTPROC) (GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLint border, GLsizei imageSize, const GLvoid *data);
-typedef void (APIENTRY *PFNGLCOMPRESSEDTEXTUREIMAGE2DEXTPROC) (GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const GLvoid *data);
-typedef void (APIENTRY *PFNGLCOMPRESSEDTEXTUREIMAGE3DEXTPROC) (GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const GLvoid *data);
-typedef void (APIENTRY *PFNGLCOMPRESSEDTEXTURESUBIMAGE1DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const GLvoid *data);
-typedef void (APIENTRY *PFNGLCOMPRESSEDTEXTURESUBIMAGE2DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const GLvoid *data);
-typedef void (APIENTRY *PFNGLCOMPRESSEDTEXTURESUBIMAGE3DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const GLvoid *data);
-typedef void (APIENTRY *PFNGLTEXTURESUBIMAGE1DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels);
-typedef void (APIENTRY *PFNGLTEXTURESUBIMAGE2DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels);
-typedef void (APIENTRY *PFNGLTEXTURESUBIMAGE3DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const GLvoid *pixels);
-typedef void (APIENTRY *PFNGLGENERATETEXTUREMIPMAPEXTPROC) (GLuint texture, GLenum target);
-typedef void (APIENTRY *PFNGLNAMEDBUFFERDATAEXTPROC) (GLuint buffer, GLsizeiptr size, const GLvoid *data, GLenum usage);
-typedef void (APIENTRY *PFNGLNAMEDBUFFERSUBDATAEXTPROC) (GLuint buffer, GLintptr offset, GLsizeiptr size, const GLvoid *data);
+typedef GLvoid (APIENTRY *PFNGLTEXTUREBUFFEREXTPROC) (GLuint texture, GLenum target, GLenum internalformat, GLuint buffer);
+typedef GLvoid (APIENTRY *PFNGLTEXTUREIMAGE1DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
+typedef GLvoid (APIENTRY *PFNGLTEXTUREIMAGE2DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
+typedef GLvoid (APIENTRY *PFNGLTEXTUREIMAGE3DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
+typedef GLvoid (APIENTRY *PFNGLCOMPRESSEDTEXTUREIMAGE1DEXTPROC) (GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLint border, GLsizei imageSize, const GLvoid *data);
+typedef GLvoid (APIENTRY *PFNGLCOMPRESSEDTEXTUREIMAGE2DEXTPROC) (GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const GLvoid *data);
+typedef GLvoid (APIENTRY *PFNGLCOMPRESSEDTEXTUREIMAGE3DEXTPROC) (GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const GLvoid *data);
+typedef GLvoid (APIENTRY *PFNGLCOMPRESSEDTEXTURESUBIMAGE1DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const GLvoid *data);
+typedef GLvoid (APIENTRY *PFNGLCOMPRESSEDTEXTURESUBIMAGE2DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const GLvoid *data);
+typedef GLvoid (APIENTRY *PFNGLCOMPRESSEDTEXTURESUBIMAGE3DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const GLvoid *data);
+typedef GLvoid (APIENTRY *PFNGLTEXTURESUBIMAGE1DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels);
+typedef GLvoid (APIENTRY *PFNGLTEXTURESUBIMAGE2DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels);
+typedef GLvoid (APIENTRY *PFNGLTEXTURESUBIMAGE3DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const GLvoid *pixels);
+typedef GLvoid (APIENTRY *PFNGLGENERATETEXTUREMIPMAPEXTPROC) (GLuint texture, GLenum target);
+typedef GLvoid (APIENTRY *PFNGLNAMEDBUFFERDATAEXTPROC) (GLuint buffer, GLsizeiptr size, const GLvoid *data, GLenum usage);
+typedef GLvoid (APIENTRY *PFNGLNAMEDBUFFERSUBDATAEXTPROC) (GLuint buffer, GLintptr offset, GLsizeiptr size, const GLvoid *data);
 typedef GLvoid* (APIENTRY *PFNGLMAPNAMEDBUFFEREXTPROC) (GLuint buffer, GLenum access);
 typedef GLvoid* (APIENTRY *PFNGLMAPNAMEDBUFFERRANGEEXTPROC) (GLuint buffer, GLintptr offset, GLsizeiptr length, GLbitfield access);
 typedef GLboolean (APIENTRY *PFNGLUNMAPNAMEDBUFFEREXTPROC) (GLuint buffer);
 
 //GL_KHR_debug
-typedef void (APIENTRY* GLDEBUGPROC)(GLenum source,GLenum type,GLuint id,GLenum severity,GLsizei length,const GLchar *message,const void *userParam);
-typedef void (APIENTRY* PFNGLDEBUGMESSAGECALLBACKPROC) (GLDEBUGPROC callback, const void *userParam);
+typedef GLvoid (APIENTRY* GLDEBUGPROC)(GLenum source,GLenum type,GLuint id,GLenum severity,GLsizei length,const GLchar *message,const void *userParam);
+typedef GLvoid (APIENTRY* PFNGLDEBUGMESSAGECALLBACKPROC) (GLDEBUGPROC callback, const void *userParam);
 /*********************************************************************************/
 
 #ifdef K15_OS_WINDOWS
-//wgl
-extern PFNWGLCHOOSEPIXELFORMATARBPROC kwglChoosePixelFormatARB;
-extern PFNWGLCREATECONTEXTATTRIBSARBPROC kwglCreateContextAttribsARB;
 
+//wgl
+extern PFNWGLCHOOSEPIXELFORMATARBPROC			kwglChoosePixelFormatARB;
+extern PFNWGLCREATECONTEXTATTRIBSARBPROC		kwglCreateContextAttribsARB;
+extern PFNWGLGETPROCADDRESSPROC					kwglGetProcAddress;
+extern PFNWGLCREATECONTEXTPROC					kwglCreateContext;
+extern PFNWGLDELETECONTEXTPROC					kwglDeleteContext;
+extern PFNWGLMAKECURRENTPROC					kwglMakeCurrent;
 
 //default gl functions
 extern PFNGLGENBUFFERSPROC						kglGenBuffers; 
@@ -256,6 +267,24 @@ extern PFNGLFRAMEBUFFERRENDERBUFFERPROC			kglFramebufferRenderbuffer;
 extern PFNGLFRAMEBUFFERTEXTUREPROC				kglFramebufferTexture;	
 extern PFNGLCHECKFRAMEBUFFERSTATUSPROC			kglCheckFramebufferStatus;
 extern PFNGLDRAWBUFFERSPROC						kglDrawBuffers;
+extern PFNGLBINDTEXTUREPROC						kglBindTexture;
+extern PFNGLCLEARPROC							kglClear;
+extern PFNGLCLEARCOLORPROC						kglClearColor;
+extern PFNGLCULLFACEPROC						kglCullFace;
+extern PFNGLDELETETEXTURESPROC					kglDeleteTextures;
+extern PFNGLDEPTHFUNCPROC						kglDepthFunc;
+extern PFNGLDISABLEPROC							kglDisable;
+extern PFNGLDRAWELEMENTSPROC					kglDrawElements;
+extern PFNGLENABLEPROC							kglEnable;
+extern PFNGLFRONTFACEPROC						kglFrontFace;
+extern PFNGLGENTEXTURESPROC						kglGenTextures;
+extern PFNGLGETERRORPROC						kglGetError;
+extern PFNGLGETFLOATVPROC						kglGetFloatv;
+extern PFNGLGETINTEGERVPROC						kglGetIntegerv;
+extern PFNGLGETSTRINGPROC						kglGetString;
+extern PFNGLGETSTRINGIPROC						kglGetStringi;
+extern PFNGLPOLYGONMODEPROC						kglPolygonMode;
+extern PFNGLVIEWPORTPROC						kglViewport;
 
 //GL_ARB_vertex_array_object//
 extern PFNGLGENVERTEXARRAYSPROC	kglGenVertexArrays;
@@ -380,8 +409,8 @@ extern PFNGLMAPNAMEDBUFFERRANGEEXTPROC kglMapNamedBufferRangeEXT;
 extern PFNGLUNMAPNAMEDBUFFEREXTPROC kglUnmapNamedBufferEXT;
 
 //custom gl functions
-extern PFNKGLSWAPBUFFERS kglSwapBuffers;
-extern PFNKGLGETPROCADDRESS kglGetProcAddress;
+extern PFNKGLSWAPBUFFERSPROC kglSwapBuffers;
+extern PFNKGLGETPROCADDRESSPROC kglGetProcAddress;
 
 //GL_EXT_direct_state_access
 extern PFNGLTEXTUREIMAGE1DEXTPROC kglTextureImage1DEXT;

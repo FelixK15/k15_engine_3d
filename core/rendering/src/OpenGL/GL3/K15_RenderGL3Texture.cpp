@@ -167,8 +167,8 @@ intern inline uint8 K15_GLCreateTexture(K15_RenderContext* p_RenderContext, K15_
 	uint32 width = p_RenderTextureDesc->dimension.width;
 	uint32 depth = p_RenderTextureDesc->dimension.depth;
 
-	K15_OPENGL_CALL(glGenTextures(1, &glTextureHandle));
-	K15_OPENGL_CALL(glBindTexture(glTextureType, glTextureHandle));
+	K15_OPENGL_CALL(kglGenTextures(1, &glTextureHandle));
+	K15_OPENGL_CALL(kglBindTexture(glTextureType, glTextureHandle));
 
 	uint32 mipmapCount = p_RenderTextureDesc->mipmaps.count;
 
@@ -248,7 +248,7 @@ intern inline uint8 K15_GLDeleteTexture(K15_RenderContext* p_RenderContext, K15_
 
 	K15_GLTexture* glTexture = &glContext->glObjects.textures[*p_RenderTextureHandle];
 
-	K15_OPENGL_CALL(glDeleteTextures(1, &glTexture->glTexture));
+	K15_OPENGL_CALL(kglDeleteTextures(1, &glTexture->glTexture));
 
 	return K15_SUCCESS;
 }

@@ -9,6 +9,7 @@ struct K15_GLRenderContext;
 
 struct K15_Win32GLContext
 {
+	HMODULE module;
 	HGLRC context;
 	HDC dc;
 };

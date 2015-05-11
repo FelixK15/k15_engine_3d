@@ -61,7 +61,9 @@ struct K15_Win32Context
 	{
 		HMODULE module;
 		LPDIRECTINPUT directInputHandle;
+		GUID xInputGUIDFilter[K15_MAX_CONTROLLER];
 		DirectInput8CreateFnc directInput8Create;
+		uint32 xInputGUIDFilterCounter;
 	} DirectInput;
 
 	struct 

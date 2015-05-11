@@ -1,12 +1,12 @@
 #include <K15_Logging.h>
 #include "K15_OSLayer_Window.h"
 #include "K15_OSLayer_OSContext.h"
+
 #include "win32/K15_WindowWin32.h"
-
-#ifdef K15_OS_WINDOWS
-
+#include "win32/K15_HelperWin32.h"
 #include "win32/K15_EventsWin32.h"
 #include "win32/K15_EnvironmentWin32.h"
+
 
 /*********************************************************************************/
 intern BOOL CALLBACK K15_Win32EnumMonitorProc(HMONITOR p_HMONITOR, HDC p_HDC, LPRECT p_Rect, LPARAM p_lParam)
@@ -87,7 +87,7 @@ uint8 K15_Win32CreateWindow(K15_OSLayerContext* p_OSContext, K15_Window* p_Windo
 	AdjustWindowRect(&winRect, style, FALSE);
 
 	//create window with default settings
-	HWND handle = CreateWindow("K15_Win32WindowClass", "", style,
+	HWND handle = CreateWindowExA(0, "K15_Win32WindowClass", "", style,
 								winRect.left + (width / 2), winRect.top + (height / 2), 
 								winRect.right - winRect.left, winRect.bottom - winRect.top,
 								0, 0, hInstance, 0);
@@ -152,8 +152,12 @@ uint8 K15_Win32SetWindowTitle(K15_OSLayerContext* p_OSContext, K15_Window* p_Win
 {
 	K15_Win32Window* win32WindowData = (K15_Win32Window*)p_Window->userData;
 	HWND hwnd = win32WindowData->hwnd;
+	uint32 titleLength = (uint32)strlen(p_Title) + 1; //+1 for 0 terminator
+	wchar_t* titleWide = (wchar_t*)alloca(titleLength * sizeof(wchar_t));
 
-	if (SetWindowTextA(hwnd, p_Title) != 0)
+	K15_Win32ConvertStringToWString(p_Title, titleLength, titleWide);
+
+	if (SetWindowTextW(hwnd, titleWide) != 0)
 	{
 		return K15_OS_ERROR_SYSTEM;
 	}
@@ -166,5 +170,3 @@ uint8 K15_Win32CloseWindow(K15_OSLayerContext* p_OSContext, K15_Window* p_Window
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-
-#endif //K15_OS_WINDOWS

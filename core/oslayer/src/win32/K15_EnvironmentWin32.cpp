@@ -2,14 +2,13 @@
 
 #include "win32/K15_EnvironmentWin32.h"
 
-#ifdef K15_OS_WINDOWS 
-
 #include "K15_OSLayer_OSContext.h"
 #include "K15_OSLayer_Thread.h"
 
 #include "win32/K15_WindowWin32.h"
 #include "win32/K15_EventsWin32.h"
 #include "win32/K15_ThreadWin32.h"
+#include "win32/K15_HelperWin32.h"
 
 #include <K15_Logging.h>	
 
@@ -17,7 +16,12 @@
 /*********************************************************************************/
 void K15_Win32LogVisualStudio(const char* p_Message, LogPriority p_Priority)
 {
-	OutputDebugStringA(p_Message);
+	uint32 messageLength = (uint32)strlen(p_Message) + 1; //+1 for 0 terminator
+	wchar_t* messageBuffer = (wchar_t*)alloca(messageLength * sizeof(wchar_t));
+
+	K15_Win32ConvertStringToWString(p_Message, messageLength, messageBuffer);
+
+	OutputDebugStringW(messageBuffer);
 }
 /*********************************************************************************/
 void K15_Win32LogConsole(const char* p_Message, LogPriority p_Priority)
@@ -58,9 +62,14 @@ void K15_Win32LogConsole(const char* p_Message, LogPriority p_Priority)
 		}
 	}
 
+	uint32 messageLength = (uint32)strlen(p_Message) + 1; //+1 for 0 terminator
+	wchar_t* messageBuffer = (wchar_t*)alloca(messageLength * sizeof(wchar_t));
+
+	K15_Win32ConvertStringToWString(p_Message, messageLength, messageBuffer);
+
 	//set output color
 	SetConsoleTextAttribute(consoleHandle,colorCode);
-	printf("%s\n", p_Message);
+	printf("%ls\n", messageBuffer);
 
 	//set color back to white
 	SetConsoleTextAttribute(consoleHandle, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN); 
@@ -70,14 +79,6 @@ void K15_Win32LogConsole(const char* p_Message, LogPriority p_Priority)
 
 // /*********************************************************************************/
 
-// /*********************************************************************************/
-// intern inline K15_Win32DirectInputController K15_InternalCreateInputDevice(LPDIRECTINPUTDEVICE p_DeviceInstance)
-// {
-// 	K15_Win32DirectInputController win32DirectInputController = {};
-// 	HRESULT result = p_DeviceInstance->EnumObjects(K15_InternalEnumDeviceObjectsCallback, &win32DirectInputController, DIDFT_AXIS | DIDFT_BUTTON);
-// 
-// 	return win32DirectInputController;
-// }
 /*********************************************************************************/
 intern inline uint8 K15_InternalTryLoadXInput(K15_Win32Context* p_Win32Context)
 {
@@ -109,9 +110,6 @@ intern inline uint8 K15_InternalTryLoadXInput(K15_Win32Context* p_Win32Context)
 		return K15_OS_ERROR_SYSTEM;
 	}
 
-	//enable XInput
-	p_Win32Context->XInput.enable(TRUE);
-
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
@@ -130,7 +128,8 @@ intern inline uint8 K15_InternalTryLoadDirectInput(K15_Win32Context* p_Win32Cont
 
 	p_Win32Context->DirectInput.module = directInput;
 	p_Win32Context->DirectInput.directInput8Create = (DirectInput8CreateFnc)GetProcAddress(directInput, "DirectInput8Create");
-
+	//p_Win32Context->DirectInput.xInputGUIDFilter = {};
+	p_Win32Context->DirectInput.xInputGUIDFilterCounter = 0;
 	assert(p_Win32Context->DirectInput.directInput8Create);
 	
 	HRESULT result = p_Win32Context->DirectInput.directInput8Create(appInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)&directInputHandle, 0);
@@ -300,15 +299,20 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 char* K15_Win32GetError()
 {
 	DWORD errorNo = GetLastError();
-	char* messageBuffer = (char*)K15_OS_MALLOC(256);
+	wchar_t* messageBuffer = (wchar_t*)alloca(256 * sizeof(wchar_t));
 
-	if (FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, 0, errorNo, LANG_ENGLISH, messageBuffer, 256, 0) == 0)
+	if (FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, 0, errorNo, 0, messageBuffer, 256, 0) == 0)
 	{
-		K15_OS_FREE(messageBuffer);
-		messageBuffer = "Unkown Error";
+		//K15_OS_FREE(messageBuffer);
+		messageBuffer = L"Unkown Error";
 	}
+
+	uint32 messageBufferLength = (uint32)wcslen(messageBuffer) + 1; //+1 for 0 terminator
+	char* outputBuffer = (char*)malloc(messageBufferLength);
+
+	K15_Win32ConvertWStringToString(messageBuffer, messageBufferLength, outputBuffer);
 	
-	return messageBuffer;
+	return outputBuffer;
 }
 /*********************************************************************************/
 void K15_Win32Sleep(double p_SleepTimeInSeconds)
@@ -354,5 +358,3 @@ double K15_Win32GetElapsedSeconds()
 	return seconds;
 }
 /*********************************************************************************/
-
-#endif //K15_OS_WINDOWS

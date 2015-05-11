@@ -12,6 +12,8 @@
 /*********************************************************************************/
 intern inline void K15_Win32WindowCreated(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	DWORD connectedController = 0;
+
 	K15_SystemEvent win32Event = {};
 
 	win32Event.event = K15_WINDOW_CREATED;
@@ -20,9 +22,24 @@ intern inline void K15_Win32WindowCreated(HWND hWnd, UINT uMsg, WPARAM wParam, L
 	//Call once on window creation to get default values
 	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
+	K15_Win32Controller* win32Controller = win32Context->controller;
 
-	K15_Win32InitializeXInputDevices(win32Context);
-	K15_Win32InitializeDirectInputDevices(win32Context, hWnd);
+	uint32 numXInputDevices = 0;
+
+	K15_Win32InitializeXInputDevices(win32Context, &numXInputDevices);
+	K15_Win32InitializeDirectInputDevices(win32Context, numXInputDevices, hWnd);
+
+	for (uint32 controllerIndex = 0;
+		 controllerIndex < K15_MAX_CONTROLLER;
+		 ++controllerIndex)
+	{
+		if (win32Controller[controllerIndex].controllerState == K15_WIN32_CONTROLLER_STATE_CONNECTED)
+		{
+			++connectedController;
+		}
+	}
+
+	win32Context->connectedController = connectedController;
 
 	K15_AddSystemEventToQueue(&win32Event);
 }
@@ -178,55 +195,47 @@ intern inline void K15_Win32MouseWheelInputReceived(HWND hWnd, UINT uMsg, WPARAM
 	K15_AddSystemEventToQueue(&win32Event);
 }
 /*********************************************************************************/
-intern inline void K15_Win32DeviceChangeReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
-	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
-
-	if (wParam == DBT_DEVNODES_CHANGED)
-	{
-		//reinitialize DirectInput devices on device arrival/removal
-		K15_Win32InitializeDirectInputDevices(win32Context, hWnd);
-	}
-}
-/*********************************************************************************/
-intern inline DWORD K15_Win32CheckControllerConnectivity(K15_Win32Context* p_Win32Context, K15_Win32Controller* p_Controller, uint32 p_NumController)
+intern inline DWORD K15_Win32CheckControllerConnectivity(K15_Win32Context* p_Win32Context, K15_Win32Controller* p_Controller, uint32 p_NumController, HWND p_HandleWindow)
 {
 	DWORD connectedController = 0;
+	uint32 xInputDevices = 0;
+
+	//reinitialize APIs
+	K15_Win32InitializeXInputDevices(p_Win32Context, &xInputDevices);
+	K15_Win32InitializeDirectInputDevices(p_Win32Context, xInputDevices, p_HandleWindow);
 
 	for (uint32 controllerIndex = 0;
-		 controllerIndex < p_NumController;
-		 ++controllerIndex)
+		controllerIndex < p_NumController;
+		++controllerIndex)
 	{
 		K15_Win32Controller* currentController = &p_Controller[controllerIndex];
 		uint8 previousState = currentController->controllerState;
 		uint8 currentState = 0;
-
 		if (K15_Win32CheckXInputConnectivity(p_Win32Context, currentController) == TRUE)
 		{
-			p_Controller->APIType = K15_WIN32_APITYPE_XINPUT;
+			currentController->APIType = K15_WIN32_APITYPE_XINPUT;
 			currentState = K15_WIN32_CONTROLLER_STATE_CONNECTED;
 			connectedController += 1;
 		}
 		else if (K15_Win32CheckDirectInputConnectivity(p_Win32Context, currentController) == TRUE)
 		{
-			p_Controller->APIType = K15_WIN32_APITYPE_DIRECTINPUT;
+			currentController->APIType = K15_WIN32_APITYPE_DIRECTINPUT;
 			currentState = K15_WIN32_CONTROLLER_STATE_CONNECTED;
 			connectedController += 1;
 		}
 		else
 		{
-			p_Controller->APIType = K15_WIN32_APITYPE_UNDEFINED;
+			currentController->APIType = K15_WIN32_APITYPE_UNDEFINED;
 			currentState = K15_WIN32_CONTROLLER_STATE_NOT_CONNECTED;
 
-			continue;
+			//continue;
 		}
 
-		p_Controller->controllerState = currentState;
+		currentController->controllerState = currentState;
 
 		//Fire messages when controller got disconnected/connected
-		if (previousState != currentState &&
-			currentState != K15_WIN32_CONTROLLER_STATE_NOT_CONNECTED)
+		if (previousState != currentState 
+			/*&& currentState != K15_WIN32_CONTROLLER_STATE_NOT_CONNECTED*/)
 		{
 			K15_SystemEvent controllerStateEvent = {};
 			controllerStateEvent.params.controllerIndex = controllerIndex;
@@ -246,6 +255,33 @@ intern inline DWORD K15_Win32CheckControllerConnectivity(K15_Win32Context* p_Win
 	}
 
 	return connectedController;
+}
+/*********************************************************************************/
+intern inline void K15_Win32DeviceChangeReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
+	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
+
+	if (wParam == DBT_DEVNODES_CHANGED)
+	{
+		K15_Win32Controller* controllers = win32Context->controller;
+
+		//Check connectivity
+		DWORD numConnectedController = K15_Win32CheckControllerConnectivity(win32Context, controllers, K15_MAX_CONTROLLER, hWnd);
+		
+		//super hacky
+// 		for (uint32 controllerIndex = 0;
+// 			 controllerIndex < numConnectedController;
+// 			 ++controllerIndex)
+// 		{
+// 			if (win32Context->controller[controllerIndex].APIType == K15_WIN32_APITYPE_DIRECTINPUT)
+// 			{
+// 				win32Context->controller[controllerIndex].controllerState = K15_WIN32_CONTROLLER_STATE_NOT_CONNECTED;
+// 			}
+// 		}
+
+		win32Context->connectedController = numConnectedController;
+	}
 }
 /*********************************************************************************/
 intern inline void K15_Win32PumpControllerEvents(K15_Win32Context* p_Win32Context, K15_Win32Controller* p_Controller, uint32 p_NumController)
@@ -320,6 +356,7 @@ LRESULT CALLBACK K15_Win32WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 	case WM_DEVICECHANGE:
 		K15_Win32DeviceChangeReceived(hWnd, uMsg, wParam, lParam);
+		messageHandled = TRUE;
 		break;
 	}
 
@@ -348,29 +385,7 @@ uint8 K15_Win32PumpSystemEvents(K15_OSLayerContext* p_OSContext)
 
 	K15_Win32Controller* controllers = win32Context->controller;
 
-	//Check connectivity
-	DWORD numConnectedController = K15_Win32CheckControllerConnectivity(win32Context, controllers, K15_MAX_CONTROLLER);
 	K15_Win32PumpControllerEvents(win32Context, controllers, K15_MAX_CONTROLLER);
-
-	win32Context->connectedController = numConnectedController;
-
-	/*DWORD previousControllerConnectivity[K15_MAX_CONTROLLER] = {};
-	XINPUT_STATE previousControllerStates[K15_MAX_CONTROLLER] = {};
-
-	memcpy(previousControllerConnectivity, win32Context->XInput.controllerConnectivity, sizeof(DWORD) * K15_MAX_CONTROLLER);
-	memcpy(previousControllerStates, win32Context->XInput.controllerStates, sizeof(XINPUT_STATE) * K15_MAX_CONTROLLER);
-
-	
-
-	K15_Win32GetXInputControllerConnectivity(win32Context);
-
-	K15_Win32EvaluateXInputControllerConnectivity(win32Context->controllerConnectivity, 
-									  previousControllerConnectivity);
-
-	K15_Win32EvaluateXInputControllerStates(win32Context->XInput.controllerStates,
-									  previousControllerStates);
-
-	K15_Win32EvaluateDirectInputControllerStates(win32Context->DirectInput.devices, win32Context->DirectInput.numDevices);*/
 
 	return K15_SUCCESS;
 }

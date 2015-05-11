@@ -1,7 +1,10 @@
 /*********************************************************************************/
-intern inline void K15_Win32InitializeXInputDevices(K15_Win32Context* p_Win32Context)
+intern inline void K15_Win32InitializeXInputDevices(K15_Win32Context* p_Win32Context, uint32* p_NumInputDevices)
 {
+	uint32 connectedController = 0;
+	
 	//will be called first so we can start to fill the win32 controller array from pos 0
+	p_Win32Context->XInput.enable(TRUE);
 
 	for (uint32 controllerIndex = 0;
 		 controllerIndex < K15_MAX_CONTROLLER;
@@ -17,10 +20,13 @@ intern inline void K15_Win32InitializeXInputDevices(K15_Win32Context* p_Win32Con
 			currentController->controllerIndex = controllerIndex;
 			currentController->controllerState = K15_WIN32_CONTROLLER_STATE_CONNECTED;
 			
-			p_Win32Context->connectedController += 1;
 			p_Win32Context->XInput.getState(controllerIndex, &currentController->xInputState);
+
+			++connectedController;
 		}
 	}
+
+	*p_NumInputDevices = connectedController;
 }
 /*********************************************************************************/
 intern inline BOOL K15_Win32CheckXInputConnectivity(K15_Win32Context* p_Win32Context, K15_Win32Controller* p_Controller)
@@ -29,8 +35,8 @@ intern inline BOOL K15_Win32CheckXInputConnectivity(K15_Win32Context* p_Win32Con
 	DWORD controllerIndex = p_Controller->controllerIndex;
 	DWORD controllerStatus = p_Win32Context->XInput.getCapabilities(controllerIndex, 0, &controllerCapabilites);
 
-	BOOL connected = controllerIndex == ERROR_SUCCESS;
-
+	BOOL connected = (controllerStatus == ERROR_SUCCESS);
+	
 	return connected;
 }
 /*********************************************************************************/
@@ -266,34 +272,34 @@ intern inline void K15_Win32PumpXInputControllerEvents(K15_Win32Context* p_Win32
 	}
 }
 /*********************************************************************************/
-intern inline void K15_Win32EvaluateXInputControllerConnectivity(DWORD* p_CurrentControllerStates, DWORD* p_PreviousControllerStates)
-{
-	for (DWORD controllerIndex = 0;
-		controllerIndex < K15_MAX_CONTROLLER;
-		++controllerIndex)
-	{
-		DWORD currentControllerState = p_CurrentControllerStates[controllerIndex];
-		DWORD previousControllerState = p_PreviousControllerStates[controllerIndex];
-
-		if (currentControllerState != previousControllerState)
-		{
-			K15_SystemEvent win32Event = {};
-			win32Event.params.controllerIndex = controllerIndex;
-			win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
-
-			if (currentControllerState == ERROR_DEVICE_NOT_CONNECTED)
-			{
-				//device was previously connected
-				win32Event.event = K15_CONTROLLER_DISCONNECTED;
-			}
-			else if(previousControllerState == ERROR_DEVICE_NOT_CONNECTED)
-			{
-				//device was previously not connected
-				win32Event.event = K15_CONTROLLER_CONNECTED;
-			}
-
-			K15_AddSystemEventToQueue(&win32Event);
-		}
-	}
-}
+// intern inline void K15_Win32EvaluateXInputControllerConnectivity(DWORD* p_CurrentControllerStates, DWORD* p_PreviousControllerStates)
+// {
+// 	for (DWORD controllerIndex = 0;
+// 		controllerIndex < K15_MAX_CONTROLLER;
+// 		++controllerIndex)
+// 	{
+// 		DWORD currentControllerState = p_CurrentControllerStates[controllerIndex];
+// 		DWORD previousControllerState = p_PreviousControllerStates[controllerIndex];
+// 
+// 		if (currentControllerState != previousControllerState)
+// 		{
+// 			K15_SystemEvent win32Event = {};
+// 			win32Event.params.controllerIndex = controllerIndex;
+// 			win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
+// 
+// 			if (currentControllerState == ERROR_DEVICE_NOT_CONNECTED)
+// 			{
+// 				//device was previously connected
+// 				win32Event.event = K15_CONTROLLER_DISCONNECTED;
+// 			}
+// 			else if(previousControllerState == ERROR_DEVICE_NOT_CONNECTED)
+// 			{
+// 				//device was previously not connected
+// 				win32Event.event = K15_CONTROLLER_CONNECTED;
+// 			}
+// 
+// 			K15_AddSystemEventToQueue(&win32Event);
+// 		}
+// 	}
+// }
 /*********************************************************************************/

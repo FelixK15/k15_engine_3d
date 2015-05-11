@@ -8,6 +8,8 @@
 #include <K15_OSLayer_OSContext.h>
 #include <K15_OSLayer_SystemEvents.h>
 
+#include <K15_OSLayer_FileSystem.h>
+
 #include <win32/K15_EnvironmentWin32.h>
 
 /*********************************************************************************/
@@ -52,6 +54,15 @@ int CALLBACK WinMain(
 			if (event.event == K15_APPLICATION_QUIT)
 			{
 				running = false;
+			}
+
+			if (event.event == K15_CONTROLLER_DISCONNECTED)
+			{
+				K15_LOG_ERROR_MESSAGE("Controller %d disconnected :(", event.params.controllerIndex);
+			}
+			else if(event.event == K15_CONTROLLER_CONNECTED)
+			{
+				K15_LOG_ERROR_MESSAGE("Controller %d connected :)", event.params.controllerIndex);
 			}
 		}		
 

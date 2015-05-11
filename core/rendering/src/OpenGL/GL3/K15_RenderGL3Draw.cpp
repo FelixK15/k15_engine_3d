@@ -29,7 +29,7 @@ intern inline uint8 K15_GLDrawFullscreenQuad(K15_RenderContext* p_RenderContext,
 
 	if (previousVertexOrder != GL_CW)
 	{
-		K15_OPENGL_CALL(glFrontFace(GL_CW));
+		K15_OPENGL_CALL(kglFrontFace(GL_CW));
 	}
 
 	//Set state for quad
@@ -40,18 +40,18 @@ intern inline uint8 K15_GLDrawFullscreenQuad(K15_RenderContext* p_RenderContext,
 	//Bind Vertex & Index buffer
 	K15_OPENGL_CALL(kglBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glQuadIBO));
 	K15_OPENGL_CALL(kglBindBuffer(GL_ARRAY_BUFFER, glQuadVBO));
-	K15_OPENGL_CALL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0));
+	K15_OPENGL_CALL(kglDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0));
 	K15_OPENGL_CALL(kglBindVertexArray(glPreviousVAO));
 	K15_OPENGL_CALL(kglBindProgramPipeline(glPreviousProgramPipeline));
 
 	if (previousVertexOrder != GL_CW)
 	{
-		K15_OPENGL_CALL(glFrontFace(previousVertexOrder));
+		K15_OPENGL_CALL(kglFrontFace(previousVertexOrder));
 	}
 
 #ifdef K15_OPENGL_ENABLE_QUAD_BUFFER_BACKUP
-	K15_OPENGL_CALL(glBindBuffer(GL_ARRAY_BUFFER, glPreviousArrayBuffer));
-	K15_OPENGL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glPreviousElementArrayBuffer));
+	K15_OPENGL_CALL(kglBindBuffer(GL_ARRAY_BUFFER, glPreviousArrayBuffer));
+	K15_OPENGL_CALL(kglBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glPreviousElementArrayBuffer));
 #endif //K15_OPENGL_ENABLE_QUAD_BUFFER_BACKUP
 
 	return K15_SUCCESS;

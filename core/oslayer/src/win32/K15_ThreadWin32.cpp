@@ -4,8 +4,6 @@
 #include "K15_OSLayer_OSContext.h"
 #include "K15_OSLayer_Thread.h"
 
-#ifdef K15_OS_WINDOWS
-
 /*********************************************************************************/
 intern DWORD WINAPI K15_Win32ThreadWrapper(LPVOID p_Parameter)
 {
@@ -298,4 +296,3 @@ uint8 K15_Win32FreeSemaphore(K15_Semaphore* p_Semaphore)
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-#endif //K15_OS_WINDOWS

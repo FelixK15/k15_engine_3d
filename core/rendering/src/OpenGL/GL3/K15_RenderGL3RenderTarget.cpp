@@ -55,7 +55,7 @@ intern inline uint8 K15_GLCreateRenderTarget(K15_RenderContext* p_RenderContext,
 		{
 			GLuint glCurrentTextureBinding = 0;
 
-			K15_OPENGL_CALL(glGenTextures(1, &glCurrentTextureBinding));
+			K15_OPENGL_CALL(kglGenTextures(1, &glCurrentTextureBinding));
 			K15_OPENGL_CALL(kglTextureImage2DEXT(glCurrentTextureBinding, GL_TEXTURE_2D, 0, glFormat, renderTargetWidth, renderTargetHeight, 0, glFormat, glType, 0));
 		
 			K15_OPENGL_CALL(kglFramebufferTexture(GL_FRAMEBUFFER, attachment, glCurrentTextureBinding, 0));
@@ -157,7 +157,7 @@ intern inline uint8 K15_GLDeleteRenderTarget(K15_RenderContext* p_RenderContext,
 		glContext->gl3.framebufferHandle = 0;
 	}
 
-	K15_OPENGL_CALL(glDeleteTextures(glRenderTargetStruct->textureCount, glRenderTargetStruct->glTextures));
+	K15_OPENGL_CALL(kglDeleteTextures(glRenderTargetStruct->textureCount, glRenderTargetStruct->glTextures));
 	
 	if(glRenderTargetStruct->glRenderbuffer != GL_INVALID_VALUE)
 	{
