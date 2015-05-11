@@ -1,5 +1,5 @@
-#ifndef _K15_OSLayer_Config_h_
-#define _K15_OSLayer_Config_h_
+#ifndef _K15_Config_h_
+#define _K15_Config_h_
 
 #ifndef K15_OSLAYER_USE_CUSTOM_ALLOCATORS
 	#define K15_OS_MALLOC(bytes)	malloc(bytes)
@@ -11,4 +11,6 @@
 
 #define K15_MAX_CONTROLLER 4
 
-#endif //_K15_OSLayer_Config_h_
+#define K15_USE_CUSTOM_ASSERTS
+
+#endif //_K15_Config_h_

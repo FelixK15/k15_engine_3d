@@ -1,5 +1,7 @@
 #include "win32/K15_HelperWin32.h"
 
+#include "win32/K15_HeaderDefaultWin32.h"
+
 /*********************************************************************************/
 uint8 K15_Win32ConvertStringToWString(const char* p_String, int p_StringLength, wchar_t* p_OutputString)
 {

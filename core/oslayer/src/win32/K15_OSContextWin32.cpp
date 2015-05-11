@@ -1,16 +1,21 @@
 #define INITGUID
 
-#include "win32/K15_EnvironmentWin32.h"
+#include "win32/K15_OSContextWin32.h"
 
-#include "K15_OSLayer_OSContext.h"
-#include "K15_OSLayer_Thread.h"
+#include "K15_OSContext.h"
+#include "K15_Thread.h"
+#include "K15_DefaultCLibraries.h"
 
 #include "win32/K15_WindowWin32.h"
 #include "win32/K15_EventsWin32.h"
 #include "win32/K15_ThreadWin32.h"
 #include "win32/K15_HelperWin32.h"
+#include "win32/K15_HeaderDefaultWin32.h"
+#include "win32/K15_HeaderExtensionsWin32.h"
 
 #include <K15_Logging.h>	
+
+MessageBoxAProc _MessageBoxA = 0;
 
 #ifdef K15_DEBUG
 /*********************************************************************************/
@@ -175,7 +180,7 @@ void K15_Win32AllocateDebugConsole()
 	FILE* fp;
 
 	stdHandle = (long)GetStdHandle(STD_OUTPUT_HANDLE);
-	handleConsole = _open_osfhandle(stdHandle, _O_TEXT);
+	handleConsole = _open_osfhandle(stdHandle, 0x4000); //_O_TEXT
 	fp = _fdopen(handleConsole, "w");
 	*stdout = *fp;
 	setvbuf( stdout, NULL, _IONBF, 0 );
@@ -183,7 +188,7 @@ void K15_Win32AllocateDebugConsole()
 /*********************************************************************************/
 uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 {
-	K15_OSLayerContext win32OSContext;
+	K15Context win32OSContext;
 
 	//window
 	win32OSContext.window.createWindow = K15_Win32CreateWindow;
@@ -207,6 +212,10 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	win32OSContext.threading.threads = (K15_Thread**)K15_OS_MALLOC(sizeof(K15_Thread*) * K15_MAX_THREADS);
 
 	memset(win32OSContext.threading.threads, 0, sizeof(K15_Thread*) * K15_MAX_THREADS);
+
+	//Get message box function
+	HMODULE user32Module = GetModuleHandleA("user32.dll");
+	_MessageBoxA = (MessageBoxAProc)GetProcAddress(user32Module, "MessageBoxA");
 
 	//get current dir
 	LPSTR currentDirectoryBuffer = (LPSTR)K15_OS_MALLOC(MAX_PATH);
@@ -318,12 +327,12 @@ char* K15_Win32GetError()
 void K15_Win32Sleep(double p_SleepTimeInSeconds)
 {
 	DWORD milliSeconds = (DWORD)(p_SleepTimeInSeconds * 1000.0);
-	SleepEx(milliSeconds, TRUE);
+	SleepEx(milliSeconds, K15_TRUE);
 }
 /*********************************************************************************/
 void K15_Win32ShutdownOSLayer()
 {
-	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
+	K15Context* osContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
 
 	if (win32Context->XInput.module)
@@ -347,7 +356,7 @@ void K15_Win32ShutdownOSLayer()
 /*********************************************************************************/
 double K15_Win32GetElapsedSeconds()
 {
-	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
+	K15Context* osContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
 
 	LARGE_INTEGER counts;

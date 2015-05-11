@@ -1,29 +1,29 @@
-#ifndef _K15_OSLayer_OSContext_h_
-#define _K15_OSLayer_OSContext_h_
+#ifndef _K15_OSContext_h_
+#define _K15_OSContext_h_
 
-#include "K15_OSLayer_Prerequisites.h"
+#include "K15_Prerequisites.h"
 
 struct K15_Window;
 
 ///Window
-typedef uint8 (*createWindowFnc)(K15_OSLayerContext*, K15_Window*, uint32, uint8);
-typedef uint8 (*setWindowDimensionFnc)(K15_OSLayerContext*, K15_Window*, uint32, uint32);
-typedef uint8 (*setWindowFullscreenFnc)(K15_OSLayerContext*, K15_Window*, bool8);
-typedef uint8 (*setWindowTitleFnc)(K15_OSLayerContext*, K15_Window*, char*);
-typedef uint8 (*closeWindowFnc)(K15_OSLayerContext*, K15_Window*);
+typedef uint8 (*createWindowFnc)(K15Context*, K15_Window*, uint32, uint8);
+typedef uint8 (*setWindowDimensionFnc)(K15Context*, K15_Window*, uint32, uint32);
+typedef uint8 (*setWindowFullscreenFnc)(K15Context*, K15_Window*, bool8);
+typedef uint8 (*setWindowTitleFnc)(K15Context*, K15_Window*, char*);
+typedef uint8 (*closeWindowFnc)(K15Context*, K15_Window*);
 typedef double (*getElapsedSecondsFnc)();
 
 ///Events
-typedef uint8 (*pumpSystemEventsFnc)(K15_OSLayerContext*);
+typedef uint8 (*pumpSystemEventsFnc)(K15Context*);
 typedef void (*sleepFnc)(double);
 typedef char* (*getErrorFnc)();
 
 ///Threads
-typedef uint8 (*createThreadFnc)(K15_OSLayerContext*, K15_Thread*, K15_ThreadFnc, void*);
-typedef uint8 (*joinThreadFnc)(K15_OSLayerContext*, K15_Thread*);
-typedef uint8 (*tryJoinThreadFnc)(K15_OSLayerContext*, K15_Thread*, uint32);
-typedef uint8 (*interruptThreadFnc)(K15_OSLayerContext*, K15_Thread*);
-typedef uint8 (*freeThreadFnc)(K15_OSLayerContext*, K15_Thread*);
+typedef uint8 (*createThreadFnc)(K15Context*, K15_Thread*, K15_ThreadFnc, void*);
+typedef uint8 (*joinThreadFnc)(K15Context*, K15_Thread*);
+typedef uint8 (*tryJoinThreadFnc)(K15Context*, K15_Thread*, uint32);
+typedef uint8 (*interruptThreadFnc)(K15Context*, K15_Thread*);
+typedef uint8 (*freeThreadFnc)(K15Context*, K15_Thread*);
 typedef K15_Thread* (*getCurrentThreadFnc)();
 typedef uint8 (*setThreadNameFnc)(K15_Thread*);
 
@@ -38,7 +38,7 @@ enum OSIdentifier
 	OS_COUNT
 };
 
-struct K15_OSLayerContext
+struct K15Context
 {
 	///Window Management
 	struct
@@ -86,8 +86,8 @@ struct K15_OSLayerContext
 	void* userData;
 };
 
-K15_OSLayerContext* K15_GetOSLayerContext();
+K15Context* K15_GetOSLayerContext();
 
-void K15_InternalSetOSLayerContext(K15_OSLayerContext p_OSLayerContext);
+void K15_InternalSetOSLayerContext(K15Context p_OSLayerContext);
 
-#endif //_K15_OSLayer_OSContext_h_
+#endif //_K15_OSContext_h_

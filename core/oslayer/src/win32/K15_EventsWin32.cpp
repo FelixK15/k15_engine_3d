@@ -1,13 +1,19 @@
 #include "win32/K15_EventsWin32.h"
-#include "win32/K15_EnvironmentWin32.h"
+#include "win32/K15_OSContextWin32.h"
 #include "win32/K15_WindowWin32.h"
 
-#include "K15_OSLayer_Window.h"
-#include "K15_OSLayer_SystemEvents.h"
-#include "K15_OSLayer_OSContext.h"
+#include "K15_Window.h"
+#include "K15_SystemEvents.h"
+#include "K15_OSContext.h"
+#include "K15_Logging.h"
+
+#include "K15_DefaultCLibraries.h"
 
 #include "win32/K15_XInputWin32.cpp"
 #include "win32/K15_DirectInputWin32.cpp"
+
+#include "win32/K15_HeaderDefaultWin32.h"
+#include "win32/K15_HeaderExtensionsWin32.h"
 
 /*********************************************************************************/
 intern inline void K15_Win32WindowCreated(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -20,7 +26,7 @@ intern inline void K15_Win32WindowCreated(HWND hWnd, UINT uMsg, WPARAM wParam, L
 	win32Event.eventFlags = K15_WINDOW_EVENT_FLAG;
 
 	//Call once on window creation to get default values
-	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
+	K15Context* osContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
 	K15_Win32Controller* win32Controller = win32Context->controller;
 
@@ -60,7 +66,7 @@ intern inline void K15_Win32WindowActivated(HWND hWnd, UINT uMsg, WPARAM wParam,
 {
 	//low order word = window activated or deactivated?
 	WORD reason = LOWORD(wParam);
-	K15_OSLayerContext* osLayerContext = K15_GetOSLayerContext();
+	K15Context* osLayerContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osLayerContext->userData;
 	K15_Window* window = osLayerContext->window.window;
 
@@ -72,13 +78,13 @@ intern inline void K15_Win32WindowActivated(HWND hWnd, UINT uMsg, WPARAM wParam,
 		{
 			win32Event.event = K15_WINDOW_FOCUS_GAINED;
 			window->flags |= K15_WINDOW_FLAG_HAS_FOCUS;
-			win32Context->XInput.enable(TRUE);
+			win32Context->XInput.enable(K15_TRUE);
 		}
 		else if(reason == WA_INACTIVE)
 		{
 			win32Event.event = K15_WINDOW_FOCUS_LOST;
 			window->flags %= ~K15_WINDOW_FLAG_HAS_FOCUS;
-			win32Context->XInput.enable(FALSE);
+			win32Context->XInput.enable(K15_FALSE);
 		}
 
 		win32Event.eventFlags = K15_WINDOW_EVENT_FLAG;
@@ -93,7 +99,7 @@ intern inline void K15_Win32WindowResized(HWND hWnd, UINT uMsg, WPARAM wParam, L
 	{
 		K15_SystemEvent win32Event = {};
 
-		K15_OSLayerContext* osLayerContext = K15_GetOSLayerContext();
+		K15Context* osLayerContext = K15_GetOSLayerContext();
 		K15_Window* window = osLayerContext->window.window;
 
 		if (window)
@@ -119,13 +125,13 @@ intern inline void K15_Win32KeyInputReceived(HWND hWnd, UINT uMsg, WPARAM wParam
 
 	bool8 wasDown = ((lParam & (1 << 30)) != 0);
 	bool8 isDown = ((lParam & (1 << 31)) == 0);
-	bool8 isSystemKey = FALSE;
+	bool8 isSystemKey = K15_FALSE;
 	
 	if (isDown != wasDown)
 	{
 		if (uMsg == WM_SYSKEYDOWN || uMsg == WM_SYSKEYUP)
 		{
-			isSystemKey = TRUE;
+			isSystemKey = K15_TRUE;
 			win32Event.eventFlags |= K15_SYSTEM_EVENT_FLAG;
 		}
 
@@ -211,13 +217,13 @@ intern inline DWORD K15_Win32CheckControllerConnectivity(K15_Win32Context* p_Win
 		K15_Win32Controller* currentController = &p_Controller[controllerIndex];
 		uint8 previousState = currentController->controllerState;
 		uint8 currentState = 0;
-		if (K15_Win32CheckXInputConnectivity(p_Win32Context, currentController) == TRUE)
+		if (K15_Win32CheckXInputConnectivity(p_Win32Context, currentController) == K15_TRUE)
 		{
 			currentController->APIType = K15_WIN32_APITYPE_XINPUT;
 			currentState = K15_WIN32_CONTROLLER_STATE_CONNECTED;
 			connectedController += 1;
 		}
-		else if (K15_Win32CheckDirectInputConnectivity(p_Win32Context, currentController) == TRUE)
+		else if (K15_Win32CheckDirectInputConnectivity(p_Win32Context, currentController) == K15_TRUE)
 		{
 			currentController->APIType = K15_WIN32_APITYPE_DIRECTINPUT;
 			currentState = K15_WIN32_CONTROLLER_STATE_CONNECTED;
@@ -259,7 +265,7 @@ intern inline DWORD K15_Win32CheckControllerConnectivity(K15_Win32Context* p_Win
 /*********************************************************************************/
 intern inline void K15_Win32DeviceChangeReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
+	K15Context* osContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
 
 	if (wParam == DBT_DEVNODES_CHANGED)
@@ -307,7 +313,7 @@ intern inline void K15_Win32PumpControllerEvents(K15_Win32Context* p_Win32Contex
 /*********************************************************************************/
 LRESULT CALLBACK K15_Win32WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	uint8 messageHandled = FALSE;
+	uint8 messageHandled = K15_FALSE;
 
 	switch(uMsg)
 	{
@@ -317,7 +323,7 @@ LRESULT CALLBACK K15_Win32WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 	case WM_CLOSE:
 		K15_Win32WindowClosed(hWnd, uMsg, wParam, lParam);
-		messageHandled = TRUE;
+		messageHandled = K15_TRUE;
 		break;
 	
 	case WM_ACTIVATE:
@@ -356,11 +362,11 @@ LRESULT CALLBACK K15_Win32WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 	case WM_DEVICECHANGE:
 		K15_Win32DeviceChangeReceived(hWnd, uMsg, wParam, lParam);
-		messageHandled = TRUE;
+		messageHandled = K15_TRUE;
 		break;
 	}
 
-	if (messageHandled == FALSE)
+	if (messageHandled == K15_FALSE)
 	{
 		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	}
@@ -368,7 +374,7 @@ LRESULT CALLBACK K15_Win32WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 	return 0;
 }
 /*********************************************************************************/
-uint8 K15_Win32PumpSystemEvents(K15_OSLayerContext* p_OSContext)
+uint8 K15_Win32PumpSystemEvents(K15Context* p_OSContext)
 {
 	K15_Window* window = p_OSContext->window.window;
 	K15_Win32Context* win32Context = (K15_Win32Context*)p_OSContext->userData;

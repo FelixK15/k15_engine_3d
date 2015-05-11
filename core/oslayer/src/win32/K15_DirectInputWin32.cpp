@@ -406,7 +406,7 @@ intern BOOL K15_InternalEnumDeviceObjectsCallback(LPCDIDEVICEOBJECTINSTANCEA p_D
 	dibRange.diph.dwHow        = DIPH_BYID;
 	dibRange.diph.dwObj        = objectType;
 	dibRange.lMin              = 0;
-	dibRange.lMax              = SHORT_MAX;
+	dibRange.lMax              = SHRT_MAX;
 
 	if ((objectType & DIDFT_AXIS) > 0)
 	{
@@ -554,7 +554,7 @@ intern inline BOOL K15_Win32CheckDirectInputConnectivity(K15_Win32Context* p_Win
 /*********************************************************************************/
 intern inline void K15_Win32DirectInputThumpStickEvent(LPDIDEVICEOBJECTDATA p_InputData)
 {
-	float value = (float)p_InputData->dwData / (float)SHORT_MAX; // [0, 1]
+	float value = (float)p_InputData->dwData / (float)SHRT_MAX; // [0, 1]
 	value = value * 2.f - 1.f;
 
 

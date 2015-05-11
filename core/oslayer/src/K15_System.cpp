@@ -1,18 +1,18 @@
-#include "K15_OSLayer_System.h"
+#include "K15_System.h"
 
-#include "K15_OSLayer_OSContext.h"
+#include "K15_OSContext.h"
 
 /*********************************************************************************/
 void K15_SleepThreadForSeconds(double p_Seconds)
 {
-	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
+	K15Context* osContext = K15_GetOSLayerContext();
 
 	osContext->system.sleep(p_Seconds);
 }
 /*********************************************************************************/
 void K15_SleepThreadForMilliseconds(uint32 p_Milliseconds)
 {
-	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
+	K15Context* osContext = K15_GetOSLayerContext();
 
 	double seconds = (double)p_Milliseconds / 1000.f;
 
@@ -21,14 +21,14 @@ void K15_SleepThreadForMilliseconds(uint32 p_Milliseconds)
 /*********************************************************************************/
 char* K15_GetSystemErrorMessage()
 {
-	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
+	K15Context* osContext = K15_GetOSLayerContext();
 
 	return osContext->system.getError();
 }
 /*********************************************************************************/
 double K15_GetElapsedSeconds()
 {
-	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
+	K15Context* osContext = K15_GetOSLayerContext();
 
 	double seconds = osContext->system.getElapsedSeconds();
 	seconds -= osContext->timeStarted;

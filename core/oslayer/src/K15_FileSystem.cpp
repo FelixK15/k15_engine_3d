@@ -1,4 +1,6 @@
-#include "K15_OSLayer_FileSystem.h"
+#include "K15_FileSystem.h"
+
+#include "K15_DefaultCLibraries.h"
 
 /*********************************************************************************/
 char* K15_GetWholeFileContent(const char* p_FilePath)
@@ -8,7 +10,7 @@ char* K15_GetWholeFileContent(const char* p_FilePath)
 /*********************************************************************************/
 char* K15_GetWholeFileContentWithFileSize(const char* p_FilePath, uint32* p_FileSize)
 {
-	assert(p_FilePath);
+	K15_ASSERT_TEXT(p_FilePath, "Filepath is NULL.");
 
 	uint32 fileSize = K15_GetFileSize(p_FilePath);
 	char* fileContent = 0;

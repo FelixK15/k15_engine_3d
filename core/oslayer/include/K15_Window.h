@@ -1,7 +1,7 @@
-#ifndef _K15_OSLayer_Window_h_
-#define _K15_OSLayer_Window_h_
+#ifndef _K15_Window_h_
+#define _K15_Window_h_
 
-#include "K15_OSLayer_Prerequisites.h"
+#include "K15_Prerequisites.h"
 
 /*********************************************************************************/
 
@@ -51,4 +51,4 @@ bool8 K15_SetWindowTitle(K15_Window* p_Window, char* p_Title);
 void K15_CloseWindow(K15_Window* p_Window);
 
 
-#endif //_K15_OSLayer_Window_h_
+#endif //_K15_Window_h_

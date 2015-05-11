@@ -1,8 +1,28 @@
 #include "win32/K15_ThreadWin32.h"
-#include "win32/K15_EnvironmentWin32.h"
+#include "win32/K15_OSContextWin32.h"
+#include "win32/K15_HeaderDefaultWin32.h"
 
-#include "K15_OSLayer_OSContext.h"
-#include "K15_OSLayer_Thread.h"
+#include "K15_OSContext.h"
+#include "K15_Thread.h"
+#include "K15_DefaultCLibraries.h"
+
+#include <K15_Logging.h>
+
+/*********************************************************************************/
+struct K15_Mutex
+{
+	//HANDLE handle;
+	CRITICAL_SECTION criticalSection;
+};
+/*********************************************************************************/
+struct K15_Semaphore
+{
+	HANDLE handle;
+	LONG count;
+};
+/*********************************************************************************/
+
+
 
 /*********************************************************************************/
 intern DWORD WINAPI K15_Win32ThreadWrapper(LPVOID p_Parameter)
@@ -37,7 +57,7 @@ intern DWORD WINAPI K15_Win32ThreadWrapper(LPVOID p_Parameter)
 
 
 /*********************************************************************************/
-uint8 K15_Win32CreateThread(K15_OSLayerContext* p_OSContext, K15_Thread* p_Thread, K15_ThreadFnc p_ThreadFunction, void* p_ThreadParameter)
+uint8 K15_Win32CreateThread(K15Context* p_OSContext, K15_Thread* p_Thread, K15_ThreadFnc p_ThreadFunction, void* p_ThreadParameter)
 {
 	K15_Win32Thread* win32Thread = (K15_Win32Thread*)K15_OS_MALLOC(sizeof(K15_Win32Thread));
 	byte* win32ThreadParameterBuffer = (byte*)K15_OS_MALLOC(K15_PTR_SIZE * 3);
@@ -71,10 +91,8 @@ uint8 K15_Win32CreateThread(K15_OSLayerContext* p_OSContext, K15_Thread* p_Threa
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-uint8 K15_Win32TryJoinThread(K15_OSLayerContext* p_OSContext, K15_Thread* p_Thread, uint32 p_MilliSeconds)
+uint8 K15_Win32TryJoinThread(K15Context* p_OSContext, K15_Thread* p_Thread, uint32 p_MilliSeconds)
 {
-	assert(p_OSContext && p_Thread);
-
 	K15_Win32Thread* win32Thread = (K15_Win32Thread*)p_Thread->userData;
 
 	DWORD result = WaitForSingleObject(win32Thread->handle, DWORD(p_MilliSeconds));
@@ -91,20 +109,18 @@ uint8 K15_Win32TryJoinThread(K15_OSLayerContext* p_OSContext, K15_Thread* p_Thre
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-uint8 K15_Win32JoinThread(K15_OSLayerContext* p_OSContext, K15_Thread* p_Thread)
+uint8 K15_Win32JoinThread(K15Context* p_OSContext, K15_Thread* p_Thread)
 {
 	return K15_Win32TryJoinThread(p_OSContext, p_Thread, INFINITE);
 }
 /*********************************************************************************/
-uint8 K15_Win32InterruptThread(K15_OSLayerContext* p_OSContext, K15_Thread* p_Thread)
+uint8 K15_Win32InterruptThread(K15Context* p_OSContext, K15_Thread* p_Thread)
 {
-	assert(p_OSContext && p_Thread);
-
 	K15_Win32Thread* win32Thread = (K15_Win32Thread*)p_Thread->userData;
 
 	BOOL threadInterrupted = TerminateThread(win32Thread->handle, 0);
 
-	if (threadInterrupted == FALSE)
+	if (threadInterrupted == K15_FALSE)
 	{
 		return K15_OS_ERROR_SYSTEM;
 	}
@@ -118,7 +134,7 @@ K15_Thread* K15_Win32GetCurrentThread()
 	DWORD threadIdentifier = GetCurrentThreadId();
 	K15_Win32Thread* win32Thread = 0;
 	K15_Thread* currentThread = 0;
-	K15_OSLayerContext* osContext = K15_GetOSLayerContext();
+	K15Context* osContext = K15_GetOSLayerContext();
 
 	//iterate through all threads and check the thread handle
 	for (uint32 threadIndex = 0;
@@ -146,7 +162,6 @@ K15_Thread* K15_Win32GetCurrentThread()
 K15_Mutex* K15_Win32CreateMutex()
 {
 	K15_Mutex* win32Mutex = (K15_Mutex*)K15_OS_MALLOC(sizeof(K15_Mutex));
-	assert(win32Mutex);
 
 	InitializeCriticalSectionAndSpinCount(&win32Mutex->criticalSection, 2000);
 
@@ -173,8 +188,6 @@ uint8 K15_Win32UnlockMutex(K15_Mutex* p_Mutex)
 /*********************************************************************************/
 uint8 K15_Win32FreeMutex(K15_Mutex* p_Mutex)
 {
-	assert(p_Mutex);
-
 	DeleteCriticalSection(&p_Mutex->criticalSection);
 
 	K15_OS_FREE(p_Mutex);
@@ -216,13 +229,13 @@ uint8 K15_Win32SetThreadName(K15_Thread* p_Thread)
 	return K15_OS_ERROR_SYSTEM;
 }
 /*********************************************************************************/
-uint8 K15_Win32FreeThread(K15_OSLayerContext* p_OSContext, K15_Thread* p_Thread)
+uint8 K15_Win32FreeThread(K15Context* p_OSContext, K15_Thread* p_Thread)
 {
 	K15_Win32Thread* win32Thread = (K15_Win32Thread*)p_Thread->userData;
 
 	BOOL handleClosed = CloseHandle(win32Thread->handle);
 
-	if (handleClosed == FALSE)
+	if (handleClosed == K15_FALSE)
 	{
 		return K15_OS_ERROR_SYSTEM;
 	}
@@ -241,11 +254,16 @@ K15_Semaphore* K15_Win32CreateSemaphoreWithInitialValue(uint32 p_InitialValue)
 {
 	K15_Semaphore* win32Semaphore = (K15_Semaphore*)K15_OS_MALLOC(sizeof(K15_Semaphore));
 
-	assert(win32Semaphore);
-
 	HANDLE semaphoreHandle = CreateSemaphore(0, p_InitialValue, 100, 0);
 
-	assert(semaphoreHandle != INVALID_HANDLE_VALUE);
+	if (semaphoreHandle == INVALID_HANDLE_VALUE)
+	{
+		char* error = K15_Win32GetError();
+		K15_LOG_ERROR_MESSAGE("K15_Win32CreateSemaphoreWithInitialValue (System Error): %s", error);
+		free(error);
+
+		return 0;
+	}
 
 	win32Semaphore->handle = semaphoreHandle;
 	win32Semaphore->count = p_InitialValue;
@@ -255,11 +273,9 @@ K15_Semaphore* K15_Win32CreateSemaphoreWithInitialValue(uint32 p_InitialValue)
 /*********************************************************************************/
 uint8 K15_Win32PostSemaphore(K15_Semaphore* p_Semaphore)
 {
-	assert(p_Semaphore);
-
 	uint8 returnValue = K15_SUCCESS;
 
-	if (ReleaseSemaphore(p_Semaphore->handle, 1, 0) != FALSE)
+	if (ReleaseSemaphore(p_Semaphore->handle, 1, 0) != K15_FALSE)
 	{
 		returnValue = K15_OS_ERROR_SYSTEM;
 	}
@@ -271,8 +287,6 @@ uint8 K15_Win32PostSemaphore(K15_Semaphore* p_Semaphore)
 /*********************************************************************************/
 uint8 K15_Win32WaitSemaphore(K15_Semaphore* p_Semaphore)
 {
-	assert(p_Semaphore);
-
 	DWORD returnValue = WaitForSingleObject(p_Semaphore->handle, INFINITE);
 	InterlockedDecrement(&p_Semaphore->count);
 
@@ -281,12 +295,11 @@ uint8 K15_Win32WaitSemaphore(K15_Semaphore* p_Semaphore)
 /*********************************************************************************/
 uint8 K15_Win32FreeSemaphore(K15_Semaphore* p_Semaphore)
 {
-	assert(p_Semaphore);
-	assert(p_Semaphore->count == 0);
+	K15_ASSERT_TEXT(p_Semaphore->count == 0, "Count of semaphore is 0.");
 
 	BOOL handleClosed = CloseHandle(p_Semaphore->handle);
 
-	if (handleClosed == FALSE)
+	if (handleClosed == K15_FALSE)
 	{
 		return K15_OS_ERROR_SYSTEM;
 	}

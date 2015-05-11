@@ -1,9 +1,10 @@
 #include "K15_RenderContext.h"
 
-#include <K15_OSLayer_OSContext.h>
-#include <K15_OSLayer_ErrorCodes.h>
-#include <K15_OSLayer_Thread.h>
-#include <K15_OSLayer_Window.h>
+#include <K15_OSContext.h>
+#include <K15_ErrorCodes.h>
+#include <K15_Thread.h>
+#include <K15_Window.h>
+#include <K15_DefaultCLibraries.h>
 
 #include "K15_RenderBufferDesc.h"
 #include "K15_RenderProgramDesc.h"
@@ -655,7 +656,7 @@ intern void K15_InternalSwapRenderDispatcherBuffers(K15_RenderCommandBufferDispa
 	K15_UnlockMutex(p_RenderCommandBufferDispatcher->swapMutex);
 }
 /*********************************************************************************/
-intern uint8 K15_InternalInitializeRenderContext(K15_RenderContext* p_RenderContext, K15_OSLayerContext* p_OSContext)
+intern uint8 K15_InternalInitializeRenderContext(K15_RenderContext* p_RenderContext, K15Context* p_OSContext)
 {
 	assert(p_RenderContext && p_OSContext);
 
@@ -802,7 +803,7 @@ const char* K15_GetLastRenderErrorMessageWithSize(K15_RenderContext* p_RenderCon
 	return p_RenderContext->lastError.message;
 }
 /*********************************************************************************/
-K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext)
+K15_RenderContext* K15_CreateRenderContext(K15Context* p_OSContext)
 {
 	assert(p_OSContext);
 

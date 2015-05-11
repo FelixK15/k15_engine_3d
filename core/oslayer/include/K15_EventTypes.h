@@ -1,5 +1,5 @@
-#ifndef _K15_OSLayer_EventTypes_h_
-#define _K15_OSLayer_EventTypes_h_
+#ifndef _K15_EventTypes_h_
+#define _K15_EventTypes_h_
 
 // EVENT TYPES
 #define K15_APPLICATION_QUIT 100
@@ -63,4 +63,4 @@
 
 #define K15_GET_CONTROLLER_INDEX(event)(short)(event.controllerButton >> 16)
 
-#endif //_K15_OSLayer_EventTypes_h_
+#endif //_K15_EventTypes_h_

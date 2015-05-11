@@ -3,6 +3,8 @@
 
 #include "K15_RenderPrerequisites.h"
 
+#include <K15_Logging.h>
+
 #define K15_RENDERING_COMMAND_BUFFER_COUNT 2
 #define K15_RENDERING_COMMAND_BACK_BUFFER_INDEX 1
 #define K15_RENDERING_COMMAND_FRONT_BUFFER_INDEX 0
@@ -360,7 +362,7 @@ void K15_SetRenderContextError(K15_RenderContext* p_RenderContext, const char* p
 const char* K15_GetLastRenderErrorMessage(K15_RenderContext* p_RenderContext);
 const char* K15_GetLastRenderErrorMessageWithSize(K15_RenderContext* p_RenderContext, uint32* p_ErrorMessageSize);
 
-K15_RenderContext* K15_CreateRenderContext(K15_OSLayerContext* p_OSContext);
+K15_RenderContext* K15_CreateRenderContext(K15Context* p_OSContext);
 K15_RenderCommandBuffer* K15_CreateRenderCommandBuffer(K15_RenderContext* p_RenderContext);
 
 uint8 K15_BeginRenderCommand(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderCommand p_RenderCommand);

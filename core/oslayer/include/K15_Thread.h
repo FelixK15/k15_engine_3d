@@ -1,7 +1,7 @@
-#ifndef _K15_OSLayer_Thread_h_
-#define _K15_OSLayer_Thread_h_
+#ifndef _K15_Thread_h_
+#define _K15_Thread_h_
 
-#include "K15_OSLayer_Prerequisites.h"
+#include "K15_Prerequisites.h"
 
 #ifdef K15_OS_WINDOWS
 	#include "win32/K15_ThreadWin32.h"
@@ -57,4 +57,4 @@ uint8 K15_InterruptThread(K15_Thread* p_Thread);
 
 uint8 K15_SetThreadName(K15_Thread* p_Thread, const char* p_ThreadName);
 
-#endif //_K15_OSLayer_Thread_h_
+#endif //_K15_Thread_h_

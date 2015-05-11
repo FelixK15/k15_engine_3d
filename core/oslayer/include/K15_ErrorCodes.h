@@ -1,5 +1,5 @@
-#ifndef _K15_OSLayer_ErrorCodes_h_
-#define _K15_OSLayer_ErrorCodes_h_
+#ifndef _K15_ErrorCodes_h_
+#define _K15_ErrorCodes_h_
 
 #define K15_SUCCESS 0
 
@@ -16,4 +16,4 @@
 #define K15_OS_ERROR_THREAD_NOT_JOINABLE 207
 #define K15_OS_THREAD_NOT_FINISHED 208
 
-#endif //_K15_OSLayer_ErrorCodes_h_
+#endif //_K15_ErrorCodes_h_

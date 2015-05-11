@@ -3,11 +3,12 @@
 #include "OpenGL/K15_RenderGLContext.h"
 #include "OpenGL/WGL/wglext.h"
 
-#include <K15_OSLayer_OSContext.h>
-#include <K15_OSLayer_Window.h>
+#include <K15_DefaultCLibraries.h>
+#include <K15_OSContext.h>
+#include <K15_Window.h>
 
 #include <win32/K15_WindowWin32.h>
-#include <win32/K15_EnvironmentWin32.h>
+#include <win32/K15_OSContextWin32.h>
 
 /*********************************************************************************/
 intern inline uint8 K15_Win32InternalCreateDummyContext(HWND hwnd, HDC dc, HGLRC* p_Context)
@@ -94,7 +95,7 @@ intern GLboolean K15_Win32SwapBuffers(K15_GLRenderContext* p_RenderContext)
 	return GL_TRUE;
 }
 /*********************************************************************************/
-uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSLayerContext* p_OSContext)
+uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15Context* p_OSContext)
 {
 	K15_Win32Context* win32Context = (K15_Win32Context*)p_OSContext->userData;
 

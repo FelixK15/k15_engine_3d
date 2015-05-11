@@ -1,7 +1,9 @@
-#ifndef _K15_OSLayer_Environment_Win32_h_
-#define _K15_OSLayer_Environment_Win32_h_
+#ifndef _K15_OSContext_Win32_h_
+#define _K15_OSContext_Win32_h_
 
-#include "K15_OSLayer_Prerequisites.h"
+#include "K15_Prerequisites.h"
+#include "win32/K15_HeaderDefaultWin32.h"
+#include "win32/K15_HeaderExtensionsWin32.h"
 
 #define K15_WIN32_APITYPE_XINPUT 1
 #define K15_WIN32_APITYPE_DIRECTINPUT 2
@@ -83,4 +85,4 @@ void K15_Win32Sleep(double p_SleepTimeInSeconds);
 void K15_Win32ShutdownOSLayer();
 double K15_Win32GetElapsedSeconds();
 
-#endif //_K15_OSLayer_Environment_Win32_h_
+#endif //_K15_OSContext_Win32_h_

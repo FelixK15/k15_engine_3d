@@ -1,10 +1,14 @@
+#include "K15_DefaultCLibraries.h"
+
 #include "win32/K15_FileSystemWin32.h"
 #include "win32/K15_HelperWin32.h"
+
+#include "win32/K15_HeaderDefaultWin32.h"
 
 /*********************************************************************************/
 uint32 K15_Win32GetFileSize(const char* p_FilePath)
 {
-	assert(p_FilePath);
+	K15_ASSERT_TEXT(p_FilePath, "filepath is 0.");
 
 	uint32 filePathLength = (uint32)strlen(p_FilePath) + 1;
 
@@ -27,7 +31,7 @@ uint32 K15_Win32GetFileSize(const char* p_FilePath)
 /*********************************************************************************/
 uint8 K15_Win32FileExists(const char* p_FilePath)
 {
-	assert(p_FilePath);
+	K15_ASSERT_TEXT(p_FilePath, "filepath is 0.");
 
 	int filePathLength = (uint32)strlen(p_FilePath) + 1;
 
@@ -48,7 +52,7 @@ uint8 K15_Win32FileExists(const char* p_FilePath)
 /*********************************************************************************/
 char* K15_Win32ConvertToSystemPath(const char* p_FilePath)
 {
-	assert(p_FilePath);
+	K15_ASSERT_TEXT(p_FilePath, "filepath is 0.");
 
 	size_t filePathSize = strlen(p_FilePath);
 	char* convertedFilePath = (char*)K15_OS_MALLOC(filePathSize + 1); //+1 for 0 terminator

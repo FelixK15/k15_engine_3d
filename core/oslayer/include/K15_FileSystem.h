@@ -1,7 +1,7 @@
-#ifndef _K15_OSLayer_FileSystem_h_
-#define _K15_OSLayer_FileSystem_h_
+#ifndef _K15_FileSystem_h_
+#define _K15_FileSystem_h_
 
-#include "K15_OSLayer_Prerequisites.h"
+#include "K15_Prerequisites.h"
 
 #ifdef K15_OS_WINDOWS
 	#include "win32/K15_FileSystemWin32.h"
@@ -26,4 +26,4 @@ char* K15_GetFileName(const char* p_FilePath);
 char* K15_GetFileNameWithoutExtension(const char* p_FilePath);
 char* K15_GetFileExtension(const char* p_FilePath);
 
-#endif //_K15_OSLayer_FileSystem_h_
+#endif //_K15_FileSystem_h_

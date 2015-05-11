@@ -1,7 +1,9 @@
 #ifndef K15_Render_Prerequisties_h_
 #define K15_Render_Prerequisties_h_
 
-#include <K15_OSLayer_Prerequisites.h>
+#define _CRT_SECURE_NO_WARNINGS
+
+#include <K15_Prerequisites.h>
 
 #ifdef K15_OS_WINDOWS
 	#include "OpenGL/WGL/K15_Win32RenderWGLContext.h"	
@@ -43,7 +45,7 @@
 #define K15_RENDER_MAX_GPU_RENDER_TARGETS						32
 
 #define K15_IS_POW2(x) ((x != 0) && !(x & (x - 1))
-#define K15_CHECK_ASSIGNMENT(variable, value) {variable = value; assert(variable);}
+#define K15_CHECK_ASSIGNMENT(variable, value) {variable = value; K15_ASSERT_TEXT(variable, "Could not assign to variable \'%s\'.", #variable);}
 
 enum K15_RenderDescFlags
 {
