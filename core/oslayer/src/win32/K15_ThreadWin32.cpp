@@ -1,28 +1,11 @@
 #include "win32/K15_ThreadWin32.h"
 #include "win32/K15_OSContextWin32.h"
-#include "win32/K15_HeaderDefaultWin32.h"
 
 #include "K15_OSContext.h"
 #include "K15_Thread.h"
 #include "K15_DefaultCLibraries.h"
 
 #include <K15_Logging.h>
-
-/*********************************************************************************/
-struct K15_Mutex
-{
-	//HANDLE handle;
-	CRITICAL_SECTION criticalSection;
-};
-/*********************************************************************************/
-struct K15_Semaphore
-{
-	HANDLE handle;
-	LONG count;
-};
-/*********************************************************************************/
-
-
 
 /*********************************************************************************/
 intern DWORD WINAPI K15_Win32ThreadWrapper(LPVOID p_Parameter)

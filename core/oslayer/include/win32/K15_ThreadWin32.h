@@ -2,6 +2,7 @@
 #define _K15_Thread_Win32_h_
 
 #include "K15_Prerequisites.h"
+#include "win32/K15_HeaderDefaultWin32.h"
 
 #define K15_CreateMutex K15_Win32CreateMutex
 #define K15_LockMutex K15_Win32LockMutex
@@ -13,8 +14,19 @@
 #define K15_WaitSemaphore K15_Win32WaitSemaphore
 #define K15_FreeSemaphore K15_Win32FreeSemaphore
 
-typedef void * HANDLE;
-
+/*********************************************************************************/
+struct K15_Mutex
+{
+	//HANDLE handle;
+	CRITICAL_SECTION criticalSection;
+};
+/*********************************************************************************/
+struct K15_Semaphore
+{
+	HANDLE handle;
+	LONG count;
+};
+/*********************************************************************************/
 struct K15_Win32Thread
 {
 	HANDLE handle;
@@ -22,6 +34,7 @@ struct K15_Win32Thread
 
 	byte* parameterBuffer;
 };
+/*********************************************************************************/
 
 uint8 K15_Win32CreateThread(K15Context* p_OSContext, K15_Thread* p_Thread, K15_ThreadFnc p_ThreadFunction, void* p_ThreadParameter);
 uint8 K15_Win32TryJoinThread(K15Context* p_OSContext, K15_Thread* p_Thread, uint32 p_MilliSeconds);

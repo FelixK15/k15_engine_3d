@@ -44,6 +44,12 @@ int CALLBACK WinMain(
 
 	bool running = true;
 
+#ifdef K15_USE_DYNAMIC_GAME_LIBRARY
+	K15_LoadGameLibrary();
+
+#endif //K15_USE_DYNAMIC_GAME_LIBRARY
+
+
 	K15_SystemEvent event = {};
 
 	while (running)

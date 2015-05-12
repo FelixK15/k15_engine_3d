@@ -3,8 +3,6 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "K15_ErrorCodes.h"
-#include "K15_Config.h"
 
 #ifdef __ANDROID__
 #define K15_OS_ANDROID
@@ -19,6 +17,9 @@
 #ifdef K15_OS_ANDROID
 #define K15_PLATFORM_MOBILE
 #endif //K15_OS_ANDROID
+
+#include "K15_Config.h"
+#include "K15_ErrorCodes.h"
 
 #if defined (K15_OS_WINDOWS)
 #ifdef _WIN64
