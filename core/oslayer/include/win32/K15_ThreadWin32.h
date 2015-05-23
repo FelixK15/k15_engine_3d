@@ -11,6 +11,7 @@
 #define K15_CreateSemaphore K15_Win32CreateSemaphore
 #define K15_CreateSemaphoreWithInitialValue K15_Win32CreateSemaphoreWithInitialValue
 #define K15_PostSemaphore K15_Win32PostSemaphore
+#define K15_TryWaitSemaphore K15_Win32TryWaitSemaphore
 #define K15_WaitSemaphore K15_Win32WaitSemaphore
 #define K15_FreeSemaphore K15_Win32FreeSemaphore
 
@@ -36,12 +37,12 @@ struct K15_Win32Thread
 };
 /*********************************************************************************/
 
-uint8 K15_Win32CreateThread(K15Context* p_OSContext, K15_Thread* p_Thread, K15_ThreadFnc p_ThreadFunction, void* p_ThreadParameter);
-uint8 K15_Win32TryJoinThread(K15Context* p_OSContext, K15_Thread* p_Thread, uint32 p_MilliSeconds);
-uint8 K15_Win32JoinThread(K15Context* p_OSContext, K15_Thread* p_Thread);
-uint8 K15_Win32InterruptThread(K15Context* p_OSContext, K15_Thread* p_Thread);
+uint8 K15_Win32CreateThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread, K15_ThreadFnc p_ThreadFunction, void* p_ThreadParameter);
+uint8 K15_Win32TryJoinThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread, uint32 p_MilliSeconds);
+uint8 K15_Win32JoinThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread);
+uint8 K15_Win32InterruptThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread);
 uint8 K15_Win32SetThreadName(K15_Thread* p_Thread);
-uint8 K15_Win32FreeThread(K15Context* p_OSContext, K15_Thread* p_Thread);
+uint8 K15_Win32FreeThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread);
 K15_Thread* K15_Win32GetCurrentThread();
 
 K15_Mutex* K15_Win32CreateMutex();
@@ -52,6 +53,7 @@ uint8 K15_Win32FreeMutex(K15_Mutex* p_Mutex);
 K15_Semaphore* K15_Win32CreateSemaphore();
 K15_Semaphore* K15_Win32CreateSemaphoreWithInitialValue(uint32 p_InitialValue);
 uint8 K15_Win32PostSemaphore(K15_Semaphore* p_Semaphore);
+uint8 K15_Win32TryWaitSemaphore(K15_Semaphore* p_Semaphore, uint32 p_MilliSeconds);
 uint8 K15_Win32WaitSemaphore(K15_Semaphore* p_Semaphore);
 uint8 K15_Win32FreeSemaphore(K15_Semaphore* p_Semaphore);
 

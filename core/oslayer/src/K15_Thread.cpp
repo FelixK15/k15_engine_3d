@@ -5,12 +5,18 @@
 #include "K15_OSContext.h"
 #include "K15_System.h"
 
+#include "generated/K15_ThreadStretchBuffer.cpp"
+
 #include <K15_Logging.h>
 
 /*********************************************************************************/
-intern void K15_InternalAddThreadToOSContext(K15Context* p_OSContext, K15_Thread* p_Thread)
+intern void K15_InternalAddThreadToOSContext(K15_OSContext* p_OSContext, K15_Thread* p_Thread)
 {
-	for (uint32 threadIndex = 0;
+	K15_ThreadStretchBuffer* threadBuffer = &p_OSContext->threading.threads;
+
+	K15_PushThread(threadBuffer, p_Thread);
+
+	/*for (uint32 threadIndex = 0;
 		threadIndex < K15_MAX_THREADS;
 		++threadIndex)
 	{
@@ -19,12 +25,16 @@ intern void K15_InternalAddThreadToOSContext(K15Context* p_OSContext, K15_Thread
 			p_OSContext->threading.threads[threadIndex] = p_Thread;
 			break;
 		}
-	}
+	}*/
 }
 /*********************************************************************************/
-intern void K15_InternalRemoveThreadFromOSContext(K15Context* p_OSContext, K15_Thread* p_Thread)
+intern void K15_InternalRemoveThreadFromOSContext(K15_OSContext* p_OSContext, K15_Thread* p_Thread)
 {
-	for (uint32 threadIndex = 0;
+	K15_ThreadStretchBuffer* threadBuffer = &p_OSContext->threading.threads;
+
+	K15_PopThreadElement(threadBuffer, p_Thread);
+	
+	/*for (uint32 threadIndex = 0;
 		threadIndex < K15_MAX_THREADS;
 		++threadIndex)
 	{
@@ -33,7 +43,7 @@ intern void K15_InternalRemoveThreadFromOSContext(K15Context* p_OSContext, K15_T
 			p_OSContext->threading.threads[threadIndex] = 0;
 			break;
 		}
-	}
+	}*/
 }
 /*********************************************************************************/
 K15_Thread* K15_CreateThread(K15_ThreadFnc p_ThreadFunction, void* p_ThreadParameter, uint32 p_ThreadFlags)
@@ -69,7 +79,7 @@ K15_Thread* K15_CreateThread(K15_ThreadFnc p_ThreadFunction, void* p_ThreadParam
 /*********************************************************************************/
 K15_Thread* K15_GetCurrentThread()
 {
-	K15Context* osContext = K15_GetOSLayerContext();
+	K15_OSContext* osContext = K15_GetOSLayerContext();
 	K15_Thread* currentThread = osContext->threading.getCurrentThread();
 
 	return currentThread;
@@ -79,7 +89,7 @@ uint8 K15_FreeThread(K15_Thread* p_Thread)
 {
 	K15_ASSERT_TEXT(p_Thread, "Thread is NULL");
 
-	K15Context* osContext = K15_GetOSLayerContext();
+	K15_OSContext* osContext = K15_GetOSLayerContext();
 
 	if (p_Thread->context->state == K15_THREAD_STATE_RUNNING)
 	{
@@ -106,7 +116,7 @@ uint8 K15_StartThread(K15_Thread* p_Thread)
 		return K15_OS_ERROR_THREAD_ALREADY_STARTED;
 	}
 
-	K15Context* osContext = K15_GetOSLayerContext();
+	K15_OSContext* osContext = K15_GetOSLayerContext();
 
 	K15_ThreadContext* threadContext = p_Thread->context;
 
@@ -132,7 +142,7 @@ uint8 K15_JoinThread(K15_Thread* p_Thread)
 {
 	K15_ASSERT_TEXT(p_Thread, "Thread is NULL");
 
-	K15Context* osContext = K15_GetOSLayerContext();
+	K15_OSContext* osContext = K15_GetOSLayerContext();
 	K15_ThreadContext* threadContext = p_Thread->context;
 
 	if (threadContext->state != K15_THREAD_STATE_RUNNING)
@@ -162,10 +172,10 @@ uint8 K15_TryJoinThread(K15_Thread* p_Thread, uint32 p_MilliSeconds)
 {
 	K15_ASSERT_TEXT(p_Thread, "Thread is NULL");
 
-	K15Context* osContext = K15_GetOSLayerContext();
+	K15_OSContext* osContext = K15_GetOSLayerContext();
 	K15_ThreadContext* threadContext = p_Thread->context;
 
-	if (threadContext->state != K15_THREAD_STATE_RUNNING)
+	if (threadContext->state != K15_THREAD_STATE_RUNNING && threadContext->state != K15_THREAD_STATE_FINISHED)
 	{
 		return K15_OS_ERROR_THREAD_NOT_JOINABLE;
 	}
@@ -192,7 +202,7 @@ uint8 K15_InterruptThread(K15_Thread* p_Thread)
 {
 	K15_ASSERT_TEXT(p_Thread, "Thread is NULL");
 
-	K15Context* osContext = K15_GetOSLayerContext();
+	K15_OSContext* osContext = K15_GetOSLayerContext();
 	K15_ThreadContext* threadContext = p_Thread->context;
 
 	if (threadContext->state != K15_THREAD_STATE_RUNNING)
@@ -223,7 +233,7 @@ uint8 K15_SetThreadName(K15_Thread* p_Thread, const char* p_ThreadName)
 	K15_ASSERT_TEXT(p_Thread, "Thread is NULL");
 	K15_ASSERT_TEXT(p_ThreadName, "Thread name is NULL");
 
-	K15Context* osContext = K15_GetOSLayerContext();
+	K15_OSContext* osContext = K15_GetOSLayerContext();
 	K15_ThreadContext* threadContext = p_Thread->context;
 	size_t newThreadNameLength = strlen(p_ThreadName);
 

@@ -59,6 +59,6 @@ struct K15_GLRenderContext
 	void* userData;
 };
 
-uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15Context* p_OSLayerContext);
+uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSContext* p_OSLayerContext);
 
 #endif //_K15_Rendering_GLContext_h_

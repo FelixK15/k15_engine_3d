@@ -30,6 +30,7 @@ build
 build-dependencies
 *.lnk
 *.swp
+*.dll
 build_dependencies/
 dependencies/resourceformats/.git
 tools/resource_compiler/.git

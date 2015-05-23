@@ -7,7 +7,7 @@
 /*********************************************************************************/
 K15_Window* K15_CreateWindow(uint32 p_Flags, uint8 p_MonitorIndex)
 {
-	K15Context* OSContext = K15_GetOSLayerContext();
+	K15_OSContext* OSContext = K15_GetOSLayerContext();
 
 //	K15_ASSERT_TEXT(OSContext->window.window == 0, "Window has already been created.");
 
@@ -36,7 +36,7 @@ uint8 K15_SetWindowDimension(K15_Window* p_Window, uint32 p_Height, uint32 p_Wid
 {
 	assert(p_Window);
 
-	K15Context* OSContext = K15_GetOSLayerContext();
+	K15_OSContext* OSContext = K15_GetOSLayerContext();
 
 	uint8 result = OSContext->window.setWindowDimension(OSContext, p_Window, p_Height, p_Width);
 
@@ -53,7 +53,7 @@ uint8 K15_SetWindowFullscreen(K15_Window* p_Window, bool8 p_Fullscreen)
 {
 	assert(p_Window);
 
-	K15Context* OSContext = K15_GetOSLayerContext();
+	K15_OSContext* OSContext = K15_GetOSLayerContext();
 
 	uint8 result = OSContext->window.setWindowFullscreen(OSContext, p_Window, p_Fullscreen);
 
@@ -76,7 +76,7 @@ uint8 K15_SetWindowTitle(K15_Window* p_Window, char* p_Title)
 {
 	assert(p_Window && p_Title);
 	
-	K15Context* OSContext = K15_GetOSLayerContext();
+	K15_OSContext* OSContext = K15_GetOSLayerContext();
 
 	size_t titleLength = strlen(p_Title);
 	char* copiedTitle = (char*)K15_OS_MALLOC(titleLength);
@@ -102,7 +102,7 @@ void K15_CloseWindow(K15_Window* p_Window)
 {
 	assert(p_Window);
 
-	K15Context* OSContext = K15_GetOSLayerContext();
+	K15_OSContext* OSContext = K15_GetOSLayerContext();
 
 	assert(OSContext->window.window);
 

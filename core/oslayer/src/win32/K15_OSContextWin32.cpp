@@ -4,11 +4,13 @@
 
 #include "K15_OSContext.h"
 #include "K15_Thread.h"
+#include "K15_FileSystem.h"
 #include "K15_DefaultCLibraries.h"
 
 #include "win32/K15_WindowWin32.h"
 #include "win32/K15_EventsWin32.h"
 #include "win32/K15_ThreadWin32.h"
+#include "win32/K15_DynamicLibraryWin32.h"	
 #include "win32/K15_HelperWin32.h"
 #include "win32/K15_HeaderDefaultWin32.h"
 #include "win32/K15_HeaderExtensionsWin32.h"
@@ -188,7 +190,7 @@ void K15_Win32AllocateDebugConsole()
 /*********************************************************************************/
 uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 {
-	K15Context win32OSContext;
+	K15_OSContext win32OSContext;
 
 	//window
 	win32OSContext.window.createWindow = K15_Win32CreateWindow;
@@ -209,25 +211,34 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	win32OSContext.threading.setThreadName = K15_Win32SetThreadName;
 	win32OSContext.threading.getCurrentThread = K15_Win32GetCurrentThread;
 	win32OSContext.threading.freeThread = K15_Win32FreeThread;
-	win32OSContext.threading.threads = (K15_Thread**)K15_OS_MALLOC(sizeof(K15_Thread*) * K15_MAX_THREADS);
 
-	memset(win32OSContext.threading.threads, 0, sizeof(K15_Thread*) * K15_MAX_THREADS);
+	//create threading stretch buffer
+	K15_ThreadStretchBuffer threadBuffer = {};
+	K15_CreateThreadStretchBuffer(&threadBuffer, K15_DEFAULT_THREAD_SIZE);
+
+	win32OSContext.threading.threads = threadBuffer;
+
+	//win32OSContext.threading.threads = (K15_Thread**)K15_OS_MALLOC(sizeof(K15_Thread*) * K15_MAX_THREADS);
+
+	//memset(win32OSContext.threading.threads, 0, sizeof(K15_Thread*) * K15_MAX_THREADS);
 
 	//Get message box function
 	HMODULE user32Module = GetModuleHandleA("user32.dll");
 	_MessageBoxA = (MessageBoxAProc)GetProcAddress(user32Module, "MessageBoxA");
 
-	//get current dir
-	LPSTR currentDirectoryBuffer = (LPSTR)K15_OS_MALLOC(MAX_PATH);
-	GetCurrentDirectoryA(MAX_PATH, currentDirectoryBuffer);
-
 	//system
 	win32OSContext.system.systemIdentifier = OS_WINDOWS;
-	win32OSContext.system.sleep = K15_Win32Sleep;
-	win32OSContext.system.getError = K15_Win32GetError;
-	win32OSContext.system.homeDir = currentDirectoryBuffer;
+	win32OSContext.system.homeDir = K15_Win32GetWorkingDirectory();
 	win32OSContext.system.getElapsedSeconds = K15_Win32GetElapsedSeconds;
+	win32OSContext.system.loadDynamicLibrary = K15_Win32LoadDynamicLibrary;
 
+	//create dynamic library stretch buffer
+	K15_DynamicLibraryStretchBuffer dynamicLibraryBuffer = {};
+	K15_CreateDynamicLibraryStretchBuffer(&dynamicLibraryBuffer, K15_DEFAULT_DYNAMIC_LIBRARY_SIZE);
+
+	win32OSContext.system.dynamicLibraries = dynamicLibraryBuffer;
+	
+	//arguments
 	win32OSContext.commandLineArgCount = __argc;
 	win32OSContext.commandLineArgs = __argv;
 	win32OSContext.userData = 0;
@@ -236,8 +247,8 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 #ifdef K15_DEBUG
 	K15_Win32AllocateDebugConsole();
 
-	K15_LogRegisterLogFnc(K15_Win32LogVisualStudio, K15_LOG_PRIORITY_DEFAULT);
-	K15_LogRegisterLogFnc(K15_Win32LogConsole, K15_LOG_PRIORITY_DEFAULT);
+	K15_LogRegisterLogFnc(K15_Win32LogVisualStudio, K15_LOG_PRIORITY_DEFAULT, K15_LOG_FLAG_ADD_TIME);
+	K15_LogRegisterLogFnc(K15_Win32LogConsole, K15_LOG_PRIORITY_DEFAULT, K15_LOG_FLAG_ADD_TIME);
 #endif //K15_DEBUG
 
 	K15_Win32Context* win32SpecificContext = (K15_Win32Context*)K15_OS_MALLOC(sizeof(K15_Win32Context));
@@ -332,7 +343,7 @@ void K15_Win32Sleep(double p_SleepTimeInSeconds)
 /*********************************************************************************/
 void K15_Win32ShutdownOSLayer()
 {
-	K15Context* osContext = K15_GetOSLayerContext();
+	K15_OSContext* osContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
 
 	if (win32Context->XInput.module)
@@ -356,7 +367,7 @@ void K15_Win32ShutdownOSLayer()
 /*********************************************************************************/
 double K15_Win32GetElapsedSeconds()
 {
-	K15Context* osContext = K15_GetOSLayerContext();
+	K15_OSContext* osContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
 
 	LARGE_INTEGER counts;

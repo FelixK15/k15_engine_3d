@@ -26,7 +26,7 @@ intern inline void K15_Win32WindowCreated(HWND hWnd, UINT uMsg, WPARAM wParam, L
 	win32Event.eventFlags = K15_WINDOW_EVENT_FLAG;
 
 	//Call once on window creation to get default values
-	K15Context* osContext = K15_GetOSLayerContext();
+	K15_OSContext* osContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
 	K15_Win32Controller* win32Controller = win32Context->controller;
 
@@ -66,7 +66,7 @@ intern inline void K15_Win32WindowActivated(HWND hWnd, UINT uMsg, WPARAM wParam,
 {
 	//low order word = window activated or deactivated?
 	WORD reason = LOWORD(wParam);
-	K15Context* osLayerContext = K15_GetOSLayerContext();
+	K15_OSContext* osLayerContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osLayerContext->userData;
 	K15_Window* window = osLayerContext->window.window;
 
@@ -99,7 +99,7 @@ intern inline void K15_Win32WindowResized(HWND hWnd, UINT uMsg, WPARAM wParam, L
 	{
 		K15_SystemEvent win32Event = {};
 
-		K15Context* osLayerContext = K15_GetOSLayerContext();
+		K15_OSContext* osLayerContext = K15_GetOSLayerContext();
 		K15_Window* window = osLayerContext->window.window;
 
 		if (window)
@@ -265,7 +265,7 @@ intern inline DWORD K15_Win32CheckControllerConnectivity(K15_Win32Context* p_Win
 /*********************************************************************************/
 intern inline void K15_Win32DeviceChangeReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	K15Context* osContext = K15_GetOSLayerContext();
+	K15_OSContext* osContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
 
 	if (wParam == DBT_DEVNODES_CHANGED)
@@ -374,7 +374,7 @@ LRESULT CALLBACK K15_Win32WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 	return 0;
 }
 /*********************************************************************************/
-uint8 K15_Win32PumpSystemEvents(K15Context* p_OSContext)
+uint8 K15_Win32PumpSystemEvents(K15_OSContext* p_OSContext)
 {
 	K15_Window* window = p_OSContext->window.window;
 	K15_Win32Context* win32Context = (K15_Win32Context*)p_OSContext->userData;

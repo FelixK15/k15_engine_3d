@@ -15,6 +15,7 @@
 
 #ifdef K15_OS_WINDOWS
 	#define K15_USE_DYNAMIC_GAME_LIBRARY
+	#define K15_USE_DETERMINISTIC_GAME_MEM_ADDRESS
 #endif //K15_OS_WINDOWS
 
 #endif //_K15_Config_h_

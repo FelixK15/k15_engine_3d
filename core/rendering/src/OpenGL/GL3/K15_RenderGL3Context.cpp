@@ -33,7 +33,7 @@
 #include "OpenGL/GL3/K15_RenderGL3RenderTarget.cpp"
 #include "OpenGL/GL3/K15_RenderGL3Draw.cpp"
 
-typedef uint8 (*K15_CreatePlatformContextFnc)(K15_GLRenderContext*, K15Context*);
+typedef uint8 (*K15_CreatePlatformContextFnc)(K15_GLRenderContext*, K15_OSContext*);
 
 #ifdef K15_OS_WINDOWS
 	intern K15_CreatePlatformContextFnc K15_CreateContext = K15_Win32CreateGLContext;
@@ -584,7 +584,7 @@ intern inline void K15_InternalGLCreateFullscreenQuadVBO(K15_GLRenderContext* p_
 	p_GlContext->gl3.fullscreenQuadVAO = glVAO;
 }
 /*********************************************************************************/
-uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15Context* p_OSLayerContext)
+uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSContext* p_OSLayerContext)
 {
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)malloc(sizeof(K15_GLRenderContext));
 
