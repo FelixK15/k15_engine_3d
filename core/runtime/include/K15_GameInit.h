@@ -5,6 +5,13 @@
 
 struct K15_RenderContext;
 struct K15_ConfigFileContext;
+struct K15_InitGameInputData;
+struct K15_InitGameOutputData;
+struct K15_GameContext;
+
+typedef void(*K15_InitGameFnc)(K15_InitGameInputData, K15_InitGameOutputData*);
+typedef void(*K15_TickGameFnc)(K15_GameContext*);
+typedef void(*K15_QuitGameFnc)(void);
 
 /*********************************************************************************/
 struct K15_InitGameInputData
@@ -22,6 +29,7 @@ struct K15_InitGameOutputData
 struct K15_GameContext
 {
 	byte* gameMemory;
+	K15_TickGameFnc tickFnc;
 	K15_OSContext* osContext;
 	K15_RenderContext* renderContext;
 	K15_ConfigFileContext* configContext;
@@ -29,8 +37,6 @@ struct K15_GameContext
 	K15_Semaphore* mainThreadSynchronizer;
 };
 /*********************************************************************************/
-
-typedef void(*K15_GameInitFnc)(K15_InitGameInputData p_InputData, K15_InitGameOutputData* p_OutputData);
 
 uint8 K15_GameThreadMain(void* p_Parameter);
 uint8 K15_LoadGameLibrary(const char* p_LibraryPath);

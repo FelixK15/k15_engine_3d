@@ -9,10 +9,10 @@
 struct K15_Thread;
 
 //compare function
-typedef uint8 (*K15_ThreadCompareFnc)(K15_Thread** p_LHS, K15_Thread** p_RHS);
+typedef unsigned char (*K15_ThreadCompareFnc)(K15_Thread** p_LHS, K15_Thread** p_RHS);
 
 //get condition function
-typedef uint8 (*K15_ThreadConditionFnc)(K15_Thread** p_Element, void* p_UserData);
+typedef unsigned char (*K15_ThreadConditionFnc)(K15_Thread** p_Element, void* p_UserData);
 
 struct K15_ThreadStretchBuffer
 {
@@ -27,9 +27,9 @@ void K15_DeleteThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer);
 void K15_ResizeThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer, unsigned int p_Capacity);
 
 void K15_PushThread(K15_ThreadStretchBuffer* p_StretchBuffer, K15_Thread* p_Element);
-void K15_PopThread(K15_ThreadStretchBuffer* p_StretchBuffer, unsigned int p_Index);
-void K15_PopThreadElement(K15_ThreadStretchBuffer* p_StretchBuffer, K15_Thread* p_Element);
-void K15_PopThreadCompare(K15_ThreadStretchBuffer* p_StretchBuffer, K15_Thread* p_Element, K15_ThreadCompareFnc p_CompareFnc);
+unsigned char K15_PopThread(K15_ThreadStretchBuffer* p_StretchBuffer, unsigned int p_Index);
+unsigned char K15_PopThreadElement(K15_ThreadStretchBuffer* p_StretchBuffer, K15_Thread* p_Element);
+unsigned char K15_PopThreadCompare(K15_ThreadStretchBuffer* p_StretchBuffer, K15_Thread* p_Element, K15_ThreadCompareFnc p_CompareFnc);
 
 K15_Thread** K15_GetThreadElement(K15_ThreadStretchBuffer* p_StretchBuffer, unsigned int p_Index);
 K15_Thread** K15_GetThreadElementConditional(K15_ThreadStretchBuffer* p_StretchBuffer, K15_ThreadConditionFnc p_ConditionFnc, void* p_UserData = 0);

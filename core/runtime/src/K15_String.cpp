@@ -1,5 +1,6 @@
 #include "K15_String.h"
 
+#include <cassert>
 #include <cstring>
 #include <cctype>
 #include <memory>
@@ -59,5 +60,35 @@ uint32 K15_GetLinesInplace(char* p_String, char** p_Lines)
 	}
 
 	return lineCount;
+}
+/*********************************************************************************/
+char* K15_CopyString(const char* p_String, uint32 p_StringLength)
+{
+	K15_ASSERT_TEXT(p_String, "Source string is NULL.");
+
+	if (p_StringLength == 0)
+	{
+		p_StringLength = (uint32)strlen(p_String);
+	}
+
+	char* buffer = (char*)malloc(p_StringLength);
+
+	return K15_CopyStringIntoBuffer(p_String, buffer, p_StringLength);
+}
+/*********************************************************************************/
+char* K15_CopyStringIntoBuffer(const char* p_String, char* p_Buffer, uint32 p_StringLength)
+{
+	K15_ASSERT_TEXT(p_String, "Source string is NULL.");
+	K15_ASSERT_TEXT(p_Buffer, "Destination string is NULL.");
+
+	if (p_StringLength == 0)
+	{
+		p_StringLength = (uint32)strlen(p_String);
+	}
+
+	memcpy(p_Buffer, p_String, p_StringLength);
+	p_Buffer[p_StringLength] = 0;
+
+	return p_Buffer;
 }
 /*********************************************************************************/

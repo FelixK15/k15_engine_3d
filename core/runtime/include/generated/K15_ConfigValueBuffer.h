@@ -9,10 +9,10 @@
 struct K15_ConfigValue;
 
 //compare function
-typedef uint8 (*K15_ConfigValueCompareFnc)(K15_ConfigValue* p_LHS, K15_ConfigValue* p_RHS);
+typedef unsigned char (*K15_ConfigValueCompareFnc)(K15_ConfigValue* p_LHS, K15_ConfigValue* p_RHS);
 
 //get condition function
-typedef uint8 (*K15_ConfigValueConditionFnc)(K15_ConfigValue* p_Element, void* p_UserData);
+typedef unsigned char (*K15_ConfigValueConditionFnc)(K15_ConfigValue* p_Element, void* p_UserData);
 
 struct K15_ConfigValueStretchBuffer
 {
@@ -27,9 +27,9 @@ void K15_DeleteConfigValueStretchBuffer(K15_ConfigValueStretchBuffer* p_StretchB
 void K15_ResizeConfigValueStretchBuffer(K15_ConfigValueStretchBuffer* p_StretchBuffer, unsigned int p_Capacity);
 
 void K15_PushConfigValue(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_ConfigValue p_Element);
-void K15_PopConfigValue(K15_ConfigValueStretchBuffer* p_StretchBuffer, unsigned int p_Index);
-void K15_PopConfigValueElement(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_ConfigValue p_Element);
-void K15_PopConfigValueCompare(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_ConfigValue p_Element, K15_ConfigValueCompareFnc p_CompareFnc);
+unsigned char K15_PopConfigValue(K15_ConfigValueStretchBuffer* p_StretchBuffer, unsigned int p_Index);
+unsigned char K15_PopConfigValueElement(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_ConfigValue p_Element);
+unsigned char K15_PopConfigValueCompare(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_ConfigValue p_Element, K15_ConfigValueCompareFnc p_CompareFnc);
 
 K15_ConfigValue* K15_GetConfigValueElement(K15_ConfigValueStretchBuffer* p_StretchBuffer, unsigned int p_Index);
 K15_ConfigValue* K15_GetConfigValueElementConditional(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_ConfigValueConditionFnc p_ConditionFnc, void* p_UserData = 0);

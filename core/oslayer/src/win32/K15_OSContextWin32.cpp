@@ -9,6 +9,7 @@
 
 #include "win32/K15_WindowWin32.h"
 #include "win32/K15_EventsWin32.h"
+#include "win32/K15_FileWatchWin32.h"
 #include "win32/K15_ThreadWin32.h"
 #include "win32/K15_DynamicLibraryWin32.h"	
 #include "win32/K15_HelperWin32.h"
@@ -190,6 +191,11 @@ void K15_Win32AllocateDebugConsole()
 /*********************************************************************************/
 uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 {
+	if (!p_hInstance)
+	{
+		p_hInstance = GetModuleHandle(NULL);
+	}
+
 	K15_OSContext win32OSContext;
 
 	//window
@@ -231,12 +237,21 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	win32OSContext.system.homeDir = K15_Win32GetWorkingDirectory();
 	win32OSContext.system.getElapsedSeconds = K15_Win32GetElapsedSeconds;
 	win32OSContext.system.loadDynamicLibrary = K15_Win32LoadDynamicLibrary;
+	win32OSContext.system.unloadDynamicLibrary = K15_Win32UnloadDynamicLibrary;
+	win32OSContext.system.getProcAddress = K15_Win32GetProcAddress;
+	win32OSContext.system.registerFileWatch = K15_Win32RegisterFileWatch;
 
 	//create dynamic library stretch buffer
 	K15_DynamicLibraryStretchBuffer dynamicLibraryBuffer = {};
 	K15_CreateDynamicLibraryStretchBuffer(&dynamicLibraryBuffer, K15_DEFAULT_DYNAMIC_LIBRARY_SIZE);
 
 	win32OSContext.system.dynamicLibraries = dynamicLibraryBuffer;
+
+	//create directory watch entry stretch buffer
+	K15_DirectoryWatchEntryStretchBuffer directoryWatchBuffer = {};
+	K15_CreateDirectoryWatchEntryStretchBuffer(&directoryWatchBuffer);
+
+	win32OSContext.system.directoryWatchEntries = directoryWatchBuffer;
 	
 	//arguments
 	win32OSContext.commandLineArgCount = __argc;
@@ -316,7 +331,7 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-char* K15_Win32GetError()
+char* K15_Win32GetError(char* p_OutputBuffer)
 {
 	DWORD errorNo = GetLastError();
 	wchar_t* messageBuffer = (wchar_t*)alloca(256 * sizeof(wchar_t));
@@ -328,11 +343,10 @@ char* K15_Win32GetError()
 	}
 
 	uint32 messageBufferLength = (uint32)wcslen(messageBuffer) + 1; //+1 for 0 terminator
-	char* outputBuffer = (char*)malloc(messageBufferLength);
 
-	K15_Win32ConvertWStringToString(messageBuffer, messageBufferLength, outputBuffer);
+	K15_Win32ConvertWStringToString(messageBuffer, messageBufferLength, p_OutputBuffer);
 	
-	return outputBuffer;
+	return p_OutputBuffer;
 }
 /*********************************************************************************/
 void K15_Win32Sleep(double p_SleepTimeInSeconds)

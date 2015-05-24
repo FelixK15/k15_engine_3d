@@ -5,17 +5,18 @@
 
 #include "K15_ArgumentParser.h"
 
-/*********************************************************************************/
-static void K15_PrintfLog(const char* p_Message, LogPriority p_Priority)
-{
-	printf("%s\n", p_Message);
-}
+#ifdef K15_OS_WINDOWS
+	#include "win32/K15_OSContextWin32.h"	
+#endif //K15_OS_WINDOWS
+
 /*********************************************************************************/
 int main(int argc, const char** argv)
 {
 	int returnCode = 0;
 
-	K15_LogRegisterLogFnc(K15_PrintfLog, K15_LOG_PRIORITY_ALL, K15_LOG_FLAG_ADD_TIME);
+#ifdef K15_OS_WINDOWS
+	K15_Win32InitializeOSLayer(0);
+#endif //K15_OS_WINDOWS
 
 	if (argc < 3)
 	{

@@ -4,6 +4,7 @@
 #include "K15_Prerequisites.h"
 #include "generated/K15_ThreadStretchBuffer.h"
 #include "generated/K15_DynamicLibraryStretchBuffer.h"
+#include "generated/K15_DirectoryWatchEntryStretchBuffer.h"
 
 ///Window
 typedef uint8 (*createWindowFnc)(K15_OSContext*, K15_Window*, uint32, uint8);
@@ -11,8 +12,13 @@ typedef uint8 (*setWindowDimensionFnc)(K15_OSContext*, K15_Window*, uint32, uint
 typedef uint8 (*setWindowFullscreenFnc)(K15_OSContext*, K15_Window*, bool8);
 typedef uint8 (*setWindowTitleFnc)(K15_OSContext*, K15_Window*, char*);
 typedef uint8 (*closeWindowFnc)(K15_OSContext*, K15_Window*);
+
+///System
 typedef double (*getElapsedSecondsFnc)();
 typedef uint8 (*loadDynamicLibraryFnc)(K15_OSContext*, K15_DynamicLibrary*, const char*);
+typedef uint8 (*unloadDynamicLibraryFnc)(K15_OSContext*, K15_DynamicLibrary*);
+typedef void* (*getProcAddressFnc)(K15_OSContext*, K15_DynamicLibrary*, const char*);
+typedef uint8 (*registerFileWatchFnc)(K15_OSContext*, K15_FileWatchEntry*, K15_DirectoryWatchEntry*);
 
 ///Events
 typedef uint8 (*pumpSystemEventsFnc)(K15_OSContext*);
@@ -60,9 +66,13 @@ struct K15_OSContext
 	struct  
 	{
 		K15_DynamicLibraryStretchBuffer dynamicLibraries;
+		K15_DirectoryWatchEntryStretchBuffer directoryWatchEntries;
 		char* homeDir;
 		getElapsedSecondsFnc getElapsedSeconds;
 		loadDynamicLibraryFnc loadDynamicLibrary;
+		unloadDynamicLibraryFnc unloadDynamicLibrary;
+		registerFileWatchFnc registerFileWatch;
+		getProcAddressFnc getProcAddress;
 		OSIdentifier systemIdentifier;
 	} system;
 

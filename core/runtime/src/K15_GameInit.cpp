@@ -1,15 +1,18 @@
 #include "K15_GameInit.h"
 
+#include <K15_DynamicLibrary.h>
 #include <K15_SystemEvents.h>
 #include <K15_Thread.h>
 
-/*********************************************************************************/
+///*********************************************************************************/
 uint8 K15_GameThreadMain(void* p_Parameter)
 {
 	K15_GameContext* gameContext = (K15_GameContext*)p_Parameter;
 	byte* memory = gameContext->gameMemory;
 	K15_Semaphore* mainThreadSynchronizer = gameContext->mainThreadSynchronizer;
 	K15_Semaphore* gameThreadSynchronizer = gameContext->gameThreadSynchronizer;
+
+	K15_TickGameFnc K15_TickGame = gameContext->tickFnc;
 
 	bool running = true;
 
@@ -25,6 +28,7 @@ uint8 K15_GameThreadMain(void* p_Parameter)
 			}
 		}
 
+		K15_TickGame(gameContext);
 
 		K15_PostSemaphore(gameThreadSynchronizer);
 		K15_WaitSemaphore(mainThreadSynchronizer);

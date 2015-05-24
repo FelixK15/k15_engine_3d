@@ -51,6 +51,23 @@ uint8 K15_Win32FileExists(const char* p_FilePath)
 	return result;
 }
 /*********************************************************************************/
+uint8 K15_Win32CopyFile(const char* p_SourcePath, const char* p_DestinationPath)
+{
+	K15_ASSERT_TEXT(p_SourcePath, "Source path is NULL.");
+	K15_ASSERT_TEXT(p_DestinationPath, "Destination path is NULL.");
+
+	size_t sourcePathLength = strlen(p_SourcePath) + 1;
+	size_t destinationPathLength = strlen(p_DestinationPath) + 1;
+
+	wchar_t* sourcePathW = (wchar_t*)alloca(sourcePathLength * sizeof(wchar_t));
+	wchar_t* destinationPathW = (wchar_t*)alloca(destinationPathLength * sizeof(wchar_t));
+
+	K15_Win32ConvertStringToWString(p_SourcePath, sourcePathLength, sourcePathW);
+	K15_Win32ConvertStringToWString(p_DestinationPath, destinationPathLength, destinationPathW);
+
+	return CopyFileW(sourcePathW, destinationPathW, FALSE) == 0 ? K15_OS_ERROR_SYSTEM : K15_SUCCESS;
+}
+/*********************************************************************************/
 byte* K15_Win32ReadWholeFile(const char* p_FilePath)
 {
 	K15_ASSERT_TEXT(p_FilePath, "filepath is NULL.");

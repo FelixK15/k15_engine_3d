@@ -85,14 +85,15 @@ uint8 K15_Win32CreateThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread, K1
 uint8 K15_Win32TryJoinThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread, uint32 p_MilliSeconds)
 {
 	K15_Win32Thread* win32Thread = (K15_Win32Thread*)p_Thread->userData;
+	BOOL alertableThread = K15_GetCurrentThread() == K15_MAIN_THREAD ? TRUE : FALSE;
 
-	DWORD result = WaitForSingleObject(win32Thread->handle, DWORD(p_MilliSeconds));
+	DWORD result = WaitForSingleObjectEx(win32Thread->handle, DWORD(p_MilliSeconds), alertableThread);
 
 	if (result == WAIT_FAILED)
 	{
 		return K15_OS_ERROR_SYSTEM;
 	}
-	else if (result == WAIT_TIMEOUT)
+	else if (result == WAIT_TIMEOUT || result == WAIT_IO_COMPLETION)
 	{
 		return K15_OS_TIMEOUT;
 	}
@@ -250,10 +251,7 @@ K15_Semaphore* K15_Win32CreateSemaphoreWithInitialValue(uint32 p_InitialValue)
 
 	if (semaphoreHandle == INVALID_HANDLE_VALUE)
 	{
-		char* error = K15_Win32GetError();
-		K15_LOG_ERROR_MESSAGE("K15_Win32CreateSemaphoreWithInitialValue (System Error): %s", error);
-		free(error);
-
+		K15_LOG_ERROR_MESSAGE("K15_Win32CreateSemaphoreWithInitialValue (System Error): %s", K15_Win32GetError((char*)alloca(256)));
 		return 0;
 	}
 
@@ -281,9 +279,9 @@ uint8 K15_Win32TryWaitSemaphore(K15_Semaphore* p_Semaphore, uint32 p_MilliSecond
 {
 	uint8 result = K15_SUCCESS;
 
-	DWORD returnValue = WaitForSingleObject(p_Semaphore->handle, (DWORD)p_MilliSeconds);
+	DWORD returnValue = WaitForSingleObjectEx(p_Semaphore->handle, (DWORD)p_MilliSeconds, FALSE);
 
-	if (returnValue == WAIT_TIMEOUT)
+	if (returnValue == WAIT_TIMEOUT || returnValue == WAIT_IO_COMPLETION) 
 	{
 		result = K15_OS_TIMEOUT;
 	}

@@ -13,3 +13,10 @@ double K15_GetElapsedSeconds()
 	return seconds;
 }
 /*********************************************************************************/
+char* K15_GetSystemErrorMessage()
+{
+	char* messageBuffer = (char*)K15_OS_MALLOC(K15_ERROR_MESSAGE_LENGTH);
+	
+	return K15_CopySystemErrorMessageIntoBuffer(messageBuffer);
+}
+/*********************************************************************************/

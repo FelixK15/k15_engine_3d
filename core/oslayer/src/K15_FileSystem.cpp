@@ -38,9 +38,9 @@ byte* K15_GetWholeFileContentWithFileSize(const char* p_FilePath, uint32* p_File
 /*********************************************************************************/
 char* K15_GetPathWithoutFileName(const char* p_FilePath)
 {
-	assert(p_FilePath);
+	K15_ASSERT_TEXT(p_FilePath, "Filepath is NULL.");
 
-	const char* convertedFilePath = K15_ConvertToSystemPath(p_FilePath);
+	char* convertedFilePath = K15_ConvertToSystemPath(p_FilePath);
 	const char* fileNameOnly = strrchr(convertedFilePath, K15_DIR_SEPARATOR);
 
 	char* returnBuffer = 0;
@@ -67,50 +67,40 @@ char* K15_GetPathWithoutFileName(const char* p_FilePath)
 
 	returnBuffer[returnBufferSize] = 0; //0 terminator
 
-	K15_OS_FREE((void*)convertedFilePath);
+	K15_OS_FREE(convertedFilePath);
 
 	return returnBuffer;
 }
 /*********************************************************************************/
-char* K15_GetFileName(const char* p_FilePath)
+char* K15_GetFileNameWithoutPath(const char* p_FilePath)
 {
-	assert(p_FilePath);
+	K15_ASSERT_TEXT(p_FilePath, "Filepath is NULL.");
 
-	const char* pathWithoutFileName = strchr(p_FilePath, K15_DIR_SEPARATOR);
-	
-	char* returnBuffer = 0;
+	char* convertedFilePath = K15_ConvertToSystemPath(p_FilePath);
+	const char* fileNameOnly = strrchr(convertedFilePath, K15_DIR_SEPARATOR);
 
-	if (!pathWithoutFileName)
+	size_t fileNameLength = strlen(fileNameOnly);
+	uint32 offset = 0;
+
+	if (fileNameOnly[0] == K15_DIR_SEPARATOR)
 	{
-		size_t returnBufferSize = strlen(p_FilePath);
-		returnBuffer = (char*)K15_OS_MALLOC(returnBufferSize + 1); //+1 for 0 terminator
-
-		memcpy(returnBuffer, p_FilePath, returnBufferSize);
-
-		returnBuffer[returnBufferSize] = 0;  //0 terminator
-	}
-	else
-	{
-		size_t sizeFilePath = strlen(p_FilePath);
-		size_t sizePath = strlen(pathWithoutFileName);
-		size_t returnBufferSize = sizeFilePath - sizePath;
-
-		assert(returnBufferSize > 0);
-
-		returnBuffer = (char*)K15_OS_MALLOC(returnBufferSize + 1); //+1 for 0 terminator
-
-		memcpy(returnBuffer, p_FilePath + sizePath, returnBufferSize);
-
-		returnBuffer[returnBufferSize] = 0; //0 terminator
+		fileNameLength -= 1;
+		offset = 1;
 	}
 
+	char* fileNameBuffer = (char*)K15_OS_MALLOC(fileNameLength + 1);
+	fileNameBuffer[fileNameLength] = 0;
 
-	return returnBuffer;
+	memcpy(fileNameBuffer, fileNameOnly + offset, fileNameLength);
+
+	K15_OS_FREE(convertedFilePath);
+
+	return fileNameBuffer;
 }
 /*********************************************************************************/
 char* K15_GetFileNameWithoutExtension(const char* p_FilePath)
 {
-	char* fileName = K15_GetFileName(p_FilePath);
+	char* fileName = K15_GetFileNameWithoutPath(p_FilePath);
 	char* fileNameWithoutExtension = 0;
 
 	size_t fileNameLength = strlen(p_FilePath);
@@ -133,7 +123,7 @@ char* K15_GetFileNameWithoutExtension(const char* p_FilePath)
 /*********************************************************************************/
 char* K15_GetFileExtension(const char* p_FilePath)
 {
-	char* fileName = K15_GetFileName(p_FilePath);
+	char* fileName = K15_GetFileNameWithoutPath(p_FilePath);
 	char* extension = 0;
 
 	size_t fileNameLength = strlen(p_FilePath);
@@ -160,6 +150,8 @@ char* K15_GetFileExtension(const char* p_FilePath)
 /*********************************************************************************/
 char* K15_ConvertToAbsolutePath(const char* p_FilePath)
 {
+	K15_ASSERT_TEXT(p_FilePath, "Filepath is NULL.");
+
 	const char* workingDir = K15_GetWorkingDirectory();
 	size_t workingDirLength = strlen(workingDir);
 	size_t filePathLength = strlen(p_FilePath);
@@ -178,9 +170,14 @@ char* K15_ConvertToSystemPath(const char* p_FilePath)
 {
 	K15_ASSERT_TEXT(p_FilePath, "Filepath is NULL.");
 
-	size_t filePathSize = strlen(p_FilePath);
-	char* convertedFilePath = (char*)K15_OS_MALLOC(filePathSize + 1); //+1 for 0 terminator
-	const char* filePath = p_FilePath;
+	size_t filePathLength = strlen(p_FilePath);
+	char* convertedFilePath = (char*)K15_OS_MALLOC(filePathLength + 1); //+1 for 0 terminator
+	memcpy(convertedFilePath, p_FilePath, filePathLength);
+	convertedFilePath[filePathLength] = 0;
+
+	return K15_ConvertToSystemPathInplace(convertedFilePath);
+
+	/*const char* filePath = p_FilePath;
 
 	for (size_t fileNameIndex = 0;
 		fileNameIndex < filePathSize;
@@ -198,19 +195,18 @@ char* K15_ConvertToSystemPath(const char* p_FilePath)
 
 	convertedFilePath[filePathSize] = 0;
 
-	return convertedFilePath;
+	return convertedFilePath;*/
 }
 /*********************************************************************************/
 char* K15_ConvertToSystemPathInplace(char* p_FilePath)
 {
 	K15_ASSERT_TEXT(p_FilePath, "Filepath is NULL.");
 
-	size_t filePathSize = strlen(p_FilePath);
+	size_t filePathLength = strlen(p_FilePath);
 	char* convertedFilePath = p_FilePath;
 
-
 	for (size_t fileNameIndex = 0;
-		fileNameIndex < filePathSize;
+		fileNameIndex < filePathLength;
 		++fileNameIndex)
 	{
 		if (convertedFilePath[fileNameIndex] == '\\')
@@ -220,5 +216,31 @@ char* K15_ConvertToSystemPathInplace(char* p_FilePath)
 	}
 
 	return convertedFilePath;
+}
+/*********************************************************************************/
+char* K15_GetPathWithoutExtension(const char* p_FilePath)
+{
+	K15_ASSERT_TEXT(p_FilePath, "Filepath is NULL.");
+
+	size_t filePathLength = strlen(p_FilePath);
+	size_t extensionIndex = filePathLength;
+
+	for(size_t filePathIndex = filePathLength;
+		filePathLength > 0;
+		--filePathLength)
+	{
+		if (p_FilePath[filePathIndex] == '.')
+		{
+			extensionIndex = filePathIndex;
+		}
+	}
+
+	size_t filePathWithoutExtensionLength = extensionIndex;
+
+	char* pathBuffer = (char*)K15_OS_MALLOC(filePathWithoutExtensionLength + 1);
+	pathBuffer[filePathWithoutExtensionLength] = 0;
+	memcpy(pathBuffer, p_FilePath, filePathWithoutExtensionLength);
+
+	return pathBuffer;
 }
 /*********************************************************************************/

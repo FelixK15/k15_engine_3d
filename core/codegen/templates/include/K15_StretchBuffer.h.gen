@@ -9,10 +9,10 @@
 struct $TYPE_STRUCT_NAME$;
 
 //compare function
-typedef uint8 (*K15_$TYPE_NAME$CompareFnc)($TYPE$* p_LHS, $TYPE$* p_RHS);
+typedef unsigned char (*K15_$TYPE_NAME$CompareFnc)($TYPE$* p_LHS, $TYPE$* p_RHS);
 
 //get condition function
-typedef uint8 (*K15_$TYPE_NAME$ConditionFnc)($TYPE$* p_Element, void* p_UserData);
+typedef unsigned char (*K15_$TYPE_NAME$ConditionFnc)($TYPE$* p_Element, void* p_UserData);
 
 struct K15_$TYPE_NAME$StretchBuffer
 {
@@ -27,9 +27,9 @@ void K15_Delete$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchB
 void K15_Resize$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_Capacity);
 
 void K15_Push$TYPE_NAME$(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element);
-void K15_Pop$TYPE_NAME$(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_Index);
-void K15_Pop$TYPE_NAME$Element(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element);
-void K15_Pop$TYPE_NAME$Compare(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element, K15_$TYPE_NAME$CompareFnc p_CompareFnc);
+unsigned char K15_Pop$TYPE_NAME$(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_Index);
+unsigned char K15_Pop$TYPE_NAME$Element(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element);
+unsigned char K15_Pop$TYPE_NAME$Compare(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element, K15_$TYPE_NAME$CompareFnc p_CompareFnc);
 
 $TYPE$* K15_Get$TYPE_NAME$Element(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_Index);
 $TYPE$* K15_Get$TYPE_NAME$ElementConditional(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, K15_$TYPE_NAME$ConditionFnc p_ConditionFnc, void* p_UserData = 0);

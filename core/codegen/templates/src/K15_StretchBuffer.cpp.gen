@@ -71,7 +71,7 @@ void K15_Push$TYPE_NAME$(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p
 	++p_StretchBuffer->numElements;
 }
 /*********************************************************************************/
-void K15_Pop$TYPE_NAME$(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_Index)
+unsigned char K15_Pop$TYPE_NAME$(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_Index)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -93,29 +93,35 @@ void K15_Pop$TYPE_NAME$(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned 
 
 	p_StretchBuffer->elements = elements;
 	p_StretchBuffer->numElements = numElements - 1;
+
+	return 1;
 }
 /*********************************************************************************/
-void K15_Pop$TYPE_NAME$Element(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element)
+unsigned char K15_Pop$TYPE_NAME$Element(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 
 	$TYPE$* elements = p_StretchBuffer->elements;
 	unsigned int numElements = p_StretchBuffer->numElements;
+	unsigned char returnValue = 0;
 
 	for (unsigned int elementIndex = 0;
-		(elementIndex + 1) < numElements;
+		elementIndex < numElements;
 		++elementIndex)
 	{		
 		if (memcmp(&elements[elementIndex], &p_Element, sizeof($TYPE$)) == 0)
 		{
 			K15_Pop$TYPE_NAME$(p_StretchBuffer, elementIndex);
+			returnValue = 1;
 			break;
 		}
 	}
+
+	return returnValue;
 }
 /*********************************************************************************/
-void K15_Pop$TYPE_NAME$Compare(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element, K15_$TYPE_NAME$CompareFnc p_CompareFnc)
+unsigned char K15_Pop$TYPE_NAME$Compare(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element, K15_$TYPE_NAME$CompareFnc p_CompareFnc)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -123,17 +129,21 @@ void K15_Pop$TYPE_NAME$Compare(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $T
 
 	$TYPE$* elements = p_StretchBuffer->elements;
 	unsigned int numElements = p_StretchBuffer->numElements;
+	unsigned char returnValue = 0;
 
 	for (unsigned int elementIndex = 0;
-		(elementIndex + 1) < numElements;
+		elementIndex< numElements;
 		++elementIndex)
 	{		
 		if (p_CompareFnc(&p_Element, &elements[elementIndex]) == 0)
 		{
 			K15_Pop$TYPE_NAME$(p_StretchBuffer, elementIndex);
+			returnValue = 1;
 			break;
 		}
 	}
+
+	return returnValue;
 }
 /*********************************************************************************/
 $TYPE$* K15_Get$TYPE_NAME$Element(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_Index)
@@ -166,7 +176,7 @@ $TYPE$* K15_Get$TYPE_NAME$ElementConditional(K15_$TYPE_NAME$StretchBuffer* p_Str
 	unsigned int numElements = p_StretchBuffer->numElements;
 
 	for (unsigned int elementIndex = 0;
-		(elementIndex + 1) < numElements;
+		elementIndex < numElements;
 		++elementIndex)
 	{		
 		currentElement = &elements[elementIndex];

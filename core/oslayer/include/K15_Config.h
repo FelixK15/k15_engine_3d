@@ -9,13 +9,15 @@
 //undef to disable jni exception checks after each jni call
 #define K15_CHECK_JNI_CALLS
 
-#define K15_MAX_CONTROLLER 4
-
 #define K15_USE_CUSTOM_ASSERTS
+
+#define K15_LOAD_GAME_LIB_DYNAMIC
 
 #ifdef K15_OS_WINDOWS
 	#define K15_USE_DYNAMIC_GAME_LIBRARY
 	#define K15_USE_DETERMINISTIC_GAME_MEM_ADDRESS
 #endif //K15_OS_WINDOWS
+
+#define K15_MAX_CONTROLLER 4
 
 #endif //_K15_Config_h_

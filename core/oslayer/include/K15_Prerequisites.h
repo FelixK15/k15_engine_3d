@@ -71,11 +71,13 @@
 #define K15_Search bsearch
 #define K15_Sort qsort
 
-#define K15_TRUE 0
-#define K15_FALSE 1
+#define K15_TRUE 1
+#define K15_FALSE 0
 
 #define K15_DEFAULT_THREAD_SIZE 8
 #define K15_DEFAULT_DYNAMIC_LIBRARY_SIZE 8
+
+#define K15_MAIN_THREAD 0
 
 #define K15_FUNCTION_DEBUG_PRINTF(func) printf("Before "#func"\n"); func; printf("After "#func"\n")
 
@@ -224,7 +226,8 @@ struct K15_Window;
 struct K15_Thread;
 struct K15_DynamicLibrary;
 struct K15_Mutex;
-struct K15_ConditionVariable;
+struct K15_FileWatchEntry;
+struct K15_DirectoryWatchEntry;
 struct K15_ThreadContext;
 struct K15_Semaphore;
 struct K15_OSContext;

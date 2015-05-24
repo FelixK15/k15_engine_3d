@@ -9,10 +9,10 @@
 struct K15_DynamicLibrary;
 
 //compare function
-typedef uint8 (*K15_DynamicLibraryCompareFnc)(K15_DynamicLibrary** p_LHS, K15_DynamicLibrary** p_RHS);
+typedef unsigned char (*K15_DynamicLibraryCompareFnc)(K15_DynamicLibrary** p_LHS, K15_DynamicLibrary** p_RHS);
 
 //get condition function
-typedef uint8 (*K15_DynamicLibraryConditionFnc)(K15_DynamicLibrary** p_Element, void* p_UserData);
+typedef unsigned char (*K15_DynamicLibraryConditionFnc)(K15_DynamicLibrary** p_Element, void* p_UserData);
 
 struct K15_DynamicLibraryStretchBuffer
 {
@@ -27,9 +27,9 @@ void K15_DeleteDynamicLibraryStretchBuffer(K15_DynamicLibraryStretchBuffer* p_St
 void K15_ResizeDynamicLibraryStretchBuffer(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, unsigned int p_Capacity);
 
 void K15_PushDynamicLibrary(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, K15_DynamicLibrary* p_Element);
-void K15_PopDynamicLibrary(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, unsigned int p_Index);
-void K15_PopDynamicLibraryElement(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, K15_DynamicLibrary* p_Element);
-void K15_PopDynamicLibraryCompare(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, K15_DynamicLibrary* p_Element, K15_DynamicLibraryCompareFnc p_CompareFnc);
+unsigned char K15_PopDynamicLibrary(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, unsigned int p_Index);
+unsigned char K15_PopDynamicLibraryElement(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, K15_DynamicLibrary* p_Element);
+unsigned char K15_PopDynamicLibraryCompare(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, K15_DynamicLibrary* p_Element, K15_DynamicLibraryCompareFnc p_CompareFnc);
 
 K15_DynamicLibrary** K15_GetDynamicLibraryElement(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, unsigned int p_Index);
 K15_DynamicLibrary** K15_GetDynamicLibraryElementConditional(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, K15_DynamicLibraryConditionFnc p_ConditionFnc, void* p_UserData = 0);

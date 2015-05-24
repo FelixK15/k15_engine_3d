@@ -71,7 +71,7 @@ void K15_PushConfigValue(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_Conf
 	++p_StretchBuffer->numElements;
 }
 /*********************************************************************************/
-void K15_PopConfigValue(K15_ConfigValueStretchBuffer* p_StretchBuffer, unsigned int p_Index)
+unsigned char K15_PopConfigValue(K15_ConfigValueStretchBuffer* p_StretchBuffer, unsigned int p_Index)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -93,29 +93,35 @@ void K15_PopConfigValue(K15_ConfigValueStretchBuffer* p_StretchBuffer, unsigned 
 
 	p_StretchBuffer->elements = elements;
 	p_StretchBuffer->numElements = numElements - 1;
+
+	return 1;
 }
 /*********************************************************************************/
-void K15_PopConfigValueElement(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_ConfigValue p_Element)
+unsigned char K15_PopConfigValueElement(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_ConfigValue p_Element)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 
 	K15_ConfigValue* elements = p_StretchBuffer->elements;
 	unsigned int numElements = p_StretchBuffer->numElements;
+	unsigned char returnValue = 0;
 
 	for (unsigned int elementIndex = 0;
-		(elementIndex + 1) < numElements;
+		elementIndex < numElements;
 		++elementIndex)
 	{		
 		if (memcmp(&elements[elementIndex], &p_Element, sizeof(K15_ConfigValue)) == 0)
 		{
 			K15_PopConfigValue(p_StretchBuffer, elementIndex);
+			returnValue = 1;
 			break;
 		}
 	}
+
+	return returnValue;
 }
 /*********************************************************************************/
-void K15_PopConfigValueCompare(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_ConfigValue p_Element, K15_ConfigValueCompareFnc p_CompareFnc)
+unsigned char K15_PopConfigValueCompare(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_ConfigValue p_Element, K15_ConfigValueCompareFnc p_CompareFnc)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -123,17 +129,21 @@ void K15_PopConfigValueCompare(K15_ConfigValueStretchBuffer* p_StretchBuffer, K1
 
 	K15_ConfigValue* elements = p_StretchBuffer->elements;
 	unsigned int numElements = p_StretchBuffer->numElements;
+	unsigned char returnValue = 0;
 
 	for (unsigned int elementIndex = 0;
-		(elementIndex + 1) < numElements;
+		elementIndex< numElements;
 		++elementIndex)
 	{		
 		if (p_CompareFnc(&p_Element, &elements[elementIndex]) == 0)
 		{
 			K15_PopConfigValue(p_StretchBuffer, elementIndex);
+			returnValue = 1;
 			break;
 		}
 	}
+
+	return returnValue;
 }
 /*********************************************************************************/
 K15_ConfigValue* K15_GetConfigValueElement(K15_ConfigValueStretchBuffer* p_StretchBuffer, unsigned int p_Index)
@@ -166,7 +176,7 @@ K15_ConfigValue* K15_GetConfigValueElementConditional(K15_ConfigValueStretchBuff
 	unsigned int numElements = p_StretchBuffer->numElements;
 
 	for (unsigned int elementIndex = 0;
-		(elementIndex + 1) < numElements;
+		elementIndex < numElements;
 		++elementIndex)
 	{		
 		currentElement = &elements[elementIndex];

@@ -18,22 +18,15 @@ struct K15_Win32DynamicLibrary
 
 
 /*********************************************************************************/
-uint8 K15_Win32LoadDynamicLibrary(K15_OSContext* p_OSContext, K15_DynamicLibrary* p_DynamicLibrary, const char* p_Name)
+uint8 K15_Win32LoadDynamicLibrary(K15_OSContext* p_OSContext, K15_DynamicLibrary* p_DynamicLibrary, const char* p_Path)
 {
 	uint8 returnValue = K15_SUCCESS;
 
-	size_t libNameLength = strlen(p_Name) + K15_WIN32_LIBRARY_EXTENSION_LENGTH;
-
-	char* libSystemName = (char*)alloca(libNameLength + 1);
-	libSystemName[libNameLength] = 0;
-	sprintf(libSystemName, "%s%s", p_Name, K15_WIN32_LIBRARY_EXTENSION);
-
-	char* libAbsolutePath = K15_ConvertToAbsolutePath(libSystemName); //free(libAbsolutePath)
-	size_t pathLength = strlen(libAbsolutePath) + 1;
+	size_t pathLength = strlen(p_Path) + 1;
 
 	wchar_t* libAbsolutePathW = (wchar_t*)alloca(pathLength * sizeof(wchar_t));
 
-	K15_Win32ConvertStringToWString(libAbsolutePath, pathLength, libAbsolutePathW);
+	K15_Win32ConvertStringToWString(p_Path, pathLength, libAbsolutePathW);
 
 	HMODULE libModule = LoadLibraryW(libAbsolutePathW);
 
@@ -43,26 +36,43 @@ uint8 K15_Win32LoadDynamicLibrary(K15_OSContext* p_OSContext, K15_DynamicLibrary
 	}
 	else
 	{
-		K15_Win32DynamicLibrary* win32Library = (K15_Win32DynamicLibrary*)K15_OS_MALLOC(sizeof(K15_Win32DynamicLibrary));
+		K15_Win32DynamicLibrary* win32Library = (K15_Win32DynamicLibrary*)p_DynamicLibrary->userData;
+		
+		if (!win32Library)
+		{
+			win32Library = (K15_Win32DynamicLibrary*)K15_OS_MALLOC(sizeof(K15_Win32DynamicLibrary));
+			p_DynamicLibrary->userData = (void*)win32Library;
+		}
+
 		win32Library->module = libModule;
-		p_DynamicLibrary->userData = (void*)win32Library;
-		p_DynamicLibrary->path = libAbsolutePath;
 	}
 
 	return returnValue;
 }
 /*********************************************************************************/
-void* K15_Win32GetProcAddress(K15_DynamicLibrary* p_DynamicLibrary, const char* p_ProcName)
+uint8 K15_Win32UnloadDynamicLibrary(K15_OSContext* p_OSContext, K15_DynamicLibrary* p_DynamicLibrary)
+{
+	uint8 returnValue = K15_SUCCESS;
+
+	K15_Win32DynamicLibrary* win32DynamicLibrary = (K15_Win32DynamicLibrary*)p_DynamicLibrary->userData;
+
+	BOOL result = FreeLibrary(win32DynamicLibrary->module);
+
+	if (result != TRUE)
+	{
+		returnValue = K15_OS_ERROR_SYSTEM;
+	}
+
+	return returnValue;
+}
+/*********************************************************************************/
+void* K15_Win32GetProcAddress(K15_OSContext* p_OSContext, K15_DynamicLibrary* p_DynamicLibrary, const char* p_ProcName)
 {
 	K15_Win32DynamicLibrary* win32Library = (K15_Win32DynamicLibrary*)p_DynamicLibrary->userData;
 	K15_ASSERT_TEXT(win32Library && win32Library->module, "Library '%s' is not loaded.", p_DynamicLibrary->name);
 
 	HMODULE libModule = win32Library->module;
 
-	void* address = GetProcAddress(libModule, p_ProcName);
-
-	K15_ASSERT_TEXT(address, "Could not load address of symbol '%s' from library '%s'.", p_ProcName, p_DynamicLibrary->name);
-
-	return address;
+	return GetProcAddress(libModule, p_ProcName);;
 }
 /*********************************************************************************/

@@ -33,10 +33,8 @@ int CALLBACK WinMain(
 	}
 	else if(result == K15_OS_ERROR_SYSTEM)
 	{
-		char* errorMessage = K15_Win32GetError();
+		char* errorMessage = K15_Win32GetError((char*)alloca(K15_ERROR_MESSAGE_LENGTH));
 		K15_LOG_ERROR_MESSAGE(errorMessage);
-		free(errorMessage);
-
 		K15_ASSERT_TEXT(false, errorMessage);
 		exit(0);
 	}
@@ -63,10 +61,13 @@ int CALLBACK WinMain(
 	inputData.renderContext = renderContext;
 	inputData.configContext = &configFileContext;
 
-	K15_DynamicLibrary* gameLibrary = K15_LoadDynamicLibrary("data/testgame");
-	K15_GameInitFnc K15_InitGame = (K15_GameInitFnc)K15_GetProcAddress(gameLibrary, "K15_InitGame");
-
-	K15_ASSERT_TEXT(gameLibrary, "Could not load gamelib");
+#ifdef K15_LOAD_GAME_LIB_DYNAMIC
+	const char* gameLibraryName = "data/testgame";
+	K15_DynamicLibrary* gameLibrary = K15_LoadDynamicLibrary(gameLibraryName, K15_RELOAD_LIBRARY);
+	K15_InitGameFnc K15_InitGame = (K15_InitGameFnc)K15_GetProcAddress(gameLibrary, "K15_InitGame");
+	K15_TickGameFnc K15_TickGame = (K15_TickGameFnc)K15_GetProcAddress(gameLibrary, "K15_TickGame");
+	K15_QuitGameFnc K15_QuitGame = (K15_QuitGameFnc)K15_GetProcAddress(gameLibrary, "K15_QuitGame");
+#endif //K15_LOAD_GAME_LIB_DYNAMIC
 
 	K15_InitGame(inputData, &outputData);
 
@@ -85,6 +86,7 @@ int CALLBACK WinMain(
 	gameContext.osContext = osContext;
 	gameContext.gameThreadSynchronizer = gameThreadSynchronizer;
 	gameContext.mainThreadSynchronizer = mainThreadSynchronizer;
+	gameContext.tickFnc = K15_TickGame;
 
 	K15_Thread* gameThread = K15_CreateThread(K15_GameThreadMain, (void*)&gameContext, K15_THREAD_START_FLAG);
 
