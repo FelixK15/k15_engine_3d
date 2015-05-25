@@ -25,6 +25,7 @@ struct K15_DynamicFunctionPointerStretchBuffer
 void K15_CreateDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, unsigned int p_Capacity = 8);
 void K15_DeleteDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer);
 void K15_ResizeDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, unsigned int p_Capacity);
+void K15_ClearDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer);
 
 void K15_PushDynamicFunctionPointer(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, K15_DynamicFunctionPointer p_Element);
 unsigned char K15_PopDynamicFunctionPointer(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, unsigned int p_Index);

@@ -8,6 +8,7 @@ struct K15_ConfigFileContext;
 struct K15_InitGameInputData;
 struct K15_InitGameOutputData;
 struct K15_GameContext;
+struct K15_LogContext;
 
 typedef void(*K15_InitGameFnc)(K15_InitGameInputData, K15_InitGameOutputData*);
 typedef void(*K15_TickGameFnc)(K15_GameContext*);
@@ -28,13 +29,21 @@ struct K15_InitGameOutputData
 /*********************************************************************************/
 struct K15_GameContext
 {
+	uint32 logContextCount;
+
 	byte* gameMemory;
 	K15_TickGameFnc tickFnc;
+	K15_LogContext* logContexts;
 	K15_OSContext* osContext;
 	K15_RenderContext* renderContext;
 	K15_ConfigFileContext* configContext;
 	K15_Semaphore* gameThreadSynchronizer;
 	K15_Semaphore* mainThreadSynchronizer;
+
+#ifdef K15_LOAD_GAME_LIB_DYNAMIC
+	K15_DynamicLibrary* gameLibrary;
+	K15_Mutex* gameLibrarySynchronizer;
+#endif //K15_LOAD_GAME_LIB_DYNAMIC
 };
 /*********************************************************************************/
 

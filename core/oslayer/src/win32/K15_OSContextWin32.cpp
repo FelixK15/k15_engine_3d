@@ -24,12 +24,13 @@ MessageBoxAProc _MessageBoxA = 0;
 /*********************************************************************************/
 void K15_Win32LogVisualStudio(const char* p_Message, LogPriority p_Priority)
 {
-	uint32 messageLength = (uint32)strlen(p_Message) + 1; //+1 for 0 terminator
+	uint32 messageLength = (uint32)strlen(p_Message) + 1; //+1 for 0 terminator, +1 for newline
 	wchar_t* messageBuffer = (wchar_t*)alloca(messageLength * sizeof(wchar_t));
 
 	K15_Win32ConvertStringToWString(p_Message, messageLength, messageBuffer);
 
 	OutputDebugStringW(messageBuffer);
+	OutputDebugStringW(L"\n");
 }
 /*********************************************************************************/
 void K15_Win32LogConsole(const char* p_Message, LogPriority p_Priority)
@@ -297,6 +298,9 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	{
 		return K15_OS_ERROR_SYSTEM;
 	}
+
+	//battery
+	GetSystemPowerStatus(&win32SpecificContext->Battery.powerStatus);
 
 	//frequency of performance timer
 	LARGE_INTEGER performanceFrequency;

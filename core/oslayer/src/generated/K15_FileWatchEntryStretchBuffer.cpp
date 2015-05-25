@@ -54,6 +54,14 @@ void K15_ResizeFileWatchEntryStretchBuffer(K15_FileWatchEntryStretchBuffer* p_St
 	}
 }
 /*********************************************************************************/
+void K15_ClearFileWatchEntryStretchBuffer(K15_FileWatchEntryStretchBuffer* p_StretchBuffer)
+{
+	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
+	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
+
+	p_StretchBuffer->numElements = 0;
+}
+/*********************************************************************************/
 void K15_PushFileWatchEntry(K15_FileWatchEntryStretchBuffer* p_StretchBuffer, K15_FileWatchEntry p_Element)
 {	
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");

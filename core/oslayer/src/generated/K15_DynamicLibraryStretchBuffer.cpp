@@ -54,6 +54,14 @@ void K15_ResizeDynamicLibraryStretchBuffer(K15_DynamicLibraryStretchBuffer* p_St
 	}
 }
 /*********************************************************************************/
+void K15_ClearDynamicLibraryStretchBuffer(K15_DynamicLibraryStretchBuffer* p_StretchBuffer)
+{
+	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
+	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
+
+	p_StretchBuffer->numElements = 0;
+}
+/*********************************************************************************/
 void K15_PushDynamicLibrary(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, K15_DynamicLibrary* p_Element)
 {	
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");

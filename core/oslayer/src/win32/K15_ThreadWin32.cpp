@@ -170,6 +170,20 @@ uint8 K15_Win32LockMutex(K15_Mutex* p_Mutex)
 	return returnValue;
 }
 /*********************************************************************************/
+uint8 K15_Win32TryLockMutex(K15_Mutex* p_Mutex)
+{
+	uint8 returnValue = K15_SUCCESS;
+
+	BOOL success = TryEnterCriticalSection(&p_Mutex->criticalSection);
+
+	if (success != TRUE)
+	{
+		returnValue = K15_OS_TIMEOUT;
+	}
+
+	return returnValue;
+}
+/*********************************************************************************/
 uint8 K15_Win32UnlockMutex(K15_Mutex* p_Mutex)
 {
 	uint8 returnValue = K15_SUCCESS;

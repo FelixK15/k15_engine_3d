@@ -54,6 +54,14 @@ void K15_ResizeDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStr
 	}
 }
 /*********************************************************************************/
+void K15_ClearDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer)
+{
+	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
+	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
+
+	p_StretchBuffer->numElements = 0;
+}
+/*********************************************************************************/
 void K15_PushDynamicFunctionPointer(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, K15_DynamicFunctionPointer p_Element)
 {	
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");

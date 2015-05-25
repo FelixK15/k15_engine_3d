@@ -7,10 +7,12 @@ include_directories(../logging/include/)
 
 set(K15_RUNTIME_SRC 	"src/K15_ConfigFile.cpp"
 			"src/K15_String.cpp"
+			"src/K15_ResourceContext.cpp"
 			"src/K15_GameInit.cpp")
 
 set(K15_RUNTIME_INCLUDE "include/K15_ConfigFile.h"
 			"include/K15_String.h"
+			"include/K15_ResourceContext.h"
 			"include/K15_GameInit.h")
 
 set(K15_RUNTIME_GENERATED_INC "include/generated/K15_ConfigValueBuffer.h")

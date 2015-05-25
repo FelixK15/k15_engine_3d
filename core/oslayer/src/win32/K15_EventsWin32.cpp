@@ -7,6 +7,7 @@
 #include "K15_OSContext.h"
 #include "K15_Logging.h"
 
+#include "K15_System.h"
 #include "K15_DefaultCLibraries.h"
 
 #include "win32/K15_XInputWin32.cpp"
@@ -311,6 +312,52 @@ intern inline void K15_Win32PumpControllerEvents(K15_Win32Context* p_Win32Contex
 	}
 }
 /*********************************************************************************/
+intern inline void K15_Win32CheckSystemPowerStatus(K15_Win32Context* p_Win32Context)
+{
+	SYSTEM_POWER_STATUS currentSystemPowerStatus = {};
+	SYSTEM_POWER_STATUS lastSystemPowerStatus = p_Win32Context->Battery.powerStatus;
+
+	GetSystemPowerStatus(&currentSystemPowerStatus);
+
+	BYTE currentBatteryLifePercent = currentSystemPowerStatus.BatteryLifePercent;
+	BYTE currentBatteryFlags = currentSystemPowerStatus.BatteryFlag;
+	BYTE currentACLineStatus = currentSystemPowerStatus.ACLineStatus;
+
+	BYTE lastBatteryLifePercent = lastSystemPowerStatus.BatteryLifePercent;
+	BYTE lastBatteryFlags = lastSystemPowerStatus.BatteryFlag;
+	BYTE lastACLineStatus = lastSystemPowerStatus.ACLineStatus;
+
+	if (currentACLineStatus != 255 &&
+		lastACLineStatus != 255)
+	{
+		if (currentBatteryLifePercent != lastBatteryLifePercent)
+		{
+			K15_SystemEvent batteryChangedEvent = {};
+			batteryChangedEvent.event = K15_BATTERY_LEVEL_CHANGED;
+			batteryChangedEvent.params.batteryPercentage = (float)currentBatteryLifePercent / 255.f;
+			batteryChangedEvent.eventFlags = K15_SYSTEM_EVENT_FLAG;
+
+			K15_AddSystemEventToQueue(&batteryChangedEvent);
+		}
+
+		if (currentBatteryFlags != lastBatteryFlags)
+		{
+			if ((currentBatteryFlags & 0x08) > 0) //0x08 = Charging
+			{
+				K15_SystemEvent batteryChargeEvent = {};
+
+				batteryChargeEvent.params.batteryPercentage = (float)currentBatteryLifePercent / 255.f;
+				batteryChargeEvent.eventFlags = K15_SYSTEM_EVENT_FLAG;
+				batteryChargeEvent.event = K15_BATTERY_CHARGING;
+
+				K15_AddSystemEventToQueue(&batteryChargeEvent);
+			}
+		}
+	}
+
+	p_Win32Context->Battery.powerStatus = currentSystemPowerStatus;
+}
+/*********************************************************************************/
 LRESULT CALLBACK K15_Win32WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	uint8 messageHandled = K15_FALSE;
@@ -392,6 +439,8 @@ uint8 K15_Win32PumpSystemEvents(K15_OSContext* p_OSContext)
 	K15_Win32Controller* controllers = win32Context->controller;
 
 	K15_Win32PumpControllerEvents(win32Context, controllers, K15_MAX_CONTROLLER);
+
+	K15_Win32CheckSystemPowerStatus(win32Context);
 
 	return K15_SUCCESS;
 }

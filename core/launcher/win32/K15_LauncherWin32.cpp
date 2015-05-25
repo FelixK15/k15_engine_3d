@@ -5,6 +5,7 @@
 #include <K15_OSContext.h>
 #include <K15_SystemEvents.h>
 #include <K15_DynamicLibrary.h>
+#include <K15_FileWatch.h>
 #include <K15_System.h>
 
 #include <K15_FileSystem.h>
@@ -15,6 +16,33 @@
 #include <K15_DefaultCLibraries.h>
 #include <K15_ConfigFile.h>
 #include <K15_Thread.h>
+
+#ifndef K15_LOAD_GAME_LIB_DYNAMIC
+	K15_EXPORT_SYMBOL void K15_InitGame(K15_InitGameInputData, K15_InitGameOutputData*);
+	K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext*);
+	K15_EXPORT_SYMBOL void K15_QuitGame(void);
+#endif //K15_LOAD_GAME_LIB_DYNAMIC
+
+#ifdef K15_LOAD_GAME_LIB_DYNAMIC
+/*********************************************************************************/
+intern void K15_InternalOnGameLibraryReload(void* p_UserData)
+{
+	K15_GameContext* gameContext = (K15_GameContext*)p_UserData;
+	K15_DynamicLibrary* gameLibrary = gameContext->gameLibrary;
+	K15_Mutex* gameLibrarySynchronizer = gameContext->gameLibrarySynchronizer;
+
+	K15_LockMutex(gameLibrarySynchronizer);
+
+	K15_ReloadDynamicLibrary(gameLibrary);
+
+	gameContext->tickFnc = (K15_TickGameFnc)K15_GetProcAddress(gameLibrary, "K15_TickGame");
+
+	K15_UnlockMutex(gameLibrarySynchronizer);
+}
+/*********************************************************************************/
+#endif //K15_LOAD_GAME_LIB_DYNAMIC
+
+
 
 /*********************************************************************************/
 int CALLBACK WinMain(
@@ -54,6 +82,7 @@ int CALLBACK WinMain(
 	
 	bool running = true;
 
+	K15_GameContext gameContext = {};
 	K15_InitGameInputData inputData = {};
 	K15_InitGameOutputData outputData = {};
 
@@ -63,10 +92,14 @@ int CALLBACK WinMain(
 
 #ifdef K15_LOAD_GAME_LIB_DYNAMIC
 	const char* gameLibraryName = "data/testgame";
-	K15_DynamicLibrary* gameLibrary = K15_LoadDynamicLibrary(gameLibraryName, K15_RELOAD_LIBRARY);
+	K15_DynamicLibrary* gameLibrary = K15_LoadDynamicLibrary(gameLibraryName, K15_RELOADABLE_LIBRARY);
 	K15_InitGameFnc K15_InitGame = (K15_InitGameFnc)K15_GetProcAddress(gameLibrary, "K15_InitGame");
 	K15_TickGameFnc K15_TickGame = (K15_TickGameFnc)K15_GetProcAddress(gameLibrary, "K15_TickGame");
 	K15_QuitGameFnc K15_QuitGame = (K15_QuitGameFnc)K15_GetProcAddress(gameLibrary, "K15_QuitGame");
+
+	K15_Mutex* gameLibrarySynchronizer = K15_CreateMutex();
+
+	K15_AddFileWatch("data/testgame.dll", K15_InternalOnGameLibraryReload, &gameContext);
 #endif //K15_LOAD_GAME_LIB_DYNAMIC
 
 	K15_InitGame(inputData, &outputData);
@@ -79,14 +112,19 @@ int CALLBACK WinMain(
 	byte* memoryBlock = (byte*)K15_GAME_MALLOC(requestedMemorySize);
 #endif //K15_USE_DETERMINISTIC_GAME_MEM_ADDRESS
 
-	K15_GameContext gameContext = {};
 	gameContext.gameMemory = memoryBlock;
+	gameContext.logContexts = K15_GetLogContexts(&gameContext.logContextCount);
 	gameContext.configContext = &configFileContext;
 	gameContext.renderContext = renderContext;
 	gameContext.osContext = osContext;
 	gameContext.gameThreadSynchronizer = gameThreadSynchronizer;
 	gameContext.mainThreadSynchronizer = mainThreadSynchronizer;
 	gameContext.tickFnc = K15_TickGame;
+
+#ifdef K15_LOAD_GAME_LIB_DYNAMIC
+	gameContext.gameLibrary = gameLibrary;
+	gameContext.gameLibrarySynchronizer = gameLibrarySynchronizer;
+#endif //K15_LOAD_GAME_LIB_DYNAMIC
 
 	K15_Thread* gameThread = K15_CreateThread(K15_GameThreadMain, (void*)&gameContext, K15_THREAD_START_FLAG);
 
@@ -112,8 +150,10 @@ int CALLBACK WinMain(
 			//gpu bound
 		}
 
+		//let game run for 1 frame
 		K15_PostSemaphore(mainThreadSynchronizer);
 
+		//start processing dispatched render buffer
 		K15_ProcessDispatchedRenderCommandBuffers(renderContext);
 
 		joinResult = K15_TryJoinThread(gameThread, 0);

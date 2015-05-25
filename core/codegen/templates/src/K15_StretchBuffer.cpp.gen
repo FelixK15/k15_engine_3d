@@ -54,6 +54,14 @@ void K15_Resize$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchB
 	}
 }
 /*********************************************************************************/
+void K15_Clear$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer)
+{
+	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
+	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
+
+	p_StretchBuffer->numElements = 0;
+}
+/*********************************************************************************/
 void K15_Push$TYPE_NAME$(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element)
 {	
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");

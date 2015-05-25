@@ -56,7 +56,6 @@ intern inline VOID WINAPI K15_Win32InternalFileChangeCallback(DWORD dwErrorCode,
 		//uint32 fileNameLength = currentNotification->FileNameLength + 1; //apparently not 0 terminated.
 
 		char* fileName = (char*)alloca(fileNameLength);
-		//char* fileName = (char*)malloc(fileNameLength);
 
 		K15_Win32ConvertWStringToString(fileNameW, fileNameLength, fileName);
 		

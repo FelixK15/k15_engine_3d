@@ -66,7 +66,6 @@
 #define size_kilobyte(s) (uint32)(s*KILOBYTE)
 
 #define intern static
-#define global static
 
 #define K15_Search bsearch
 #define K15_Sort qsort
@@ -139,6 +138,7 @@ typedef signed    __int64 int64;
 typedef unsigned  __int64 uint64;
 
 #define K15_EXPORT_SYMBOL extern "C" __declspec(dllexport)
+
 #else
 //8 bit types
 typedef signed		char		int8;

@@ -9,28 +9,19 @@
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
+#include <memory>
 
 #define K15_MAX_LOG_CONTEXT_COUNT 8
 #define K15_MAX_LOG_BUFFER_LENGTH 2048
 
 /*********************************************************************************/
-struct K15_LogContext
-{
-	K15_LogFnc fnc;
-	unsigned int filterMask;
-	unsigned int flags;
-};
-/*********************************************************************************/
 static K15_LogContext g_LogContexts[K15_MAX_LOG_CONTEXT_COUNT] = {};
 static unsigned int g_LogCount = 0;
-
 /*********************************************************************************/
-
 
 /*********************************************************************************/
 static int K15_LogWriteTime(char* p_LogBuffer)
 {
-	char bufferTime[9];
 	char bufferHour[3];
 	char bufferMinute[3];
 	char bufferSecond[3];
@@ -70,6 +61,26 @@ static int K15_LogWriteTime(char* p_LogBuffer)
 	bufferSecond[2] = 0;
 
 	return sprintf(p_LogBuffer, "%s:%s:%s: ", bufferHour, bufferMinute, bufferSecond);
+}
+/*********************************************************************************/
+
+
+
+/*********************************************************************************/
+K15_LogContext* K15_GetLogContexts(unsigned int *p_LogCount)
+{
+	if (p_LogCount)
+	{
+		*p_LogCount = g_LogCount;
+	}
+
+	return g_LogContexts;
+}
+/*********************************************************************************/
+void K15_SetLogContexts(K15_LogContext* p_LogContexts, unsigned int p_LogCount)
+{
+	g_LogCount = p_LogCount;
+	memcpy(g_LogContexts, p_LogContexts, sizeof(K15_LogContext) * K15_MAX_LOG_CONTEXT_COUNT);
 }
 /*********************************************************************************/
 void K15_LogRegisterLogFnc(K15_LogFnc p_LogFunction, unsigned int p_LogPriorityFilterMask, unsigned int p_LogFlags)

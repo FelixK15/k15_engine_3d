@@ -76,6 +76,11 @@ struct K15_Win32Context
 		DirectSoundCreateFnc directSoundCreate;
 	} DirectSound;
 
+	struct  
+	{
+		SYSTEM_POWER_STATUS powerStatus;
+	} Battery;
+
 	K15_Win32Controller controller[K15_MAX_CONTROLLER];
 	DWORD connectedController;
 };

@@ -25,6 +25,7 @@ struct K15_FileWatchEntryStretchBuffer
 void K15_CreateFileWatchEntryStretchBuffer(K15_FileWatchEntryStretchBuffer* p_StretchBuffer, unsigned int p_Capacity = 8);
 void K15_DeleteFileWatchEntryStretchBuffer(K15_FileWatchEntryStretchBuffer* p_StretchBuffer);
 void K15_ResizeFileWatchEntryStretchBuffer(K15_FileWatchEntryStretchBuffer* p_StretchBuffer, unsigned int p_Capacity);
+void K15_ClearFileWatchEntryStretchBuffer(K15_FileWatchEntryStretchBuffer* p_StretchBuffer);
 
 void K15_PushFileWatchEntry(K15_FileWatchEntryStretchBuffer* p_StretchBuffer, K15_FileWatchEntry p_Element);
 unsigned char K15_PopFileWatchEntry(K15_FileWatchEntryStretchBuffer* p_StretchBuffer, unsigned int p_Index);

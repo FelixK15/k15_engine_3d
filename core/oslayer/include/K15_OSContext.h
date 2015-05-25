@@ -67,13 +67,13 @@ struct K15_OSContext
 	{
 		K15_DynamicLibraryStretchBuffer dynamicLibraries;
 		K15_DirectoryWatchEntryStretchBuffer directoryWatchEntries;
-		char* homeDir;
 		getElapsedSecondsFnc getElapsedSeconds;
 		loadDynamicLibraryFnc loadDynamicLibrary;
 		unloadDynamicLibraryFnc unloadDynamicLibrary;
 		registerFileWatchFnc registerFileWatch;
 		getProcAddressFnc getProcAddress;
 		OSIdentifier systemIdentifier;
+		char* homeDir;
 	} system;
 
 	/// Threading
@@ -97,7 +97,6 @@ struct K15_OSContext
 };
 
 K15_OSContext* K15_GetOSLayerContext();
-
 void K15_InternalSetOSLayerContext(K15_OSContext p_OSLayerContext);
 
 #endif //_K15_OSContext_h_

@@ -25,6 +25,7 @@ struct K15_ThreadStretchBuffer
 void K15_CreateThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer, unsigned int p_Capacity = 8);
 void K15_DeleteThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer);
 void K15_ResizeThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer, unsigned int p_Capacity);
+void K15_ClearThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer);
 
 void K15_PushThread(K15_ThreadStretchBuffer* p_StretchBuffer, K15_Thread* p_Element);
 unsigned char K15_PopThread(K15_ThreadStretchBuffer* p_StretchBuffer, unsigned int p_Index);

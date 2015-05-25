@@ -47,6 +47,7 @@ K15_Thread* K15_Win32GetCurrentThread();
 
 K15_Mutex* K15_Win32CreateMutex();
 uint8 K15_Win32LockMutex(K15_Mutex* p_Mutex);
+uint8 K15_Win32TryLockMutex(K15_Mutex* p_Mutex);
 uint8 K15_Win32UnlockMutex(K15_Mutex* p_Mutex);
 uint8 K15_Win32FreeMutex(K15_Mutex* p_Mutex);
 

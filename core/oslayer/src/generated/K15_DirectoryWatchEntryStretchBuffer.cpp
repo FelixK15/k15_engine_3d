@@ -54,6 +54,14 @@ void K15_ResizeDirectoryWatchEntryStretchBuffer(K15_DirectoryWatchEntryStretchBu
 	}
 }
 /*********************************************************************************/
+void K15_ClearDirectoryWatchEntryStretchBuffer(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer)
+{
+	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
+	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
+
+	p_StretchBuffer->numElements = 0;
+}
+/*********************************************************************************/
 void K15_PushDirectoryWatchEntry(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer, K15_DirectoryWatchEntry p_Element)
 {	
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");

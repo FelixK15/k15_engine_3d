@@ -25,6 +25,7 @@ struct K15_DirectoryWatchEntryStretchBuffer
 void K15_CreateDirectoryWatchEntryStretchBuffer(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer, unsigned int p_Capacity = 8);
 void K15_DeleteDirectoryWatchEntryStretchBuffer(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer);
 void K15_ResizeDirectoryWatchEntryStretchBuffer(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer, unsigned int p_Capacity);
+void K15_ClearDirectoryWatchEntryStretchBuffer(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer);
 
 void K15_PushDirectoryWatchEntry(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer, K15_DirectoryWatchEntry p_Element);
 unsigned char K15_PopDirectoryWatchEntry(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer, unsigned int p_Index);

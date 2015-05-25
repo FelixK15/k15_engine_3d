@@ -25,6 +25,7 @@ struct K15_DynamicLibraryStretchBuffer
 void K15_CreateDynamicLibraryStretchBuffer(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, unsigned int p_Capacity = 8);
 void K15_DeleteDynamicLibraryStretchBuffer(K15_DynamicLibraryStretchBuffer* p_StretchBuffer);
 void K15_ResizeDynamicLibraryStretchBuffer(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, unsigned int p_Capacity);
+void K15_ClearDynamicLibraryStretchBuffer(K15_DynamicLibraryStretchBuffer* p_StretchBuffer);
 
 void K15_PushDynamicLibrary(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, K15_DynamicLibrary* p_Element);
 unsigned char K15_PopDynamicLibrary(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, unsigned int p_Index);

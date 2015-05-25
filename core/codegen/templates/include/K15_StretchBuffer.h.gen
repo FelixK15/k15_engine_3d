@@ -25,6 +25,7 @@ struct K15_$TYPE_NAME$StretchBuffer
 void K15_Create$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_Capacity = 8);
 void K15_Delete$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer);
 void K15_Resize$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_Capacity);
+void K15_Clear$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer);
 
 void K15_Push$TYPE_NAME$(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element);
 unsigned char K15_Pop$TYPE_NAME$(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_Index);

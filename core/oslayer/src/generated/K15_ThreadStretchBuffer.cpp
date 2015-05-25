@@ -54,6 +54,14 @@ void K15_ResizeThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer, uns
 	}
 }
 /*********************************************************************************/
+void K15_ClearThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer)
+{
+	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
+	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
+
+	p_StretchBuffer->numElements = 0;
+}
+/*********************************************************************************/
 void K15_PushThread(K15_ThreadStretchBuffer* p_StretchBuffer, K15_Thread* p_Element)
 {	
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");

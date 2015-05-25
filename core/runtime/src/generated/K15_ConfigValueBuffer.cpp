@@ -54,6 +54,14 @@ void K15_ResizeConfigValueStretchBuffer(K15_ConfigValueStretchBuffer* p_StretchB
 	}
 }
 /*********************************************************************************/
+void K15_ClearConfigValueStretchBuffer(K15_ConfigValueStretchBuffer* p_StretchBuffer)
+{
+	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
+	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
+
+	p_StretchBuffer->numElements = 0;
+}
+/*********************************************************************************/
 void K15_PushConfigValue(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_ConfigValue p_Element)
 {	
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
