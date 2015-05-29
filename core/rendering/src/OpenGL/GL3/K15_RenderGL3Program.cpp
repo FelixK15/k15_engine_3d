@@ -214,7 +214,7 @@ intern char* K15_InternalGLPreprocessProgramCode(const char* p_FilePath, const c
 			else
 			{
 				//replace with content from file
-				char* includeFileContent = K15_GetWholeFileContent(includeFileNameBuffer);
+				char* includeFileContent = (char*)K15_GetWholeFileContent(includeFileNameBuffer);
 				char* preprocessedIncludeFileContent = K15_InternalGLPreprocessProgramCode(includeFileNameBuffer, includeFileContent);
 
 				//after the content got preprocessed, we don't need the un-preprocessed code anymore.
@@ -413,7 +413,7 @@ uint8 K15_GLCreateProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramD
 		}
 		else
 		{
-			char* codeBuffer = K15_GetWholeFileContent(programFilePath);
+			char* codeBuffer = (char*)K15_GetWholeFileContent(programFilePath);
 			programCode = codeBuffer;
 
 			p_RenderProgramDesc->code = codeBuffer;

@@ -25,7 +25,7 @@ intern BOOL CALLBACK K15_Win32EnumMonitorProc(HMONITOR p_HMONITOR, HDC p_HDC, LP
 
 
 /*********************************************************************************/
-uint8 K15_Win32CreateWindow(K15Context* p_OSContext, K15_Window* p_Window, uint32 p_Flags, uint8 p_MonitorIndex)
+uint8 K15_Win32CreateWindow(K15_OSContext* p_OSContext, K15_Window* p_Window, uint32 p_Flags, uint8 p_MonitorIndex)
 {
 	K15_Win32Context* Win32Context = (K15_Win32Context*)p_OSContext->userData;
 
@@ -112,7 +112,7 @@ uint8 K15_Win32CreateWindow(K15Context* p_OSContext, K15_Window* p_Window, uint3
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-uint8 K15_Win32SetWindowDimension(K15Context* p_OSContext, K15_Window* p_Window, uint32 p_Height, uint32 p_Width)
+uint8 K15_Win32SetWindowDimension(K15_OSContext* p_OSContext, K15_Window* p_Window, uint32 p_Height, uint32 p_Width)
 {
 	K15_Win32Window* win32WindowData = (K15_Win32Window*)p_Window->userData;
 	HWND hwnd = win32WindowData->hwnd;
@@ -146,12 +146,12 @@ uint8 K15_Win32SetWindowDimension(K15Context* p_OSContext, K15_Window* p_Window,
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-uint8 K15_Win32SetWindowFullscreen(K15Context* p_OSContext, K15_Window* p_Window, bool8 p_Fullscreen)
+uint8 K15_Win32SetWindowFullscreen(K15_OSContext* p_OSContext, K15_Window* p_Window, bool8 p_Fullscreen)
 {
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-uint8 K15_Win32SetWindowTitle(K15Context* p_OSContext, K15_Window* p_Window, char* p_Title)
+uint8 K15_Win32SetWindowTitle(K15_OSContext* p_OSContext, K15_Window* p_Window, char* p_Title)
 {
 	K15_Win32Window* win32WindowData = (K15_Win32Window*)p_Window->userData;
 	HWND hwnd = win32WindowData->hwnd;
@@ -168,7 +168,7 @@ uint8 K15_Win32SetWindowTitle(K15Context* p_OSContext, K15_Window* p_Window, cha
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-uint8 K15_Win32CloseWindow(K15Context* p_OSContext, K15_Window* p_Window)
+uint8 K15_Win32CloseWindow(K15_OSContext* p_OSContext, K15_Window* p_Window)
 {
 	return K15_SUCCESS;
 }

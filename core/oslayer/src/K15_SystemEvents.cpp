@@ -13,7 +13,7 @@ intern uint32 g_MasterListSize = 0;
 /*********************************************************************************/
 uint8 K15_PumpSystemEvents()
 {
-	K15Context* osLayerContext = K15_GetOSLayerContext();
+	K15_OSContext* osLayerContext = K15_GetOSLayerContext();
 
 	return osLayerContext->events.pumpSystemEvents(osLayerContext);
 }

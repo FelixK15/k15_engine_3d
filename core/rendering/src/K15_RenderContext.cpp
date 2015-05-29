@@ -656,7 +656,7 @@ intern void K15_InternalSwapRenderDispatcherBuffers(K15_RenderCommandBufferDispa
 	K15_UnlockMutex(p_RenderCommandBufferDispatcher->swapMutex);
 }
 /*********************************************************************************/
-intern uint8 K15_InternalInitializeRenderContext(K15_RenderContext* p_RenderContext, K15Context* p_OSContext)
+intern uint8 K15_InternalInitializeRenderContext(K15_RenderContext* p_RenderContext, K15_OSContext* p_OSContext)
 {
 	assert(p_RenderContext && p_OSContext);
 
@@ -803,7 +803,7 @@ const char* K15_GetLastRenderErrorMessageWithSize(K15_RenderContext* p_RenderCon
 	return p_RenderContext->lastError.message;
 }
 /*********************************************************************************/
-K15_RenderContext* K15_CreateRenderContext(K15Context* p_OSContext)
+K15_RenderContext* K15_CreateRenderContext(K15_OSContext* p_OSContext)
 {
 	assert(p_OSContext);
 

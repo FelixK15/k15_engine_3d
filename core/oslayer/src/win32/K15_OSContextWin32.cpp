@@ -4,11 +4,14 @@
 
 #include "K15_OSContext.h"
 #include "K15_Thread.h"
+#include "K15_FileSystem.h"
 #include "K15_DefaultCLibraries.h"
 
 #include "win32/K15_WindowWin32.h"
 #include "win32/K15_EventsWin32.h"
+#include "win32/K15_FileWatchWin32.h"
 #include "win32/K15_ThreadWin32.h"
+#include "win32/K15_DynamicLibraryWin32.h"	
 #include "win32/K15_HelperWin32.h"
 #include "win32/K15_HeaderDefaultWin32.h"
 #include "win32/K15_HeaderExtensionsWin32.h"
@@ -21,12 +24,13 @@ MessageBoxAProc _MessageBoxA = 0;
 /*********************************************************************************/
 void K15_Win32LogVisualStudio(const char* p_Message, LogPriority p_Priority)
 {
-	uint32 messageLength = (uint32)strlen(p_Message) + 1; //+1 for 0 terminator
+	uint32 messageLength = (uint32)strlen(p_Message) + 1; //+1 for 0 terminator, +1 for newline
 	wchar_t* messageBuffer = (wchar_t*)alloca(messageLength * sizeof(wchar_t));
 
 	K15_Win32ConvertStringToWString(p_Message, messageLength, messageBuffer);
 
 	OutputDebugStringW(messageBuffer);
+	OutputDebugStringW(L"\n");
 }
 /*********************************************************************************/
 void K15_Win32LogConsole(const char* p_Message, LogPriority p_Priority)
@@ -188,7 +192,12 @@ void K15_Win32AllocateDebugConsole()
 /*********************************************************************************/
 uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 {
-	K15Context win32OSContext;
+	if (!p_hInstance)
+	{
+		p_hInstance = GetModuleHandle(NULL);
+	}
+
+	K15_OSContext win32OSContext;
 
 	//window
 	win32OSContext.window.createWindow = K15_Win32CreateWindow;
@@ -209,25 +218,43 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	win32OSContext.threading.setThreadName = K15_Win32SetThreadName;
 	win32OSContext.threading.getCurrentThread = K15_Win32GetCurrentThread;
 	win32OSContext.threading.freeThread = K15_Win32FreeThread;
-	win32OSContext.threading.threads = (K15_Thread**)K15_OS_MALLOC(sizeof(K15_Thread*) * K15_MAX_THREADS);
 
-	memset(win32OSContext.threading.threads, 0, sizeof(K15_Thread*) * K15_MAX_THREADS);
+	//create threading stretch buffer
+	K15_ThreadStretchBuffer threadBuffer = {};
+	K15_CreateThreadStretchBuffer(&threadBuffer, K15_DEFAULT_THREAD_SIZE);
+
+	win32OSContext.threading.threads = threadBuffer;
+
+	//win32OSContext.threading.threads = (K15_Thread**)K15_OS_MALLOC(sizeof(K15_Thread*) * K15_MAX_THREADS);
+
+	//memset(win32OSContext.threading.threads, 0, sizeof(K15_Thread*) * K15_MAX_THREADS);
 
 	//Get message box function
 	HMODULE user32Module = GetModuleHandleA("user32.dll");
 	_MessageBoxA = (MessageBoxAProc)GetProcAddress(user32Module, "MessageBoxA");
 
-	//get current dir
-	LPSTR currentDirectoryBuffer = (LPSTR)K15_OS_MALLOC(MAX_PATH);
-	GetCurrentDirectoryA(MAX_PATH, currentDirectoryBuffer);
-
 	//system
 	win32OSContext.system.systemIdentifier = OS_WINDOWS;
-	win32OSContext.system.sleep = K15_Win32Sleep;
-	win32OSContext.system.getError = K15_Win32GetError;
-	win32OSContext.system.homeDir = currentDirectoryBuffer;
+	win32OSContext.system.homeDir = K15_Win32GetWorkingDirectory();
 	win32OSContext.system.getElapsedSeconds = K15_Win32GetElapsedSeconds;
+	win32OSContext.system.loadDynamicLibrary = K15_Win32LoadDynamicLibrary;
+	win32OSContext.system.unloadDynamicLibrary = K15_Win32UnloadDynamicLibrary;
+	win32OSContext.system.getProcAddress = K15_Win32GetProcAddress;
+	win32OSContext.system.registerFileWatch = K15_Win32RegisterFileWatch;
 
+	//create dynamic library stretch buffer
+	K15_DynamicLibraryStretchBuffer dynamicLibraryBuffer = {};
+	K15_CreateDynamicLibraryStretchBuffer(&dynamicLibraryBuffer, K15_DEFAULT_DYNAMIC_LIBRARY_SIZE);
+
+	win32OSContext.system.dynamicLibraries = dynamicLibraryBuffer;
+
+	//create directory watch entry stretch buffer
+	K15_DirectoryWatchEntryStretchBuffer directoryWatchBuffer = {};
+	K15_CreateDirectoryWatchEntryStretchBuffer(&directoryWatchBuffer);
+
+	win32OSContext.system.directoryWatchEntries = directoryWatchBuffer;
+	
+	//arguments
 	win32OSContext.commandLineArgCount = __argc;
 	win32OSContext.commandLineArgs = __argv;
 	win32OSContext.userData = 0;
@@ -236,8 +263,8 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 #ifdef K15_DEBUG
 	K15_Win32AllocateDebugConsole();
 
-	K15_LogRegisterLogFnc(K15_Win32LogVisualStudio, K15_LOG_PRIORITY_DEFAULT);
-	K15_LogRegisterLogFnc(K15_Win32LogConsole, K15_LOG_PRIORITY_DEFAULT);
+	K15_LogRegisterLogFnc(K15_Win32LogVisualStudio, K15_LOG_PRIORITY_DEFAULT, K15_LOG_FLAG_ADD_TIME);
+	K15_LogRegisterLogFnc(K15_Win32LogConsole, K15_LOG_PRIORITY_DEFAULT, K15_LOG_FLAG_ADD_TIME);
 #endif //K15_DEBUG
 
 	K15_Win32Context* win32SpecificContext = (K15_Win32Context*)K15_OS_MALLOC(sizeof(K15_Win32Context));
@@ -272,6 +299,9 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 		return K15_OS_ERROR_SYSTEM;
 	}
 
+	//battery
+	GetSystemPowerStatus(&win32SpecificContext->Battery.powerStatus);
+
 	//frequency of performance timer
 	LARGE_INTEGER performanceFrequency;
 	QueryPerformanceFrequency(&performanceFrequency);
@@ -305,7 +335,7 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-char* K15_Win32GetError()
+char* K15_Win32GetError(char* p_OutputBuffer)
 {
 	DWORD errorNo = GetLastError();
 	wchar_t* messageBuffer = (wchar_t*)alloca(256 * sizeof(wchar_t));
@@ -317,11 +347,10 @@ char* K15_Win32GetError()
 	}
 
 	uint32 messageBufferLength = (uint32)wcslen(messageBuffer) + 1; //+1 for 0 terminator
-	char* outputBuffer = (char*)malloc(messageBufferLength);
 
-	K15_Win32ConvertWStringToString(messageBuffer, messageBufferLength, outputBuffer);
+	K15_Win32ConvertWStringToString(messageBuffer, messageBufferLength, p_OutputBuffer);
 	
-	return outputBuffer;
+	return p_OutputBuffer;
 }
 /*********************************************************************************/
 void K15_Win32Sleep(double p_SleepTimeInSeconds)
@@ -332,7 +361,7 @@ void K15_Win32Sleep(double p_SleepTimeInSeconds)
 /*********************************************************************************/
 void K15_Win32ShutdownOSLayer()
 {
-	K15Context* osContext = K15_GetOSLayerContext();
+	K15_OSContext* osContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
 
 	if (win32Context->XInput.module)
@@ -356,7 +385,7 @@ void K15_Win32ShutdownOSLayer()
 /*********************************************************************************/
 double K15_Win32GetElapsedSeconds()
 {
-	K15Context* osContext = K15_GetOSLayerContext();
+	K15_OSContext* osContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
 
 	LARGE_INTEGER counts;

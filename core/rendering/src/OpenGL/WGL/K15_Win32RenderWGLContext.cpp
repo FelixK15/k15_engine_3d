@@ -95,7 +95,7 @@ intern GLboolean K15_Win32SwapBuffers(K15_GLRenderContext* p_RenderContext)
 	return GL_TRUE;
 }
 /*********************************************************************************/
-uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15Context* p_OSContext)
+uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSContext* p_OSContext)
 {
 	K15_Win32Context* win32Context = (K15_Win32Context*)p_OSContext->userData;
 

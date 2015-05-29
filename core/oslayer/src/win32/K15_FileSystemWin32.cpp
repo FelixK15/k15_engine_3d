@@ -1,5 +1,6 @@
 #include "K15_DefaultCLibraries.h"
 
+#include "K15_FileSystem.h"
 #include "win32/K15_FileSystemWin32.h"
 #include "win32/K15_HelperWin32.h"
 
@@ -8,7 +9,7 @@
 /*********************************************************************************/
 uint32 K15_Win32GetFileSize(const char* p_FilePath)
 {
-	K15_ASSERT_TEXT(p_FilePath, "filepath is 0.");
+	K15_ASSERT_TEXT(p_FilePath, "filepath is NULL.");
 
 	uint32 filePathLength = (uint32)strlen(p_FilePath) + 1;
 
@@ -31,11 +32,11 @@ uint32 K15_Win32GetFileSize(const char* p_FilePath)
 /*********************************************************************************/
 uint8 K15_Win32FileExists(const char* p_FilePath)
 {
-	K15_ASSERT_TEXT(p_FilePath, "filepath is 0.");
+	K15_ASSERT_TEXT(p_FilePath, "filepath is NULL.");
 
-	int filePathLength = (uint32)strlen(p_FilePath) + 1;
+	int filePathLength = (uint32)strlen(p_FilePath) + 1;  //+1 for 0 terminator
 
-	wchar_t* wideFilePath = (wchar_t*)alloca(filePathLength * sizeof(wchar_t));  //+1 for 0 terminator
+	wchar_t* wideFilePath = (wchar_t*)alloca(filePathLength * sizeof(wchar_t));
 
 	K15_Win32ConvertStringToWString(p_FilePath, filePathLength, wideFilePath);
 
@@ -50,30 +51,80 @@ uint8 K15_Win32FileExists(const char* p_FilePath)
 	return result;
 }
 /*********************************************************************************/
-char* K15_Win32ConvertToSystemPath(const char* p_FilePath)
+uint8 K15_Win32CopyFile(const char* p_SourcePath, const char* p_DestinationPath)
 {
-	K15_ASSERT_TEXT(p_FilePath, "filepath is 0.");
+	K15_ASSERT_TEXT(p_SourcePath, "Source path is NULL.");
+	K15_ASSERT_TEXT(p_DestinationPath, "Destination path is NULL.");
 
-	size_t filePathSize = strlen(p_FilePath);
-	char* convertedFilePath = (char*)K15_OS_MALLOC(filePathSize + 1); //+1 for 0 terminator
-	const char* filePath = p_FilePath;
+	size_t sourcePathLength = strlen(p_SourcePath) + 1;
+	size_t destinationPathLength = strlen(p_DestinationPath) + 1;
 
-	for (size_t fileNameIndex = 0;
-		 fileNameIndex < filePathSize;
-		 ++fileNameIndex)
+	wchar_t* sourcePathW = (wchar_t*)alloca(sourcePathLength * sizeof(wchar_t));
+	wchar_t* destinationPathW = (wchar_t*)alloca(destinationPathLength * sizeof(wchar_t));
+
+	K15_Win32ConvertStringToWString(p_SourcePath, sourcePathLength, sourcePathW);
+	K15_Win32ConvertStringToWString(p_DestinationPath, destinationPathLength, destinationPathW);
+
+	return CopyFileW(sourcePathW, destinationPathW, FALSE) == 0 ? K15_OS_ERROR_SYSTEM : K15_SUCCESS;
+}
+/*********************************************************************************/
+byte* K15_Win32ReadWholeFile(const char* p_FilePath)
+{
+	K15_ASSERT_TEXT(p_FilePath, "filepath is NULL.");
+
+	int filePathLength = (uint32)strlen(p_FilePath) + 1;  //+1 for 0 terminator
+
+	wchar_t* wideFilePath = (wchar_t*)alloca(filePathLength * sizeof(wchar_t));
+
+	K15_Win32ConvertStringToWString(p_FilePath, filePathLength, wideFilePath);
+
+	uint8 result = K15_SUCCESS;
+
+	HANDLE fileHandle = CreateFileW(wideFilePath, GENERIC_READ, FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	DWORD fileSize = INVALID_FILE_SIZE;
+	byte* fileContent = 0;
+
+	if (fileHandle != INVALID_HANDLE_VALUE)
 	{
-		if (filePath[fileNameIndex] == '/')
-		{
-			convertedFilePath[fileNameIndex] = '\\';
-		}
-		else
-		{
-			convertedFilePath[fileNameIndex] = filePath[fileNameIndex];
-		}
+		fileSize = GetFileSize(fileHandle, NULL);
+	}
+	else
+	{
+		result = K15_OS_ERROR_SYSTEM;
 	}
 
-	convertedFilePath[filePathSize] = 0;
+	if (fileHandle != INVALID_HANDLE_VALUE &&
+		fileSize != INVALID_FILE_SIZE)
+	{
+		fileContent = (byte*)K15_OS_MALLOC(fileSize + 1); //+1 = 0 terminator
+		ReadFile(fileHandle, fileContent, fileSize, 0, 0);
+		fileContent[fileSize] = 0;
+	}
+	
+	if (fileHandle != INVALID_HANDLE_VALUE)
+	{
+		CloseHandle(fileHandle);
+	}
 
-	return convertedFilePath;
+	return fileContent;
+}
+/*********************************************************************************/
+char* K15_Win32GetWorkingDirectory()
+{
+	DWORD bufferLength = GetCurrentDirectoryW(0, 0);
+	wchar_t* wideWorkingDirectoryPath = (wchar_t*)alloca(bufferLength * sizeof(wchar_t));
+
+	DWORD written = GetCurrentDirectoryW(bufferLength, wideWorkingDirectoryPath);
+	bufferLength = written + 1;
+
+	char* workingDirectory = (char*)K15_OS_MALLOC(bufferLength);
+
+	K15_Win32ConvertWStringToString(wideWorkingDirectoryPath, bufferLength, workingDirectory);
+
+	workingDirectory[written] = '\\';
+	workingDirectory[bufferLength] = 0;
+
+
+	return K15_ConvertToSystemPathInplace(workingDirectory);
 }
 /*********************************************************************************/

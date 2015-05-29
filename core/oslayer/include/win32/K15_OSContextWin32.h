@@ -59,6 +59,7 @@ struct K15_Win32Context
 		XInputGetStateFnc getState;
 		XInputSetStateFnc setState;
 	} XInput;
+
 	struct 
 	{
 		HMODULE module;
@@ -75,12 +76,17 @@ struct K15_Win32Context
 		DirectSoundCreateFnc directSoundCreate;
 	} DirectSound;
 
+	struct  
+	{
+		SYSTEM_POWER_STATUS powerStatus;
+	} Battery;
+
 	K15_Win32Controller controller[K15_MAX_CONTROLLER];
 	DWORD connectedController;
 };
 
 uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance);
-char* K15_Win32GetError();
+char* K15_Win32GetError(char* p_OutputBuffer);
 void K15_Win32Sleep(double p_SleepTimeInSeconds);
 void K15_Win32ShutdownOSLayer();
 double K15_Win32GetElapsedSeconds();

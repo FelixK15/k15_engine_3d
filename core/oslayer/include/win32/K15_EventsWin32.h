@@ -6,6 +6,6 @@
 
 LRESULT CALLBACK K15_Win32WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-uint8 K15_Win32PumpSystemEvents(K15Context* p_OSContext);
+uint8 K15_Win32PumpSystemEvents(K15_OSContext* p_OSContext);
 
 #endif //_K15_Events_Win32_h_

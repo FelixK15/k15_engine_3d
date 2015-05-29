@@ -1,11 +1,6 @@
 #ifndef _K15_Prerequisites_h_
 #define _K15_Prerequisites_h_
 
-#define _CRT_SECURE_NO_WARNINGS
-
-#include "K15_ErrorCodes.h"
-#include "K15_Config.h"
-
 #ifdef __ANDROID__
 #define K15_OS_ANDROID
 #elif defined _WIN32
@@ -19,6 +14,9 @@
 #ifdef K15_OS_ANDROID
 #define K15_PLATFORM_MOBILE
 #endif //K15_OS_ANDROID
+
+#include "K15_Config.h"
+#include "K15_ErrorCodes.h"
 
 #if defined (K15_OS_WINDOWS)
 #ifdef _WIN64
@@ -47,6 +45,10 @@
 #define K15_DEBUG_MRT //Multithreaded debugging
 #endif //_DEBUG
 
+#ifdef _MSC_VER
+	#pragma warning(disable : 4996) //function is deprecated, use safe function
+#endif //_MSC_VER
+
 #define K15_PTR_SIZE sizeof(void*)
 
 #if defined (K15_CPP11_SUPPORT)
@@ -64,15 +66,17 @@
 #define size_kilobyte(s) (uint32)(s*KILOBYTE)
 
 #define intern static
-#define global static
 
 #define K15_Search bsearch
 #define K15_Sort qsort
 
-#define K15_TRUE 0
-#define K15_FALSE 1
+#define K15_TRUE 1
+#define K15_FALSE 0
 
-#define K15_MAX_THREADS 64
+#define K15_DEFAULT_THREAD_SIZE 8
+#define K15_DEFAULT_DYNAMIC_LIBRARY_SIZE 8
+
+#define K15_MAIN_THREAD 0
 
 #define K15_FUNCTION_DEBUG_PRINTF(func) printf("Before "#func"\n"); func; printf("After "#func"\n")
 
@@ -90,7 +94,7 @@ typedef int (*MessageBoxAProc)(void*, const char*, const char*, unsigned int);
 extern MessageBoxAProc _MessageBoxA;
 #define K15_ASSERT_TEXT(expression, text, ...)	\
 	{ \
-		if (!expression) { \
+		if ((!expression)) { \
 			if (_MessageBoxA) \
 			{ \
 				char messageText[256]; \
@@ -132,6 +136,9 @@ typedef unsigned  __int32 uint32;
 //64 bit types
 typedef signed    __int64 int64;
 typedef unsigned  __int64 uint64;
+
+#define K15_EXPORT_SYMBOL extern "C" __declspec(dllexport)
+
 #else
 //8 bit types
 typedef signed		char		int8;
@@ -217,12 +224,18 @@ typedef uint8 byte;
 // forward declaration
 struct K15_Window;
 struct K15_Thread;
+struct K15_DynamicLibrary;
 struct K15_Mutex;
-struct K15_ConditionVariable;
+struct K15_FileWatchEntry;
+struct K15_DirectoryWatchEntry;
 struct K15_ThreadContext;
 struct K15_Semaphore;
-struct K15Context;
+struct K15_OSContext;
 
 typedef uint8 (*K15_ThreadFnc)(void*);
+
+#ifndef K15_EXPORT_SYMBOL
+	#define K15_EXPORT_SYMBOL
+#endif 
 
 #endif //_K15_Prerequisites_h_
