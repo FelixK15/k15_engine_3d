@@ -48,7 +48,7 @@ intern uint8 K15_Win32InternalCurrentThreadCompare(K15_Thread** p_Thread, void* 
 
 
 /*********************************************************************************/
-uint8 K15_Win32CreateThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread, K15_ThreadFnc p_ThreadFunction, void* p_ThreadParameter)
+uint8 K15_Win32CreateThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread, K15_ThreadFnc p_ThreadFunction, void* p_ThreadParameter, uint32 p_ThreadFlags)
 {
 	K15_Win32Thread* win32Thread = (K15_Win32Thread*)K15_OS_MALLOC(sizeof(K15_Win32Thread));
 	byte* win32ThreadParameterBuffer = (byte*)K15_OS_MALLOC(K15_PTR_SIZE * 3);
@@ -62,8 +62,15 @@ uint8 K15_Win32CreateThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread, K1
 	memcpy(win32ThreadParameterBuffer + K15_PTR_SIZE, &p_ThreadParameter, K15_PTR_SIZE);
 	memcpy(win32ThreadParameterBuffer + K15_PTR_SIZE * 2, &p_Thread, K15_PTR_SIZE);
 
+	DWORD creationFlags = 0;
+
+	if ((p_ThreadFlags & K15_THREAD_START_FLAG) == 0)
+	{
+		creationFlags = CREATE_SUSPENDED;
+	}
+
 	DWORD threadIdentifier = 0;
-	HANDLE threadHandle = CreateThread(0, size_megabyte(1), K15_Win32ThreadWrapper, (LPVOID)win32ThreadParameterBuffer, 0, &threadIdentifier);
+	HANDLE threadHandle = CreateThread(0, size_megabyte(1), K15_Win32ThreadWrapper, (LPVOID)win32ThreadParameterBuffer, creationFlags, &threadIdentifier);
 
 	if (threadHandle == INVALID_HANDLE_VALUE)
 	{
@@ -80,6 +87,15 @@ uint8 K15_Win32CreateThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread, K1
 	p_Thread->userData = (void*)win32Thread;
 
 	return K15_SUCCESS;
+}
+/*********************************************************************************/
+uint8 K15_Win32StartThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread)
+{
+	K15_Win32Thread* win32Thread = (K15_Win32Thread*)p_Thread->userData;
+
+	DWORD result = ResumeThread(win32Thread->handle);
+
+	return result == ((DWORD) - 1) ? K15_OS_ERROR_SYSTEM : K15_SUCCESS;
 }
 /*********************************************************************************/
 uint8 K15_Win32TryJoinThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread, uint32 p_MilliSeconds)
@@ -147,7 +163,7 @@ K15_Thread* K15_Win32GetCurrentThread()
 // 		}
 // 	}
 
-	K15_Thread** currentThread = K15_GetThreadElementConditional(threadBuffer, K15_Win32InternalCurrentThreadCompare, &threadIdentifier);
+	K15_Thread** currentThread = K15_GetThreadStretchBufferElementConditional(threadBuffer, K15_Win32InternalCurrentThreadCompare, &threadIdentifier);
 
 	return currentThread == 0 ? 0 : (*currentThread);
 }

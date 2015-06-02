@@ -1,0 +1,285 @@
+/*********************************************************************************/
+/*  THIS FILE HAS BEEN GENERATED AUTOMATICALLY. ANY CHANGES WILL BE OVERRIDDEN   */
+/*********************************************************************************/
+
+#include "$INPUT_FILE$"
+
+/*********************************************************************************/
+void K15_CreateLocked$TYPE_NAME$StretchBufferWithPreallocatedMemory(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, unsigned char* p_Buffer, unsigned int p_BufferCapacityInByte)
+{
+	K15_ASSERT_TEXT(p_Buffer, "Input buffer is NULL.");
+	K15_ASSERT_TEXT(p_BufferCapacityInByte != 0, "Input buffer size is 0.");
+	K15_ASSERT_TEXT(!p_LockedStretchBuffer->elements, "Locked Stretch Buffer has already been created.");
+
+	unsigned int numCapacity = p_BufferCapacityInByte / sizeof($TYPE$);
+
+	K15_ASSERT_TEXT(numCapacity != 0, "Byte count '%d' is less than one element of type %s (%d byte(s)).", p_BufferCapacityInByte, "$TYPE$", sizeof($TYPE$));
+
+	$TYPE$* elements = ($TYPE$*)p_Buffer;
+
+	p_LockedStretchBuffer->elements = elements;
+	p_LockedStretchBuffer->numCapacity = numCapacity;
+	p_LockedStretchBuffer->numElements = 0;
+	p_LockedStretchBuffer->flags = K15_USE_EXTERNAL_BUFFER;
+	p_LockedStretchBuffer->bufferLock = K15_CreateMutex();
+}
+/*********************************************************************************/
+void K15_CreateLocked$TYPE_NAME$StretchBuffer(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, unsigned int p_Capacity)
+{
+	K15_ASSERT_TEXT(p_Capacity != 0, "Can not reserve 0 elements.");
+	K15_ASSERT_TEXT(!p_LockedStretchBuffer->elements, "Locked Stretch Buffer has already been created.");
+
+	unsigned int bytesToAllocate = p_Capacity * sizeof($TYPE$);
+	$TYPE$* elements = ($TYPE$*)$MALLOC_FNC$(bytesToAllocate);
+
+	K15_ASSERT_TEXT(elements, "Out of memory.");
+
+	p_LockedStretchBuffer->elements = elements;
+	p_LockedStretchBuffer->numCapacity = p_Capacity;
+	p_LockedStretchBuffer->numElements = 0;
+	p_LockedStretchBuffer->flags = 0;
+	p_LockedStretchBuffer->bufferLock = K15_CreateMutex();
+}
+/*********************************************************************************/
+void K15_DeleteLocked$TYPE_NAME$StretchBuffer(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer)
+{
+	K15_ASSERT_TEXT(p_LockedStretchBuffer, "Locked Stretch Buffer is NULL.");
+	K15_ASSERT_TEXT(p_LockedStretchBuffer->elements, "Locked Stretch Buffer has not yet been created.");
+
+	if ((p_LockedStretchBuffer->flags & K15_USE_EXTERNAL_BUFFER) == 0)
+	{
+		$FREE_FNC$(p_LockedStretchBuffer->elements);
+	}
+
+	K15_FreeMutex(p_LockedStretchBuffer->bufferLock);
+
+	p_LockedStretchBuffer->elements = 0;
+}
+/*********************************************************************************/
+void K15_ResizeLocked$TYPE_NAME$StretchBuffer(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, unsigned int p_Capacity)
+{
+	K15_ASSERT_TEXT(p_LockedStretchBuffer, "Locked Stretch Buffer is NULL.");
+	K15_ASSERT_TEXT(p_LockedStretchBuffer->elements, "Locked Stretch Buffer has not yet been created.");
+	K15_ASSERT_TEXT((p_LockedStretchBuffer->flags & K15_USE_EXTERNAL_BUFFER) == 0, "Locked Stretch Buffer for Type '%s' can't be resized.", "$TYPE$");
+
+	unsigned int freeSlotIndex = p_LockedStretchBuffer->numElements;
+	unsigned int capacity = p_LockedStretchBuffer->numCapacity;
+
+	if (freeSlotIndex >= capacity)
+	{
+		unsigned int newSizeInBytes = sizeof($TYPE$) * p_Capacity;
+		unsigned int oldSizeInBytes = sizeof($TYPE$) * capacity;
+		$TYPE$* oldMemory = p_LockedStretchBuffer->elements;
+		$TYPE$* newMemory = ($TYPE$*)$MALLOC_FNC$(newSizeInBytes);
+		memcpy(newMemory, oldMemory, oldSizeInBytes);
+
+		$FREE_FNC$(oldMemory);
+
+		p_LockedStretchBuffer->elements = newMemory;
+		p_LockedStretchBuffer->numCapacity = p_Capacity;
+	}
+}
+/*********************************************************************************/
+void K15_ClearLocked$TYPE_NAME$StretchBuffer(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer)
+{
+	K15_ASSERT_TEXT(p_LockedStretchBuffer, "Locked Stretch Buffer is NULL.");
+	K15_ASSERT_TEXT(p_LockedStretchBuffer->elements, "Locked Stretch Buffer has not yet been created.");
+
+	K15_Mutex* bufferLock = p_LockedStretchBuffer->bufferLock;
+
+	K15_LockMutex(bufferLock);
+
+	p_LockedStretchBuffer->numElements = 0;
+
+	K15_UnlockMutex(bufferLock);
+}
+/*********************************************************************************/
+void K15_PushLocked$TYPE_NAME$StretchBufferElement(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, $TYPE$ p_Element)
+{	
+	K15_ASSERT_TEXT(p_LockedStretchBuffer, "Locked Stretch Buffer is NULL.");
+	K15_ASSERT_TEXT(p_LockedStretchBuffer->elements, "Locked Stretch Buffer has not yet been created.");
+
+	K15_Mutex* bufferLock = p_LockedStretchBuffer->bufferLock;
+
+	K15_LockMutex(bufferLock);
+
+	unsigned int freeSlotIndex = p_LockedStretchBuffer->numElements;
+	unsigned int capacity = p_LockedStretchBuffer->numCapacity;
+
+	if (freeSlotIndex >= capacity)
+	{
+		K15_ResizeLocked$TYPE_NAME$StretchBuffer(p_LockedStretchBuffer, capacity * 2);
+	}
+
+	p_LockedStretchBuffer->elements[freeSlotIndex] = p_Element;
+	++p_LockedStretchBuffer->numElements;
+
+	K15_UnlockMutex(bufferLock);
+}
+/*********************************************************************************/
+unsigned char K15_PopLocked$TYPE_NAME$StretchBufferIndex(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, unsigned int p_Index)
+{
+	K15_ASSERT_TEXT(p_LockedStretchBuffer, "Locked Stretch Buffer is NULL.");
+	K15_ASSERT_TEXT(p_LockedStretchBuffer->elements, "Locked Stretch Buffer has not yet been created.");
+
+	K15_Mutex* bufferLock = p_LockedStretchBuffer->bufferLock;
+
+	K15_LockMutex(bufferLock);
+
+	$TYPE$* elements = p_LockedStretchBuffer->elements;
+	unsigned int numElements = p_LockedStretchBuffer->numElements;
+
+	if (p_Index != (numElements - 1))
+	{
+		for (unsigned int elementIndex = p_Index;
+			(elementIndex + 1) < numElements;
+			++elementIndex)
+		{		
+			elements[elementIndex] = elements[elementIndex + 1];
+		}
+	}
+
+	//elements[numElements] = 0;
+
+	p_LockedStretchBuffer->elements = elements;
+	p_LockedStretchBuffer->numElements = numElements - 1;
+
+	K15_UnlockMutex(bufferLock);
+
+	return 1;
+}
+/*********************************************************************************/
+unsigned char K15_PopLocked$TYPE_NAME$StretchBufferElement(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, $TYPE$ p_Element)
+{
+	K15_ASSERT_TEXT(p_LockedStretchBuffer, "Locked Stretch Buffer is NULL.");
+	K15_ASSERT_TEXT(p_LockedStretchBuffer->elements, "Locked Stretch Buffer has not yet been created.");
+
+	K15_Mutex* bufferLock = p_LockedStretchBuffer->bufferLock;
+
+	K15_LockMutex(bufferLock);
+
+	$TYPE$* elements = p_LockedStretchBuffer->elements;
+	unsigned int numElements = p_LockedStretchBuffer->numElements;
+	unsigned char returnValue = 0;
+
+	for (unsigned int elementIndex = 0;
+		elementIndex < numElements;
+		++elementIndex)
+	{		
+		if (memcmp(&elements[elementIndex], &p_Element, sizeof($TYPE$)) == 0)
+		{
+			K15_PopLocked$TYPE_NAME$StretchBufferIndex(p_LockedStretchBuffer, elementIndex);
+			returnValue = 1;
+			break;
+		}
+	}
+
+	K15_UnlockMutex(bufferLock);
+
+	return returnValue;
+}
+/*********************************************************************************/
+unsigned char K15_PopLocked$TYPE_NAME$StretchBufferCompare(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, $TYPE$ p_Element, K15_$TYPE_NAME$CompareFnc p_CompareFnc)
+{
+	K15_ASSERT_TEXT(p_LockedStretchBuffer, "Locked Stretch Buffer is NULL.");
+	K15_ASSERT_TEXT(p_LockedStretchBuffer->elements, "Locked Stretch Buffer has not yet been created.");
+	K15_ASSERT_TEXT(p_CompareFnc, "Compare Function is NULL.");
+
+	K15_Mutex* bufferLock = p_LockedStretchBuffer->bufferLock;
+
+	K15_LockMutex(bufferLock);
+
+	$TYPE$* elements = p_LockedStretchBuffer->elements;
+	unsigned int numElements = p_LockedStretchBuffer->numElements;
+	unsigned char returnValue = 0;
+
+	for (unsigned int elementIndex = 0;
+		elementIndex< numElements;
+		++elementIndex)
+	{		
+		if (p_CompareFnc(&p_Element, &elements[elementIndex]) == 0)
+		{
+			K15_PopLocked$TYPE_NAME$StretchBufferIndex(p_LockedStretchBuffer, elementIndex);
+			returnValue = 1;
+			break;
+		}
+	}
+
+	K15_UnlockMutex(bufferLock);
+
+	return returnValue;
+}
+/*********************************************************************************/
+$TYPE$* K15_GetLocked$TYPE_NAME$StretchBufferElementUnsafe(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, unsigned int p_Index)
+{
+	K15_ASSERT_TEXT(p_LockedStretchBuffer, "Locked Stretch Buffer is NULL.");
+	K15_ASSERT_TEXT(p_LockedStretchBuffer->elements, "Locked Stretch Buffer has not yet been created.");
+
+	K15_Mutex* bufferLock = p_LockedStretchBuffer->bufferLock;
+
+	K15_LockMutex(bufferLock);
+
+	$TYPE$* element = &p_LockedStretchBuffer->elements[p_Index];
+
+	K15_UnlockMutex(bufferLock);
+
+	return element;
+}
+/*********************************************************************************/
+$TYPE$* K15_GetLocked$TYPE_NAME$StretchBufferElement(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, unsigned int p_Index)
+{
+	K15_ASSERT_TEXT(p_LockedStretchBuffer, "Locked Stretch Buffer is NULL.");
+	K15_ASSERT_TEXT(p_LockedStretchBuffer->elements, "Locked Stretch Buffer has not yet been created.");
+
+	K15_Mutex* bufferLock = p_LockedStretchBuffer->bufferLock;
+
+	K15_LockMutex(bufferLock);
+
+	unsigned int numElements = p_LockedStretchBuffer->numElements;
+
+	$TYPE$* returnValue = 0;
+
+	if (numElements > p_Index)
+	{
+		returnValue = &p_LockedStretchBuffer->elements[p_Index];
+	}
+
+	K15_UnlockMutex(bufferLock);
+
+	return returnValue;
+}
+/*********************************************************************************/
+$TYPE$* K15_GetLocked$TYPE_NAME$StretchBufferElementConditional(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, K15_$TYPE_NAME$ConditionFnc p_ConditionFnc, void* p_UserData)
+{
+	K15_ASSERT_TEXT(p_LockedStretchBuffer, "Locked Stretch Buffer is NULL.");
+	K15_ASSERT_TEXT(p_LockedStretchBuffer->elements, "Locked Stretch Buffer has not yet been created.");
+	K15_ASSERT_TEXT(p_ConditionFnc, "Condition Function is NULL.");
+
+	K15_Mutex* bufferLock = p_LockedStretchBuffer->bufferLock;
+
+	K15_LockMutex(bufferLock);
+
+	$TYPE$* elements = p_LockedStretchBuffer->elements;
+	$TYPE$* returnElement = 0;
+	$TYPE$* currentElement = 0;
+
+	unsigned int numElements = p_LockedStretchBuffer->numElements;
+
+	for (unsigned int elementIndex = 0;
+		elementIndex < numElements;
+		++elementIndex)
+	{		
+		currentElement = &elements[elementIndex];
+
+		if (p_ConditionFnc(currentElement, p_UserData) == 0)
+		{
+			returnElement = currentElement;
+			break;
+		}
+	}
+
+	K15_UnlockMutex(bufferLock);
+
+	return returnElement;
+}
+/*********************************************************************************/

@@ -12,6 +12,8 @@
 
 #include <win32/K15_OSContextWin32.h>
 
+#include <K15_AsyncOperation.h>
+#include <K15_MemoryBuffer.h>
 #include <K15_GameInit.h>
 #include <K15_DefaultCLibraries.h>
 #include <K15_ConfigFile.h>
@@ -42,6 +44,12 @@ intern void K15_InternalOnGameLibraryReload(void* p_UserData)
 /*********************************************************************************/
 #endif //K15_LOAD_GAME_LIB_DYNAMIC
 
+intern void K15_AsyncText(void* p)
+{
+	K15_LOG_ERROR_MESSAGE("BLUBBB!");
+	K15_SleepThreadForMilliseconds(50);
+}
+
 
 
 /*********************************************************************************/
@@ -54,6 +62,7 @@ int CALLBACK WinMain(
 	int returnValue = 0;
 
 	uint8 result = K15_Win32InitializeOSLayer(hInstance);
+	K15_ParseCommandLineArguments();
 
 	if (result == K15_OS_ERROR_OUT_OF_MEMORY)
 	{
@@ -99,7 +108,7 @@ int CALLBACK WinMain(
 
 	K15_Mutex* gameLibrarySynchronizer = K15_CreateMutex();
 
-	K15_AddFileWatch("data/testgame.dll", K15_InternalOnGameLibraryReload, &gameContext);
+	K15_AddFileWatch(gameLibrary->originalSystemPath, K15_InternalOnGameLibraryReload, &gameContext);
 #endif //K15_LOAD_GAME_LIB_DYNAMIC
 
 	K15_InitGame(inputData, &outputData);
@@ -109,10 +118,14 @@ int CALLBACK WinMain(
 #ifdef K15_USE_DETERMINISTIC_GAME_MEM_ADDRESS
 	byte* memoryBlock = (byte*)VirtualAlloc((LPVOID)(0x0800000000), requestedMemorySize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 #else
-	byte* memoryBlock = (byte*)K15_GAME_MALLOC(requestedMemorySize);
+	byte* memoryBlock = (byte*)malloc(requestedMemorySize);
 #endif //K15_USE_DETERMINISTIC_GAME_MEM_ADDRESS
 
-	gameContext.gameMemory = memoryBlock;
+	K15_MemoryBuffer gameMemory = {};
+	K15_InitializeDefaultPreallocatedMemoryBuffer(&gameMemory, memoryBlock, requestedMemorySize, 0);
+
+	gameContext.asyncContext = K15_CreateAsyncContext(osContext);
+	gameContext.gameMemory = &gameMemory;
 	gameContext.logContexts = K15_GetLogContexts(&gameContext.logContextCount);
 	gameContext.configContext = &configFileContext;
 	gameContext.renderContext = renderContext;
@@ -132,6 +145,14 @@ int CALLBACK WinMain(
 
 	uint8 joinResult = 0;
 	uint8 waitGameSyncResult = 0;
+
+	for (int i = 0;
+		i < 100;
+		++i)
+	{
+		K15_AsyncOperation* asyncOperation = K15_CreateAsyncOperation(K15_AsyncText, 0, 0, 0, 0);
+		K15_AddAsyncOperation(gameContext.asyncContext, asyncOperation);
+	}
 
 	while (running)
 	{

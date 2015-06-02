@@ -1,7 +1,7 @@
 #ifndef _K15_Runtime_Game_Init_h_
 #define _K15_Runtime_Game_Init_h_
 
-#include "K15_Prerequisites.h"
+#include "K15_Prerequisites_RT.h"
 
 struct K15_RenderContext;
 struct K15_ConfigFileContext;
@@ -9,6 +9,8 @@ struct K15_InitGameInputData;
 struct K15_InitGameOutputData;
 struct K15_GameContext;
 struct K15_LogContext;
+struct K15_MemoryBuffer;
+struct K15_AsyncContext;
 
 typedef void(*K15_InitGameFnc)(K15_InitGameInputData, K15_InitGameOutputData*);
 typedef void(*K15_TickGameFnc)(K15_GameContext*);
@@ -31,7 +33,8 @@ struct K15_GameContext
 {
 	uint32 logContextCount;
 
-	byte* gameMemory;
+	K15_AsyncContext* asyncContext;
+	K15_MemoryBuffer* gameMemory;
 	K15_TickGameFnc tickFnc;
 	K15_LogContext* logContexts;
 	K15_OSContext* osContext;

@@ -6,10 +6,11 @@
 #ifdef K15_OS_WINDOWS
 	#include "win32/K15_FileSystemWin32.h"
 
-	#define K15_GetFileSize		K15_Win32GetFileSize
-	#define K15_FileExists		K15_Win32FileExists
-	#define K15_ReadWholeFile	K15_Win32ReadWholeFile
-	#define K15_CopyFile		K15_Win32CopyFile
+	#define K15_GetFileSize						K15_Win32GetFileSize
+	#define K15_FileExists						K15_Win32FileExists
+	#define K15_CopyWholeFileContentIntoBuffer	K15_Win32ReadWholeFileIntoBuffer
+	#define K15_CopyFile						K15_Win32CopyFile
+	#define K15_DirectoryExists					K15_Win32DirectoryExists
 
 	#define K15_DIR_SEPARATOR '/'
 #elif defined K15_OS_ANDROID || defined K15_OS_LINUX

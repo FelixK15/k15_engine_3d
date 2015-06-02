@@ -59,7 +59,7 @@ intern inline VOID WINAPI K15_Win32InternalFileChangeCallback(DWORD dwErrorCode,
 
 		K15_Win32ConvertWStringToString(fileNameW, fileNameLength, fileName);
 		
-		K15_FileWatchEntry* fileWatchEntry = K15_GetFileWatchEntryElementConditional(fileWatchBuffer, K15_InternalWin32FileWatchEntryComparer, fileName);
+		K15_FileWatchEntry* fileWatchEntry = K15_GetFileWatchEntryStretchBufferElementConditional(fileWatchBuffer, K15_InternalWin32FileWatchEntryComparer, fileName);
 
 		//check if file is being watched
 		if (fileWatchEntry)

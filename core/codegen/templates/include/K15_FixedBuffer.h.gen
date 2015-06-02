@@ -1,0 +1,41 @@
+/*********************************************************************************/
+/*  THIS FILE HAS BEEN GENERATED AUTOMATICALLY. ANY CHANGES WILL BE OVERRIDDEN   */
+/*********************************************************************************/
+
+#ifndef _K15_$TYPE_NAME$_Fixed_Buffer_h_
+#define _K15_$TYPE_NAME$_Fixed_Buffer_h_
+
+//forward declaration
+struct $TYPE_STRUCT_NAME$;
+
+//compare function
+typedef unsigned char (*K15_$TYPE_NAME$CompareFnc)($TYPE$* p_LHS, $TYPE$* p_RHS);
+
+//get condition function
+typedef unsigned char (*K15_$TYPE_NAME$ConditionFnc)($TYPE$* p_Element, void* p_UserData);
+
+struct K15_$TYPE_NAME$FixedBuffer
+{
+	$TYPE$* elements;			//64bit
+
+	unsigned int numCapacity;	//32bit
+	unsigned int numElements;	//32bit
+	unsigned int flags;			//32bit
+};
+
+void K15_Create$TYPE_NAME$FixedBufferWithPreallocatedMemory(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, unsigned char* p_Buffer, unsigned int p_BufferCapacityInByte);
+void K15_Create$TYPE_NAME$FixedBuffer(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, unsigned int p_Capacity = 8);
+void K15_Delete$TYPE_NAME$FixedBuffer(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer);
+void K15_Resize$TYPE_NAME$FixedBuffer(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, unsigned int p_Capacity);
+void K15_Clear$TYPE_NAME$FixedBuffer(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer);
+
+void K15_Push$TYPE_NAME$FixedBufferElement(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, $TYPE$ p_Element);
+unsigned char K15_Pop$TYPE_NAME$FixedBufferIndex(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, unsigned int p_Index);
+unsigned char K15_Pop$TYPE_NAME$FixedBufferElement(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, $TYPE$ p_Element);
+unsigned char K15_Pop$TYPE_NAME$FixedBufferCompare(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, $TYPE$ p_Element, K15_$TYPE_NAME$CompareFnc p_CompareFnc);
+
+$TYPE$* K15_Get$TYPE_NAME$FixedBufferElementUnsafe(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, unsigned int p_Index);
+$TYPE$* K15_Get$TYPE_NAME$FixedBufferElement(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, unsigned int p_Index);
+$TYPE$* K15_Get$TYPE_NAME$FixedBufferElementConditional(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, K15_$TYPE_NAME$ConditionFnc p_ConditionFnc, void* p_UserData = 0);
+
+#endif //_K15_$TYPE_NAME$_Stretch_Buffer_h_s

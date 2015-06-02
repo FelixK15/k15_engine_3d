@@ -18,6 +18,8 @@
 
 #include <K15_Logging.h>	
 
+#include <clocale>
+
 MessageBoxAProc _MessageBoxA = 0;
 
 #ifdef K15_DEBUG
@@ -176,7 +178,7 @@ intern inline uint8 K15_InternalTryLoadDirectSound(K15_Win32Context* p_Win32Cont
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-void K15_Win32AllocateDebugConsole()
+intern void K15_InternalAllocateDebugConsole()
 {
 	AllocConsole();
 	long stdHandle;
@@ -190,6 +192,19 @@ void K15_Win32AllocateDebugConsole()
 	setvbuf( stdout, NULL, _IONBF, 0 );
 }
 /*********************************************************************************/
+intern void K15_InternalGetSystemInfo(K15_OSContext* p_OSContext)
+{
+	SYSTEM_INFO sysInfo = {};
+	GetSystemInfo(&sysInfo);
+
+	p_OSContext->threading.numHardwareThreads = sysInfo.dwNumberOfProcessors;
+}
+/*********************************************************************************/
+
+
+
+
+/*********************************************************************************/
 uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 {
 	if (!p_hInstance)
@@ -197,6 +212,10 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 		p_hInstance = GetModuleHandle(NULL);
 	}
 
+	//unicode output on debug console
+	setlocale(LC_ALL, "");
+
+	//create context
 	K15_OSContext win32OSContext;
 
 	//window
@@ -212,6 +231,7 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 
 	//threading
 	win32OSContext.threading.createThread = K15_Win32CreateThread;
+	win32OSContext.threading.startThread = K15_Win32StartThread;
 	win32OSContext.threading.joinThread = K15_Win32JoinThread;
 	win32OSContext.threading.tryJoinThread = K15_Win32TryJoinThread;
 	win32OSContext.threading.interruptThread = K15_Win32InterruptThread;
@@ -261,7 +281,7 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 
 	//Debug console
 #ifdef K15_DEBUG
-	K15_Win32AllocateDebugConsole();
+	K15_InternalAllocateDebugConsole();
 
 	K15_LogRegisterLogFnc(K15_Win32LogVisualStudio, K15_LOG_PRIORITY_DEFAULT, K15_LOG_FLAG_ADD_TIME);
 	K15_LogRegisterLogFnc(K15_Win32LogConsole, K15_LOG_PRIORITY_DEFAULT, K15_LOG_FLAG_ADD_TIME);
@@ -298,6 +318,9 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	{
 		return K15_OS_ERROR_SYSTEM;
 	}
+
+	//get hardware information
+	K15_InternalGetSystemInfo(&win32OSContext);
 
 	//battery
 	GetSystemPowerStatus(&win32SpecificContext->Battery.powerStatus);

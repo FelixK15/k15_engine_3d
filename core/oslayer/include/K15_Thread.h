@@ -12,7 +12,8 @@
 /*********************************************************************************/
 enum K15_ThreadFlags : uint32
 {
-	K15_THREAD_START_FLAG = 0x01,
+	K15_THREAD_START_FLAG		= 0x01,
+	K15_THREAD_COPY_PARAMETER	= 0x02,
 
 	K15_THREAD_DEFAULT_FLAGS = K15_THREAD_START_FLAG
 };
@@ -47,6 +48,7 @@ struct K15_Thread
 /*********************************************************************************/
 
 K15_Thread* K15_CreateThread(K15_ThreadFnc p_ThreadFunction, void* p_ThreadParameter, uint32 p_ThreadFlags = K15_THREAD_DEFAULT_FLAGS);
+
 K15_Thread* K15_GetCurrentThread();
 uint8 K15_FreeThread(K15_Thread* p_Thread);
 

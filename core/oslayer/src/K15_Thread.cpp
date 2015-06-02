@@ -6,6 +6,7 @@
 #include "K15_System.h"
 
 #include "generated/K15_ThreadStretchBuffer.cpp"
+#include "generated/K15_ThreadFixedBuffer.cpp"
 
 #include <K15_Logging.h>
 
@@ -14,7 +15,7 @@ intern void K15_InternalAddThreadToOSContext(K15_OSContext* p_OSContext, K15_Thr
 {
 	K15_ThreadStretchBuffer* threadBuffer = &p_OSContext->threading.threads;
 
-	K15_PushThread(threadBuffer, p_Thread);
+	K15_PushThreadStretchBufferElement(threadBuffer, p_Thread);
 
 	/*for (uint32 threadIndex = 0;
 		threadIndex < K15_MAX_THREADS;
@@ -32,7 +33,7 @@ intern void K15_InternalRemoveThreadFromOSContext(K15_OSContext* p_OSContext, K1
 {
 	K15_ThreadStretchBuffer* threadBuffer = &p_OSContext->threading.threads;
 
-	K15_PopThreadElement(threadBuffer, p_Thread);
+	K15_PopThreadStretchBufferElement(threadBuffer, p_Thread);
 	
 	/*for (uint32 threadIndex = 0;
 		threadIndex < K15_MAX_THREADS;
@@ -48,6 +49,7 @@ intern void K15_InternalRemoveThreadFromOSContext(K15_OSContext* p_OSContext, K1
 /*********************************************************************************/
 K15_Thread* K15_CreateThread(K15_ThreadFnc p_ThreadFunction, void* p_ThreadParameter, uint32 p_ThreadFlags)
 {
+	K15_OSContext* osContext = K15_GetOSLayerContext();
 	K15_Thread* thread = (K15_Thread*)K15_OS_MALLOC(sizeof(K15_Thread));
 	K15_ThreadContext* threadContext = (K15_ThreadContext*)K15_OS_MALLOC(sizeof(K15_ThreadContext));
 
@@ -60,6 +62,8 @@ K15_Thread* K15_CreateThread(K15_ThreadFnc p_ThreadFunction, void* p_ThreadParam
 
 	thread->context = threadContext;
 	
+	uint8 result = osContext->threading.createThread(osContext, thread, threadContext->function, threadContext->parameter, p_ThreadFlags);
+
 	//start thread
 	if ((p_ThreadFlags & K15_THREAD_START_FLAG) > 0)
 	{
@@ -120,7 +124,7 @@ uint8 K15_StartThread(K15_Thread* p_Thread)
 
 	K15_ThreadContext* threadContext = p_Thread->context;
 
-	uint8 result = osContext->threading.createThread(osContext, p_Thread, threadContext->function, threadContext->parameter);
+	uint8 result = osContext->threading.startThread(osContext, p_Thread);
 	
 	if (result == K15_SUCCESS)
 	{

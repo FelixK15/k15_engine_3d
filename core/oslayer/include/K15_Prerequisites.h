@@ -94,11 +94,11 @@ typedef int (*MessageBoxAProc)(void*, const char*, const char*, unsigned int);
 extern MessageBoxAProc _MessageBoxA;
 #define K15_ASSERT_TEXT(expression, text, ...)	\
 	{ \
-		if ((!expression)) { \
+		if (!(expression)) { \
 			if (_MessageBoxA) \
 			{ \
-				char messageText[256]; \
-				char customMessage[128]; \
+				char messageText[512]; \
+				char customMessage[512]; \
 				sprintf(customMessage, text, ##__VA_ARGS__);\
 				sprintf(messageText, "Error: Expression \n\n\"%s\"\n\nevaluated to FALSE.\n---------------------------------------\nFile: %s\nLine: %d\nMessage: %s\n---------------------------------------\nPress IGNORE to continue execution.\nPress RETRY to trigger the debuffer.\nPress ABORT to close the application.", #expression, __FILE__, __LINE__, customMessage, ##__VA_ARGS__); \
 				unsigned int style = 0x00000010L | 0x00000002L; \
@@ -160,18 +160,6 @@ typedef unsigned	long long	uint64;
 typedef uint8 bool8;
 typedef uint8 byte;
 
-#ifdef K15_INCLUDE_C_STD_HEADER
-#include <assert.h>
-#include <memory.h>
-#include <math.h>
-#include <malloc.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <time.h>
-#include <intsafe.h>
-#endif //K15_INCLUDE_C_STD_HEADER
-
 #ifdef K15_OS_ANDROID
 #ifdef K15_CHECK_JNI_CALLS
 #define K15_JNI_CALL(jniEnv, call) {call; jthrowable ex = jniEnv->ExceptionOccurred(); if(ex){jniEnv->ExceptionDescribe(); jniEnv->ExceptionClear();}}
@@ -221,6 +209,14 @@ typedef uint8 byte;
 // #include <time.h>
 // #endif //K15_OS_LINUX
 
+
+/*********************************************************************************/
+enum K15_StretchBufferFlags
+{
+	K15_USE_EXTERNAL_BUFFER = 0x02
+};
+/*********************************************************************************/
+
 // forward declaration
 struct K15_Window;
 struct K15_Thread;
@@ -233,9 +229,15 @@ struct K15_Semaphore;
 struct K15_OSContext;
 
 typedef uint8 (*K15_ThreadFnc)(void*);
+typedef void* (*K15_MallocFnc)(size_t);
+typedef void (*K15_FreeFnc)(void*);
 
 #ifndef K15_EXPORT_SYMBOL
 	#define K15_EXPORT_SYMBOL
 #endif 
+
+//implemented in K15_OSContext.cpp
+void* K15_DefaultMallocWrapper(size_t p_SizeInBytes);
+void K15_DefaultFreeWrapper(void* p_Pointer);
 
 #endif //_K15_Prerequisites_h_

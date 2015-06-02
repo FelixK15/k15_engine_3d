@@ -214,7 +214,10 @@ intern char* K15_InternalGLPreprocessProgramCode(const char* p_FilePath, const c
 			else
 			{
 				//replace with content from file
-				char* includeFileContent = (char*)K15_GetWholeFileContent(includeFileNameBuffer);
+				uint32 fileSize = 0;
+				char* includeFileContent = (char*)K15_GetWholeFileContentWithFileSize(includeFileNameBuffer, &fileSize);
+				includeFileContent[fileSize] = 0;
+
 				char* preprocessedIncludeFileContent = K15_InternalGLPreprocessProgramCode(includeFileNameBuffer, includeFileContent);
 
 				//after the content got preprocessed, we don't need the un-preprocessed code anymore.

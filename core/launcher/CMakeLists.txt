@@ -4,7 +4,7 @@ include_directories(../oslayer/include)
 include_directories(../logging/include)
 include_directories(../runtime/include)
 
-set(LAUNCHER_LIBRARIES oslayer logging rendering runtime)
+set(LAUNCHER_LIBRARIES oslayer logging rendering runtime string)
 
 if (${K15_PLATFORM} STREQUAL "Android")
 	set(LAUNCHER_SRC_ANDROID "android/jni/K15_LauncherAndroid.cpp")

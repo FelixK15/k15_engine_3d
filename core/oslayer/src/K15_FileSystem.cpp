@@ -21,11 +21,11 @@ byte* K15_GetWholeFileContentWithFileSize(const char* p_FilePath, uint32* p_File
 	K15_ASSERT_TEXT(p_FilePath, "Filepath is NULL.");
 
 	uint32 fileSize = K15_GetFileSize(p_FilePath);
-	byte* fileContent = 0;
+	byte* fileContent = (byte*)K15_OS_MALLOC(fileSize + 1);
 
 	if (fileSize > 0)
 	{
-		fileContent = K15_ReadWholeFile(p_FilePath);
+		fileContent = K15_CopyWholeFileContentIntoBuffer(p_FilePath, fileContent);
 
 		if (p_FileSize)
 		{

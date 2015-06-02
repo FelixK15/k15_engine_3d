@@ -45,8 +45,7 @@ K15_FileWatchEntry* K15_AddFileWatch(const char* p_FilePath, K15_FileChangeNotif
 	K15_OSContext* osContext = K15_GetOSLayerContext();
 
 	K15_DirectoryWatchEntryStretchBuffer* directoryWatchBuffer = &osContext->system.directoryWatchEntries;
-
-	K15_DirectoryWatchEntry* directoryWatchEntry = K15_GetDirectoryWatchEntryElementConditional(directoryWatchBuffer, K15_InternalDirectoryWatchComparer, dirPath);
+	K15_DirectoryWatchEntry* directoryWatchEntry = K15_GetDirectoryWatchEntryStretchBufferElementConditional(directoryWatchBuffer, K15_InternalDirectoryWatchComparer, dirPath);
 
 	if (!directoryWatchEntry)
 	{
@@ -55,7 +54,7 @@ K15_FileWatchEntry* K15_AddFileWatch(const char* p_FilePath, K15_FileChangeNotif
 		newDirectoryWatchEntry->dirPath = dirPath;
 		
 		K15_CreateFileWatchEntryStretchBuffer(&newDirectoryWatchEntry->fileWatchEntries);
-		K15_PushDirectoryWatchEntry(directoryWatchBuffer, *newDirectoryWatchEntry);
+		K15_PushDirectoryWatchEntryStretchBufferElement(directoryWatchBuffer, *newDirectoryWatchEntry);
 
 		directoryWatchEntry = newDirectoryWatchEntry;
 	}
@@ -67,7 +66,7 @@ K15_FileWatchEntry* K15_AddFileWatch(const char* p_FilePath, K15_FileChangeNotif
 	K15_FileWatchEntryStretchBuffer* fileWatchBuffer = &directoryWatchEntry->fileWatchEntries;
 
 	//check if file is already being watched
-	K15_FileWatchEntry* fileWatchEntry = K15_GetFileWatchEntryElementConditional(fileWatchBuffer, K15_InternalFileWatchComparer, (void*)p_FilePath);
+	K15_FileWatchEntry* fileWatchEntry = K15_GetFileWatchEntryStretchBufferElementConditional(fileWatchBuffer, K15_InternalFileWatchComparer, (void*)p_FilePath);
 
 	if (fileWatchEntry)
 	{
@@ -87,7 +86,7 @@ K15_FileWatchEntry* K15_AddFileWatch(const char* p_FilePath, K15_FileChangeNotif
 	newFileWatchEntry->notification = p_NotificationFnc;
 	newFileWatchEntry->flags = p_Flags;
 
-	K15_PushFileWatchEntry(fileWatchBuffer, *newFileWatchEntry);
+	K15_PushFileWatchEntryStretchBufferElement(fileWatchBuffer, *newFileWatchEntry);
 
 	fileWatchEntry = newFileWatchEntry;
 
@@ -96,7 +95,7 @@ K15_FileWatchEntry* K15_AddFileWatch(const char* p_FilePath, K15_FileChangeNotif
 	if (result != K15_SUCCESS)
 	{
 		K15_LOG_ERROR_MESSAGE("Could not add file '%s' to the file watcher (%s).", p_FilePath, K15_CopySystemErrorMessageIntoBuffer((char*)alloca(K15_ERROR_MESSAGE_LENGTH)));
-		K15_PopFileWatchEntryElement(fileWatchBuffer, *fileWatchEntry);
+		K15_PopFileWatchEntryStretchBufferElement(fileWatchBuffer, *fileWatchEntry);
 		K15_DeleteFileWatch(fileWatchEntry);
 		fileWatchEntry = 0;
 	}

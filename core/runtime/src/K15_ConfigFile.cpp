@@ -174,7 +174,7 @@ intern inline char* K15_InternalGetValueFromConfigStretchBuffer(K15_ConfigValueS
 		configValueIndex < numElements;
 		++configValueIndex)
 	{
-		K15_ConfigValue* currentConfigValue = K15_GetConfigValueElement(p_ConfigValues, configValueIndex);
+		K15_ConfigValue* currentConfigValue = K15_GetConfigValueStretchBufferElement(p_ConfigValues, configValueIndex);
 
 		if (strcmp(currentConfigValue->name, p_Name) == 0)
 		{
@@ -219,6 +219,8 @@ uint8 K15_LoadConfigFile(const char* p_ConfigFile, K15_ConfigFileContext* p_Conf
 
 	K15_ASSERT_TEXT(configFileContent, "Could not read config file '%s'.", configFilePath);
 
+	configFileContent[configFileSize] = 0;
+
 	p_ConfigFileContext->path = configFilePath;
 
 	//chop config file into lines
@@ -260,7 +262,7 @@ uint8 K15_LoadConfigFile(const char* p_ConfigFile, K15_ConfigFileContext* p_Conf
 			currentConfigValue.category = currentCategory;
 
 			//add config value to stretch buffer
-			K15_PushConfigValue(configStretchBuffer, currentConfigValue);
+			K15_PushConfigValueStretchBufferElement(configStretchBuffer, currentConfigValue);
 
 			if (!currentCategory)
 			{

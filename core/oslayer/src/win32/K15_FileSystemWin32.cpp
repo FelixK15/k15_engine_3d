@@ -68,9 +68,39 @@ uint8 K15_Win32CopyFile(const char* p_SourcePath, const char* p_DestinationPath)
 	return CopyFileW(sourcePathW, destinationPathW, FALSE) == 0 ? K15_OS_ERROR_SYSTEM : K15_SUCCESS;
 }
 /*********************************************************************************/
-byte* K15_Win32ReadWholeFile(const char* p_FilePath)
+uint8 K15_Win32DirectoryExists(const char* p_Path)
+{
+	K15_ASSERT_TEXT(p_Path, "Path is NULL.");
+
+	size_t pathLength = strlen(p_Path);
+	char* path = (char*)p_Path; //safe, we won't change path
+
+	if (p_Path[pathLength] != K15_DIR_SEPARATOR)
+	{
+		pathLength++;
+		path = (char*)alloca(pathLength + 2); //+2 = missing separator & 0 terminator
+		sprintf(path, "%s%c", p_Path, K15_DIR_SEPARATOR);
+	}
+
+	pathLength++;
+	wchar_t* pathW = (wchar_t*)alloca(pathLength * sizeof(wchar_t));
+
+	K15_Win32ConvertStringToWString(path, pathLength, pathW);
+
+	DWORD fileAttributes = GetFileAttributesW(pathW);
+
+	if (fileAttributes == INVALID_FILE_ATTRIBUTES)
+	{
+		return K15_OS_ERROR_SYSTEM;
+	}
+
+	return (fileAttributes & FILE_ATTRIBUTE_DIRECTORY) > 0 ? K15_SUCCESS : K15_OS_ERROR_DIRECTORY_NOT_FOUND;
+}
+/*********************************************************************************/
+byte* K15_Win32ReadWholeFileIntoBuffer(const char* p_FilePath, byte* p_Buffer)
 {
 	K15_ASSERT_TEXT(p_FilePath, "filepath is NULL.");
+	K15_ASSERT_TEXT(p_Buffer, "buffer is NULL.");
 
 	int filePathLength = (uint32)strlen(p_FilePath) + 1;  //+1 for 0 terminator
 
@@ -82,23 +112,16 @@ byte* K15_Win32ReadWholeFile(const char* p_FilePath)
 
 	HANDLE fileHandle = CreateFileW(wideFilePath, GENERIC_READ, FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 	DWORD fileSize = INVALID_FILE_SIZE;
-	byte* fileContent = 0;
 
 	if (fileHandle != INVALID_HANDLE_VALUE)
 	{
 		fileSize = GetFileSize(fileHandle, NULL);
 	}
-	else
-	{
-		result = K15_OS_ERROR_SYSTEM;
-	}
 
 	if (fileHandle != INVALID_HANDLE_VALUE &&
 		fileSize != INVALID_FILE_SIZE)
 	{
-		fileContent = (byte*)K15_OS_MALLOC(fileSize + 1); //+1 = 0 terminator
-		ReadFile(fileHandle, fileContent, fileSize, 0, 0);
-		fileContent[fileSize] = 0;
+		ReadFile(fileHandle, p_Buffer, fileSize, 0, 0);
 	}
 	
 	if (fileHandle != INVALID_HANDLE_VALUE)
@@ -106,7 +129,7 @@ byte* K15_Win32ReadWholeFile(const char* p_FilePath)
 		CloseHandle(fileHandle);
 	}
 
-	return fileContent;
+	return p_Buffer;
 }
 /*********************************************************************************/
 char* K15_Win32GetWorkingDirectory()

@@ -5,7 +5,7 @@ uint8 K15_CreateDataAccessContextFromFile(K15_DataAccessContext* p_DataAccessCon
 {
 	assert(p_DataAccessContext && p_FileName);
 
-	FILE *file = fopen(p_FileName, "rb+");
+	FILE *file = fopen(p_FileName, "wb+");
 
 	if (!file)
 	{

@@ -1,0 +1,43 @@
+/*********************************************************************************/
+/*  THIS FILE HAS BEEN GENERATED AUTOMATICALLY. ANY CHANGES WILL BE OVERRIDDEN   */
+/*********************************************************************************/
+
+#ifndef _K15_Locked_$TYPE_NAME$_Stretch_Buffer_h_
+#define _K15_Locked_$TYPE_NAME$_Stretch_Buffer_h_
+
+//forward declaration
+struct $TYPE_STRUCT_NAME$;
+struct K15_Mutex;
+
+//compare function
+typedef unsigned char (*K15_$TYPE_NAME$CompareFnc)($TYPE$* p_LHS, $TYPE$* p_RHS);
+
+//get condition function
+typedef unsigned char (*K15_$TYPE_NAME$ConditionFnc)($TYPE$* p_Element, void* p_UserData);
+
+struct K15_Locked$TYPE_NAME$StretchBuffer
+{
+	K15_Mutex* bufferLock;		//64bit
+	$TYPE$* elements;			//64bit
+
+	unsigned int numCapacity;	//32bit
+	unsigned int numElements;	//32bit
+	unsigned int flags;			//32bit
+};
+
+void K15_CreateLocked$TYPE_NAME$StretchBufferWithPreallocatedMemory(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, unsigned char* p_Buffer, unsigned int p_BufferCapacityInByte);
+void K15_CreateLocked$TYPE_NAME$StretchBuffer(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, unsigned int p_Capacity = 8);
+void K15_DeleteLocked$TYPE_NAME$StretchBuffer(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer);
+void K15_ResizeLocked$TYPE_NAME$StretchBuffer(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, unsigned int p_Capacity);
+void K15_ClearLocked$TYPE_NAME$StretchBuffer(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer);
+
+void K15_PushLocked$TYPE_NAME$StretchBufferElement(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, $TYPE$ p_Element);
+unsigned char K15_PopLocked$TYPE_NAME$StretchBufferIndex(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, unsigned int p_Index);
+unsigned char K15_PopLocked$TYPE_NAME$StretchBufferElement(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, $TYPE$ p_Element);
+unsigned char K15_PopLocked$TYPE_NAME$StretchBufferCompare(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, $TYPE$ p_Element, K15_$TYPE_NAME$CompareFnc p_CompareFnc);
+
+$TYPE$* K15_GetLocked$TYPE_NAME$StretchBufferElementUnsafe(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, unsigned int p_Index);
+$TYPE$* K15_GetLocked$TYPE_NAME$StretchBufferElement(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, unsigned int p_Index);
+$TYPE$* K15_GetLocked$TYPE_NAME$StretchBufferElementConditional(K15_Locked$TYPE_NAME$StretchBuffer* p_LockedStretchBuffer, K15_$TYPE_NAME$ConditionFnc p_ConditionFnc, void* p_UserData = 0);
+
+#endif //_K15_Locked_$TYPE_NAME$_Stretch_Buffer_h_

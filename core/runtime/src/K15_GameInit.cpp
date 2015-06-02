@@ -8,7 +8,7 @@
 uint8 K15_GameThreadMain(void* p_Parameter)
 {
 	K15_GameContext* gameContext = (K15_GameContext*)p_Parameter;
-	byte* memory = gameContext->gameMemory;
+	K15_MemoryBuffer* memory = gameContext->gameMemory;
 	K15_Semaphore* mainThreadSynchronizer = gameContext->mainThreadSynchronizer;
 	K15_Semaphore* gameThreadSynchronizer = gameContext->gameThreadSynchronizer;
 

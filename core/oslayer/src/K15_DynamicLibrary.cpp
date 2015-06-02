@@ -119,6 +119,19 @@ K15_DynamicLibrary* K15_LoadDynamicLibrary(const char* p_LibraryName, uint32 p_F
 	char* libOriginalAbsoluteFilePath = 0;
 	char* libOriginalAbsolutePath = 0;
 
+	//check if the library exists
+	if (K15_FileExists(libAbsoluteFilePath) != K15_SUCCESS)
+	{
+		K15_LOG_ERROR_MESSAGE("Could not find dynamic library '%s'.", libAbsoluteFilePath);
+	
+		K15_DeleteDynamicFunctionPointerStretchBuffer(&dynamicLibrary->functionPointerBuffer);
+		
+		K15_OS_FREE(libAbsoluteFilePath);
+		K15_OS_FREE(dynamicLibrary);
+
+		return 0;
+	}
+
 	//create temp lib file if reloading is enabled
 	if ((p_Flags & K15_RELOADABLE_LIBRARY) > 0)
 	{
@@ -146,6 +159,9 @@ K15_DynamicLibrary* K15_LoadDynamicLibrary(const char* p_LibraryName, uint32 p_F
 	if (result != K15_SUCCESS)
 	{
 		K15_LOG_ERROR_MESSAGE("Could not load dynamic library '%s' (%s).", p_LibraryName, K15_CopySystemErrorMessageIntoBuffer((char*)alloca(K15_ERROR_MESSAGE_LENGTH)));
+		K15_OS_FREE(libOriginalAbsoluteFilePath);
+		K15_OS_FREE(libOriginalAbsolutePath);
+		K15_OS_FREE(libAbsoluteFilePath);
 		K15_OS_FREE(dynamicLibrary);
 		dynamicLibrary = 0;
 	}
@@ -160,7 +176,7 @@ K15_DynamicLibrary* K15_LoadDynamicLibrary(const char* p_LibraryName, uint32 p_F
 		dynamicLibrary->originalPath = libOriginalAbsolutePath;
 		dynamicLibrary->systemPath = libAbsoluteFilePath;
 
-		K15_PushDynamicLibrary(dynamicLibraryStretchBuffer, dynamicLibrary);
+		K15_PushDynamicLibraryStretchBufferElement(dynamicLibraryStretchBuffer, dynamicLibrary);
 	}
 
 	return dynamicLibrary;
@@ -207,7 +223,7 @@ uint8 K15_ReloadDynamicLibrary(K15_DynamicLibrary* p_DynamicLibrary)
 	if (result == K15_SUCCESS)
 	{
 		K15_DynamicLibraryStretchBuffer* dynamicLibraryBuffer = &osContext->system.dynamicLibraries;
-		K15_PushDynamicLibrary(dynamicLibraryBuffer, p_DynamicLibrary);
+		K15_PushDynamicLibraryStretchBufferElement(dynamicLibraryBuffer, p_DynamicLibrary);
 
 		p_DynamicLibrary->state = K15_STATE_LOADED;
 	}
@@ -232,7 +248,7 @@ uint8 K15_UnloadDynamicLibrary(K15_DynamicLibrary* p_DynamicLibrary)
 	K15_DynamicLibraryStretchBuffer* dynamicLibraryStretchBuffer = &context->system.dynamicLibraries;
 	uint8 returnValue = K15_OS_ERROR_LIBRARY_NOT_LOADED;
 
-	uint8 removedElement = K15_PopDynamicLibraryElement(dynamicLibraryStretchBuffer, p_DynamicLibrary);
+	uint8 removedElement = K15_PopDynamicLibraryStretchBufferElement(dynamicLibraryStretchBuffer, p_DynamicLibrary);
 
 	if (removedElement == K15_TRUE)
 	{
@@ -277,7 +293,7 @@ void* K15_GetProcAddress(K15_DynamicLibrary* p_DynamicLibrary, const char* p_Pro
 	//check if function has been loaded before.
 	K15_DynamicFunctionPointerStretchBuffer* functionPointerBuffer = &p_DynamicLibrary->functionPointerBuffer;
 
-	K15_DynamicFunctionPointer* cachedFunctionPointer = K15_GetDynamicFunctionPointerElementConditional(functionPointerBuffer, K15_CompareFunctionPointerName, (void*)p_ProcName);
+	K15_DynamicFunctionPointer* cachedFunctionPointer = K15_GetDynamicFunctionPointerStretchBufferElementConditional(functionPointerBuffer, K15_CompareFunctionPointerName, (void*)p_ProcName);
 
 	if (cachedFunctionPointer)
 	{
@@ -294,7 +310,7 @@ void* K15_GetProcAddress(K15_DynamicLibrary* p_DynamicLibrary, const char* p_Pro
 	dynamicFunctionPointer.name = procNameBuffer;
 	dynamicFunctionPointer.externalFunctionPointer = &functionPointer;
 
-	K15_PushDynamicFunctionPointer(functionPointerBuffer, dynamicFunctionPointer);
+	K15_PushDynamicFunctionPointerStretchBufferElement(functionPointerBuffer, dynamicFunctionPointer);
 
 	return (*dynamicFunctionPointer.externalFunctionPointer);
 }

@@ -13,6 +13,7 @@
 #include "K15_ResourceCompiler_ResourceProcessorMesh.h"
 #include "K15_ResourceCompiler_StringUtil.h"
 #include "K15_ResourceCompiler_ResourceData.h"
+#include "K15_ResourceCompiler_Logging.h"
 
 
 namespace K15_ResourceCompiler
@@ -200,12 +201,21 @@ namespace K15_ResourceCompiler
 
 		K15_DataAccessContext accessContext;
 
-		if (K15_CreateDataAccessContextFromFile(&accessContext, p_OutputPath.c_str()) == K15_SUCCESS)
+		uint8 result = K15_CreateDataAccessContextFromFile(&accessContext, p_OutputPath.c_str());
+
+		if (result == K15_SUCCESS)
 		{
-			//error
+			result = K15_InternalSaveMeshFormat(&meshFormat, &accessContext, K15_SAVE_FLAG_FREE_DATA);
+		}
+		
+		if (result != K15_SUCCESS)
+		{
+			if (result == K15_ERROR_FILE)
+			{
+				LOG_ERROR("Could not save file '%s' (%s).", p_OutputPath.c_str(), strerror(errno));
+			}
 		}
 
-		uint8 result = K15_InternalSaveMeshFormat(&meshFormat, &accessContext, K15_SAVE_FLAG_FREE_DATA);
 
 		return result == K15_SUCCESS;
 	}
@@ -310,12 +320,20 @@ namespace K15_ResourceCompiler
 
 		K15_DataAccessContext accessContext;
 
-		if (K15_CreateDataAccessContextFromFile(&accessContext, p_OutputPath.c_str()) == K15_SUCCESS)
+		uint8 result = K15_CreateDataAccessContextFromFile(&accessContext, p_OutputPath.c_str());
+
+		if (result == K15_SUCCESS)
 		{
-			//error
+			result = K15_InternalSaveMaterialFormat(&accessContext, &materialFormat, K15_SAVE_FLAG_FREE_DATA);
 		}
 
-		uint8 result = K15_InternalSaveMaterialFormat(&accessContext, &materialFormat, K15_SAVE_FLAG_FREE_DATA);
+		if (result != K15_SUCCESS)
+		{
+			if (result == K15_ERROR_FILE)
+			{
+				LOG_ERROR("Could not save file '%s' (%s).", p_OutputPath.c_str(), strerror(errno));
+			}
+		}
 
 		return result == K15_SUCCESS;
 	}

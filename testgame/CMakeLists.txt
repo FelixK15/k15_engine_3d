@@ -11,7 +11,7 @@ include_directories(../core/math/include/)
 set(K15_TESTGAME_SRC 			"src/K15_GameMain.cpp")
 set(K15_TESTGAME_INCLUDE 		"")
 set(K15_TESTGAME_COMPLETE_SRC 	${K15_TESTGAME_SRC} ${K15_TESTGAME_INCLUDE})
-set(K15_TESTGAME_LIBS 			oslayer runtime logging resourceformats math)
+set(K15_TESTGAME_LIBS 			oslayer runtime logging resourceformats math string)
 
 source_group(include FILES ${K15_TESTGAME_INCLUDE})
 source_group(src FILES ${K15_TESTGAME_SRC})

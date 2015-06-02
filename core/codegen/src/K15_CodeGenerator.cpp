@@ -125,7 +125,10 @@ void K15_GenerateCode(K15_ArgumentParserContext* p_ParserContext)
 
 	K15_LOG_VERBOSE(p_ParserContext, "Trying to read '%s'...", inputPathBuffer);
 
-	char* inputFileContent = (char*)K15_ReadWholeFile(inputPathBuffer);
+	uint32 inputFileSize = K15_GetFileSize(inputPathBuffer);
+	char* inputFileContent = (char*)malloc(inputFileSize + 1);
+	K15_CopyWholeFileContentIntoBuffer(inputPathBuffer, (byte*)inputFileContent);
+	inputFileContent[inputFileSize] = 0;
 
 	if (!inputFileContent)
 	{
@@ -155,6 +158,8 @@ void K15_GenerateCode(K15_ArgumentParserContext* p_ParserContext)
 		return;
 	}
 
+	uint32 lineNumber = 0;
+
 	//iterate input file content char by char
 	while(contentChar != 0)
 	{
@@ -174,7 +179,7 @@ void K15_GenerateCode(K15_ArgumentParserContext* p_ParserContext)
 				memcpy(currentTemplateName, inputFileContent + offset, templateNameSize);
 				currentTemplateName[templateNameSize] = 0;
 
-				K15_LOG_VERBOSE(p_ParserContext, "Found template define '%s'.", currentTemplateName);
+				K15_LOG_VERBOSE(p_ParserContext, "Found template define '%s' in file '%s' at line %d.", currentTemplateName, inputFile, lineNumber);
 
 				const char* currentTemplateValue = K15_GetTemplateValue(p_ParserContext, currentTemplateName);
 
@@ -190,6 +195,12 @@ void K15_GenerateCode(K15_ArgumentParserContext* p_ParserContext)
 		}
 		else if(!K15_FilterChar(contentChar))
 		{
+			//keep track of line number.
+			if (contentChar == '\n')
+			{
+				++lineNumber;
+			}
+
 			//put char by char
 			fputc(contentChar, outputFileHandle);
 		}

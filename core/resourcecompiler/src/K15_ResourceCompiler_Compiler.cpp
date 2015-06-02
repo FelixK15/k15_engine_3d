@@ -159,11 +159,17 @@ namespace K15_ResourceCompiler
 
 					if(processResult.processState == RPS_FAILURE)
 					{
-						LOG_ERROR("Error processing \"%s\" with processor \"%s\":%s",
+						LOG_ERROR("Error processing \"%s\" with processor \"%s\"",
 							p_ResourceData.filePath.c_str(), processorSettings.processorName.c_str(),
 							processor->getError().c_str());
 
 						return false;
+					}
+					else if(processResult.processState == RPS_SUCCESS)
+					{
+						LOG_NORMAL("Successfully processed \"%s\" with processor \"%s\"",
+							p_ResourceData.filePath.c_str(), processorSettings.processorName.c_str(),
+							processor->getError().c_str());
 					}
 				}
 			}

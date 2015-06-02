@@ -6,7 +6,8 @@
 uint32 K15_Win32GetFileSize(const char* p_FilePath);
 uint8 K15_Win32FileExists(const char* p_FilePath);
 uint8 K15_Win32CopyFile(const char* p_SourcePath, const char* p_DestinationPath);
-byte* K15_Win32ReadWholeFile(const char* p_FilePath);
+uint8 K15_Win32DirectoryExists(const char* p_Path);
+byte* K15_Win32ReadWholeFileIntoBuffer(const char* p_FilePath, byte* p_Buffer);
 char* K15_Win32ConvertToSystemPath(const char* p_FilePath);
 char* K15_Win32GetWorkingDirectory();
 #endif //_K15_FileSystem_Win32_h_

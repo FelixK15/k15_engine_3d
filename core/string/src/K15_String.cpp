@@ -6,7 +6,7 @@
 #include <memory>
 
 /*********************************************************************************/
-uint32 K15_GetLines(const char* p_String, char** p_Lines)
+unsigned int K15_GetLines(const char* p_String, char** p_Lines)
 {
 	size_t stringLength = 0;
 	char* stringBuffer = (char*)p_String; //hacky and dangerous. will be overridden if p_lines is valid.
@@ -24,13 +24,13 @@ uint32 K15_GetLines(const char* p_String, char** p_Lines)
 	return K15_GetLinesInplace(stringBuffer, p_Lines);
 }
 /*********************************************************************************/
-uint32 K15_GetLinesInplace(char* p_String, char** p_Lines)
+unsigned int K15_GetLinesInplace(char* p_String, char** p_Lines)
 {
 	size_t stringLength = strlen(p_String);
 	size_t stringIndex = 0;
-	uint32 lineCount = 0;
-	uint32 lineIndex = 0;
-	uint32 lineBreakIndex = 0;
+	unsigned int lineCount = 0;
+	unsigned int lineIndex = 0;
+	unsigned int lineBreakIndex = 0;
 
 	//one line for counting the loops
 	while (stringIndex != stringLength)
@@ -43,7 +43,7 @@ uint32 K15_GetLinesInplace(char* p_String, char** p_Lines)
 				p_String[stringIndex] = 0;
 				p_Lines[lineCount] = p_String + lineBreakIndex;
 
-				lineBreakIndex = (uint32)stringIndex + 1;
+				lineBreakIndex = (unsigned int)stringIndex + 1;
 			}
 
 			++lineCount;
@@ -62,28 +62,28 @@ uint32 K15_GetLinesInplace(char* p_String, char** p_Lines)
 	return lineCount;
 }
 /*********************************************************************************/
-char* K15_CopyString(const char* p_String, uint32 p_StringLength)
+char* K15_CopyString(const char* p_String, unsigned int p_StringLength)
 {
-	K15_ASSERT_TEXT(p_String, "Source string is NULL.");
+	assert(p_String && "Source string is NULL.");
 
 	if (p_StringLength == 0)
 	{
-		p_StringLength = (uint32)strlen(p_String);
-	}
+		p_StringLength = (unsigned int)strlen(p_String);
+	} 
 
 	char* buffer = (char*)malloc(p_StringLength);
 
 	return K15_CopyStringIntoBuffer(p_String, buffer, p_StringLength);
 }
 /*********************************************************************************/
-char* K15_CopyStringIntoBuffer(const char* p_String, char* p_Buffer, uint32 p_StringLength)
+char* K15_CopyStringIntoBuffer(const char* p_String, char* p_Buffer, unsigned int p_StringLength)
 {
-	K15_ASSERT_TEXT(p_String, "Source string is NULL.");
-	K15_ASSERT_TEXT(p_Buffer, "Destination string is NULL.");
+	assert(p_String && "Source string is NULL.");
+	assert(p_Buffer && "Destination string is NULL.");
 
 	if (p_StringLength == 0)
 	{
-		p_StringLength = (uint32)strlen(p_String);
+		p_StringLength = (unsigned int)strlen(p_String);
 	}
 
 	memcpy(p_Buffer, p_String, p_StringLength);

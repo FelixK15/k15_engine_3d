@@ -24,7 +24,8 @@ typedef uint8 (*registerFileWatchFnc)(K15_OSContext*, K15_FileWatchEntry*, K15_D
 typedef uint8 (*pumpSystemEventsFnc)(K15_OSContext*);
 
 ///Threads
-typedef uint8 (*createThreadFnc)(K15_OSContext*, K15_Thread*, K15_ThreadFnc, void*);
+typedef uint8 (*createThreadFnc)(K15_OSContext*, K15_Thread*, K15_ThreadFnc, void*, uint32);
+typedef uint8 (*startThreadFnc)(K15_OSContext*, K15_Thread*);
 typedef uint8 (*joinThreadFnc)(K15_OSContext*, K15_Thread*);
 typedef uint8 (*tryJoinThreadFnc)(K15_OSContext*, K15_Thread*, uint32);
 typedef uint8 (*interruptThreadFnc)(K15_OSContext*, K15_Thread*);
@@ -81,12 +82,14 @@ struct K15_OSContext
 	{
 		K15_ThreadStretchBuffer threads;
 		createThreadFnc createThread;
+		startThreadFnc startThread;
 		joinThreadFnc joinThread;
 		tryJoinThreadFnc tryJoinThread;
 		interruptThreadFnc interruptThread;
 		setThreadNameFnc setThreadName;
 		getCurrentThreadFnc getCurrentThread;
 		freeThreadFnc freeThread;
+		uint32 numHardwareThreads;
 		//K15_Thread** threads;
 	} threading;
 
@@ -98,5 +101,7 @@ struct K15_OSContext
 
 K15_OSContext* K15_GetOSLayerContext();
 void K15_InternalSetOSLayerContext(K15_OSContext p_OSLayerContext);
+
+void K15_ParseCommandLineArguments();
 
 #endif //_K15_OSContext_h_

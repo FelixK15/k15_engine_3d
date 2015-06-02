@@ -73,6 +73,7 @@ set(K15_OS_LAYER_ANDROID_INC 	"include/android/K15_OSContextAndroid.h"
 
 include_directories(src)
 include_directories(include)
+include_directories(../string/include)
 include_directories(../logging/include)
 
 source_group(include FILES ${K15_OS_LAYER_INC})
