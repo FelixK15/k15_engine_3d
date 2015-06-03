@@ -165,6 +165,8 @@ int CALLBACK WinMain(
 		joinResult = K15_TryJoinThread(gameThread, 0);
 
 		running = joinResult != K15_SUCCESS;
+
+		K15_SleepThreadForMilliseconds(16);
 	}
 
 	return 0;
