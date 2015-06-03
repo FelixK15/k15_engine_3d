@@ -16,17 +16,6 @@ intern void K15_InternalAddThreadToOSContext(K15_OSContext* p_OSContext, K15_Thr
 	K15_ThreadStretchBuffer* threadBuffer = &p_OSContext->threading.threads;
 
 	K15_PushThreadStretchBufferElement(threadBuffer, p_Thread);
-
-	/*for (uint32 threadIndex = 0;
-		threadIndex < K15_MAX_THREADS;
-		++threadIndex)
-	{
-		if (!p_OSContext->threading.threads[threadIndex])
-		{
-			p_OSContext->threading.threads[threadIndex] = p_Thread;
-			break;
-		}
-	}*/
 }
 /*********************************************************************************/
 intern void K15_InternalRemoveThreadFromOSContext(K15_OSContext* p_OSContext, K15_Thread* p_Thread)
@@ -34,17 +23,6 @@ intern void K15_InternalRemoveThreadFromOSContext(K15_OSContext* p_OSContext, K1
 	K15_ThreadStretchBuffer* threadBuffer = &p_OSContext->threading.threads;
 
 	K15_PopThreadStretchBufferElement(threadBuffer, p_Thread);
-	
-	/*for (uint32 threadIndex = 0;
-		threadIndex < K15_MAX_THREADS;
-		++threadIndex)
-	{
-		if (p_OSContext->threading.threads[threadIndex] == p_Thread)
-		{
-			p_OSContext->threading.threads[threadIndex] = 0;
-			break;
-		}
-	}*/
 }
 /*********************************************************************************/
 K15_Thread* K15_CreateThread(K15_ThreadFnc p_ThreadFunction, void* p_ThreadParameter, uint32 p_ThreadFlags)
@@ -59,6 +37,7 @@ K15_Thread* K15_CreateThread(K15_ThreadFnc p_ThreadFunction, void* p_ThreadParam
 	threadContext->nameLength = 0;
 	threadContext->startFlags = p_ThreadFlags;
 	threadContext->state = K15_THREAD_STATE_NOT_STARTED;
+	threadContext->threadAffintyMask = 0xffffffff;
 
 	thread->context = threadContext;
 	
@@ -232,6 +211,23 @@ uint8 K15_InterruptThread(K15_Thread* p_Thread)
 	return result;
 }
 /*********************************************************************************/
+uint8 K15_SetThreadAffinityMask(K15_Thread* p_Thread, uint64 p_AffintyMask)
+{
+	K15_ASSERT_TEXT(p_Thread, "Thread is NULL");
+
+	K15_OSContext* osContext = K15_GetOSLayerContext();
+	K15_ThreadContext* threadContext = p_Thread->context;
+
+	uint8 result = osContext->threading.setThreadAffinityMask(osContext, p_Thread, p_AffintyMask);
+
+	if (result == K15_OS_ERROR_SYSTEM)
+	{
+		K15_LOG_ERROR_MESSAGE("K15_SetThreadAffinityMask (System Error): %s", K15_CopySystemErrorMessageIntoBuffer((char*)alloca(K15_ERROR_MESSAGE_LENGTH)));
+	}
+
+	return result;
+}
+/*********************************************************************************/
 uint8 K15_SetThreadName(K15_Thread* p_Thread, const char* p_ThreadName)
 {
 	K15_ASSERT_TEXT(p_Thread, "Thread is NULL");
@@ -250,6 +246,7 @@ uint8 K15_SetThreadName(K15_Thread* p_Thread, const char* p_ThreadName)
 
 	memcpy(threadContext->name, p_ThreadName, newThreadNameLength);
 	threadContext->name[newThreadNameLength] = 0;
+	threadContext->nameLength = (uint32)newThreadNameLength;
 
 	return osContext->threading.setThreadName(p_Thread);
 }

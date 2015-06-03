@@ -28,6 +28,7 @@ typedef uint8 (*createThreadFnc)(K15_OSContext*, K15_Thread*, K15_ThreadFnc, voi
 typedef uint8 (*startThreadFnc)(K15_OSContext*, K15_Thread*);
 typedef uint8 (*joinThreadFnc)(K15_OSContext*, K15_Thread*);
 typedef uint8 (*tryJoinThreadFnc)(K15_OSContext*, K15_Thread*, uint32);
+typedef uint8 (*setThreadAffintyMaskFnc)(K15_OSContext*, K15_Thread*, uint64);
 typedef uint8 (*interruptThreadFnc)(K15_OSContext*, K15_Thread*);
 typedef uint8 (*freeThreadFnc)(K15_OSContext*, K15_Thread*);
 typedef K15_Thread* (*getCurrentThreadFnc)();
@@ -86,6 +87,7 @@ struct K15_OSContext
 		joinThreadFnc joinThread;
 		tryJoinThreadFnc tryJoinThread;
 		interruptThreadFnc interruptThread;
+		setThreadAffintyMaskFnc setThreadAffinityMask;
 		setThreadNameFnc setThreadName;
 		getCurrentThreadFnc getCurrentThread;
 		freeThreadFnc freeThread;

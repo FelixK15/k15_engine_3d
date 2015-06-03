@@ -35,6 +35,7 @@ struct K15_ThreadContext
 	char* name;
 	uint32 nameLength;
 	uint32 startFlags;
+	uint32 threadAffintyMask;
 
 	K15_ThreadState state;
 };
@@ -56,6 +57,7 @@ uint8 K15_StartThread(K15_Thread* p_Thread);
 uint8 K15_JoinThread(K15_Thread* p_Thread);
 uint8 K15_TryJoinThread(K15_Thread* p_Thread, uint32 p_MilliSeconds);
 uint8 K15_InterruptThread(K15_Thread* p_Thread);
+uint8 K15_SetThreadAffinityMask(K15_Thread* p_Thread, uint64 p_AffintyMask);
 
 uint8 K15_SetThreadName(K15_Thread* p_Thread, const char* p_ThreadName);
 

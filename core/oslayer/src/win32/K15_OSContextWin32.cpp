@@ -238,6 +238,7 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	win32OSContext.threading.setThreadName = K15_Win32SetThreadName;
 	win32OSContext.threading.getCurrentThread = K15_Win32GetCurrentThread;
 	win32OSContext.threading.freeThread = K15_Win32FreeThread;
+	win32OSContext.threading.setThreadAffinityMask = K15_Win32SetThreadAffinityMask;
 
 	//create threading stretch buffer
 	K15_ThreadStretchBuffer threadBuffer = {};

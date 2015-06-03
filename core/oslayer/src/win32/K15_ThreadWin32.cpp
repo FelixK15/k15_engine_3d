@@ -95,7 +95,16 @@ uint8 K15_Win32StartThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread)
 
 	DWORD result = ResumeThread(win32Thread->handle);
 
-	return result == ((DWORD) - 1) ? K15_OS_ERROR_SYSTEM : K15_SUCCESS;
+	uint8 returnValue = result == ((DWORD) - 1) ? K15_OS_ERROR_SYSTEM : K15_SUCCESS;
+
+	//defer name setting
+	if (returnValue == K15_SUCCESS
+		&& p_Thread->context->name)
+	{
+		K15_Win32SetThreadName(p_Thread);
+	}
+
+	return returnValue;
 }
 /*********************************************************************************/
 uint8 K15_Win32TryJoinThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread, uint32 p_MilliSeconds)
@@ -115,6 +124,18 @@ uint8 K15_Win32TryJoinThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread, u
 	}
 
 	return K15_SUCCESS;
+}
+/*********************************************************************************/
+uint8 K15_Win32SetThreadAffinityMask(K15_OSContext* p_OSContext, K15_Thread* p_Thread, uint64 p_AffinityMask)
+{
+	K15_Win32Thread* win32Thread = (K15_Win32Thread*)p_Thread->userData;
+	HANDLE threadHandle = win32Thread->handle;
+
+	DWORD_PTR threadAffinityMask = p_AffinityMask;
+
+	DWORD_PTR prevThreadAffinityMask = SetThreadAffinityMask(threadHandle, threadAffinityMask);
+
+	return prevThreadAffinityMask != 0 ? K15_SUCCESS : K15_OS_ERROR_SYSTEM;
 }
 /*********************************************************************************/
 uint8 K15_Win32JoinThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread)
@@ -222,6 +243,11 @@ uint8 K15_Win32SetThreadName(K15_Thread* p_Thread)
 {
 	K15_Win32Thread* win32Thread = (K15_Win32Thread*)p_Thread->userData;
 	K15_ThreadContext* threadContext = p_Thread->context;
+
+	if (!threadContext->name)
+	{
+		return K15_SUCCESS;
+	}
 
 	///http://blogs.msdn.com/b/stevejs/archive/2005/12/19/505815.aspx
 	typedef struct tagTHREADNAME_INFO

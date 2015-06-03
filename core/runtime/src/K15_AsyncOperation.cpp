@@ -75,7 +75,7 @@ K15_AsyncContext* K15_CreateAsyncContext(K15_OSContext* p_OSContext, K15_MallocF
 	K15_ThreadFixedBuffer asyncThreadBuffer = {};
 	K15_CreateThreadFixedBuffer(&asyncThreadBuffer, numHardwareThreads);
 
-	K15_Semaphore* asyncWorkerSynchronizer = K15_CreateSemaphoreWithInitialValue(numHardwareThreads);
+	K15_Semaphore* asyncWorkerSynchronizer = K15_CreateSemaphore();
 
  	asyncContext->asyncThreads = asyncThreadBuffer;
  	asyncContext->asyncOperations = asyncOperationBuffer;
@@ -88,14 +88,23 @@ K15_AsyncContext* K15_CreateAsyncContext(K15_OSContext* p_OSContext, K15_MallocF
 	threadParameter->asyncOperationBuffer = &asyncContext->asyncOperations;
 	threadParameter->asyncWorkSynchronizer = asyncWorkerSynchronizer;
 
+	uint32 threadAffinityMask = 0x1;
+
 	for (uint32 hardwareThreadIndex = 0;
 		 hardwareThreadIndex < numHardwareThreads;
 		 ++hardwareThreadIndex)
 	{
+		char* threadNameBuffer = (char*)alloca(32);
+		sprintf(threadNameBuffer, "AsyncWorkerThread %d", hardwareThreadIndex + 1);
+
 		K15_Thread* asyncWorkerThread = K15_CreateThread(K15_InternalAsyncOperationThreadProc, threadParameter, 0);
-		K15_SetThreadName(asyncWorkerThread, "AsyncWorkerThread");
 		K15_PushThreadFixedBufferElement(&asyncThreadBuffer, asyncWorkerThread);
 		K15_StartThread(asyncWorkerThread);
+		K15_SetThreadName(asyncWorkerThread, threadNameBuffer);
+		K15_SetThreadAffinityMask(asyncWorkerThread, threadAffinityMask);
+
+		threadAffinityMask = (threadAffinityMask << 1);
+
 	}
 
 	return asyncContext;

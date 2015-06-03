@@ -40,6 +40,7 @@ struct K15_Win32Thread
 uint8 K15_Win32CreateThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread, K15_ThreadFnc p_ThreadFunction, void* p_ThreadParameter, uint32 p_ThreadFlags);
 uint8 K15_Win32StartThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread);
 uint8 K15_Win32TryJoinThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread, uint32 p_MilliSeconds);
+uint8 K15_Win32SetThreadAffinityMask(K15_OSContext* p_OSContext, K15_Thread* p_Thread, uint64 p_AffinityMask);
 uint8 K15_Win32JoinThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread);
 uint8 K15_Win32InterruptThread(K15_OSContext* p_OSContext, K15_Thread* p_Thread);
 uint8 K15_Win32SetThreadName(K15_Thread* p_Thread);
