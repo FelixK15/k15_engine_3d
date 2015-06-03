@@ -44,13 +44,6 @@ intern void K15_InternalOnGameLibraryReload(void* p_UserData)
 /*********************************************************************************/
 #endif //K15_LOAD_GAME_LIB_DYNAMIC
 
-intern void K15_AsyncText(void* p)
-{
-	K15_LOG_ERROR_MESSAGE("BLUBBB!");
-	K15_SleepThreadForMilliseconds(50);
-}
-
-
 
 /*********************************************************************************/
 int CALLBACK WinMain(
@@ -146,14 +139,6 @@ int CALLBACK WinMain(
 	uint8 joinResult = 0;
 	uint8 waitGameSyncResult = 0;
 
-	for (int i = 0;
-		i < 100;
-		++i)
-	{
-		K15_AsyncOperation* asyncOperation = K15_CreateAsyncOperation(K15_AsyncText, 0, 0, 0, 0);
-		K15_AddAsyncOperation(gameContext.asyncContext, asyncOperation);
-	}
-
 	while (running)
 	{
 		K15_PumpSystemEvents();
@@ -180,6 +165,8 @@ int CALLBACK WinMain(
 		joinResult = K15_TryJoinThread(gameThread, 0);
 
 		running = joinResult != K15_SUCCESS;
+
+		K15_SleepThreadForMilliseconds(16);
 	}
 
 	return 0;

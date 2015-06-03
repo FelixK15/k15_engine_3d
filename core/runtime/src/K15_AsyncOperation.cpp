@@ -75,7 +75,7 @@ K15_AsyncContext* K15_CreateAsyncContext(K15_OSContext* p_OSContext, K15_MallocF
 	K15_ThreadFixedBuffer asyncThreadBuffer = {};
 	K15_CreateThreadFixedBuffer(&asyncThreadBuffer, numHardwareThreads);
 
-	K15_Semaphore* asyncWorkerSynchronizer = K15_CreateSemaphoreWithInitialValue(numHardwareThreads);
+	K15_Semaphore* asyncWorkerSynchronizer = K15_CreateSemaphore();
 
  	asyncContext->asyncThreads = asyncThreadBuffer;
  	asyncContext->asyncOperations = asyncOperationBuffer;

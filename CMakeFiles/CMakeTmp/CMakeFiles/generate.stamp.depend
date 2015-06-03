@@ -1,0 +1,14 @@
+# CMake generation dependency list for this directory.
+D:/Programming/my_projects/k15-engine-3d/CMakeFiles/3.1.0-rc2/CMakeSystem.cmake
+D:/Programs/CMake/share/cmake-3.1/Modules/CMakeSystemSpecificInitialize.cmake
+D:/Programming/my_projects/k15-engine-3d/CMakeFiles/3.1.0-rc2/CMakeCCompiler.cmake
+D:/Programs/CMake/share/cmake-3.1/Modules/CMakeSystemSpecificInformation.cmake
+D:/Programs/CMake/share/cmake-3.1/Modules/CMakeGenericSystem.cmake
+D:/Programs/CMake/share/cmake-3.1/Modules/Platform/Windows.cmake
+D:/Programs/CMake/share/cmake-3.1/Modules/Platform/WindowsPaths.cmake
+D:/Programs/CMake/share/cmake-3.1/Modules/CMakeCInformation.cmake
+D:/Programs/CMake/share/cmake-3.1/Modules/Platform/Windows-MSVC-C.cmake
+D:/Programs/CMake/share/cmake-3.1/Modules/Platform/Windows-MSVC.cmake
+D:/Programming/my_projects/k15-engine-3d/CMakeFiles/3.1.0-rc2/CMakeRCCompiler.cmake
+D:/Programs/CMake/share/cmake-3.1/Modules/CMakeRCInformation.cmake
+D:/Programs/CMake/share/cmake-3.1/Modules/CMakeCommonLanguageInclude.cmake
