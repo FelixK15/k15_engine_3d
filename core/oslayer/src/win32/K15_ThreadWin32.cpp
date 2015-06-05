@@ -38,10 +38,10 @@ intern DWORD WINAPI K15_Win32ThreadWrapper(LPVOID p_Parameter)
 /*********************************************************************************/
 intern uint8 K15_Win32InternalCurrentThreadCompare(K15_Thread** p_Thread, void* p_UserData)
 {
-	DWORD threadIdentifier = (DWORD)p_UserData;
+	LPDWORD threadIdentifier = (LPDWORD)p_UserData;
 	K15_Win32Thread* win32Thread = (K15_Win32Thread*)(*p_Thread)->userData;
 
-	return win32Thread->identifier == threadIdentifier ? 0 : 1;
+	return win32Thread->identifier == (*threadIdentifier) ? 0 : 1;
 }
 /*********************************************************************************/
 
@@ -303,7 +303,7 @@ K15_Semaphore* K15_Win32CreateSemaphoreWithInitialValue(uint32 p_InitialValue)
 {
 	K15_Semaphore* win32Semaphore = (K15_Semaphore*)K15_OS_MALLOC(sizeof(K15_Semaphore));
 
-	HANDLE semaphoreHandle = CreateSemaphoreA(0, p_InitialValue, 100, 0);
+	HANDLE semaphoreHandle = CreateSemaphoreA(0, p_InitialValue, LONG_MAX, 0);
 
 	if (semaphoreHandle == INVALID_HANDLE_VALUE)
 	{

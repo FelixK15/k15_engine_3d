@@ -4,7 +4,7 @@
 #include "K15_Prerequisites_RT.h"
 
 #include "generated/K15_ThreadFixedBuffer.h"
-#include "generated/K15_AsyncOperationLockedStretchBuffer.h"
+#include "generated/K15_AsyncOperationStretchBuffer.h"
 
 typedef void (*K15_AsyncCallbackFnc)(K15_AsyncOperation*);
 typedef void (*K15_AsyncFunctionFnc)(void*);
@@ -19,7 +19,8 @@ enum K15_AsyncStatus
 /*********************************************************************************/
 enum K15_AsyncOperationFlags
 {
-	K15_ASYNC_OPERATION_USER_DATA_COPY_FLAG = 0x01
+	K15_ASYNC_OPERATION_USER_DATA_COPY_FLAG = 0x01,		//Copy user data memory to own buffer
+	K15_ASYNC_OPERATION_CLEAR_AFTER_PROCESS = 0x02		//Automatically clear the async operation memory after it has been processed
 };
 /*********************************************************************************/
 struct K15_AsyncOperation
@@ -37,6 +38,7 @@ struct K15_AsyncContext
 	K15_ThreadFixedBuffer asyncThreads;
 	K15_AsyncOperationStretchBuffer asyncOperations;
 
+	K15_Mutex* asyncJobLock;
 	K15_MallocFnc mallocFnc;
 	K15_FreeFnc freeFnc;
 };

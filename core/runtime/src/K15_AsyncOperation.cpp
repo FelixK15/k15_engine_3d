@@ -6,12 +6,13 @@
 
 #include <K15_Logging.h>
 
-#include "generated/K15_AsyncOperationLockedStretchBuffer.cpp"
+#include "generated/K15_AsyncOperationStretchBuffer.cpp"
 
 /*********************************************************************************/
 struct K15_AsyncThreadParameter
 {
 	K15_Semaphore* asyncWorkSynchronizer;
+	K15_Mutex* asyncJobLock;
 	K15_AsyncOperationStretchBuffer* asyncOperationBuffer;
 };
 /*********************************************************************************/
@@ -22,14 +23,20 @@ intern void K15_InternalProcessAsyncOperation(K15_AsyncOperation* p_AsyncOperati
 	void* userData = p_AsyncOperation->userData;
 	K15_AsyncFunctionFnc asyncFunction = p_AsyncOperation->asyncFunction;
 	K15_AsyncCallbackFnc asyncCallback = p_AsyncOperation->asyncCallback;
+	uint32 flags = p_AsyncOperation->flags;
 
 	asyncFunction(userData);
 	
-	p_AsyncOperation->asyncStatus = K15_ASYNC_OPERATION_FINISHED;
-
 	if (asyncCallback)
 	{
 		asyncCallback(p_AsyncOperation);
+	}
+
+	p_AsyncOperation->asyncStatus = K15_ASYNC_OPERATION_FINISHED;
+
+	if ((flags & K15_ASYNC_OPERATION_CLEAR_AFTER_PROCESS) > 0)
+	{
+		K15_ClearAsyncOperation(p_AsyncOperation);
 	}
 }
 /*********************************************************************************/
@@ -37,19 +44,27 @@ intern uint8 K15_InternalAsyncOperationThreadProc(void* p_Parameter)
 {
 	K15_AsyncThreadParameter* asyncParameter = (K15_AsyncThreadParameter*)p_Parameter;
 	K15_AsyncOperationStretchBuffer* asyncOperationBuffer = asyncParameter->asyncOperationBuffer;
+	K15_Mutex* asyncJobLock = asyncParameter->asyncJobLock;
+
 	K15_Semaphore* asyncWorkerSynchronizer = asyncParameter->asyncWorkSynchronizer;
 	
 	while(true)
 	{
 		K15_WaitSemaphore(asyncWorkerSynchronizer);
 
-		K15_AsyncOperation* asyncOperation = K15_GetAsyncOperationStretchBufferElement(asyncOperationBuffer, 0);
+		K15_LockMutex(asyncJobLock);
 
-		if (asyncOperation)
+		K15_AsyncOperation** asyncOperationPtr = K15_GetAsyncOperationStretchBufferElementUnsafe(asyncOperationBuffer, 0);
+		K15_AsyncOperation* asyncOperation = 0;
+
+		if (asyncOperationPtr)
 		{
-			K15_PopAsyncOperationStretchBufferElement(asyncOperationBuffer, *asyncOperation);
+			asyncOperation = *asyncOperationPtr;
+			K15_PopAsyncOperationStretchBufferIndex(asyncOperationBuffer, 0);
 		}
-		
+
+		K15_UnlockMutex(asyncJobLock);
+
 		if (asyncOperation)
 		{
 			K15_InternalProcessAsyncOperation(asyncOperation);
@@ -76,7 +91,9 @@ K15_AsyncContext* K15_CreateAsyncContext(K15_OSContext* p_OSContext, K15_MallocF
 	K15_CreateThreadFixedBuffer(&asyncThreadBuffer, numHardwareThreads);
 
 	K15_Semaphore* asyncWorkerSynchronizer = K15_CreateSemaphore();
+	K15_Mutex* asyncJobLock = K15_CreateMutex();
 
+	asyncContext->asyncJobLock = asyncJobLock;
  	asyncContext->asyncThreads = asyncThreadBuffer;
  	asyncContext->asyncOperations = asyncOperationBuffer;
  	asyncContext->asyncWorkerSynchronizer = asyncWorkerSynchronizer;
@@ -86,6 +103,7 @@ K15_AsyncContext* K15_CreateAsyncContext(K15_OSContext* p_OSContext, K15_MallocF
 
 	K15_AsyncThreadParameter* threadParameter = (K15_AsyncThreadParameter*)p_MallocFnc(sizeof(K15_AsyncThreadParameter));
 	threadParameter->asyncOperationBuffer = &asyncContext->asyncOperations;
+	threadParameter->asyncJobLock = asyncContext->asyncJobLock;
 	threadParameter->asyncWorkSynchronizer = asyncWorkerSynchronizer;
 
 	uint32 threadAffinityMask = 0x1;
@@ -104,7 +122,6 @@ K15_AsyncContext* K15_CreateAsyncContext(K15_OSContext* p_OSContext, K15_MallocF
 		K15_SetThreadAffinityMask(asyncWorkerThread, threadAffinityMask);
 
 		threadAffinityMask = (threadAffinityMask << 1);
-
 	}
 
 	return asyncContext;
@@ -173,9 +190,13 @@ uint8 K15_AddAsyncOperation(K15_AsyncContext* p_AsyncContext, K15_AsyncOperation
 	K15_ASSERT_TEXT(p_AsyncOperation->asyncFunction, "Async Operation Function is NULL.");
 
 	K15_Semaphore* asyncWorkerSynchronizer = p_AsyncContext->asyncWorkerSynchronizer;
+	K15_Mutex* asyncJobLock = p_AsyncContext->asyncJobLock;
 
-	K15_AsyncOperationStretchBuffer* asyncOperationBuffer = &p_AsyncContext->asyncOperations;
-	K15_PushAsyncOperationStretchBufferElement(asyncOperationBuffer, *p_AsyncOperation);
+ 	K15_AsyncOperationStretchBuffer* asyncOperationBuffer = &p_AsyncContext->asyncOperations;
+
+	K15_LockMutex(asyncJobLock);
+	K15_PushAsyncOperationStretchBufferElement(asyncOperationBuffer, p_AsyncOperation);
+	K15_UnlockMutex(asyncJobLock);
 
 	p_AsyncOperation->asyncStatus = K15_ASYNC_OPERATION_QUEUED;
 
