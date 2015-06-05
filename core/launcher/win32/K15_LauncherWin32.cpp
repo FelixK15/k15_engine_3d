@@ -44,7 +44,6 @@ intern void K15_InternalOnGameLibraryReload(void* p_UserData)
 /*********************************************************************************/
 #endif //K15_LOAD_GAME_LIB_DYNAMIC
 
-
 /*********************************************************************************/
 int CALLBACK WinMain(
 	HINSTANCE hInstance,

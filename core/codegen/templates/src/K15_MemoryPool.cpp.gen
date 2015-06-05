@@ -1,0 +1,130 @@
+/*********************************************************************************/
+/*  THIS FILE HAS BEEN GENERATED AUTOMATICALLY. ANY CHANGES WILL BE OVERRIDDEN   */
+/*********************************************************************************/
+
+#include "$INPUT_FILE$"
+
+/*********************************************************************************/
+struct K15_$TYPE_NAME$MemoryPoolElement	
+{
+	$TYPE$ element;
+	uint32 inUse;
+};
+/*********************************************************************************/
+
+
+
+/*********************************************************************************/
+void* K15_Default$TYPE_NAME$Malloc(size_t p_SizeInBytes)
+{
+	return ::malloc(p_SizeInBytes);
+}
+/*********************************************************************************/
+void K15_Default$TYPE_NAME$Free(void* p_Pointer)
+{
+	return ::free(p_Pointer);
+}
+/*********************************************************************************/
+
+
+
+
+
+/*********************************************************************************/
+void K15_Initialize$TYPE_NAME$MemoryPool(K15_$TYPE_NAME$MemoryPool* p_MemoryPool, unsigned int p_NumElements)
+{
+	K15_ASSERT_TEXT(p_MemoryPool, "Memory Pool for Type '$TYPE$' is NULL.");
+	K15_ASSERT_TEXT(p_NumElements, "Element Count for Memory Pool '$TYPE$' is 0.");
+
+	K15_Initialize$TYPE_NAME$MemoryPoolWithCustomAllocator(p_MemoryPool, K15_Default$TYPE_NAME$Malloc, K15_Default$TYPE_NAME$Free, p_NumElements);
+}
+/*********************************************************************************/
+void K15_Initialize$TYPE_NAME$MemoryPoolWithCustomAllocator(K15_$TYPE_NAME$MemoryPool* p_MemoryPool, K15_$TYPE_NAME$MemoryPoolAllocFnc p_CustomMalloc, K15_$TYPE_NAME$MemoryPoolFreeFnc p_CustomFree, unsigned int p_NumElements)
+{
+	K15_ASSERT_TEXT(p_MemoryPool, "Memory Pool for Type '$TYPE$' is NULL.");
+	K15_ASSERT_TEXT(p_CustomMalloc, "Custom Malloc Function for Memory Pool '$TYPE$' is NULL.");
+	K15_ASSERT_TEXT(p_CustomFree, "Custom Free Function for Memory Pool '$TYPE$' is NULL.");
+	K15_ASSERT_TEXT(p_NumElements, "Element Count for Memory Pool '$TYPE$' is 0.");
+
+	uint32 elementBufferSize = sizeof(K15_$TYPE_NAME$MemoryPoolElement) * p_NumElements;
+	byte* elementBuffer = (byte*)p_CustomMalloc(elementBufferSize);
+
+	memset(elementBuffer, 0, elementBufferSize);
+
+	p_MemoryPool->elements = elementBuffer;
+	p_MemoryPool->customMalloc = p_CustomMalloc;
+	p_MemoryPool->customFree = p_CustomFree;
+	p_MemoryPool->numElements = p_NumElements;
+	p_MemoryPool->lastElementIndex = 0;
+}
+/*********************************************************************************/
+$TYPE$* K15_Get$TYPE_NAME$MemoryPoolElement(K15_$TYPE_NAME$MemoryPool* p_MemoryPool)
+{
+	K15_ASSERT_TEXT(p_MemoryPool, "Memory Pool for Type '$TYPE$' is NULL.");
+
+	uint32 index = 0;
+	K15_$TYPE_NAME$MemoryPoolElement* poolBuffer = (K15_$TYPE_NAME$MemoryPoolElement*)p_MemoryPool->elements;
+	uint32 numElements = p_MemoryPool->numElements;
+	uint32 lastElementIndex = p_MemoryPool->lastElementIndex;
+	uint8 foundElement = K15_FALSE;
+
+	$TYPE$* element = 0;
+
+	if (lastElementIndex == numElements)
+	{
+		index = 0;
+	}
+	else
+	{
+		index = ++lastElementIndex;
+	}
+
+	K15_$TYPE_NAME$MemoryPoolElement* poolElement = &poolBuffer[index];
+
+	if (poolElement->inUse == K15_FALSE)
+	{
+		poolElement->inUse = K15_TRUE;
+
+		element = ($TYPE$*)poolElement;
+	}
+	else
+	{
+		for (uint32 elementIndex = 0;
+			elementIndex < numElements;
+			++elementIndex)
+		{
+			poolElement = &poolBuffer[elementIndex];
+
+			if (poolElement->inUse == K15_FALSE)
+			{
+				index = elementIndex;
+				poolElement->inUse = K15_TRUE;
+				element = ($TYPE$*)poolElement;
+			}
+		}
+	}
+
+	K15_ASSERT_TEXT(element, "Memory Pool for type '$TYPE$' is full.");
+
+	p_MemoryPool->lastElementIndex = index;
+
+	return element;
+}
+/*********************************************************************************/
+void K15_Free$TYPE_NAME$MemoryPoolElement(K15_$TYPE_NAME$MemoryPool* p_MemoryPool, $TYPE$* p_Element)
+{
+	K15_ASSERT_TEXT(p_MemoryPool, "Memory Pool for Type '$TYPE$' is NULL.");
+	K15_ASSERT_TEXT(p_Element, "Element of Type '$TYPE$' is NULL.");
+	
+	K15_$TYPE_NAME$MemoryPoolElement* poolElement = (K15_$TYPE_NAME$MemoryPoolElement*)p_Element;
+	poolElement->inUse = K15_FALSE;
+}
+/*********************************************************************************/
+void K15_Clear$TYPE_NAME$MemoryPool(K15_$TYPE_NAME$MemoryPool* p_MemoryPool)
+{
+	K15_$TYPE_NAME$MemoryPoolFreeFnc  customFree = p_MemoryPool->customFree;
+	byte* memoryPoolBuffer = p_MemoryPool->elements;
+	
+	customFree(memoryPoolBuffer);
+}
+/*********************************************************************************/

@@ -1,0 +1,32 @@
+/*********************************************************************************/
+/*  THIS FILE HAS BEEN GENERATED AUTOMATICALLY. ANY CHANGES WILL BE OVERRIDDEN   */
+/*********************************************************************************/
+
+#ifndef _K15_$TYPE_NAME$_Memory_Pool_h_
+#define _K15_$TYPE_NAME$_Memory_Pool_h_
+
+//forward declaration
+struct $TYPE_STRUCT_NAME$;
+
+typedef void* (*K15_$TYPE_NAME$MemoryPoolAllocFnc)(size_t);
+typedef void (*K15_$TYPE_NAME$MemoryPoolFreeFnc)(void*);
+
+struct K15_$TYPE_NAME$MemoryPool //256 bit / 32 byte
+{
+	K15_$TYPE_NAME$MemoryPoolAllocFnc customMalloc;	//64bit
+	K15_$TYPE_NAME$MemoryPoolFreeFnc  customFree;	//64bit
+	byte* elements;									//64bit
+	unsigned int numElements;						//32bit
+	unsigned int lastElementIndex;					//32bit
+};
+
+void K15_Initialize$TYPE_NAME$MemoryPool(K15_$TYPE_NAME$MemoryPool* p_MemoryPool, unsigned int p_NumElements);
+void K15_Initialize$TYPE_NAME$MemoryPoolWithCustomAllocator(K15_$TYPE_NAME$MemoryPool* p_MemoryPool, K15_$TYPE_NAME$MemoryPoolAllocFnc p_CustomMalloc, K15_$TYPE_NAME$MemoryPoolFreeFnc p_CustomFree, unsigned int p_NumElements);
+
+$TYPE$* K15_Get$TYPE_NAME$MemoryPoolElement(K15_$TYPE_NAME$MemoryPool* p_MemoryPool);
+
+void K15_Free$TYPE_NAME$MemoryPoolElement(K15_$TYPE_NAME$MemoryPool* p_MemoryPool, $TYPE$* p_Element);
+
+void K15_Clear$TYPE_NAME$MemoryPool(K15_$TYPE_NAME$MemoryPool* p_MemoryPool);
+
+#endif _K15_$TYPE_NAME$_Memory_Pool_h_
