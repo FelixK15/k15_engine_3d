@@ -41,12 +41,13 @@ struct K15_AsyncContext
 	K15_AsyncOperationMemoryPool asyncMemoryPool;
 
 	K15_Mutex* asyncJobLock;
-	K15_MallocFnc mallocFnc;
-	K15_FreeFnc freeFnc;
+	K15_CustomMemoryAllocator* memoryAllocator;
 };
 /*********************************************************************************/
 
-K15_AsyncContext* K15_CreateAsyncContext(K15_OSContext* p_OSContext, K15_MallocFnc p_MallocFnc = K15_DefaultMallocWrapper, K15_FreeFnc p_FreeFnc = K15_DefaultFreeWrapper);
+K15_AsyncContext* K15_CreateAsyncContext(K15_OSContext* p_OSContext);
+K15_AsyncContext* K15_CreateAsyncContextWithCustomAllocator(K15_OSContext* p_OSContext, K15_CustomMemoryAllocator* p_CustomMemoryAllocator);
+K15_AsyncOperation* K15_CreateSimpleAsyncOperation(K15_AsyncContext* p_AsyncContext, K15_AsyncFunctionFnc p_AsyncFunction, uint32 p_Flags);
 K15_AsyncOperation* K15_CreateAsyncOperation(K15_AsyncContext* p_AsyncContext, K15_AsyncFunctionFnc p_AsyncFunction, K15_AsyncCallbackFnc p_AsyncCallback, void* p_UserData, uint32 p_UserDataSize, uint32 p_Flags);
 K15_AsyncOperation* K15_CreateAndIssueAsyncOperation(K15_AsyncContext* p_AsyncContext, K15_AsyncFunctionFnc p_AsyncFunction, K15_AsyncCallbackFnc p_AsyncCallback, void* p_UserData, uint32 p_UserDataSize, uint32 p_Flags);
 void K15_RemoveAsyncOperation(K15_AsyncContext* p_AsyncContext, K15_AsyncOperation* p_AsyncOperation);

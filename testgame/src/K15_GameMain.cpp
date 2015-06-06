@@ -3,7 +3,9 @@
 
 #include <K15_OSContext.h>
 #include <K15_Logging.h>
+#include <K15_SystemEvents.h>
 
+#include <K15_AsyncOperation.h>
 #include <K15_ResourceContext.h>
 #include <K15_MeshFormat.h>
 #include <K15_MemoryBuffer.h>
@@ -27,22 +29,20 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 	K15_InternalSetOSLayerContext(*p_GameContext->osContext);
 
 	K15_MemoryBuffer* memory = p_GameContext->gameMemory;
-
-	uint32 resourceBufferSize = size_megabyte(5);
+	K15_AsyncContext* asyncContext = p_GameContext->asyncContext;
+	uint32 resourceBufferSize = size_megabyte(5) + size_kilobyte(20); //20 kilobyte for bookkeeping
 
 	K15_Sample1GameContext* sample1GameContext = (K15_Sample1GameContext*)K15_GetMemoryFromMemoryBuffer(memory, sizeof(K15_Sample1GameContext));
-	K15_ResourceContext* resourceContext = (K15_ResourceContext*)K15_GetMemoryFromMemoryBuffer(memory, sizeof(K15_ResourceContext));
-	sample1GameContext->resourceContext = resourceContext;
 
 	K15_MemoryBuffer* resourceMemoryBuffer = (K15_MemoryBuffer*)K15_GetMemoryFromMemoryBuffer(memory, sizeof(K15_MemoryBuffer));
+	K15_InitializeMemoryBufferWithCustomAllocator(resourceMemoryBuffer, K15_CreateMemoryBufferAllocator(memory), resourceBufferSize, 0);
 
-	K15_InitializeDefaultPreallocatedMemoryBuffer(resourceMemoryBuffer, K15_GetMemoryFromMemoryBuffer(memory, resourceBufferSize), resourceBufferSize, 0);
+	K15_ResourceContext* resourceContext = K15_CreateResourceContextWithCustomAllocator("data/", K15_CreateMemoryBufferAllocator(resourceMemoryBuffer), 0);
 
-	K15_InitializeResourceContext(resourceContext, resourceMemoryBuffer, "data/", 0);
+	sample1GameContext->resourceContext = resourceContext;
 
-	K15_AsyncOperation* asyncRobbie = K15_AsyncLoadResource(sample1GameContext->resourceContext, "meshes/robbie/Robbie_the_Rabbit_rigged.k15mesh", 0);
-	
-	sample1GameContext->robbie = K15_LoadResource(sample1GameContext->resourceContext, "meshes/robbie/Robbie_the_Rabbit_rigged.k15mesh", 0);
+	K15_Resource** resourcePtr = &sample1GameContext->robbie;
+	K15_AsyncLoadResource(asyncContext, resourcePtr, resourceContext, "meshes/robbie/Robbie_the_Rabbit_rigged.k15mesh", 0, K15_ASYNC_OPERATION_FIRE_AND_FORGET_FLAG);
 }
 /*********************************************************************************/
 

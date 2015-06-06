@@ -6,6 +6,7 @@
 #include "K15_Prerequisites.h"
 
 struct K15_AsyncOperation;
+struct K15_AsyncContext;
 struct K15_Resource;
 struct K15_ResourceContext;
 struct K15_MemoryBuffer;

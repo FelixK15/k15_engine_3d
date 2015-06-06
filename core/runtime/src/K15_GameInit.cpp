@@ -47,6 +47,9 @@ uint8 K15_GameThreadMain(void* p_Parameter)
 		K15_WaitSemaphore(mainThreadSynchronizer);
 	}
 
+	//increment semaphore on exit. Some systems close the thread deferred :(
+	K15_PostSemaphore(gameThreadSynchronizer);
+
 	return K15_SUCCESS;
 }
 /*********************************************************************************/

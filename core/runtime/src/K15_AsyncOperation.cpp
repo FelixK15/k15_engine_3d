@@ -2,6 +2,7 @@
 
 #include "K15_Thread.h"
 #include "K15_OSContext.h"
+#include "K15_Memory.h"
 #include "K15_DefaultCLibraries.h"
 
 #include <K15_Logging.h>
@@ -83,11 +84,17 @@ intern uint8 K15_InternalAsyncOperationThreadProc(void* p_Parameter)
 
 
 /*********************************************************************************/
-K15_AsyncContext* K15_CreateAsyncContext(K15_OSContext* p_OSContext, K15_MallocFnc p_MallocFnc, K15_FreeFnc p_FreeFnc)
+K15_AsyncContext* K15_CreateAsyncContext(K15_OSContext* p_OSContext)
+{
+	return K15_CreateAsyncContextWithCustomAllocator(p_OSContext, K15_CreateDefaultMemoryAllocator());
+}
+/*********************************************************************************/
+K15_AsyncContext* K15_CreateAsyncContextWithCustomAllocator(K15_OSContext* p_OSContext, K15_CustomMemoryAllocator* p_CustomMemoryAllocator)
 {
 	K15_ASSERT_TEXT(p_OSContext, "OS Context is NULL.");
+	K15_ASSERT_TEXT(p_CustomMemoryAllocator, "Custom memory allocator is NULL.");
 
-	K15_AsyncContext* asyncContext = (K15_AsyncContext*)p_MallocFnc(sizeof(K15_AsyncContext));
+	K15_AsyncContext* asyncContext = (K15_AsyncContext*)K15_AllocateFromMemoryAllocator(p_CustomMemoryAllocator, sizeof(K15_AsyncContext));
 
 	K15_AsyncOperationStretchBuffer asyncOperationBuffer = {};
 	K15_CreateAsyncOperationStretchBuffer(&asyncOperationBuffer);
@@ -105,14 +112,13 @@ K15_AsyncContext* K15_CreateAsyncContext(K15_OSContext* p_OSContext, K15_MallocF
 
 	asyncContext->asyncMemoryPool = asyncMemoryPool;
 	asyncContext->asyncJobLock = asyncJobLock;
- 	asyncContext->asyncThreads = asyncThreadBuffer;
- 	asyncContext->asyncOperations = asyncOperationBuffer;
- 	asyncContext->asyncWorkerSynchronizer = asyncWorkerSynchronizer;
+	asyncContext->asyncThreads = asyncThreadBuffer;
+	asyncContext->asyncOperations = asyncOperationBuffer;
+	asyncContext->asyncWorkerSynchronizer = asyncWorkerSynchronizer;
 
-  	asyncContext->mallocFnc = p_MallocFnc;
-  	asyncContext->freeFnc = p_FreeFnc;
+	asyncContext->memoryAllocator = p_CustomMemoryAllocator;
 
-	K15_AsyncThreadParameter* threadParameter = (K15_AsyncThreadParameter*)p_MallocFnc(sizeof(K15_AsyncThreadParameter));
+	K15_AsyncThreadParameter* threadParameter = (K15_AsyncThreadParameter*)K15_AllocateFromMemoryAllocator(p_CustomMemoryAllocator, sizeof(K15_AsyncThreadParameter));
 	threadParameter->asyncOperationBuffer = &asyncContext->asyncOperations;
 	threadParameter->asyncJobLock = asyncContext->asyncJobLock;
 	threadParameter->asyncWorkSynchronizer = asyncWorkerSynchronizer;
@@ -121,8 +127,8 @@ K15_AsyncContext* K15_CreateAsyncContext(K15_OSContext* p_OSContext, K15_MallocF
 	uint32 threadAffinityMask = 0x1;
 
 	for (uint32 hardwareThreadIndex = 0;
-		 hardwareThreadIndex < numHardwareThreads;
-		 ++hardwareThreadIndex)
+		hardwareThreadIndex < numHardwareThreads;
+		++hardwareThreadIndex)
 	{
 		char* threadNameBuffer = (char*)alloca(32);
 		sprintf(threadNameBuffer, "AsyncWorkerThread %d", hardwareThreadIndex + 1);
@@ -137,6 +143,11 @@ K15_AsyncContext* K15_CreateAsyncContext(K15_OSContext* p_OSContext, K15_MallocF
 	}
 
 	return asyncContext;
+}
+/*********************************************************************************/
+K15_AsyncOperation* K15_CreateSimpleAsyncOperation(K15_AsyncContext* p_AsyncContext, K15_AsyncFunctionFnc p_AsyncFunction, uint32 p_Flags)
+{
+	return K15_CreateAsyncOperation(p_AsyncContext, p_AsyncFunction, 0, 0, 0, p_Flags);
 }
 /*********************************************************************************/
 K15_AsyncOperation* K15_CreateAsyncOperation(K15_AsyncContext* p_AsyncContext, K15_AsyncFunctionFnc p_AsyncFunction, K15_AsyncCallbackFnc p_AsyncCallback, void* p_UserData, uint32 p_UserDataSize, uint32 p_Flags)

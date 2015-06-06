@@ -227,17 +227,12 @@ struct K15_DirectoryWatchEntry;
 struct K15_ThreadContext;
 struct K15_Semaphore;
 struct K15_OSContext;
+struct K15_CustomMemoryAllocator;
 
-typedef uint8 (*K15_ThreadFnc)(void*);
-typedef void* (*K15_MallocFnc)(size_t);
-typedef void (*K15_FreeFnc)(void*);
+typedef uint8 (*K15_ThreadFnc)(void* p_ThreadParameter);
 
 #ifndef K15_EXPORT_SYMBOL
 	#define K15_EXPORT_SYMBOL
 #endif 
-
-//implemented in K15_OSContext.cpp
-void* K15_DefaultMallocWrapper(size_t p_SizeInBytes);
-void K15_DefaultFreeWrapper(void* p_Pointer);
 
 #endif //_K15_Prerequisites_h_

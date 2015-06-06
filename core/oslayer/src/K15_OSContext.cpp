@@ -10,19 +10,6 @@
 #include <cstring>
 #include <cctype>
 
-/*********************************************************************************/
-void* K15_DefaultMallocWrapper(size_t p_SizeInBytes)
-{
-	return ::malloc(p_SizeInBytes);
-}
-/*********************************************************************************/
-void K15_DefaultFreeWrapper(void* p_Pointer)
-{
-	::free(p_Pointer);
-}
-/*********************************************************************************/
-
-
 intern K15_OSContext g_InternalOSContext = {};
 intern uint8 g_InternalOSContextInitialized = K15_FALSE;
 

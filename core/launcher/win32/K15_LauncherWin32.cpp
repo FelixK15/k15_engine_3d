@@ -114,7 +114,7 @@ int CALLBACK WinMain(
 #endif //K15_USE_DETERMINISTIC_GAME_MEM_ADDRESS
 
 	K15_MemoryBuffer gameMemory = {};
-	K15_InitializeDefaultPreallocatedMemoryBuffer(&gameMemory, memoryBlock, requestedMemorySize, 0);
+	K15_InitializePreallocatedMemoryBuffer(&gameMemory, memoryBlock, requestedMemorySize, 0);
 
 	gameContext.asyncContext = K15_CreateAsyncContext(osContext);
 	gameContext.gameMemory = &gameMemory;
