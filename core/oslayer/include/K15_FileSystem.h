@@ -31,6 +31,7 @@ char* K15_GetPathWithoutExtension(const char* p_FilePath);
 char* K15_GetFileNameWithoutPath(const char* p_FilePath);
 char* K15_GetFileNameWithoutExtension(const char* p_FilePath);
 char* K15_GetFileExtension(const char* p_FilePath);
+char* K15_ConvertToDirectoryPath(const char* p_String);
 char* K15_ConvertToAbsolutePath(const char* p_FilePath);
 char* K15_ConvertToSystemPath(const char* p_FilePath);
 char* K15_ConvertToSystemPathInplace(char* p_FilePath);

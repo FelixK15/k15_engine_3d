@@ -242,13 +242,44 @@ intern inline uint8 K15_GLUpdateTexture(K15_RenderContext* p_RenderContext, K15_
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
+intern inline uint8 K15_GLBindTexture(K15_RenderContext* p_RenderContext, K15_RenderTextureHandle* p_RenderTextureHandle)
+{
+	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
+
+	K15_GLTexture* glTexture = &glContext->glObjects.textures[*p_RenderTextureHandle];
+	GLenum glTextureType = glTexture->glTextureTarget;
+	
+	//don't bind already bound textre
+	if (glContext->glBoundObjects.boundTextures[glTextureType] == glTexture)
+	{
+		return K15_SUCCESS;
+	}
+	
+	GLuint glTextureHandle = glTexture->glTexture;
+
+	K15_OPENGL_CALL(kglBindTexture(glTextureType, glTextureHandle));
+
+	//save bound texture
+	glContext->glBoundObjects.boundTextures[glTextureType] = glTexture;
+
+	return K15_SUCCESS;
+}
+/*********************************************************************************/
 intern inline uint8 K15_GLDeleteTexture(K15_RenderContext* p_RenderContext, K15_RenderTextureHandle* p_RenderTextureHandle)
 {
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
 
 	K15_GLTexture* glTexture = &glContext->glObjects.textures[*p_RenderTextureHandle];
+	GLenum glTextureType = glTexture->glTextureTarget;
 
 	K15_OPENGL_CALL(kglDeleteTextures(1, &glTexture->glTexture));
+
+	//set saved bound texture to 0
+	if (glContext->glBoundObjects.boundTextures[glTextureType] == glTexture)
+	{
+		glContext->glBoundObjects.boundTextures[glTextureType] = 0;
+	}
+
 
 	return K15_SUCCESS;
 }

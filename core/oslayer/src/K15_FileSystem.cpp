@@ -1,5 +1,6 @@
 #include "K15_FileSystem.h"
 
+#include "K15_String.h"
 #include "K15_DefaultCLibraries.h"
 #include "K15_OSContext.h"
 
@@ -148,6 +149,26 @@ char* K15_GetFileExtension(const char* p_FilePath)
 	return fileName;
 }
 /*********************************************************************************/
+char* K15_ConvertToDirectoryPath(const char* p_String)
+{
+	K15_ASSERT_TEXT(p_String, "String is NULL.");
+
+	uint32 stringLength = (uint32)strlen(p_String);
+
+	//last char equals dir separator?
+	if (p_String[stringLength-1] != '/' && 
+		p_String[stringLength-1] != '\\')
+	{
+		stringLength += 1;
+	}
+
+	char* copyString = K15_CopyStringIntoBuffer(p_String, (char*)alloca(stringLength + 1), stringLength);
+
+	copyString[stringLength-1] = K15_DIR_SEPARATOR;
+
+	return K15_ConvertToSystemPath(copyString);
+}
+/*********************************************************************************/
 char* K15_ConvertToAbsolutePath(const char* p_FilePath)
 {
 	K15_ASSERT_TEXT(p_FilePath, "Filepath is NULL.");
@@ -176,26 +197,6 @@ char* K15_ConvertToSystemPath(const char* p_FilePath)
 	convertedFilePath[filePathLength] = 0;
 
 	return K15_ConvertToSystemPathInplace(convertedFilePath);
-
-	/*const char* filePath = p_FilePath;
-
-	for (size_t fileNameIndex = 0;
-		fileNameIndex < filePathSize;
-		++fileNameIndex)
-	{
-		if (filePath[fileNameIndex] == '\\')
-		{
-			convertedFilePath[fileNameIndex] = '/';
-		}
-		else
-		{
-			convertedFilePath[fileNameIndex] = filePath[fileNameIndex];
-		}
-	}
-
-	convertedFilePath[filePathSize] = 0;
-
-	return convertedFilePath;*/
 }
 /*********************************************************************************/
 char* K15_ConvertToSystemPathInplace(char* p_FilePath)

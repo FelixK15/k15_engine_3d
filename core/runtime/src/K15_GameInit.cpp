@@ -19,7 +19,7 @@ uint8 K15_GameThreadMain(void* p_Parameter)
 	K15_TickGameFnc K15_TickGame = gameContext->tickFnc;
 
 	bool running = true;
-
+	uint32 frameCounter = 0;
 	K15_SystemEvent event = {};
 
 	while(running)
@@ -45,6 +45,8 @@ uint8 K15_GameThreadMain(void* p_Parameter)
 
 		K15_PostSemaphore(gameThreadSynchronizer);
 		K15_WaitSemaphore(mainThreadSynchronizer);
+
+		++gameContext->frameCounter;
 	}
 
 	//increment semaphore on exit. Some systems close the thread deferred :(

@@ -1,7 +1,7 @@
 #ifndef _K15_Runtime_Memory_Buffer_h_
 #define _K15_Runtime_Memory_Buffer_h_
 
-#include "K15_Prerequisites_RT.h"
+#include "K15_RuntimePrerequisites.h"
 
 enum K15_MemoryBufferFlags
 {

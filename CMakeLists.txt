@@ -18,6 +18,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 #Define Subdirectories
 add_subdirectory(core)
+add_subdirectory(unittest)
 add_subdirectory(dependencies)
 add_subdirectory(testgame)
 add_subdirectory(tools)

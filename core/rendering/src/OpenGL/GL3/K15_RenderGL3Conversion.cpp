@@ -799,3 +799,70 @@ intern inline GLenum K15_GLConvertFilterAddressMode(K15_RenderFilterAddressMode 
 	return nativeFilterAddressMode;
 }
 /*********************************************************************************/
+K15_RenderProgramType K15_ConvertGLProgramType(GLenum p_GLProgramType)
+{
+	K15_RenderProgramType programType = K15_RENDER_PROGRAM_TYPE_COUNT;
+
+	switch (p_GLProgramType)
+	{
+		case GL_VERTEX_SHADER:
+		{
+			programType = K15_RENDER_PROGRAM_TYPE_VERTEX;
+			break;
+		}
+
+		case GL_FRAGMENT_SHADER:
+		{
+			programType = K15_RENDER_PROGRAM_TYPE_FRAGMENT;
+			break;
+		}
+
+		case GL_GEOMETRY_SHADER:
+		{
+			programType = K15_RENDER_PROGRAM_TYPE_GEOMETRY;
+			break;
+		}
+
+		default:
+		{
+			assert(false);
+			break;
+		}
+	}
+
+	return programType;
+}
+/*********************************************************************************/
+GLbitfield K15_GLConvertProgramTypeBit(GLenum p_GLProgramType)
+{
+	GLbitfield nativeShaderBitField = GL_INVALID_ENUM;
+
+	switch(p_GLProgramType)
+	{
+		case GL_VERTEX_SHADER:
+		{
+			nativeShaderBitField = GL_VERTEX_SHADER_BIT;
+			break;
+		}
+
+		case GL_FRAGMENT_SHADER:
+		{
+			nativeShaderBitField = GL_FRAGMENT_SHADER_BIT;
+			break;
+		}
+
+		case GL_GEOMETRY_SHADER:
+		{
+			nativeShaderBitField = GL_GEOMETRY_SHADER_BIT;
+			break;
+		}
+
+		default:
+		{
+			assert(false);
+		}
+	}
+
+	return nativeShaderBitField;
+}
+/*********************************************************************************/

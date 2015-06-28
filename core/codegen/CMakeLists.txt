@@ -17,4 +17,4 @@ include_directories(./../logging/include)
 
 add_executable(codegen ${K15_CODEGEN_CODE})
 
-target_link_libraries(codegen logging oslayer)
+target_link_libraries(codegen logging oslayer string math)

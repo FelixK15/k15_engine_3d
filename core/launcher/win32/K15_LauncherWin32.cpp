@@ -8,6 +8,8 @@
 #include <K15_FileWatch.h>
 #include <K15_System.h>
 
+#include <K15_FrameCounter.h>
+
 #include <K15_FileSystem.h>
 
 #include <win32/K15_OSContextWin32.h>
@@ -164,8 +166,6 @@ int CALLBACK WinMain(
 		joinResult = K15_TryJoinThread(gameThread, 0);
 
 		running = joinResult != K15_SUCCESS;
-
-		K15_SleepThreadForMilliseconds(16);
 	}
 
 	return 0;

@@ -1,92 +1,23 @@
-/**
- * @file K15_Quaternion.h
- * @author  Tobias Funke <t.funke@k15games.de>
- * @version 1.0
- * @date 2012/08/07
- * @section LICENSE
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 3 of
- * the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details at
- * http://www.gnu.org/copyleft/gpl.html
- *
- * @section DESCRIPTION
- *
- * 
- */
-
-#ifndef _K15Engine_Math_Quaternion_h_
-#define _K15Engine_Math_Quaternion_h_
+#ifndef _K15_Math_Quaternion_h_
+#define _K15_Math_Quaternion_h_
 
 #include "K15_MathPrerequisites.h"
-#include "K15_Matrix4.h"
 
-namespace K15_Engine { namespace Math {
-	class Quaternion
+struct K15_Quaternion
+{
+	union
 	{
-	public:
-		/*********************************************************************************/
-		static const Quaternion Identity;
-		static const Quaternion Zero;
-		/*********************************************************************************/
-	public:
-		Quaternion();
-		Quaternion(float w, float x, float y, float z);
-		Quaternion(const Quaternion &qQuat);
-		~Quaternion();
-
-		float length() const;
-		void normalize();
-		void conjugate();
-		void invert();
-
-		Quaternion operator+(const Quaternion &qQuat) const;
-		Quaternion operator-(const Quaternion &qQuat) const;
-		Quaternion operator*(const Quaternion &qQuat) const;
-		Quaternion operator/(const Quaternion &qQuat) const;
-		Quaternion operator*(float fScalar) const;
-		Quaternion operator/(float fScalar) const;
-
-		const Quaternion& operator=(const Quaternion &qQuat);
-		const Quaternion& operator+=(const Quaternion &qQuat);
-		const Quaternion& operator-=(const Quaternion &qQuat);
-		const Quaternion& operator*=(const Quaternion &qQuat);
-		const Quaternion& operator/=(const Quaternion& p_Quaternion);
-		const Quaternion& operator*=(float p_Scalar);
-		const Quaternion& operator/=(float p_Scalar);
-		
-		bool operator==(const Quaternion &qQuat) const;
-		bool operator!=(const Quaternion &qQuat) const;
-		
-		float getRoll() const;
-		float getPitch() const;
-		float getYaw() const;
-
-		bool isIdentity() const;
-		
-		float dot(const Quaternion& p_Quaternion) const;
-		
-		Matrix4 toRotationMatrix() const;
-
-// 		static Quaternion Lerp(const Quaternion &qQuat1, const Quaternion &qQuat2, float fValue);
-// 		static Quaternion Slerp(const Quaternion &qQuat1, const Quaternion &qQuat2, float fValue);
-	
-	public:
-		union
+		struct  
 		{
-			struct  
-			{
-				float w, x, y, z;
-			};//struct
-			float m_QuaternionArray[4];
-		};//union
-	};// end of Quaternion class declaration
-}} //end of K15_Engine::Math namespace
+			real32 w;
+			real32 x;
+			real32 y;
+			real32 z;
+		};
+		real32 v[4]; //w,x,y,z
+	};
+};
 
-#endif //__K15_Quaternion__
+K15_Quaternion operator*(K15_Quaternion& p_Quaternion1, K15_Quaternion& p_Quaternion2);
+
+#endif //_K15_Math_Quaternion_h_

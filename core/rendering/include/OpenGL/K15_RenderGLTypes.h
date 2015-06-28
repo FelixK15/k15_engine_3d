@@ -114,6 +114,8 @@
 typedef char GLchar;
 struct K15_GLRenderContext;
 
+enum K15_RenderBufferType : uint32;
+
 /*********************************************************************************/
 enum K15_GLUniformUsage
 {
@@ -124,14 +126,17 @@ enum K15_GLUniformUsage
 /*********************************************************************************/
 struct K15_GLBuffer
 {
-	byte* data;
-	uint32 size;
+	GLvoid* data;
+	GLsizeiptr sizeInBytes;
+	GLsizei singleElementSizeInBytes;
 	GLuint buffer;
-	GLenum bufferType;
+	GLenum glBufferType;
+	K15_RenderBufferType bufferType;
 };
 /*********************************************************************************/
 struct K15_GLBufferAccessData
 {
+	K15_RenderBufferType bufferType;
 	uint32 glBufferIndex;
 	uint32 offset;
 	uint32 size;
@@ -161,6 +166,7 @@ struct K15_GLProgram
 	K15_GLUniform uniforms[K15_RENDER_GL_MAX_PROGRAM_UNIFORMS];
 	uint32 uniformCount;
 	GLuint program;
+	GLenum programType;
 };
 /*********************************************************************************/
 struct K15_GLTexture
@@ -275,6 +281,9 @@ extern PFNGLDELETETEXTURESPROC					kglDeleteTextures;
 extern PFNGLDEPTHFUNCPROC						kglDepthFunc;
 extern PFNGLDISABLEPROC							kglDisable;
 extern PFNGLDRAWELEMENTSPROC					kglDrawElements;
+extern PFNGLDRAWRANGEELEMENTSPROC				kglDrawRangeElements;
+extern PFNGLDRAWELEMENTSBASEVERTEXPROC			kglDrawElementsBaseVertex;
+extern PFNGLDRAWRANGEELEMENTSBASEVERTEXPROC		kglDrawRangeElementsBaseVertex;
 extern PFNGLENABLEPROC							kglEnable;
 extern PFNGLFRONTFACEPROC						kglFrontFace;
 extern PFNGLGENTEXTURESPROC						kglGenTextures;

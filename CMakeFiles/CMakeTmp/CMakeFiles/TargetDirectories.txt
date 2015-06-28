@@ -1,2 +1,0 @@
-D:/Programming/my_projects/k15-engine-3d/CMakeFiles/CMakeTmp/CMakeFiles/ALL_BUILD.dir
-D:/Programming/my_projects/k15-engine-3d/CMakeFiles/CMakeTmp/CMakeFiles/cmTryCompileExec45092060.dir

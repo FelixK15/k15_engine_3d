@@ -4,7 +4,11 @@ include_directories(../oslayer/include)
 include_directories(../logging/include)
 include_directories(../runtime/include)
 
-set(LAUNCHER_LIBRARIES oslayer logging rendering runtime string)
+set(LAUNCHER_LIBRARIES resourceformats oslayer logging rendering runtime string)
+
+if(${K15_BUILD_DYNAMIC_GAME_LIBRARY} EQUAL 0)
+	set(LAUNCHER_LIBRARIES ${LAUNCHER_LIBRARIES} testgame)
+endif()
 
 if (${K15_PLATFORM} STREQUAL "Android")
 	set(LAUNCHER_SRC_ANDROID "android/jni/K15_LauncherAndroid.cpp")

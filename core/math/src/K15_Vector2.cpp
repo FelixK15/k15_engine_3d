@@ -1,219 +1,111 @@
-/**
- * @file K15_Vector2.cpp
- * @author  Tobias Funke <tobyfunke@web.de>
- * @version 1.0
- * @date 2012/10/19
- * @section LICENSE
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 3 of
- * the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details at
- * http://www.gnu.org/copyleft/gpl.html
- *
- * @section DESCRIPTION
- *
- * 
- */
-
 #include "K15_Vector2.h"
-#include "K15_MathUtil.h"
 
-namespace K15_Engine { namespace Math { 
-	/*********************************************************************************/
-	const Vector2 Vector2::Up = Vector2(0.0f,1.0f);
-	const Vector2 Vector2::Right = Vector2(1.0f,0.0f);
-	const Vector2 Vector2::Zero = Vector2(0.0f,0.0f);
-	/*********************************************************************************/
-	
-	/*********************************************************************************/
-	Vector2::Vector2()
-	{
-		x = 0.0f;
-		y = 0.0f;
-	}
-	/*********************************************************************************/
-	Vector2::Vector2(float p_Values[2])
-	{
-		x = p_Values[0];
-		y = p_Values[1];
-	}
-	/*********************************************************************************/
-	Vector2::Vector2(float x,float y)
-	{
-		m_VectorArray[0] = x;
-		m_VectorArray[1] = y;
-	}
-	/*********************************************************************************/
-	Vector2::Vector2(const Vector2& p_Vector)
-	{
-		x = p_Vector.x;
-		y = p_Vector.y;
-	}
-	/*********************************************************************************/
-	Vector2::~Vector2()
-	{
+/*********************************************************************************/
+real32 K15_GetVectorDotProduct(K15_Vector2& p_Vector1, K15_Vector2& p_Vector2)
+{
+	return p_Vector1.x * p_Vector2.x + p_Vector1.y * p_Vector2.y;
+}
+/*********************************************************************************/
+real32 K15_GetVectorAngle(K15_Vector2& p_Vector1, K15_Vector2& p_Vector2)
+{
+	real32 v1Length = K15_GetVectorLength(p_Vector1);
+	real32 v2Length = K15_GetVectorLength(p_Vector2);
+	real32 dotProduct = K15_GetVectorDotProduct(p_Vector1, p_Vector2);
 
-	}
-	/*********************************************************************************/
-	void Vector2::normalize()
-	{
-		float magnitude = length();
-		
-		x /= magnitude;
-		y /= magnitude;
-	}
-	/*********************************************************************************/
-	float Vector2::length() const
-	{
-		return MathUtil::sqrt(x*x + y*y);
-	}
-	/*********************************************************************************/
-	void Vector2::invert()
-	{
-		x = -x;
-		y = -y;
-	}
-	/*********************************************************************************/
-	bool Vector2::isNull() const
-	{
-		return (x == y) && (x == 0);
-	}
-	/*********************************************************************************/
-	bool Vector2::isUnit() const
-	{
-		return (length() == 1);
-	}
-	/*********************************************************************************/
-	float Vector2::dot(const Vector2& p_Vector) const
-	{
-		return (x * p_Vector.x + y * p_Vector.y);
-	}
-	/*********************************************************************************/
-	const Vector2& Vector2::operator=(const Vector2& p_Vector)
-	{
-		x = p_Vector.x;
-		y = p_Vector.y;
-		return *this;
-	}
-	/*********************************************************************************/
-	Vector2 Vector2::operator*(float p_Scale) const
-	{
-		Vector2 vector = *this;
-		vector.x *= p_Scale;
-		vector.y *= p_Scale;
-		return *this;
-	}
-	/*********************************************************************************/
-	Vector2 Vector2::operator/(float p_Scalar) const
-	{
-		Vector2 vector = *this;
-		vector.x /= p_Scalar;
-		vector.y /= p_Scalar;
-		return *this;
-	}
-	/*********************************************************************************/
-	const Vector2& Vector2::operator*=(float p_Scale)
-	{
-		x *= p_Scale;
-		y *= p_Scale;
-		return *this;
-	}
-	/*********************************************************************************/
-	Vector2 Vector2::operator+(const Vector2& p_Vector) const
-	{
-		Vector2 vecNewVec;
-		vecNewVec.x = this->x + p_Vector.x;
-		vecNewVec.y = this->y + p_Vector.y;
-		return vecNewVec;
-	}
-	/*********************************************************************************/
-	Vector2 Vector2::operator-(const Vector2& p_Vector) const
-	{
-		Vector2 vecNewVec;
-		vecNewVec.x = this->x - p_Vector.x;
-		vecNewVec.y = this->y - p_Vector.y;
-		return vecNewVec;
-	}
-	/*********************************************************************************/
-	const Vector2& Vector2::operator+=(const Vector2& p_Vector)
-	{
-		x += p_Vector.x;
-		y += p_Vector.y;
-		return *this;
-	}
-	/*********************************************************************************/
-	const Vector2& Vector2::operator-=(const Vector2& p_Vector)
-	{
-		x -= p_Vector.x;
-		y -= p_Vector.y;
-		return *this;
-	}
-	/*********************************************************************************/
-	const Vector2& Vector2::operator/=(float p_Scalar)
-	{
-		x /= p_Scalar;
-		y /= p_Scalar;
-		return *this;
-	}
-	/*********************************************************************************/
-	bool Vector2::operator<(const Vector2& p_Vector) const
-	{
-		if(length()<p_Vector.length())
-		{
-			return true;
-		}
-		return false;
-	}
-	/*********************************************************************************/
-	bool Vector2::operator>(const Vector2& p_Vector) const
-	{
-		if(length()>p_Vector.length())
-		{
-			return true;
-		}
-		return false;
-	}
-	/*********************************************************************************/
-	bool Vector2::operator<=(const Vector2& p_Vector) const
-	{
-		if(length()<=p_Vector.length())
-		{
-			return true;
-		}
-		return false;
-	}
-	/*********************************************************************************/
-	bool Vector2::operator>=(const Vector2& p_Vector) const
-	{
-		if(length()>=p_Vector.length())
-		{
-			return true;
-		}
-		return false;
-	}
-	/*********************************************************************************/
-	bool Vector2::operator==(const Vector2& p_Vector) const
-	{
-		if(length() == p_Vector.length())
-		{
-			return true;
-		}
-		return false;
-	}
-	/*********************************************************************************/
-	bool Vector2::operator!=(const Vector2& p_Vector) const
-	{
-		if(length() == p_Vector.length())
-		{
-			return false;
-		}
-		return true;
-	}
-	/*********************************************************************************/
-}}//end of K15_Engine::Math namespace
+	return ::acos(dotProduct / (v1Length * v2Length));
+}
+/*********************************************************************************/
+real32 K15_GetVectorLength(K15_Vector2& p_Vector)
+{
+	real32 squaredLength = K15_GetVectorSquaredLength(p_Vector);
+	return (real32)::sqrt(squaredLength);
+}
+/*********************************************************************************/
+real32 K15_GetVectorSquaredLength(K15_Vector2& p_Vector)
+{
+	return p_Vector.x * p_Vector.x + p_Vector.y * p_Vector.y;
+}
+/*********************************************************************************/
+K15_Vector2 K15_CreateVector(real32 p_ComponentX, real32 p_ComponentY)
+{
+	K15_Vector2 vec2 = {};
+
+	return K15_InitializeVector(vec2, p_ComponentX, p_ComponentY);
+}
+/*********************************************************************************/
+K15_Vector2 K15_InitializeVector(K15_Vector2& p_Vector, real32 p_ComponentX, real32 p_ComponentY)
+{
+	p_Vector.x = p_ComponentX;
+	p_Vector.y = p_ComponentY;
+
+	return p_Vector;
+}
+/*********************************************************************************/
+K15_Vector2 K15_GetProjectedVector(K15_Vector2& p_Vector1, K15_Vector2& p_Vector2)
+{
+	real32 dotProduct = K15_GetVectorDotProduct(p_Vector1, p_Vector2);
+
+	return p_Vector1 * dotProduct;
+}
+/*********************************************************************************/
+K15_Vector2 K15_GetNormalizedVector(K15_Vector2& p_Vector)
+{
+	real32 vectorLength = K15_GetVectorLength(p_Vector);
+	K15_Vector2 normalizedVector = {};
+
+	normalizedVector.x = p_Vector.x /= vectorLength;
+	normalizedVector.y = p_Vector.y /= vectorLength;
+
+	return normalizedVector;
+}
+/*********************************************************************************/
+void K15_NormalizeVector(K15_Vector2& p_Vector)
+{
+	p_Vector = K15_GetNormalizedVector(p_Vector);
+}
+/*********************************************************************************/
+K15_Vector2 operator+(K15_Vector2& p_Vector1, K15_Vector2& p_Vector2)
+{
+	K15_Vector2 vectorSum = {};
+
+	vectorSum.x = p_Vector1.x + p_Vector2.x;
+	vectorSum.y = p_Vector1.y + p_Vector2.y;
+
+	return vectorSum;
+}
+/*********************************************************************************/
+K15_Vector2 operator-(K15_Vector2& p_Vector1, K15_Vector2& p_Vector2)
+{
+	K15_Vector2 vectorDifference = {};
+
+	vectorDifference.x = p_Vector1.x - p_Vector2.x;
+	vectorDifference.y = p_Vector1.y - p_Vector2.y;
+
+	return vectorDifference;
+}
+/*********************************************************************************/
+K15_Vector2 operator*(K15_Vector2& p_Vector, real32 p_Scalar)
+{
+	K15_Vector2 scaledVector = {};
+
+	scaledVector.x = p_Vector.x * p_Scalar;
+	scaledVector.y = p_Vector.y * p_Scalar;
+
+	return scaledVector;
+}
+/*********************************************************************************/
+K15_Vector2 operator*(real32 p_Scalar, K15_Vector2& p_Vector)
+{
+	return p_Vector * p_Scalar;
+}
+/*********************************************************************************/
+bool operator==(K15_Vector2& p_Vector1, K15_Vector2& p_Vector2)
+{
+	return (p_Vector1.x == p_Vector2.x) && (p_Vector1.y == p_Vector2.y);
+}
+/*********************************************************************************/
+bool operator!=(K15_Vector2& p_Vector1, K15_Vector2& p_Vector2)
+{
+	return !((p_Vector1.x == p_Vector2.x) && (p_Vector1.y == p_Vector2.y));
+}
+/*********************************************************************************/

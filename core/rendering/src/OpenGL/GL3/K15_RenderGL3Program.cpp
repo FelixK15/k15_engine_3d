@@ -18,6 +18,8 @@ struct K15_GLProgramPreprocessor
 	uint32 amountIncludes;
 };
 
+typedef uint8(*K15_InternalGLUpdateUniformFnc)(K15_GLProgram* p_GLProgram, uint32 p_UniformIndex, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc);
+
 /*********************************************************************************/
 intern void K15_InternalGLUpdateUniform(uint32 p_TargetSize, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc, void* p_UniformData)
 {
@@ -250,7 +252,7 @@ intern char* K15_InternalGLPreprocessProgramCode(const char* p_FilePath, const c
 	return preprocessedCode;
 }
 /*********************************************************************************/
-intern void K15_InternGLReflectProgram(K15_GLProgram* p_Program)
+intern void K15_InternGLReflectProgram(K15_GLProgram* p_Program, K15_RenderProgramDesc* p_RenderProgramDesc)
 {
 	uint32 uniformCounter = 0;
 	GLuint glProgram = p_Program->program;
@@ -280,12 +282,7 @@ intern void K15_InternGLReflectProgram(K15_GLProgram* p_Program)
 		K15_OPENGL_CALL(kglGetActiveUniform(glProgram, activeUniformIndex, nameBufferSize, 0, &currentValueSize, &currentValueType, nameBuffer));
 
 		//copy name for later use
-		size_t nameLength = strlen(nameBuffer);
-		GLchar* name = (GLchar*)malloc(nameLength + 1); //+1 for 0 terminator
-		memcpy(name, nameBuffer, nameLength);
-
-		//set 0 terminator
-		name[nameLength] = 0;
+		GLchar* name = (GLchar*)K15_CopyString(nameBuffer);
 
 		//get register location using uniform name
 		K15_OPENGL_CALL(uniformRegister = kglGetUniformLocation(glProgram, nameBuffer));
@@ -297,7 +294,14 @@ intern void K15_InternGLReflectProgram(K15_GLProgram* p_Program)
 		p_Program->uniforms[activeUniformIndex].uniformType = K15_GLConvertGLTypeToUniformType(currentValueType, currentValueSize);
 		p_Program->uniforms[activeUniformIndex].name = name;
 
-		memcpy(p_Program->uniforms[activeUniformIndex].name, nameBuffer, nameLength);
+		K15_AutoUniformType autoType = K15_ConvertToAutoType(name);
+
+		p_RenderProgramDesc->uniforms[activeUniformIndex].type = K15_GLConvertGLTypeToUniformType(currentValueType, currentValueSize);
+		p_RenderProgramDesc->uniforms[activeUniformIndex].name = name;
+		p_RenderProgramDesc->uniforms[activeUniformIndex].autoType = autoType;
+		p_RenderProgramDesc->uniforms[activeUniformIndex].autoTypeGroup = K15_ConvertToAutoTypeGroup(autoType);
+
+		//memcpy(p_Program->uniforms[activeUniformIndex].name, nameBuffer, nameLength);
 
 		//clear name buffer
 		memset(nameBuffer, 0, nameBufferSize);
@@ -311,12 +315,7 @@ intern void K15_InternGLReflectProgram(K15_GLProgram* p_Program)
 		K15_OPENGL_CALL(kglGetActiveAttrib(glProgram, activeAttributeIndex, nameBufferSize, 0, &currentValueSize, &currentValueType, nameBuffer));
 
 		//copy name for later use
-		size_t nameLength = strlen(nameBuffer);
-		GLchar* name = (GLchar*)malloc(nameLength + 1); //+1 for 0 terminator
-		memcpy(name, nameBuffer, nameLength);
-
-		//set 0 terminator
-		name[nameLength] = 0;
+		GLchar* name =  (GLchar*)K15_CopyString(nameBuffer);
 
 		//get register location using uniform name
 		K15_OPENGL_CALL(uniformRegister = kglGetAttribLocation(glProgram, nameBuffer));
@@ -334,6 +333,76 @@ intern void K15_InternGLReflectProgram(K15_GLProgram* p_Program)
 
 	p_Program->uniformCount = (uint32)(amountActiveUniforms + amountActiveAttributes);
 
+}
+/*********************************************************************************/
+intern K15_InternalGLUpdateUniformFnc K15_InternalGLConvertToUpdateUniformFnc(K15_UniformType p_UniformType)
+{
+	K15_InternalGLUpdateUniformFnc updateUniformFnc = 0;
+
+	switch(p_UniformType)
+	{
+		case K15_UNIFORM_TYPE_INT32:
+		{
+			updateUniformFnc = K15_InternalGLUpdateIntUniform;
+			break;
+		}
+
+		case K15_UNIFORM_TYPE_UINT32:
+		{
+			updateUniformFnc = K15_InternalGLUpdateUIntUniform;
+			break;
+		}
+
+		case K15_UNIFORM_TYPE_FLOAT:
+		{
+			updateUniformFnc = K15_InternalGLUpdateFloatUniform;
+			break;
+		}
+
+		case K15_UNIFORM_TYPE_FLOAT2:
+		{
+			updateUniformFnc = K15_InternalGLUpdateFloat2Uniform;
+			break;
+		}
+
+		case K15_UNIFORM_TYPE_FLOAT2x2:
+		{
+			updateUniformFnc = K15_InternalGLUpdateFloat2x2Uniform;
+			break;
+		}
+
+		case K15_UNIFORM_TYPE_FLOAT3:
+		{
+			updateUniformFnc = K15_InternalGLUpdateFloat3Uniform;
+			break;
+		}
+
+		case K15_UNIFORM_TYPE_FLOAT3x3:
+		{
+			updateUniformFnc = K15_InternalGLUpdateFloat3x3Uniform;
+			break;
+		}
+
+		case K15_UNIFORM_TYPE_FLOAT4:
+		{
+			updateUniformFnc = K15_InternalGLUpdateFloat4Uniform;
+			break;
+		}
+
+		case K15_UNIFORM_TYPE_FLOAT4x4:
+		{
+			updateUniformFnc = K15_InternalGLUpdateFloat4x4Uniform;
+			break;
+		}
+
+		default:
+		{
+			assert(false);
+			break;
+		}
+	}
+
+	return updateUniformFnc;
 }
 /*********************************************************************************/
 int K15_GLUniformNameCompare(const void* p_UniformName, const void* p_Uniform)
@@ -428,7 +497,7 @@ uint8 K15_GLCreateProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramD
 	}
 
 	char* parsedProgramCode = K15_InternalGLPreprocessProgramCode(programFilePath, programCode);
-	free((void*)programCode); //free programcode after it got preprocessed
+	//free((void*)programCode); //free programcode after it got preprocessed
 
 	const char* glslProgramCode[] = {
 		K15_GLGenerateGLSLHeaderCode(glProgramType),
@@ -443,6 +512,7 @@ uint8 K15_GLCreateProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramD
 
 	K15_GLProgram* program = &glContext->glObjects.programs[*p_RenderProgramHandle];
 	program->program = glProgram;
+	program->programType = glProgramType;
 
 	if (linkStatus == GL_FALSE)
 	{
@@ -468,13 +538,13 @@ uint8 K15_GLCreateProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramD
 	//if everything went smooth so far, try to reflect the program
 	if (result == K15_SUCCESS)
 	{
-		K15_InternGLReflectProgram(program);
+		K15_InternGLReflectProgram(program, p_RenderProgramDesc);
 	}
 
-	if (glProgramType == GL_FRAGMENT_SHADER)
+	/*if (glProgramType == GL_FRAGMENT_SHADER)
 	{
 		K15_OPENGL_CALL(kglBindFragDataLocation(glProgram, 0, "outColor0"));
-	}
+	}*/
 
 	return result;
 }
@@ -485,10 +555,97 @@ uint8 K15_GLDeleteProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramH
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
 
 	K15_GLProgram* glProgram = &glContext->glObjects.programs[*p_RenderProgramHandle];
+	GLenum glProgramType = glProgram->programType;
+	K15_RenderProgramType programType = K15_ConvertGLProgramType(glProgramType);
 
 	K15_OPENGL_CALL(kglDeleteProgram(glProgram->program));
 
+	glContext->glBoundObjects.boundPrograms[programType] = 0;
 	glContext->glObjects.programs[*p_RenderProgramHandle].program = K15_INVALID_GL_PROGRAM_INDEX;
+
+	return result;
+}
+/*********************************************************************************/
+uint8 K15_GLBindProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramHandle* p_RenderProgramHandle)
+{
+	uint8 result = K15_SUCCESS;
+	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
+
+	GLuint glProgramPipelineHandle = glContext->gl3.programPipelineHandle;
+	K15_GLProgram* glProgram = &glContext->glObjects.programs[*p_RenderProgramHandle];
+	GLenum glProgramType = glProgram->programType;
+
+	K15_RenderProgramType programType = K15_ConvertGLProgramType(glProgramType);
+	if (glContext->glBoundObjects.boundPrograms[programType] == glProgram)
+	{
+		return K15_SUCCESS;
+	}
+
+	GLuint glProgramHandle = glProgram->program;
+	GLbitfield glProgramTypeBit = K15_GLConvertProgramTypeBit(glProgramType);
+
+	K15_OPENGL_CALL(kglUseProgramStages(glProgramPipelineHandle, glProgramTypeBit ,glProgramHandle));
+
+	glContext->glBoundObjects.boundPrograms[programType] = glProgram;
+
+	return result;
+}
+/*********************************************************************************/
+uint8 K15_GLUpdateDirtyUniforms(K15_RenderContext* p_RenderContext)
+{
+	uint8 result = K15_SUCCESS;
+	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
+
+	K15_RenderUniformCache* uniformCache = p_RenderContext->uniformCache;
+	//TEST ME
+	for (uint32 dirtyUniformIndex = 0;
+		dirtyUniformIndex < K15_AUTO_UNIFORM_TYPE_COUNT;
+		++dirtyUniformIndex)
+	{
+		if (uniformCache->dirtyAutoUniforms[dirtyUniformIndex])
+		{
+			K15_RenderUniformCacheEntry* cachedDirtyUniform = uniformCache->dirtyAutoUniforms[dirtyUniformIndex];
+			const char* cachedDirtyUniformName = cachedDirtyUniform->name;
+
+			for (uint32 gpuProgramIndex = 0;
+				gpuProgramIndex < K15_RENDER_PROGRAM_TYPE_COUNT;
+				++gpuProgramIndex)
+			{
+				K15_GLProgram* boundProgram = glContext->glBoundObjects.boundPrograms[gpuProgramIndex];
+
+				if (boundProgram)
+				{
+					uint32 programUniformCount = boundProgram->uniformCount;
+
+					for (uint32 programUniformIndex = 0;
+						programUniformIndex < programUniformCount;
+						++programUniformIndex)
+					{
+						K15_GLUniform* glUniform = &boundProgram->uniforms[programUniformIndex];
+						char* glUniformName = glUniform->name;
+						K15_UniformType uniformType = glUniform->uniformType;
+
+						if (strcmp(glUniformName, cachedDirtyUniformName) == 0)
+						{
+							K15_InternalGLUpdateUniformFnc updateUniform = K15_InternalGLConvertToUpdateUniformFnc(uniformType);
+							K15_RenderUniformUpdateDesc updateUniformDesc = {};
+
+							updateUniformDesc.type = uniformType;
+							updateUniformDesc.name = glUniformName;
+							updateUniformDesc.size = K15_ConvertToUniformByteSize(uniformType);
+							updateUniformDesc.data = cachedDirtyUniform->data;
+							updateUniformDesc.flags = 0;
+
+							updateUniform(boundProgram, glUniform->registerIndex, &updateUniformDesc);
+							break;
+						}
+					}
+				}
+			}
+
+			uniformCache->dirtyAutoUniforms[dirtyUniformIndex] = 0;
+		}
+	}
 
 	return result;
 }

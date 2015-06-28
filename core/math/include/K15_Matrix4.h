@@ -1,100 +1,48 @@
-/**
- * @file K15_Matrix4x4.h
- * @author	Tobias Funke <t.funke@k15games.de>
- * @version 1.0
- * @date 2012/07/12
- * @section LICENSE
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 3 of
- * the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details at
- * http://www.gnu.org/copyleft/gpl.html
- *
- * @section DESCRIPTION
- *
- *							
- */
-
-#ifndef _K15Engine_Math_Matrix4x4_h_
-#define _K15Engine_Math_Matrix4x4_h_
+#ifndef _K15_Math_Matrix4_h_
+#define _K15_Math_Matrix4_h_
 
 #include "K15_MathPrerequisites.h"
 
-#include "K15_Vector3.h"
-#include "K15_Vector4.h"
-
-namespace K15_Engine { namespace Math {
-	class Matrix4
+struct K15_Matrix4
+{
+	union 
 	{
-	public:
-		/*********************************************************************************/
-		static const Matrix4 Identity;
-		static const Matrix4 Zero;
-		/*********************************************************************************/
-	public:
-		Matrix4();
-		Matrix4(float p_Values[16]);
-		Matrix4(float _1_1,float _1_2,float _1_3,float _1_4,
-				  float _2_1,float _2_2,float _2_3,float _2_4,
-				  float _3_1,float _3_2,float _3_3,float _3_4,
-				  float _4_1,float _4_2,float _4_3,float _4_4);
-		Matrix4(const Matrix4& p_Other);
-
-		~Matrix4();
-
-		float determinant() const;
-
-		Matrix4 inverse() const;
-		Matrix4 transpose() const;
-
-		static Matrix4 Inverse(const Matrix4& p_Matrix);
-		static Matrix4 Transpose(const Matrix4& p_Matrix);
-
-		bool isIdentity() const;
-		bool isZero() const;
-
-		Vector3 getXAxis() const;
-		Vector3 getYAxis() const;
-		Vector3 getZAxis() const;
-
-		float operator[](int p_Index) const;
-		
-		Vector3 operator*(const Vector3& p_Vector) const;
-		Vector4 operator*(const Vector4& p_Vector) const;
-		Matrix4 operator*(float p_Scalar) const;
-		Matrix4 operator*(const Matrix4& p_Matrix) const;
-
-		Matrix4 operator+(const Matrix4& p_Matrix) const;
-		Matrix4 operator-(const Matrix4& p_Matrix) const;
-
-		const Matrix4& operator=(const Matrix4& p_Matrix);
-		const Matrix4& operator*=(float p_Scalar);
-		const Matrix4& operator*=(const Matrix4& p_Matrix);
-		const Matrix4& operator+=(const Matrix4& p_Matrix);
-		const Matrix4& operator-=(const Matrix4& p_Matrix);
-
-		bool operator==(const Matrix4& p_Matrix) const;
-		bool operator!=(const Matrix4& p_Matrix) const;
-
-	public:
-		union
+		struct 
 		{
-			struct 
-			{
-				float _1_1,_1_2,_1_3,_1_4;
-				float _2_1,_2_2,_2_3,_2_4;
-				float _3_1,_3_2,_3_3,_3_4;
-				float _4_1,_4_2,_4_3,_4_4;
-			};// struct
-			float m_MatrixArray[16];
-		};// union
-	};// end of Matrix4x4 class
- }}//end of K15_Engine::Math namespace
+			real32 _1_1, _2_1, _3_1, _4_1;
+			real32 _1_2, _2_2, _3_2, _4_2;
+			real32 _1_3, _2_3, _3_3, _4_3;
+			real32 _1_4, _2_4, _3_4, _4_4;
+		};
 
-#endif //_K15Engine_Math_Matrix4x4_h_
+		real32 v[16];
+		real32 m[4][4];
+	};
+};
+
+K15_Matrix4 K15_GetIdentityMatrix4();
+K15_Matrix4 K15_GetMatrix4Transpose(K15_Matrix4& p_Matrix);
+K15_Matrix4 K15_CreateComposedMatrix(K15_Vector3& p_Position, K15_Vector3& p_Scale, K15_Quaternion& p_Orientation);
+K15_Matrix4 K15_CreateFromQuaternion(K15_Quaternion& p_Quaternion);
+
+void K15_TransposeMatrix4(K15_Matrix4& p_Matrix);
+real32 K15_GetMatrix4Determinant(K15_Matrix4& p_Matrix);
+
+K15_Vector3 K15_GetTransformedVector(K15_Vector3& p_Vector, K15_Matrix4& p_Matrix);
+K15_Vector4 K15_GetTransformedVector(K15_Vector4& p_Vector, K15_Matrix4& p_Matrix);
+
+K15_Vector3 K15_GetXAxis(K15_Matrix4& p_Matrix);
+K15_Vector3 K15_GetYAxis(K15_Matrix4& p_Matrix);
+K15_Vector3 K15_GetZAxis(K15_Matrix4& p_Matrix);
+
+K15_Vector3 K15_GetNormalizedXAxis(K15_Matrix4& p_Matrix);
+K15_Vector3 K15_GetNormalizedYAxis(K15_Matrix4& p_Matrix);
+K15_Vector3 K15_GetNormalizedZAxis(K15_Matrix4& p_Matrix);
+
+K15_Matrix4 operator*(K15_Matrix4& p_Matrix1, K15_Matrix4& p_Matrix2);
+K15_Matrix4 operator*(K15_Matrix4& p_Matrix1, real32 p_Scalar);
+
+bool operator==(K15_Matrix4& p_Matrix1, K15_Matrix4& p_Matrix2);
+bool operator!=(K15_Matrix4& p_Matrix1, K15_Matrix4& p_Matrix2);
+
+#endif //_K15_Math_Matrix4_h_

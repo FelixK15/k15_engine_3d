@@ -35,7 +35,9 @@ intern char* K15_InternalGetWorkingDirectory(char* p_Argument)
 
 	while (p_Argument[characterIndex++] != '=');
 
-	return p_Argument + characterIndex;
+	char* workingDir = p_Argument + characterIndex;
+
+	return K15_ConvertToDirectoryPath(workingDir);
 }
 /*********************************************************************************/
 intern uint32 K15_InternalGetNumWorkingThreads(char* p_Argument)

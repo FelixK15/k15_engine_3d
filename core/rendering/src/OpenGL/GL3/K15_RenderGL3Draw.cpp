@@ -1,5 +1,5 @@
 /*********************************************************************************/
-intern inline uint8 K15_GLDrawFullscreenQuad(K15_RenderContext* p_RenderContext, K15_RenderProgramHandle* p_RenderProgramHandle)
+intern uint8 K15_GLDrawFullscreenQuad(K15_RenderContext* p_RenderContext, K15_RenderProgramHandle* p_RenderProgramHandle)
 {
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
 
@@ -55,5 +55,34 @@ intern inline uint8 K15_GLDrawFullscreenQuad(K15_RenderContext* p_RenderContext,
 #endif //K15_OPENGL_ENABLE_QUAD_BUFFER_BACKUP
 
 	return K15_SUCCESS;
+}
+/*********************************************************************************/
+intern inline uint8 K15_GLDrawIndexed(K15_RenderContext* p_RenderContext, uint32 p_IndexCount, uint32 p_IndexOffset)
+{
+	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
+
+	//get buffer access for vertex and index buffer
+	//K15_GLBufferAccessData* vertexAccessData = glContext->glBoundObjects.currentBufferAccess[K15_RENDER_BUFFER_TYPE_VERTEX];
+	//K15_GLBufferAccessData* indexAccessData = glContext->glBoundObjects.currentBufferAccess[K15_RENDER_BUFFER_TYPE_INDEX];
+
+	K15_GLBuffer* vertexBuffer = glContext->glBoundObjects.boundBuffers[K15_RENDER_BUFFER_TYPE_VERTEX];
+	K15_GLBuffer* indexBuffer = glContext->glBoundObjects.boundBuffers[K15_RENDER_BUFFER_TYPE_INDEX];
+
+	K15_GLProgram* boundVertexProgram = glContext->glBoundObjects.boundPrograms[K15_RENDER_PROGRAM_TYPE_VERTEX];
+
+	GLint vsPositionRegister = 0;
+	GLuint glProgramHandle = boundVertexProgram->program;
+
+	K15_OPENGL_CALL(vsPositionRegister = kglGetAttribLocation(glProgramHandle, "position"));
+	K15_OPENGL_CALL(kglEnableVertexAttribArray(vsPositionRegister));
+	K15_OPENGL_CALL(kglVertexAttribPointer(vsPositionRegister, 3, GL_FLOAT, GL_FALSE, vertexBuffer->singleElementSizeInBytes, 0));
+	K15_OPENGL_CALL(kglDrawElements(GL_TRIANGLES, p_IndexCount, GL_UNSIGNED_SHORT, 0));
+
+	return K15_SUCCESS;
+}
+/*********************************************************************************/
+intern uint8 K15_GLDrawMeshDesc(K15_RenderContext* p_RenderContext, K15_RenderMeshDesc* p_RenderMeshDesc)
+{
+
 }
 /*********************************************************************************/

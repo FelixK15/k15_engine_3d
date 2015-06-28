@@ -3,19 +3,21 @@
 
 #include "K15_RenderPrerequisites.h"
 
-enum K15_RenderBufferUsage
+enum K15_RenderBufferUsage : uint32
 {
 	K15_RENDER_BUFFER_USAGE_STATIC_DRAW = 0,
 	K15_RENDER_BUFFER_USAGE_DYNAMIC_DRAW,
-	K15_RENDER_BUFFER_USAGE_STREAM_DRAW
+	K15_RENDER_BUFFER_USAGE_STREAM_DRAW,
 };
 
-enum K15_RenderBufferType
+enum K15_RenderBufferType : uint32
 {
 	K15_RENDER_BUFFER_TYPE_VERTEX = 0,
 	K15_RENDER_BUFFER_TYPE_INDEX,
 	K15_RENDER_BUFFER_TYPE_UNIFORM,
-	K15_RENDER_BUFFER_TYPE_TEXTURE
+	K15_RENDER_BUFFER_TYPE_TEXTURE,
+
+	K15_RENDER_BUFFER_TYPE_COUNT
 };
 
 enum K15_RenderBufferAccess : uint32
@@ -29,7 +31,8 @@ struct K15_RenderBufferDesc
 {
 	byte* data;
 	void* userData;
-	uint32 size;
+	uint32 sizeInBytes;
+	uint32 singleElementSizeInBytes;
 
 	K15_RenderBufferUsage usage;
 	K15_RenderBufferType type;

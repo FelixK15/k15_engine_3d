@@ -3,6 +3,9 @@
 
 #include "K15_RenderPrerequisites.h"
 #include "K15_RenderGLTypes.h"
+#include "K15_RenderTextureDesc.h"
+#include "K15_RenderProgramDesc.h"
+#include "K15_RenderBufferDesc.h"
 
 struct K15_GLRenderContext
 {
@@ -23,9 +26,6 @@ struct K15_GLRenderContext
 		const GLubyte* vendorString;
 		const GLubyte* rendererString;
 	};
-
-	union
-	{
 		struct  
 		{
 			K15_GLBuffer buffers[K15_RENDER_GL_MAX_BUFFER_COUNT];
@@ -33,8 +33,17 @@ struct K15_GLRenderContext
 			K15_GLSampler samplers[K15_RENDER_MAX_GPU_SAMPLERS];
 			K15_GLProgram programs[K15_RENDER_MAX_GPU_PROGRAMS];
 		} glObjects;
-		
 
+		struct 
+		{
+			//K15_GLBufferAccessData* currentBufferAccess[K15_RENDER_BUFFER_TYPE_COUNT];
+			K15_GLBuffer* boundBuffers[K15_RENDER_BUFFER_TYPE_COUNT];
+			K15_GLTexture* boundTextures[K15_RENDER_TEXTURE_TYPE_COUNT];
+			K15_GLProgram* boundPrograms[K15_RENDER_PROGRAM_TYPE_COUNT];
+		} glBoundObjects;
+		
+	union
+	{
 		struct 
 		{
 			K15_GLBufferAccessData accessData[K15_RENDER_MAX_GPU_BUFFER];

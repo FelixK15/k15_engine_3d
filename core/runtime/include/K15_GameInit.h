@@ -1,7 +1,7 @@
 #ifndef _K15_Runtime_Game_Init_h_
 #define _K15_Runtime_Game_Init_h_
 
-#include "K15_Prerequisites_RT.h"
+#include "K15_RuntimePrerequisites.h"
 
 struct K15_RenderContext;
 struct K15_ConfigFileContext;
@@ -32,6 +32,7 @@ struct K15_InitGameOutputData
 struct K15_GameContext
 {
 	uint32 logContextCount;
+	uint32 frameCounter;
 
 	K15_AsyncContext* asyncContext;
 	K15_MemoryBuffer* gameMemory;

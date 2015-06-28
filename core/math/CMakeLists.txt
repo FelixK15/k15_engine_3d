@@ -8,6 +8,7 @@ include(math_core_src)
 include(math_compiler_settings)
 
 include_directories(./include)
+include_directories(./src)
 
 set(MATH_LIB_SRC ${MATH_SRC} ${MATH_INC})
 

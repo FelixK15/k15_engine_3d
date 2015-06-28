@@ -1,68 +1,28 @@
-/**
- * @file K15_Math_Prerequisites.h
- * @author  Felix Klinge <f.klinge@k15games.de>
- * @version 1.0
- * @date 2013/09/10
- * @section LICENSE
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 3 of
- * the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details at
- * http://www.gnu.org/copyleft/gpl.html
- *
- * @section DESCRIPTION
- *
- * 
- */
+#ifndef _K15_Math_Prerequisties_h_
+#define _K15_Math_Prerequisties_h_
 
-#ifndef _K15Engine_Math_Prerequisites_h_
-#define _K15Engine_Math_Prerequisites_h_
+#pragma warning(disable:4244)
+#pragma warning(disable:4305)
+
 
 #include <algorithm>
 #include <cmath>
-#include <cstring>
 #include <cassert>
 #include <cstdlib>
 
-#define K15_EPSILON 1e-5
-#define GLM_FORCE_RADIANS
+#define K15_EPSILON		1e-5
+#define K15_TWO_PI		6.28318531
+#define K15_PI			3.14159265
+#define K15_HALF_PI		1.57079632
+#define K15_QUATER_PI	0.78539816
 
-namespace K15_Engine { namespace Math {
-	class Vector2;
-	class Vector3;
-	class Vector4;
-	class Matrix3;
-	class Matrix4;
-	class Quaternion;
-}}
+typedef float real32;
 
-//we won't use SIMD for android.
-#ifndef __ANDROID__
-	#define K15_SIMD_SUPPORT
-#else
-	#define K15_NEON_SUPPORT
-#endif //__ANDROID__))
+struct K15_Vector2;
+struct K15_Vector3;
+struct K15_Vector4;
+struct K15_Matrix3;
+struct K15_Matrix4;
+struct K15_Quaternion;
 
-#if defined K15_SIMD_SUPPORT
-//	#include <tmmintrin.h>
-#elif defined K15_NEON_SUPPORT
-//	#include <arm_neon.h>
-#endif //K15_SIMD_SUPPORT
-
-namespace K15_Engine { namespace Math {
-#if defined K15_MATH_DOUBLE_PRECISION
-	typedef double Real;
-#elif defined K15_MATH_HALF_PRECISION
-	typedef half Real;
-#else
-	typedef float Real;
-#endif //K15_MATH_DOUBLE_PRECISION
-}}
-
-#endif //_K15Engine_Math_Prerequisites_h_
+#endif //_K15_Math_Prerequisties_h_

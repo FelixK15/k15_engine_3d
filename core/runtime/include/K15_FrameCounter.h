@@ -5,6 +5,7 @@ struct K15_FrameCounter
 {
 	unsigned int framesPerSecond;
 	unsigned int frameCount;
+	unsigned int seconds;
 	double deltaTime;
 	double startFrameTime;
 	double endFrameTime;

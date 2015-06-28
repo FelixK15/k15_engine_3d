@@ -1,7 +1,11 @@
 include_directories(include)
 include_directories(src)
+
+include_directories(../math/include)
 include_directories(../oslayer/include)
 include_directories(../logging/include)
+include_directories(../string/include)
+include_directories(../resourceformats/include)
 
 set(RENDERER_SRC ./src/K15_RenderContext.cpp)
 set(RENDERER_INC ./include/K15_RenderContext.h
@@ -10,6 +14,9 @@ set(RENDERER_INC ./include/K15_RenderContext.h
 		 ./include/K15_RenderProgramDesc.h
 		 ./include/K15_RenderBufferDesc.h
 		 ./include/K15_RenderStateDesc.h
+		 ./include/K15_RenderStateDesc.h
+		 ./include/K15_RenderViewportDesc.h
+		 ./include/K15_RenderCameraDesc.h
 		 ./include/K15_RenderTextureDesc.h
 		 ./include/K15_RenderSamplerDesc.h
 		 ./include/K15_RenderTargetDesc.h

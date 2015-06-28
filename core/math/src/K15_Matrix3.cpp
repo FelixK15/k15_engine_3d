@@ -1,288 +1,176 @@
-/**
- * @file K15_Matrix3x4.cpp
- * @author  Tobias Funke <tobyfunke@web.de>
- * @version 1.0
- * @date 2012/10/20
- * @section LICENSE
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 3 of
- * the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details at
- * http://www.gnu.org/copyleft/gpl.html
- *
- * @section DESCRIPTION
- *
- * 
- */
-
 #include "K15_Matrix3.h"
-#include "K15_MathUtil.h"
+#include "K15_Vector2.h"
+#include "K15_Vector3.h"
 
-//glm include
-#include "glm/matrix.hpp"
+/*********************************************************************************/
+K15_Matrix3 K15_GetIdentityMatrix3()
+{
+	static K15_Matrix3 identityMatrix = {1.0, 0.0, 0.0, 
+										 0.0, 1.0, 0.0, 
+										 0.0, 0.0, 1.0};
+	return identityMatrix;
+}
+/*********************************************************************************/
+K15_Matrix3 K15_GetMatrix3Inverse(K15_Matrix3& p_Matrix)
+{
+	K15_Matrix3 inverseMatrix = {};
 
-namespace K15_Engine { namespace Math {
-	/*********************************************************************************/
-	const Matrix3 Matrix3::Identity;
-	const Matrix3 Matrix3::Zero(0.0f,0.0f,0.0f,
-								0.0f,0.0f,0.0f,
-								0.0f,0.0f,0.0f);
-	/*********************************************************************************/
+	return inverseMatrix;
+}
+/*********************************************************************************/
+K15_Matrix3 K15_GetMatrix3Transpose(K15_Matrix3& p_Matrix)
+{
+	K15_Matrix3 transposeMatrix = {};
 
-	/*********************************************************************************/
-	Matrix3::Matrix3()
-	{
-		for(int i = 0;i < 9;++i)
-		{
-			m_MatrixArray[i] = 0.0f;
-		}
-		_1_1 = _2_2 = _3_3 = 1.0f;
-	}
-	/*********************************************************************************/
-	Matrix3::Matrix3(float p_Values[9])
-	{
-		memcpy(m_MatrixArray,p_Values,sizeof(p_Values));
-	}
-	/*********************************************************************************/
-	Matrix3::Matrix3(float _1_1,float _1_2,float _1_3,
-		float _2_1,float _2_2,float _2_3,
-		float _3_1,float _3_2,float _3_3)
-	{
-		this->_1_1 = _1_1; this->_1_2 = _1_2; this->_1_3 = _1_3;
-		this->_2_1 = _2_1; this->_2_2 = _2_2; this->_2_3 = _2_3;
-		this->_3_1 = _3_1; this->_3_2 = _3_2; this->_3_3 = _3_3;
-	}
-	/*********************************************************************************/
-	Matrix3::Matrix3(const Matrix3& p_Other)
-	{
-		memcpy(m_MatrixArray,p_Other.m_MatrixArray,sizeof(m_MatrixArray));
-	}
-	/*********************************************************************************/
-	Matrix3::~Matrix3()
-	{
+	transposeMatrix._1_2 = p_Matrix._2_1;
+	transposeMatrix._1_3 = p_Matrix._3_1;
+	transposeMatrix._2_1 = p_Matrix._1_2;
+	transposeMatrix._2_3 = p_Matrix._3_2;
+	transposeMatrix._3_1 = p_Matrix._1_3;
+	transposeMatrix._3_2 = p_Matrix._2_3;
 
-	}
-	/*********************************************************************************/
-	float Matrix3::determinant() const
-	{
-		glm::mat3 mat;
-		memcpy(&mat, m_MatrixArray, sizeof(m_MatrixArray));
-		return glm::determinant(mat);
-	}
-	/*********************************************************************************/
-	Matrix3 Matrix3::inverse() const
-	{
-		Matrix3 invMat;
-		glm::mat3 mat;
-		memcpy(&mat, m_MatrixArray, sizeof(mat));
+	return transposeMatrix;
+}
+/*********************************************************************************/
+void K15_InverseMatrix3(K15_Matrix3& p_Matrix)
+{
+	p_Matrix = K15_GetMatrix3Inverse(p_Matrix);
+}
+/*********************************************************************************/
+void K15_TransposeMatrix3(K15_Matrix3& p_Matrix)
+{
+	p_Matrix = K15_GetMatrix3Transpose(p_Matrix);
+}
+/*********************************************************************************/
+real32 K15_GetMatrix3Determinant(K15_Matrix3& p_Matrix)
+{
+	return	p_Matrix._1_1 * (p_Matrix._2_2 * p_Matrix._3_3 - p_Matrix._3_2 * p_Matrix._2_3) - 
+		p_Matrix._2_1 * (p_Matrix._1_2 * p_Matrix._3_3 - p_Matrix._3_2 * p_Matrix._1_3) + 
+		p_Matrix._3_1 * (p_Matrix._1_2 * p_Matrix._2_3 - p_Matrix._2_2 * p_Matrix._1_3);
+}
+/*********************************************************************************/
+K15_Vector2 K15_GetTransformedVector(K15_Vector2& p_Vector, K15_Matrix3& p_Matrix)
+{
+	K15_Vector3 transformedVector = {};
+	
+	transformedVector.x = p_Vector.x;
+	transformedVector.y = p_Vector.y;
+	transformedVector.z = 1.f;
 
-		mat = glm::inverse(mat);
-		memcpy(&invMat, &mat, sizeof(mat));
-		
-		return invMat;
-	}
-	/*********************************************************************************/
-	Matrix3 Matrix3::transpose() const
-	{
-		Matrix3 transMat;
-		glm::mat3 mat;
-		memcpy(&mat, m_MatrixArray, sizeof(mat));
+	transformedVector = K15_GetTransformedVector(transformedVector, p_Matrix);
 
-		mat = glm::transpose(mat);
-		memcpy(&transMat, &mat, sizeof(mat));
-		return transMat;
-	}
-	/*********************************************************************************/
-	Vector3 Matrix3::getXAxis() const
-	{
-		Vector3 xAxis;
+	K15_Vector2 transformedVector2 = {};
 
-		xAxis.x = _1_1;
-		xAxis.y = _1_2;
-		xAxis.z = _1_3;
+	transformedVector2.x = transformedVector.x;
+	transformedVector2.y = transformedVector.y;
 
-		return xAxis;
-	}
-	/*********************************************************************************/
-	Vector3 Matrix3::getYAxis() const
-	{
-		Vector3 yAxis;
+	return transformedVector2;
+}
+/*********************************************************************************/
+K15_Vector3 K15_GetTransformedVector(K15_Vector3& p_Vector, K15_Matrix3& p_Matrix)
+{
+	K15_Vector3 transformedVector = {};
 
-		yAxis.x = _2_1;
-		yAxis.y = _2_2;
-		yAxis.z = _2_3;
+	transformedVector.x = p_Matrix._1_1 * p_Vector.x + p_Matrix._2_1 * p_Vector.y + p_Matrix._3_1 * p_Vector.z;
+	transformedVector.y = p_Matrix._1_2 * p_Vector.x + p_Matrix._2_2 * p_Vector.y + p_Matrix._3_2 * p_Vector.z;
+	transformedVector.z = p_Matrix._1_3 * p_Vector.x + p_Matrix._2_3 * p_Vector.y + p_Matrix._3_3 * p_Vector.z;
 
-		return yAxis;
-	}
-	/*********************************************************************************/
-	Vector3 Matrix3::getZAxis() const
-	{
-		Vector3 zAxis;
+	return transformedVector;
+}
+/*********************************************************************************/
+K15_Vector3 K15_GetXAxis(K15_Matrix3& p_Matrix)
+{
+	K15_Vector3 axis = {};
 
-		zAxis.x = _3_1;
-		zAxis.y = _3_2;
-		zAxis.z = _3_3;
+	axis.x = p_Matrix._1_1;
+	axis.y = p_Matrix._2_1;
+	axis.z = p_Matrix._3_1;
 
-		return zAxis;
-	}
-	/*********************************************************************************/
-	bool Matrix3::isIdentity() const
-	{
-		for(int i=0; i< 9; ++i)
-		{
-			if((i%4) == 0)
-			{
-				if(m_MatrixArray[i] != 1.0f)
-				{
-					return false;
-				}
-			} else{
-				if(m_MatrixArray[i] != 0.0f)
-				{
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	/*********************************************************************************/
-	bool Matrix3::isZero() const
-	{
-		for(int i=0;i < 9; ++i)
-		{
-			if(m_MatrixArray[i] != 0.0f)
-			{
-				return false;
-			}
-		}
+	return axis;
+}
+/*********************************************************************************/
+K15_Vector3 K15_GetYAxis(K15_Matrix3& p_Matrix)
+{
+	K15_Vector3 axis = {};
 
-		return true;
-	}
-	/*********************************************************************************/
-	Matrix3 Matrix3::operator*(const Matrix3& p_Matrix) const
-	{
-		Matrix3 matrix = *this;
+	axis.x = p_Matrix._1_2;
+	axis.y = p_Matrix._2_2;
+	axis.z = p_Matrix._3_2;
 
-		matrix *= p_Matrix;
+	return axis;
+}
+/*********************************************************************************/
+K15_Vector3 K15_GetZAxis(K15_Matrix3& p_Matrix)
+{
+	K15_Vector3 axis = {};
 
-		return matrix;
-	}
-	/*********************************************************************************/
-	Vector3 Matrix3::operator*(const Vector3& p_Vector) const
-	{
-		Vector3 vec(p_Vector);
-		vec.x = m_MatrixArray[0]*p_Vector.x + m_MatrixArray[1]*p_Vector.y + m_MatrixArray[2]*p_Vector.z;
-		vec.y = m_MatrixArray[4]*p_Vector.x + m_MatrixArray[5]*p_Vector.y + m_MatrixArray[6]*p_Vector.z;
-		vec.z = m_MatrixArray[8]*p_Vector.x + m_MatrixArray[9]*p_Vector.y + m_MatrixArray[10]*p_Vector.z;
-		return vec;
-	}
-	/*********************************************************************************/
-	Matrix3 Matrix3::operator*(float p_Scalar) const
-	{
-		Matrix3 matrix = *this;
+	axis.x = p_Matrix._1_3;
+	axis.y = p_Matrix._2_3;
+	axis.z = p_Matrix._3_3;
 
-		matrix *= p_Scalar;
+	return axis;
+}
+/*********************************************************************************/
+K15_Vector3 K15_GetNormalizedXAxis(K15_Matrix3& p_Matrix)
+{
+	return K15_GetNormalizedVector(K15_GetXAxis(p_Matrix));
+}
+/*********************************************************************************/
+K15_Vector3 K15_GetNormalizedYAxis(K15_Matrix3& p_Matrix)
+{
+	return K15_GetNormalizedVector(K15_GetYAxis(p_Matrix));
+}
+/*********************************************************************************/
+K15_Vector3 K15_GetNormalizedZAxis(K15_Matrix3& p_Matrix)
+{
+	return K15_GetNormalizedVector(K15_GetZAxis(p_Matrix));
+}
+/*********************************************************************************/
+K15_Matrix3 operator*(K15_Matrix3& p_Matrix1, K15_Matrix3& p_Matrix2)
+{
+	K15_Matrix3 matrixProduct = {};
 
-		return matrix;
-	}
-	/*********************************************************************************/
-	Matrix3 Matrix3::operator+(const Matrix3& p_Matrix) const
-	{
-		Matrix3 matrix = *this;
+	matrixProduct._1_1 = p_Matrix1._1_1 * p_Matrix2._1_1 + p_Matrix1._1_2 * p_Matrix2._2_1 + p_Matrix1._1_3 * p_Matrix2._3_1;
+	matrixProduct._1_2 = p_Matrix1._1_1 * p_Matrix2._1_2 + p_Matrix1._1_2 * p_Matrix2._2_2 + p_Matrix1._1_3 * p_Matrix2._3_2;
+	matrixProduct._1_3 = p_Matrix1._1_1 * p_Matrix2._1_3 + p_Matrix1._1_2 * p_Matrix2._2_3 + p_Matrix1._1_3 * p_Matrix2._3_3;
 
-		matrix += p_Matrix;
+	matrixProduct._2_1 = p_Matrix1._2_1 * p_Matrix2._1_1 + p_Matrix1._2_2 * p_Matrix2._2_1 + p_Matrix1._2_3 * p_Matrix2._3_1;
+	matrixProduct._2_2 = p_Matrix1._2_1 * p_Matrix2._1_2 + p_Matrix1._2_2 * p_Matrix2._2_2 + p_Matrix1._2_3 * p_Matrix2._3_2;
+	matrixProduct._2_3 = p_Matrix1._2_1 * p_Matrix2._1_3 + p_Matrix1._2_2 * p_Matrix2._2_3 + p_Matrix1._2_3 * p_Matrix2._3_3;
 
-		return matrix;
-	}
-	/*********************************************************************************/
-	Matrix3 Matrix3::operator-(const Matrix3& p_Matrix) const
-	{ 
-		Matrix3 matrix = *this;
+	matrixProduct._3_1 = p_Matrix1._3_1 * p_Matrix2._1_1 + p_Matrix1._3_2 * p_Matrix2._2_1 + p_Matrix1._3_3 * p_Matrix2._3_1;
+	matrixProduct._3_2 = p_Matrix1._3_1 * p_Matrix2._1_2 + p_Matrix1._3_2 * p_Matrix2._2_2 + p_Matrix1._3_3 * p_Matrix2._3_2;
+	matrixProduct._3_3 = p_Matrix1._3_1 * p_Matrix2._1_3 + p_Matrix1._3_2 * p_Matrix2._2_3 + p_Matrix1._3_3 * p_Matrix2._3_3;
 
-		matrix -= p_Matrix;
+	return matrixProduct;
+}
+/*********************************************************************************/
+K15_Matrix3 operator*(K15_Matrix3& p_Matrix1, real32 p_Scalar)
+{
+	K15_Matrix3 matrixProduct = {};
 
-		return matrix;
-	}
-	/*********************************************************************************/
-	const Matrix3& Matrix3::operator*=(const Matrix3& p_Matrix)
-	{
-		glm::mat3 mat, mat2;
-		memcpy(&mat, m_MatrixArray, sizeof(mat));
-		memcpy(&mat2, &p_Matrix, sizeof(mat2));
+	matrixProduct._1_1 = p_Matrix1._1_1 * p_Scalar;
+	matrixProduct._1_2 = p_Matrix1._1_2 * p_Scalar;
+	matrixProduct._1_3 = p_Matrix1._1_3 * p_Scalar;
 
-		mat *= mat2;
+	matrixProduct._2_1 = p_Matrix1._2_1 * p_Scalar;
+	matrixProduct._2_2 = p_Matrix1._2_2 * p_Scalar;
+	matrixProduct._2_3 = p_Matrix1._2_3 * p_Scalar;
 
-		memcpy(m_MatrixArray,&mat,sizeof(mat));
+	matrixProduct._3_1 = p_Matrix1._3_1 * p_Scalar;
+	matrixProduct._3_2 = p_Matrix1._3_2 * p_Scalar;
+	matrixProduct._3_3 = p_Matrix1._3_3 * p_Scalar;
 
-		return *this; 
-	}
-	/*********************************************************************************/
-	const Matrix3& Matrix3::operator*=(float p_Scalar)
-	{
-		for(int i = 0;i < 9; ++i)
-		{
-			m_MatrixArray[i] *= p_Scalar;
-		}
-
-		return *this;
-	}
-	/*********************************************************************************/
-	const Matrix3& Matrix3::operator=(const Matrix3& p_Matrix)
-	{
-		memcpy(m_MatrixArray, p_Matrix.m_MatrixArray, sizeof(Matrix3));
-
-		return *this;
-	}
-	/*********************************************************************************/
-	const Matrix3& Matrix3::operator+=(const Matrix3& p_Matrix)
-	{
-		for(int i = 0;i < 9;++i)
-		{
-			m_MatrixArray[i] += p_Matrix.m_MatrixArray[i];
-		}
-
-		return *this;
-	}
-	/*********************************************************************************/
-	const Matrix3& Matrix3::operator-=(const Matrix3& p_Matrix)
-	{
-		for(int i = 0;i < 9;++i)
-		{
-			m_MatrixArray[i] -= p_Matrix.m_MatrixArray[i];
-		}
-
-		return *this;
-	}
-	/*********************************************************************************/
-	bool Matrix3::operator==(const Matrix3& p_Matrix)
-	{
-		for(int i = 0; i < 9; i++)
-		{
-			if(m_MatrixArray[i] != p_Matrix.m_MatrixArray[i])
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-	/*********************************************************************************/
-	bool Matrix3::operator!=(const Matrix3& p_Matrix)
-	{
-		return !this->operator==(p_Matrix);
-	}
-	/*********************************************************************************/
-	float Matrix3::operator[](int p_Index) const
-	{
-		if(p_Index < 0) p_Index = 0;
-		if(p_Index > 8) p_Index = 8;
-
-		return m_MatrixArray[p_Index];
-	}
-	/*********************************************************************************/
-}}//end of K15_Engine::Math namespace
+	return matrixProduct;
+}
+/*********************************************************************************/
+bool operator==(K15_Matrix3& p_Matrix1, K15_Matrix3& p_Matrix2)
+{
+	return memcmp(p_Matrix1.m, p_Matrix2.m, sizeof(p_Matrix1.m)) == 0;
+}
+/*********************************************************************************/
+bool operator!=(K15_Matrix3& p_Matrix1, K15_Matrix3& p_Matrix2)
+{
+	return memcmp(p_Matrix1.m, p_Matrix2.m, sizeof(p_Matrix1.m)) != 0;
+}
+/*********************************************************************************/

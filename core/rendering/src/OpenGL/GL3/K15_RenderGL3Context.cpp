@@ -13,9 +13,11 @@
 #include "K15_RenderProgramDesc.h"
 #include "K15_RenderStateDesc.h"
 #include "K15_RenderTextureDesc.h"
+#include "K15_RenderViewportDesc.h"
 #include "K15_RenderSamplerDesc.h"
 #include "K15_RenderTargetDesc.h"
 
+#include <K15_String.h>
 #include <K15_Logging.h>
 
 #include <K15_DefaultCLibraries.h>
@@ -163,16 +165,20 @@ intern inline void K15_InternalGLSetFunctionPointers(K15_RenderContext* p_Render
 	//buffer management
 	p_RenderContext->commandProcessing.bufferManagement.createBuffer = K15_GLCreateBuffer;
 	p_RenderContext->commandProcessing.bufferManagement.updateBuffer = K15_GLUpdateBuffer;
+	p_RenderContext->commandProcessing.bufferManagement.bindBuffer = K15_GLBindBuffer;
 	p_RenderContext->commandProcessing.bufferManagement.deleteBuffer = K15_GLDeleteBuffer;
 
 	//program management
 	p_RenderContext->commandProcessing.programManagement.createProgram = K15_GLCreateProgram;
 	p_RenderContext->commandProcessing.programManagement.deleteProgram = K15_GLDeleteProgram;
+	p_RenderContext->commandProcessing.programManagement.bindProgram = K15_GLBindProgram;
 	p_RenderContext->commandProcessing.programManagement.updateUniform = K15_GLUpdateUniform;
+	p_RenderContext->commandProcessing.programManagement.updateDirtyUniforms = K15_GLUpdateDirtyUniforms;
 
 	//texture management
 	p_RenderContext->commandProcessing.textureManagement.createTexture = K15_GLCreateTexture;
 	p_RenderContext->commandProcessing.textureManagement.updateTexture = K15_GLUpdateTexture;
+	p_RenderContext->commandProcessing.textureManagement.bindTexture = K15_GLBindTexture;
 	p_RenderContext->commandProcessing.textureManagement.deleteTexture = K15_GLDeleteTexture;
 
 	//sampler management
@@ -193,6 +199,7 @@ intern inline void K15_InternalGLSetFunctionPointers(K15_RenderContext* p_Render
 
 	//drawing
 	p_RenderContext->commandProcessing.drawManagement.drawFullscreenQuad = K15_GLDrawFullscreenQuad;
+	p_RenderContext->commandProcessing.drawManagement.drawIndexed = K15_GLDrawIndexed;
 }
 /*********************************************************************************/
 intern int K15_CmpStrings(const void* a, const void* b)
@@ -293,6 +300,7 @@ intern uint8 K15_GLLoadExtensions(K15_GLRenderContext* p_GLRenderContext)
 	K15_CHECK_ASSIGNMENT(kglVertexAttribPointer, (PFNGLVERTEXATTRIBPOINTERPROC)kglGetProcAddress("glVertexAttribPointer"));
 	K15_CHECK_ASSIGNMENT(kglEnableVertexAttribArray, (PFNGLENABLEVERTEXATTRIBARRAYPROC)kglGetProcAddress("glEnableVertexAttribArray"));
 	K15_CHECK_ASSIGNMENT(kglDisableVertexAttribArray, (PFNGLDISABLEVERTEXATTRIBARRAYPROC)kglGetProcAddress("glDisableVertexAttribArray"));
+	K15_CHECK_ASSIGNMENT(kglDrawElementsBaseVertex, (PFNGLDRAWELEMENTSBASEVERTEXPROC)kglGetProcAddress("glDrawElementsBaseVertex"));
 	K15_CHECK_ASSIGNMENT(kglBindBuffer, (PFNGLBINDBUFFERPROC)kglGetProcAddress("glBindBuffer"));
 	K15_CHECK_ASSIGNMENT(kglDeleteBuffers, (PFNGLDELETEBUFFERSPROC)kglGetProcAddress("glDeleteBuffers"));
 	K15_CHECK_ASSIGNMENT(kglGetProgramiv, (PFNGLGETPROGRAMIVPROC)kglGetProcAddress("glGetProgramiv"));
@@ -480,14 +488,17 @@ intern void K15_InternalGLGetRenderCapabilities(K15_RenderContext* p_RenderConte
 	GLfloat glMaxAnistropy = 1.0f;
 	GLint glMaxColorAttachments = 1;
 	GLint glMaxSamples = 0;
+	GLint glMaxTextureSize = 0;
 
 	K15_OPENGL_CALL(kglGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &glMaxAnistropy));
 	K15_OPENGL_CALL(kglGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &glMaxColorAttachments));
 	K15_OPENGL_CALL(kglGetIntegerv(GL_MAX_SAMPLES, &glMaxSamples));
+	K15_OPENGL_CALL(kglGetIntegerv(GL_MAX_TEXTURE_SIZE, &glMaxTextureSize));
 
 	capabilities->maxAnisotropy = (float)glMaxAnistropy;
 	capabilities->maxRenderTargets = (uint32)glMaxColorAttachments;
 	capabilities->maxSamples = (uint32)glMaxSamples;
+	capabilities->maxTextureDimension = (uint32)glMaxTextureSize;
 }
 /*********************************************************************************/
 intern inline void K15_InternalGLCreateFullscreenQuadVBO(K15_GLRenderContext* p_GlContext)
@@ -609,6 +620,11 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSContex
 
 	K15_InternalGLSetFunctionPointers(p_RenderContext);
 
+	//clear bound objects arrays
+	memset(glContext->glBoundObjects.boundBuffers, 0, sizeof(glContext->glBoundObjects.boundBuffers));
+	memset(glContext->glBoundObjects.boundTextures, 0, sizeof(glContext->glBoundObjects.boundTextures));
+	memset(glContext->glBoundObjects.boundPrograms, 0, sizeof(glContext->glBoundObjects.boundPrograms));
+
 	glContext->vendorString = kglGetString(GL_VENDOR);
 	glContext->rendererString = kglGetString(GL_RENDERER);
 	
@@ -652,7 +668,7 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSContex
 
 	p_RenderContext->userData = (void*)glContext;
 
-	K15_GLCreateBuffers(glContext);
+//	K15_GLCreateBuffers(glContext);
 	K15_GLInitPrograms(glContext);
 
 	K15_InternalGLGetRenderCapabilities(p_RenderContext);

@@ -348,6 +348,30 @@ uint8 K15_LoadMeshFormatFromMemory(K15_MeshFormat* p_MeshFormat, byte* p_Memory)
 	return result;
 }
 /*********************************************************************************/
+uint32 K15_GetSubMeshFormatVertexDataSize(K15_SubMeshFormat* p_SubMeshFormat)
+{
+	assert(p_SubMeshFormat);
+
+	//calculate size of vertex data
+	uint32 vertexSizeInBytes =	K15_RESOURCE_DESC_SIZE_POSITION 
+		+ K15_RESOURCE_DESC_SIZE_NORMAL
+		+ K15_RESOURCE_DESC_SIZE_TANGENT
+		+ K15_RESOURCE_DESC_SIZE_BITANGENT
+		+ p_SubMeshFormat->textureChannelCount * K15_RESOURCE_DESC_SIZE_TEXCOORD
+		+ p_SubMeshFormat->colorChannelCount * K15_RESOURCE_DESC_SIZE_COLOR;
+
+	return vertexSizeInBytes * p_SubMeshFormat->vertexCount;
+}
+/*********************************************************************************/
+uint32 K15_GetSubMeshFormatTriangleDataSize(K15_SubMeshFormat* p_SubMeshFormat)
+{
+	assert(p_SubMeshFormat);
+
+	uint32 triangleDataSizeInBytes = p_SubMeshFormat->triangleCount * K15_RESOURCE_DESC_TRIANGLE_INDICES;
+
+	return triangleDataSizeInBytes;
+}
+/*********************************************************************************/
 void K15_FreeMeshFormat(K15_MeshFormat p_MeshFormat)
 {
 	for(uint32 submeshIndex = 0;
@@ -430,14 +454,7 @@ uint8 K15_InternalLoadMeshFormat(K15_MeshFormat* p_MeshFormat, K15_DataAccessCon
 		K15_ReadData(p_DataAccessContext, sizeof(uint32), &currentSubmesh->vertexCount);
 
 		//calculate size of vertex data
-		uint32 vertexSizeInBytes =	K15_RESOURCE_DESC_SIZE_POSITION 
-			+ K15_RESOURCE_DESC_SIZE_NORMAL
-			+ K15_RESOURCE_DESC_SIZE_TANGENT
-			+ K15_RESOURCE_DESC_SIZE_BITANGENT
-			+ currentSubmesh->textureChannelCount * K15_RESOURCE_DESC_SIZE_TEXCOORD
-			+ currentSubmesh->colorChannelCount * K15_RESOURCE_DESC_SIZE_COLOR;
-
-		uint32 vertexDataSizeInBytes = vertexSizeInBytes * currentSubmesh->vertexCount;
+		uint32 vertexDataSizeInBytes =	K15_GetSubMeshFormatVertexDataSize(currentSubmesh);
 
 		assert(vertexDataSizeInBytes % sizeof(float) == 0);
 
@@ -459,7 +476,7 @@ uint8 K15_InternalLoadMeshFormat(K15_MeshFormat* p_MeshFormat, K15_DataAccessCon
 		K15_ReadData(p_DataAccessContext, sizeof(uint32), &currentSubmesh->triangleCount);
 
 		//calculate size of triangle data
-		uint32 triangleDataSizeInBytes = currentSubmesh->triangleCount * K15_RESOURCE_DESC_TRIANGLE_INDICES;
+		uint32 triangleDataSizeInBytes = K15_GetSubMeshFormatTriangleDataSize(currentSubmesh);
 
 		assert(triangleDataSizeInBytes % sizeof(K15_TriangleFormat) == 0);
 

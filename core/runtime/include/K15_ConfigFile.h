@@ -1,7 +1,7 @@
 #ifndef _K15_Runtime_Config_File_h_
 #define _K15_Runtime_Config_File_h_
 
-#include "K15_Prerequisites_RT.h"
+#include "K15_RuntimePrerequisites.h"
 #include "generated/K15_ConfigValueBuffer.h"
 
 /*********************************************************************************/

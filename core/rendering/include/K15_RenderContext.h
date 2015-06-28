@@ -2,6 +2,7 @@
 #define _K15_Rendering_RenderContext_h_
 
 #include "K15_RenderPrerequisites.h"
+#include "K15_RenderUniformCache.h"
 
 #include <K15_Logging.h>
 
@@ -25,12 +26,15 @@ K15_FUNCTION_VARIABLE(uint8, K15_ClearScreenCommandFnc, (K15_RenderContext* p_Re
 //buffer
 K15_FUNCTION_VARIABLE(uint8, K15_CreateBufferCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderBufferDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr));
 K15_FUNCTION_VARIABLE(uint8, K15_UpdateBufferCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderBufferUpdateDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr));
+K15_FUNCTION_VARIABLE(uint8, K15_BindBufferCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderBufferHandle* p_RenderBufferHandlePtr));
 K15_FUNCTION_VARIABLE(uint8, K15_DeleteBufferCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderBufferHandle* p_RenderBufferHandlePtr));
 
 //programs
 K15_FUNCTION_VARIABLE(uint8, K15_CreateProgramCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderProgramDesc* p_RenderProgramDesc, K15_RenderProgramHandle* p_RenderProgramHandlePtr));
 K15_FUNCTION_VARIABLE(uint8, K15_DeleteProgramCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderProgramHandle* p_RenderProgramHandlePtr));
+K15_FUNCTION_VARIABLE(uint8, K15_BindProgramCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderProgramHandle* p_RenderProgramHandlePtr));
 K15_FUNCTION_VARIABLE(uint8, K15_UpdateUniformCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc, K15_RenderProgramHandle* p_RenderProgramHandlePtr));
+K15_FUNCTION_VARIABLE(uint8, K15_UpdateDirtyUniformsCommandFnc, (K15_RenderContext* p_RenderContext));
 
 //states
 K15_FUNCTION_VARIABLE(uint8, K15_SetDepthStateCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderDepthStateDesc* p_RenderDepthStateDesc));
@@ -52,47 +56,13 @@ K15_FUNCTION_VARIABLE(uint8, K15_DeleteRenderTargetCommandFnc, (K15_RenderContex
 K15_FUNCTION_VARIABLE(uint8, K15_CreateTextureCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderTextureDesc* p_RenderTextureDesc, K15_RenderTextureHandle* p_RenderTextureHandle));
 K15_FUNCTION_VARIABLE(uint8, K15_UpdateTextureCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderTextureUpdateDesc* p_RenderTextureDesc, K15_RenderTextureHandle* p_RenderTextureHandle));
 K15_FUNCTION_VARIABLE(uint8, K15_DeleteTextureCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderTextureHandle* p_RenderTextureHandle));
+K15_FUNCTION_VARIABLE(uint8, K15_BindTextureCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderTextureHandle* p_RenderTextureHandle));
 
 //drawing
 K15_FUNCTION_VARIABLE(uint8, K15_DrawFullscreenQuadCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderProgramHandle* p_RenderProgramHandle));
+K15_FUNCTION_VARIABLE(uint8, K15_DrawIndexedCommandFnc, (K15_RenderContext* p_RenderContext, uint32 p_IndexCount, uint32 p_IndexOffset));
 
-//typedef uint8 (*K15_ClearScreenCommandFnc)(K15_RenderContext* p_RenderContext);
-
-//buffer
-// typedef uint8 (*K15_CreateBufferCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderBufferDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr);
-// typedef uint8 (*K15_UpdateBufferCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderBufferUpdateDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr);
-// typedef uint8 (*K15_DeleteBufferCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderBufferHandle* p_RenderBufferHandlePtr);
-
-//programs
-// typedef uint8 (*K15_CreateProgramCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderProgramDesc* p_RenderProgramDesc, K15_RenderProgramHandle* p_RenderProgramHandlePtr);
-// typedef uint8 (*K15_DeleteProgramCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderProgramHandle* p_RenderProgramHandlePtr);
-// typedef uint8 (*K15_UpdateUniformCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc, K15_RenderProgramHandle* p_RenderProgramHandlePtr);
-
-//states
-// typedef uint8 (*K15_SetDepthStateCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderDepthStateDesc* p_RenderDepthStateDesc);
-// typedef uint8 (*K15_SetStencilStateCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderStencilStateDesc* p_RenderStencilStateDesc);
-// typedef uint8 (*K15_SetRasterizerStateCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderRasterizerStateDesc* p_RenderRasterizerStateDesc);
-// typedef uint8 (*K15_SetBlendStateCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderBlendStateDesc* p_RenderDepthStateDesc);
-
-//sampler
-// typedef uint8 (*K15_CreateSamplerCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderSamplerDesc* p_RenderTextureDesc, K15_RenderSamplerHandle* p_RenderTextureHandle);
-// typedef uint8 (*K15_DeleteSamplerCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderSamplerHandle* p_RenderTextureHandle);
-
-//render target
-// typedef uint8 (*K15_CreateRenderTargetCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTargetDesc* p_RenderTargetDesc, K15_RenderTargetHandle* p_RenderTargetHandle);
-// typedef uint8 (*K15_BindRenderTargetCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTargetHandle* p_RenderTargetHandle);
-// typedef uint8 (*K15_UnbindRenderTargetCommandFnc)(K15_RenderContext* p_RenderContext);
-// typedef uint8 (*K15_DeleteRenderTargetCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTargetHandle* p_RenderTargetHandle);
-
-//textures
-// typedef uint8 (*K15_CreateTextureCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTextureDesc* p_RenderTextureDesc, K15_RenderTextureHandle* p_RenderTextureHandle);
-// typedef uint8 (*K15_UpdateTextureCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTextureUpdateDesc* p_RenderTextureDesc, K15_RenderTextureHandle* p_RenderTextureHandle);
-// typedef uint8 (*K15_DeleteTextureCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderTextureHandle* p_RenderTextureHandle);
-
-//drawing
-//typedef uint8 (*K15_DrawFullscreenQuadCommandFnc)(K15_RenderContext* p_RenderContext, K15_RenderProgramHandle* p_RenderProgramHandle);
-
-enum K15_RenderCommand
+enum K15_RenderCommand : uint32
 {
 	K15_RENDER_COMMAND_CLEAR_SCREEN = 0,
 
@@ -100,6 +70,9 @@ enum K15_RenderCommand
 	K15_RENDER_COMMAND_CREATE_BUFFER,
 	K15_RENDER_COMMAND_UPDATE_BUFFER,
 	K15_RENDER_COMMAND_DELETE_BUFFER,
+
+	//mesh
+	K15_RENDER_COMMAND_CREATE_MESH,
 
 	//program
 	K15_RENDER_COMMAND_CREATE_PROGRAM,
@@ -131,6 +104,17 @@ enum K15_RenderCommand
 
 	//drawing
 	K15_RENDER_COMMAND_DRAW_FULLSCREEN_QUAD,
+	K15_RENDER_COMMAND_DRAW_MESH,
+
+	//camera
+	K15_RENDER_COMMAND_CREATE_CAMERA,
+	K15_RENDER_COMMAND_UPDATE_CAMERA,
+	K15_RENDER_COMMAND_BIND_CAMERA,
+	K15_RENDER_COMMAND_DELETE_CAMERA,
+
+	//matrices
+	K15_RENDER_COMMAND_SET_PROJECTION_MATRIX,
+	K15_RENDER_COMMAND_SET_VIEW_MATRIX,
 
 	K15_RENDER_COMMAND_COUNT
 };
@@ -219,12 +203,14 @@ struct K15_RenderCapabilities
 	float maxAnisotropy;
 	uint32 maxRenderTargets;
 	uint32 maxSamples;
+	uint32 maxTextureDimension;
 };
 
 struct K15_RenderContext
 {
 	K15_RenderCapabilities capabilities;
 
+	K15_RenderUniformCache* uniformCache;
 	K15_RenderCommandBufferDispatcher* commandBufferDispatcher;
 	K15_RenderCommandBuffer* commandBuffers;
 	
@@ -240,16 +226,14 @@ struct K15_RenderContext
 		uint32 length;
 	} lastError;
 
-	struct  
-	{
-		uint32 x;
-		uint32 y;
-		uint32 width;
-		uint32 height;
-	} viewports[K15_RENDER_MAX_VIEWPORT_COUNT];
+	K15_RenderViewportDesc* viewports;
 
 	uint32 viewportCount;
 	uint32 activeViewportIndex;
+	uint32 activeCameraIndex;
+
+	K15_InternalRenderCameraDesc* cameras;
+	uint32 amountCameras;
 
 	struct 
 	{
@@ -262,6 +246,7 @@ struct K15_RenderContext
 		{
 			K15_CreateBufferCommandFnc createBuffer;
 			K15_UpdateBufferCommandFnc updateBuffer;
+			K15_BindBufferCommandFnc bindBuffer;
 			K15_DeleteBufferCommandFnc deleteBuffer;
 		} bufferManagement;
 
@@ -269,13 +254,16 @@ struct K15_RenderContext
 		{
 			K15_CreateProgramCommandFnc createProgram;
 			K15_DeleteProgramCommandFnc deleteProgram;
+			K15_BindProgramCommandFnc bindProgram;
 			K15_UpdateUniformCommandFnc updateUniform;
+			K15_UpdateDirtyUniformsCommandFnc updateDirtyUniforms;
 		} programManagement;
 
 		struct K15_TextureManagementCommands
 		{
 			K15_CreateTextureCommandFnc createTexture;
 			K15_UpdateTextureCommandFnc updateTexture;
+			K15_BindTextureCommandFnc bindTexture;
 			K15_DeleteTextureCommandFnc deleteTexture;
 		} textureManagement;
 
@@ -304,6 +292,7 @@ struct K15_RenderContext
 		struct K15_DrawManagementCommandS
 		{
 			K15_DrawFullscreenQuadCommandFnc drawFullscreenQuad;
+			K15_DrawIndexedCommandFnc drawIndexed;
 		} drawManagement;
 	} commandProcessing;
 
@@ -324,6 +313,12 @@ struct K15_RenderContext
 		K15_RenderTextureDesc* textures;
 		uint32 amountTextures;
 	} gpuTexture;
+
+	struct 
+	{
+		K15_RenderMeshDesc* meshes;
+		uint32 amountMeshes;
+	} gpuMeshes;
 
 	struct  
 	{
@@ -401,6 +396,17 @@ uint8 K15_AddRenderSamplerDescParameter(K15_RenderCommandBuffer* p_RenderCommand
 //Render Target Parameter
 uint8 K15_AddRenderTargetHandleParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTargetHandle* p_RenderTargetHandle);
 uint8 K15_AddRenderTargetDescParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTargetDesc* p_RenderTargetDesc);
+
+//Draw Parameter
+uint8 K15_AddRenderMeshHandleParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderMeshHandle* p_RenderMeshHandle);
+uint8 K15_AddMeshFormatParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_MeshFormat* p_MeshFormat);
+
+//Camera Parameter
+uint8 K15_AddRenderCameraDescParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderCameraDesc* p_RenderCameraDesc);
+uint8 K15_AddRenderCameraHandleParameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderCameraHandle* p_RenderCameraHandle);
+
+//Matrix Parameter
+uint8 K15_AddMatrix4Parameter(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_Matrix4* p_MatrixParameter);
 
 void K15_DispatchRenderCommandBuffer(K15_RenderCommandBuffer* p_RenderCommandBuffer);
 void K15_ProcessDispatchedRenderCommandBuffers(K15_RenderContext* p_RenderContext);

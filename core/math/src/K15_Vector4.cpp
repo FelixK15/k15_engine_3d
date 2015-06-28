@@ -1,268 +1,112 @@
-/**
- * @file K15_Vector4.cpp
- * @author  Tobias Funke <tobyfunke@web.de>
- * @version 1.0
- * @date 2012/10/19
- * @section LICENSE
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 3 of
- * the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details at
- * http://www.gnu.org/copyleft/gpl.html
- *
- * @section DESCRIPTION
- *
- * 
- */
-
 #include "K15_Vector4.h"
-#include "K15_MathUtil.h"
-#include "K15_Vector3.h"
 
-namespace K15_Engine { namespace Math { 
-	/*********************************************************************************/
-	const Vector4 Vector4::Up = Vector4(0.0f,1.0f,0.0f,1.0f);
-	const Vector4 Vector4::Right = Vector4(1.0f,0.f,0.0f,1.0f);
-	const Vector4 Vector4::Forward = Vector4(0.0f,0.0f,1.0f,1.0f);
-	const Vector4 Vector4::X_Axis = Vector4::Right;
-	const Vector4 Vector4::Y_Axis = Vector4::Up;
-	const Vector4 Vector4::Z_Axis = Vector4::Forward;
-	const Vector4 Vector4::Zero = Vector4(0.0f,0.0f,0.0f,0.0f);
-	/*********************************************************************************/
-	
-	/*********************************************************************************/
-	Vector4::Vector4()
-	{
-		memset(m_VectorArray,0,sizeof(m_VectorArray));
-		m_VectorArray[3] = 1.0f;
-	}
-	/*********************************************************************************/
-	Vector4::Vector4(float p_Values[3])
-	{
-		memcpy(m_VectorArray,p_Values,sizeof(m_VectorArray));
-	}
-	/*********************************************************************************/
-	Vector4::Vector4(float x,float y, float z, float w)
-    : x(x),
-    y(y),
-    z(z),
-    w(w)
-	{
+/*********************************************************************************/
+real32 K15_GetVectorDotProduct(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2)
+{
+	return p_Vector1.x * p_Vector2.x + p_Vector1.y * p_Vector2.y + p_Vector1.z * p_Vector2.z + p_Vector1.w * p_Vector2.w;
+}
+/*********************************************************************************/
+real32 K15_GetVectorLength(K15_Vector4& p_Vector)
+{
+	real32 squaredLength = K15_GetVectorSquaredLength(p_Vector);
+	return (real32)::sqrt(squaredLength);
+}
+/*********************************************************************************/
+real32 K15_GetVectorSquaredLength(K15_Vector4& p_Vector)
+{
+	return p_Vector.x * p_Vector.x + p_Vector.y * p_Vector.y + p_Vector.z * p_Vector.z + p_Vector.w * p_Vector.w;
+}
+/*********************************************************************************/
+K15_Vector4 K15_GetCrossProduct(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2)
+{
+	K15_Vector4 crossProduct = {};
 
-	}
-	/*********************************************************************************/
-	Vector4::Vector4(const Vector3& p_Vector, float w)
-	{
-		x = p_Vector.x;
-		y = p_Vector.y;
-		z = p_Vector.z;
-		
-		this->w = w;
-	}
-	/*********************************************************************************/
-	Vector4::Vector4(const Vector4& p_Vector)
-	{
-		memcpy(m_VectorArray,p_Vector.m_VectorArray,sizeof(m_VectorArray));
-	}
-	/*********************************************************************************/
-	Vector4::~Vector4()
-	{
+	//Cx = AyBz - AzBy
+	//Cy = AzBx - AxBz
+	//Cz = AxBy - AyBx
 
-	}
-	/*********************************************************************************/
-	void Vector4::normalize()
-	{
-		float len = length();
-		x /= len;
-		y /= len;
-		z /= len;
-		w /= len;
-	}
-	/*********************************************************************************/
-	float Vector4::length() const
-	{
-		return MathUtil::sqrt(x*x + y*y + z*z + w*w);
-	}
-	/*********************************************************************************/
-	void Vector4::invert()
-	{
-		x = -x;
-		y = -y;
-		z = -z;
-		w = -w;
-	}
-	/*********************************************************************************/
-	bool Vector4::isNull() const
-	{
-		return (x == y) && (y == z) && (x == 0) && (w == 0);
-	}
-	/*********************************************************************************/
-	bool Vector4::isUnit() const
-	{
-		return (length() == 1.0f);
-	}
-	/*********************************************************************************/
-	float Vector4::dot(const Vector4& p_Vector) const
-	{
-		return x*p_Vector.x + y*p_Vector.y + z*p_Vector.z + w*p_Vector.w;
-	}
-	/*********************************************************************************/
-	Vector4 Vector4::cross(const Vector4& p_Vector) const
-	{
-		Vector3 vec, vec2, vec3;
-		Vector4 crossVec;
+	crossProduct.x = p_Vector1.y * p_Vector2.z - p_Vector1.z * p_Vector2.y;
+	crossProduct.y = p_Vector1.z * p_Vector2.x - p_Vector1.x * p_Vector2.z;
+	crossProduct.z = p_Vector1.x * p_Vector2.y - p_Vector1.y * p_Vector2.x;
+	crossProduct.w = 0.0f;
 
-		memcpy(&vec, m_VectorArray, sizeof(Vector3));
-		memcpy(&vec2, &p_Vector, sizeof(Vector3));
+	return crossProduct;
+}
+/*********************************************************************************/
+K15_Vector4 K15_GetProjectedVector(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2)
+{
+	real32 dotProduct = K15_GetVectorDotProduct(p_Vector1, p_Vector2);
 
-		vec3 = vec.cross(vec2);
+	return p_Vector1 * dotProduct;
+}
+/*********************************************************************************/
+K15_Vector4 K15_GetNormalizedVector(K15_Vector4& p_Vector)
+{
+	real32 length = K15_GetVectorLength(p_Vector);
 
-		memcpy(&crossVec, &vec3, sizeof(Vector3));
-		crossVec.w = 1.f;
+	K15_Vector4 normalizedVector = {};
 
-		return crossVec;
-	}
-	/*********************************************************************************/
-	const Vector4& Vector4::operator=(const Vector4& p_Vector)
-	{
-		x = p_Vector.x;
-		y = p_Vector.y;
-		z = p_Vector.z;
-		w = p_Vector.w;
-		return *this;
-	}
-	/*********************************************************************************/
-	Vector4 Vector4::operator*(float p_Scale) const
-	{
-		Vector4 vector = *this;
-		vector *= p_Scale;
-		return vector;
-	}
-	/*********************************************************************************/
-	const Vector4& Vector4::operator*=(float p_Scale)
-	{
-		x *= p_Scale;
-		y *= p_Scale;
-		z *= p_Scale;
-		w *= p_Scale;
+	normalizedVector.x = p_Vector.x / length;
+	normalizedVector.y = p_Vector.y / length;
+	normalizedVector.z = p_Vector.z / length;
+	normalizedVector.w = p_Vector.w / length;
 
-		return *this;
-	}
-	/*********************************************************************************/
-	Vector4 Vector4::operator+(const Vector4& p_Vector) const
-	{
-		Vector4 vector = *this;
-		vector += p_Vector;
-		
-		return vector;
-	}
-	/*********************************************************************************/
-	Vector4 Vector4::operator-(const Vector4& p_Vector) const
-	{
-		Vector4 vector = *this;
-		vector -= p_Vector;
-		return vector;
-	}
-	/*********************************************************************************/
-	const Vector4& Vector4::operator+=(const Vector4& p_Vector)
-	{
-		x += p_Vector.x;
-		y += p_Vector.y;
-		z += p_Vector.z;
-		w += p_Vector.w;
+	return normalizedVector;
+}
+/*********************************************************************************/
+void K15_NormalizeVector(K15_Vector4& p_Vector)
+{
+	p_Vector = K15_GetNormalizedVector(p_Vector);
+}
+/*********************************************************************************/
+K15_Vector4 operator+(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2)
+{
+	K15_Vector4 vectorSum = {};
 
-		return *this;
-	}
-	/*********************************************************************************/
-	const Vector4& Vector4::operator-=(const Vector4& p_Vector)
-	{
-		x -= p_Vector.x;
-		y -= p_Vector.y;
-		z -= p_Vector.z;
-		w -= p_Vector.w;
+	vectorSum.x = p_Vector1.x + p_Vector2.x;
+	vectorSum.y = p_Vector1.y + p_Vector2.y;
+	vectorSum.z = p_Vector1.z + p_Vector2.z;
+	vectorSum.z = p_Vector1.w + p_Vector2.w;
 
-		return *this;
-	}
-	/*********************************************************************************/
-	const Vector4& Vector4::operator/=(float p_Scalar)
-	{
-		x /= p_Scalar;
-		y /= p_Scalar;
-		z /= p_Scalar;
-		w /= p_Scalar;
+	return vectorSum;
+}
+/*********************************************************************************/
+K15_Vector4 operator-(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2)
+{
+	K15_Vector4 vectorDifference = {};
 
-		return *this;
-	}
-	/*********************************************************************************/
-	bool Vector4::operator<(const Vector4& p_Vector) const
-	{
-		if(length()<p_Vector.length())
-		{
-			return true;
-		}
-		return false;
-	}
-	/*********************************************************************************/
-	bool Vector4::operator>(const Vector4& p_Vector) const
-	{
-		if(length()>p_Vector.length())
-		{
-			return true;
-		}
-		return false;
-	}
-	/*********************************************************************************/
-	bool Vector4::operator<=(const Vector4& p_Vector) const
-	{
-		if(length()<=p_Vector.length())
-		{
-			return true;
-		}
-		return false;
-	}
-	/*********************************************************************************/
-	bool Vector4::operator>=(const Vector4& p_Vector) const
-	{
-		if(length()>=p_Vector.length())
-		{
-			return true;
-		}
-		return false;
-	}
-	/*********************************************************************************/
-	bool Vector4::operator==(const Vector4& p_Vector) const
-	{
-		for(int i = 0; i < 4; ++i)
-    {
-      if(m_VectorArray[i] != p_Vector[i])
-      {
-        return false;
-      }
-    }
-		return true;
-	}
-	/*********************************************************************************/
-	bool Vector4::operator!=(const Vector4& p_Vector) const
-	{
-		if(length() == p_Vector.length())
-		{
-			return false;
-		}
-		return true;
-	}
-  /*********************************************************************************/
-  float Vector4::operator[](int p_Index) const
-  {
-	  if(p_Index < 0) p_Index = 0;
-	  if(p_Index > 3) p_Index = 3;
+	vectorDifference.x = p_Vector1.x - p_Vector2.x;
+	vectorDifference.y = p_Vector1.y - p_Vector2.y;
+	vectorDifference.z = p_Vector1.z - p_Vector2.z;
+	vectorDifference.z = p_Vector1.w - p_Vector2.w;
 
-	  return m_VectorArray[p_Index];
-  }
-  /*********************************************************************************/
-}}//end of K15_Engine::Math namespace
+	return vectorDifference;
+}
+/*********************************************************************************/
+K15_Vector4 operator*(K15_Vector4& p_Vector, real32 p_Scalar)
+{
+	K15_Vector4 scaledVector = {};
+
+	scaledVector.x = p_Vector.x * p_Scalar;
+	scaledVector.y = p_Vector.y * p_Scalar;
+	scaledVector.z = p_Vector.z * p_Scalar;
+	scaledVector.z = p_Vector.w * p_Scalar;
+
+	return scaledVector;
+}
+/*********************************************************************************/
+K15_Vector4 operator*(real32 p_Scalar, K15_Vector4& p_Vector)
+{
+	return p_Vector * p_Scalar;
+}
+/*********************************************************************************/
+bool operator==(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2)
+{
+	return (p_Vector1.x == p_Vector2.x) && (p_Vector1.y == p_Vector2.y) && (p_Vector1.z == p_Vector2.z) && (p_Vector1.w == p_Vector2.w);
+}
+/*********************************************************************************/
+bool operator!=(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2)
+{
+	return !((p_Vector1.x == p_Vector2.x) && (p_Vector1.y == p_Vector2.y) && (p_Vector1.z == p_Vector2.z) && (p_Vector1.w == p_Vector2.w));
+}
+/*********************************************************************************/
