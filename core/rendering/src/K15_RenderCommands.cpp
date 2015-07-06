@@ -28,6 +28,14 @@ uint8 K15_RenderCommandDeleteBuffer(K15_RenderCommandBuffer* p_RenderCommandBuff
 	return K15_EndRenderCommand(p_RenderCommandBuffer);
 }
 /*********************************************************************************/
+uint8 K15_RenderCommandCreateTexture(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTextureDesc* p_RenderTextureDesc, K15_RenderTextureHandle* p_RenderTextureHandlePtr)
+{
+	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_CREATE_TEXTURE);
+	K15_AddRenderTextureHandleParameter(p_RenderCommandBuffer, p_RenderTextureHandlePtr);
+	K15_AddRenderTextureDescParameter(p_RenderCommandBuffer, p_RenderTextureDesc);
+	return K15_EndRenderCommand(p_RenderCommandBuffer);
+}
+/*********************************************************************************/
 uint8 K15_RenderCommandCreateMesh(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_MeshFormat* p_MeshFormat, K15_RenderMeshHandle* p_RenderMeshHandlePtr)
 {
 	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_CREATE_MESH);
@@ -56,6 +64,13 @@ uint8 K15_RenderCommandBindCamera(K15_RenderCommandBuffer* p_RenderCommandBuffer
 {
 	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_BIND_CAMERA);
 	K15_AddRenderCameraHandleParameter(p_RenderCommandBuffer, p_RenderCameraHandlePtr);
+	return K15_EndRenderCommand(p_RenderCommandBuffer);
+}
+/*********************************************************************************/
+uint8 K15_RenderCommandSetGUITexture(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTextureDesc* p_RenderTextureDesc)
+{
+	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_SET_GUI_TEXTURE);
+	K15_AddRenderTextureDescParameter(p_RenderCommandBuffer, p_RenderTextureDesc);
 	return K15_EndRenderCommand(p_RenderCommandBuffer);
 }
 /*********************************************************************************/

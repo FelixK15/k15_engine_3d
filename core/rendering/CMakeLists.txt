@@ -3,6 +3,7 @@ include_directories(src)
 
 include_directories(../math/include)
 include_directories(../oslayer/include)
+include_directories(../guilayer/include)
 include_directories(../logging/include)
 include_directories(../string/include)
 include_directories(../resourceformats/include)

@@ -1,7 +1,9 @@
 #ifndef K15_Render_Prerequisties_h_
 #define K15_Render_Prerequisties_h_
 
-#define _CRT_SECURE_NO_WARNINGS
+#ifndef _CRT_SECURE_NO_WARNINGS
+	#define _CRT_SECURE_NO_WARNINGS
+#endif
 
 #include <K15_Prerequisites.h>
 #include "K15_RendererConfig.h"
@@ -62,6 +64,7 @@ typedef uint32 K15_RenderTextureHandle;
 typedef uint32 K15_RenderProgramHandle;
 typedef uint32 K15_RenderSamplerHandle;
 typedef uint32 K15_RenderTargetHandle;
+typedef uint32 K15_RenderFontHandle;
 typedef uint32 K15_RenderMeshHandle;
 typedef uint32 K15_RenderCameraHandle;
 

@@ -232,7 +232,7 @@ intern void K15_GLGetExtensions(K15_GLRenderContext* p_GLRenderContext)
 		for(int i = 0; i < numExtensions; ++i)
 		{
 			char* extensionName = (char*)kglGetStringi(GL_EXTENSIONS, i);
-			size_t extensionNameLength = strlen(extensionName);
+			uint32 extensionNameLength= (uint32)strlen(extensionName);
 		
 			p_GLRenderContext->extensions.names[i] = (char*)malloc(extensionNameLength) + 1; // +1 for 0 terminator
 			memcpy(p_GLRenderContext->extensions.names[i], extensionName, extensionNameLength);
@@ -245,7 +245,7 @@ intern void K15_GLGetExtensions(K15_GLRenderContext* p_GLRenderContext)
 		const char* separator = " ";
 		const GLubyte* extensionsString = kglGetString(GL_EXTENSIONS);
 
-		size_t extensionStringLength = strlen((const char*)extensionsString);
+		uint32 extensionStringLength= (uint32)strlen((const char*)extensionsString);
 		char* extensionStringBuffer = (char*)alloca(extensionStringLength + 1); //+1 for 0 terminator
 		extensionStringBuffer[extensionStringLength] = 0;
 
@@ -275,7 +275,7 @@ intern void K15_GLGetExtensions(K15_GLRenderContext* p_GLRenderContext)
 
 		while (currentExtension)
 		{
-			size_t extensionLength = strlen(currentExtension); 
+			uint32 extensionLength= (uint32)strlen(currentExtension); 
 			char* currentExtensionBuffer = (char*)malloc(extensionLength + 1); //+1 for 0 terminator
 			memcpy(currentExtensionBuffer, currentExtension, extensionLength);
 			currentExtensionBuffer[extensionLength] = 0;
@@ -660,7 +660,7 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSContex
 	if (result != K15_SUCCESS)
 	{
 		const char* errorMessage = "Missing OpenGL Extensions.";
-		uint32 errorMessageLength = (uint32)strlen(errorMessage);
+		uint32 errorMessageLength= (uint32)strlen(errorMessage);
 		K15_SetRenderContextError(p_RenderContext, errorMessage, errorMessageLength);
 
 		return result;

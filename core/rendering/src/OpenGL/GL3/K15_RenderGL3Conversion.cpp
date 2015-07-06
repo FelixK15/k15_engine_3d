@@ -458,20 +458,26 @@ intern inline GLenum K15_GLConvertRenderFormatType(K15_RenderFormat p_RenderForm
 
 	switch(p_RenderFormat)
 	{
-		case K15_RENDER_FORMAT_R8G8B8A8_INT:
+		case K15_RENDER_FORMAT_R8_INT:
+		case K15_RENDER_FORMAT_R8G8_INT:
 		case K15_RENDER_FORMAT_R8G8B8_INT:
+		case K15_RENDER_FORMAT_R8G8B8A8_INT:
 		{
 			nativeRenderFormatType = GL_BYTE;
 			break;
 		}
 
-		case K15_RENDER_FORMAT_R16G16B16A16_INT:
+		case K15_RENDER_FORMAT_R16_INT:
+		case K15_RENDER_FORMAT_R16G16_INT:
 		case K15_RENDER_FORMAT_R16G16B16_INT:
+		case K15_RENDER_FORMAT_R16G16B16A16_INT:
 		{
 			nativeRenderFormatType = GL_SHORT;
 			break;
 		}
 
+		case K15_RENDER_FORMAT_R32_INT:
+		case K15_RENDER_FORMAT_R32G32_INT:
 		case K15_RENDER_FORMAT_R32G32B32_INT:
 		case K15_RENDER_FORMAT_R32G32B32A32_INT:
 		{
@@ -479,6 +485,8 @@ intern inline GLenum K15_GLConvertRenderFormatType(K15_RenderFormat p_RenderForm
 			break;
 		}	
 
+		case K15_RENDER_FORMAT_R8_UINT:
+		case K15_RENDER_FORMAT_R8G8_UINT:
 		case K15_RENDER_FORMAT_R8G8B8_UINT:
 		case K15_RENDER_FORMAT_R8G8B8A8_UINT:
 		{
@@ -486,6 +494,8 @@ intern inline GLenum K15_GLConvertRenderFormatType(K15_RenderFormat p_RenderForm
 			break;
 		}
 
+		case K15_RENDER_FORMAT_R16_UINT:
+		case K15_RENDER_FORMAT_R16G16_UINT:
 		case K15_RENDER_FORMAT_R16G16B16_UINT:
 		case K15_RENDER_FORMAT_R16G16B16A16_UINT:
 		{
@@ -493,6 +503,8 @@ intern inline GLenum K15_GLConvertRenderFormatType(K15_RenderFormat p_RenderForm
 			break;
 		}
 
+		case K15_RENDER_FORMAT_R32_UINT:
+		case K15_RENDER_FORMAT_R32G32_UINT:
 		case K15_RENDER_FORMAT_R32G32B32_UINT:
 		case K15_RENDER_FORMAT_R32G32B32A32_UINT:
 		{
@@ -500,12 +512,16 @@ intern inline GLenum K15_GLConvertRenderFormatType(K15_RenderFormat p_RenderForm
 			break;
 		}
 
+		case K15_RENDER_FORMAT_R16_FLOAT:
+		case K15_RENDER_FORMAT_R16G16_FLOAT:
 		case K15_RENDER_FORMAT_R16G16B16_FLOAT:
 		case K15_RENDER_FORMAT_R16G16B16A16_FLOAT:
 		{
 			nativeRenderFormatType = GL_HALF_FLOAT;
 		}
 
+		case K15_RENDER_FORMAT_R32_FLOAT:
+		case K15_RENDER_FORMAT_R32G32_FLOAT:
 		case K15_RENDER_FORMAT_R32G32B32_FLOAT:
 		case K15_RENDER_FORMAT_R32G32B32A32_FLOAT:
 		{
@@ -523,6 +539,32 @@ intern inline GLenum K15_GLConvertRenderFormat(K15_RenderFormat p_RenderFormat)
 
 	switch(p_RenderFormat)
 	{
+		case K15_RENDER_FORMAT_R8_INT:
+		case K15_RENDER_FORMAT_R8_UINT:
+		case K15_RENDER_FORMAT_R16_INT:
+		case K15_RENDER_FORMAT_R16_UINT:
+		case K15_RENDER_FORMAT_R16_FLOAT:
+		case K15_RENDER_FORMAT_R32_INT:
+		case K15_RENDER_FORMAT_R32_UINT:
+		case K15_RENDER_FORMAT_R32_FLOAT:
+		{
+			nativeRenderFormat = GL_RED;
+			break;
+		}
+
+		case K15_RENDER_FORMAT_R8G8_INT:
+		case K15_RENDER_FORMAT_R8G8_UINT:
+		case K15_RENDER_FORMAT_R16G16_INT:
+		case K15_RENDER_FORMAT_R16G16_UINT:
+		case K15_RENDER_FORMAT_R16G16_FLOAT:
+		case K15_RENDER_FORMAT_R32G32_INT:
+		case K15_RENDER_FORMAT_R32G32_UINT:
+		case K15_RENDER_FORMAT_R32G32_FLOAT:
+		{
+			nativeRenderFormat = GL_RG;
+			break;
+		}
+
 		case K15_RENDER_FORMAT_R8G8B8_INT:
 		case K15_RENDER_FORMAT_R8G8B8_UINT:
 		case K15_RENDER_FORMAT_R16G16B16_INT:
@@ -552,7 +594,7 @@ intern inline GLenum K15_GLConvertRenderFormat(K15_RenderFormat p_RenderFormat)
 			nativeRenderFormat = GL_RGBA;
 			break;
 		}
-	
+		
 		default:
 		{
 			assert(false);
@@ -568,6 +610,36 @@ intern inline GLenum K15_GLConvertInternalRenderFormat(K15_RenderFormat p_Render
 
 	switch(p_RenderFormat)
 	{
+		case K15_RENDER_FORMAT_R8_UINT:
+		case K15_RENDER_FORMAT_R8_INT:
+		{
+			nativeRenderFormat = GL_R8;
+			break;
+		}
+
+		case K15_RENDER_FORMAT_R16_UINT:
+		case K15_RENDER_FORMAT_R16_INT:
+		case K15_RENDER_FORMAT_R16_FLOAT:
+		{
+			nativeRenderFormat = GL_R16;
+			break;
+		}
+		
+		case K15_RENDER_FORMAT_R8G8_UINT:
+		case K15_RENDER_FORMAT_R8G8_INT:
+		{
+			nativeRenderFormat = GL_RG8;
+			break;
+		}
+
+		case K15_RENDER_FORMAT_R16G16_UINT:
+		case K15_RENDER_FORMAT_R16G16_INT:
+		case K15_RENDER_FORMAT_R16G16_FLOAT:
+		{
+			nativeRenderFormat = GL_RG16;
+			break;
+		}
+
 		case K15_RENDER_FORMAT_R8G8B8_INT:
 		case K15_RENDER_FORMAT_R8G8B8_UINT:
 		{

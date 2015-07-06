@@ -8,11 +8,14 @@
 
 #include <K15_Matrix4.h>
 
+#include <K15_GUIContext.h>
+
 #include "K15_RenderBufferDesc.h"
 #include "K15_RenderProgramDesc.h"
 #include "K15_RenderTextureDesc.h"
 #include "K15_RenderSamplerDesc.h"
 #include "K15_RenderStateDesc.h"
+#include "K15_RenderFontDesc.h"
 #include "K15_RenderTargetDesc.h"
 #include "K15_RenderCameraDesc.h"
 #include "K15_RenderViewportDesc.h"
@@ -26,8 +29,6 @@
 #include "K15_RenderProgramDesc.cpp"
 #include "K15_RenderCommands.cpp"
 
-#include <glm/matrix.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 /*********************************************************************************/
 intern inline void K15_InternalConvertCameraDescToInternalCameraDesc(K15_RenderContext* p_RenderContext, K15_RenderCameraDesc* p_RenderCameraDesc, K15_InternalRenderCameraDesc* p_InternalRenderCameraDesc)
@@ -112,6 +113,7 @@ intern inline void K15_InternalCheckRenderTextureDescFlags(K15_RenderTextureDesc
 		}
 		
 		free(p_RenderTextureDesc->mipmaps.data);
+		free(p_RenderTextureDesc->mipmaps.dataSize);
 	}
 }
 /*********************************************************************************/
@@ -932,6 +934,15 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 			break;
 		}
 
+		case K15_RENDER_COMMAND_DRAW_GUI:
+		{
+			K15_GUIContext guiContext = {};
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_GUIContext), 0, &guiContext);
+
+			break;
+		}
+
 		case K15_RENDER_COMMAND_CREATE_CAMERA:
 		{
 			K15_RenderCameraHandle* renderCameraHandle = 0;
@@ -984,6 +995,33 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 				K15_LOG_DEBUG_MESSAGE("Did not sent command '%s' to the GPU because the camera handle is invalid.", K15_ConvertRenderCommandToString(p_RenderCommand->type));
 			}
 #endif //K15_SHOW_PER_COMMAND_DEBUG_LOG
+			break;
+		}
+
+		case K15_RENDER_COMMAND_SET_GUI_TEXTURE:
+		{
+			K15_RenderTextureHandle* guiTextureHandle = &p_RenderContext->resources.guiTexture;
+
+			K15_RenderTextureDesc renderTextureDesc = {};
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderTextureDesc), 0, &renderTextureDesc);
+
+			//try to load new gui texture
+			K15_RenderTextureHandle newGUITextureHandle = K15_InternalAddRenderTextureDesc(p_RenderContext, &renderTextureDesc);
+			result = p_RenderContext->commandProcessing.textureManagement.createTexture(p_RenderContext, &renderTextureDesc, &newGUITextureHandle);
+
+			if (result == K15_SUCCESS &&
+				newGUITextureHandle != K15_INVALID_GPU_RESOURCE_HANDLE)
+			{
+				if (*guiTextureHandle != K15_INVALID_GPU_RESOURCE_HANDLE)
+				{
+					//delete old gui texture
+					result = p_RenderContext->commandProcessing.textureManagement.deleteTexture(p_RenderContext, guiTextureHandle);
+				}
+
+				*guiTextureHandle = newGUITextureHandle;
+			}
+
 			break;
 		}
 
@@ -1273,6 +1311,10 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSContext* p_OSContext)
 	K15_InitializeRenderUniformCache(uniformCache);
 
 	renderContext->uniformCache = uniformCache;
+
+
+	//create render resources
+	renderContext->resources.guiTexture = K15_INVALID_GPU_RESOURCE_HANDLE;
 
 	//create command queues
 	K15_RenderCommandBuffer* renderCommandBuffers = (K15_RenderCommandBuffer*)malloc(sizeof(K15_RenderCommandBuffer) * K15_RENDERING_MAX_COMMAND_BUFFERS);

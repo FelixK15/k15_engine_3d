@@ -105,6 +105,7 @@ enum K15_RenderCommand : uint32
 	//drawing
 	K15_RENDER_COMMAND_DRAW_FULLSCREEN_QUAD,
 	K15_RENDER_COMMAND_DRAW_MESH,
+	K15_RENDER_COMMAND_DRAW_GUI,
 
 	//camera
 	K15_RENDER_COMMAND_CREATE_CAMERA,
@@ -115,6 +116,9 @@ enum K15_RenderCommand : uint32
 	//matrices
 	K15_RENDER_COMMAND_SET_PROJECTION_MATRIX,
 	K15_RENDER_COMMAND_SET_VIEW_MATRIX,
+
+	//resources
+	K15_RENDER_COMMAND_SET_GUI_TEXTURE,
 
 	K15_RENDER_COMMAND_COUNT
 };
@@ -206,9 +210,15 @@ struct K15_RenderCapabilities
 	uint32 maxTextureDimension;
 };
 
+struct K15_RenderResources
+{
+	K15_RenderTextureHandle guiTexture;
+};
+
 struct K15_RenderContext
 {
 	K15_RenderCapabilities capabilities;
+	K15_RenderResources resources;
 
 	K15_RenderUniformCache* uniformCache;
 	K15_RenderCommandBufferDispatcher* commandBufferDispatcher;
