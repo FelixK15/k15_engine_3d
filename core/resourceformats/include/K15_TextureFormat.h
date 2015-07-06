@@ -8,6 +8,8 @@
 struct K15_TextureFormat
 {
 	byte* textureMemory;
+	uint32 allocatedTextureMemorySize;
+	uint32 actualTextureMemorySize;
 	char* textureName;
 	uint32 textureNameLength;
 	uint32 width;
@@ -25,11 +27,7 @@ byte* K15_GetTextureMipMap(K15_TextureFormat* p_TextureFormat, uint8 p_MipmapInd
 
 uint8 K15_SaveTextureFormatToFile(K15_TextureFormat* p_TextureFormat, const char* p_File, uint32 p_SaveFlags);
 uint8 K15_LoadTextureFormatFromFile(K15_TextureFormat* p_TextureFormat, const char* p_File);
-uint8 K15_LoadTextureFormatFromMemory(K15_TextureFormat* p_TextureFormat, byte* p_Memory);
-
-
-uint8 K15_InternalSaveTextureFormat(K15_DataAccessContext* p_DataAccessContext, K15_TextureFormat* p_TextureFormat, uint32 p_SaveFlags);
-uint8 K15_InternalLoadTextureFormat(K15_DataAccessContext* p_DataAccessContext, K15_TextureFormat* p_TextureFormat);
+uint8 K15_LoadTextureFormatFromMemory(K15_TextureFormat* p_TextureFormat, byte* p_Memory, uint32 p_MemorySize);
 
 void K15_FreeTextureFormat(K15_TextureFormat p_TextureFormat);
 

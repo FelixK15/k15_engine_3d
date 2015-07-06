@@ -6,185 +6,13 @@
 #include "enums/K15_FormatValues.h"
 
 /*********************************************************************************/
-uint8 K15_SetMaterialName(K15_MaterialFormat* p_MaterialFormat, const char* p_Name)
-{
-	assert(p_MaterialFormat && p_Name);
-
-	size_t nameLength = strlen(p_Name);
-	char* nameBuffer = (char*)K15_RF_MALLOC(nameLength);
-	
-	if (!nameBuffer)
-	{
-		return K15_ERROR_OUT_OF_MEMORY;
-	}
-
-	memcpy(nameBuffer, p_Name, nameLength);
-
-	p_MaterialFormat->materialNameLength = (uint32)nameLength;
-	p_MaterialFormat->materialName = nameBuffer;
-
-	return K15_SUCCESS;
-}
-/*********************************************************************************/
-uint8 K15_SetSubMaterialCount(K15_MaterialFormat* p_MaterialFormat, uint16 p_SubMaterialCount)
-{
-	assert(p_MaterialFormat && p_SubMaterialCount > 0);
-
-	K15_SubMaterialFormat* subMaterialMemory = (K15_SubMaterialFormat*)K15_RF_MALLOC(sizeof(K15_SubMaterialFormat) * p_SubMaterialCount);
-
-	if(!subMaterialMemory)
-	{
-		return K15_ERROR_OUT_OF_MEMORY;
-	}
-
-	p_MaterialFormat->subMaterials = subMaterialMemory;
-	p_MaterialFormat->submaterialCount = p_SubMaterialCount;
-	
-	return K15_SUCCESS;
-}
-/*********************************************************************************/
-uint8 K15_SetSubMaterialTextureCount(K15_SubMaterialFormat* p_SubMaterialFormat, uint32 p_TextureCount, uint32 p_TextureIdentifier)
-{
-	assert(p_SubMaterialFormat && p_TextureCount > 0 && p_TextureIdentifier > 0);
-
-	K15_SubMaterialTextureFormat* textureFormatMemory = (K15_SubMaterialTextureFormat*)K15_RF_MALLOC(p_TextureCount * sizeof(K15_SubMaterialTextureFormat));
-
-	if(!textureFormatMemory)
-	{
-		return K15_ERROR_OUT_OF_MEMORY;
-	}
-
-	switch(p_TextureIdentifier)
-	{
-	case K15_MATERIAL_TEXTURE_DIFFUSE:
-		{
-			p_SubMaterialFormat->diffuseTextureFormat = textureFormatMemory;
-			p_SubMaterialFormat->diffuseTextureCount = p_TextureCount;
-			break;
-		}
-	default:
-		{
-			if(textureFormatMemory)
-			{
-				K15_RF_FREE(textureFormatMemory);
-			}
-
-			return K15_ERROR_WRONG_DATA_IDENTIFIER;
-		}
-	}
-	
-	return K15_SUCCESS;
-}
-/*********************************************************************************/
-uint8 K15_SetSubMaterialTextureFormatTextureName(K15_SubMaterialTextureFormat* p_SubMaterialTextureFormat, const char* p_TextureName)
-{
-	assert(p_SubMaterialTextureFormat && p_TextureName);
-
-	size_t lengthName = strlen(p_TextureName);
-	char* nameBuffer = (char*)K15_RF_MALLOC(lengthName);
-
-	if(!nameBuffer)
-	{
-		return K15_ERROR_OUT_OF_MEMORY;
-	}
-
-	memcpy(nameBuffer, p_TextureName, lengthName);
-
-	p_SubMaterialTextureFormat->textureNameLength = (uint32)lengthName;
-	p_SubMaterialTextureFormat->textureName = nameBuffer;
-
-	return K15_SUCCESS;
-}
-/*********************************************************************************/
-uint8 K15_SaveMaterialFormatToFile(K15_MaterialFormat* p_MaterialFormat, const char* p_Path, uint32 p_SaveFlag)
-{
-	assert(p_MaterialFormat && p_Path);
-
-	K15_DataAccessContext accessContext;
-
-	uint8 result = K15_CreateDataAccessContextFromFile(&accessContext, p_Path);
-
-	if(result != K15_SUCCESS)
-	{
-		//error
-	}
-
-	result = K15_InternalSaveMaterialFormat(&accessContext, p_MaterialFormat, p_SaveFlag);
-
-	K15_CloseDataAccessContext(&accessContext);
-
-	return result;
-}
-/*********************************************************************************/
-void K15_FreeMaterialFormat(K15_MaterialFormat p_MaterialFormat)
-{
-	for(uint16 submaterialFormatIndex = 0;
-		submaterialFormatIndex < p_MaterialFormat.submaterialCount;
-		++submaterialFormatIndex)
-	{
-		K15_SubMaterialFormat submaterialFormat = p_MaterialFormat.subMaterials[submaterialFormatIndex];
-	
-		for(uint16 submaterialDiffuseTextureIndex = 0;
-			submaterialDiffuseTextureIndex < submaterialFormat.diffuseTextureCount;
-			++submaterialDiffuseTextureIndex)
-		{
-			K15_SubMaterialTextureFormat submaterialDiffuseTextureFormat = submaterialFormat.diffuseTextureFormat[submaterialDiffuseTextureIndex];
-			K15_RF_FREE(submaterialDiffuseTextureFormat.textureName);
-			submaterialDiffuseTextureFormat.textureName = 0;
-		}
-
-		K15_RF_FREE(submaterialFormat.diffuseTextureFormat);
-		submaterialFormat.diffuseTextureFormat = 0;
-	}
-
-	K15_RF_FREE(p_MaterialFormat.materialName);
-	K15_RF_FREE(p_MaterialFormat.subMaterials);
-	p_MaterialFormat.subMaterials = 0;
-}
-/*********************************************************************************/
-uint8 K15_LoadMaterialFormat(K15_MaterialFormat* p_MaterialFormat, const char* p_Path)
-{
-	assert(p_MaterialFormat && p_Path);
-
-	K15_DataAccessContext accessContext;
-
-	uint8 result = K15_CreateDataAccessContextFromFile(&accessContext, p_Path);
-
-	if (result != K15_SUCCESS)
-	{
-		//error
-	}
-
-	result = K15_InternalLoadMaterialFormat(&accessContext, p_MaterialFormat);
-
-	K15_CloseDataAccessContext(&accessContext);
-
-	return result;
-}
-/*********************************************************************************/
-uint8 K15_LoadMaterialFormatFromMemory(K15_MaterialFormat* p_MaterialFormat, byte* p_Memory)
-{
-	assert(p_MaterialFormat && p_Memory);
-
-	K15_DataAccessContext accessContext;
-
-	K15_CreateDataAccessContextFromMemory(&accessContext, p_Memory);
-
-	uint8 result = K15_InternalLoadMaterialFormat(&accessContext, p_MaterialFormat);
-
-	K15_CloseDataAccessContext(&accessContext);
-
-	return result;
-
-}
-/*********************************************************************************/
-uint8 K15_InternalLoadMaterialFormat(K15_DataAccessContext* p_DataAcessContext, K15_MaterialFormat* p_MaterialFormat)
+intern uint8 K15_InternalLoadMaterialFormat(K15_DataAccessContext* p_DataAcessContext, K15_MaterialFormat* p_MaterialFormat)
 {
 	assert(p_MaterialFormat && p_DataAcessContext);
 
 	K15_HeaderFormat headerFormat;
 
-	uint8 headerResult = K15_InternalReadHeaderFormat(p_DataAcessContext, &headerFormat, K15_RESOURCE_FORMAT_MATERIAL);
+	uint8 headerResult = K15_ReadHeaderFormat(p_DataAcessContext, &headerFormat, K15_RESOURCE_FORMAT_MATERIAL);
 	if(headerResult != K15_SUCCESS)
 	{
 		return headerResult;
@@ -296,7 +124,7 @@ uint8 K15_InternalLoadMaterialFormat(K15_DataAccessContext* p_DataAcessContext, 
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-uint8 K15_InternalSaveMaterialFormat(K15_DataAccessContext* p_DataAcessContext, K15_MaterialFormat* p_MaterialFormat, uint32 p_SaveFlags)
+intern uint8 K15_InternalSaveMaterialFormat(K15_DataAccessContext* p_DataAcessContext, K15_MaterialFormat* p_MaterialFormat, uint32 p_SaveFlags)
 {
 	K15_HeaderFormat headerFormat;
 	K15_CreateHeader(&headerFormat, K15_RESOURCE_FORMAT_MATERIAL);
@@ -372,5 +200,181 @@ uint8 K15_InternalSaveMaterialFormat(K15_DataAccessContext* p_DataAcessContext, 
 	}
 
 	return K15_SUCCESS;
+}
+/*********************************************************************************/
+
+
+
+/*********************************************************************************/
+uint8 K15_SetMaterialName(K15_MaterialFormat* p_MaterialFormat, const char* p_Name)
+{
+	assert(p_MaterialFormat && p_Name);
+
+	uint32 nameLength = (uint32)strlen(p_Name);
+	char* nameBuffer = (char*)K15_RF_MALLOC(nameLength);
+	
+	if (!nameBuffer)
+	{
+		return K15_ERROR_OUT_OF_MEMORY;
+	}
+
+	memcpy(nameBuffer, p_Name, nameLength);
+
+	p_MaterialFormat->materialNameLength = nameLength;
+	p_MaterialFormat->materialName = nameBuffer;
+
+	return K15_SUCCESS;
+}
+/*********************************************************************************/
+uint8 K15_SetSubMaterialCount(K15_MaterialFormat* p_MaterialFormat, uint16 p_SubMaterialCount)
+{
+	assert(p_MaterialFormat && p_SubMaterialCount > 0);
+
+	K15_SubMaterialFormat* subMaterialMemory = (K15_SubMaterialFormat*)K15_RF_MALLOC(sizeof(K15_SubMaterialFormat) * p_SubMaterialCount);
+
+	if(!subMaterialMemory)
+	{
+		return K15_ERROR_OUT_OF_MEMORY;
+	}
+
+	p_MaterialFormat->subMaterials = subMaterialMemory;
+	p_MaterialFormat->submaterialCount = p_SubMaterialCount;
+	
+	return K15_SUCCESS;
+}
+/*********************************************************************************/
+uint8 K15_SetSubMaterialTextureCount(K15_SubMaterialFormat* p_SubMaterialFormat, uint32 p_TextureCount, uint32 p_TextureIdentifier)
+{
+	assert(p_SubMaterialFormat && p_TextureCount > 0 && p_TextureIdentifier > 0);
+
+	K15_SubMaterialTextureFormat* textureFormatMemory = (K15_SubMaterialTextureFormat*)K15_RF_MALLOC(p_TextureCount * sizeof(K15_SubMaterialTextureFormat));
+
+	if(!textureFormatMemory)
+	{
+		return K15_ERROR_OUT_OF_MEMORY;
+	}
+
+	switch(p_TextureIdentifier)
+	{
+	case K15_MATERIAL_TEXTURE_DIFFUSE:
+		{
+			p_SubMaterialFormat->diffuseTextureFormat = textureFormatMemory;
+			p_SubMaterialFormat->diffuseTextureCount = p_TextureCount;
+			break;
+		}
+	default:
+		{
+			if(textureFormatMemory)
+			{
+				K15_RF_FREE(textureFormatMemory);
+			}
+
+			return K15_ERROR_WRONG_DATA_IDENTIFIER;
+		}
+	}
+	
+	return K15_SUCCESS;
+}
+/*********************************************************************************/
+uint8 K15_SetSubMaterialTextureFormatTextureName(K15_SubMaterialTextureFormat* p_SubMaterialTextureFormat, const char* p_TextureName)
+{
+	assert(p_SubMaterialTextureFormat && p_TextureName);
+
+	uint32 lengthName = (uint32)strlen(p_TextureName);
+	char* nameBuffer = (char*)K15_RF_MALLOC(lengthName);
+
+	if(!nameBuffer)
+	{
+		return K15_ERROR_OUT_OF_MEMORY;
+	}
+
+	memcpy(nameBuffer, p_TextureName, lengthName);
+
+	p_SubMaterialTextureFormat->textureNameLength = lengthName;
+	p_SubMaterialTextureFormat->textureName = nameBuffer;
+
+	return K15_SUCCESS;
+}
+/*********************************************************************************/
+uint8 K15_SaveMaterialFormatToFile(K15_MaterialFormat* p_MaterialFormat, const char* p_Path, uint32 p_SaveFlag)
+{
+	assert(p_MaterialFormat && p_Path);
+
+	K15_DataAccessContext accessContext;
+
+	uint8 result = K15_CreateDataAccessContextFromFile(&accessContext, p_Path, K15_DATA_ACCESS_USAGE_SAVE);
+
+	if(result != K15_SUCCESS)
+	{
+		//error
+	}
+
+	result = K15_InternalSaveMaterialFormat(&accessContext, p_MaterialFormat, p_SaveFlag);
+
+	K15_CloseDataAccessContext(&accessContext);
+
+	return result;
+}
+/*********************************************************************************/
+void K15_FreeMaterialFormat(K15_MaterialFormat p_MaterialFormat)
+{
+	for(uint16 submaterialFormatIndex = 0;
+		submaterialFormatIndex < p_MaterialFormat.submaterialCount;
+		++submaterialFormatIndex)
+	{
+		K15_SubMaterialFormat submaterialFormat = p_MaterialFormat.subMaterials[submaterialFormatIndex];
+	
+		for(uint16 submaterialDiffuseTextureIndex = 0;
+			submaterialDiffuseTextureIndex < submaterialFormat.diffuseTextureCount;
+			++submaterialDiffuseTextureIndex)
+		{
+			K15_SubMaterialTextureFormat submaterialDiffuseTextureFormat = submaterialFormat.diffuseTextureFormat[submaterialDiffuseTextureIndex];
+			K15_RF_FREE(submaterialDiffuseTextureFormat.textureName);
+			submaterialDiffuseTextureFormat.textureName = 0;
+		}
+
+		K15_RF_FREE(submaterialFormat.diffuseTextureFormat);
+		submaterialFormat.diffuseTextureFormat = 0;
+	}
+
+	K15_RF_FREE(p_MaterialFormat.materialName);
+	K15_RF_FREE(p_MaterialFormat.subMaterials);
+	p_MaterialFormat.subMaterials = 0;
+}
+/*********************************************************************************/
+uint8 K15_LoadMaterialFormat(K15_MaterialFormat* p_MaterialFormat, const char* p_Path)
+{
+	assert(p_MaterialFormat && p_Path);
+
+	K15_DataAccessContext accessContext;
+
+	uint8 result = K15_CreateDataAccessContextFromFile(&accessContext, p_Path, K15_DATA_ACCESS_USAGE_LOAD);
+
+	if (result != K15_SUCCESS)
+	{
+		//error
+	}
+
+	result = K15_InternalLoadMaterialFormat(&accessContext, p_MaterialFormat);
+
+	K15_CloseDataAccessContext(&accessContext);
+
+	return result;
+}
+/*********************************************************************************/
+uint8 K15_LoadMaterialFormatFromMemory(K15_MaterialFormat* p_MaterialFormat, byte* p_Memory, uint32 p_MemorySize)
+{
+	assert(p_MaterialFormat && p_Memory);
+
+	K15_DataAccessContext accessContext;
+
+	K15_CreateDataAccessContextFromMemory(&accessContext, p_Memory, p_MemorySize, K15_DATA_ACCESS_USAGE_LOAD);
+
+	uint8 result = K15_InternalLoadMaterialFormat(&accessContext, p_MaterialFormat);
+
+	K15_CloseDataAccessContext(&accessContext);
+
+	return result;
+
 }
 /*********************************************************************************/

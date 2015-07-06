@@ -5,29 +5,29 @@
 #include "enums/K15_ReturnValues.h"
 
 /*********************************************************************************/
-uint8 K15_ReadHeaderFromFile(const char* p_FileName, K15_HeaderFormat* p_HeaderFormat, uint32 p_ResourceType)
-{
-	assert(p_FileName && p_HeaderFormat);
-
-	K15_DataAccessContext accessContext;
-
-	K15_CreateDataAccessContextFromFile(&accessContext, p_FileName);
-
-	return K15_InternalReadHeaderFormat(&accessContext, p_HeaderFormat, p_ResourceType);
-}
+// uint8 K15_ReadHeaderFromFile(const char* p_FileName, K15_HeaderFormat* p_HeaderFormat, uint32 p_ResourceType)
+// {
+// 	assert(p_FileName && p_HeaderFormat);
+// 
+// 	K15_DataAccessContext accessContext;
+// 
+// 	K15_CreateDataAccessContextFromFile(&accessContext, p_FileName);
+// 
+// 	return K15_ReadHeaderFormat(&accessContext, p_HeaderFormat, p_ResourceType);
+// }
+// /*********************************************************************************/
+// uint8 K15_ReadHeaderFromMemory(byte* p_Memory, K15_HeaderFormat* p_HeaderFormat, uint32 p_ResourceType)
+// {
+// 	assert(p_Memory && p_HeaderFormat);
+// 
+// 	K15_DataAccessContext accessContext;
+// 
+// 	K15_CreateDataAccessContextFromMemory(&accessContext, p_Memory);
+// 
+// 	return K15_ReadHeaderFormat(&accessContext, p_HeaderFormat, p_ResourceType);
+// }
 /*********************************************************************************/
-uint8 K15_ReadHeaderFromMemory(byte* p_Memory, K15_HeaderFormat* p_HeaderFormat, uint32 p_ResourceType)
-{
-	assert(p_Memory && p_HeaderFormat);
-
-	K15_DataAccessContext accessContext;
-
-	K15_CreateDataAccessContextFromMemory(&accessContext, p_Memory);
-
-	return K15_InternalReadHeaderFormat(&accessContext, p_HeaderFormat, p_ResourceType);
-}
-/*********************************************************************************/
-uint8 K15_InternalReadHeaderFormat(K15_DataAccessContext* p_DataAcessContext, K15_HeaderFormat* p_HeaderFormat, uint32 p_ResourceType)
+uint8 K15_ReadHeaderFormat(K15_DataAccessContext* p_DataAcessContext, K15_HeaderFormat* p_HeaderFormat, uint32 p_ResourceType)
 {
 	assert(p_DataAcessContext && p_HeaderFormat);
 
@@ -83,7 +83,7 @@ uint32 K15_CreateHash(const char* p_Identifier)
 
 	uint32 hash = 0;
 	uint32 i;
-	size_t length = strlen(p_Identifier);
+	uint32 length = (uint32)strlen(p_Identifier);
 
 	for (i = 0; 
 		i < length; 

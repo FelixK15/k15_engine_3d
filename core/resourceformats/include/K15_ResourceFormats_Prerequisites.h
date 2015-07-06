@@ -6,6 +6,7 @@
 #include <cassert>
 #include <cstdio>
 #include <cmath>
+#include <io.h>
 //#include <string>
 //#include <fstream>
 
@@ -23,6 +24,7 @@
 #define K15_RESOURCE_FORMAT_MESH 1
 #define K15_RESOURCE_FORMAT_MATERIAL 2
 #define K15_RESOURCE_FORMAT_TEXTURE 3
+#define K15_RESOURCE_FORMAT_FONT 4
 
 //versioning
 #define K15_FORMAT_MESH_MAJOR_VERSION 1
@@ -34,6 +36,19 @@
 //typedef std::string String;
 
 typedef unsigned char byte;
+typedef unsigned char bool8;
+
+#ifndef K15_FALSE
+	#define K15_FALSE 0
+#endif //K15_FALSE
+
+#ifndef K15_TRUE
+	#define K15_TRUE 1
+#endif //K15_TRUE
+
+#ifndef intern
+	#define intern static
+#endif //intern1
 
 #ifdef _WIN32
 	//8 bit types

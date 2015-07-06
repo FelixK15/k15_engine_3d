@@ -11,9 +11,9 @@ struct K15_HeaderFormat
 	uint32 resourceType;
 };
 
-uint8 K15_ReadHeaderFromFile(const char* p_FileName, K15_HeaderFormat* p_HeaderFormat, uint32 p_ResourceType);
-uint8 K15_ReadHeaderFromMemory(byte* p_Memory, K15_HeaderFormat* p_HeaderFormat, uint32 p_ResourceType);
-uint8 K15_InternalReadHeaderFormat(K15_DataAccessContext* p_DataAcessContext, K15_HeaderFormat* p_HeaderFormat, uint32 p_ResourceType);
+//uint8 K15_ReadHeaderFromFile(const char* p_FileName, K15_HeaderFormat* p_HeaderFormat, uint32 p_ResourceType);
+//uint8 K15_ReadHeaderFromMemory(byte* p_Memory, K15_HeaderFormat* p_HeaderFormat, uint32 p_ResourceType);
+uint8 K15_ReadHeaderFormat(K15_DataAccessContext* p_DataAcessContext, K15_HeaderFormat* p_HeaderFormat, uint32 p_ResourceType);
 
 uint8 K15_CreateHeader(K15_HeaderFormat* p_HeaderFormat, uint32 p_ResourceType);
 

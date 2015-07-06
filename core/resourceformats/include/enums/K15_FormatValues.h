@@ -29,5 +29,7 @@
 //Texture Format Values
 #define K15_TEXTURE_DXT3_COMPRESSION					1
 #define K15_TEXTURE_DXT5_COMPRESSION					2
+#define K15_TEXTURE_DXT1_COMPRESSION					3
+#define K15_TEXTURE_NO_COMPRESSION						4
 
 #endif //_K15_ResourceFormat_ReturnVa_K15_ResourceFormat_FormatValues_h_lues_h_

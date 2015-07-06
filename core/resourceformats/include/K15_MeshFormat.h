@@ -64,13 +64,10 @@ uint8 K15_SetSubmeshDataWithIndex(uint32 p_Index, K15_SubMeshFormat* p_SubmeshFo
 
 uint8 K15_SaveMeshFormatToFile(K15_MeshFormat* p_MeshFormat, const char* p_FileName, uint32 p_SaveFlags);
 uint8 K15_LoadMeshFormatFromFile(K15_MeshFormat* p_MeshFormat, const char* p_FileName);
-uint8 K15_LoadMeshFormatFromMemory(K15_MeshFormat* p_MeshFormat, byte* p_Memory);
+uint8 K15_LoadMeshFormatFromMemory(K15_MeshFormat* p_MeshFormat, byte* p_Memory, uint32 p_MemorySize);
 
 uint32 K15_GetSubMeshFormatVertexDataSize(K15_SubMeshFormat* p_SubMeshFormat);
 uint32 K15_GetSubMeshFormatTriangleDataSize(K15_SubMeshFormat* p_SubMeshFormat);
-
-uint8 K15_InternalLoadMeshFormat(K15_MeshFormat* p_MeshFormat, K15_DataAccessContext* p_DataAccessContext);
-uint8 K15_InternalSaveMeshFormat(K15_MeshFormat* p_MeshFormat, K15_DataAccessContext* p_DataAccessContext, uint32 p_SaveFlags);
 
 void K15_FreeMeshFormat(K15_MeshFormat p_MeshFormat);
 

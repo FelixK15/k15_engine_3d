@@ -48,10 +48,7 @@ uint8 K15_SetSubMaterialTextureFormatTextureName(K15_SubMaterialTextureFormat* p
 uint8 K15_SaveMaterialFormatgToFile(K15_MaterialFormat* p_MaterialFormat, const char* p_Path, uint32 p_SaveFlags);
 
 uint8 K15_LoadMaterialFormatFromFile(K15_MaterialFormat* p_MaterialFormat, const char* p_Path);
-uint8 K15_LoadMaterialFormatFromMemory(K15_MaterialFormat* p_MaterialFormat, byte* p_Memory);
-
-uint8 K15_InternalLoadMaterialFormat(K15_DataAccessContext* p_DataAcessContext, K15_MaterialFormat* p_MaterialFormat);
-uint8 K15_InternalSaveMaterialFormat(K15_DataAccessContext* p_DataAcessContext, K15_MaterialFormat* p_MaterialFormat, uint32 p_SaveFlags);
+uint8 K15_LoadMaterialFormatFromMemory(K15_MaterialFormat* p_MaterialFormat, byte* p_Memory, uint32 p_MemorySize);
 
 void K15_FreeMaterialFormat(K15_MaterialFormat p_MaterialFormat);
 
