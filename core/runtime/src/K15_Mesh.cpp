@@ -25,7 +25,7 @@ K15_Mesh* K15_LoadMesh(K15_ResourceContext* p_ResourceContext, K15_RenderCommand
 		return NULL;
 	}
 
-	uint8 result = K15_LoadMeshFormatFromMemory(&meshFormat, resource->data);
+	uint8 result = K15_LoadMeshFormatFromMemory(&meshFormat, resource->data, resource->dataSizeInBytes);
 
 	if (result != K15_SUCCESS)
 	{

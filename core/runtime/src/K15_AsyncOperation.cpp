@@ -158,13 +158,20 @@ K15_AsyncOperation* K15_CreateAsyncOperation(K15_AsyncContext* p_AsyncContext, K
 	K15_AsyncOperationMemoryPool* asyncMemoryPool = &p_AsyncContext->asyncMemoryPool;
 	K15_AsyncOperation* asyncOperation = K15_GetAsyncOperationMemoryPoolElement(asyncMemoryPool);
 
-	K15_InitializeAsyncOperation(asyncOperation, p_AsyncFunction, p_AsyncCallback, p_UserData, p_UserDataSize, p_Flags);
+	K15_InitializeAsyncOperation(p_AsyncContext, asyncOperation, p_AsyncFunction, p_AsyncCallback, p_UserData, p_UserDataSize, p_Flags);
+
+	if ((p_Flags & K15_ASYNC_OPERATION_FIRE_AND_FORGET_FLAG) > 0)
+	{
+		K15_IssueAsyncOperation(p_AsyncContext, asyncOperation);
+	}
 
 	return asyncOperation;
 }
 /*********************************************************************************/
 K15_AsyncOperation* K15_CreateAndIssueAsyncOperation(K15_AsyncContext* p_AsyncContext, K15_AsyncFunctionFnc p_AsyncFunction, K15_AsyncCallbackFnc p_AsyncCallback, void* p_UserData, uint32 p_UserDataSize, uint32 p_Flags)
 {
+	p_Flags &= ~K15_ASYNC_OPERATION_FIRE_AND_FORGET_FLAG;
+
 	K15_AsyncOperation* asyncOperation = K15_CreateAsyncOperation(p_AsyncContext, p_AsyncFunction, p_AsyncCallback, p_UserData, p_UserDataSize, p_Flags);
 
 	K15_IssueAsyncOperation(p_AsyncContext, asyncOperation);
@@ -177,25 +184,31 @@ void K15_RemoveAsyncOperation(K15_AsyncContext* p_AsyncContext, K15_AsyncOperati
 	K15_ASSERT_TEXT(p_AsyncContext, "Async Context is NULL.");
 	K15_ASSERT_TEXT(p_AsyncOperation, "Async Operation is NULL.");
 
+	if ((p_AsyncOperation->flags & K15_ASYNC_OPERATION_CLEAR_AFTER_PROCESS_FLAG) > 0)
+	{
+		K15_FreeFromMemoryAllocator(p_AsyncContext->memoryAllocator, p_AsyncOperation->userData);
+	}
+
 	K15_AsyncOperationMemoryPool* asyncMemoryPool = &p_AsyncContext->asyncMemoryPool;
 
 	K15_FreeAsyncOperationMemoryPoolElement(asyncMemoryPool, p_AsyncOperation);
 }
 /*********************************************************************************/
-void K15_InitializeAsyncOperation(K15_AsyncOperation* p_AsyncOperation, K15_AsyncFunctionFnc p_AsyncFunction, K15_AsyncCallbackFnc p_AsyncCallback, void* p_UserData, uint32 p_UserDataSize, uint32 p_Flags)
+void K15_InitializeAsyncOperation(K15_AsyncContext* p_AsyncContext, K15_AsyncOperation* p_AsyncOperation, K15_AsyncFunctionFnc p_AsyncFunction, K15_AsyncCallbackFnc p_AsyncCallback, void* p_UserData, uint32 p_UserDataSize, uint32 p_Flags)
 {
 	K15_ASSERT_TEXT(p_AsyncOperation, "Async Operation is NULL.");
 	K15_ASSERT_TEXT(p_AsyncFunction, "Async Operation Function is NULL.");
 
-// 	if ((p_Flags & K15_ASYNC_OPERATION_USER_DATA_COPY_FLAG) > 0)
-// 	{
-// 		K15_ASSERT_TEXT(p_UserData, "User Data is NULL.");
-// 		K15_ASSERT_TEXT(p_UserDataSize, "User Data Size is 0.");
-// 
-// 		byte* userDataCopy = (byte*)K15_RT_MALLOC(p_UserDataSize);
-// 		memcpy(userDataCopy, p_UserData, p_UserDataSize);
-// 		p_UserData = userDataCopy;
-// 	}
+	if ((p_Flags & K15_ASYNC_OPERATION_USER_DATA_COPY_FLAG) > 0)
+	{
+		K15_ASSERT_TEXT(p_UserData, "User Data is NULL.");
+		K15_ASSERT_TEXT(p_UserDataSize, "User Data Size is 0.");
+
+		byte* userDataCopy = (byte*)K15_AllocateFromMemoryAllocator(p_AsyncContext->memoryAllocator, p_UserDataSize);
+		memcpy(userDataCopy, p_UserData, p_UserDataSize);
+		p_UserData = userDataCopy;
+		p_Flags |= K15_ASYNC_OPERATION_CLEAR_AFTER_PROCESS_FLAG;
+	}
 
 	p_AsyncOperation->asyncCallback = p_AsyncCallback;
 	p_AsyncOperation->asyncFunction = p_AsyncFunction;

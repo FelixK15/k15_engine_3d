@@ -17,6 +17,9 @@ uint8 K15_GameThreadMain(void* p_Parameter)
 #endif //K15_LOAD_GAME_LIB_DYNAMIC
 
 	K15_TickGameFnc K15_TickGame = gameContext->tickFnc;
+	K15_OnInputEventFnc K15_OnInputEvent = gameContext->onInputEventFnc;
+	K15_OnWindowEventFnc K15_OnWindowEvent = gameContext->onWindowEventFnc;
+	K15_OnSystemEventFnc K15_OnSystemEvent = gameContext->onSystemEventFnc;
 
 	bool running = true;
 	uint32 frameCounter = 0;
@@ -24,18 +27,36 @@ uint8 K15_GameThreadMain(void* p_Parameter)
 
 	while(running)
 	{
+#ifdef K15_LOAD_GAME_LIB_DYNAMIC
+		K15_LockMutex(gameLibrarySynchronizer);
+		K15_TickGame = gameContext->tickFnc;
+		K15_OnInputEvent = gameContext->onInputEventFnc;
+		K15_OnWindowEvent = gameContext->onWindowEventFnc;
+		K15_OnSystemEvent = gameContext->onSystemEventFnc;
+#endif //K15_LOAD_GAME_LIB_DYNAMIC
+
 		while (K15_GetSystemEventFromQueue(&event, K15_REMOVE_SYSTEM_EVENT_FLAG) != K15_SYSTEM_EVENT_QUEUE_EMPTY)
 		{
 			if (event.event == K15_APPLICATION_QUIT)
 			{
 				running = false;
 			}
-		}
 
-#ifdef K15_LOAD_GAME_LIB_DYNAMIC
-		K15_LockMutex(gameLibrarySynchronizer);
-		K15_TickGame = gameContext->tickFnc;
-#endif //K15_LOAD_GAME_LIB_DYNAMIC
+			if ((event.eventFlags & K15_WINDOW_EVENT_FLAG) > 0)
+			{
+				K15_OnWindowEvent(gameContext, &event);
+			}
+
+			if ((event.eventFlags & K15_SYSTEM_EVENT_FLAG) > 0)
+			{
+				K15_OnSystemEvent(gameContext, &event);
+			}
+
+			if ((event.eventFlags & K15_INPUT_EVENT_FLAG) > 0)
+			{
+				K15_OnInputEvent(gameContext, &event);
+			}
+		}
 
 		K15_TickGame(gameContext);
 

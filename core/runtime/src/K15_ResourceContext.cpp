@@ -27,8 +27,8 @@ struct K15_AsyncResourceLoadParameter
 /*********************************************************************************/
 intern char* K15_InternalCopyResourcePathIntoBuffer(const char* p_ResourcePackPath, const char* p_ResourcePath, char* p_Buffer)
 {
-	uint32 resourcePackPathLength = (uint32)strlen(p_ResourcePackPath);
-	uint32 resourcePathLength = (uint32)strlen(p_ResourcePath);
+	uint32 resourcePackPathLength= (uint32)strlen(p_ResourcePackPath);
+	uint32 resourcePathLength= (uint32)strlen(p_ResourcePath);
 	uint32 bufferOffset = 0;
 
 	uint8 addSeparator = K15_FALSE;
@@ -63,8 +63,8 @@ intern char* K15_InternalCopyResourcePathIntoBuffer(const char* p_ResourcePackPa
 /*********************************************************************************/
 intern uint8 K15_InternalFileSystemResourceExists(K15_ResourceContext* p_ResourceContext, const char* p_Path)
 {
-	uint32 dirPathLength = (uint32)strlen(p_ResourceContext->resourcePath);
-	uint32 filePathLength = (uint32)strlen(p_Path);
+	uint32 dirPathLength= (uint32)strlen(p_ResourceContext->resourcePath);
+	uint32 filePathLength= (uint32)strlen(p_Path);
 
 	uint32 filePathBufferSize = dirPathLength + filePathLength + 1; //+1 = 0 terminator
 
@@ -75,8 +75,8 @@ intern uint8 K15_InternalFileSystemResourceExists(K15_ResourceContext* p_Resourc
 /*********************************************************************************/
 intern uint32 K15_InternalFileSystemGetResourceSize(K15_ResourceContext* p_ResourceContext, const char* p_Path)
 {
-	uint32 dirPathLength = (uint32)strlen(p_ResourceContext->resourcePath);
-	uint32 filePathLength = (uint32)strlen(p_Path);
+	uint32 dirPathLength= (uint32)strlen(p_ResourceContext->resourcePath);
+	uint32 filePathLength= (uint32)strlen(p_Path);
 
 	uint32 filePathBufferSize = dirPathLength + filePathLength + 1; //+1 = 0 terminator
 
@@ -89,8 +89,8 @@ intern byte* K15_InternalFileSystemLoadResource(K15_ResourceContext* p_ResourceC
 {
 	K15_MemoryBuffer* resourceMemoryBuffer = p_ResourceContext->resourceMemoryBuffer;
 
-	uint32 dirPathLength = (uint32)strlen(p_ResourceContext->resourcePath);
-	uint32 filePathLength = (uint32)strlen(p_Path);
+	uint32 dirPathLength= (uint32)strlen(p_ResourceContext->resourcePath);
+	uint32 filePathLength= (uint32)strlen(p_Path);
 
 	uint32 filePathBufferSize = dirPathLength + filePathLength + 1; //+1 = 0 terminator
 
@@ -120,13 +120,13 @@ intern K15_ResourceContext* K15_InternalCreateResourceContext(K15_ResourceContex
 
 	resourceContext->resourceCache = resourceCache;
 
-	if (directoryExists == K15_SUCCESS)
+	if (directoryExists == K15_TRUE)
 	{
 		resourceContext->loadResource = K15_InternalFileSystemLoadResource;
 		resourceContext->resourceExists = K15_InternalFileSystemResourceExists;
 		resourceContext->resourceSize = K15_InternalFileSystemGetResourceSize;
 	}
-	else if(fileExists == K15_SUCCESS)
+	else if(fileExists == K15_TRUE)
 	{
 		//TODO: CHECK FOR PACK FILE EXTENSION
 	}
@@ -216,9 +216,10 @@ K15_Resource* K15_LoadResource(K15_ResourceContext* p_ResourceContext, const cha
 	{
 		K15_LOG_NORMAL_MESSAGE("Resource '%s' could not be found in the cache. Loading resource...", p_ResourcePath);
 
-		if (resourceContext->resourceExists(resourceContext, p_ResourcePath) != K15_SUCCESS)
+		if (!resourceContext->resourceExists(resourceContext, p_ResourcePath))
 		{
-			K15_LOG_ERROR_MESSAGE("Could not load resource '%s' (%s).", p_ResourcePath, K15_CopySystemErrorMessageIntoBuffer((char*)alloca(K15_ERROR_MESSAGE_LENGTH)));
+			//K15_LOG_ERROR_MESSAGE("Could not load resource '%s' (%s).", p_ResourcePath, K15_CopySystemErrorMessageIntoBuffer((char*)alloca(K15_ERROR_MESSAGE_LENGTH)));
+			K15_ASSERT_TEXT(false, "Could not load resource '%s' (%s).", p_ResourcePath, K15_CopySystemErrorMessageIntoBuffer((char*)alloca(K15_ERROR_MESSAGE_LENGTH)));
 			return 0;
 		}
 

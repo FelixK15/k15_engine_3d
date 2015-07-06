@@ -32,9 +32,9 @@ intern inline uint8 K15_InternalIsCategoryConfigLine(char* p_ConfigLine)
 	uint8 foundBracketLeft = K15_FALSE;
 	uint8 foundBracketRight = K15_FALSE;
 
-	size_t lineSize = strlen(p_ConfigLine);
+	uint32 lineSize= (uint32)strlen(p_ConfigLine);
 
-	for (size_t lineCharIndex = 0 ;
+	for (uint32 lineCharIndex = 0 ;
 		lineCharIndex < lineSize;
 		++lineCharIndex)
 	{
@@ -64,8 +64,8 @@ intern inline uint8 K15_InternalIsCategoryConfigLine(char* p_ConfigLine)
 /*********************************************************************************/
 intern inline char* K15_InternalGetCategoryName(char* p_ConfigLine)
 {
-	size_t nameLength = strlen(p_ConfigLine) - 1; //-2 (brackets) + 1 (0 terminator)
-	size_t nameIndex = 0;
+	uint32 nameLength= (uint32)strlen(p_ConfigLine) - 1; //-2 (brackets) + 1 (0 terminator)
+	uint32 nameIndex = 0;
 	char* name = (char*)malloc(nameLength);
 	name[nameLength] = 0;
 
@@ -89,7 +89,7 @@ intern inline uint8 K15_InternalIsValidConfigLine(char* p_ConfigLine)
 	uint8 foundRightValue = K15_FALSE;
 	uint8 foundLeftValue = K15_FALSE;
 	uint8 foundEqual = K15_FALSE;
-	size_t lineLength = strlen(p_ConfigLine);
+	uint32 lineLength= (uint32)strlen(p_ConfigLine);
 
 
 	for (size_t lineCharIndex = 0;
@@ -124,7 +124,7 @@ intern inline uint8 K15_InternalIsValidConfigLine(char* p_ConfigLine)
 intern inline char* K15_InternalGetConfigLineValue(char* p_ConfigLine)
 {
 	uint32 equalIndex = 0;
-	uint32 lineLength = (uint32)strlen(p_ConfigLine);
+	uint32 lineLength= (uint32)strlen(p_ConfigLine);
 
 	uint32 equalPosition = K15_InternalGetEqualPosition(p_ConfigLine, lineLength);
 
@@ -147,7 +147,7 @@ intern inline char* K15_InternalGetConfigLineValue(char* p_ConfigLine)
 intern inline char* K15_InternalGetConfigLineName(char* p_ConfigLine)
 {
 	uint32 equalIndex = 0;
-	uint32 lineLength = (uint32)strlen(p_ConfigLine);
+	uint32 lineLength= (uint32)strlen(p_ConfigLine);
 
 	uint32 equalPosition = K15_InternalGetEqualPosition(p_ConfigLine, lineLength);
 
@@ -202,17 +202,24 @@ uint8 K15_LoadConfigFile(const char* p_ConfigFile, K15_ConfigFileContext* p_Conf
 	
 	//create new stretch buffer
 	K15_CreateConfigValueStretchBuffer(configStretchBuffer);
+	char* configFilePath = 0;
 
+	if (K15_IsRelativePath(p_ConfigFile))
+	{
+		const char* workingDirectory = K15_GetWorkingDirectory();
 
-	const char* workingDirectory = K15_GetWorkingDirectory();
+		uint32 configFileNameLength= (uint32)strlen(p_ConfigFile);
+		uint32 workingDirectoryNameLength= (uint32)strlen(workingDirectory);
+		uint32 lengthPathName = configFileNameLength + workingDirectoryNameLength;
 
-	size_t configFileNameLength = strlen(p_ConfigFile);
-	size_t workingDirectoryNameLength = strlen(workingDirectory);
-	size_t lengthPathName = configFileNameLength + workingDirectoryNameLength;
+		configFilePath = (char*)malloc(lengthPathName);
 
-	char* configFilePath = (char*)malloc(lengthPathName);
-
-	sprintf(configFilePath, "%s%s", workingDirectory, p_ConfigFile);
+		sprintf(configFilePath, "%s%s", workingDirectory, p_ConfigFile);
+	}
+	else
+	{
+		configFilePath = K15_CopyString(p_ConfigFile);
+	}
 
 	uint32 configFileSize = 0;
 	char* configFileContent = (char*)K15_GetWholeFileContentWithFileSize(configFilePath, &configFileSize);
@@ -221,7 +228,7 @@ uint8 K15_LoadConfigFile(const char* p_ConfigFile, K15_ConfigFileContext* p_Conf
 
 	configFileContent[configFileSize] = 0;
 
-	p_ConfigFileContext->path = configFilePath;
+	p_ConfigFileContext->path = (char*)configFilePath;
 
 	//chop config file into lines
 	char* currentValue = 0;
@@ -263,11 +270,6 @@ uint8 K15_LoadConfigFile(const char* p_ConfigFile, K15_ConfigFileContext* p_Conf
 
 			//add config value to stretch buffer
 			K15_PushConfigValueStretchBufferElement(configStretchBuffer, currentConfigValue);
-
-			if (!currentCategory)
-			{
-				K15_LOG_WARNING_MESSAGE("Config value '%s' in config file '%s' has no category.", currentValue, p_ConfigFile);
-			}
 
 			currentName = 0;
 			currentValue = 0;
@@ -311,6 +313,30 @@ int K15_GetConfigValueAsInt(K15_ConfigFileContext* p_ConfigFileContext, const ch
 	return returnValue;
 }
 /*********************************************************************************/
+bool8 K15_GetConfigValueAsBool(K15_ConfigFileContext* p_ConfigFileContext, const char* p_ConfigValueName, bool8 p_DefaultValue)
+{
+	K15_ASSERT_TEXT(p_ConfigFileContext, "Config File Context is NULL.");
+	K15_ASSERT_TEXT(p_ConfigValueName, "Config Vale Name is NULL.");
+
+	K15_ConfigValueStretchBuffer* configValueStretchBuffer = &p_ConfigFileContext->configValues;
+	char* elementValue = K15_InternalGetValueFromConfigStretchBuffer(configValueStretchBuffer, p_ConfigValueName);
+	bool8 returnValue = p_DefaultValue;
+
+	if (elementValue)
+	{
+		if (strcmp(elementValue, "true") == 0)
+		{
+			returnValue = K15_TRUE;
+		}
+		else
+		{
+			returnValue = K15_FALSE;
+		}
+	}
+
+	return returnValue;
+}
+/*********************************************************************************/
 char* K15_GetConfigValueAsString(K15_ConfigFileContext* p_ConfigFileContext, const char* p_ConfigValueName, char* p_DefaultValue)
 {
 	K15_ASSERT_TEXT(p_ConfigFileContext, "Config File Context is NULL.");
@@ -322,7 +348,7 @@ char* K15_GetConfigValueAsString(K15_ConfigFileContext* p_ConfigFileContext, con
 
 	if (elementValue)
 	{
-		size_t valueLength = strlen(elementValue);
+		uint32 valueLength= (uint32)strlen(elementValue);
 		elementValueBuffer = (char*)malloc(valueLength + 1);
 		elementValueBuffer[valueLength] = 0;
 
@@ -330,5 +356,38 @@ char* K15_GetConfigValueAsString(K15_ConfigFileContext* p_ConfigFileContext, con
 	}	
 
 	return elementValueBuffer;
+}
+/*********************************************************************************/
+void K15_GetConfigValueAsResolution(K15_ConfigFileContext* p_ConfigFileContext, const char* p_ConfigValueName, int* p_Width, int* p_Height, int p_DefaultWidth, int p_DefaultHeight)
+{
+	K15_ASSERT_TEXT(p_ConfigFileContext, "Config File Context is NULL.");
+	K15_ASSERT_TEXT(p_ConfigValueName, "Config Vale Name is NULL.");
+	K15_ASSERT_TEXT(p_Width, "width pointer is NULL.");
+	K15_ASSERT_TEXT(p_Height, "height pointer is NULL.");
+
+	K15_ConfigValueStretchBuffer* configValueStretchBuffer = &p_ConfigFileContext->configValues;
+	char* elementValue = K15_InternalGetValueFromConfigStretchBuffer(configValueStretchBuffer, p_ConfigValueName);
+
+	*p_Width = p_DefaultWidth;
+	*p_Height = p_DefaultHeight;
+
+	if (elementValue)
+	{
+		char* width = 0;
+		char* height = 0;
+
+		width = strtok(elementValue, "x");
+		
+		if (width)
+		{
+			height = strtok(0, "x");
+		}
+
+		if (width && height)
+		{
+			*p_Width = atoi(width);
+			*p_Height = atoi(height);
+		}
+	}	
 }
 /*********************************************************************************/

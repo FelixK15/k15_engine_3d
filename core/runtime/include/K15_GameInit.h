@@ -10,11 +10,16 @@ struct K15_InitGameOutputData;
 struct K15_GameContext;
 struct K15_LogContext;
 struct K15_MemoryBuffer;
+struct K15_SystemEvent;
 struct K15_AsyncContext;
 
 typedef void(*K15_InitGameFnc)(K15_InitGameInputData, K15_InitGameOutputData*);
 typedef void(*K15_TickGameFnc)(K15_GameContext*);
-typedef void(*K15_QuitGameFnc)(void);
+typedef void(*K15_OnSystemEventFnc)(K15_GameContext*, K15_SystemEvent*);
+typedef void(*K15_OnInputEventFnc)(K15_GameContext*, K15_SystemEvent*);
+typedef void(*K15_OnWindowEventFnc)(K15_GameContext*, K15_SystemEvent*);
+
+typedef void(*K15_QuitGameFnc)(K15_GameContext*);
 
 /*********************************************************************************/
 struct K15_InitGameInputData
@@ -37,6 +42,9 @@ struct K15_GameContext
 	K15_AsyncContext* asyncContext;
 	K15_MemoryBuffer* gameMemory;
 	K15_TickGameFnc tickFnc;
+	K15_OnSystemEventFnc onSystemEventFnc;
+	K15_OnInputEventFnc onInputEventFnc;
+	K15_OnWindowEventFnc onWindowEventFnc;
 	K15_LogContext* logContexts;
 	K15_OSContext* osContext;
 	K15_RenderContext* renderContext;
