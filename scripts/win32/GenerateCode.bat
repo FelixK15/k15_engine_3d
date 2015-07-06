@@ -53,3 +53,7 @@ call "../../build/%BIN_DIR%/bin/%CONF_DIR%/codegen.exe" -i ../../core/codegen/te
 call "../../build/%BIN_DIR%/bin/%CONF_DIR%/codegen.exe" -i ../../core/codegen/templates/src/K15_FixedBuffer.cpp.gen -o ../../core/rendering/src/generated/K15_RenderSubMeshFixedBuffer.cpp -t TYPE=K15_RenderSubMeshDesc -t TYPE_NAME=RenderSubMeshDesc -t INPUT_FILE=generated/K15_RenderSubMeshFixedBuffer.h -t MALLOC_FNC=malloc -t FREE_FNC=free
 
 call "../../build/%BIN_DIR%/bin/%CONF_DIR%/codegen.exe" -i ../../core/codegen/templates/include/K15_FixedBuffer.h.gen -o ../../core/rendering/include/generated/K15_RenderSubMeshFixedBuffer.h -t TYPE=K15_RenderSubMeshDesc -t TYPE_NAME=RenderSubMeshDesc -t TYPE_STRUCT_NAME=K15_RenderSubMeshDesc
+
+call "../../build/%BIN_DIR%/bin/%CONF_DIR%/codegen.exe" -i ../../core/codegen/templates/src/K15_StretchBuffer.cpp.gen -o ../../core/guilayer/src/generated/K15_GUIElementStretchBuffer.cpp -t TYPE=K15_GUIElement* -t TYPE_NAME=GUIElement -t INPUT_FILE=generated/K15_GUIElementStretchBuffer.h -t MALLOC_FNC=malloc -t FREE_FNC=free
+
+call "../../build/%BIN_DIR%/bin/%CONF_DIR%/codegen.exe" -i ../../core/codegen/templates/include/K15_StretchBuffer.h.gen -o ../../core/guilayer/include/generated/K15_GUIElementStretchBuffer.h -t TYPE=K15_GUIElement* -t TYPE_NAME=GUIElement -t TYPE_STRUCT_NAME=K15_GUIElement

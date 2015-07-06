@@ -9,6 +9,7 @@
 #include <K15_AsyncOperation.h>
 #include <K15_ResourceContext.h>
 #include <K15_Mesh.h>
+#include <K15_GUIContext.h>
 #include <K15_MemoryBuffer.h>
 
 #include <K15_RenderCameraDesc.h>
@@ -23,6 +24,8 @@ struct K15_Sample1GameContext
 {
 	K15_RenderCommandBuffer* gameRenderBuffer;
 	K15_ResourceContext* resourceContext;
+	K15_GUIContext* guiContext;
+
 	K15_Mesh* robbie;
 
 	K15_RenderCameraHandle camera;
@@ -52,7 +55,10 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 
 	//Create the memory buffer for the resource context (this buffer will be used for resource caching).
 	K15_MemoryBuffer* resourceMemoryBuffer = (K15_MemoryBuffer*)K15_GetMemoryFromMemoryBuffer(memory, sizeof(K15_MemoryBuffer));
+	K15_MemoryBuffer* guiMemoryBuffer = (K15_MemoryBuffer*)K15_GetMemoryFromMemoryBuffer(memory, K15_GUI_CONTEXT_MEMORY_SIZE);
+
 	K15_InitializeMemoryBufferWithCustomAllocator(resourceMemoryBuffer, K15_CreateMemoryBufferAllocator(memory), resourceBufferSize, 0);
+	K15_InitializeMemoryBufferWithCustomAllocator(guiMemoryBuffer, K15_CreateMemoryBufferAllocator(memory), resourceBufferSize, 0);
 
 	//Create the resource context pointing to the 'data' directory of the working directory.
 	K15_ResourceContext* resourceContext = K15_CreateResourceContextWithCustomAllocator("data/", K15_CreateMemoryBufferAllocator(resourceMemoryBuffer), 0);
@@ -80,17 +86,21 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 
 	K15_AsyncContext* asyncContext = p_GameContext->asyncContext;
 
+	sample1GameContext->guiContext = K15_CreateGUIContextWithCustomAllocator(K15_CreateMemoryBufferAllocator(guiMemoryBuffer), resourceContext, p_GameContext->renderContext);
+
+	//K15_DispatchRenderCommandBuffer(sample1GameContext->guiContext->guiRenderCommandBuffer);
+
 	//Load mesh (creates render commands internally)
 	//K15_Mesh* mesh = K15_LoadMesh(resourceContext, renderBuffer, "meshes/cube.k15mesh");
-	K15_Mesh* mesh = K15_LoadMesh(resourceContext, renderBuffer, "meshes/robbie/Robbie_the_Rabbit_rigged.k15mesh");
+	//K15_Mesh* mesh = K15_LoadMesh(resourceContext, renderBuffer, "meshes/robbie/Robbie_the_Rabbit_rigged.k15mesh");
 
-	sample1GameContext->robbie = mesh;
+	//sample1GameContext->robbie = mesh;
 }
 /*********************************************************************************/
 
 
 
-/***********************************************uint**********************************/
+/*********************************************************************************/
 K15_EXPORT_SYMBOL void K15_InitGame(K15_InitGameInputData* p_InputData, K15_InitGameOutputData* p_OutputData)
 {
 	//This function will get called *once* on startup
@@ -112,58 +122,95 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 		K15_InternalSetGameContext(p_GameContext);
 		g_Initialized = K15_TRUE;
 	}
+	K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->gameMemory->buffer;
+	K15_RenderCommandBuffer* gameRenderCommandBuffer = gameContext->gameRenderBuffer;
 
-	if (p_GameContext->frameCounter >= 10)
+	K15_DispatchRenderCommandBuffer(gameContext->guiContext->guiRenderCommandBuffer);
+	K15_DispatchRenderCommandBuffer(gameRenderCommandBuffer);
+
+
+// 	if (p_GameContext->frameCounter >= 10)
+// 	{
+// 		//Game context is an internal struct. We know that the head of the game memory, which the engines
+// 		//provides is reserved for the struct.
+// 		K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->gameMemory->buffer;
+// 
+// 		K15_Mesh* robbieMesh = gameContext->robbie;
+// 
+// 		K15_Matrix4 worldMatrix = K15_GetIdentityMatrix4();
+// 
+// 		worldMatrix._1_4 = 0.f;
+// 		worldMatrix._2_4 = 0.f;
+// 		worldMatrix._3_4 = z;
+// 
+// 		if(forward)
+// 		{
+// 			z -= 0.5f;
+// 
+// 			if (z <= -8.f)
+// 			{
+// 				forward = false;
+// 			}
+// 		}
+// 		else
+// 		{
+// 			z += 0.5f;
+// 
+// 			if (z >= -4.f)
+// 			{
+// 				forward = true;
+// 			}
+// 		}
+// 
+// 		K15_RenderCommandDrawMesh(gameRenderCommandBuffer, &robbieMesh->renderMeshHandle, &worldMatrix);
+// 
+// 	}
+}
+/*********************************************************************************/
+K15_EXPORT_SYMBOL void K15_OnInputEvent(K15_GameContext* p_GameContext, K15_SystemEvent* p_SystemEvent)
+{
+	if (!g_Initialized)
 	{
-		//Game context is an internal struct. We know that the head of the game memory, which the engines
-		//provides is reserved for the struct.
+		return;
+	}
+
+	if (p_SystemEvent->event == K15_MOUSE_MOVED)
+	{
+		uint32 posX = p_SystemEvent->params.position.x;
+		uint32 posY = p_SystemEvent->params.position.y;
+
 		K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->gameMemory->buffer;
-
-		K15_RenderCommandBuffer* gameRenderCommandBuffer = gameContext->gameRenderBuffer;
-		K15_Mesh* robbieMesh = gameContext->robbie;
-
-		K15_Matrix4 worldMatrix = K15_GetIdentityMatrix4();
-
-		worldMatrix._1_4 = 0.f;
-		worldMatrix._2_4 = 0.f;
-		worldMatrix._3_4 = z;
-
-		if(forward)
-		{
-			z -= 0.5f;
-
-			if (z <= -8.f)
-			{
-				forward = false;
-			}
-		}
-		else
-		{
-			z += 0.5f;
-
-			if (z >= -4.f)
-			{
-				forward = true;
-			}
-		}
-
-		K15_RenderCommandDrawMesh(gameRenderCommandBuffer, &robbieMesh->renderMeshHandle, &worldMatrix);
-
-		K15_DispatchRenderCommandBuffer(gameRenderCommandBuffer);
+		K15_SetGUIContextMousePosition(gameContext->guiContext, posX, posY);
 	}
 }
 /*********************************************************************************/
-K15_EXPORT_SYMBOL void K15_OnInputEvent(K15_SystemEvent* p_SystemEvent)
+K15_EXPORT_SYMBOL void K15_OnSystemEvent(K15_GameContext* p_GameContext, K15_SystemEvent* p_SystemEvent)
 {
+	if (!g_Initialized)
+	{
+		return;
+	}
 
 }
 /*********************************************************************************/
-K15_EXPORT_SYMBOL void K15_OnSystemEvent(K15_SystemEvent* p_SystemEvent)
+K15_EXPORT_SYMBOL void K15_OnWindowEvent(K15_GameContext* p_GameContext, K15_SystemEvent* p_SystemEvent)
 {
+	if (!g_Initialized)
+	{
+		return;
+	}
 
+	if (p_SystemEvent->event == K15_WINDOW_RESIZED)
+	{
+		uint32 width = p_SystemEvent->params.size.width;
+		uint32 height = p_SystemEvent->params.size.height;
+
+		K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->gameMemory->buffer;
+		K15_SetGUIContextWindowSize(gameContext->guiContext, width, height);
+	}
 }
 /*********************************************************************************/
-K15_EXPORT_SYMBOL void K15_QuitGame()
+K15_EXPORT_SYMBOL void K15_QuitGame(K15_GameContext* p_GameContext)
 {
 	//This function will get called *once* on shutdown
 }
