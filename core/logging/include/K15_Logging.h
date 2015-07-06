@@ -34,14 +34,16 @@ enum LogPriority
 /*********************************************************************************/
 enum LogFlags
 {
-	K15_LOG_FLAG_NONE = 0x00,
-	K15_LOG_FLAG_ADD_TIME = 0x01
+	K15_LOG_FLAG_NONE			= 0x00,
+	K15_LOG_FLAG_ADD_TIME		= 0x01,
+	K15_LOG_FLAG_ADD_NEW_LINE	= 0x02
 };
 /*********************************************************************************/
 typedef void (*K15_LogFnc)(const char*, LogPriority);
 /*********************************************************************************/
 struct K15_LogContext
 {
+	volatile unsigned int lock;
 	K15_LogFnc fnc;
 	unsigned int filterMask;
 	unsigned int flags;
@@ -52,5 +54,6 @@ K15_LogContext* K15_GetLogContexts(unsigned int* p_LogCount);
 void K15_SetLogContexts(K15_LogContext* p_LogContexts, unsigned int p_LogCount);
 void K15_LogRegisterLogFnc(K15_LogFnc p_LogFunction, unsigned int p_LogPriorityFilterMask, unsigned int p_LogFlags = K15_LOG_FLAG_NONE);
 void K15_LogWrite(const char* p_Message, LogPriority p_LogPriority, ...);
+void K15_RegisterDefaultLog(unsigned int p_LogFlags);
 
 #endif //_K15_Logging_h_
