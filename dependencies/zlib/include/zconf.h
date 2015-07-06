@@ -152,6 +152,10 @@
 
 #endif
 
+#if defined (_MSC_VER)
+#	pragma warning (disable : 4996) //the posix name for this item is deprecated
+#endif
+
 #if defined(__MSDOS__) && !defined(MSDOS)
 #  define MSDOS
 #endif
