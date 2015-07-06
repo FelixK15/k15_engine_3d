@@ -4,6 +4,7 @@
 
 #include "K15_System.h"
 #include "K15_Logging.h"
+#include "K15_String.h"
 
 #include "K15_DefaultCLibraries.h"
 #include "K15_FileSystem.h"
@@ -33,7 +34,7 @@ intern inline uint8 K15_Win32InternalRegisterChangeNotification(HANDLE, K15_Dire
 intern uint8 K15_InternalWin32FileWatchEntryComparer(K15_FileWatchEntry* p_FileWatchEntry, void* p_UserData)
 {
 	char* filePath = (char*)p_UserData;
-	return strcmp(p_FileWatchEntry->fileName, filePath);
+	return strcmp(p_FileWatchEntry->fileName, ".") == 0 ? 0 : strcmp(p_FileWatchEntry->fileName, filePath);
 }
 /*********************************************************************************/
 intern inline VOID WINAPI K15_Win32InternalFileChangeCallback(DWORD dwErrorCode, DWORD dwNumberOfBytesTransfered, LPOVERLAPPED lpOverlapped)
@@ -64,10 +65,12 @@ intern inline VOID WINAPI K15_Win32InternalFileChangeCallback(DWORD dwErrorCode,
 		//check if file is being watched
 		if (fileWatchEntry)
 		{
-			if (currentNotification->Action == FILE_ACTION_MODIFIED)
+			if (currentNotification->Action == FILE_ACTION_MODIFIED ||
+				currentNotification->Action == FILE_ACTION_ADDED)
 			{
 				void* fileWatchUserData = fileWatchEntry->userParamter;
-				fileWatchEntry->notification(fileWatchUserData);
+				char* fullFilePath = K15_ConcatStringsIntoBuffer(watchEntry->dirPath, fileName, (char*)alloca(512));
+				fileWatchEntry->notification(fullFilePath, fileWatchUserData);
 			}
 		}
 
@@ -85,7 +88,7 @@ intern inline VOID WINAPI K15_Win32InternalFileChangeCallback(DWORD dwErrorCode,
 intern inline uint8 K15_Win32InternalRegisterChangeNotification(HANDLE p_DirectoryHandle, K15_DirectoryWatchEntry* p_DirectoryWatchEntry, K15_DirectoryWatchEntryWin32* p_DirectoryWatchEntryWin32)
 {
 	uint32 notificationBufferSize = sizeof(FILE_NOTIFY_INFORMATION) * K15_WIN32_READDIRECTORYCHANGES_NOTIFICATION_COUNT;
-	uint32 notificationFilter = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_ATTRIBUTES | FILE_NOTIFY_CHANGE_SIZE;
+	uint32 notificationFilter = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_ATTRIBUTES/* | FILE_NOTIFY_CHANGE_SIZE*/;
 
 	K15_DirectoryWatchOverlapped* overlapped = &p_DirectoryWatchEntryWin32->overlapped;
 	overlapped->directoryWatchEntry = p_DirectoryWatchEntry;
@@ -107,7 +110,7 @@ uint8 K15_Win32RegisterFileWatch(K15_OSContext* p_OSContext, K15_FileWatchEntry*
 	if (!win32DirWatchEntry)
 	{
 		char* dirPath = p_DirectoryWatchEntry->dirPath;
-		size_t dirPathLength = strlen(dirPath) + 1;
+		uint32 dirPathLength= (uint32)strlen(dirPath) + 1;
 		wchar_t* dirPathW = (wchar_t*)alloca(dirPathLength * sizeof(wchar_t));
 
 		K15_Win32ConvertStringToWString(dirPath, dirPathLength, dirPathW);

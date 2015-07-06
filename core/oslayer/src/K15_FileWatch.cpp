@@ -12,6 +12,7 @@
 #include "K15_FileSystem.h"
 #include "K15_Logging.h"
 #include "K15_System.h"
+#include "K15_String.h"
 #include "K15_OSContext.h"
 
 /*********************************************************************************/
@@ -29,18 +30,48 @@ intern uint8 K15_InternalDirectoryWatchComparer(K15_DirectoryWatchEntry* p_Direc
 	return strcmp(dirPath, p_DirectoryWatchEntry->dirPath);
 }
 /*********************************************************************************/
+K15_FileWatchEntry* K15_AddDirectoryWatch(const char* p_DirectoryWatch, K15_FileChangeNotificationFnc p_NotificationFnc, void* p_UserData, unsigned int p_Flags /*= 0*/)
+{
+	char* directoryWatchPath = 0;
+
+	if (K15_IsRelativePath(p_DirectoryWatch))
+	{
+		directoryWatchPath = K15_ConvertToAbsolutePath(p_DirectoryWatch);
+	}
+	else
+	{
+		directoryWatchPath = K15_ConvertToSystemPath(p_DirectoryWatch);
+	}
+
+	if (!K15_DirectoryExists(directoryWatchPath))
+	{
+		K15_LOG_ERROR_MESSAGE("Could not add directory '%s' to the file watcher (%s).", p_DirectoryWatch, K15_CopySystemErrorMessageIntoBuffer((char*)alloca(K15_ERROR_MESSAGE_LENGTH)));
+		free(directoryWatchPath);
+		return 0;
+	}
+
+	K15_FileWatchEntry* watchEntry = K15_AddFileWatch(directoryWatchPath, p_NotificationFnc, p_UserData, p_Flags);
+	free(directoryWatchPath);
+	
+	return watchEntry;
+}
+/*********************************************************************************/
 K15_FileWatchEntry* K15_AddFileWatch(const char* p_FilePath, K15_FileChangeNotificationFnc p_NotificationFnc, void* p_UserData, unsigned int p_Flags)
 {
 	K15_ASSERT_TEXT(p_FilePath, "File Path is NULL.");
 	K15_ASSERT_TEXT(p_NotificationFnc, "Notification Function is NULL.");
 
-	if (K15_FileExists(p_FilePath) != K15_SUCCESS)
+	bool8 isDirectory = K15_DirectoryExists(p_FilePath);
+
+	if (K15_FileExists(p_FilePath) == K15_FALSE &&
+		isDirectory == K15_FALSE)
 	{
 		K15_LOG_ERROR_MESSAGE("Could not add file '%s' to the file watcher (%s).", p_FilePath, K15_CopySystemErrorMessageIntoBuffer((char*)alloca(K15_ERROR_MESSAGE_LENGTH)));
 		return 0;
 	}
 
 	char* dirPath = K15_GetPathWithoutFileName(p_FilePath);
+	const char* filePath = p_FilePath;
 
 	K15_OSContext* osContext = K15_GetOSLayerContext();
 
@@ -65,6 +96,11 @@ K15_FileWatchEntry* K15_AddFileWatch(const char* p_FilePath, K15_FileChangeNotif
 
 	K15_FileWatchEntryStretchBuffer* fileWatchBuffer = &directoryWatchEntry->fileWatchEntries;
 
+	if (isDirectory)
+	{
+		filePath = ".";
+	}
+
 	//check if file is already being watched
 	K15_FileWatchEntry* fileWatchEntry = K15_GetFileWatchEntryStretchBufferElementConditional(fileWatchBuffer, K15_InternalFileWatchComparer, (void*)p_FilePath);
 
@@ -74,14 +110,14 @@ K15_FileWatchEntry* K15_AddFileWatch(const char* p_FilePath, K15_FileChangeNotif
 		return fileWatchEntry;
 	}
 
-	size_t filePathLength = strlen(p_FilePath);
-	char* filePathBuffer = (char*)K15_OS_MALLOC(filePathLength + 1); //+1 for 0 terminator
-	filePathBuffer[filePathLength] = 0;
-	memcpy(filePathBuffer, p_FilePath, filePathLength);
+	char* filePathBuffer = K15_CopyString(p_FilePath);
+	char* fileName = K15_GetFileNameWithoutPath(filePathBuffer);
+
+	fileName = fileName == 0 ? K15_CopyString(".") : fileName;
 
 	K15_FileWatchEntry* newFileWatchEntry = (K15_FileWatchEntry*)K15_OS_MALLOC(sizeof(K15_FileWatchEntry));
 	newFileWatchEntry->filePath = filePathBuffer;
-	newFileWatchEntry->fileName = K15_GetFileNameWithoutPath(filePathBuffer);
+	newFileWatchEntry->fileName = fileName;
 	newFileWatchEntry->userParamter = p_UserData;
 	newFileWatchEntry->notification = p_NotificationFnc;
 	newFileWatchEntry->flags = p_Flags;

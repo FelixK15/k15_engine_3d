@@ -3,7 +3,7 @@
 
 #include "generated/K15_FileWatchEntryStretchBuffer.h"
 
-typedef void(*K15_FileChangeNotificationFnc)(void*);
+typedef void(*K15_FileChangeNotificationFnc)(const char*, void*);
 
 /*********************************************************************************/
 enum K15_FileWatchFlags
@@ -15,6 +15,8 @@ struct K15_DirectoryWatchEntry
 {
 	char* dirPath;
 	void* userData;
+	void* userParamter; //userData from the user
+	K15_FileChangeNotificationFnc notification;
 	K15_FileWatchEntryStretchBuffer fileWatchEntries;
 };
 /*********************************************************************************/
@@ -28,6 +30,7 @@ struct K15_FileWatchEntry
 };
 /*********************************************************************************/
 
+K15_FileWatchEntry* K15_AddDirectoryWatch(const char* p_DirectoryWatch, K15_FileChangeNotificationFnc p_NotificationFnc, void* p_UserData, unsigned int p_Flags = 0);
 K15_FileWatchEntry* K15_AddFileWatch(const char* p_FilePath, K15_FileChangeNotificationFnc p_NotificationFnc, void* p_UserData, unsigned int p_Flags = 0);
 K15_FileWatchEntry* K15_AddFileWatchAndCopyUserData(const char* p_FilePath, K15_FileChangeNotificationFnc p_NotificationFnc, void* p_UserData, unsigned int p_UserDataSize, unsigned int p_Flags = 0);
 

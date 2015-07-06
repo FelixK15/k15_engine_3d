@@ -11,6 +11,8 @@
 	#define K15_CopyWholeFileContentIntoBuffer	K15_Win32ReadWholeFileIntoBuffer
 	#define K15_CopyFile						K15_Win32CopyFile
 	#define K15_DirectoryExists					K15_Win32DirectoryExists
+	#define K15_GetFilesInDirectory				K15_Win32GetFilesInDirectory
+	#define K15_IsRelativePath					K15_Win32IsRelativePath
 
 	#define K15_DIR_SEPARATOR '/'
 #elif defined K15_OS_ANDROID || defined K15_OS_LINUX
@@ -22,9 +24,10 @@
 #endif //K15_OS_WINDWS
 
 const char* K15_GetWorkingDirectory();
-
 byte* K15_GetWholeFileContent(const char* p_FilePath);
 byte* K15_GetWholeFileContentWithFileSize(const char* p_FilePath, uint32* p_FileSize);
+
+bool8 K15_IsAbsolutePath(const char* p_FilePath);
 
 char* K15_GetPathWithoutFileName(const char* p_FilePath);
 char* K15_GetPathWithoutExtension(const char* p_FilePath);

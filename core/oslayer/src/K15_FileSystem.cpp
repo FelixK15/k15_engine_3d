@@ -22,10 +22,11 @@ byte* K15_GetWholeFileContentWithFileSize(const char* p_FilePath, uint32* p_File
 	K15_ASSERT_TEXT(p_FilePath, "Filepath is NULL.");
 
 	uint32 fileSize = K15_GetFileSize(p_FilePath);
-	byte* fileContent = (byte*)K15_OS_MALLOC(fileSize + 1);
+	byte* fileContent = 0;
 
 	if (fileSize > 0)
 	{
+		fileContent = (byte*)K15_OS_MALLOC(fileSize + 1);
 		fileContent = K15_CopyWholeFileContentIntoBuffer(p_FilePath, fileContent);
 
 		if (p_FileSize)
@@ -37,6 +38,11 @@ byte* K15_GetWholeFileContentWithFileSize(const char* p_FilePath, uint32* p_File
 	return fileContent;
 }
 /*********************************************************************************/
+bool8 K15_IsAbsolutePath(const char* p_FilePath)
+{
+	return !K15_IsRelativePath(p_FilePath);
+}
+/*********************************************************************************/
 char* K15_GetPathWithoutFileName(const char* p_FilePath)
 {
 	K15_ASSERT_TEXT(p_FilePath, "Filepath is NULL.");
@@ -45,11 +51,11 @@ char* K15_GetPathWithoutFileName(const char* p_FilePath)
 	const char* fileNameOnly = strrchr(convertedFilePath, K15_DIR_SEPARATOR);
 
 	char* returnBuffer = 0;
-	size_t returnBufferSize = 0;
+	uint32 returnBufferSize = 0;
 
 	if (!fileNameOnly)
 	{
-		returnBufferSize = strlen(convertedFilePath); //+1 for 0 terminator
+		returnBufferSize= (uint32)strlen(convertedFilePath); //+1 for 0 terminator
 		returnBuffer = (char*)K15_OS_MALLOC(returnBufferSize);
 		memcpy(returnBuffer, convertedFilePath, returnBufferSize);
 	}
@@ -58,8 +64,14 @@ char* K15_GetPathWithoutFileName(const char* p_FilePath)
 		//directory seperator is part of the return of strrchr
 		fileNameOnly++;
 
-		size_t filePathWithFileNameSize = strlen(convertedFilePath);
-		size_t fileNameSize = strlen(fileNameOnly);
+		uint32 filePathWithFileNameSize= (uint32)strlen(convertedFilePath);
+		uint32 fileNameSize= (uint32)strlen(fileNameOnly);
+
+		if (fileNameSize == 0)
+		{
+			K15_OS_FREE(convertedFilePath);
+			return 0;
+		}
 		
 		returnBufferSize = filePathWithFileNameSize - fileNameSize;
 		returnBuffer = (char*)K15_OS_MALLOC(returnBufferSize + 1); //+1 for 0 terminator
@@ -80,13 +92,18 @@ char* K15_GetFileNameWithoutPath(const char* p_FilePath)
 	char* convertedFilePath = K15_ConvertToSystemPath(p_FilePath);
 	const char* fileNameOnly = strrchr(convertedFilePath, K15_DIR_SEPARATOR);
 
-	size_t fileNameLength = strlen(fileNameOnly);
+	uint32 fileNameLength= (uint32)strlen(fileNameOnly);
 	uint32 offset = 0;
 
 	if (fileNameOnly[0] == K15_DIR_SEPARATOR)
 	{
 		fileNameLength -= 1;
 		offset = 1;
+	}
+
+	if (fileNameLength == 0)
+	{
+		return 0;
 	}
 
 	char* fileNameBuffer = (char*)K15_OS_MALLOC(fileNameLength + 1);
@@ -104,7 +121,7 @@ char* K15_GetFileNameWithoutExtension(const char* p_FilePath)
 	char* fileName = K15_GetFileNameWithoutPath(p_FilePath);
 	char* fileNameWithoutExtension = 0;
 
-	size_t fileNameLength = strlen(p_FilePath);
+	size_t fileNameLength = strlen(fileName);
 
 	for (size_t fileNameIndex = fileNameLength;
 		 fileNameIndex > 0;
@@ -113,7 +130,7 @@ char* K15_GetFileNameWithoutExtension(const char* p_FilePath)
 		if (fileName[fileNameIndex] == '.')
 		{
 			fileNameWithoutExtension = (char*)K15_OS_MALLOC(fileNameIndex + 1); //+1 for 0 terminator
-			memcpy(fileNameWithoutExtension, p_FilePath, fileNameIndex);
+			memcpy(fileNameWithoutExtension, fileName, fileNameIndex);
 			fileNameWithoutExtension[fileNameIndex] = 0;
 			break;
 		}
@@ -127,15 +144,15 @@ char* K15_GetFileExtension(const char* p_FilePath)
 	char* fileName = K15_GetFileNameWithoutPath(p_FilePath);
 	char* extension = 0;
 
-	size_t fileNameLength = strlen(p_FilePath);
+	uint32 fileNameLength= (uint32)strlen(p_FilePath);
 
-	for (size_t fileNameIndex = 0;
+	for (uint32 fileNameIndex = 0;
 		fileNameIndex > fileNameLength;
 		++fileNameIndex)
 	{
 		if (fileName[fileNameIndex] == '.')
 		{
-			size_t extensionLength = fileNameLength - fileNameIndex;
+			uint32 extensionLength = fileNameLength - fileNameIndex;
 
 			assert(extensionLength > 0);
 
@@ -153,7 +170,7 @@ char* K15_ConvertToDirectoryPath(const char* p_String)
 {
 	K15_ASSERT_TEXT(p_String, "String is NULL.");
 
-	uint32 stringLength = (uint32)strlen(p_String);
+	uint32 stringLength= (uint32)strlen(p_String);
 
 	//last char equals dir separator?
 	if (p_String[stringLength-1] != '/' && 
@@ -174,9 +191,9 @@ char* K15_ConvertToAbsolutePath(const char* p_FilePath)
 	K15_ASSERT_TEXT(p_FilePath, "Filepath is NULL.");
 
 	const char* workingDir = K15_GetWorkingDirectory();
-	size_t workingDirLength = strlen(workingDir);
-	size_t filePathLength = strlen(p_FilePath);
-	size_t absolutPathLength = workingDirLength + filePathLength;
+	uint32 workingDirLength= (uint32)strlen(workingDir);
+	uint32 filePathLength= (uint32)strlen(p_FilePath);
+	uint32 absolutPathLength = workingDirLength + filePathLength;
 
 	char* absolutPathBuffer = (char*)K15_OS_MALLOC(absolutPathLength + 1);
 	absolutPathBuffer[absolutPathLength] = 0;
@@ -191,7 +208,7 @@ char* K15_ConvertToSystemPath(const char* p_FilePath)
 {
 	K15_ASSERT_TEXT(p_FilePath, "Filepath is NULL.");
 
-	size_t filePathLength = strlen(p_FilePath);
+	uint32 filePathLength= (uint32)strlen(p_FilePath);
 	char* convertedFilePath = (char*)K15_OS_MALLOC(filePathLength + 1); //+1 for 0 terminator
 	memcpy(convertedFilePath, p_FilePath, filePathLength);
 	convertedFilePath[filePathLength] = 0;
@@ -203,17 +220,16 @@ char* K15_ConvertToSystemPathInplace(char* p_FilePath)
 {
 	K15_ASSERT_TEXT(p_FilePath, "Filepath is NULL.");
 
-	size_t filePathLength = strlen(p_FilePath);
 	char* convertedFilePath = p_FilePath;
 
-	for (size_t fileNameIndex = 0;
-		fileNameIndex < filePathLength;
-		++fileNameIndex)
+	while(*p_FilePath)
 	{
-		if (convertedFilePath[fileNameIndex] == '\\')
+		if (*p_FilePath == '\\')
 		{
-			convertedFilePath[fileNameIndex] = '/';
+			*p_FilePath = '/';
 		}
+
+		++p_FilePath;
 	}
 
 	return convertedFilePath;
@@ -223,10 +239,10 @@ char* K15_GetPathWithoutExtension(const char* p_FilePath)
 {
 	K15_ASSERT_TEXT(p_FilePath, "Filepath is NULL.");
 
-	size_t filePathLength = strlen(p_FilePath);
-	size_t extensionIndex = filePathLength;
+	uint32 filePathLength= (uint32)strlen(p_FilePath);
+	uint32 extensionIndex = filePathLength;
 
-	for(size_t filePathIndex = filePathLength;
+	for(uint32 filePathIndex = filePathLength;
 		filePathLength > 0;
 		--filePathLength)
 	{
@@ -236,7 +252,7 @@ char* K15_GetPathWithoutExtension(const char* p_FilePath)
 		}
 	}
 
-	size_t filePathWithoutExtensionLength = extensionIndex;
+	uint32 filePathWithoutExtensionLength = extensionIndex;
 
 	char* pathBuffer = (char*)K15_OS_MALLOC(filePathWithoutExtensionLength + 1);
 	pathBuffer[filePathWithoutExtensionLength] = 0;
