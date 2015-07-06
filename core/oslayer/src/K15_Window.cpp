@@ -1,6 +1,7 @@
 #include "K15_Window.h"
 #include "K15_OSContext.h"
 
+#include "K15_String.h"
 #include "K15_Thread.h"
 #include "K15_DefaultCLibraries.h"
 
@@ -78,7 +79,7 @@ uint8 K15_SetWindowTitle(K15_Window* p_Window, char* p_Title)
 	
 	K15_OSContext* OSContext = K15_GetOSLayerContext();
 
-	size_t titleLength = strlen(p_Title);
+	uint32 titleLength= (uint32)strlen(p_Title);
 	char* copiedTitle = (char*)K15_OS_MALLOC(titleLength);
 
 	if (!copiedTitle)

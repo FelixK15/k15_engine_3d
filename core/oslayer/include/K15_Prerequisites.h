@@ -159,6 +159,7 @@ typedef unsigned	long long	uint64;
 
 typedef uint8 bool8;
 typedef uint8 byte;
+typedef float real32;
 
 #ifdef K15_OS_ANDROID
 #ifdef K15_CHECK_JNI_CALLS

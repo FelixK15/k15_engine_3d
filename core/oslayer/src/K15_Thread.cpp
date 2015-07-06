@@ -4,6 +4,7 @@
 
 #include "K15_OSContext.h"
 #include "K15_System.h"
+#include "K15_String.h"
 
 #include "generated/K15_ThreadStretchBuffer.cpp"
 #include "generated/K15_ThreadFixedBuffer.cpp"
@@ -235,7 +236,7 @@ uint8 K15_SetThreadName(K15_Thread* p_Thread, const char* p_ThreadName)
 
 	K15_OSContext* osContext = K15_GetOSLayerContext();
 	K15_ThreadContext* threadContext = p_Thread->context;
-	size_t newThreadNameLength = strlen(p_ThreadName);
+	uint32 newThreadNameLength= (uint32)strlen(p_ThreadName);
 
 	if (threadContext->nameLength < newThreadNameLength)
 	{

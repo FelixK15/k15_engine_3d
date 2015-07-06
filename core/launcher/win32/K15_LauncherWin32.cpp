@@ -25,6 +25,9 @@
 	K15_EXPORT_SYMBOL void K15_InitGame(K15_InitGameInputData, K15_InitGameOutputData*);
 	K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext*);
 	K15_EXPORT_SYMBOL void K15_QuitGame(void);
+	K15_EXPORT_SYMBOL void K15_OnSystemEvent(K15_GameContext*, K15_SystemEvent*);
+	K15_EXPORT_SYMBOL void K15_OnWindowEvent(K15_GameContext*, K15_SystemEvent*);
+	K15_EXPORT_SYMBOL void K15_OnInputEvent(K15_GameContext*, K15_SystemEvent*);
 #endif //K15_LOAD_GAME_LIB_DYNAMIC
 
 #ifdef K15_LOAD_GAME_LIB_DYNAMIC
@@ -40,6 +43,9 @@ intern void K15_InternalOnGameLibraryReload(void* p_UserData)
 	K15_ReloadDynamicLibrary(gameLibrary);
 
 	gameContext->tickFnc = (K15_TickGameFnc)K15_GetProcAddress(gameLibrary, "K15_TickGame");
+	gameContext->onSystemEventFnc = (K15_TickGameFnc)K15_GetProcAddress(gameLibrary, "K15_OnSystemEvent");
+	gameContext->onWindowEventFnc = (K15_TickGameFnc)K15_GetProcAddress(gameLibrary, "K15_OnWindowEvent");
+	gameContext->onInputEventFnc = (K15_TickGameFnc)K15_GetProcAddress(gameLibrary, "K15_OnInputEvent");
 
 	K15_UnlockMutex(gameLibrarySynchronizer);
 }
@@ -99,6 +105,9 @@ int CALLBACK WinMain(
 	K15_InitGameFnc K15_InitGame = (K15_InitGameFnc)K15_GetProcAddress(gameLibrary, "K15_InitGame");
 	K15_TickGameFnc K15_TickGame = (K15_TickGameFnc)K15_GetProcAddress(gameLibrary, "K15_TickGame");
 	K15_QuitGameFnc K15_QuitGame = (K15_QuitGameFnc)K15_GetProcAddress(gameLibrary, "K15_QuitGame");
+	K15_OnSystemEventFnc K15_OnSystemEvent = (K15_OnSystemEventFnc)K15_GetProcAddress(gameLibrary, "K15_OnSystemEvent");
+	K15_OnInputEventFnc K15_OnInputEvent = (K15_OnInputEventFnc)K15_GetProcAddress(gameLibrary, "K15_OnInputEvent");
+	K15_OnWindowEventFnc K15_OnWindowEvent = (K15_OnWindowEventFnc)K15_GetProcAddress(gameLibrary, "K15_OnWindowEvent");
 
 	K15_Mutex* gameLibrarySynchronizer = K15_CreateMutex();
 
@@ -127,6 +136,9 @@ int CALLBACK WinMain(
 	gameContext.gameThreadSynchronizer = gameThreadSynchronizer;
 	gameContext.mainThreadSynchronizer = mainThreadSynchronizer;
 	gameContext.tickFnc = K15_TickGame;
+	gameContext.onInputEventFnc = K15_OnInputEvent;
+	gameContext.onSystemEventFnc = K15_OnSystemEvent;
+	gameContext.onWindowEventFnc = K15_OnWindowEvent;
 
 #ifdef K15_LOAD_GAME_LIB_DYNAMIC
 	gameContext.gameLibrary = gameLibrary;

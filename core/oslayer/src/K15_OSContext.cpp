@@ -37,7 +37,16 @@ intern char* K15_InternalGetWorkingDirectory(char* p_Argument)
 
 	char* workingDir = p_Argument + characterIndex;
 
-	return K15_ConvertToDirectoryPath(workingDir);
+	workingDir = K15_ConvertToDirectoryPath(workingDir);
+
+	if (K15_IsRelativePath(workingDir))
+	{
+		char* oldWorkingDir = workingDir;
+		workingDir = K15_ConvertToAbsolutePath(oldWorkingDir);
+		free(oldWorkingDir);
+	}
+
+	return workingDir;
 }
 /*********************************************************************************/
 intern uint32 K15_InternalGetNumWorkingThreads(char* p_Argument)

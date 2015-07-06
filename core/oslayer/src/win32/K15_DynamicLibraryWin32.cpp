@@ -5,6 +5,7 @@
 #include "K15_DynamicLibrary.h"
 #include "K15_FileSystem.h"
 #include "K15_DefaultCLibraries.h"
+#include "K15_String.h"
 
 #define K15_WIN32_LIBRARY_EXTENSION ".dll"
 #define K15_WIN32_LIBRARY_EXTENSION_LENGTH 4
@@ -22,7 +23,7 @@ uint8 K15_Win32LoadDynamicLibrary(K15_OSContext* p_OSContext, K15_DynamicLibrary
 {
 	uint8 returnValue = K15_SUCCESS;
 
-	size_t pathLength = strlen(p_Path) + 1;
+	uint32 pathLength= (uint32)strlen(p_Path) + 1;
 
 	wchar_t* libAbsolutePathW = (wchar_t*)alloca(pathLength * sizeof(wchar_t));
 

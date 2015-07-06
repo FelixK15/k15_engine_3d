@@ -22,74 +22,6 @@
 
 MessageBoxAProc _MessageBoxA = 0;
 
-#ifdef K15_DEBUG
-/*********************************************************************************/
-void K15_Win32LogVisualStudio(const char* p_Message, LogPriority p_Priority)
-{
-	uint32 messageLength = (uint32)strlen(p_Message) + 1; //+1 for 0 terminator, +1 for newline
-	wchar_t* messageBuffer = (wchar_t*)alloca(messageLength * sizeof(wchar_t));
-
-	K15_Win32ConvertStringToWString(p_Message, messageLength, messageBuffer);
-
-	OutputDebugStringW(messageBuffer);
-	OutputDebugStringW(L"\n");
-}
-/*********************************************************************************/
-void K15_Win32LogConsole(const char* p_Message, LogPriority p_Priority)
-{
-	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-	WORD colorCode = 0;
-
-	switch (p_Priority)
-	{
-	case K15_LOG_PRIORITY_NORMAL:
-		{
-			colorCode = FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN;
-			break;
-		}
-
-	case K15_LOG_PRIORITY_ERROR:
-		{
-			colorCode = FOREGROUND_RED;
-			break;
-		}
-	
-	case K15_LOG_PRIORITY_WARNING:
-		{
-			colorCode = FOREGROUND_GREEN | FOREGROUND_RED;
-			break;
-		}
-
-	case K15_LOG_PRIORITY_SUCCESS:
-		{
-			colorCode = FOREGROUND_GREEN;
-			break;
-		}
-	
-	case K15_LOG_PRIORITY_DEBUG:
-		{
-			colorCode = FOREGROUND_RED | FOREGROUND_BLUE;
-			break;
-		}
-	}
-
-	uint32 messageLength = (uint32)strlen(p_Message) + 1; //+1 for 0 terminator
-	wchar_t* messageBuffer = (wchar_t*)alloca(messageLength * sizeof(wchar_t));
-
-	K15_Win32ConvertStringToWString(p_Message, messageLength, messageBuffer);
-
-	//set output color
-	SetConsoleTextAttribute(consoleHandle,colorCode);
-	printf("%ls\n", messageBuffer);
-
-	//set color back to white
-	SetConsoleTextAttribute(consoleHandle, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN); 
-}
-/*********************************************************************************/
-#endif //K15_DEBUG
-
-// /*********************************************************************************/
-
 /*********************************************************************************/
 intern inline uint8 K15_InternalTryLoadXInput(K15_Win32Context* p_Win32Context)
 {
@@ -202,8 +134,83 @@ intern void K15_InternalGetSystemInfo(K15_OSContext* p_OSContext)
 /*********************************************************************************/
 
 
+/*********************************************************************************/
+uint8 K15_Win32InitializeLightOSLayer()
+{
+	//unicode output on debug console
+	setlocale(LC_ALL, "");
 
+	//create context
+	K15_OSContext win32OSContext;
 
+	//threading
+	win32OSContext.threading.createThread = K15_Win32CreateThread;
+	win32OSContext.threading.startThread = K15_Win32StartThread;
+	win32OSContext.threading.joinThread = K15_Win32JoinThread;
+	win32OSContext.threading.tryJoinThread = K15_Win32TryJoinThread;
+	win32OSContext.threading.interruptThread = K15_Win32InterruptThread;
+	win32OSContext.threading.setThreadName = K15_Win32SetThreadName;
+	win32OSContext.threading.getCurrentThread = K15_Win32GetCurrentThread;
+	win32OSContext.threading.freeThread = K15_Win32FreeThread;
+	win32OSContext.threading.setThreadAffinityMask = K15_Win32SetThreadAffinityMask;
+
+	//create threading stretch buffer
+	K15_ThreadStretchBuffer threadBuffer = {};
+	K15_CreateThreadStretchBuffer(&threadBuffer, K15_DEFAULT_THREAD_SIZE);
+
+	win32OSContext.threading.threads = threadBuffer;
+
+	//system
+	win32OSContext.system.systemIdentifier = OS_WINDOWS;
+	win32OSContext.system.homeDir = K15_Win32GetWorkingDirectory();
+	win32OSContext.system.getElapsedSeconds = K15_Win32GetElapsedSeconds;
+	win32OSContext.system.loadDynamicLibrary = K15_Win32LoadDynamicLibrary;
+	win32OSContext.system.unloadDynamicLibrary = K15_Win32UnloadDynamicLibrary;
+	win32OSContext.system.getProcAddress = K15_Win32GetProcAddress;
+	win32OSContext.system.registerFileWatch = K15_Win32RegisterFileWatch;
+
+	//create dynamic library stretch buffer
+	K15_DynamicLibraryStretchBuffer dynamicLibraryBuffer = {};
+	K15_CreateDynamicLibraryStretchBuffer(&dynamicLibraryBuffer, K15_DEFAULT_DYNAMIC_LIBRARY_SIZE);
+
+	win32OSContext.system.dynamicLibraries = dynamicLibraryBuffer;
+
+	//create directory watch entry stretch buffer
+	K15_DirectoryWatchEntryStretchBuffer directoryWatchBuffer = {};
+	K15_CreateDirectoryWatchEntryStretchBuffer(&directoryWatchBuffer);
+
+	win32OSContext.system.directoryWatchEntries = directoryWatchBuffer;
+
+	//arguments
+	win32OSContext.commandLineArgCount = __argc;
+	win32OSContext.commandLineArgs = __argv;
+	win32OSContext.userData = 0;
+
+	K15_Win32Context* win32SpecificContext = (K15_Win32Context*)K15_OS_MALLOC(sizeof(K15_Win32Context));
+	memset(win32SpecificContext, 0, sizeof(K15_Win32Context));
+
+	//frequency of performance timer
+	LARGE_INTEGER performanceFrequency;
+	QueryPerformanceFrequency(&performanceFrequency);
+
+	win32SpecificContext->performanceFrequency = (float)performanceFrequency.QuadPart;
+
+	//win32 context as userdata
+	win32OSContext.userData = (void*)win32SpecificContext;
+
+	//get time the os layer got initialized
+	LARGE_INTEGER counts;
+	QueryPerformanceCounter(&counts);
+
+	win32OSContext.timeStarted = (double)(counts.QuadPart / performanceFrequency.QuadPart);
+
+	K15_InternalGetSystemInfo(&win32OSContext);
+	K15_InternalSetOSLayerContext(win32OSContext);
+		
+	K15_RegisterDefaultLog(K15_LOG_FLAG_ADD_TIME | K15_LOG_FLAG_ADD_NEW_LINE);
+
+	return K15_SUCCESS;
+}
 /*********************************************************************************/
 uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 {
@@ -284,8 +291,7 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 #ifdef K15_DEBUG
 	K15_InternalAllocateDebugConsole();
 
-	K15_LogRegisterLogFnc(K15_Win32LogVisualStudio, K15_LOG_PRIORITY_DEFAULT, K15_LOG_FLAG_ADD_TIME);
-	K15_LogRegisterLogFnc(K15_Win32LogConsole, K15_LOG_PRIORITY_DEFAULT, K15_LOG_FLAG_ADD_TIME);
+	K15_RegisterDefaultLog(K15_LOG_FLAG_ADD_TIME);
 #endif //K15_DEBUG
 
 	K15_Win32Context* win32SpecificContext = (K15_Win32Context*)K15_OS_MALLOC(sizeof(K15_Win32Context));

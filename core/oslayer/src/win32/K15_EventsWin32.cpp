@@ -105,8 +105,8 @@ intern inline void K15_Win32WindowResized(HWND hWnd, UINT uMsg, WPARAM wParam, L
 
 		if (window)
 		{
-			WORD newWidth = (WORD)(lParam << 16);
-			WORD newHeight = (WORD)(lParam);
+			WORD newWidth = (WORD)(lParam);
+			WORD newHeight = (WORD)(lParam >> 16);
 
 			K15_SetWindowDimension(window, newHeight, newWidth);
 
@@ -202,7 +202,7 @@ intern inline void K15_Win32MouseWheelInputReceived(HWND hWnd, UINT uMsg, WPARAM
 	K15_AddSystemEventToQueue(&win32Event);
 }
 /*********************************************************************************/
-intern inline DWORD K15_Win32CheckControllerConnectivity(K15_Win32Context* p_Win32Context, K15_Win32Controller* p_Controller, uint32 p_NumController, HWND p_HandleWindow)
+intern DWORD K15_Win32CheckControllerConnectivity(K15_Win32Context* p_Win32Context, K15_Win32Controller* p_Controller, uint32 p_NumController, HWND p_HandleWindow)
 {
 	DWORD connectedController = 0;
 	uint32 xInputDevices = 0;
@@ -264,7 +264,7 @@ intern inline DWORD K15_Win32CheckControllerConnectivity(K15_Win32Context* p_Win
 	return connectedController;
 }
 /*********************************************************************************/
-intern inline void K15_Win32DeviceChangeReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+intern void K15_Win32DeviceChangeReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	K15_OSContext* osContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
@@ -291,7 +291,7 @@ intern inline void K15_Win32DeviceChangeReceived(HWND hWnd, UINT uMsg, WPARAM wP
 	}
 }
 /*********************************************************************************/
-intern inline void K15_Win32PumpControllerEvents(K15_Win32Context* p_Win32Context, K15_Win32Controller* p_Controller, uint32 p_NumController)
+intern void K15_Win32PumpControllerEvents(K15_Win32Context* p_Win32Context, K15_Win32Controller* p_Controller, uint32 p_NumController)
 {
 	for (uint32 controllerIndex = 0;
 		controllerIndex < p_NumController;
@@ -312,7 +312,7 @@ intern inline void K15_Win32PumpControllerEvents(K15_Win32Context* p_Win32Contex
 	}
 }
 /*********************************************************************************/
-intern inline void K15_Win32CheckSystemPowerStatus(K15_Win32Context* p_Win32Context)
+intern void K15_Win32CheckSystemPowerStatus(K15_Win32Context* p_Win32Context)
 {
 	SYSTEM_POWER_STATUS currentSystemPowerStatus = {};
 	SYSTEM_POWER_STATUS lastSystemPowerStatus = p_Win32Context->Battery.powerStatus;

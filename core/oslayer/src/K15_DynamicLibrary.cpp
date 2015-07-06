@@ -5,6 +5,7 @@
 #include "K15_FileWatch.h"
 #include "K15_OSContext.h"
 #include "K15_Logging.h"
+#include "K15_String.h"
 #include "K15_System.h"
 
 #include "generated/K15_DynamicLibraryStretchBuffer.cpp"
@@ -28,8 +29,8 @@ intern inline char* K15_InternalCreateLibraryFileName(char* p_LibraryName, char*
 /*********************************************************************************/
 intern inline char* K15_InternalCreateDynamicLibraryCopy(char* p_LibraryPath, char* p_LibraryFilePath, char* p_OutputBuffer)
 {
-	size_t tempLibAbsolutePathLength = strlen(p_LibraryPath) + 5; //+5 = '_temp'
-	size_t tempLibAbsoluteFilePathLength = strlen(p_LibraryFilePath) + 5; //+5 = '_temp'
+	uint32 tempLibAbsolutePathLength= (uint32)strlen(p_LibraryPath) + 5; //+5 = '_temp'
+	uint32 tempLibAbsoluteFilePathLength= (uint32)strlen(p_LibraryFilePath) + 5; //+5 = '_temp'
 
 	//wihtout extension
 	sprintf(p_OutputBuffer, "%s_temp", p_LibraryPath);
@@ -111,7 +112,7 @@ K15_DynamicLibrary* K15_LoadDynamicLibrary(const char* p_LibraryName, uint32 p_F
 
 	//without extension
 	char* libAbsolutePath = K15_ConvertToAbsolutePath(p_LibraryName);
-	uint32 libAbsolutPathLength = (uint32)strlen(libAbsolutePath);
+	uint32 libAbsolutPathLength= (uint32)strlen(libAbsolutePath);
 	uint32 libAbsolutFilePathLength = libAbsolutPathLength + K15_LIBRARY_FILE_EXTENSION_LENGTH;
 
 	//with extension
@@ -120,7 +121,7 @@ K15_DynamicLibrary* K15_LoadDynamicLibrary(const char* p_LibraryName, uint32 p_F
 	char* libOriginalAbsolutePath = 0;
 
 	//check if the library exists
-	if (K15_FileExists(libAbsoluteFilePath) != K15_SUCCESS)
+	if (K15_FileExists(libAbsoluteFilePath) == K15_FALSE)
 	{
 		K15_LOG_ERROR_MESSAGE("Could not find dynamic library '%s'.", libAbsoluteFilePath);
 	
@@ -137,7 +138,7 @@ K15_DynamicLibrary* K15_LoadDynamicLibrary(const char* p_LibraryName, uint32 p_F
 	{
 		//create copy of the 'real' library path. We could need this for file watching.
 		char* libAbsoluteFilePathBuffer = K15_OS_CopyString(libAbsoluteFilePath, libAbsolutFilePathLength);
-		libAbsolutFilePathLength = (uint32)strlen(libAbsoluteFilePath) + 5; //+5 = '_temp'
+		libAbsolutFilePathLength= (uint32)strlen(libAbsoluteFilePath) + 5; //+5 = '_temp'
 
 		//get the name of the temp library file
 		char* libAbsoluteTempFilePath = K15_InternalCreateDynamicLibraryCopy(libAbsolutePath, libAbsoluteFilePath, (char*)K15_OS_MALLOC(libAbsolutFilePathLength + 1));  //+1 for 0 terminator
@@ -207,14 +208,14 @@ uint8 K15_ReloadDynamicLibrary(K15_DynamicLibrary* p_DynamicLibrary)
 		return result;
 	}
 
-	size_t libraryFilePathLength = strlen(p_DynamicLibrary->path) + K15_LIBRARY_FILE_EXTENSION_LENGTH;
+	uint32 libraryFilePathLength= (uint32)strlen(p_DynamicLibrary->path) + K15_LIBRARY_FILE_EXTENSION_LENGTH;
 	char* libraryFilePath = (char*)alloca(libraryFilePathLength + 1);
 	libraryFilePath[libraryFilePathLength] = 0;
 	sprintf(libraryFilePath, "%s%s", p_DynamicLibrary->path, K15_LIBRARY_FILE_EXTENSION);
 
 	char* libraryPath = p_DynamicLibrary->originalPath;
 
-	size_t tempLibraryFilePathLength = strlen(libraryFilePath) + 5; //+5 = '_temp'
+	uint32 tempLibraryFilePathLength= (uint32)strlen(libraryFilePath) + 5; //+5 = '_temp'
 
 	char* tempLibraryFilePath = K15_InternalCreateDynamicLibraryCopy(libraryPath, libraryFilePath, (char*)alloca(tempLibraryFilePathLength + 1));
 	

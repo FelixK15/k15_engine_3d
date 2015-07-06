@@ -1,6 +1,7 @@
 #include "K15_Window.h"
 #include "K15_OSContext.h"
 #include "K15_DefaultCLibraries.h"
+#include "K15_String.h"
 
 #include "win32/K15_WindowWin32.h"
 #include "win32/K15_HelperWin32.h"
@@ -155,7 +156,7 @@ uint8 K15_Win32SetWindowTitle(K15_OSContext* p_OSContext, K15_Window* p_Window, 
 {
 	K15_Win32Window* win32WindowData = (K15_Win32Window*)p_Window->userData;
 	HWND hwnd = win32WindowData->hwnd;
-	uint32 titleLength = (uint32)strlen(p_Title) + 1; //+1 for 0 terminator
+	uint32 titleLength= (uint32)strlen(p_Title) + 1; //+1 for 0 terminator
 	wchar_t* titleWide = (wchar_t*)alloca(titleLength * sizeof(wchar_t));
 
 	K15_Win32ConvertStringToWString(p_Title, titleLength, titleWide);

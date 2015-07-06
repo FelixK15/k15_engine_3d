@@ -11,48 +11,6 @@
 #include <K15_Logging.h>
 
 /*********************************************************************************/
-intern void K15_AndroidLog(const char* p_LogMessage, LogPriority p_LogPriority)
-{
-	int prio = ANDROID_LOG_INFO;
-
-	switch (p_LogPriority)
-	{
-	case K15_LOG_PRIORITY_NORMAL:
-		{
-			prio = ANDROID_LOG_INFO;
-			break;
-		}
-
-	case K15_LOG_PRIORITY_DEBUG:
-		{
-			prio = ANDROID_LOG_DEBUG;
-			break;
-		}
-
-	case K15_LOG_PRIORITY_ERROR:
-		{
-			prio = ANDROID_LOG_ERROR;
-			break;
-		}
-
-	case K15_LOG_PRIORITY_WARNING:
-		{
-			prio = ANDROID_LOG_WARN;
-			break;
-		}
-
-	case K15_LOG_PRIORITY_SUCCESS:
-		{
-			prio = ANDROID_LOG_VERBOSE;
-			break;
-		}
-	}
-
-	__android_log_print(prio, "K15_Engine", p_LogMessage);
-}
-/*********************************************************************************/
-
-/*********************************************************************************/
 intern inline K15_Window* K15_InternalCreateWindow(int p_HeightInPixels, int p_WidthInPixels)
 {
 	K15_Window* window = K15_CreateWindow(0, 0);
@@ -72,7 +30,7 @@ intern inline K15_Window* K15_InternalCreateWindow(int p_HeightInPixels, int p_W
 /*********************************************************************************/
 uint8 K15_AndroidInitializeOSLayer(JNIEnv* p_JNIEnvironment, jobject p_EngineThreadHandle, int p_WidthInPixels, int p_HeightInPixels, jobject p_SurfaceHandle, const char* p_AppDirectory)
 {
-	K15_LogRegisterLogFnc(K15_AndroidLog, K15_LOG_PRIORITY_DEFAULT);
+	K15_RegisterDefaultLog();
 
 	K15_OSLayerContext androidContext;
 

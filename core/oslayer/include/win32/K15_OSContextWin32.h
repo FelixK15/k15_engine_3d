@@ -85,6 +85,7 @@ struct K15_Win32Context
 	DWORD connectedController;
 };
 
+uint8 K15_Win32InitializeLightOSLayer(); //wihtout window, event support etc.
 uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance);
 char* K15_Win32GetError(char* p_OutputBuffer);
 void K15_Win32Sleep(double p_SleepTimeInSeconds);
