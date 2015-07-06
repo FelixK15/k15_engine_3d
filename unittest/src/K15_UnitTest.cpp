@@ -1,5 +1,6 @@
 #include "K15_Prerequisites.h"
 #include "K15_Logging.h"
+#include "K15_String.h"
 
 #ifdef K15_OS_WINDOWS
 	#include "windows.h"
@@ -69,7 +70,7 @@ void K15_Win32LogConsole(const char* p_Message, LogPriority p_Priority)
 		}
 	}
 
-	uint32 messageLength = (uint32)strlen(p_Message) + 1; //+1 for 0 terminator
+	uint32 messageLength= (uint32)strlen(p_Message) + 1; //+1 for 0 terminator
 	wchar_t* messageBuffer = (wchar_t*)alloca(messageLength * sizeof(wchar_t));
 
 	K15_Win32ConvertStringToWString(p_Message, messageLength, messageBuffer);
@@ -93,7 +94,13 @@ void K15_InternalDoMathTests()
 	K15_END_TESTS
 }
 /*********************************************************************************/
-
+void K15_InternalDoOSLayerTests()
+{
+	K15_START_TESTS("OSLayer Test")
+		K15_TEST_EQUAL_FUNCTION(K15_FileSystemTest, TRUE);
+	K15_END_TESTS
+}
+/*********************************************************************************/
 
 /*********************************************************************************/
 int main(int argc, char** argv)
@@ -103,6 +110,7 @@ int main(int argc, char** argv)
 #endif //K15_OS_WINDOWS
 
 	K15_InternalDoMathTests();
+	K15_InternalDoOSLayerTests();
 
 
 	return globalTestResult;
