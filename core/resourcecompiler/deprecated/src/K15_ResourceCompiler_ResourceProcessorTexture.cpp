@@ -121,18 +121,14 @@ namespace K15_ResourceCompiler
 	/*********************************************************************************/
 	ProcessorEnvironment ResourceprocessorTexture::getProcessorEnvironment() const
 	{
-		static ProcessorEnvironment environment = {".k15tex", "Texture Processor"};
+		static ProcessorEnvironment environment = {".k15texture", "Texture Processor"};
 
 		return environment;
 	}
 	/*********************************************************************************/
 	bool ResourceprocessorTexture::canProcess(const String& p_FileExtension) const
 	{
-		static String extensions[] = {".tga", ".jpg", ".jpeg", ".png", ".tiff"};
-
-		static StringSet imageExtensions = StringSet(extensions, extensions + sizeof(extensions) / sizeof(extensions[0])); 
-
-		return std::find(imageExtensions.begin(), imageExtensions.end(), p_FileExtension) != imageExtensions.end();
+		return p_FileExtension.compare(".k15textureinfo")
 	}
 	/*********************************************************************************/
 	ResourceProcessResult ResourceprocessorTexture::process(const ResourceData& p_ResourceData)

@@ -1,0 +1,9 @@
+#ifndef _K15_ResourceCompiler_Config_h_
+#define _K15_ResourceCompiler_Config_h_
+
+#define K15_RESOURCE_COMPILER_ENABLE_ASSIMP
+#define K15_RESOURCE_COMPILER_ENABLE_SQUISH
+#define K15_RESOURCE_COMPILER_ENABLE_STB_IMAGE
+#define K15_RESOURCE_COMPILER_ENABLE_STB_TTF
+
+#endif //_K15_ResourceCompiler_Config_h_
