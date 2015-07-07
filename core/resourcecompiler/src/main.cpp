@@ -127,6 +127,8 @@ int main(int argc, char** argv)
 		}
 	}
 
+	while (K15_HasAsyncOperationsLeft(asyncContext)) K15_SleepThreadForMilliseconds(50);
+
 	return 0;
 }
 /*********************************************************************************/

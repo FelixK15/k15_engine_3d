@@ -43,6 +43,8 @@ struct K15_AsyncContext
 
 	K15_Mutex* asyncJobLock;
 	K15_CustomMemoryAllocator* memoryAllocator;
+
+	uint32 numAsyncOperations;
 };
 /*********************************************************************************/
 
@@ -55,5 +57,6 @@ void K15_RemoveAsyncOperation(K15_AsyncContext* p_AsyncContext, K15_AsyncOperati
 uint8 K15_IssueAsyncOperation(K15_AsyncContext* p_AsyncContext, K15_AsyncOperation* p_AsyncOperation);
 void K15_InitializeAsyncOperation(K15_AsyncContext* p_AsyncContext, K15_AsyncOperation* p_AsyncOperation, K15_AsyncFunctionFnc p_AsyncFunction, K15_AsyncCallbackFnc p_AsyncCallback, void* p_UserData, uint32 p_UserDataSize, uint32 p_Flags);
 uint8 K15_AddAsyncOperation(K15_AsyncContext* p_AsyncContext, K15_AsyncOperation* p_AsyncOperation);
+bool8 K15_HasAsyncOperationsLeft(K15_AsyncContext* p_AsyncContext);
 
 #endif //_K15_Runtime_Async_Operation_h_

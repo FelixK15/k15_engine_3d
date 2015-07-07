@@ -76,6 +76,7 @@ intern uint8 K15_InternalAsyncOperationThreadProc(void* p_Parameter)
 		if (asyncOperation)
 		{
 			K15_InternalProcessAsyncOperation(asyncOperation, asyncContext);
+			K15_InterlockedDecrement(&asyncContext->numAsyncOperations);
 		}
 	}
 }
@@ -115,6 +116,7 @@ K15_AsyncContext* K15_CreateAsyncContextWithCustomAllocator(K15_OSContext* p_OSC
 	asyncContext->asyncThreads = asyncThreadBuffer;
 	asyncContext->asyncOperations = asyncOperationBuffer;
 	asyncContext->asyncWorkerSynchronizer = asyncWorkerSynchronizer;
+	asyncContext->numAsyncOperations = 0;
 
 	asyncContext->memoryAllocator = p_CustomMemoryAllocator;
 
@@ -232,10 +234,19 @@ uint8 K15_IssueAsyncOperation(K15_AsyncContext* p_AsyncContext, K15_AsyncOperati
 	K15_PushAsyncOperationStretchBufferElement(asyncOperationBuffer, p_AsyncOperation);
 	K15_UnlockMutex(asyncJobLock);
 
+	K15_InterlockedIncrement(&p_AsyncContext->numAsyncOperations);
+
 	p_AsyncOperation->asyncStatus = K15_ASYNC_OPERATION_QUEUED;
 
 	K15_PostSemaphore(asyncWorkerSynchronizer);
 
 	return K15_SUCCESS;
+}
+/*********************************************************************************/
+bool8 K15_HasAsyncOperationsLeft(K15_AsyncContext* p_AsyncContext)
+{
+	K15_ASSERT_TEXT(p_AsyncContext, "Async Context is NULL.");
+
+	return p_AsyncContext->numAsyncOperations > 0 ? K15_TRUE : K15_FALSE;
 }
 /*********************************************************************************/
