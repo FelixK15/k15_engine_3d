@@ -13,6 +13,7 @@
 #include "K15_ConfigFile.h"
 
 #include <stdio.h>
+#include <csignal>
 
 #define K15_RESOURCE_COMPILER_VERSION_MAJOR "1"
 #define K15_RESOURCE_COMPILER_VERSION_MINOR "0"
@@ -80,10 +81,17 @@ void K15_OnResourceFileChanged(const char* p_ResourceFilePath, void* p_UserData)
 	}
 }
 /*********************************************************************************/
+void interrupt_handler(int p_Signal)
+{
+	K15_LOG_ERROR_MESSAGE("BYE!");
+}
+/*********************************************************************************/
 int main(int argc, char** argv)
 {
 	K15_InitializeOSLayer();
 	K15_OSContext* osContext = K15_GetOSLayerContext();
+
+	signal(SIGTERM, interrupt_handler);
 
 	K15_ArgumentParser argumentParser = {};
 	K15_AsyncContext* asyncContext = K15_CreateAsyncContext(osContext);

@@ -69,8 +69,7 @@ char* K15_GetPathWithoutFileName(const char* p_FilePath)
 
 		if (fileNameSize == 0)
 		{
-			K15_OS_FREE(convertedFilePath);
-			return 0;
+			return convertedFilePath;
 		}
 		
 		returnBufferSize = filePathWithFileNameSize - fileNameSize;

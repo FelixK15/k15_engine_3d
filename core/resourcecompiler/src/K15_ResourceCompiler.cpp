@@ -716,7 +716,6 @@ bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext
 	assert(p_ResourceCompilerContext);
 
 	bool8 compileResult = K15_FALSE;
-	char* resourcePath = K15_GetPathWithoutFileName(p_ResourceFile);
 
 	K15_ConfigFileContext resourceFileConfig = {};
 
@@ -729,6 +728,8 @@ bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext
 	char* resourceType = K15_GetConfigValueAsString(&resourceFileConfig, "ResourceType");
 	char* outputPath = K15_GetConfigValueAsString(&resourceFileConfig, "Destination");
 	char* inputPath = K15_GetConfigValueAsString(&resourceFileConfig, "Source");
+	const char* argumentInputPath = p_ResourceCompilerContext->argumentParser->inputPath;
+	const char* argumentOutputPath = p_ResourceCompilerContext->argumentParser->outputPath;
 	char* outputCompletePath = 0;
 	char* inputCompletePath = 0;
 
@@ -750,21 +751,21 @@ bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext
 		goto free_resources;
 	}
 
-	inputCompletePath = K15_ConcatStrings(resourcePath, inputPath);
-	outputCompletePath = K15_ConcatStrings(resourcePath, outputPath);
+	inputCompletePath = K15_ConcatStrings(argumentInputPath, inputPath);
+	outputCompletePath = K15_ConcatStrings(argumentOutputPath, outputPath);
 
 	if (!p_ResourceCompilerContext->argumentParser->replace)
 	{
 		if (K15_FileExists(outputCompletePath))
 		{
-			K15_LOG_WARNING_MESSAGE("Will not compile resource '%s' as the resource has already been compiled to '%s'. Provide the '-u' flag to override already compiled resource files.", inputPath, outputPath);
+			K15_LOG_WARNING_MESSAGE("Will not compile resource '%s' as the resource has already been compiled to '%s'. Provide the '-u' flag to override already compiled resource files.", inputCompletePath, outputCompletePath);
 			goto free_resources;
 		}
 	}
 
-	if (K15_DirectoryExists(inputPath) == K15_FALSE)
+	if (K15_FileExists(inputCompletePath) == K15_FALSE)
 	{
-		K15_LOG_ERROR_MESSAGE("Input path '%s' does not exist.", outputPath);
+		K15_LOG_ERROR_MESSAGE("Input file '%s' does not exist.", inputCompletePath);
 		goto free_resources;
 	}
 
@@ -810,7 +811,6 @@ free_resources:
 	free(resourceType);
 	free(outputPath);
 	free(inputPath);
-	free(resourcePath);
 	free(inputCompletePath);
 	free(outputCompletePath);
 

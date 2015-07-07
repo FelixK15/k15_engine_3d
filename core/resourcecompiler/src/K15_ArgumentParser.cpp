@@ -69,6 +69,13 @@ void K15_ParseArguments(K15_ArgumentParser* p_ArgumentParser, int p_ArgumentCoun
 		else if (parserState == K15_PARSER_STATE_INPUT || parserState == K15_PARSER_STATE_OUTPUT)
 		{
 			char* convertedArgument = K15_ConvertToDirectoryPath(argument);
+			
+			if (K15_IsRelativePath(convertedArgument))
+			{
+				char* absolutePath = K15_ConvertToAbsolutePath(convertedArgument);
+				free(convertedArgument);
+				convertedArgument = absolutePath;
+			}
 
 			if (parserState == K15_PARSER_STATE_INPUT)
 			{
