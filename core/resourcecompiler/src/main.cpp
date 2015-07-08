@@ -32,14 +32,13 @@ void K15_PrintHelp()
 		"K15 Resource Compiler Version %s.%s\n"
 		"====================================\n"
 		"Usage:\n"
-		"k15_resourcecompiler -i [file|dir] -o [dir] -q [high|medium|low]\n"
-		"                     -f [mesh|shader|textures|all] -r\n"
+		"k15_resourcecompiler -i [dir] -o [dir] {-r} {-d} {-u}"
 		"\n"
 		"Parameters:\n"
-		"-i   -   Input [file|dir] either a single file or a complete directory.\n"
+		"-i   -   Input [dir] directory where to search for *.k15resourceinfo files.\n"
 		"-o   -   Output [dir] directory where to put compiled resources.\n"
-		"-u	  -   Replace old compiled file with new compiled file.\n"
-		"-r   -   Recursively search directory if input is a directory.\n"
+		"-u   -   Replace old compiled file with new compiled file.\n"
+		"-r   -   Recursively search input directory for *.k15resourceinfo files.\n"
 		"-d   -   Start the resource compiler as a demon.\n"
 		"\n"
 		"Description:\n"
@@ -81,17 +80,10 @@ void K15_OnResourceFileChanged(const char* p_ResourceFilePath, void* p_UserData)
 	}
 }
 /*********************************************************************************/
-void interrupt_handler(int p_Signal)
-{
-	K15_LOG_ERROR_MESSAGE("BYE!");
-}
-/*********************************************************************************/
 int main(int argc, char** argv)
 {
 	K15_InitializeOSLayer();
 	K15_OSContext* osContext = K15_GetOSLayerContext();
-
-	signal(SIGTERM, interrupt_handler);
 
 	K15_ArgumentParser argumentParser = {};
 	K15_AsyncContext* asyncContext = K15_CreateAsyncContext(osContext);

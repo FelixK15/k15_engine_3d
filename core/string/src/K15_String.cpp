@@ -47,9 +47,9 @@ unsigned int K15_GetLinesInplace(char* p_String, char** p_Lines)
 			{
 				p_String[stringIndex] = 0;
 				p_Lines[lineCount] = p_String + lineBreakIndex;
-
-				lineBreakIndex = (unsigned int)stringIndex + 1;
 			}
+
+			lineBreakIndex = (unsigned int)stringIndex + 1;
 
 			++lineCount;
 		}
@@ -62,6 +62,16 @@ unsigned int K15_GetLinesInplace(char* p_String, char** p_Lines)
 		}
 
 		++stringIndex;
+	}
+
+	if (stringIndex != lineBreakIndex)
+	{
+		if (p_Lines)
+		{
+			p_Lines[lineCount] = p_String + lineBreakIndex;
+		}
+
+		++lineCount;
 	}
 
 	return lineCount;
