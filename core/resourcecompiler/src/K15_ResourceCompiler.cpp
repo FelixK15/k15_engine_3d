@@ -32,7 +32,7 @@
 	#error missing font loader implementation	
 #endif //K15_RESOURCE_COMPILER_ENABLE_STB_TTF
 
-#include "K15_Memory.h"
+#include "K15_CustomMemoryAllocator.h"
 #include "K15_TextureFormat.h"
 #include "K15_FontFormat.h"
 #include "K15_System.h"

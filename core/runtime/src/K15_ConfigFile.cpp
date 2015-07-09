@@ -224,7 +224,11 @@ uint8 K15_LoadConfigFile(const char* p_ConfigFile, K15_ConfigFileContext* p_Conf
 	uint32 configFileSize = 0;
 	char* configFileContent = (char*)K15_GetWholeFileContentWithFileSize(configFilePath, &configFileSize);
 
-	K15_ASSERT_TEXT(configFileContent, "Could not read config file '%s'.", configFilePath);
+	if (!configFileContent)
+	{
+		K15_LOG_ERROR_MESSAGE("File '%s' is empty.", configFilePath);
+		return K15_OS_ERROR_EMPTY_FILE;
+	}
 
 	configFileContent[configFileSize] = 0;
 

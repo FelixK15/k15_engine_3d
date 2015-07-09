@@ -14,16 +14,12 @@
 unsigned int K15_GetLines(const char* p_String, char** p_Lines)
 {
 	unsigned int stringLength = 0;
-	char* stringBuffer = (char*)p_String; //hacky and dangerous. will be overridden if p_lines is valid.
+	char* stringBuffer = (char*)p_String; //hacky and dangerous. will be overridden if p_lines is valid. As long as we don't change this buffer, we'll be fine
 	
 	if (p_Lines)
 	{
-		stringLength= (unsigned int)strlen(p_String);
-
-		stringBuffer = (char*)malloc(stringLength + 1);
-		memcpy(stringBuffer, p_String, stringLength);
-
-		stringBuffer[stringLength] = 0;
+		//Copy string so we can modify it.
+		stringBuffer = K15_CopyString(p_String);
 	}
 
 	return K15_GetLinesInplace(stringBuffer, p_Lines);
@@ -47,9 +43,9 @@ unsigned int K15_GetLinesInplace(char* p_String, char** p_Lines)
 			{
 				p_String[stringIndex] = 0;
 				p_Lines[lineCount] = p_String + lineBreakIndex;
-
-				lineBreakIndex = (unsigned int)stringIndex + 1;
 			}
+
+			lineBreakIndex = (unsigned int)stringIndex + 1;
 
 			++lineCount;
 		}
@@ -62,6 +58,16 @@ unsigned int K15_GetLinesInplace(char* p_String, char** p_Lines)
 		}
 
 		++stringIndex;
+	}
+
+	if (stringIndex != lineBreakIndex)
+	{
+		if (p_Lines)
+		{
+			p_Lines[lineCount] = p_String + lineBreakIndex;
+		}
+
+		++lineCount;
 	}
 
 	return lineCount;

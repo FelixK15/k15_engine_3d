@@ -1,5 +1,5 @@
 #include "K15_GUIContext.h"
-#include "K15_Memory.h"
+#include "K15_CustomMemoryAllocator.h"
 #include "K15_DefaultCLibraries.h"
 
 #include "K15_OSContext.h"

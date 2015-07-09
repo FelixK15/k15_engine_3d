@@ -20,8 +20,6 @@
 
 #include <clocale>
 
-MessageBoxAProc _MessageBoxA = 0;
-
 /*********************************************************************************/
 intern inline uint8 K15_InternalTryLoadXInput(K15_Win32Context* p_Win32Context)
 {
@@ -256,10 +254,6 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	//win32OSContext.threading.threads = (K15_Thread**)K15_OS_MALLOC(sizeof(K15_Thread*) * K15_MAX_THREADS);
 
 	//memset(win32OSContext.threading.threads, 0, sizeof(K15_Thread*) * K15_MAX_THREADS);
-
-	//Get message box function
-	HMODULE user32Module = GetModuleHandleA("user32.dll");
-	_MessageBoxA = (MessageBoxAProc)GetProcAddress(user32Module, "MessageBoxA");
 
 	//system
 	win32OSContext.system.systemIdentifier = OS_WINDOWS;

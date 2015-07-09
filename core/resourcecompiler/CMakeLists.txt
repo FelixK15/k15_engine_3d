@@ -3,6 +3,7 @@ project(resourcecompiler)
 
 set(RESOURCECOMPILER_SRC "./src/main.cpp")
 
+include_directories(./../)
 include_directories(./include)
 include_directories(./src)
 include_directories(../resourceformats/include/)
@@ -11,6 +12,7 @@ include_directories(../logging/include/)
 include_directories(../string/include/)
 include_directories(../runtime/include/)
 include_directories(../rendering/include/)
+include_directories(../memory/include/)
 include_directories(../../dependencies/assimp/include/)
 include_directories(../../dependencies/stb/)
 include_directories(../../dependencies/squish/)
@@ -24,4 +26,4 @@ endif()
 
 add_executable(resourcecompiler ${RESOURCECOMPILER_SRC})
 
-target_link_libraries(resourcecompiler zlib assimp squish resourceformats oslayer string logging runtime)
+target_link_libraries(resourcecompiler zlib assimp squish resourceformats oslayer string logging runtime memory)

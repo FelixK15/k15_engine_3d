@@ -3,9 +3,7 @@ set(K15_OS_LAYER_SRC 	"src/K15_SystemEvents.cpp"
 			"src/K15_Window.cpp"
 			"src/K15_FileWatch.cpp"
 			"src/K15_Thread.cpp"
-			"src/K15_Memory.cpp"
 			"src/K15_OSContext.cpp"
-			"src/K15_StringHelper.cpp"
 			"src/K15_FileSystem.cpp"
 			"src/K15_System.cpp")
 
@@ -38,9 +36,7 @@ set(K15_OS_LAYER_INC 	"include/K15_EventTypes.h"
 			"include/K15_FileWatch.h"
 			"include/K15_DynamicLibrary.h"
 			"include/K15_Prerequisites.h"
-			"include/K15_Memory.h"
 			"include/K15_Window.h"
-			"include/K15_StringHelper.h"
 			"include/K15_SystemEvents.h"
 			"include/K15_OSContext.h"
 			"include/K15_FileSystem.h"
@@ -73,9 +69,11 @@ set(K15_OS_LAYER_ANDROID_INC 	"include/android/K15_OSContextAndroid.h"
 				"include/posix/K15_SystemPosix.h"
 				"include/posix/K15_FileSystemPosix.h")
 
+include_directories(./../)
 include_directories(src)
 include_directories(include)
 include_directories(../string/include)
+include_directories(../memory/include)
 include_directories(../logging/include)
 
 source_group(include FILES ${K15_OS_LAYER_INC})

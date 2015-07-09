@@ -3,11 +3,11 @@
 #include "K15_String.h"
 #include "K15_OSContext.h"
 #include "K15_MemoryBuffer.h"
+#include "K15_CustomMemoryAllocator.h"
 #include "K15_AsyncOperation.h"
 #include "K15_System.h"
 #include "K15_Logging.h"
 #include "K15_Thread.h"
-#include "K15_Memory.h"
 #include "K15_DefaultCLibraries.h"
 
 #include "generated/K15_ResourceFixedBuffer.cpp"
@@ -164,11 +164,17 @@ intern void K15_InternalInitializeResourceContext(K15_ResourceContext* p_Resourc
 	K15_ASSERT_TEXT(p_ResourceMemoryBuffer, "Resource Memory Buffer is NULL.");
 	K15_ASSERT_TEXT(p_ResourceCollectionPath, "Resource collection path is NULL.");
 
+	char* resourcePath = K15_ConvertToAbsolutePath(p_ResourceCollectionPath);
+
+	bool8 pathExists = K15_FileExists(resourcePath) || K15_DirectoryExists(resourcePath);
+
+	K15_ASSERT_TEXT(pathExists, "Resource Path '%s' does not exist", resourcePath);
+
 	p_ResourceContext->memoryAllocator = p_MemoryAllocator;
 	p_ResourceContext->resourceCacheLock = K15_CreateMutex();
 	p_ResourceContext->flags = p_Flags;
 	p_ResourceContext->resourceMemoryBuffer = p_ResourceMemoryBuffer;
-	p_ResourceContext->resourcePath = K15_ConvertToAbsolutePath(p_ResourceCollectionPath);
+	p_ResourceContext->resourcePath = resourcePath;
 
 	K15_InternalCreateResourceContext(p_ResourceContext, p_ResourceMemoryBuffer->sizeInBytes, p_Flags);
 }

@@ -112,12 +112,12 @@ void K15_LogWrite(const char* p_Message, LogPriority p_LogPriority, ...)
 		logIndex < g_LogCount;
 		++logIndex)
 	{
-		unsigned int lock = g_LogContexts[logIndex].lock;
-		K15_InterlockedCompareExchange(&lock, 0, 0);
+		//try to acquire lock
+		unsigned int lock = K15_InterlockedCompareExchange(&g_LogContexts[logIndex].lock, 1, 0);
 
 		if (lock == 0)
 		{
-			K15_InterlockedIncrement(&g_LogContexts[logIndex].lock);
+			//K15_InterlockedIncrement(&g_LogContexts[logIndex].lock);
 
 			unsigned int logFilterMask = g_LogContexts[logIndex].filterMask;
 			unsigned int logFlags = g_LogContexts[logIndex].flags;
@@ -135,15 +135,15 @@ void K15_LogWrite(const char* p_Message, LogPriority p_LogPriority, ...)
 				va_list paramList;
 
 				va_start(paramList, p_LogPriority);
-				vsprintf(logBuffer + offset, p_Message, paramList);
+				offset += vsprintf(logBuffer + offset, p_Message, paramList);
 				va_end(paramList);
-
-				g_LogContexts[logIndex].fnc(logBuffer, p_LogPriority);
 
 				if ((logFlags & K15_LOG_FLAG_ADD_NEW_LINE) > 0)
 				{
-					g_LogContexts[logIndex].fnc("\n", p_LogPriority);
+					sprintf(logBuffer + offset, "\n");
 				}
+
+				g_LogContexts[logIndex].fnc(logBuffer, p_LogPriority);
 			}
 
 			K15_InterlockedDecrement(&g_LogContexts[logIndex].lock);

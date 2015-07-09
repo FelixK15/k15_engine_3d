@@ -1,6 +1,6 @@
 #include "K15_DynamicLibrary.h"
 #include "K15_DefaultCLibraries.h"
-#include "K15_StringHelper.h"
+#include "K15_String.h"
 #include "K15_FileSystem.h"
 #include "K15_FileWatch.h"
 #include "K15_OSContext.h"
@@ -137,7 +137,7 @@ K15_DynamicLibrary* K15_LoadDynamicLibrary(const char* p_LibraryName, uint32 p_F
 	if ((p_Flags & K15_RELOADABLE_LIBRARY) > 0)
 	{
 		//create copy of the 'real' library path. We could need this for file watching.
-		char* libAbsoluteFilePathBuffer = K15_OS_CopyString(libAbsoluteFilePath, libAbsolutFilePathLength);
+		char* libAbsoluteFilePathBuffer = K15_CopyString(libAbsoluteFilePath, libAbsolutFilePathLength);
 		libAbsolutFilePathLength= (uint32)strlen(libAbsoluteFilePath) + 5; //+5 = '_temp'
 
 		//get the name of the temp library file
@@ -168,7 +168,7 @@ K15_DynamicLibrary* K15_LoadDynamicLibrary(const char* p_LibraryName, uint32 p_F
 	}
 	else
 	{
-		char* libNameBuffer = K15_OS_CopyString(p_LibraryName);
+		char* libNameBuffer = K15_CopyString(p_LibraryName);
 
 		dynamicLibrary->state = K15_STATE_LOADED;
 		dynamicLibrary->name = libNameBuffer;
@@ -304,7 +304,7 @@ void* K15_GetProcAddress(K15_DynamicLibrary* p_DynamicLibrary, const char* p_Pro
 	void* functionPointer = osContext->system.getProcAddress(osContext, p_DynamicLibrary, p_ProcName);
 	K15_ASSERT_TEXT(functionPointer, "Could not load function pointer for symbol '%s' (%s)", p_ProcName, K15_CopySystemErrorMessageIntoBuffer((char*)alloca(K15_ERROR_MESSAGE_LENGTH)));
 
-	char* procNameBuffer = K15_OS_CopyString(p_ProcName);
+	char* procNameBuffer = K15_CopyString(p_ProcName);
 	
 	K15_DynamicFunctionPointer dynamicFunctionPointer = {};
 	dynamicFunctionPointer.functionPointer = functionPointer;

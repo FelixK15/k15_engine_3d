@@ -12,6 +12,7 @@ int K15_IsSubstringR(const char* p_String, const char* p_Needle);
 
 char* K15_ConcatStrings(const char* p_String1, const char* p_String2);
 char* K15_ConcatStringsIntoBuffer(const char* p_String1, const char* p_String2, char* p_Buffer);
+
 char* K15_GenerateString(const char* p_Format, char* p_Buffer, ...);
 char** K15_CreateStringArray(unsigned int p_NumStrings, ...);
 

@@ -4,10 +4,12 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_LIST_DIR})
 
 include_directories(include/)
 include_directories(src/)
+include_directories(./../)
 include_directories(../oslayer/include/)
 include_directories(../math/include/)
 include_directories(../runtime/include/)
 include_directories(../logging/include/)
+include_directories(../memory/include/)
 include_directories(../resourceformats/include/)
 include_directories(../rendering/include/)
 

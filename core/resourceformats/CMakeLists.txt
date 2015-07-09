@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8.10)
 
 project(k15_resourceformats)
 
+include_directories(./../)
 include_directories(./include)
 include_directories(./../../dependencies/zlib/include)
 

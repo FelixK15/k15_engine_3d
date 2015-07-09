@@ -1,18 +1,19 @@
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_LIST_DIR})
 
+include_directories(./../)
 include_directories(./include/)
 include_directories(./src/)
 include_directories(./../math/include/)
 include_directories(./../rendering/include/)
 include_directories(./../resourceformats/include/)
 include_directories(./../oslayer/include/)
+include_directories(./../memory/include/)
 include_directories(./../logging/include/)
 include_directories(./../string/include/)
 
 set(K15_RUNTIME_SRC 	"src/K15_ConfigFile.cpp"
 			"src/K15_ResourceContext.cpp"
 			"src/K15_GameInit.cpp"
-			"src/K15_MemoryBuffer.cpp"
 			"src/K15_FrameCounter.cpp"
 			"src/K15_Mesh.cpp"
 			"src/K15_AsyncOperation.cpp")
@@ -23,7 +24,6 @@ set(K15_RUNTIME_INCLUDE "include/K15_ConfigFile.h"
 			"include/K15_Mesh.h"
 			"include/K15_RuntimePrerequisites.h"
 			"include/K15_GameInit.h"
-			"include/K15_MemoryBuffer.h"
 			"include/K15_FrameCounter.h"
 			"include/K15_AsyncOperation.h")
 
