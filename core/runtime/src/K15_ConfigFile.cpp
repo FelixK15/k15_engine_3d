@@ -4,6 +4,8 @@
 #include "K15_Logging.h"
 #include "K15_String.h"
 
+#include "K15_CustomMemoryAllocator.h"
+
 #include "generated/K15_ConfigValueBuffer.cpp"
 
 /*********************************************************************************/

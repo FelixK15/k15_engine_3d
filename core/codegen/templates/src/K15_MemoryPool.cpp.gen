@@ -13,47 +13,28 @@ struct K15_$TYPE_NAME$MemoryPoolElement
 /*********************************************************************************/
 
 
-
-/*********************************************************************************/
-void* K15_Default$TYPE_NAME$Malloc(size_t p_SizeInBytes)
-{
-	return ::malloc(p_SizeInBytes);
-}
-/*********************************************************************************/
-void K15_Default$TYPE_NAME$Free(void* p_Pointer)
-{
-	return ::free(p_Pointer);
-}
-/*********************************************************************************/
-
-
-
-
-
 /*********************************************************************************/
 void K15_Initialize$TYPE_NAME$MemoryPool(K15_$TYPE_NAME$MemoryPool* p_MemoryPool, unsigned int p_NumElements)
 {
 	K15_ASSERT_TEXT(p_MemoryPool, "Memory Pool for Type '$TYPE$' is NULL.");
 	K15_ASSERT_TEXT(p_NumElements, "Element Count for Memory Pool '$TYPE$' is 0.");
 
-	K15_Initialize$TYPE_NAME$MemoryPoolWithCustomAllocator(p_MemoryPool, K15_Default$TYPE_NAME$Malloc, K15_Default$TYPE_NAME$Free, p_NumElements);
+	K15_Initialize$TYPE_NAME$MemoryPoolWithCustomAllocator(p_MemoryPool, K15_CreateDefaultMemoryAllocator("$TYPE_NAME$ Default Memory Pool Allocator"), p_NumElements);
 }
 /*********************************************************************************/
-void K15_Initialize$TYPE_NAME$MemoryPoolWithCustomAllocator(K15_$TYPE_NAME$MemoryPool* p_MemoryPool, K15_$TYPE_NAME$MemoryPoolAllocFnc p_CustomMalloc, K15_$TYPE_NAME$MemoryPoolFreeFnc p_CustomFree, unsigned int p_NumElements)
+void K15_Initialize$TYPE_NAME$MemoryPoolWithCustomAllocator(K15_$TYPE_NAME$MemoryPool* p_MemoryPool, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_NumElements)
 {
 	K15_ASSERT_TEXT(p_MemoryPool, "Memory Pool for Type '$TYPE$' is NULL.");
-	K15_ASSERT_TEXT(p_CustomMalloc, "Custom Malloc Function for Memory Pool '$TYPE$' is NULL.");
-	K15_ASSERT_TEXT(p_CustomFree, "Custom Free Function for Memory Pool '$TYPE$' is NULL.");
+	K15_ASSERT_TEXT(p_MemoryAllocator, "Custom Allocator is NULL.");
 	K15_ASSERT_TEXT(p_NumElements, "Element Count for Memory Pool '$TYPE$' is 0.");
 
 	uint32 elementBufferSize = sizeof(K15_$TYPE_NAME$MemoryPoolElement) * p_NumElements;
-	byte* elementBuffer = (byte*)p_CustomMalloc(elementBufferSize);
+	byte* elementBuffer = (byte*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, elementBufferSize);
 
 	memset(elementBuffer, 0, elementBufferSize);
 
 	p_MemoryPool->elements = elementBuffer;
-	p_MemoryPool->customMalloc = p_CustomMalloc;
-	p_MemoryPool->customFree = p_CustomFree;
+	p_MemoryPool->memoryAllocator = p_MemoryAllocator;
 	p_MemoryPool->numElements = p_NumElements;
 	p_MemoryPool->lastElementIndex = 0;
 }
@@ -122,9 +103,6 @@ void K15_Free$TYPE_NAME$MemoryPoolElement(K15_$TYPE_NAME$MemoryPool* p_MemoryPoo
 /*********************************************************************************/
 void K15_Clear$TYPE_NAME$MemoryPool(K15_$TYPE_NAME$MemoryPool* p_MemoryPool)
 {
-	K15_$TYPE_NAME$MemoryPoolFreeFnc  customFree = p_MemoryPool->customFree;
-	byte* memoryPoolBuffer = p_MemoryPool->elements;
-	
-	customFree(memoryPoolBuffer);
+	K15_FreeFromMemoryAllocator(p_MemoryPool->memoryAllocator, p_MemoryPool->elements);
 }
 /*********************************************************************************/

@@ -4,39 +4,31 @@
 
 #include "generated/K15_ConfigValueBuffer.h"
 
+
 /*********************************************************************************/
-void K15_CreateConfigValueStretchBufferWithPreallocatedMemory(K15_ConfigValueStretchBuffer* p_StretchBuffer, unsigned char* p_Buffer, unsigned int p_BufferCapacityInByte)
+void K15_CreateConfigValueStretchBufferWithCustomAllocator(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_ElementCapacity)
 {
-	K15_ASSERT_TEXT(p_Buffer, "Input buffer is NULL.");
-	K15_ASSERT_TEXT(p_BufferCapacityInByte != 0, "Input buffer size is 0.");
 	K15_ASSERT_TEXT(!p_StretchBuffer->elements, "Stretch Buffer has already been created.");
+	K15_ASSERT_TEXT(p_MemoryAllocator, "No memory allocator defined.");
+	K15_ASSERT_TEXT(p_ElementCapacity != 0, "Can not reserve 0 elements.");
 
-	unsigned int numCapacity = p_BufferCapacityInByte / sizeof(K15_ConfigValue);
-
-	K15_ASSERT_TEXT(numCapacity != 0, "Byte count '%d' is less than one element of type %s (%d byte(s)).", p_BufferCapacityInByte, "K15_ConfigValue", sizeof(K15_ConfigValue));
-
-	K15_ConfigValue* elements = (K15_ConfigValue*)p_Buffer;
-
-	p_StretchBuffer->elements = elements;
-	p_StretchBuffer->numCapacity = numCapacity;
-	p_StretchBuffer->numElements = 0;
-	p_StretchBuffer->flags = K15_USE_EXTERNAL_BUFFER;
-}
-/*********************************************************************************/
-void K15_CreateConfigValueStretchBuffer(K15_ConfigValueStretchBuffer* p_StretchBuffer, unsigned int p_Capacity)
-{
-	K15_ASSERT_TEXT(p_Capacity != 0, "Can not reserve 0 elements.");
-	K15_ASSERT_TEXT(!p_StretchBuffer->elements, "Stretch Buffer has already been created.");
-
-	unsigned int bytesToAllocate = p_Capacity * sizeof(K15_ConfigValue);
-	K15_ConfigValue* elements = (K15_ConfigValue*)malloc(bytesToAllocate);
+	unsigned int bytesToAllocate = p_ElementCapacity * sizeof(K15_ConfigValue);
+	
+	K15_ConfigValue* elements = (K15_ConfigValue*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, bytesToAllocate);
 
 	K15_ASSERT_TEXT(elements, "Out of memory.");
 
+	p_StretchBuffer->memoryAllocator = p_MemoryAllocator;
 	p_StretchBuffer->elements = elements;
-	p_StretchBuffer->numCapacity = p_Capacity;
+	p_StretchBuffer->numCapacity = p_ElementCapacity;
 	p_StretchBuffer->numElements = 0;
 	p_StretchBuffer->flags = 0;
+
+}
+/*********************************************************************************/
+void K15_CreateConfigValueStretchBuffer(K15_ConfigValueStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity)
+{
+	K15_CreateConfigValueStretchBufferWithCustomAllocator(p_StretchBuffer, K15_CreateDefaultMemoryAllocator("ConfigValue Default Stretch Buffer Allocator"), p_ElementCapacity);
 }
 /*********************************************************************************/
 void K15_DeleteConfigValueStretchBuffer(K15_ConfigValueStretchBuffer* p_StretchBuffer)
@@ -46,13 +38,13 @@ void K15_DeleteConfigValueStretchBuffer(K15_ConfigValueStretchBuffer* p_StretchB
 
 	if ((p_StretchBuffer->flags & K15_USE_EXTERNAL_BUFFER) == 0)
 	{
-		free(p_StretchBuffer->elements);
+		K15_FreeFromMemoryAllocator(p_StretchBuffer->memoryAllocator, p_StretchBuffer->elements);
 	}
 
 	p_StretchBuffer->elements = 0;
 }
 /*********************************************************************************/
-void K15_ResizeConfigValueStretchBuffer(K15_ConfigValueStretchBuffer* p_StretchBuffer, unsigned int p_Capacity)
+void K15_ResizeConfigValueStretchBuffer(K15_ConfigValueStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -60,19 +52,20 @@ void K15_ResizeConfigValueStretchBuffer(K15_ConfigValueStretchBuffer* p_StretchB
 
 	unsigned int freeSlotIndex = p_StretchBuffer->numElements;
 	unsigned int capacity = p_StretchBuffer->numCapacity;
+	K15_CustomMemoryAllocator* memoryAllocator = p_StretchBuffer->memoryAllocator;
 
 	if (freeSlotIndex >= capacity)
 	{
-		unsigned int newSizeInBytes = sizeof(K15_ConfigValue) * p_Capacity;
+		unsigned int newSizeInBytes = sizeof(K15_ConfigValue) * p_ElementCapacity;
 		unsigned int oldSizeInBytes = sizeof(K15_ConfigValue) * capacity;
 		K15_ConfigValue* oldMemory = p_StretchBuffer->elements;
-		K15_ConfigValue* newMemory = (K15_ConfigValue*)malloc(newSizeInBytes);
+		K15_ConfigValue* newMemory = (K15_ConfigValue*)K15_AllocateFromMemoryAllocator(memoryAllocator, newSizeInBytes);
 		memcpy(newMemory, oldMemory, oldSizeInBytes);
 
-		free(oldMemory);
+		K15_FreeFromMemoryAllocator(memoryAllocator, oldMemory);
 
 		p_StretchBuffer->elements = newMemory;
-		p_StretchBuffer->numCapacity = p_Capacity;
+		p_StretchBuffer->numCapacity = p_ElementCapacity;
 	}
 }
 /*********************************************************************************/

@@ -275,18 +275,6 @@ intern void K15_Win32DeviceChangeReceived(HWND hWnd, UINT uMsg, WPARAM wParam, L
 
 		//Check connectivity
 		DWORD numConnectedController = K15_Win32CheckControllerConnectivity(win32Context, controllers, K15_MAX_CONTROLLER, hWnd);
-		
-		//super hacky
-// 		for (uint32 controllerIndex = 0;
-// 			 controllerIndex < numConnectedController;
-// 			 ++controllerIndex)
-// 		{
-// 			if (win32Context->controller[controllerIndex].APIType == K15_WIN32_APITYPE_DIRECTINPUT)
-// 			{
-// 				win32Context->controller[controllerIndex].controllerState = K15_WIN32_CONTROLLER_STATE_NOT_CONNECTED;
-// 			}
-// 		}
-
 		win32Context->connectedController = numConnectedController;
 	}
 }

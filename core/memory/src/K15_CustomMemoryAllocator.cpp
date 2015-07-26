@@ -18,24 +18,24 @@ static void K15_InternalFreeWrapper(void* p_Pointer, void* p_UserData)
 
 
 /*********************************************************************************/
-K15_CustomMemoryAllocator* K15_CreateDefaultMemoryAllocator()
+K15_CustomMemoryAllocator* K15_CreateDefaultMemoryAllocator(char* p_AllocatorName)
 {
-	return K15_CreateCustomMemoryAllocator(K15_InternalMallocWrapper, K15_InternalFreeWrapper, 0);
+	return K15_CreateCustomMemoryAllocator(K15_InternalMallocWrapper, K15_InternalFreeWrapper, 0, p_AllocatorName);
 }
 /*********************************************************************************/
-K15_CustomMemoryAllocator* K15_CreateCustomMemoryAllocator(K15_MallocFnc p_CustomMallocFnc, K15_FreeFnc p_CustomFreeFnc, void* p_UserData)
+K15_CustomMemoryAllocator* K15_CreateCustomMemoryAllocator(K15_MallocFnc p_CustomMallocFnc, K15_FreeFnc p_CustomFreeFnc, void* p_UserData, char* p_AllocatorName)
 {
 	K15_ASSERT(p_CustomMallocFnc, "Custom Malloc is NULL.");
 	K15_ASSERT(p_CustomFreeFnc, "Custom Free is NULL.");
 
 	K15_CustomMemoryAllocator* customAllocator = (K15_CustomMemoryAllocator*)p_CustomMallocFnc(sizeof(K15_CustomMemoryAllocator), 0);
 
-	K15_InitializeCustomMemoryAllocator(customAllocator, p_CustomMallocFnc, p_CustomFreeFnc, p_UserData);
+	K15_InitializeCustomMemoryAllocator(customAllocator, p_CustomMallocFnc, p_CustomFreeFnc, p_UserData, p_AllocatorName);
 
 	return customAllocator;
 }
 /*********************************************************************************/
-void K15_InitializeCustomMemoryAllocator(K15_CustomMemoryAllocator* p_CustomMemoryAllocator, K15_MallocFnc p_CustomMallocFnc, K15_FreeFnc p_CustomFreeFnc, void* p_UserData)
+void K15_InitializeCustomMemoryAllocator(K15_CustomMemoryAllocator* p_CustomMemoryAllocator, K15_MallocFnc p_CustomMallocFnc, K15_FreeFnc p_CustomFreeFnc, void* p_UserData, char* p_AllocatorName)
 {
 	K15_ASSERT(p_CustomMemoryAllocator, "Custom Memory Allocator is NULL.");
 	K15_ASSERT(p_CustomMallocFnc, "Custom Malloc is NULL.");
@@ -44,6 +44,7 @@ void K15_InitializeCustomMemoryAllocator(K15_CustomMemoryAllocator* p_CustomMemo
 	p_CustomMemoryAllocator->alloc = p_CustomMallocFnc;
 	p_CustomMemoryAllocator->free = p_CustomFreeFnc;
 	p_CustomMemoryAllocator->userData = p_UserData;
+	p_CustomMemoryAllocator->name = p_AllocatorName;
 }
 /*********************************************************************************/
 void* K15_AllocateFromMemoryAllocator(K15_CustomMemoryAllocator* p_MemoryAllocator, size_t p_SizeInBytes)

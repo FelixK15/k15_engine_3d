@@ -4,39 +4,29 @@
 
 #include "$INPUT_FILE$"
 
+
 /*********************************************************************************/
-void K15_Create$TYPE_NAME$FixedBufferWithPreallocatedMemory(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, unsigned char* p_Buffer, unsigned int p_BufferCapacityInByte)
-{
-	K15_ASSERT_TEXT(p_Buffer, "Input buffer is NULL.");
-	K15_ASSERT_TEXT(p_BufferCapacityInByte != 0, "Input buffer size is 0.");
-	K15_ASSERT_TEXT(!p_FixedBuffer->elements, "Fixed Buffer has already been created.");
-
-	unsigned int numCapacity = p_BufferCapacityInByte / sizeof($TYPE$);
-
-	K15_ASSERT_TEXT(numCapacity != 0, "Byte count '%d' is less than one element of type %s (%d byte(s)).", p_BufferCapacityInByte, "$TYPE$", sizeof($TYPE$));
-
-	$TYPE$* elements = ($TYPE$*)p_Buffer;
-
-	p_FixedBuffer->elements = elements;
-	p_FixedBuffer->numCapacity = numCapacity;
-	p_FixedBuffer->numElements = 0;
-	p_FixedBuffer->flags = K15_USE_EXTERNAL_BUFFER;
-}
-/*********************************************************************************/
-void K15_Create$TYPE_NAME$FixedBuffer(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, unsigned int p_Capacity)
+void K15_Create$TYPE_NAME$FixedBufferWithCustomAllocator(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_Capacity)
 {
 	K15_ASSERT_TEXT(p_Capacity != 0, "Can not reserve 0 elements.");
 	K15_ASSERT_TEXT(!p_FixedBuffer->elements, "Fixed Buffer has already been created.");
+	K15_ASSERT_TEXT(p_MemoryAllocator, "No memory allocator defined.");
 
 	unsigned int bytesToAllocate = p_Capacity * sizeof($TYPE$);
-	$TYPE$* elements = ($TYPE$*)$MALLOC_FNC$(bytesToAllocate);
+	$TYPE$* elements = ($TYPE$*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, bytesToAllocate);
 
 	K15_ASSERT_TEXT(elements, "Out of memory.");
 
+	p_FixedBuffer->memoryAllocator = p_MemoryAllocator;
 	p_FixedBuffer->elements = elements;
 	p_FixedBuffer->numCapacity = p_Capacity;
 	p_FixedBuffer->numElements = 0;
 	p_FixedBuffer->flags = 0;
+}
+/*********************************************************************************/
+void K15_Create$TYPE_NAME$FixedBuffer(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, unsigned int p_Capacity)
+{
+	K15_Create$TYPE_NAME$FixedBufferWithCustomAllocator(p_FixedBuffer, K15_CreateDefaultMemoryAllocator("$TYPE_NAME$ Default Fixed Buffer Allocator"), p_Capacity);
 }
 /*********************************************************************************/
 void K15_Delete$TYPE_NAME$FixedBuffer(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer)
@@ -46,7 +36,7 @@ void K15_Delete$TYPE_NAME$FixedBuffer(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer)
 
 	if ((p_FixedBuffer->flags & K15_USE_EXTERNAL_BUFFER) == 0)
 	{
-		$FREE_FNC$(p_FixedBuffer->elements);
+		K15_FreeFromMemoryAllocator(p_FixedBuffer->memoryAllocator, p_FixedBuffer->elements);
 	}
 
 	p_FixedBuffer->elements = 0;

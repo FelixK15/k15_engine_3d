@@ -8,6 +8,8 @@
 #include "K15_String.h"
 #include "K15_System.h"
 
+#include "K15_CustomMemoryAllocator.h"
+
 #include "generated/K15_DynamicLibraryStretchBuffer.cpp"
 #include "generated/K15_DynamicFunctionPointerStretchBuffer.cpp"
 

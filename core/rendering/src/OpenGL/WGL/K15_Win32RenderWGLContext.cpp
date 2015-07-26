@@ -11,36 +11,58 @@
 #include <win32/K15_OSContextWin32.h>
 
 /*********************************************************************************/
-intern inline uint8 K15_Win32InternalCreateDummyContext(HWND hwnd, HDC dc, HGLRC* p_Context)
+intern inline uint8 K15_Win32InternalCreateAndBindDummyContext(HGLRC* p_Context, HWND* p_WindowHandle, HDC* p_DeviceContext)
 {
 	HGLRC context = 0;
 	int pixelFormatIndex = 0;
 
-	if (dc)
+	//create dummy window
+	HWND windowHandle = CreateWindowExA(0, "K15_Win32WindowClass", "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+	if (windowHandle)
 	{
-		PIXELFORMATDESCRIPTOR px;
-		ZeroMemory(&px,sizeof(px));
+		HDC dc = GetDC(windowHandle);
 
-		px.nSize = sizeof(px);
-		px.nVersion = 1;
-		px.iPixelType = PFD_TYPE_RGBA;
-		px.dwFlags = PFD_DOUBLEBUFFER | PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL;
-		px.cColorBits = 32;
-		px.cDepthBits = 24;
-		px.cStencilBits = 8;
-		px.dwLayerMask = PFD_MAIN_PLANE;
-
-		if((pixelFormatIndex = ChoosePixelFormat(dc, &px)) == 0)
+		if (dc)
 		{
-			return K15_OS_ERROR_SYSTEM;
+			//dummy pixel format
+			PIXELFORMATDESCRIPTOR px =
+			{
+				sizeof(PIXELFORMATDESCRIPTOR),
+				1,
+				PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER, //flags
+				PFD_TYPE_RGBA,												//framebuffer type
+				32,															//colordepth
+				0, 0, 0, 0, 0, 0,
+				0,
+				0,
+				0,
+				0, 0, 0, 0,
+				24,															//depth buffer
+				8,															//stencil buffer
+				0,															//aux buffers
+				PFD_MAIN_PLANE,
+				0,										
+				0, 0, 0
+			};
+
+			if((pixelFormatIndex = ChoosePixelFormat(dc, &px)) == 0)
+			{
+				return K15_OS_ERROR_SYSTEM;
+			}
+
+			if (!SetPixelFormat(dc, pixelFormatIndex, &px))
+			{
+				return K15_OS_ERROR_SYSTEM;
+			}
+
+			context = kwglCreateContext(dc);
+			kwglMakeCurrent(dc, context);
+
+			*p_Context = context;
+			*p_WindowHandle = windowHandle;
+			*p_DeviceContext = dc;
 		}
-
-		SetPixelFormat(dc, pixelFormatIndex, &px);
-
-		context = kwglCreateContext(dc);
-		kwglMakeCurrent(dc, context);
-
-		*p_Context = context;
 	}
 
 	return context != 0 ? K15_SUCCESS : K15_OS_ERROR_SYSTEM;
@@ -52,14 +74,8 @@ intern inline void K15_Win32InternalGetWGLFunctionPointer(HMODULE p_LibModule)
 	K15_CHECK_ASSIGNMENT(kwglCreateContext, (PFNWGLCREATECONTEXTPROC)GetProcAddress(p_LibModule, "wglCreateContext"));
 	K15_CHECK_ASSIGNMENT(kwglDeleteContext, (PFNWGLDELETECONTEXTPROC)GetProcAddress(p_LibModule, "wglDeleteContext"));
 	K15_CHECK_ASSIGNMENT(kwglMakeCurrent, (PFNWGLMAKECURRENTPROC)GetProcAddress(p_LibModule, "wglMakeCurrent"));
-}
-/*********************************************************************************/
-intern inline void K15_Win32InternalGetWGLContextFunctionPointer(HMODULE p_LibModule)
-{
-	//These function have to be loaded pre extension checking or directly from the opengl32.dll library
-	K15_CHECK_ASSIGNMENT(kwglChoosePixelFormatARB, (PFNWGLCHOOSEPIXELFORMATARBPROC)kwglGetProcAddress("wglChoosePixelFormatARB"));
-	K15_CHECK_ASSIGNMENT(kglGetStringi,	(PFNGLGETSTRINGIPROC)kwglGetProcAddress("glGetStringi"));
-	K15_CHECK_ASSIGNMENT(kwglCreateContextAttribsARB, (PFNWGLCREATECONTEXTATTRIBSARBPROC)kwglGetProcAddress("wglCreateContextAttribsARB"));
+	K15_CHECK_ASSIGNMENT(kwglGetCurrentContext, (PFNWGLGETCURRENTCONTEXTPROC)GetProcAddress(p_LibModule, "wglGetCurrentContext"));
+	K15_CHECK_ASSIGNMENT(kwglGetCurrentDC, (PFNWGLGETCURRENTDCPROC)GetProcAddress(p_LibModule, "wglGetCurrentDC"));
 
 	K15_CHECK_ASSIGNMENT(kglBindTexture, (PFNGLBINDTEXTUREPROC)GetProcAddress(p_LibModule, "glBindTexture"));
 	K15_CHECK_ASSIGNMENT(kglClear, (PFNGLCLEARPROC)GetProcAddress(p_LibModule, "glClear"));
@@ -78,6 +94,14 @@ intern inline void K15_Win32InternalGetWGLContextFunctionPointer(HMODULE p_LibMo
 	K15_CHECK_ASSIGNMENT(kglViewport, (PFNGLVIEWPORTPROC)GetProcAddress(p_LibModule, "glViewport"));
 	K15_CHECK_ASSIGNMENT(kglGetIntegerv, (PFNGLGETINTEGERVPROC)GetProcAddress(p_LibModule, "glGetIntegerv"));
 	K15_CHECK_ASSIGNMENT(kglGetString, (PFNGLGETSTRINGPROC)GetProcAddress(p_LibModule, "glGetString"));
+}
+/*********************************************************************************/
+intern inline void K15_Win32InternalGetWGLContextFunctionPointer()
+{
+	//These function have to be loaded pre extension checking or directly from the opengl32.dll library
+	K15_CHECK_ASSIGNMENT(kwglChoosePixelFormatARB, (PFNWGLCHOOSEPIXELFORMATARBPROC)kwglGetProcAddress("wglChoosePixelFormatARB"));
+	K15_CHECK_ASSIGNMENT(kglGetStringi,	(PFNGLGETSTRINGIPROC)kwglGetProcAddress("glGetStringi"));
+	K15_CHECK_ASSIGNMENT(kwglCreateContextAttribsARB, (PFNWGLCREATECONTEXTATTRIBSARBPROC)kwglGetProcAddress("wglCreateContextAttribsARB"));
 }
 /*********************************************************************************/
 intern GLvoid* K15_Win32GetProcAddress(const char* p_ProcName)
@@ -104,22 +128,31 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSConte
 		return K15_OS_ERROR_NO_WINDOW;
 	}
 
-	HMODULE libModule = LoadLibraryA("opengl32.dll");
+	if (p_RenderContext->userData)
+	{
+		return K15_OS_ERROR_RENDER_CONTEXT_ALREADY_CREATED;
+	}
 
-	if (!libModule)
+	HMODULE openglModule = GetModuleHandleA("opengl32.dll");
+
+	if (!openglModule)
+	{
+		openglModule = LoadLibraryA("opengl32.dll");
+	}
+
+	if (!openglModule)
 	{
 		return K15_OS_ERROR_SYSTEM;
 	}
 
-	K15_Win32InternalGetWGLFunctionPointer(libModule);
+	K15_Win32InternalGetWGLFunctionPointer(openglModule);
 
-	K15_Win32Window* win32Window = (K15_Win32Window*)p_OSContext->window.window->userData;
-	HWND hwnd = win32Window->hwnd;
-	HDC dc = GetDC(hwnd);
+	HGLRC tempContext = 0;
+	HWND tempWindowHandle = 0;
+	HDC tempDeviceContext = 0;
 
-	HGLRC context = 0;
-
- 	uint8 result = K15_Win32InternalCreateDummyContext(hwnd, dc, &context);
+	//Create a new dummy window, create a dummy pixel format and create a dummy opengl context
+ 	uint8 result = K15_Win32InternalCreateAndBindDummyContext(&tempContext, &tempWindowHandle, &tempDeviceContext);
 
 	if (result != K15_SUCCESS)
 	{
@@ -127,11 +160,14 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSConte
 	}
 
 	//context got created. retrieve function pointer
-	K15_Win32InternalGetWGLContextFunctionPointer(libModule);
+	K15_Win32InternalGetWGLContextFunctionPointer();
 
-	//unbind and delete dummy context
-	kwglMakeCurrent(dc, 0);
-	kwglDeleteContext(context);
+	//get real window
+	K15_Win32Window* win32Window = (K15_Win32Window*)p_OSContext->window.window->userData;
+	HWND hwnd = win32Window->hwnd;
+	HDC dc = GetDC(hwnd);
+
+	HGLRC context = 0;
 
 	//create real context
 	const int pixelFormatAttributes[] = {
@@ -148,14 +184,17 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSConte
 	int pixelFormatIndex = 0;
 	unsigned int formatCount = 1;
 
-	kwglChoosePixelFormatARB(dc, pixelFormatAttributes, 0, 1, &pixelFormatIndex, &formatCount);
+	K15_OPENGL_CALL(kwglChoosePixelFormatARB(dc, pixelFormatAttributes, 0, 1, &pixelFormatIndex, &formatCount));
 
 	if (!pixelFormatIndex)
 	{
 		return K15_OS_ERROR_SYSTEM;
 	}
 
-	SetPixelFormat(dc, pixelFormatIndex, 0);
+	if (!SetPixelFormat(dc, pixelFormatIndex, 0))
+	{
+		return K15_OS_ERROR_SYSTEM;
+	}
 
 	int contextFlags = WGL_CONTEXT_CORE_PROFILE_BIT_ARB;
 
@@ -170,17 +209,31 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSConte
 		0 //END
 	};
 
-	context = kwglCreateContextAttribsARB(dc, 0, contextAttributes);
+	K15_OPENGL_CALL(context = kwglCreateContextAttribsARB(dc, 0, contextAttributes));
 
 	if (!context)
 	{
 		return K15_OS_ERROR_SYSTEM;
 	}
 
-	if (kwglMakeCurrent(dc, context) == FALSE)
+	bool8 contextMadeCurrent = K15_FALSE;
+
+	K15_OPENGL_CALL(contextMadeCurrent = kwglMakeCurrent(dc, context));
+
+	if (contextMadeCurrent)
+	{
+		//delete temp context, window and device context
+		K15_OPENGL_CALL(kwglDeleteContext(tempContext));
+		DeleteDC(tempDeviceContext);
+		DestroyWindow(tempWindowHandle);
+	}
+	else
 	{
 		return K15_OS_ERROR_SYSTEM;
-	}
+	}	
+
+	//re-retrieve function pointer for the new context
+	K15_Win32InternalGetWGLContextFunctionPointer();
 
 	K15_Win32GLContext* win32GLContext = (K15_Win32GLContext*)malloc(sizeof(K15_Win32GLContext));
 

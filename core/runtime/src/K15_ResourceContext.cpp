@@ -10,7 +10,7 @@
 #include "K15_Thread.h"
 #include "K15_DefaultCLibraries.h"
 
-#include "generated/K15_ResourceFixedBuffer.cpp"
+#include "generated/K15_ResourceStretchBuffer.cpp"
 
 /*********************************************************************************/
 struct K15_AsyncResourceLoadParameter
@@ -87,7 +87,7 @@ intern uint32 K15_InternalFileSystemGetResourceSize(K15_ResourceContext* p_Resou
 /*********************************************************************************/
 intern byte* K15_InternalFileSystemLoadResource(K15_ResourceContext* p_ResourceContext, uint32 p_ResourceSize, const char* p_Path)
 {
-	K15_MemoryBuffer* resourceMemoryBuffer = p_ResourceContext->resourceMemoryBuffer;
+	K15_CustomMemoryAllocator* resourceMemoryAllocator = p_ResourceContext->memoryAllocator;
 
 	uint32 dirPathLength= (uint32)strlen(p_ResourceContext->resourcePath);
 	uint32 filePathLength= (uint32)strlen(p_Path);
@@ -96,42 +96,10 @@ intern byte* K15_InternalFileSystemLoadResource(K15_ResourceContext* p_ResourceC
 
 	char* resourceFilePath = K15_InternalCopyResourcePathIntoBuffer(p_ResourceContext->resourcePath, p_Path, (char*)alloca(filePathBufferSize));
 
-	byte* fileContentBuffer = K15_GetMemoryFromMemoryBuffer(resourceMemoryBuffer, p_ResourceSize);
+	byte* fileContentBuffer = (byte*)K15_AllocateFromMemoryAllocator(resourceMemoryAllocator, p_ResourceSize);
 	K15_CopyWholeFileContentIntoBuffer(resourceFilePath, fileContentBuffer);
 
 	return fileContentBuffer;
-}
-/*********************************************************************************/
-intern K15_ResourceContext* K15_InternalCreateResourceContext(K15_ResourceContext* p_ResourceContext, uint32 p_ResourceMemoryBufferSizeInBytes, uint32 p_Flags)
-{
-	uint8 directoryExists = K15_DirectoryExists(p_ResourceContext->resourcePath);
-	uint8 fileExists = K15_FileExists(p_ResourceContext->resourcePath);
-	K15_ResourceContext* resourceContext = p_ResourceContext;
-	K15_MemoryBuffer* resourceMemoryBuffer = p_ResourceContext->resourceMemoryBuffer;
-
-	//this should be a super temporary solution!
-	uint32 memorySizeInBytes = (uint32)((float)p_ResourceMemoryBufferSizeInBytes * 0.05f);
-
-	uint32 numCapcity = memorySizeInBytes / sizeof(K15_Resource);
-	byte* resourceCacheMemory = K15_GetMemoryFromMemoryBuffer(resourceMemoryBuffer, memorySizeInBytes);
-
-	K15_ResourceFixedBuffer resourceCache = {};
-	K15_CreateResourceFixedBufferWithPreallocatedMemory(&resourceCache, resourceCacheMemory, numCapcity);
-
-	resourceContext->resourceCache = resourceCache;
-
-	if (directoryExists == K15_TRUE)
-	{
-		resourceContext->loadResource = K15_InternalFileSystemLoadResource;
-		resourceContext->resourceExists = K15_InternalFileSystemResourceExists;
-		resourceContext->resourceSize = K15_InternalFileSystemGetResourceSize;
-	}
-	else if(fileExists == K15_TRUE)
-	{
-		//TODO: CHECK FOR PACK FILE EXTENSION
-	}
-
-	return resourceContext;
 }
 /*********************************************************************************/
 intern uint8 K15_InternalCheckResource(K15_Resource* p_Resource, void* p_UserData)
@@ -158,28 +126,53 @@ intern void K15_InternalAsyncResourceLoad(void* p_Parameter)
 	K15_FreeFromMemoryAllocator(customAllocator, p_Parameter);
 }
 /*********************************************************************************/
-intern void K15_InternalInitializeResourceContext(K15_ResourceContext* p_ResourceContext, K15_MemoryBuffer* p_ResourceMemoryBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, const char* p_ResourceCollectionPath, uint32 p_Flags)
+intern void K15_InternalInitializeResourceContext(K15_ResourceContext* p_ResourceContext, K15_CustomMemoryAllocator* p_MemoryAllocator, const char* p_ResourceCollectionPath, uint32 p_Flags)
 {
-	K15_ASSERT_TEXT(p_ResourceContext, "ResourceContext is NULL.");
-	K15_ASSERT_TEXT(p_ResourceMemoryBuffer, "Resource Memory Buffer is NULL.");
-	K15_ASSERT_TEXT(p_ResourceCollectionPath, "Resource collection path is NULL.");
+	//Create resource cache
+	K15_ResourceStretchBuffer resourceCache = {};
+	K15_CreateResourceStretchBuffer(&resourceCache);
 
 	char* resourcePath = K15_ConvertToAbsolutePath(p_ResourceCollectionPath);
-
-	bool8 pathExists = K15_FileExists(resourcePath) || K15_DirectoryExists(resourcePath);
-
-	K15_ASSERT_TEXT(pathExists, "Resource Path '%s' does not exist", resourcePath);
 
 	p_ResourceContext->memoryAllocator = p_MemoryAllocator;
 	p_ResourceContext->resourceCacheLock = K15_CreateMutex();
 	p_ResourceContext->flags = p_Flags;
-	p_ResourceContext->resourceMemoryBuffer = p_ResourceMemoryBuffer;
 	p_ResourceContext->resourcePath = resourcePath;
+	p_ResourceContext->resourceCache = resourceCache;
 
-	K15_InternalCreateResourceContext(p_ResourceContext, p_ResourceMemoryBuffer->sizeInBytes, p_Flags);
+	//check if the resource context path is a directory or file. 
+	if (K15_DirectoryExists(resourcePath) == K15_TRUE)
+	{
+		p_ResourceContext->loadResource = K15_InternalFileSystemLoadResource;
+		p_ResourceContext->resourceExists = K15_InternalFileSystemResourceExists;
+		p_ResourceContext->resourceSize = K15_InternalFileSystemGetResourceSize;
+	}
+	else
+	{
+		//TODO: CHECK FOR PACK FILE EXTENSION
+	}
 }
 /*********************************************************************************/
+intern bool8 K15_InternalResourcePathExists(const char* p_ResourcePath)
+{
+	char* resourcePath = 0;
 
+	if (K15_IsRelativePath(p_ResourcePath))
+	{
+		resourcePath = K15_ConvertToAbsolutePath(p_ResourcePath);
+	}
+	else
+	{
+		resourcePath = K15_ConvertToSystemPath(p_ResourcePath);
+	}
+
+	bool8 resourcePathExists = K15_DirectoryExists(resourcePath) || K15_FileExists(resourcePath);
+
+	free(resourcePath);
+
+	return resourcePathExists;
+}
+/*********************************************************************************/
 
 
 /*********************************************************************************/
@@ -193,12 +186,21 @@ K15_ResourceContext* K15_CreateResourceContextWithCustomAllocator(const char* p_
 	K15_ASSERT_TEXT(p_ResourceCollectionPath, "Resource collection path is NULL.");
 	K15_ASSERT_TEXT(p_CustomMemoryAllocator, "Custom Memory Allocator is NULL.");
 
-	K15_ResourceContext* resourceContext = (K15_ResourceContext*)K15_AllocateFromMemoryAllocator(p_CustomMemoryAllocator, sizeof(K15_ResourceContext));
-	K15_MemoryBuffer* memoryBuffer = (K15_MemoryBuffer*)K15_AllocateFromMemoryAllocator(p_CustomMemoryAllocator, sizeof(K15_MemoryBuffer));
-	byte* memoryForMemoryBuffer = (byte*)K15_AllocateFromMemoryAllocator(p_CustomMemoryAllocator, K15_DEFAULT_RESOURCE_CONTEXT_RESOURCE_BUFFER_SIZE);
+	K15_ResourceContext* resourceContext = 0;
+
+	//Check if the resource path is existent
+	if (K15_InternalResourcePathExists(p_ResourceCollectionPath))
+	{
+		resourceContext = (K15_ResourceContext*)K15_AllocateFromMemoryAllocator(p_CustomMemoryAllocator, sizeof(K15_ResourceContext));
+		K15_InternalInitializeResourceContext(resourceContext, p_CustomMemoryAllocator, p_ResourceCollectionPath, p_Flags);
+	}
+	else
+	{
+		K15_LOG_ERROR_MESSAGE("Could not find resource path '%s'.", p_ResourceCollectionPath);
+	}
+
 	
-	K15_InitializePreallocatedMemoryBuffer(memoryBuffer, memoryForMemoryBuffer, K15_DEFAULT_RESOURCE_CONTEXT_RESOURCE_BUFFER_SIZE, 0);
-	K15_InternalInitializeResourceContext(resourceContext, memoryBuffer, p_CustomMemoryAllocator, p_ResourceCollectionPath, p_Flags);
+	
 
 	return resourceContext;
 }
@@ -209,13 +211,13 @@ K15_Resource* K15_LoadResource(K15_ResourceContext* p_ResourceContext, const cha
 	K15_ASSERT_TEXT(p_ResourcePath, "resource path is NULL.");
 
 	K15_ResourceContext* resourceContext = p_ResourceContext;
-	K15_ResourceFixedBuffer* resourceCache = &resourceContext->resourceCache;
+	K15_ResourceStretchBuffer* resourceCache = &resourceContext->resourceCache;
 
 	K15_Mutex* resourceCacheLock = resourceContext->resourceCacheLock;
 
 	//check if the resource has already been loaded and is inside the cache
 	K15_LockMutex(resourceCacheLock);
-	K15_Resource* resource = K15_GetResourceFixedBufferElementConditional(resourceCache, K15_InternalCheckResource, (void*)p_ResourcePath);
+	K15_Resource* resource = K15_GetResourceStretchBufferElementConditional(resourceCache, K15_InternalCheckResource, (void*)p_ResourcePath);
 	K15_UnlockMutex(resourceCacheLock);
 
 	if (resource == 0)
@@ -238,7 +240,7 @@ K15_Resource* K15_LoadResource(K15_ResourceContext* p_ResourceContext, const cha
 		K15_ASSERT_TEXT(resourceBuffer, "Resource data from resource file '%s' is NULL (Maybe file was not accessible?).", p_ResourcePath);
 
 		//get next free resource from the resource cache
-		resource = K15_GetResourceFixedBufferElementUnsafe(resourceCache, resourceCache->numElements);
+		resource = K15_GetResourceStretchBufferElementUnsafe(resourceCache, resourceCache->numElements);
 
 		//fill data
 		resource->resourceFilePath = K15_CopyString(p_ResourcePath);
@@ -247,7 +249,7 @@ K15_Resource* K15_LoadResource(K15_ResourceContext* p_ResourceContext, const cha
 		resource->flags = p_Flags;
 
 		//put it back in the cache
-		K15_PushResourceFixedBufferElement(resourceCache, *resource);
+		K15_PushResourceStretchBufferElement(resourceCache, *resource);
 
 		K15_LOG_SUCCESS_MESSAGE("Successfully loaded resource '%s'.", p_ResourcePath);
 	}

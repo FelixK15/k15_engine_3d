@@ -6,6 +6,8 @@
 	#include "win32/K15_FileWatchWin32.h"
 #endif //K15_OS_WINDOWS
 
+#include "K15_CustomMemoryAllocator.h"
+
 #include "generated/K15_FileWatchEntryStretchBuffer.cpp"
 #include "generated/K15_DirectoryWatchEntryStretchBuffer.cpp"
 

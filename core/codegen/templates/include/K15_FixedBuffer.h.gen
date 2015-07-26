@@ -7,6 +7,7 @@
 
 //forward declaration
 struct $TYPE_STRUCT_NAME$;
+struct K15_CustomMemoryAllocator;
 
 //compare function
 typedef unsigned char (*K15_$TYPE_NAME$CompareFnc)($TYPE$* p_LHS, $TYPE$* p_RHS);
@@ -16,14 +17,15 @@ typedef unsigned char (*K15_$TYPE_NAME$ConditionFnc)($TYPE$* p_Element, void* p_
 
 struct K15_$TYPE_NAME$FixedBuffer
 {
-	$TYPE$* elements;			//64bit
+	K15_CustomMemoryAllocator* memoryAllocator;	//64bit
+	$TYPE$* elements;							//64bit
 
-	unsigned int numCapacity;	//32bit
-	unsigned int numElements;	//32bit
-	unsigned int flags;			//32bit
+	unsigned int numCapacity;					//32bit
+	unsigned int numElements;					//32bit
+	unsigned int flags;							//32bit
 };
 
-void K15_Create$TYPE_NAME$FixedBufferWithPreallocatedMemory(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, unsigned char* p_Buffer, unsigned int p_BufferCapacityInByte);
+void K15_Create$TYPE_NAME$FixedBufferWithCustomAllocator(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_Capacity = 8);
 void K15_Create$TYPE_NAME$FixedBuffer(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, unsigned int p_Capacity = 8);
 void K15_Delete$TYPE_NAME$FixedBuffer(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer);
 void K15_Resize$TYPE_NAME$FixedBuffer(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, unsigned int p_Capacity);

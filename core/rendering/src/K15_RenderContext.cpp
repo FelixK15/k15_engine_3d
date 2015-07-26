@@ -1286,6 +1286,8 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSContext* p_OSContext)
 		return 0;
 	}
 
+	renderContext->userData = 0;
+
 	//create command queue dispatcher
 	K15_RenderCommandBufferDispatcher* renderCommandBufferDispatcher = (K15_RenderCommandBufferDispatcher*)malloc(sizeof(K15_RenderCommandBufferDispatcher));
 
@@ -1483,23 +1485,6 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSContext* p_OSContext)
 
 	//set stub functions
 	K15_InternalSetRenderContextStubFunctions(renderContext);
-	// allocate memory for 2 pointer
-// 	byte* threadParameterBuffer = (byte*)malloc(K15_PTR_SIZE * 2);
-// 
-// 	//1. parameter : os context
-// 	memcpy(threadParameterBuffer, &p_OSContext, K15_PTR_SIZE);
-// 
-// 	//2. parameter : render context
-// 	memcpy(threadParameterBuffer + K15_PTR_SIZE, &renderContext, K15_PTR_SIZE);
-
-	//create render thread
-// 	K15_Thread* renderThread = K15_CreateThread(K15_InternalRenderThreadFunction, (void*)threadParameterBuffer);
-// 	K15_SetThreadName(renderThread, "K15_RenderThread");
-// 
-// 	if (renderThread)
-// 	{
-// 		renderContext->renderThread = renderThread;
-// 	}
 
 	uint8 contextCreateResult = K15_InternalInitializeRenderContext(renderContext, p_OSContext);
 

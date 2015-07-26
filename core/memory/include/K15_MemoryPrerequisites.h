@@ -3,6 +3,8 @@
 
 #include "K15_Common.h"
 
+#define K15_TRACK_ALLOCATOR_NAMES
+
 struct K15_CustomMemoryAllocator;
 struct K15_MemoryBuffer;
 

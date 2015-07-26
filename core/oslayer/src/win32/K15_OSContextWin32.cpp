@@ -251,10 +251,6 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 
 	win32OSContext.threading.threads = threadBuffer;
 
-	//win32OSContext.threading.threads = (K15_Thread**)K15_OS_MALLOC(sizeof(K15_Thread*) * K15_MAX_THREADS);
-
-	//memset(win32OSContext.threading.threads, 0, sizeof(K15_Thread*) * K15_MAX_THREADS);
-
 	//system
 	win32OSContext.system.systemIdentifier = OS_WINDOWS;
 	win32OSContext.system.homeDir = K15_Win32GetWorkingDirectory();

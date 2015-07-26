@@ -13,47 +13,28 @@ struct K15_AsyncOperationMemoryPoolElement
 /*********************************************************************************/
 
 
-
-/*********************************************************************************/
-void* K15_DefaultAsyncOperationMalloc(size_t p_SizeInBytes)
-{
-	return ::malloc(p_SizeInBytes);
-}
-/*********************************************************************************/
-void K15_DefaultAsyncOperationFree(void* p_Pointer)
-{
-	return ::free(p_Pointer);
-}
-/*********************************************************************************/
-
-
-
-
-
 /*********************************************************************************/
 void K15_InitializeAsyncOperationMemoryPool(K15_AsyncOperationMemoryPool* p_MemoryPool, unsigned int p_NumElements)
 {
 	K15_ASSERT_TEXT(p_MemoryPool, "Memory Pool for Type 'K15_AsyncOperation' is NULL.");
 	K15_ASSERT_TEXT(p_NumElements, "Element Count for Memory Pool 'K15_AsyncOperation' is 0.");
 
-	K15_InitializeAsyncOperationMemoryPoolWithCustomAllocator(p_MemoryPool, K15_DefaultAsyncOperationMalloc, K15_DefaultAsyncOperationFree, p_NumElements);
+	K15_InitializeAsyncOperationMemoryPoolWithCustomAllocator(p_MemoryPool, K15_CreateDefaultMemoryAllocator("AsyncOperation Default Memory Pool Allocator"), p_NumElements);
 }
 /*********************************************************************************/
-void K15_InitializeAsyncOperationMemoryPoolWithCustomAllocator(K15_AsyncOperationMemoryPool* p_MemoryPool, K15_AsyncOperationMemoryPoolAllocFnc p_CustomMalloc, K15_AsyncOperationMemoryPoolFreeFnc p_CustomFree, unsigned int p_NumElements)
+void K15_InitializeAsyncOperationMemoryPoolWithCustomAllocator(K15_AsyncOperationMemoryPool* p_MemoryPool, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_NumElements)
 {
 	K15_ASSERT_TEXT(p_MemoryPool, "Memory Pool for Type 'K15_AsyncOperation' is NULL.");
-	K15_ASSERT_TEXT(p_CustomMalloc, "Custom Malloc Function for Memory Pool 'K15_AsyncOperation' is NULL.");
-	K15_ASSERT_TEXT(p_CustomFree, "Custom Free Function for Memory Pool 'K15_AsyncOperation' is NULL.");
+	K15_ASSERT_TEXT(p_MemoryAllocator, "Custom Allocator is NULL.");
 	K15_ASSERT_TEXT(p_NumElements, "Element Count for Memory Pool 'K15_AsyncOperation' is 0.");
 
 	uint32 elementBufferSize = sizeof(K15_AsyncOperationMemoryPoolElement) * p_NumElements;
-	byte* elementBuffer = (byte*)p_CustomMalloc(elementBufferSize);
+	byte* elementBuffer = (byte*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, elementBufferSize);
 
 	memset(elementBuffer, 0, elementBufferSize);
 
 	p_MemoryPool->elements = elementBuffer;
-	p_MemoryPool->customMalloc = p_CustomMalloc;
-	p_MemoryPool->customFree = p_CustomFree;
+	p_MemoryPool->memoryAllocator = p_MemoryAllocator;
 	p_MemoryPool->numElements = p_NumElements;
 	p_MemoryPool->lastElementIndex = 0;
 }
@@ -122,9 +103,6 @@ void K15_FreeAsyncOperationMemoryPoolElement(K15_AsyncOperationMemoryPool* p_Mem
 /*********************************************************************************/
 void K15_ClearAsyncOperationMemoryPool(K15_AsyncOperationMemoryPool* p_MemoryPool)
 {
-	K15_AsyncOperationMemoryPoolFreeFnc  customFree = p_MemoryPool->customFree;
-	byte* memoryPoolBuffer = p_MemoryPool->elements;
-	
-	customFree(memoryPoolBuffer);
+	K15_FreeFromMemoryAllocator(p_MemoryPool->memoryAllocator, p_MemoryPool->elements);
 }
 /*********************************************************************************/

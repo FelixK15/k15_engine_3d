@@ -7,6 +7,7 @@
 
 //forward declaration
 struct K15_Thread;
+struct K15_CustomMemoryAllocator;
 
 //compare function
 typedef unsigned char (*K15_ThreadCompareFnc)(K15_Thread** p_LHS, K15_Thread** p_RHS);
@@ -16,17 +17,18 @@ typedef unsigned char (*K15_ThreadConditionFnc)(K15_Thread** p_Element, void* p_
 
 struct K15_ThreadStretchBuffer
 {
-	K15_Thread** elements;			//64bit
+	K15_CustomMemoryAllocator* memoryAllocator; //64bit
+	K15_Thread** elements;							//64bit
 
-	unsigned int numCapacity;	//32bit
-	unsigned int numElements;	//32bit
-	unsigned int flags;			//32bit
+	unsigned int numCapacity;					//32bit
+	unsigned int numElements;					//32bit
+	unsigned int flags;							//32bit
 };
 
-void K15_CreateThreadStretchBufferWithPreallocatedMemory(K15_ThreadStretchBuffer* p_StretchBuffer, unsigned char* p_Buffer, unsigned int p_BufferCapacityInByte);
-void K15_CreateThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer, unsigned int p_Capacity = 8);
+void K15_CreateThreadStretchBufferWithCustomAllocator(K15_ThreadStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_ElementCapacity);
+void K15_CreateThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity = 8);
 void K15_DeleteThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer);
-void K15_ResizeThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer, unsigned int p_Capacity);
+void K15_ResizeThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);
 void K15_ClearThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer);
 
 void K15_PushThreadStretchBufferElement(K15_ThreadStretchBuffer* p_StretchBuffer, K15_Thread* p_Element);

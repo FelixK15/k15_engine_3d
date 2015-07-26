@@ -2,19 +2,19 @@
 /*  THIS FILE HAS BEEN GENERATED AUTOMATICALLY. ANY CHANGES WILL BE OVERRIDDEN   */
 /*********************************************************************************/
 
-#include "generated/K15_DynamicFunctionPointerStretchBuffer.h"
+#include "generated/K15_ResourceStretchBuffer.h"
 
 
 /*********************************************************************************/
-void K15_CreateDynamicFunctionPointerStretchBufferWithCustomAllocator(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_ElementCapacity)
+void K15_CreateResourceStretchBufferWithCustomAllocator(K15_ResourceStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_ElementCapacity)
 {
 	K15_ASSERT_TEXT(!p_StretchBuffer->elements, "Stretch Buffer has already been created.");
 	K15_ASSERT_TEXT(p_MemoryAllocator, "No memory allocator defined.");
 	K15_ASSERT_TEXT(p_ElementCapacity != 0, "Can not reserve 0 elements.");
 
-	unsigned int bytesToAllocate = p_ElementCapacity * sizeof(K15_DynamicFunctionPointer);
+	unsigned int bytesToAllocate = p_ElementCapacity * sizeof(K15_Resource);
 	
-	K15_DynamicFunctionPointer* elements = (K15_DynamicFunctionPointer*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, bytesToAllocate);
+	K15_Resource* elements = (K15_Resource*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, bytesToAllocate);
 
 	K15_ASSERT_TEXT(elements, "Out of memory.");
 
@@ -26,12 +26,12 @@ void K15_CreateDynamicFunctionPointerStretchBufferWithCustomAllocator(K15_Dynami
 
 }
 /*********************************************************************************/
-void K15_CreateDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity)
+void K15_CreateResourceStretchBuffer(K15_ResourceStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity)
 {
-	K15_CreateDynamicFunctionPointerStretchBufferWithCustomAllocator(p_StretchBuffer, K15_CreateDefaultMemoryAllocator("DynamicFunctionPointer Default Stretch Buffer Allocator"), p_ElementCapacity);
+	K15_CreateResourceStretchBufferWithCustomAllocator(p_StretchBuffer, K15_CreateDefaultMemoryAllocator("Resource Default Stretch Buffer Allocator"), p_ElementCapacity);
 }
 /*********************************************************************************/
-void K15_DeleteDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer)
+void K15_DeleteResourceStretchBuffer(K15_ResourceStretchBuffer* p_StretchBuffer)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -44,11 +44,11 @@ void K15_DeleteDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStr
 	p_StretchBuffer->elements = 0;
 }
 /*********************************************************************************/
-void K15_ResizeDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity)
+void K15_ResizeResourceStretchBuffer(K15_ResourceStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
-	K15_ASSERT_TEXT((p_StretchBuffer->flags & K15_USE_EXTERNAL_BUFFER) == 0, "Stretch Buffer for Type '%s' can't be resized.", "K15_DynamicFunctionPointer");
+	K15_ASSERT_TEXT((p_StretchBuffer->flags & K15_USE_EXTERNAL_BUFFER) == 0, "Stretch Buffer for Type '%s' can't be resized.", "K15_Resource");
 
 	unsigned int freeSlotIndex = p_StretchBuffer->numElements;
 	unsigned int capacity = p_StretchBuffer->numCapacity;
@@ -56,10 +56,10 @@ void K15_ResizeDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStr
 
 	if (freeSlotIndex >= capacity)
 	{
-		unsigned int newSizeInBytes = sizeof(K15_DynamicFunctionPointer) * p_ElementCapacity;
-		unsigned int oldSizeInBytes = sizeof(K15_DynamicFunctionPointer) * capacity;
-		K15_DynamicFunctionPointer* oldMemory = p_StretchBuffer->elements;
-		K15_DynamicFunctionPointer* newMemory = (K15_DynamicFunctionPointer*)K15_AllocateFromMemoryAllocator(memoryAllocator, newSizeInBytes);
+		unsigned int newSizeInBytes = sizeof(K15_Resource) * p_ElementCapacity;
+		unsigned int oldSizeInBytes = sizeof(K15_Resource) * capacity;
+		K15_Resource* oldMemory = p_StretchBuffer->elements;
+		K15_Resource* newMemory = (K15_Resource*)K15_AllocateFromMemoryAllocator(memoryAllocator, newSizeInBytes);
 		memcpy(newMemory, oldMemory, oldSizeInBytes);
 
 		K15_FreeFromMemoryAllocator(memoryAllocator, oldMemory);
@@ -69,7 +69,7 @@ void K15_ResizeDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStr
 	}
 }
 /*********************************************************************************/
-void K15_ClearDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer)
+void K15_ClearResourceStretchBuffer(K15_ResourceStretchBuffer* p_StretchBuffer)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -77,7 +77,7 @@ void K15_ClearDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStre
 	p_StretchBuffer->numElements = 0;
 }
 /*********************************************************************************/
-void K15_PushDynamicFunctionPointerStretchBufferElement(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, K15_DynamicFunctionPointer p_Element)
+void K15_PushResourceStretchBufferElement(K15_ResourceStretchBuffer* p_StretchBuffer, K15_Resource p_Element)
 {	
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -87,19 +87,19 @@ void K15_PushDynamicFunctionPointerStretchBufferElement(K15_DynamicFunctionPoint
 
 	if (freeSlotIndex >= capacity)
 	{
-		K15_ResizeDynamicFunctionPointerStretchBuffer(p_StretchBuffer, capacity * 2);
+		K15_ResizeResourceStretchBuffer(p_StretchBuffer, capacity * 2);
 	}
 
 	p_StretchBuffer->elements[freeSlotIndex] = p_Element;
 	++p_StretchBuffer->numElements;
 }
 /*********************************************************************************/
-unsigned char K15_PopDynamicFunctionPointerStretchBufferIndex(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, unsigned int p_Index)
+unsigned char K15_PopResourceStretchBufferIndex(K15_ResourceStretchBuffer* p_StretchBuffer, unsigned int p_Index)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 
-	K15_DynamicFunctionPointer* elements = p_StretchBuffer->elements;
+	K15_Resource* elements = p_StretchBuffer->elements;
 	unsigned int numElements = p_StretchBuffer->numElements;
 
 	if (p_Index != (numElements - 1))
@@ -120,12 +120,12 @@ unsigned char K15_PopDynamicFunctionPointerStretchBufferIndex(K15_DynamicFunctio
 	return 1;
 }
 /*********************************************************************************/
-unsigned char K15_PopDynamicFunctionPointerStretchBufferElement(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, K15_DynamicFunctionPointer p_Element)
+unsigned char K15_PopResourceStretchBufferElement(K15_ResourceStretchBuffer* p_StretchBuffer, K15_Resource p_Element)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 
-	K15_DynamicFunctionPointer* elements = p_StretchBuffer->elements;
+	K15_Resource* elements = p_StretchBuffer->elements;
 	unsigned int numElements = p_StretchBuffer->numElements;
 	unsigned char returnValue = 0;
 
@@ -133,9 +133,9 @@ unsigned char K15_PopDynamicFunctionPointerStretchBufferElement(K15_DynamicFunct
 		elementIndex < numElements;
 		++elementIndex)
 	{		
-		if (memcmp(&elements[elementIndex], &p_Element, sizeof(K15_DynamicFunctionPointer)) == 0)
+		if (memcmp(&elements[elementIndex], &p_Element, sizeof(K15_Resource)) == 0)
 		{
-			K15_PopDynamicFunctionPointerStretchBufferIndex(p_StretchBuffer, elementIndex);
+			K15_PopResourceStretchBufferIndex(p_StretchBuffer, elementIndex);
 			returnValue = 1;
 			break;
 		}
@@ -144,13 +144,13 @@ unsigned char K15_PopDynamicFunctionPointerStretchBufferElement(K15_DynamicFunct
 	return returnValue;
 }
 /*********************************************************************************/
-unsigned char K15_PopDynamicFunctionPointerStretchBufferCompare(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, K15_DynamicFunctionPointer p_Element, K15_DynamicFunctionPointerCompareFnc p_CompareFnc)
+unsigned char K15_PopResourceStretchBufferCompare(K15_ResourceStretchBuffer* p_StretchBuffer, K15_Resource p_Element, K15_ResourceCompareFnc p_CompareFnc)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 	K15_ASSERT_TEXT(p_CompareFnc, "Compare Function is NULL.");
 
-	K15_DynamicFunctionPointer* elements = p_StretchBuffer->elements;
+	K15_Resource* elements = p_StretchBuffer->elements;
 	unsigned int numElements = p_StretchBuffer->numElements;
 	unsigned char returnValue = 0;
 
@@ -160,7 +160,7 @@ unsigned char K15_PopDynamicFunctionPointerStretchBufferCompare(K15_DynamicFunct
 	{		
 		if (p_CompareFnc(&p_Element, &elements[elementIndex]) == 0)
 		{
-			K15_PopDynamicFunctionPointerStretchBufferIndex(p_StretchBuffer, elementIndex);
+			K15_PopResourceStretchBufferIndex(p_StretchBuffer, elementIndex);
 			returnValue = 1;
 			break;
 		}
@@ -169,7 +169,7 @@ unsigned char K15_PopDynamicFunctionPointerStretchBufferCompare(K15_DynamicFunct
 	return returnValue;
 }
 /*********************************************************************************/
-K15_DynamicFunctionPointer* K15_GetDynamicFunctionPointerStretchBufferElementUnsafe(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, unsigned int p_Index)
+K15_Resource* K15_GetResourceStretchBufferElementUnsafe(K15_ResourceStretchBuffer* p_StretchBuffer, unsigned int p_Index)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -177,14 +177,14 @@ K15_DynamicFunctionPointer* K15_GetDynamicFunctionPointerStretchBufferElementUns
 	return &p_StretchBuffer->elements[p_Index];
 }
 /*********************************************************************************/
-K15_DynamicFunctionPointer* K15_GetDynamicFunctionPointerStretchBufferElement(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, unsigned int p_Index)
+K15_Resource* K15_GetResourceStretchBufferElement(K15_ResourceStretchBuffer* p_StretchBuffer, unsigned int p_Index)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 
 	unsigned int numElements = p_StretchBuffer->numElements;
 
-	K15_DynamicFunctionPointer* returnValue = 0;
+	K15_Resource* returnValue = 0;
 
 	if (numElements > p_Index)
 	{
@@ -194,15 +194,15 @@ K15_DynamicFunctionPointer* K15_GetDynamicFunctionPointerStretchBufferElement(K1
 	return returnValue;
 }
 /*********************************************************************************/
-K15_DynamicFunctionPointer* K15_GetDynamicFunctionPointerStretchBufferElementConditional(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, K15_DynamicFunctionPointerConditionFnc p_ConditionFnc, void* p_UserData)
+K15_Resource* K15_GetResourceStretchBufferElementConditional(K15_ResourceStretchBuffer* p_StretchBuffer, K15_ResourceConditionFnc p_ConditionFnc, void* p_UserData)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 	K15_ASSERT_TEXT(p_ConditionFnc, "Condition Function is NULL.");
 
-	K15_DynamicFunctionPointer* elements = p_StretchBuffer->elements;
-	K15_DynamicFunctionPointer* returnElement = 0;
-	K15_DynamicFunctionPointer* currentElement = 0;
+	K15_Resource* elements = p_StretchBuffer->elements;
+	K15_Resource* returnElement = 0;
+	K15_Resource* currentElement = 0;
 
 	unsigned int numElements = p_StretchBuffer->numElements;
 

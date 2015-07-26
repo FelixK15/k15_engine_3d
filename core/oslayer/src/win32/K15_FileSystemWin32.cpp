@@ -255,19 +255,16 @@ byte* K15_Win32ReadWholeFileIntoBuffer(const char* p_FilePath, byte* p_Buffer)
 char* K15_Win32GetWorkingDirectory()
 {
 	DWORD bufferLength = GetCurrentDirectoryW(0, 0);
+	bufferLength += 1; //GetCurrentDirectoryW does not return the size including the 0 terminator
+
 	wchar_t* wideWorkingDirectoryPath = (wchar_t*)alloca(bufferLength * sizeof(wchar_t));
 
-	DWORD written = GetCurrentDirectoryW(bufferLength, wideWorkingDirectoryPath);
-	bufferLength = written + 1;
+	DWORD currentDirectoryLength = GetCurrentDirectoryW(bufferLength, wideWorkingDirectoryPath);
+	char* workingDirectoryBuffer = (char*)alloca(currentDirectoryLength + 1);
 
-	char* workingDirectory = (char*)K15_OS_MALLOC(bufferLength);
+	K15_Win32ConvertWStringToString(wideWorkingDirectoryPath, bufferLength, workingDirectoryBuffer);
+	workingDirectoryBuffer[currentDirectoryLength] = 0;
 
-	K15_Win32ConvertWStringToString(wideWorkingDirectoryPath, bufferLength, workingDirectory);
-
-	workingDirectory[written] = '\\';
-	workingDirectory[bufferLength] = 0;
-
-
-	return K15_ConvertToSystemPathInplace(workingDirectory);
+	return  K15_ConvertToDirectoryPath(workingDirectoryBuffer);
 }
 /*********************************************************************************/

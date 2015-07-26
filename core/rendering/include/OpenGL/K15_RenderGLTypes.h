@@ -199,6 +199,8 @@ typedef GLvoid* (WINAPI *PFNWGLGETPROCADDRESSPROC)(const char*);
 typedef HGLRC	(WINAPI *PFNWGLCREATECONTEXTPROC)(HDC);
 typedef BOOL	(WINAPI *PFNWGLDELETECONTEXTPROC)(HGLRC);
 typedef BOOL	(WINAPI *PFNWGLMAKECURRENTPROC)(HDC, HGLRC);
+typedef HGLRC	(WINAPI *PFNWGLGETCURRENTCONTEXTPROC)(void);
+typedef HDC		(WINAPI* PFNWGLGETCURRENTDCPROC)(void);
 
 //custom gl function typedefs
 typedef GLboolean(*PFNKGLSWAPBUFFERSPROC)(K15_GLRenderContext*);
@@ -243,6 +245,8 @@ extern PFNWGLGETPROCADDRESSPROC					kwglGetProcAddress;
 extern PFNWGLCREATECONTEXTPROC					kwglCreateContext;
 extern PFNWGLDELETECONTEXTPROC					kwglDeleteContext;
 extern PFNWGLMAKECURRENTPROC					kwglMakeCurrent;
+extern PFNWGLGETCURRENTCONTEXTPROC				kwglGetCurrentContext;
+extern PFNWGLGETCURRENTDCPROC					kwglGetCurrentDC;
 
 //default gl functions
 extern PFNGLGENBUFFERSPROC						kglGenBuffers; 

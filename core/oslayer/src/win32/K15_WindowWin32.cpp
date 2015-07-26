@@ -37,7 +37,7 @@ uint8 K15_Win32CreateWindow(K15_OSContext* p_OSContext, K15_Window* p_Window, ui
 
 	//get monitors
 	int amountMonitors = GetSystemMetrics(SM_CMONITORS);
-	HMONITOR* monitorHandles = (HMONITOR*)K15_OS_MALLOC(sizeof(HMONITOR) * amountMonitors);
+	HMONITOR* monitorHandles = (HMONITOR*)alloca(sizeof(HMONITOR) * amountMonitors);
 	
 	//clamp monitorindex if needed
 	if (monitorID > amountMonitors-1)
@@ -46,14 +46,7 @@ uint8 K15_Win32CreateWindow(K15_OSContext* p_OSContext, K15_Window* p_Window, ui
 	}
 
 	//get HMONITOR values
-// 	for (int monitorIndex = 0;
-// 		 monitorIndex < amountMonitors;
-// 		 ++monitorIndex)
-	{
-		/*HMONITOR monitorHandle;*/
-		EnumDisplayMonitors(0, 0, K15_Win32EnumMonitorProc, (LPARAM)monitorHandles);
-		/*monitorHandles[monitorIndex] = monitorHandle;*/
-	}
+	EnumDisplayMonitors(0, 0, K15_Win32EnumMonitorProc, (LPARAM)monitorHandles);
 
 	//get monitor informations
 	MONITORINFOEX monitorInfo;

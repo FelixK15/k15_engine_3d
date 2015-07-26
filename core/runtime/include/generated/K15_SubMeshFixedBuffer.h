@@ -7,6 +7,7 @@
 
 //forward declaration
 struct K15_SubMesh;
+struct K15_CustomMemoryAllocator;
 
 //compare function
 typedef unsigned char (*K15_SubMeshCompareFnc)(K15_SubMesh* p_LHS, K15_SubMesh* p_RHS);
@@ -16,14 +17,15 @@ typedef unsigned char (*K15_SubMeshConditionFnc)(K15_SubMesh* p_Element, void* p
 
 struct K15_SubMeshFixedBuffer
 {
-	K15_SubMesh* elements;			//64bit
+	K15_CustomMemoryAllocator* memoryAllocator;	//64bit
+	K15_SubMesh* elements;							//64bit
 
-	unsigned int numCapacity;	//32bit
-	unsigned int numElements;	//32bit
-	unsigned int flags;			//32bit
+	unsigned int numCapacity;					//32bit
+	unsigned int numElements;					//32bit
+	unsigned int flags;							//32bit
 };
 
-void K15_CreateSubMeshFixedBufferWithPreallocatedMemory(K15_SubMeshFixedBuffer* p_FixedBuffer, unsigned char* p_Buffer, unsigned int p_BufferCapacityInByte);
+void K15_CreateSubMeshFixedBufferWithCustomAllocator(K15_SubMeshFixedBuffer* p_FixedBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_Capacity = 8);
 void K15_CreateSubMeshFixedBuffer(K15_SubMeshFixedBuffer* p_FixedBuffer, unsigned int p_Capacity = 8);
 void K15_DeleteSubMeshFixedBuffer(K15_SubMeshFixedBuffer* p_FixedBuffer);
 void K15_ResizeSubMeshFixedBuffer(K15_SubMeshFixedBuffer* p_FixedBuffer, unsigned int p_Capacity);

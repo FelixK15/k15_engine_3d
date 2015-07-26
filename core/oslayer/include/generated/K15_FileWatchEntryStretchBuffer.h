@@ -7,6 +7,7 @@
 
 //forward declaration
 struct K15_FileWatchEntry;
+struct K15_CustomMemoryAllocator;
 
 //compare function
 typedef unsigned char (*K15_FileWatchEntryCompareFnc)(K15_FileWatchEntry* p_LHS, K15_FileWatchEntry* p_RHS);
@@ -16,17 +17,18 @@ typedef unsigned char (*K15_FileWatchEntryConditionFnc)(K15_FileWatchEntry* p_El
 
 struct K15_FileWatchEntryStretchBuffer
 {
-	K15_FileWatchEntry* elements;			//64bit
+	K15_CustomMemoryAllocator* memoryAllocator; //64bit
+	K15_FileWatchEntry* elements;							//64bit
 
-	unsigned int numCapacity;	//32bit
-	unsigned int numElements;	//32bit
-	unsigned int flags;			//32bit
+	unsigned int numCapacity;					//32bit
+	unsigned int numElements;					//32bit
+	unsigned int flags;							//32bit
 };
 
-void K15_CreateFileWatchEntryStretchBufferWithPreallocatedMemory(K15_FileWatchEntryStretchBuffer* p_StretchBuffer, unsigned char* p_Buffer, unsigned int p_BufferCapacityInByte);
-void K15_CreateFileWatchEntryStretchBuffer(K15_FileWatchEntryStretchBuffer* p_StretchBuffer, unsigned int p_Capacity = 8);
+void K15_CreateFileWatchEntryStretchBufferWithCustomAllocator(K15_FileWatchEntryStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_ElementCapacity);
+void K15_CreateFileWatchEntryStretchBuffer(K15_FileWatchEntryStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity = 8);
 void K15_DeleteFileWatchEntryStretchBuffer(K15_FileWatchEntryStretchBuffer* p_StretchBuffer);
-void K15_ResizeFileWatchEntryStretchBuffer(K15_FileWatchEntryStretchBuffer* p_StretchBuffer, unsigned int p_Capacity);
+void K15_ResizeFileWatchEntryStretchBuffer(K15_FileWatchEntryStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);
 void K15_ClearFileWatchEntryStretchBuffer(K15_FileWatchEntryStretchBuffer* p_StretchBuffer);
 
 void K15_PushFileWatchEntryStretchBufferElement(K15_FileWatchEntryStretchBuffer* p_StretchBuffer, K15_FileWatchEntry p_Element);

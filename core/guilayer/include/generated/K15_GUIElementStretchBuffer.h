@@ -7,6 +7,7 @@
 
 //forward declaration
 struct K15_GUIElement;
+struct K15_CustomMemoryAllocator;
 
 //compare function
 typedef unsigned char (*K15_GUIElementCompareFnc)(K15_GUIElement** p_LHS, K15_GUIElement** p_RHS);
@@ -16,17 +17,18 @@ typedef unsigned char (*K15_GUIElementConditionFnc)(K15_GUIElement** p_Element, 
 
 struct K15_GUIElementStretchBuffer
 {
-	K15_GUIElement** elements;			//64bit
+	K15_CustomMemoryAllocator* memoryAllocator; //64bit
+	K15_GUIElement** elements;							//64bit
 
-	unsigned int numCapacity;	//32bit
-	unsigned int numElements;	//32bit
-	unsigned int flags;			//32bit
+	unsigned int numCapacity;					//32bit
+	unsigned int numElements;					//32bit
+	unsigned int flags;							//32bit
 };
 
-void K15_CreateGUIElementStretchBufferWithPreallocatedMemory(K15_GUIElementStretchBuffer* p_StretchBuffer, unsigned char* p_Buffer, unsigned int p_BufferCapacityInByte);
-void K15_CreateGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuffer, unsigned int p_Capacity = 8);
+void K15_CreateGUIElementStretchBufferWithCustomAllocator(K15_GUIElementStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_ElementCapacity);
+void K15_CreateGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity = 8);
 void K15_DeleteGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuffer);
-void K15_ResizeGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuffer, unsigned int p_Capacity);
+void K15_ResizeGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);
 void K15_ClearGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuffer);
 
 void K15_PushGUIElementStretchBufferElement(K15_GUIElementStretchBuffer* p_StretchBuffer, K15_GUIElement* p_Element);

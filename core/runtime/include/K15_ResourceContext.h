@@ -3,7 +3,7 @@
 
 #include "K15_RuntimePrerequisites.h"
 
-#include "generated/K15_ResourceFixedBuffer.h"
+#include "generated/K15_ResourceStretchBuffer.h"
 
 typedef uint8 (*K15_ResourceExistsFnc)(K15_ResourceContext*, const char*);
 typedef uint32 (*K15_GetResourceSizeFnc)(K15_ResourceContext*, const char*);
@@ -20,16 +20,15 @@ struct K15_Resource
 /*********************************************************************************/
 struct K15_ResourceContext
 {
-	K15_ResourceFixedBuffer resourceCache;
-	K15_ResourceExistsFnc resourceExists;
-	K15_GetResourceSizeFnc resourceSize;
-	K15_LoadResourceFnc loadResource;
-	K15_MemoryBuffer* resourceMemoryBuffer;
-	K15_CustomMemoryAllocator* memoryAllocator; 
+	K15_ResourceExistsFnc resourceExists;			//Function to check if a resource exist within a resource context (directory/packed resource file).
+	K15_GetResourceSizeFnc resourceSize;			//Function to get the size of a resource within a resource context (directory/packed resource file).
+	K15_LoadResourceFnc loadResource;				//Function to load a resource within a resource context (directory/packed resource file).
 
-	K15_Mutex* resourceCacheLock;
+	K15_CustomMemoryAllocator* memoryAllocator;		//Allocator used to get memory for the resource memory.
+	K15_ResourceStretchBuffer resourceCache;		//Resource cache for accessing already loaded resources.
+	K15_Mutex* resourceCacheLock;					//Mutex to control resource cache access.
 
-	char* resourcePath;
+	char* resourcePath;								//Path to the resource context (directory/packed resource file).
 	uint32 flags;
 };
 /*********************************************************************************/

@@ -8,6 +8,8 @@
 	PFNWGLCREATECONTEXTPROC				kwglCreateContext					= 0;
 	PFNWGLDELETECONTEXTPROC				kwglDeleteContext					= 0;
 	PFNWGLMAKECURRENTPROC				kwglMakeCurrent						= 0;
+	PFNWGLGETCURRENTCONTEXTPROC			kwglGetCurrentContext				= 0;
+	PFNWGLGETCURRENTDCPROC				kwglGetCurrentDC					= 0;
 #endif //K15_OS_WINDOWS
 
 //default gl functions

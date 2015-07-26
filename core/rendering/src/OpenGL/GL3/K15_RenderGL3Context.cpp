@@ -604,6 +604,8 @@ uint8 K15_GLCreateRenderContext(K15_RenderContext* p_RenderContext, K15_OSContex
 		return K15_OS_ERROR_OUT_OF_MEMORY;
 	}
 
+	glContext->userData = 0;
+
 	if (!K15_CreateContext)
 	{
 		return K15_OS_ERROR_SYSTEM;

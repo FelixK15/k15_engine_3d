@@ -7,6 +7,7 @@
 
 //forward declaration
 struct K15_DynamicLibrary;
+struct K15_CustomMemoryAllocator;
 
 //compare function
 typedef unsigned char (*K15_DynamicLibraryCompareFnc)(K15_DynamicLibrary** p_LHS, K15_DynamicLibrary** p_RHS);
@@ -16,17 +17,18 @@ typedef unsigned char (*K15_DynamicLibraryConditionFnc)(K15_DynamicLibrary** p_E
 
 struct K15_DynamicLibraryStretchBuffer
 {
-	K15_DynamicLibrary** elements;			//64bit
+	K15_CustomMemoryAllocator* memoryAllocator; //64bit
+	K15_DynamicLibrary** elements;							//64bit
 
-	unsigned int numCapacity;	//32bit
-	unsigned int numElements;	//32bit
-	unsigned int flags;			//32bit
+	unsigned int numCapacity;					//32bit
+	unsigned int numElements;					//32bit
+	unsigned int flags;							//32bit
 };
 
-void K15_CreateDynamicLibraryStretchBufferWithPreallocatedMemory(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, unsigned char* p_Buffer, unsigned int p_BufferCapacityInByte);
-void K15_CreateDynamicLibraryStretchBuffer(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, unsigned int p_Capacity = 8);
+void K15_CreateDynamicLibraryStretchBufferWithCustomAllocator(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_ElementCapacity);
+void K15_CreateDynamicLibraryStretchBuffer(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity = 8);
 void K15_DeleteDynamicLibraryStretchBuffer(K15_DynamicLibraryStretchBuffer* p_StretchBuffer);
-void K15_ResizeDynamicLibraryStretchBuffer(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, unsigned int p_Capacity);
+void K15_ResizeDynamicLibraryStretchBuffer(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);
 void K15_ClearDynamicLibraryStretchBuffer(K15_DynamicLibraryStretchBuffer* p_StretchBuffer);
 
 void K15_PushDynamicLibraryStretchBufferElement(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, K15_DynamicLibrary* p_Element);

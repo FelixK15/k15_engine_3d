@@ -7,21 +7,18 @@
 
 //forward declaration
 struct K15_AsyncOperation;
+struct K15_CustomMemoryAllocator;
 
-typedef void* (*K15_AsyncOperationMemoryPoolAllocFnc)(size_t);
-typedef void (*K15_AsyncOperationMemoryPoolFreeFnc)(void*);
-
-struct K15_AsyncOperationMemoryPool //256 bit / 32 byte
+struct K15_AsyncOperationMemoryPool 
 {
-	K15_AsyncOperationMemoryPoolAllocFnc customMalloc;	//64bit
-	K15_AsyncOperationMemoryPoolFreeFnc  customFree;	//64bit
+	K15_CustomMemoryAllocator* memoryAllocator; 	//64bit
 	byte* elements;									//64bit
 	unsigned int numElements;						//32bit
 	unsigned int lastElementIndex;					//32bit
 };
 
 void K15_InitializeAsyncOperationMemoryPool(K15_AsyncOperationMemoryPool* p_MemoryPool, unsigned int p_NumElements);
-void K15_InitializeAsyncOperationMemoryPoolWithCustomAllocator(K15_AsyncOperationMemoryPool* p_MemoryPool, K15_AsyncOperationMemoryPoolAllocFnc p_CustomMalloc, K15_AsyncOperationMemoryPoolFreeFnc p_CustomFree, unsigned int p_NumElements);
+void K15_InitializeAsyncOperationMemoryPoolWithCustomAllocator(K15_AsyncOperationMemoryPool* p_MemoryPool, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_NumElements);
 
 K15_AsyncOperation* K15_GetAsyncOperationMemoryPoolElement(K15_AsyncOperationMemoryPool* p_MemoryPool);
 

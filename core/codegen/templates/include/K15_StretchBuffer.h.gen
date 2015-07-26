@@ -7,6 +7,7 @@
 
 //forward declaration
 struct $TYPE_STRUCT_NAME$;
+struct K15_CustomMemoryAllocator;
 
 //compare function
 typedef unsigned char (*K15_$TYPE_NAME$CompareFnc)($TYPE$* p_LHS, $TYPE$* p_RHS);
@@ -16,17 +17,18 @@ typedef unsigned char (*K15_$TYPE_NAME$ConditionFnc)($TYPE$* p_Element, void* p_
 
 struct K15_$TYPE_NAME$StretchBuffer
 {
-	$TYPE$* elements;			//64bit
+	K15_CustomMemoryAllocator* memoryAllocator; //64bit
+	$TYPE$* elements;							//64bit
 
-	unsigned int numCapacity;	//32bit
-	unsigned int numElements;	//32bit
-	unsigned int flags;			//32bit
+	unsigned int numCapacity;					//32bit
+	unsigned int numElements;					//32bit
+	unsigned int flags;							//32bit
 };
 
-void K15_Create$TYPE_NAME$StretchBufferWithPreallocatedMemory(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned char* p_Buffer, unsigned int p_BufferCapacityInByte);
-void K15_Create$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_Capacity = 8);
+void K15_Create$TYPE_NAME$StretchBufferWithCustomAllocator(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_ElementCapacity);
+void K15_Create$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity = 8);
 void K15_Delete$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer);
-void K15_Resize$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_Capacity);
+void K15_Resize$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);
 void K15_Clear$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer);
 
 void K15_Push$TYPE_NAME$StretchBufferElement(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element);

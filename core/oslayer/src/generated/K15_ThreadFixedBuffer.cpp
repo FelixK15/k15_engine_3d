@@ -4,39 +4,29 @@
 
 #include "generated/K15_ThreadFixedBuffer.h"
 
+
 /*********************************************************************************/
-void K15_CreateThreadFixedBufferWithPreallocatedMemory(K15_ThreadFixedBuffer* p_FixedBuffer, unsigned char* p_Buffer, unsigned int p_BufferCapacityInByte)
-{
-	K15_ASSERT_TEXT(p_Buffer, "Input buffer is NULL.");
-	K15_ASSERT_TEXT(p_BufferCapacityInByte != 0, "Input buffer size is 0.");
-	K15_ASSERT_TEXT(!p_FixedBuffer->elements, "Fixed Buffer has already been created.");
-
-	unsigned int numCapacity = p_BufferCapacityInByte / sizeof(K15_Thread*);
-
-	K15_ASSERT_TEXT(numCapacity != 0, "Byte count '%d' is less than one element of type %s (%d byte(s)).", p_BufferCapacityInByte, "K15_Thread*", sizeof(K15_Thread*));
-
-	K15_Thread** elements = (K15_Thread**)p_Buffer;
-
-	p_FixedBuffer->elements = elements;
-	p_FixedBuffer->numCapacity = numCapacity;
-	p_FixedBuffer->numElements = 0;
-	p_FixedBuffer->flags = K15_USE_EXTERNAL_BUFFER;
-}
-/*********************************************************************************/
-void K15_CreateThreadFixedBuffer(K15_ThreadFixedBuffer* p_FixedBuffer, unsigned int p_Capacity)
+void K15_CreateThreadFixedBufferWithCustomAllocator(K15_ThreadFixedBuffer* p_FixedBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_Capacity)
 {
 	K15_ASSERT_TEXT(p_Capacity != 0, "Can not reserve 0 elements.");
 	K15_ASSERT_TEXT(!p_FixedBuffer->elements, "Fixed Buffer has already been created.");
+	K15_ASSERT_TEXT(p_MemoryAllocator, "No memory allocator defined.");
 
 	unsigned int bytesToAllocate = p_Capacity * sizeof(K15_Thread*);
-	K15_Thread** elements = (K15_Thread**)K15_OS_MALLOC(bytesToAllocate);
+	K15_Thread** elements = (K15_Thread**)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, bytesToAllocate);
 
 	K15_ASSERT_TEXT(elements, "Out of memory.");
 
+	p_FixedBuffer->memoryAllocator = p_MemoryAllocator;
 	p_FixedBuffer->elements = elements;
 	p_FixedBuffer->numCapacity = p_Capacity;
 	p_FixedBuffer->numElements = 0;
 	p_FixedBuffer->flags = 0;
+}
+/*********************************************************************************/
+void K15_CreateThreadFixedBuffer(K15_ThreadFixedBuffer* p_FixedBuffer, unsigned int p_Capacity)
+{
+	K15_CreateThreadFixedBufferWithCustomAllocator(p_FixedBuffer, K15_CreateDefaultMemoryAllocator("Thread Default Fixed Buffer Allocator"), p_Capacity);
 }
 /*********************************************************************************/
 void K15_DeleteThreadFixedBuffer(K15_ThreadFixedBuffer* p_FixedBuffer)
@@ -46,7 +36,7 @@ void K15_DeleteThreadFixedBuffer(K15_ThreadFixedBuffer* p_FixedBuffer)
 
 	if ((p_FixedBuffer->flags & K15_USE_EXTERNAL_BUFFER) == 0)
 	{
-		K15_OS_FREE(p_FixedBuffer->elements);
+		K15_FreeFromMemoryAllocator(p_FixedBuffer->memoryAllocator, p_FixedBuffer->elements);
 	}
 
 	p_FixedBuffer->elements = 0;

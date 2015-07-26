@@ -7,6 +7,7 @@
 
 //forward declaration
 struct K15_DirectoryWatchEntry;
+struct K15_CustomMemoryAllocator;
 
 //compare function
 typedef unsigned char (*K15_DirectoryWatchEntryCompareFnc)(K15_DirectoryWatchEntry* p_LHS, K15_DirectoryWatchEntry* p_RHS);
@@ -16,17 +17,18 @@ typedef unsigned char (*K15_DirectoryWatchEntryConditionFnc)(K15_DirectoryWatchE
 
 struct K15_DirectoryWatchEntryStretchBuffer
 {
-	K15_DirectoryWatchEntry* elements;			//64bit
+	K15_CustomMemoryAllocator* memoryAllocator; //64bit
+	K15_DirectoryWatchEntry* elements;							//64bit
 
-	unsigned int numCapacity;	//32bit
-	unsigned int numElements;	//32bit
-	unsigned int flags;			//32bit
+	unsigned int numCapacity;					//32bit
+	unsigned int numElements;					//32bit
+	unsigned int flags;							//32bit
 };
 
-void K15_CreateDirectoryWatchEntryStretchBufferWithPreallocatedMemory(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer, unsigned char* p_Buffer, unsigned int p_BufferCapacityInByte);
-void K15_CreateDirectoryWatchEntryStretchBuffer(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer, unsigned int p_Capacity = 8);
+void K15_CreateDirectoryWatchEntryStretchBufferWithCustomAllocator(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_ElementCapacity);
+void K15_CreateDirectoryWatchEntryStretchBuffer(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity = 8);
 void K15_DeleteDirectoryWatchEntryStretchBuffer(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer);
-void K15_ResizeDirectoryWatchEntryStretchBuffer(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer, unsigned int p_Capacity);
+void K15_ResizeDirectoryWatchEntryStretchBuffer(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);
 void K15_ClearDirectoryWatchEntryStretchBuffer(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer);
 
 void K15_PushDirectoryWatchEntryStretchBufferElement(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer, K15_DirectoryWatchEntry p_Element);
