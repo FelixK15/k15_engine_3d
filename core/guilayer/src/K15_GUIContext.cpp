@@ -16,17 +16,11 @@
 
 #include "K15_Math.h"
 
+
 /*********************************************************************************/
-intern inline K15_GUIElementHeader* K15_InternalCreateGUIElementHeader(K15_GUIContext* p_GUIContext)
+intern inline K15_GUIButton* K15_InternalCreateGUIButton(K15_GUIContext* p_GUIContext)
 {
-	uint32 offset = p_GUIContext->guiMemoryCurrentSize;
-	uint32 newOffset = offset + sizeof(K15_GUIElementHeader);
-
-	K15_ASSERT_TEXT(newOffset >= p_GUIContext->guiMemoryMaxSize, "Out of GUI memory.");
-
-	p_GUIContext->guiMemoryCurrentSize = newOffset;
-
-	return (K15_GUIElementHeader*)(p_GUIContext->guiMemory + newOffset);
+	
 }
 /*********************************************************************************/
 
@@ -85,12 +79,9 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 		K15_RenderTextureDesc guiTextureDesc = {};
 		guiTextureDesc.createMipChain = K15_FALSE;
 		guiTextureDesc.dimension.depth = 0;
-		//guiTextureDesc.dimension.height = guiTextureFormat.height;
-		//guiTextureDesc.dimension.width = guiTextureFormat.width;
-		guiTextureDesc.dimension.height = fontFormat.texture.height;
-		guiTextureDesc.dimension.width = fontFormat.texture.width;
-		//guiTextureDesc.mipmaps.count = guiTextureFormat.mipMapCount;
-		guiTextureDesc.mipmaps.count = 1;
+		guiTextureDesc.dimension.height = guiTextureFormat.height;
+		guiTextureDesc.dimension.width = guiTextureFormat.width;
+		guiTextureDesc.mipmaps.count = guiTextureFormat.mipMapCount;
 		guiTextureDesc.mipmaps.data = (byte**)malloc(K15_PTR_SIZE * guiTextureFormat.mipMapCount);
 		guiTextureDesc.mipmaps.dataSize = (uint32*)malloc(sizeof(uint32) * guiTextureFormat.mipMapCount);
 
@@ -98,14 +89,11 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 			imageIndex < guiTextureFormat.mipMapCount;
 			++imageIndex)
 		{
-			//guiTextureDesc.mipmaps.dataSize[imageIndex] = K15_GetTextureMipMapSize(&guiTextureFormat, imageIndex);
-			guiTextureDesc.mipmaps.dataSize[imageIndex] = K15_GetFontTextureSize(&fontFormat);
-			guiTextureDesc.mipmaps.data[imageIndex] = K15_GetFontTexture(&fontFormat);
-			//guiTextureDesc.mipmaps.data[imageIndex] = K15_GetTextureMipMap(&guiTextureFormat, imageIndex);
+			guiTextureDesc.mipmaps.dataSize[imageIndex] = K15_GetTextureMipMapSize(&guiTextureFormat, imageIndex);
+			guiTextureDesc.mipmaps.data[imageIndex] = K15_GetTextureMipMap(&guiTextureFormat, imageIndex);
 		}
 
-		guiTextureDesc.format = K15_RENDER_FORMAT_R8_UINT;
-		//guiTextureDesc.format = K15_RENDER_FORMAT_R8G8B8A8_UINT;
+		guiTextureDesc.format = K15_RENDER_FORMAT_R8G8B8A8_UINT;
 		guiTextureDesc.type = K15_RENDER_TEXTURE_TYPE_2D;
 		guiTextureDesc.flags = K15_RENDER_DESC_AUTO_CLEANUP_FLAG;
 
@@ -152,11 +140,19 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, float p_PositionX, float p_Positi
 {
 	assert(p_GUIContext);
 
-	K15_GUIElementHeader* guiButtonHeader = K15_InternalCreateGUIElementHeader(p_GUIContext);
+	uint32 offset = p_GUIContext->guiMemoryCurrentSize;
+	uint32 newOffset = offset + sizeof(K15_GUIElementHeader) + sizeof(K15_GUIButton);
 
-	guiButtonHeader->type = K15_GUI_TYPE_BUTTON;
-	guiButtonHeader->positionX = p_PositionX;
-	guiButtonHeader->positionY = p_PositionY;
+	K15_ASSERT_TEXT(newOffset >= p_GUIContext->guiMemoryMaxSize, "Out of GUI memory.");
+
+	p_GUIContext->guiMemoryCurrentSize = newOffset;
+
+	K15_GUIElementHeader* buttonHeader = (K15_GUIElementHeader*)p_GUIContext->guiMemory + offset;
+	K15_GUIButton* button = (K15_GUIButton*)p_GUIContext->guiMemory + offset + sizeof(K15_GUIElementHeader);
+
+	buttonHeader->type = K15_GUI_TYPE_BUTTON;
+
+	button->state = K15_GUI_BUTTON_STATE_NORMAL;
 
 	return K15_FALSE;
 }

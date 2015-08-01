@@ -9,6 +9,19 @@ enum K15_GUIElementType
 	K15_GUI_TYPE_BUTTON
 };
 
+enum K15_GUIButtonState
+{
+	K15_GUI_BUTTON_STATE_NORMAL = 0,
+	K15_GUI_BUTTON_STATE_PRESSED,
+	K15_GUI_BUTTON_STATE_HOVERED,
+	K15_GUI_BUTTON_STATE_DISABLED
+};
+
+struct K15_GUIButton
+{
+	K15_GUIButtonState state;
+};
+
 struct K15_GUIElementHeader
 {
 	K15_GUIElementType type;
@@ -26,6 +39,7 @@ struct K15_GUIContext
 	K15_CustomMemoryAllocator* memoryAllocator;
 	K15_RenderCommandBuffer* guiRenderCommandBuffer;
 	K15_RenderTextureHandle guiTemplateTexture;
+
 	byte* guiMemory;
 
 	uint32 guiMemoryMaxSize;

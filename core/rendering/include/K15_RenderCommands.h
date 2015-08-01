@@ -16,7 +16,6 @@ uint8 K15_RenderCommandCreateMesh(K15_RenderCommandBuffer* p_RenderCommandBuffer
 uint8 K15_RenderCommandDrawMesh(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderMeshHandle* p_RenderMeshHandlePtr, K15_Matrix4* p_WorldMatrix);
 uint8 K15_RenderCommandCreateCamera(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderCameraHandle* p_RenderCameraHandlePtr, K15_RenderCameraDesc* p_RenderCameraDesc);
 uint8 K15_RenderCommandBindCamera(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderCameraHandle* p_RenderCameraHandlePtr);
-uint8 K15_RenderCommandSetGUITexture(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTextureDesc* p_RenderTextureDesc);
 const char* K15_ConvertRenderCommandToString(K15_RenderCommand p_RenderCommand);
 
 #endif //_K15_Rendering_RenderCommands_h_

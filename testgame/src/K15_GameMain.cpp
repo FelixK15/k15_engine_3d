@@ -125,6 +125,10 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->gameMemory->buffer;
 	K15_RenderCommandBuffer* gameRenderCommandBuffer = gameContext->gameRenderBuffer;
 
+	K15_RenderBeginFrame();
+		K15_RenderCommandDrawGUI(gameContext->guiContext->guiRenderCommandBuffer, gameContext->guiContext);
+	K15_RenderEndFrame();
+
 	K15_DispatchRenderCommandBuffer(gameContext->guiContext->guiRenderCommandBuffer);
 	K15_DispatchRenderCommandBuffer(gameRenderCommandBuffer);
 

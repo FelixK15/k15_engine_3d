@@ -47,8 +47,12 @@
 #define K15_RENDER_MAX_GPU_MESHES								4096
 #define K15_RENDER_MAX_GPU_SAMPLERS								32
 #define K15_RENDER_MAX_GPU_RENDER_TARGETS						32
+#define K15_RENDER_MAX_GPU_FONTS								32
 #define K15_RENDER_MAX_CAMERAS									32
 #define K15_RENDER_MAX_UNIFORMS									64
+#define K15_RENDER_MAX_GPU_MATERIALS							512
+
+#define K15_RENDER_IMMEDIATE_BUFFER_SIZE						size_kilobyte(512)
 
 #define K15_IS_POW2(x) ((x != 0) && !(x & (x - 1))
 #define K15_CHECK_ASSIGNMENT(variable, value) {variable = value; K15_ASSERT_TEXT(variable, "Could not assign to variable \'%s\'.", #variable);}
@@ -67,6 +71,7 @@ typedef uint32 K15_RenderTargetHandle;
 typedef uint32 K15_RenderFontHandle;
 typedef uint32 K15_RenderMeshHandle;
 typedef uint32 K15_RenderCameraHandle;
+typedef uint32 K15_RenderMaterialHandle;
 
 enum K15_UniformType : uint32;
 enum K15_RenderCommand : uint32;
@@ -91,6 +96,8 @@ struct K15_RenderRasterizerStateDesc;
 struct K15_RenderSamplerDesc;
 struct K15_RenderTargetDesc;
 struct K15_RenderMeshDesc;
+struct K15_RenderFontDesc;
+struct K15_RenderMaterialDesc;
 struct K15_MeshFormat;
 struct K15_Matrix4;
 

@@ -596,7 +596,7 @@ uint8 K15_GLUpdateDirtyUniforms(K15_RenderContext* p_RenderContext)
 	uint8 result = K15_SUCCESS;
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderContext->userData;
 
-	K15_RenderUniformCache* uniformCache = p_RenderContext->uniformCache;
+	K15_RenderUniformCache* uniformCache = &p_RenderContext->uniformCache;
 	//TEST ME
 	for (uint32 dirtyUniformIndex = 0;
 		dirtyUniformIndex < K15_AUTO_UNIFORM_TYPE_COUNT;

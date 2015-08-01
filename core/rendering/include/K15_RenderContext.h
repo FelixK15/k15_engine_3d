@@ -4,6 +4,12 @@
 #include "K15_RenderPrerequisites.h"
 #include "K15_RenderUniformCache.h"
 
+#include "K15_RenderViewportDesc.h"
+#include "K15_RenderStateDesc.h"
+#include "K15_RenderBufferDesc.h"
+
+//#include "generated/K15_2DSceneElementStretchBuffer.h"
+
 #include <K15_Logging.h>
 
 #define K15_RENDERING_COMMAND_BUFFER_COUNT 2
@@ -19,7 +25,7 @@
 #define K15_RENDERING_MAX_COMMAND_BUFFERS_TO_PROCESS K15_RENDERING_MAX_COMMAND_BUFFERS * 2
 #define K15_RENDERING_MAX_PARAMETER_BUFFER_SIZE size_kilobyte(64)
 
-#define K15_RENDER_MAX_VIEWPORT_COUNT 4
+#define K15_RENDER_MAX_VIEWPORTS 4
 
 K15_FUNCTION_VARIABLE(uint8, K15_ClearScreenCommandFnc, (K15_RenderContext* p_RenderContext));
 
@@ -43,8 +49,8 @@ K15_FUNCTION_VARIABLE(uint8, K15_SetRasterizerStateCommandFnc, (K15_RenderContex
 K15_FUNCTION_VARIABLE(uint8, K15_SetBlendStateCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderBlendStateDesc* p_RenderDepthStateDesc));
 
 //sampler
-K15_FUNCTION_VARIABLE(uint8, K15_CreateSamplerCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderSamplerDesc* p_RenderTextureDesc, K15_RenderSamplerHandle* p_RenderTextureHandle));
-K15_FUNCTION_VARIABLE(uint8, K15_DeleteSamplerCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderSamplerHandle* p_RenderTextureHandle));
+K15_FUNCTION_VARIABLE(uint8, K15_CreateSamplerCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderSamplerDesc* p_RenderSamplerDesc, K15_RenderSamplerHandle* p_RenderSamplerHandle));
+K15_FUNCTION_VARIABLE(uint8, K15_DeleteSamplerCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderSamplerHandle* p_RenderSamplerHandle));
 
 //render target
 K15_FUNCTION_VARIABLE(uint8, K15_CreateRenderTargetCommandFnc, (K15_RenderContext* p_RenderContext, K15_RenderTargetDesc* p_RenderTargetDesc, K15_RenderTargetHandle* p_RenderTargetHandle));
@@ -66,13 +72,19 @@ enum K15_RenderCommand : uint32
 {
 	K15_RENDER_COMMAND_CLEAR_SCREEN = 0,
 
+	K15_RENDER_COMMAND_BEGIN_FRAME,
+	K15_RENDER_COMMAND_END_FRAME,
+
 	//buffer
 	K15_RENDER_COMMAND_CREATE_BUFFER,
 	K15_RENDER_COMMAND_UPDATE_BUFFER,
 	K15_RENDER_COMMAND_DELETE_BUFFER,
 
-	//mesh
-	K15_RENDER_COMMAND_CREATE_MESH,
+	//resource loading
+	K15_RENDER_COMMAND_CREATE_MESH_FROM_MESH_FORMAT,
+	K15_RENDER_COMMAND_CREATE_FONT_FROM_FONT_FORMAT,
+	K15_RENDER_COMMAND_CREATE_SAMPLER_FROM_SAMPLER_FORMAT,
+	K15_RENDER_COMMAND_CREATE_MATERIAL_FROM_MATERIAL_FORMAT,
 
 	//program
 	K15_RENDER_COMMAND_CREATE_PROGRAM,
@@ -105,7 +117,13 @@ enum K15_RenderCommand : uint32
 	//drawing
 	K15_RENDER_COMMAND_DRAW_FULLSCREEN_QUAD,
 	K15_RENDER_COMMAND_DRAW_MESH,
-	K15_RENDER_COMMAND_DRAW_GUI,
+
+	//2D drawing
+	K15_RENDER_COMMAND_DRAW_2D_GUI,
+	K15_RENDER_COMMAND_DRAW_2D_TEXT,
+	K15_RENDER_COMMAND_DRAW_2D_TEXT_RECTANGLE,
+	K15_RENDER_COMMAND_DRAW_2D_TEXTURE_NORMALIZED_COORDINATES,
+	K15_RENDER_COMMAND_DRAW_2D_TEXTURE_PIXEL_COORDINATES,
 
 	//camera
 	K15_RENDER_COMMAND_CREATE_CAMERA,
@@ -116,9 +134,6 @@ enum K15_RenderCommand : uint32
 	//matrices
 	K15_RENDER_COMMAND_SET_PROJECTION_MATRIX,
 	K15_RENDER_COMMAND_SET_VIEW_MATRIX,
-
-	//resources
-	K15_RENDER_COMMAND_SET_GUI_TEXTURE,
 
 	K15_RENDER_COMMAND_COUNT
 };
@@ -202,7 +217,7 @@ struct K15_RenderCommandBufferDispatcher
 	uint32 flags;
 };
 
-struct K15_RenderCapabilities
+struct K15_RenderContextCapabilities
 {
 	float maxAnisotropy;
 	uint32 maxRenderTargets;
@@ -210,40 +225,61 @@ struct K15_RenderCapabilities
 	uint32 maxTextureDimension;
 };
 
-struct K15_RenderResources
+struct K15_RenderContextResources
 {
-	K15_RenderTextureHandle guiTexture;
+	K15_RenderBufferDesc* bufferDescs[K15_RENDER_MAX_GPU_BUFFER];
+	K15_RenderProgramDesc* programDescs[K15_RENDER_MAX_GPU_PROGRAMS];
+	K15_RenderTextureDesc* textureDescs[K15_RENDER_MAX_GPU_TEXTURES];
+	K15_RenderMeshDesc* meshDescs[K15_RENDER_MAX_GPU_MESHES];
+	K15_RenderSamplerDesc* samplerDescs[K15_RENDER_MAX_GPU_SAMPLERS];
+	K15_RenderFontDesc* fontDescs[K15_RENDER_MAX_GPU_FONTS];
+	K15_RenderTargetDesc* renderTargetDescs[K15_RENDER_MAX_GPU_RENDER_TARGETS];
+	K15_RenderMaterialDesc* materialDescs[K15_RENDER_MAX_GPU_MATERIALS];
+
+	K15_RenderViewportDesc viewportDescs[K15_RENDER_MAX_VIEWPORTS];
+
+	struct 
+	{
+		uint32 activeCameraIndex;
+		K15_InternalRenderCameraDesc* cameraDescs[K15_RENDER_MAX_CAMERAS];
+	} cameras;
+};
+
+struct K15_RenderContextState
+{
+	K15_RenderBlendStateDesc blendStateDesc;
+	K15_RenderStencilStateDesc stencilStateDesc;
+	K15_RenderDepthStateDesc depthStateDesc;
+	K15_RenderRasterizerStateDesc rasterizerStateDesc;
+};
+
+struct K15_RenderContextDefaultStates
+{
+	K15_RenderContextState defaultRenderContextState;
+	K15_RenderSamplerHandle defaultRenderSampler;
 };
 
 struct K15_RenderContext
 {
-	K15_RenderCapabilities capabilities;
-	K15_RenderResources resources;
-
-	K15_RenderUniformCache* uniformCache;
+	//command buffer
 	K15_RenderCommandBufferDispatcher* commandBufferDispatcher;
 	K15_RenderCommandBuffer* commandBuffers;
-	
-	//K15_Thread* renderThread;
+
+	uint32 amountCommandBuffers;
+	uint32 flags;
+
+	K15_RenderContextCapabilities capabilities;
+	K15_RenderUniformCache uniformCache;
+	K15_RenderContextResources renderResources;
+	K15_RenderContextState renderState;
+	K15_RenderContextDefaultStates defaultStates;
+
+	//multi threading	
 	K15_Mutex* createCommandBufferMutex;
 	K15_Semaphore* renderThreadSync;
 
-	void* userData;
-
-	struct  
-	{
-		char* message;
-		uint32 length;
-	} lastError;
-
-	K15_RenderViewportDesc* viewports;
-
-	uint32 viewportCount;
-	uint32 activeViewportIndex;
-	uint32 activeCameraIndex;
-
-	K15_InternalRenderCameraDesc* cameras;
-	uint32 amountCameras;
+	//immediate renderings
+	K15_RenderDoubleBufferDesc immediateVertexBuffer;
 
 	struct 
 	{
@@ -306,52 +342,13 @@ struct K15_RenderContext
 		} drawManagement;
 	} commandProcessing;
 
-	struct 
-	{
-		K15_RenderBufferDesc* buffers;
-		uint32 amountBuffers;
-	} gpuBuffer;
-
 	struct  
 	{
-		K15_RenderProgramDesc* programs;
-		uint32 amountPrograms;
-	} gpuProgram;
+		char* message;
+		uint32 length;
+	} lastError;
 
-	struct
-	{
-		K15_RenderTextureDesc* textures;
-		uint32 amountTextures;
-	} gpuTexture;
-
-	struct 
-	{
-		K15_RenderMeshDesc* meshes;
-		uint32 amountMeshes;
-	} gpuMeshes;
-
-	struct  
-	{
-		K15_RenderSamplerDesc* samplers;
-		uint32 amountSamplers;
-	} gpuSampler;
-
-	struct 
-	{
-		K15_RenderTargetDesc* renderTargets;
-		uint32 amountRenderTargets;
-	} gpuRenderTargets;
-
-	struct 
-	{
-		K15_RenderBlendStateDesc* blendStateDesc;
-		K15_RenderStencilStateDesc* stencilStateDesc;
-		K15_RenderDepthStateDesc* depthStateDesc;
-		K15_RenderRasterizerStateDesc* rasterizerStateDesc;
-	} renderState;
-
-	uint32 amountCommandBuffers;
-	uint32 flags;
+	void* userData;
 
 #ifdef K15_DEBUG_MRT
 	struct 

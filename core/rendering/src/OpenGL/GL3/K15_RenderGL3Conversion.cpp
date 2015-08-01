@@ -823,13 +823,34 @@ intern inline GLenum K15_GLConvertRenderFilterMode(K15_RenderFilterMode p_Filter
 			break;
 		}
 
-		case K15_RENDER_FILTER_MODE_ANISOTROPIC:
+		default:
 		{
-			//will be handled separately
+			assert(false);
+		}
+	}
+
+	return nativeRenderFilterMode;
+}
+/*********************************************************************************/
+intern inline GLenum K15_GLConvertRenderMinificationFilterMode(K15_RenderFilterMode p_FilterMode)
+{
+	GLenum nativeRenderFilterMode = GL_INVALID_ENUM;
+
+	switch(p_FilterMode)
+	{
+	case K15_RENDER_FILTER_MODE_LINEAR:
+		{
+			nativeRenderFilterMode = GL_LINEAR_MIPMAP_LINEAR;
 			break;
 		}
 
-		default:
+	case K15_RENDER_FILTER_MODE_NEAREST:
+		{
+			nativeRenderFilterMode = GL_NEAREST_MIPMAP_NEAREST;
+			break;
+		}
+
+	default:
 		{
 			assert(false);
 		}

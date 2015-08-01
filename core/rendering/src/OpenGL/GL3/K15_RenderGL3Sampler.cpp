@@ -6,7 +6,7 @@ intern uint8 K15_GLCreateSampler(K15_RenderContext* p_RenderContext, K15_RenderS
 	K15_GLSampler glSampler;
 	GLuint glSamplerHandle;
 
-	GLenum minifactionFilter = K15_GLConvertRenderFilterMode(p_RenderSamplerDesc->filtering.minification);
+	GLenum minifactionFilter = K15_GLConvertRenderMinificationFilterMode(p_RenderSamplerDesc->filtering.minification);
 	GLenum magnificationFilter = K15_GLConvertRenderFilterMode(p_RenderSamplerDesc->filtering.magnification);
 
 	GLenum UAdressing = K15_GLConvertFilterAddressMode(p_RenderSamplerDesc->address.u);
@@ -17,17 +17,9 @@ intern uint8 K15_GLCreateSampler(K15_RenderContext* p_RenderContext, K15_RenderS
 
 	GLfloat maxAnisotropy = (GLfloat)p_RenderContext->capabilities.maxAnisotropy;
 
-	//special case: anisotropic filtering
-	if (p_RenderSamplerDesc->filtering.magnification == K15_RENDER_FILTER_MODE_ANISOTROPIC 
-		|| p_RenderSamplerDesc->filtering.minification == K15_RENDER_FILTER_MODE_ANISOTROPIC)
-	{
-		K15_OPENGL_CALL(kglSamplerParameterf(glSamplerHandle, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy));
-	}
-	else
-	{
-		K15_OPENGL_CALL(kglSamplerParameteri(glSamplerHandle, GL_TEXTURE_MIN_FILTER, minifactionFilter));
-		K15_OPENGL_CALL(kglSamplerParameteri(glSamplerHandle, GL_TEXTURE_MAG_FILTER, magnificationFilter));
-	}
+	K15_OPENGL_CALL(kglSamplerParameterf(glSamplerHandle, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy));
+	K15_OPENGL_CALL(kglSamplerParameteri(glSamplerHandle, GL_TEXTURE_MIN_FILTER, minifactionFilter));
+	K15_OPENGL_CALL(kglSamplerParameteri(glSamplerHandle, GL_TEXTURE_MAG_FILTER, magnificationFilter));
 
 	K15_OPENGL_CALL(kglSamplerParameteri(glSamplerHandle, GL_TEXTURE_WRAP_S, UAdressing));
 	K15_OPENGL_CALL(kglSamplerParameteri(glSamplerHandle, GL_TEXTURE_WRAP_T, VAdressing));

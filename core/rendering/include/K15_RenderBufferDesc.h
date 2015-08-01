@@ -49,4 +49,10 @@ struct K15_RenderBufferUpdateDesc
 	uint32 flags;
 };
 
+struct K15_RenderDoubleBufferDesc
+{
+	K15_RenderBufferHandle frontBufferHandle;
+	K15_RenderBufferHandle backBufferHandle;
+};
+
 #endif //_K15_Rendering_RenderBufferDesc_h_

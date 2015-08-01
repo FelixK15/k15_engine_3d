@@ -10,18 +10,20 @@
 
 #include <K15_GUIContext.h>
 
-#include "K15_RenderBufferDesc.h"
 #include "K15_RenderProgramDesc.h"
 #include "K15_RenderTextureDesc.h"
 #include "K15_RenderSamplerDesc.h"
-#include "K15_RenderStateDesc.h"
 #include "K15_RenderFontDesc.h"
 #include "K15_RenderTargetDesc.h"
 #include "K15_RenderCameraDesc.h"
+#include "K15_RenderMaterialDesc.h"
 #include "K15_RenderViewportDesc.h"
 #include "K15_RenderMeshDesc.h"
 
 #include "K15_MeshFormat.h"
+#include "K15_FontFormat.h"
+#include "K15_SamplerFormat.h"
+#include "K15_MaterialFormat.h"
 
 #include "OpenGL/K15_RenderGLContext.h"
 
@@ -29,6 +31,9 @@
 #include "K15_RenderProgramDesc.cpp"
 #include "K15_RenderCommands.cpp"
 
+#include "K15_CustomMemoryAllocator.h"
+
+//#include "generated/K15_2DSceneElementStretchBuffer.cpp"
 
 /*********************************************************************************/
 intern inline void K15_InternalConvertCameraDescToInternalCameraDesc(K15_RenderContext* p_RenderContext, K15_RenderCameraDesc* p_RenderCameraDesc, K15_InternalRenderCameraDesc* p_InternalRenderCameraDesc)
@@ -43,8 +48,7 @@ intern inline void K15_InternalConvertCameraDescToInternalCameraDesc(K15_RenderC
 	float nearPlane = p_RenderCameraDesc->nearPlane;
 	float farPlane = p_RenderCameraDesc->farPlane;
 
-	uint32 activeViewportIndex = p_RenderContext->activeViewportIndex;
-	K15_RenderViewportDesc* activeViewport = &p_RenderContext->viewports[activeViewportIndex];
+	K15_RenderViewportDesc* activeViewport = &p_RenderContext->renderResources.viewportDescs[0];
 
 	float tanHalfFovy = ::tan(fov / 2.f);
 	float aspectRatio = (float)activeViewport->height / (float)activeViewport->width;
@@ -130,95 +134,218 @@ intern inline void K15_InternalCheckRenderTextureUpdateDescFlags(K15_RenderTextu
 /*********************************************************************************/
 intern inline void K15_InternalSetViewportDesc(K15_RenderContext* p_RenderContext, K15_RenderViewportDesc *p_Viewport, uint32 p_ViewportIndex)
 {
-	assert(p_ViewportIndex < K15_RENDER_MAX_VIEWPORT_COUNT);
+	assert(p_ViewportIndex < K15_RENDER_MAX_VIEWPORTS);
 
-	p_RenderContext->viewports[p_ViewportIndex] = *p_Viewport;
+	p_RenderContext->renderResources.viewportDescs[p_ViewportIndex] = *p_Viewport;
 }
 /*********************************************************************************/
 intern inline K15_RenderTextureHandle K15_InternalAddRenderTextureDesc(K15_RenderContext* p_RenderContext, K15_RenderTextureDesc* p_RenderTextureDesc)
 {
-	//get current texture index
-	uint32 gpuTextureIndex = p_RenderContext->gpuTexture.amountTextures++;
+	K15_RenderTextureHandle handle = K15_INVALID_GPU_RESOURCE_HANDLE;
 
-	assert(gpuTextureIndex < K15_RENDER_MAX_GPU_PROGRAMS);
+	for (uint32 textureDescIndex = 0;
+		textureDescIndex < K15_RENDER_MAX_GPU_TEXTURES;
+		++textureDescIndex)
+	{
+		//find next free texture desc slot
+		if (p_RenderContext->renderResources.textureDescs[textureDescIndex] == 0)
+		{
+			K15_RenderTextureDesc* renderTextureDescCopy = (K15_RenderTextureDesc*)malloc(sizeof(K15_RenderTextureDesc));
+			memcpy(renderTextureDescCopy, p_RenderTextureDesc, sizeof(K15_RenderTextureDesc));
 
-	p_RenderContext->gpuTexture.textures[gpuTextureIndex] = *p_RenderTextureDesc;
+			p_RenderContext->renderResources.textureDescs[textureDescIndex] = renderTextureDescCopy;
+			
+			handle = (K15_RenderTextureHandle)textureDescIndex;
+			break;
+		}
+	}
 
-	return (K15_RenderTextureHandle)gpuTextureIndex;
+	return handle;
+}
+/*********************************************************************************/
+intern inline K15_RenderMaterialHandle K15_InternalAddRenderMaterialDesc(K15_RenderContext* p_RenderContext, K15_RenderMaterialDesc* p_RenderMaterialDesc)
+{
+	K15_RenderMaterialHandle handle = K15_INVALID_GPU_RESOURCE_HANDLE;
+
+	for (uint32 materialDescIndex = 0;
+		materialDescIndex < K15_RENDER_MAX_GPU_TEXTURES;
+		++materialDescIndex)
+	{
+		//find next free texture desc slot
+		if (p_RenderContext->renderResources.textureDescs[materialDescIndex] == 0)
+		{
+			K15_RenderMaterialDesc* renderMaterialDescCopy = (K15_RenderMaterialDesc*)malloc(sizeof(K15_RenderMaterialDesc));
+			memcpy(renderMaterialDescCopy, p_RenderMaterialDesc, sizeof(K15_RenderMaterialDesc));
+
+			p_RenderContext->renderResources.materialDescs[materialDescIndex] = renderMaterialDescCopy;
+
+			handle = (K15_RenderMaterialHandle)materialDescIndex;
+			break;
+		}
+	}
+
+	return handle;
 }
 /*********************************************************************************/
 intern inline K15_RenderProgramHandle K15_InternalAddRenderProgramDesc(K15_RenderContext* p_RenderContext, K15_RenderProgramDesc* p_RenderProgramDesc)
 {
-	//get current program index
-	uint32 gpuProgramIndex = p_RenderContext->gpuProgram.amountPrograms++;
+	K15_RenderProgramHandle handle = K15_INVALID_GPU_RESOURCE_HANDLE;
 
-	assert(gpuProgramIndex < K15_RENDER_MAX_GPU_PROGRAMS);
+	for (uint32 programDescIndex = 0;
+		programDescIndex < K15_RENDER_MAX_GPU_PROGRAMS;
+		++programDescIndex)
+	{
+		//find next free program desc slot
+		if (p_RenderContext->renderResources.programDescs[programDescIndex] == 0)
+		{
+			K15_RenderProgramDesc* renderProgramDescCopy = (K15_RenderProgramDesc*)malloc(sizeof(K15_RenderProgramDesc));
+			memcpy(renderProgramDescCopy, p_RenderProgramDesc, sizeof(K15_RenderProgramDesc));
 
-	p_RenderContext->gpuProgram.programs[gpuProgramIndex] = *p_RenderProgramDesc;
+			p_RenderContext->renderResources.programDescs[programDescIndex] = renderProgramDescCopy;
+			handle = (K15_RenderProgramHandle)programDescIndex;
+			break;
+		}
+	}
 
-	return (K15_RenderProgramHandle)gpuProgramIndex;
+	return handle;
 }
 /*********************************************************************************/
 intern inline K15_RenderBufferHandle K15_InternalAddRenderBufferDesc(K15_RenderContext* p_RenderContext, K15_RenderBufferDesc* p_RenderBufferDesc)
 {
-	//get current buffer index and assign amount
-	uint32 gpuBufferIndex = p_RenderContext->gpuBuffer.amountBuffers++;
+	K15_RenderBufferHandle handle = K15_INVALID_GPU_RESOURCE_HANDLE;
 
-	assert(gpuBufferIndex < K15_RENDER_MAX_GPU_BUFFER);
+	for (uint32 bufferDescIndex = 0;
+		bufferDescIndex < K15_RENDER_MAX_GPU_BUFFER;
+		++bufferDescIndex)
+	{
+		//find next free buffer desc slot
+		if (p_RenderContext->renderResources.bufferDescs[bufferDescIndex] == 0)
+		{
+			K15_RenderBufferDesc* renderBufferDescCopy = (K15_RenderBufferDesc*)malloc(sizeof(K15_RenderBufferDesc));
+			memcpy(renderBufferDescCopy, p_RenderBufferDesc, sizeof(K15_RenderBufferDesc));
 
-	p_RenderContext->gpuBuffer.buffers[gpuBufferIndex] = *p_RenderBufferDesc;
+			p_RenderContext->renderResources.bufferDescs[bufferDescIndex] = renderBufferDescCopy;
+			handle = (K15_RenderBufferHandle)bufferDescIndex;
+			break;
+		}
+	}
 
-	return (K15_RenderBufferHandle)gpuBufferIndex;
+	return handle;
 }
 /*********************************************************************************/
 intern inline K15_RenderSamplerHandle K15_InternalAddRenderSamplerDesc(K15_RenderContext* p_RenderContext, K15_RenderSamplerDesc* p_RenderSamplerDesc)
 {
-	//get current buffer index and assign amount
-	uint32 gpuSamplerIndex = p_RenderContext->gpuSampler.amountSamplers++;
+	K15_RenderSamplerHandle handle = K15_INVALID_GPU_RESOURCE_HANDLE;
 
-	assert(gpuSamplerIndex < K15_RENDER_MAX_GPU_SAMPLERS);
+	for (uint32 samplerDescIndex = 0;
+		samplerDescIndex < K15_RENDER_MAX_GPU_SAMPLERS;
+		++samplerDescIndex)
+	{
+		//find next free sampler desc slot
+		if (p_RenderContext->renderResources.samplerDescs[samplerDescIndex] == 0)
+		{
+			K15_RenderSamplerDesc* renderSamplerDescCopy = (K15_RenderSamplerDesc*)malloc(sizeof(K15_RenderSamplerDesc));
+			memcpy(renderSamplerDescCopy, p_RenderSamplerDesc, sizeof(K15_RenderSamplerDesc));
 
-	p_RenderContext->gpuSampler.samplers[gpuSamplerIndex] = *p_RenderSamplerDesc;
+			p_RenderContext->renderResources.samplerDescs[samplerDescIndex] = renderSamplerDescCopy;
+			handle = (K15_RenderSamplerHandle)samplerDescIndex;
+			break;
+		}
+	}
 
-	return (K15_RenderSamplerHandle)gpuSamplerIndex;
+	return handle;
 }
 /*********************************************************************************/
 intern inline K15_RenderTargetHandle K15_InternalAddRenderTargetDesc(K15_RenderContext* p_RenderContext, K15_RenderTargetDesc* p_RenderTargetDesc)
 {
-	//get current render target index and assign amount
-	uint32 gpuRenderTargetIndex = p_RenderContext->gpuRenderTargets.amountRenderTargets++;
+	K15_RenderTargetHandle handle = K15_INVALID_GPU_RESOURCE_HANDLE;
 
-	assert(gpuRenderTargetIndex < K15_RENDER_MAX_GPU_RENDER_TARGETS);
+	for (uint32 renderTargetDescIndex = 0;
+		renderTargetDescIndex < K15_RENDER_MAX_GPU_RENDER_TARGETS;
+		++renderTargetDescIndex)
+	{
+		//find next free sampler desc slot
+		if (p_RenderContext->renderResources.renderTargetDescs[renderTargetDescIndex] == 0)
+		{
+			K15_RenderTargetDesc* renderTargetDescCopy = (K15_RenderTargetDesc*)malloc(sizeof(K15_RenderTargetDesc));
+			memcpy(renderTargetDescCopy, p_RenderTargetDesc, sizeof(K15_RenderTargetDesc));
 
-	p_RenderContext->gpuRenderTargets.renderTargets[gpuRenderTargetIndex] = *p_RenderTargetDesc;
+			p_RenderContext->renderResources.renderTargetDescs[renderTargetDescIndex] = renderTargetDescCopy;
+			handle = (K15_RenderTargetHandle)renderTargetDescIndex;
+			break;
+		}
+	}
 
-	return (K15_RenderTargetHandle)gpuRenderTargetIndex;
+	return handle;
 }
 /*********************************************************************************/
 intern inline K15_RenderMeshHandle K15_InternalAddRenderMeshDesc(K15_RenderContext* p_RenderContext, K15_RenderMeshDesc* p_RenderMeshDesc)
 {
-	uint32 gpuRenderMeshIndex = p_RenderContext->gpuMeshes.amountMeshes++;
+	K15_RenderMeshHandle handle = K15_INVALID_GPU_RESOURCE_HANDLE;
 
-	assert (gpuRenderMeshIndex < K15_RENDER_MAX_GPU_MESHES);
+	for (uint32 meshDescIndex = 0;
+		meshDescIndex < K15_RENDER_MAX_GPU_MESHES;
+		++meshDescIndex)
+	{
+		//find next free sampler desc slot
+		if (p_RenderContext->renderResources.meshDescs[meshDescIndex] == 0)
+		{
+			K15_RenderMeshDesc* renderMeshDescCopy = (K15_RenderMeshDesc*)malloc(sizeof(K15_RenderMeshDesc));
+			memcpy(renderMeshDescCopy, p_RenderMeshDesc, sizeof(K15_RenderMeshDesc));
 
-	p_RenderContext->gpuMeshes.meshes[gpuRenderMeshIndex] = *p_RenderMeshDesc;
+			p_RenderContext->renderResources.meshDescs[meshDescIndex] = renderMeshDescCopy;
+			handle = (K15_RenderMeshHandle)meshDescIndex;
+			break;
+		}
+	}
 
-	return (K15_RenderMeshHandle)gpuRenderMeshIndex;
+	return handle;
+}
+/*********************************************************************************/
+intern inline K15_RenderFontHandle K15_InternalAddRenderFontDesc(K15_RenderContext* p_RenderContext, K15_RenderFontDesc* p_RenderFontDesc)
+{
+	K15_RenderFontHandle handle = K15_INVALID_GPU_RESOURCE_HANDLE;
+
+	for (uint32 fontDescIndex = 0;
+		fontDescIndex < K15_RENDER_MAX_GPU_FONTS;
+		++fontDescIndex)
+	{
+		//find next free sampler desc slot
+		if (p_RenderContext->renderResources.fontDescs[fontDescIndex] == 0)
+		{
+			K15_RenderFontDesc* renderFontDescCopy = (K15_RenderFontDesc*)malloc(sizeof(K15_RenderFontDesc));
+			memcpy(renderFontDescCopy, p_RenderFontDesc, sizeof(K15_RenderFontDesc));
+
+			p_RenderContext->renderResources.fontDescs[fontDescIndex] = renderFontDescCopy;
+			handle = (K15_RenderFontHandle)fontDescIndex;
+			break;
+		}
+	}
+
+	return handle;
 }
 /*********************************************************************************/
 intern inline K15_RenderCameraHandle K15_InternalAddRenderCameraDesc(K15_RenderContext* p_RenderContext, K15_RenderCameraDesc* p_RenderCameraDesc)
 {
-	uint32 cameraIndex = p_RenderContext->amountCameras++;
+	K15_RenderCameraHandle handle = K15_INVALID_GPU_RESOURCE_HANDLE;
 
-	assert (cameraIndex < K15_RENDER_MAX_CAMERAS);
+	for (uint32 cameraDescIndex = 0;
+		cameraDescIndex < K15_RENDER_MAX_CAMERAS;
+		++cameraDescIndex)
+	{
+		//find next free camera desc slot
+		if (p_RenderContext->renderResources.cameras.cameraDescs[cameraDescIndex] == 0)
+		{
+			K15_InternalRenderCameraDesc* internalCameraDesc = (K15_InternalRenderCameraDesc*)malloc(sizeof(K15_InternalRenderCameraDesc));
+			K15_InternalConvertCameraDescToInternalCameraDesc(p_RenderContext, p_RenderCameraDesc, internalCameraDesc);
 
-	K15_InternalRenderCameraDesc internalCameraDesc = {};
+			p_RenderContext->renderResources.cameras.cameraDescs[cameraDescIndex] = internalCameraDesc;
+			handle = (K15_RenderCameraHandle)cameraDescIndex;
+			break;
+		}
+	}
 
-	K15_InternalConvertCameraDescToInternalCameraDesc(p_RenderContext, p_RenderCameraDesc, &internalCameraDesc);
-
-	p_RenderContext->cameras[cameraIndex] = internalCameraDesc;
-
-	return (K15_RenderCameraHandle)cameraIndex;
+	return handle;
 }
 /*********************************************************************************/
 intern inline uint8 K15_InternalCreateBuffer(K15_RenderContext* p_RenderContext, K15_RenderBufferDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandle)
@@ -333,6 +460,102 @@ intern inline uint8 K15_InternalSetStencilStateDesc(K15_RenderContext* p_RenderC
 	return result;
 }
 /*********************************************************************************/
+intern float K15_InternalGetRenderFontKerning(K15_RenderKerningDesc* p_RenderFontKerningDescs, uint32 p_NumKerningDescs, uint32 p_ShiftedCharacters)
+{
+	float kerning = 0.f;
+	
+	uint32 l = 0;
+	uint32 r = p_NumKerningDescs;
+	uint32 i = 0;
+
+	while (l <= r)
+	{
+		i = l + ((r - l) / 2);
+
+		K15_RenderKerningDesc* kerningDesc = &p_RenderFontKerningDescs[i];
+
+		if (p_ShiftedCharacters == kerningDesc->shiftedCharacters)
+		{
+			kerning = kerningDesc->kerning;
+			break;
+		}
+		else if (p_ShiftedCharacters < kerningDesc->shiftedCharacters)
+		{
+			r = i - 1;
+		}
+		else
+		{
+			l = i + 1;
+		}
+	}
+	
+
+	return kerning;
+}
+/*********************************************************************************/
+intern void K15_InternalCalculate2DGlyphRectangle(K15_RenderFontDesc* p_RenderFontDesc, uint16 p_Character, float* p_PosX, float* p_PosY, float* p_Width, float* p_Height)
+{
+	float fontSize = p_RenderFontDesc->fontSize;
+	float verticalSpacing = 0.25f * fontSize;
+	float horizontalSpacing = 0.1f * fontSize;
+
+	if (p_Character == '\n')
+	{
+		*p_Height = fontSize + verticalSpacing;
+	}
+	else if (isspace(p_Character))
+	{
+		*p_Width = horizontalSpacing;
+	}
+	else
+	{
+		*p_PosX = p_RenderFontDesc->renderGlyphDescs[p_Character].texturePosX;
+		*p_PosY = p_RenderFontDesc->renderGlyphDescs[p_Character].texturePosY;
+		*p_Width = p_RenderFontDesc->renderGlyphDescs[p_Character].glyphWidth;
+		*p_Height = p_RenderFontDesc->renderGlyphDescs[p_Character].glyphHeight;
+	}
+}
+/*********************************************************************************/
+intern void K15_InternalCalculate2DTextRectangle(K15_RenderFontDesc* p_RenderFontDesc, const char* p_Text, float* p_Width, float* p_Height)
+{
+	uint32 textLength = (uint32)strlen(p_Text);
+	
+	float x = 0.f;
+	float y = 0.f;
+
+	float tX = 0.f;
+	float tY = 0.f;
+	float width = 0.f;
+	float height = 0.f;
+
+	for (uint32 textIndex = 0;
+		textIndex < textLength;
+		++textIndex)
+	{
+		uint16 character = p_Text[textIndex];
+		K15_InternalCalculate2DGlyphRectangle(p_RenderFontDesc, character, &tX, &tY, &width, &height);
+
+		x += width;
+		y += height;
+
+		width = 0.f;
+		height = 0.f;
+
+		if (character == '\n')
+		{
+			x = 0.f;
+		}
+		else if (textIndex != textLength)
+		{
+			uint16 nextCharacter = p_Text[textIndex + 1];
+			uint32 shiftedCharacters = (character << 16) | nextCharacter;
+
+			float kerning = K15_InternalGetRenderFontKerning(p_RenderFontDesc->renderKerningDescs, p_RenderFontDesc->numGlyphs * p_RenderFontDesc->numGlyphs, shiftedCharacters);
+			x += kerning;
+		}
+	}
+}
+/*********************************************************************************/
 intern void K15_InternalUpdateUniforms(K15_RenderContext* p_RenderContext)
 {
 	p_RenderContext->commandProcessing.programManagement.updateDirtyUniforms(p_RenderContext);
@@ -340,10 +563,10 @@ intern void K15_InternalUpdateUniforms(K15_RenderContext* p_RenderContext)
 /*********************************************************************************/
 intern void K15_InternalBindCamera(K15_RenderContext* p_RenderContext, K15_RenderCameraHandle* p_RenderCameraHandle)
 {
-	p_RenderContext->activeCameraIndex = *p_RenderCameraHandle;
+	p_RenderContext->renderResources.cameras.activeCameraIndex = *p_RenderCameraHandle;
 
-	K15_RenderUniformCache* uniformCache = p_RenderContext->uniformCache;
-	K15_InternalRenderCameraDesc* renderCameraDesc = &p_RenderContext->cameras[*p_RenderCameraHandle];
+	K15_RenderUniformCache* uniformCache = &p_RenderContext->uniformCache;
+	K15_InternalRenderCameraDesc* renderCameraDesc = &p_RenderContext->renderResources.cameras.cameraDescs[*p_RenderCameraHandle];
 
 	K15_UpdateUniformCacheEntry(uniformCache, K15_AUTO_UNIFORM_TYPE_PROJECTION_MATRIX, (byte*)&renderCameraDesc->projectionMatrix);
 	K15_UpdateUniformCacheEntry(uniformCache, K15_AUTO_UNIFORM_TYPE_VIEW_MATRIX, (byte*)&renderCameraDesc->viewMatrix);
@@ -354,8 +577,8 @@ intern uint8 K15_InternalDrawMesh(K15_RenderContext* p_RenderContext, K15_Render
 	assert(p_RenderContext);
 	assert(p_RenderMeshHandle);
 
-	K15_RenderMeshDesc* renderMeshDesc = &p_RenderContext->gpuMeshes.meshes[*p_RenderMeshHandle];
-	K15_RenderUniformCache* uniformCache = p_RenderContext->uniformCache;
+	K15_RenderMeshDesc* renderMeshDesc = p_RenderContext->renderResources.meshDescs[*p_RenderMeshHandle];
+	K15_RenderUniformCache* uniformCache = &p_RenderContext->uniformCache;
 
 	K15_UpdateUniformCacheEntry(uniformCache, K15_AUTO_UNIFORM_TYPE_WORLD_MATRIX, (byte*)p_WorldMatrix);
 
@@ -371,7 +594,7 @@ intern uint8 K15_InternalDrawMesh(K15_RenderContext* p_RenderContext, K15_Render
 		K15_RenderBufferHandle vertexBufferHandle = renderMeshDesc->vertexBufferHandles[subMeshIndex];
 		K15_RenderBufferHandle indexBufferHandle = renderMeshDesc->indexBufferHandles[subMeshIndex];
 
-		K15_RenderBufferDesc* indexBufferDesc = &p_RenderContext->gpuBuffer.buffers[indexBufferHandle];
+		K15_RenderBufferDesc* indexBufferDesc = p_RenderContext->renderResources.bufferDescs[indexBufferHandle];
 
 		uint32 numIndeces = indexBufferDesc->sizeInBytes / indexBufferDesc->singleElementSizeInBytes;
 
@@ -401,7 +624,181 @@ intern uint8 K15_InternalDrawMesh(K15_RenderContext* p_RenderContext, K15_Render
 	return result;
 }
 /*********************************************************************************/
-intern inline uint8 K15_InternalCreateMeshDesc(K15_RenderContext* p_RenderContext, K15_MeshFormat* p_MeshFormat, K15_RenderMeshDesc* p_RenderMeshDesc)
+intern inline void K15_InternalDeleteSampler(K15_RenderContext* p_RenderContext, K15_RenderSamplerHandle p_SamplerHandle)
+{
+	assert(p_RenderContext->renderResources.samplerDescs[p_SamplerHandle]);
+
+	free(p_RenderContext->renderResources.samplerDescs[p_SamplerHandle]);
+	p_RenderContext->renderResources.samplerDescs[p_SamplerHandle] = 0;
+}
+/*********************************************************************************/
+intern inline void K15_InternalDeleteBuffer(K15_RenderContext* p_RenderContext, K15_RenderBufferHandle p_BufferHandle)
+{
+	assert(p_RenderContext->renderResources.bufferDescs[p_BufferHandle]);
+
+	free(p_RenderContext->renderResources.bufferDescs[p_BufferHandle]);
+	p_RenderContext->renderResources.bufferDescs[p_BufferHandle] = 0;
+}
+/*********************************************************************************/
+intern inline void K15_InternalDeleteTexture(K15_RenderContext* p_RenderContext, K15_RenderTextureHandle p_TextureHandle)
+{
+	assert(p_RenderContext->renderResources.textureDescs[p_TextureHandle]);
+
+	free(p_RenderContext->renderResources.textureDescs[p_TextureHandle]);
+	p_RenderContext->renderResources.textureDescs[p_TextureHandle] = 0;
+}
+/*********************************************************************************/
+intern inline void K15_InternalDeleteRenderTarget(K15_RenderContext* p_RenderContext, K15_RenderTargetHandle p_RenderTargetHandle)
+{
+	assert(p_RenderContext->renderResources.renderTargetDescs[p_RenderTargetHandle]);
+
+	free(p_RenderContext->renderResources.renderTargetDescs[p_RenderTargetHandle]);
+	p_RenderContext->renderResources.renderTargetDescs[p_RenderTargetHandle] = 0;
+}
+/*********************************************************************************/
+intern inline void K15_InternalDeleteFont(K15_RenderContext* p_RenderContext, K15_RenderFontHandle p_RenderFontHandle)
+{
+	assert(p_RenderContext->renderResources.fontDescs[p_RenderFontHandle]);
+
+	free(p_RenderContext->renderResources.fontDescs[p_RenderFontHandle]);
+	p_RenderContext->renderResources.fontDescs[p_RenderFontHandle] = 0;
+}
+/*********************************************************************************/
+intern inline void K15_InternalDeleteMesh(K15_RenderContext* p_RenderContext, K15_RenderMeshHandle p_RenderMeshHandle)
+{
+	assert(p_RenderContext->renderResources.meshDescs[p_RenderMeshHandle]);
+
+	free(p_RenderContext->renderResources.meshDescs[p_RenderMeshHandle]);
+	p_RenderContext->renderResources.meshDescs[p_RenderMeshHandle] = 0;
+}
+/*********************************************************************************/
+intern inline void K15_InternalDeleteProgram(K15_RenderContext* p_RenderContext, K15_RenderProgramHandle p_RenderProgramHandle)
+{
+	assert(p_RenderContext->renderResources.programDescs[p_RenderProgramHandle]);
+
+	free(p_RenderContext->renderResources.programDescs[p_RenderProgramHandle]);
+	p_RenderContext->renderResources.programDescs[p_RenderProgramHandle] = 0;
+}
+/*********************************************************************************/
+intern inline uint8 K15_InternalDraw2DTextureNormalizedCoordinates(K15_RenderContext* p_RenderContext, K15_RenderTextureHandle p_TextureHandle, 
+																   K15_RenderMaterialHandle p_MaterialHandle,
+																   float p_DestinationX, float p_DestinationY, 
+																   float p_DestinationWidth, float p_DestinationHeight,
+																   float p_SourceX, float p_SourceY,
+																   float p_SourceWidth, float p_SourceHeight)
+{
+	//create vertices and add them to the immediate buffer
+}
+/*********************************************************************************/
+intern inline uint8 K15_InternalDraw2DTexturePixelCoordinates(K15_RenderContext* p_RenderContext, K15_RenderTextureHandle p_TextureHandle, 
+															  K15_RenderMaterialHandle p_MaterialHandle,
+															  int32 p_DestinationX, int32 p_DestinationY, 
+															  uint32 p_DestinationWidth, uint32 p_DestinationHeight,
+															  int32 p_SourceX, int32 p_SourceY,
+															  uint32 p_SourceWidth, uint32 p_SourceHeight)
+{
+	K15_RenderTextureDesc* textureDesc = p_RenderContext->renderResources.textureDescs[p_TextureHandle];
+	K15_RenderViewportDesc* viewportDesc = &p_RenderContext->renderResources.viewportDescs[0]; //first viewport (main screen)
+	
+	float dx = p_DestinationX / viewportDesc->width;
+	float dy = p_DestinationY / viewportDesc->height;
+	float dw = p_DestinationWidth / viewportDesc->width;
+	float dh = p_DestinationHeight / viewportDesc->height;
+
+	float sx = p_SourceX / textureDesc->dimension.width;
+	float sy = p_SourceY / textureDesc->dimension.height;
+	float sw = p_SourceWidth / textureDesc->dimension.width;
+	float sh = p_SourceHeight / textureDesc->dimension.height;
+
+	return K15_InternalDraw2DTextureNormalizedCoordinates(p_RenderContext, p_TextureHandle, p_MaterialHandle, dx, dy, dw, dh, sx, sy, sw, sh);
+}
+/*********************************************************************************/
+intern inline uint8 K15_InternalDraw2DGUI(K15_RenderContext* p_RenderContext, K15_GUIContext* p_GUIContext, K15_RenderMaterialHandle p_MaterialHandle)
+{
+	uint32 guiContextMemoryOffset = 0;
+
+	while (guiContextMemoryOffset < p_GUIContext->guiMemoryCurrentSize)
+	{
+		K15_GUIElementHeader* guiElementHeader = (K15_GUIElementHeader*)p_GUIContext->guiMemory + guiContextMemoryOffset;
+
+		switch (guiElementHeader->type)
+		{
+			case K15_GUI_TYPE_BUTTON:
+			{
+				K15_GUIButton* guiButton = (K15_GUIButton*)p_GUIContext->guiMemory + guiContextMemoryOffset + sizeof(K15_GUIElementHeader);
+				
+			}
+		}
+
+		guiContextMemoryOffset += guiElementHeader->offset;
+	}
+
+	return K15_SUCCESS;
+}
+/*********************************************************************************/
+intern inline uint8 K15_InternalDraw2DText(K15_RenderContext* p_RenderContext, K15_RenderFontHandle p_FontHandle, K15_RenderSamplerHandle* p_SamplerHandle, 
+										   const char* p_Text, 
+										   float p_PositionX, float p_PositionY)
+{
+	K15_RenderFontDesc* fontDesc = p_RenderContext->renderResources.fontDescs[p_FontHandle];
+	K15_RenderTextureHandle fontTexture = fontDesc->fontTextureHandle;
+
+	float fontSize = fontDesc->fontSize;
+	float verticalSpacing = 0.25f * fontSize;
+	float horizontalSpacing = 0.1f * fontSize;
+
+	float x = p_PositionX;
+	float y = p_PositionY;
+
+	float glyphPosX = 0.f;
+	float glyphPosY = 0.f;
+	float glyphWidth = 0.f;
+	float glyphHeight = 0.f;
+
+	uint32 textLength = (uint32)strlen(p_Text);
+
+	for (uint32 textIndex = 0;
+		textIndex < textLength;
+		++textIndex)
+	{
+		uint16 character = p_Text[textIndex];
+		K15_InternalCalculate2DGlyphRectangle(fontDesc, character, &glyphPosX, &glyphPosY, &glyphWidth, &glyphHeight);
+
+		x += glyphWidth;
+		y += glyphHeight;
+
+		glyphWidth = 0.f;
+		glyphHeight = 0.f;
+
+		if (character == '\n')
+		{
+			x = 0.f;
+			y += verticalSpacing;
+		}
+		else if (isspace(character))
+		{
+			x += horizontalSpacing;
+		}
+		else if (textIndex != textLength)
+		{
+			uint16 nextCharacter = p_Text[textIndex + 1];
+			uint32 shiftedCharacters = (character << 16) | nextCharacter;
+
+			float kerning = K15_InternalGetRenderFontKerning(fontDesc->renderKerningDescs, fontDesc->numGlyphs * fontDesc->numGlyphs, shiftedCharacters);
+			x += kerning;
+
+			K15_InternalDraw2DTextureNormalizedCoordinates(p_RenderContext, fontTexture, x, y, glyphWidth, glyphHeight, glyphPosX, glyphPosY, glyphWidth, glyphHeight);
+		}
+	}
+}
+/*********************************************************************************/
+intern inline uint8 K15_InternalDraw2DTextRectangle(K15_RenderContext* p_RenderContext, K15_RenderFontHandle p_FontHandle, const char* p_Text, 
+													float p_PositionX, float PositionY, float p_Width, float p_Height)
+{
+
+}
+/*********************************************************************************/
+intern inline uint8 K15_InternalCreateMeshDescFromMeshFormat(K15_RenderContext* p_RenderContext, K15_MeshFormat* p_MeshFormat, K15_RenderMeshDesc* p_RenderMeshDesc)
 {
 	assert(p_RenderContext);
 	assert(p_MeshFormat);
@@ -428,7 +825,7 @@ intern inline uint8 K15_InternalCreateMeshDesc(K15_RenderContext* p_RenderContex
 		vertexBufferDesc.sizeInBytes = K15_GetSubMeshFormatVertexDataSize(subMeshFormat);
 		vertexBufferDesc.type = K15_RENDER_BUFFER_TYPE_VERTEX;
 		vertexBufferDesc.usage = K15_RENDER_BUFFER_USAGE_STATIC_DRAW;
-		vertexBufferDesc.singleElementSizeInBytes = K15_GetSubMeshFormatVertexDataSize(subMeshFormat) / subMeshFormat->vertexCount;
+		//vertexBufferDesc.singleElementSizeInBytes = K15_GetSubMeshFormatVertexDataSize(subMeshFormat) / subMeshFormat->vertexCount;
 		/*********************************************************************************/
 		indexBufferDesc.access = K15_RENDER_BUFFER_ACCESS_ALL;
 		indexBufferDesc.data = (byte*)subMeshFormat->triangleData;
@@ -462,33 +859,235 @@ intern inline uint8 K15_InternalCreateMeshDesc(K15_RenderContext* p_RenderContex
 	return result;
 }
 /*********************************************************************************/
-intern void K15_InternalSetDefaultRenderStates(K15_RenderContext* p_RenderContext)
+intern void K15_InternalCreateSamplerDescFromSamplerFormat(K15_RenderContext* p_RenderContext, K15_SamplerFormat* p_SamplerFormat, K15_RenderSamplerDesc* p_RenderSamplerDesc)
+{
+	assert(p_RenderContext);
+	assert(p_SamplerFormat);
+	assert(p_RenderSamplerDesc);
+
+	p_RenderSamplerDesc->address.u = (K15_RenderFilterAddressMode)p_SamplerFormat->addressModeU;
+	p_RenderSamplerDesc->address.v = (K15_RenderFilterAddressMode)p_SamplerFormat->addressModeV;
+	p_RenderSamplerDesc->address.w = (K15_RenderFilterAddressMode)p_SamplerFormat->addressModeW;
+
+	p_RenderSamplerDesc->filtering.magnification = (K15_RenderFilterMode)p_SamplerFormat->magnificationFilter;
+	p_RenderSamplerDesc->filtering.minification = (K15_RenderFilterMode)p_SamplerFormat->minificationFilter;
+}
+/*********************************************************************************/
+intern uint8 K15_InternalCreateMaterialDescFromMaterialFormat(K15_RenderContext* p_RenderContext, K15_MaterialFormat* p_MaterialFormat, K15_RenderMaterialDesc* p_RenderMaterialDesc)
+{
+	assert(p_RenderContext);
+	assert(p_MaterialFormat);
+	assert(p_RenderMaterialDesc);
+
+	uint8 result = K15_SUCCESS;
+
+	uint32 numMaterialPasses = p_MaterialFormat->numMaterialPasses;
+
+	p_RenderMaterialDesc->numMaterialPasses = numMaterialPasses;
+	p_RenderMaterialDesc->materialPasses = (K15_RenderMaterialPassDesc*)malloc(sizeof(K15_RenderMaterialPassDesc) * numMaterialPasses);
+
+	for (uint32 materialPassIndex = 0;
+		materialPassIndex < numMaterialPasses;
+		++materialPassIndex)
+	{
+		K15_RenderMaterialPassDesc* materialPassDesc = &p_RenderMaterialDesc->materialPasses[materialPassIndex];
+		K15_MaterialPassTemplateFormat* materialPassTemplateFormat = &p_MaterialFormat->passTemplates[materialPassIndex];
+
+		//load shader
+		const char* vertexShaderPath = materialPassTemplateFormat->vertexShaderPath;
+		const char* fragmentShaderPath = materialPassTemplateFormat->fragmentShaderPath;
+
+		K15_RenderProgramDesc vertexShaderDesc = {};
+		K15_RenderProgramDesc fragmentShaderDesc = {};
+
+		vertexShaderDesc.file = vertexShaderPath;
+		vertexShaderDesc.source = K15_RENDER_PROGRAM_SOURCE_FILE;
+		vertexShaderDesc.type = K15_RENDER_PROGRAM_TYPE_VERTEX;
+		
+		fragmentShaderDesc.file = fragmentShaderPath;
+		fragmentShaderDesc.source = K15_RENDER_PROGRAM_SOURCE_FILE;
+		fragmentShaderDesc.type = K15_RENDER_PROGRAM_TYPE_FRAGMENT;
+
+		K15_RenderProgramHandle vertexShaderHandle = K15_InternalAddRenderProgramDesc(p_RenderContext, &vertexShaderDesc);
+		K15_RenderProgramHandle fragmentShaderHandle = K15_InternalAddRenderProgramDesc(p_RenderContext, &fragmentShaderDesc);
+
+		result = p_RenderContext->commandProcessing.programManagement.createProgram(p_RenderContext, &vertexShaderDesc, &vertexShaderHandle);
+
+		if (result != K15_SUCCESS)
+		{
+			break;
+		}
+
+		result = p_RenderContext->commandProcessing.programManagement.createProgram(p_RenderContext, &fragmentShaderDesc, &fragmentShaderHandle);
+
+		if (result != K15_SUCCESS)
+		{
+			break;
+		}
+
+		materialPassDesc->fragmentShaderHandle = fragmentShaderHandle;
+		materialPassDesc->vertexShaderHandle = vertexShaderHandle;
+
+		//load samplers
+		uint32 numSamplers = materialPassTemplateFormat->numSamplers;
+		materialPassDesc->numSamplerHandles = numSamplers;
+		materialPassDesc->samplerHandles = (K15_RenderSamplerHandle*)malloc(numSamplers * sizeof(K15_RenderSamplerHandle));
+
+		for (uint32 samplerIndex = 0;
+			samplerIndex < numSamplers;
+			++samplerIndex)
+		{
+			K15_MaterialPassTemplateSamplerFormat* materialPassSamplerFormat = &materialPassTemplateFormat->samplerFormats[samplerIndex];
+			
+			const char* materialPassSamplerFormatPath = materialPassSamplerFormat->samplerPath;
+
+			K15_SamplerFormat samplerFormat = {};
+			result = K15_LoadSamplerFormatFromFile(&samplerFormat, materialPassSamplerFormatPath);
+
+			if (result != K15_SUCCESS)
+			{
+				K15_LOG_ERROR_MESSAGE("Could not load sampler format '%s' for material '%s'", materialPassSamplerFormatPath, p_MaterialFormat->materialName);
+				break;
+			}
+
+			K15_RenderSamplerDesc renderSamplerDesc = {};
+			K15_InternalCreateSamplerDescFromSamplerFormat(p_RenderContext, &samplerFormat, &renderSamplerDesc);
+
+			K15_RenderSamplerHandle renderSamplerHandle = K15_InternalAddRenderSamplerDesc(p_RenderContext, &renderSamplerDesc);
+			result = p_RenderContext->commandProcessing.samplerManagement.createSampler(p_RenderContext, &renderSamplerDesc, &renderSamplerHandle);
+
+			materialPassDesc->samplerHandles[samplerIndex] = renderSamplerHandle;
+		}
+
+		if (result != K15_SUCCESS)
+		{
+			break;
+		}
+	}
+	
+	return result;
+}
+/*********************************************************************************/
+intern uint8 K15_InternalCreateFontDescFromFontFormat(K15_RenderContext* p_RenderContext, K15_FontFormat* p_FontFormat, K15_RenderFontDesc* p_RenderFontDesc)
+{
+	assert(p_RenderContext);
+	assert(p_FontFormat);
+
+	uint8 result = K15_SUCCESS;
+
+	K15_RenderTextureDesc fontTextureDesc = {};
+
+	fontTextureDesc.createMipChain = K15_FALSE;
+	fontTextureDesc.dimension.width = p_FontFormat->texture.width;
+	fontTextureDesc.dimension.height = p_FontFormat->texture.height;
+	fontTextureDesc.format = K15_RENDER_FORMAT_R8_UINT;
+	fontTextureDesc.mipmaps.count = 1;
+	fontTextureDesc.mipmaps.data[0] = p_FontFormat->texture.data;
+	fontTextureDesc.mipmaps.dataSize[0] = p_FontFormat->texture.dataSize;
+	fontTextureDesc.type = K15_RENDER_TEXTURE_TYPE_2D;
+	
+	//create font texture
+	K15_RenderTextureHandle fontTextureHandle = K15_InternalAddRenderTextureDesc(p_RenderContext, &fontTextureDesc);
+	result = p_RenderContext->commandProcessing.textureManagement.createTexture(p_RenderContext, &fontTextureDesc, &fontTextureHandle);
+
+	if (result == K15_SUCCESS)
+	{
+		uint32 amountGlyphs = p_FontFormat->endCharacter - p_FontFormat->startCharacter;
+		uint32 amountKerning = K15_GetKerningDataCount(p_FontFormat);
+
+		uint32 fontTextureWidth = p_FontFormat->texture.width;
+		uint32 fontTextureHeight = p_FontFormat->texture.height;
+
+		p_RenderFontDesc->fontTextureHandle = fontTextureHandle;
+		p_RenderFontDesc->fontSize = p_FontFormat->fontSize;
+		p_RenderFontDesc->numGlyphs = amountGlyphs;
+		p_RenderFontDesc->renderGlyphDescs = (K15_RenderGlyphDesc*)malloc(sizeof(K15_RenderGlyphDesc) * amountGlyphs);
+		p_RenderFontDesc->renderKerningDescs = (K15_RenderKerningDesc*)malloc(sizeof(K15_RenderKerningDesc) * amountKerning);
+
+		//transfer glyph data
+		for (uint32 glyphIndex = 0;
+			glyphIndex < amountGlyphs;
+			++glyphIndex)
+		{
+			uint32 glyphCharacter = glyphIndex + p_FontFormat->startCharacter;
+			K15_GlyphFormat* glyphFormat = K15_GetFontGlyphData(p_FontFormat, glyphCharacter);
+
+			//transfrom from pixel to [0,1]
+			if (glyphFormat)
+			{
+				p_RenderFontDesc->renderGlyphDescs[glyphIndex].character = glyphCharacter;
+				p_RenderFontDesc->renderGlyphDescs[glyphIndex].texturePosX = glyphFormat->posX / fontTextureWidth;
+				p_RenderFontDesc->renderGlyphDescs[glyphIndex].texturePosY = glyphFormat->posY / fontTextureHeight;
+				p_RenderFontDesc->renderGlyphDescs[glyphIndex].glyphWidth = glyphFormat->width / fontTextureWidth;
+				p_RenderFontDesc->renderGlyphDescs[glyphIndex].glyphHeight= glyphFormat->height / fontTextureHeight;
+			}
+		}
+
+		//transfer kern data
+		for (uint32 kernIndex = 0;
+			kernIndex < amountKerning;
+			++kernIndex)
+		{
+			K15_KerningFormat* kerningFormat = &p_FontFormat->kernFormats[kernIndex];
+
+			p_RenderFontDesc->renderKerningDescs[kernIndex].shiftedCharacters = kerningFormat->shiftedCharacters;
+			p_RenderFontDesc->renderKerningDescs[kernIndex].kerning = (real32)kerningFormat->kerning * p_FontFormat->fontSize;
+		}
+	}
+	
+	return result;
+}
+/*********************************************************************************/
+intern void K15_InternalCreateImmediateBuffer(K15_RenderContext* p_RenderContext)
 {
 	assert(p_RenderContext);
 
-	K15_RenderRasterizerStateDesc rasterizerState = {};
-	K15_RenderDepthStateDesc depthState = {};
-	K15_RenderStencilStateDesc stencilState = {};
-	K15_RenderBlendStateDesc blendState = {};
-	K15_RenderProgramDesc vertexShader = {};
-	K15_RenderProgramDesc pixelShader = {};
+	K15_RenderBufferDesc immediateRenderBufferDesc = {};
+
+	immediateRenderBufferDesc.access = K15_RENDER_BUFFER_ACCESS_WRITE;
+	immediateRenderBufferDesc.usage = K15_RENDER_BUFFER_USAGE_DYNAMIC_DRAW;
+	immediateRenderBufferDesc.type = K15_RENDER_BUFFER_TYPE_VERTEX;
+	immediateRenderBufferDesc.sizeInBytes = K15_RENDER_IMMEDIATE_BUFFER_SIZE;
+	
+	K15_RenderBufferHandle frontImmediateBufferHandle = K15_InternalAddRenderBufferDesc(p_RenderContext, &immediateRenderBufferDesc);
+	K15_RenderBufferHandle backImmediateBufferHandle = K15_InternalAddRenderBufferDesc(p_RenderContext, &immediateRenderBufferDesc);
+
+	//create buffers
+	p_RenderContext->commandProcessing.bufferManagement.createBuffer(p_RenderContext, &immediateRenderBufferDesc, &frontImmediateBufferHandle);
+	p_RenderContext->commandProcessing.bufferManagement.createBuffer(p_RenderContext, &immediateRenderBufferDesc, &backImmediateBufferHandle);
+
+	p_RenderContext->immediateVertexBuffer.backBufferHandle = backImmediateBufferHandle;
+	p_RenderContext->immediateVertexBuffer.frontBufferHandle = frontImmediateBufferHandle;
+}
+/*********************************************************************************/
+intern void K15_InternalCreateDefaultRenderStates(K15_RenderContext* p_RenderContext)
+{
+	assert(p_RenderContext);
+
+	K15_RenderSamplerDesc defaultSampler = {};
+	K15_RenderRasterizerStateDesc defaultRasterizerState = {};
+	K15_RenderDepthStateDesc defaultDepthState = {};
+	K15_RenderStencilStateDesc defaultStencilState = {};
+	K15_RenderBlendStateDesc defaultBlendState = {};
+	//K15_RenderProgramDesc vertexShader = {};
+	//K15_RenderProgramDesc pixelShader = {};
 	K15_RenderViewportDesc viewport = {};
 	K15_RenderCameraDesc cameraDesc = {};
 
-	const char* glVertexShaderCode =	"in vec3 position;\n"
-										"uniform mat4 worldMatrix;\n"
-										"uniform mat4 viewMatrix;\n"
-										"uniform mat4 projMatrix;\n"
-										"void main(void) {\n"
-										"vec4 outPosition = vec4(position, 1.0f);\n"
-										"mat4 mvp = projMatrix * (viewMatrix * worldMatrix);\n"
-										"outPosition = mvp * outPosition;\n"
-										"outPosition.xyz /= outPosition.w;\n"
-										//"mat4 mvp = projMatrix * (viewMatrix * worldMatrix);\n"
-										"gl_Position = outPosition; }\n";
-
-	const char* glPixelShaderCode =		"void main(void) {\n"
-										"gl_FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f); }\n";
+// 	const char* glVertexShaderCode =	"in vec3 position;\n"
+// 										"uniform mat4 worldMatrix;\n"
+// 										"uniform mat4 viewMatrix;\n"
+// 										"uniform mat4 projMatrix;\n"
+// 										"void main(void) {\n"
+// 										"vec4 outPosition = vec4(position, 1.0f);\n"
+// 										"mat4 mvp = projMatrix * (viewMatrix * worldMatrix);\n"
+// 										"outPosition = mvp * outPosition;\n"
+// 										"outPosition.xyz /= outPosition.w;\n"
+// 										//"mat4 mvp = projMatrix * (viewMatrix * worldMatrix);\n"
+// 										"gl_Position = outPosition; }\n";
+// 
+// 	const char* glPixelShaderCode =		"void main(void) {\n"
+// 										"gl_FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f); }\n";
 
 	/*********************************************************************************/
 	K15_OSContext* osContext = K15_GetOSLayerContext();
@@ -502,52 +1101,78 @@ intern void K15_InternalSetDefaultRenderStates(K15_RenderContext* p_RenderContex
 	cameraDesc.fov = K15_HALF_PI;
 	cameraDesc.type = K15_RENDER_CAMERA_TYPE_PERSPECTIVE_PROJECTION;
 	/*********************************************************************************/
-	vertexShader.code = (char*)glVertexShaderCode;
-	vertexShader.source = K15_RENDER_PROGRAM_SOURCE_CODE;
-	vertexShader.type = K15_RENDER_PROGRAM_TYPE_VERTEX;
-	/*********************************************************************************/
-	pixelShader.code = (char*)glPixelShaderCode;
-	pixelShader.source = K15_RENDER_PROGRAM_SOURCE_CODE;
-	pixelShader.type = K15_RENDER_PROGRAM_TYPE_FRAGMENT;
-	/*********************************************************************************/
-	rasterizerState.cullingMode = K15_CULLING_MODE_BACK;
-	rasterizerState.fillMode = K15_FILLMODE_SOLID;
-	rasterizerState.scissoringEnabled = FALSE;
-	rasterizerState.vertexOrder = K15_VERTEX_ORDER_COUNTER_CLOCKWISE;
+// 	vertexShader.code = (char*)glVertexShaderCode;
+// 	vertexShader.source = K15_RENDER_PROGRAM_SOURCE_CODE;
+// 	vertexShader.type = K15_RENDER_PROGRAM_TYPE_VERTEX;
+// 	/*********************************************************************************/
+// 	pixelShader.code = (char*)glPixelShaderCode;
+// 	pixelShader.source = K15_RENDER_PROGRAM_SOURCE_CODE;
+// 	pixelShader.type = K15_RENDER_PROGRAM_TYPE_FRAGMENT;
 	/*********************************************************************************/
 
+	//Rasterizer State
 	/*********************************************************************************/
-	depthState.compareFunction = K15_COMPARISON_GREATER_EQUAL;
-	//depthState.enabled = TRUE;
-	depthState.enabled = FALSE;
-	/*********************************************************************************/
-
-	/*********************************************************************************/
-	stencilState.enabled = FALSE;
+	defaultRasterizerState.cullingMode = K15_CULLING_MODE_BACK;
+	defaultRasterizerState.fillMode = K15_FILLMODE_SOLID;
+	defaultRasterizerState.scissoringEnabled = FALSE;
+	defaultRasterizerState.vertexOrder = K15_VERTEX_ORDER_COUNTER_CLOCKWISE;
 	/*********************************************************************************/
 
+	//Depth State
 	/*********************************************************************************/
-	blendState.enabled = FALSE;
+	defaultDepthState.compareFunction = K15_COMPARISON_GREATER_EQUAL;
+	defaultDepthState.enabled = FALSE;
+	/*********************************************************************************/
+
+	//Stencil State
+	/*********************************************************************************/
+	defaultStencilState.enabled = FALSE;
+	/*********************************************************************************/
+
+	//Blend State
+	/*********************************************************************************/
+	defaultBlendState.enabled = FALSE;
 	//blendState.enabled = TRUE;
-	blendState.sourceBlendFactorRGB = K15_BLEND_FACTOR_SRC_ALPHA;
-	blendState.sourceBlendFactorAlpha = K15_BLEND_FACTOR_ONE;
-	blendState.blendOperationRGB = K15_BLEND_OPERATION_ADD;
-	blendState.blendOperationAlpha = K15_BLEND_OPERATION_ADD;
-	blendState.destinationBlendFactorRGB = K15_BLEND_FACTOR_INVERSE_SRC_ALPHA;
-	blendState.destinationBlendFactorAlpha = K15_BLEND_FACTOR_ONE;
+	defaultBlendState.sourceBlendFactorRGB = K15_BLEND_FACTOR_SRC_ALPHA;
+	defaultBlendState.sourceBlendFactorAlpha = K15_BLEND_FACTOR_ONE;
+	defaultBlendState.blendOperationRGB = K15_BLEND_OPERATION_ADD;
+	defaultBlendState.blendOperationAlpha = K15_BLEND_OPERATION_ADD;
+	defaultBlendState.destinationBlendFactorRGB = K15_BLEND_FACTOR_INVERSE_SRC_ALPHA;
+	defaultBlendState.destinationBlendFactorAlpha = K15_BLEND_FACTOR_ONE;
 	/*********************************************************************************/
-	K15_RenderProgramHandle defaultVertexShaderHandle = K15_InternalAddRenderProgramDesc(p_RenderContext, &vertexShader);
-	K15_RenderProgramHandle defaultPixelShaderHandle = K15_InternalAddRenderProgramDesc(p_RenderContext, &pixelShader);
+
+	//Sampler
 	/*********************************************************************************/
-	p_RenderContext->commandProcessing.programManagement.createProgram(p_RenderContext, &vertexShader, &defaultVertexShaderHandle);
-	p_RenderContext->commandProcessing.programManagement.createProgram(p_RenderContext, &pixelShader, &defaultPixelShaderHandle);
-	p_RenderContext->commandProcessing.programManagement.bindProgram(p_RenderContext, &defaultVertexShaderHandle);
-	p_RenderContext->commandProcessing.programManagement.bindProgram(p_RenderContext, &defaultPixelShaderHandle);
+	defaultSampler.filtering.magnification = K15_RENDER_FILTER_MODE_LINEAR;
+	defaultSampler.filtering.minification = K15_RENDER_FILTER_MODE_LINEAR;
+	defaultSampler.address.u = K15_RENDER_FILTER_ADDRESS_MODE_REPEAT;
+	defaultSampler.address.v = K15_RENDER_FILTER_ADDRESS_MODE_REPEAT;
+	defaultSampler.address.w = K15_RENDER_FILTER_ADDRESS_MODE_REPEAT;
 	/*********************************************************************************/
-	K15_InternalSetBlendStateDesc(p_RenderContext, &blendState);
-	K15_InternalSetDepthStateDesc(p_RenderContext, &depthState);
-	K15_InternalSetStencilStateDesc(p_RenderContext, &stencilState);
-	K15_InternalSetRasterizerStateDesc(p_RenderContext, &rasterizerState);
+
+	/*********************************************************************************/
+// 	K15_RenderProgramHandle defaultVertexShaderHandle = K15_InternalAddRenderProgramDesc(p_RenderContext, &vertexShader);
+// 	K15_RenderProgramHandle defaultPixelShaderHandle = K15_InternalAddRenderProgramDesc(p_RenderContext, &pixelShader);
+ 	/*********************************************************************************/
+// 	p_RenderContext->commandProcessing.programManagement.createProgram(p_RenderContext, &vertexShader, &defaultVertexShaderHandle);
+// 	p_RenderContext->commandProcessing.programManagement.createProgram(p_RenderContext, &pixelShader, &defaultPixelShaderHandle);
+// 	p_RenderContext->commandProcessing.programManagement.bindProgram(p_RenderContext, &defaultVertexShaderHandle);
+// 	p_RenderContext->commandProcessing.programManagement.bindProgram(p_RenderContext, &defaultPixelShaderHandle);
+	/*********************************************************************************/
+	p_RenderContext->defaultStates.defaultRenderContextState.blendStateDesc = defaultBlendState;
+	p_RenderContext->defaultStates.defaultRenderContextState.depthStateDesc = defaultDepthState;
+	p_RenderContext->defaultStates.defaultRenderContextState.rasterizerStateDesc = defaultRasterizerState;
+	p_RenderContext->defaultStates.defaultRenderContextState.stencilStateDesc = defaultStencilState;
+	
+	p_RenderContext->defaultStates.defaultRenderSampler = K15_InternalAddRenderSamplerDesc(p_RenderContext, &defaultSampler);
+	uint8 createdDefaultSampler = p_RenderContext->commandProcessing.samplerManagement.createSampler(p_RenderContext, &defaultSampler, &p_RenderContext->defaultStates.defaultRenderSampler);
+	assert(createdDefaultSampler == K15_SUCCESS);
+
+	/*********************************************************************************/
+	K15_InternalSetBlendStateDesc(p_RenderContext, &defaultBlendState);
+	K15_InternalSetDepthStateDesc(p_RenderContext, &defaultDepthState);
+	K15_InternalSetStencilStateDesc(p_RenderContext, &defaultStencilState);
+	K15_InternalSetRasterizerStateDesc(p_RenderContext, &defaultRasterizerState);
 	K15_InternalAddRenderCameraDesc(p_RenderContext, &cameraDesc);
 	K15_InternalSetViewportDesc(p_RenderContext, &viewport, 0);
 	/*********************************************************************************/
@@ -616,6 +1241,11 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 			if ((*renderBufferHandle) != K15_INVALID_GPU_RESOURCE_HANDLE)
 			{
 				result = p_RenderContext->commandProcessing.bufferManagement.deleteBuffer(p_RenderContext, renderBufferHandle);
+
+				if (result == K15_SUCCESS)
+				{
+					K15_InternalDeleteBuffer(p_RenderContext, *renderBufferHandle);
+				}
 			}
 #ifdef K15_SHOW_PER_COMMAND_DEBUG_LOG
 			else
@@ -627,7 +1257,22 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 			break;
 		}
 
-		case K15_RENDER_COMMAND_CREATE_MESH:
+		case K15_RENDER_COMMAND_CREATE_FONT_FROM_FONT_FORMAT:
+		{
+			K15_FontFormat fontFormat = {};
+			K15_RenderFontHandle* renderFontHandle = 0;
+			K15_RenderFontDesc renderFontDesc = {};
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderFontHandle);
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_FontFormat), K15_PTR_SIZE, &fontFormat);
+
+			result = K15_InternalCreateFontDescFromFontFormat(p_RenderContext, &fontFormat, &renderFontDesc);
+			*renderFontHandle = K15_InternalAddRenderFontDesc(p_RenderContext, &renderFontDesc);
+
+			break;
+		}
+
+		case K15_RENDER_COMMAND_CREATE_MESH_FROM_MESH_FORMAT:
 		{
 			K15_MeshFormat meshFormat = {};
 			K15_RenderMeshHandle* renderMeshHandle = 0;
@@ -636,9 +1281,45 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderMeshHandle);
 			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_MeshFormat), K15_PTR_SIZE, &meshFormat);
 
-			result = K15_InternalCreateMeshDesc(p_RenderContext, &meshFormat, &renderMeshDesc);
-			*renderMeshHandle = K15_InternalAddRenderMeshDesc(p_RenderContext, &renderMeshDesc);
+			result = K15_InternalCreateMeshDescFromMeshFormat(p_RenderContext, &meshFormat, &renderMeshDesc);
+
+			if (result == K15_SUCCESS)
+			{
+				*renderMeshHandle = K15_InternalAddRenderMeshDesc(p_RenderContext, &renderMeshDesc);
+			}
 			
+			break;
+		}
+
+		case K15_RENDER_COMMAND_CREATE_SAMPLER_FROM_SAMPLER_FORMAT:
+		{
+			K15_SamplerFormat samplerFormat = {};
+			K15_RenderSamplerHandle* renderSamplerHandle = 0;
+			K15_RenderSamplerDesc renderSamplerDesc = {};
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderSamplerHandle);
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_SamplerFormat), K15_PTR_SIZE, &samplerFormat);
+
+			K15_InternalCreateSamplerDescFromSamplerFormat(p_RenderContext, &samplerFormat, &renderSamplerDesc);
+			*renderSamplerHandle = K15_InternalAddRenderSamplerDesc(p_RenderContext, &renderSamplerDesc);
+
+			result = p_RenderContext->commandProcessing.samplerManagement.createSampler(p_RenderContext, &renderSamplerDesc, renderSamplerHandle);
+
+			break;
+		}
+
+		case K15_RENDER_COMMAND_CREATE_MATERIAL_FROM_MATERIAL_FORMAT:
+		{
+			K15_MaterialFormat materialFormat = {};
+			K15_RenderMaterialHandle* renderMaterialHandle = 0;
+			K15_RenderMaterialDesc renderMaterialDesc = {};
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, 0, &renderMaterialHandle);
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_MaterialFormat), K15_PTR_SIZE, &materialFormat);
+
+			K15_InternalCreateMaterialDescFromMaterialFormat(p_RenderContext, &materialFormat, &renderMaterialDesc);
+			*renderMaterialHandle = K15_InternalAddRenderMaterialDesc(p_RenderContext, &renderMaterialDesc);
+
 			break;
 		}
 
@@ -666,6 +1347,11 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 			if ((*renderProgramHandle) != K15_INVALID_GPU_RESOURCE_HANDLE)
 			{
 				result = p_RenderContext->commandProcessing.programManagement.deleteProgram(p_RenderContext, renderProgramHandle);
+
+				if (result == K15_SUCCESS)
+				{
+					K15_InternalDeleteProgram(p_RenderContext, *renderProgramHandle);
+				}
 			}
 #ifdef K15_SHOW_PER_COMMAND_DEBUG_LOG
 			else
@@ -727,6 +1413,11 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 			if ((*renderTextureHandle) != K15_INVALID_GPU_RESOURCE_HANDLE)
 			{
 				result = p_RenderContext->commandProcessing.textureManagement.deleteTexture(p_RenderContext, renderTextureHandle);
+
+				if (result == K15_SUCCESS)
+				{
+					K15_InternalDeleteTexture(p_RenderContext, *renderTextureHandle);
+				}
 			}
 #ifdef K15_SHOW_PER_COMMAND_DEBUG_LOG
 			else
@@ -762,6 +1453,11 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 			if ((*renderSamplerHandle) != K15_INVALID_GPU_RESOURCE_HANDLE)
 			{
 				result = p_RenderContext->commandProcessing.samplerManagement.deleteSampler(p_RenderContext, renderSamplerHandle);
+
+				if (result == K15_SUCCESS)
+				{
+					K15_InternalDeleteSampler(p_RenderContext, *renderSamplerHandle);
+				}
 			}
 #ifdef K15_SHOW_PER_COMMAND_DEBUG_LOG
 			else
@@ -884,6 +1580,11 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 			if ((*renderTargetHandle) != K15_INVALID_GPU_RESOURCE_HANDLE)
 			{
 				result = p_RenderContext->commandProcessing.renderTargetManagement.deleteRenderTarget(p_RenderContext, renderTargetHandle);
+
+				if (result == K15_SUCCESS)
+				{
+					K15_InternalDeleteRenderTarget(p_RenderContext, *renderTargetHandle);
+				}
 			}
 #ifdef K15_SHOW_PER_COMMAND_DEBUG_LOG
 			else
@@ -934,12 +1635,42 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 			break;
 		}
 
-		case K15_RENDER_COMMAND_DRAW_GUI:
+		case K15_RENDER_COMMAND_DRAW_2D_GUI:
 		{
 			K15_GUIContext guiContext = {};
+			K15_RenderMaterialHandle materialHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
 
 			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_GUIContext), 0, &guiContext);
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, sizeof(K15_GUIContext), &materialHandle);
+			
+			result = K15_InternalDraw2DGUI(p_RenderContext, &guiContext, materialHandle);
+			
+			break;
+		}
 
+		case K15_RENDER_COMMAND_DRAW_2D_TEXT:
+		{
+			uint32 offset = 0;
+			uint32 textLength = 0;
+			K15_RenderFontHandle* fontHandle = 0;
+			K15_RenderSamplerHandle* samplerHandle = 0;
+			char* text = 0;
+			float posX = 0.f;
+			float posY = 0.f;
+
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, offset, &fontHandle);
+			offset += K15_PTR_SIZE;
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, K15_PTR_SIZE, offset, &samplerHandle);
+			offset += K15_PTR_SIZE;
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(uint32), offset, &textLength);
+			offset += sizeof(uint32);
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, textLength, offset, &text);
+			offset += textLength;
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(float), offset, &posX);
+			offset += sizeof(float);
+			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(float), offset, &posY);
+			
+			result = K15_InternalDraw2DText(p_RenderContext, *fontHandle, *samplerHandle, text, posX, posY);
 			break;
 		}
 
@@ -966,9 +1697,7 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 
 			if ((*renderCameraHandle) != K15_INVALID_GPU_RESOURCE_HANDLE)
 			{
-				K15_InternalRenderCameraDesc internalRenderCameraDesc = {};
-				K15_InternalConvertCameraDescToInternalCameraDesc(p_RenderContext, &renderCameraDesc, &internalRenderCameraDesc);
-				p_RenderContext->cameras[*renderCameraHandle] = internalRenderCameraDesc;
+				K15_InternalAddRenderCameraDesc(p_RenderContext, &renderCameraDesc);
 			}
 #ifdef K15_SHOW_PER_COMMAND_DEBUG_LOG
 			else
@@ -995,33 +1724,6 @@ intern inline uint8 K15_InternalProcessRenderCommand(K15_RenderContext* p_Render
 				K15_LOG_DEBUG_MESSAGE("Did not sent command '%s' to the GPU because the camera handle is invalid.", K15_ConvertRenderCommandToString(p_RenderCommand->type));
 			}
 #endif //K15_SHOW_PER_COMMAND_DEBUG_LOG
-			break;
-		}
-
-		case K15_RENDER_COMMAND_SET_GUI_TEXTURE:
-		{
-			K15_RenderTextureHandle* guiTextureHandle = &p_RenderContext->resources.guiTexture;
-
-			K15_RenderTextureDesc renderTextureDesc = {};
-
-			K15_InternalReadParameter(p_ParameterFrontBuffer, p_RenderCommand, sizeof(K15_RenderTextureDesc), 0, &renderTextureDesc);
-
-			//try to load new gui texture
-			K15_RenderTextureHandle newGUITextureHandle = K15_InternalAddRenderTextureDesc(p_RenderContext, &renderTextureDesc);
-			result = p_RenderContext->commandProcessing.textureManagement.createTexture(p_RenderContext, &renderTextureDesc, &newGUITextureHandle);
-
-			if (result == K15_SUCCESS &&
-				newGUITextureHandle != K15_INVALID_GPU_RESOURCE_HANDLE)
-			{
-				if (*guiTextureHandle != K15_INVALID_GPU_RESOURCE_HANDLE)
-				{
-					//delete old gui texture
-					result = p_RenderContext->commandProcessing.textureManagement.deleteTexture(p_RenderContext, guiTextureHandle);
-				}
-
-				*guiTextureHandle = newGUITextureHandle;
-			}
-
 			break;
 		}
 
@@ -1309,14 +2011,7 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSContext* p_OSContext)
 	renderCommandBufferDispatcher->swapMutex = K15_CreateMutex();
 
 	//create uniform cache
-	K15_RenderUniformCache* uniformCache = (K15_RenderUniformCache*)malloc(sizeof(K15_RenderUniformCache));
-	K15_InitializeRenderUniformCache(uniformCache);
-
-	renderContext->uniformCache = uniformCache;
-
-
-	//create render resources
-	renderContext->resources.guiTexture = K15_INVALID_GPU_RESOURCE_HANDLE;
+	K15_InitializeRenderUniformCache(&renderContext->uniformCache);
 
 	//create command queues
 	K15_RenderCommandBuffer* renderCommandBuffers = (K15_RenderCommandBuffer*)malloc(sizeof(K15_RenderCommandBuffer) * K15_RENDERING_MAX_COMMAND_BUFFERS);
@@ -1328,124 +2023,102 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSContext* p_OSContext)
 	}
 	
 	/*********************************************************************************/
-	//gpu meshes
-	K15_RenderMeshDesc* gpuMeshes = (K15_RenderMeshDesc*)malloc(sizeof(K15_RenderMeshDesc) * K15_RENDER_MAX_GPU_MESHES);
-
-	if (!gpuMeshes)
+	//gpu materials
+	for (uint32 i = 0;
+		i < K15_RENDER_MAX_GPU_MATERIALS;
+		++i)
 	{
-		assert(false);
-		return 0;
+		renderContext->renderResources.materialDescs[i] = 0;
 	}
 
-	renderContext->gpuMeshes.meshes = gpuMeshes;
-	renderContext->gpuMeshes.amountMeshes = 0;
 	/*********************************************************************************/
+	//gpu meshes
+	for (uint32 i = 0;
+		i < K15_RENDER_MAX_GPU_MESHES;
+		++i)
+	{
+		renderContext->renderResources.meshDescs[i] = 0;
+	}
+	/*********************************************************************************/
+	
 
 	/*********************************************************************************/
 	//gpu buffers
-	K15_RenderBufferDesc* gpuBuffers = (K15_RenderBufferDesc*)malloc(sizeof(K15_RenderBufferDesc) * K15_RENDER_MAX_GPU_BUFFER);
-
-	if(!gpuBuffers)
+	for (uint32 i = 0;
+		i < K15_RENDER_MAX_GPU_BUFFER;
+		++i)
 	{
-		assert(false);
-		return 0;
+		renderContext->renderResources.bufferDescs[i] = 0;
 	}
-
-	renderContext->gpuBuffer.buffers = gpuBuffers;
-	renderContext->gpuBuffer.amountBuffers = 0;
 	/*********************************************************************************/
+
 
 	/*********************************************************************************/
 	//gpu programs
-	K15_RenderProgramDesc* gpuPrograms = (K15_RenderProgramDesc*)malloc(sizeof(K15_RenderProgramDesc) * K15_RENDER_MAX_GPU_PROGRAMS);
-
-	if(!gpuPrograms)
+	for (uint32 i = 0;
+		i < K15_RENDER_MAX_GPU_PROGRAMS;
+		++i)
 	{
-		assert(false);
-		return 0;
+		renderContext->renderResources.programDescs[i] = 0;
 	}
-
-	renderContext->gpuProgram.programs = gpuPrograms;
-	renderContext->gpuProgram.amountPrograms = 0;
 	/*********************************************************************************/
+
 
 	/*********************************************************************************/
 	//gpu textures
-	K15_RenderTextureDesc* gpuTextures = (K15_RenderTextureDesc*)malloc(sizeof(K15_RenderTextureDesc) * K15_RENDER_MAX_GPU_TEXTURES);
-
-	if (!gpuTextures)
+	for (uint32 i = 0;
+		i < K15_RENDER_MAX_GPU_TEXTURES;
+		++i)
 	{
-		assert(false);
-		return 0;
+		renderContext->renderResources.textureDescs[i] = 0;
 	}
-
-	renderContext->gpuTexture.textures = gpuTextures;
-	renderContext->gpuTexture.amountTextures = 0;
 	/*********************************************************************************/
+
 
 	/*********************************************************************************/
 	//gpu samplers
-	K15_RenderSamplerDesc* gpuSamplers = (K15_RenderSamplerDesc*)malloc(sizeof(K15_RenderSamplerDesc) * K15_RENDER_MAX_GPU_SAMPLERS);
-
-	if (!gpuSamplers)
+	for (uint32 i = 0;
+		i < K15_RENDER_MAX_GPU_SAMPLERS;
+		++i)
 	{
-		assert(false);
-		return 0;
+		renderContext->renderResources.samplerDescs[i] = 0;
 	}
-
-	renderContext->gpuSampler.samplers = gpuSamplers;
-	renderContext->gpuSampler.amountSamplers = 0;
 	/*********************************************************************************/
+
 
 	/*********************************************************************************/
 	//gpu render targets
-	K15_RenderTargetDesc* gpuRenderTargets = (K15_RenderTargetDesc*)malloc(sizeof(K15_RenderTargetDesc) * K15_RENDER_MAX_GPU_RENDER_TARGETS);
-	
-	if (!gpuRenderTargets)
+	for (uint32 i = 0;
+		i < K15_RENDER_MAX_GPU_RENDER_TARGETS;
+		++i)
 	{
-		assert(false);
-		return 0;
+		renderContext->renderResources.renderTargetDescs[i] = 0;
 	}
-
-	renderContext->gpuRenderTargets.renderTargets = gpuRenderTargets;
-	renderContext->gpuRenderTargets.amountRenderTargets = 0;
 	/*********************************************************************************/
+
+
+	/*********************************************************************************/
+	//gpu fonts
+	for (uint32 i = 0;
+		i < K15_RENDER_MAX_GPU_FONTS;
+		++i)
+	{
+		renderContext->renderResources.fontDescs[i] = 0;
+	}
+	/*********************************************************************************/
+
 
 	/*********************************************************************************/
 	//camera(s)
-	K15_InternalRenderCameraDesc* cameraDescs = (K15_InternalRenderCameraDesc*)malloc(sizeof(K15_InternalRenderCameraDesc) * K15_RENDER_MAX_CAMERAS);
-
-	if (!cameraDescs)
+	for (uint32 i = 0;
+		i < K15_RENDER_MAX_CAMERAS;
+		++i)
 	{
-		assert(false);
-		return 0;
+		renderContext->renderResources.cameras.cameraDescs[i] = 0;
 	}
-
-	renderContext->cameras = cameraDescs;
-	renderContext->amountCameras = 0;
+	renderContext->renderResources.cameras.activeCameraIndex = 0;
 	/*********************************************************************************/
 
-	/*********************************************************************************/
-	//viewport(s)
-	K15_RenderViewportDesc* viewports = (K15_RenderViewportDesc*)malloc(sizeof(K15_RenderViewportDesc) * K15_RENDER_MAX_VIEWPORT_COUNT);
-
-	if (!viewports)
-	{
-		assert(false);
-		return 0;
-	}
-
-	renderContext->viewports = viewports;
-	renderContext->viewportCount = 0;
-	renderContext->activeViewportIndex = 0;
-	/*********************************************************************************/
-
-	//states
-	renderContext->renderState.blendStateDesc = (K15_RenderBlendStateDesc*)malloc(sizeof(K15_RenderBlendStateDesc));
-	renderContext->renderState.depthStateDesc = (K15_RenderDepthStateDesc*)malloc(sizeof(K15_RenderDepthStateDesc));
-	renderContext->renderState.stencilStateDesc = (K15_RenderStencilStateDesc*)malloc(sizeof(K15_RenderStencilStateDesc));
-	renderContext->renderState.rasterizerStateDesc = (K15_RenderRasterizerStateDesc*)malloc(sizeof(K15_RenderRasterizerStateDesc));
-	/*********************************************************************************/
 	renderContext->lastError.length = 0;
 	renderContext->lastError.message = 0;
 
@@ -1465,23 +2138,10 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSContext* p_OSContext)
 	K15_Window* window = p_OSContext->window.window;
 
 	//set first viewport manually
-	renderContext->viewports[0].x = 0;
-	renderContext->viewports[0].y = 0;
-	renderContext->viewports[0].width = window->width;
-	renderContext->viewports[0].height = window->height;
-
-	for(uint32 viewportIndex = 1;
-		viewportIndex < K15_RENDER_MAX_VIEWPORT_COUNT;
-		++viewportIndex)
-	{
-		renderContext->viewports[viewportIndex].x = 0;
-		renderContext->viewports[viewportIndex].y = 0;
-		renderContext->viewports[viewportIndex].width = 0;
-		renderContext->viewports[viewportIndex].height = 0;
-	}
-
-	renderContext->viewportCount = 1;
-	renderContext->activeViewportIndex = 0;
+	renderContext->renderResources.viewportDescs[0].x = 0;
+	renderContext->renderResources.viewportDescs[0].y = 0;
+	renderContext->renderResources.viewportDescs[0].width = window->width;
+	renderContext->renderResources.viewportDescs[0].height = window->height;
 
 	//set stub functions
 	K15_InternalSetRenderContextStubFunctions(renderContext);
@@ -1489,18 +2149,14 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSContext* p_OSContext)
 	uint8 contextCreateResult = K15_InternalInitializeRenderContext(renderContext, p_OSContext);
 
 	//Set default render states
-	K15_InternalSetDefaultRenderStates(renderContext);
+	K15_InternalCreateDefaultRenderStates(renderContext);
+	K15_InternalCreateImmediateBuffer(renderContext);
 
 	return renderContext;
 }
 /*********************************************************************************/
 K15_RenderCommandBuffer* K15_CreateRenderCommandBuffer(K15_RenderContext* p_RenderContext)
 {
-	//only continue when the rendercontext has been initialized
-// 	uint32 renderContextFlags = p_RenderContext->flags;
-// 
-// 	while ((renderContextFlags & K15_RCF_INITIALIZED) > 0); //busy wait until render context is initialized
-
 	assert(p_RenderContext->amountCommandBuffers < K15_RENDERING_MAX_COMMAND_BUFFERS);
 	
 	if (p_RenderContext->amountCommandBuffers >= K15_RENDERING_MAX_COMMAND_BUFFERS)
@@ -1553,7 +2209,6 @@ K15_RenderCommandBuffer* K15_CreateRenderCommandBuffer(K15_RenderContext* p_Rend
 #ifdef K15_DEBUG_MRT
 	renderCommandBuffer->debugging.assignedThread = K15_GetCurrentThread();
 #endif //K15_DEBUG_MRT
-	//renderCommandQueue->swapSection = K15_CreateNamedMutex("RenderCommandQueue Swap");
 	
 	//increasing the command queue count should be the last operation
 	++p_RenderContext->amountCommandBuffers;
