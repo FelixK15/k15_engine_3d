@@ -24,10 +24,13 @@
 #endif //K15_OS_WINDWS
 
 const char* K15_GetWorkingDirectory();
+const char* K15_SetWorkingDirectory(const char* p_WorkingDirectory);
+
 byte* K15_GetWholeFileContent(const char* p_FilePath);
 byte* K15_GetWholeFileContentWithFileSize(const char* p_FilePath, uint32* p_FileSize);
 
 bool8 K15_IsAbsolutePath(const char* p_FilePath);
+
 
 char* K15_GetPathWithoutFileName(const char* p_FilePath);
 char* K15_GetPathWithoutExtension(const char* p_FilePath);

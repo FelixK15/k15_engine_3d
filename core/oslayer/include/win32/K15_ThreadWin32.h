@@ -15,9 +15,12 @@
 #define K15_WaitSemaphore K15_Win32WaitSemaphore
 #define K15_FreeSemaphore K15_Win32FreeSemaphore
 
-#define K15_InterlockedIncrement		InterlockedIncrement
-#define K15_InterlockedDecrement		InterlockedDecrement
-#define k15_InterlockedCompareExchange	InterlockedCompareExchange
+#define K15_InterlockedIncrement						InterlockedIncrement
+#define K15_InterlockedDecrement						InterlockedDecrement
+#define K15_InterlockedCompareExchange					InterlockedCompareExchange
+#define K15_InterlockedCompareExchangePointer			InterlockedCompareExchangePointer
+#define K15_InterlockedCompareExchangePointerAcquire	InterlockedCompareExchangePointerAcquire
+#define K15_InterlockedCompareExchangePointerRelease	InterlockedCompareExchangePointerRelease
 
 /*********************************************************************************/
 struct K15_Mutex

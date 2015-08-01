@@ -32,6 +32,25 @@ intern uint8 K15_InternalDirectoryWatchComparer(K15_DirectoryWatchEntry* p_Direc
 	return strcmp(dirPath, p_DirectoryWatchEntry->dirPath);
 }
 /*********************************************************************************/
+intern K15_DirectoryWatchEntry* K15_InternalGetDirectoryWatch(K15_OSContext* p_OSContext, char* p_DirectoryPath)
+{
+	K15_DirectoryWatchEntryStretchBuffer* directoryWatchBuffer = &p_OSContext->system.directoryWatchEntries;
+	K15_DirectoryWatchEntry* directoryWatchEntry = K15_GetDirectoryWatchEntryStretchBufferElementConditional(directoryWatchBuffer, K15_InternalDirectoryWatchComparer, p_DirectoryPath);
+
+	return directoryWatchEntry;
+}
+/*********************************************************************************/
+intern K15_DirectoryWatchEntry* K15_InternalAddDirectoryWatch(K15_OSContext* p_OSContext, char* p_DirectoryPath)
+{
+	K15_DirectoryWatchEntryStretchBuffer* directoryWatchBuffer = &p_OSContext->system.directoryWatchEntries;
+	K15_DirectoryWatchEntry* newDirectoryWatchEntry = (K15_DirectoryWatchEntry*)K15_OS_MALLOC(sizeof(K15_DirectoryWatchEntry));
+	memset(newDirectoryWatchEntry, 0, sizeof(K15_DirectoryWatchEntry));
+	newDirectoryWatchEntry->dirPath = p_DirectoryPath;
+
+	K15_CreateFileWatchEntryStretchBuffer(&newDirectoryWatchEntry->fileWatchEntries);
+	return K15_PushDirectoryWatchEntryStretchBufferElement(directoryWatchBuffer, *newDirectoryWatchEntry);
+}
+/*********************************************************************************/
 K15_FileWatchEntry* K15_AddDirectoryWatch(const char* p_DirectoryWatch, K15_FileChangeNotificationFnc p_NotificationFnc, void* p_UserData, unsigned int p_Flags /*= 0*/)
 {
 	char* directoryWatchPath = 0;
@@ -72,24 +91,15 @@ K15_FileWatchEntry* K15_AddFileWatch(const char* p_FilePath, K15_FileChangeNotif
 		return 0;
 	}
 
-	char* dirPath = K15_GetPathWithoutFileName(p_FilePath);
-	const char* filePath = p_FilePath;
-
 	K15_OSContext* osContext = K15_GetOSLayerContext();
 
-	K15_DirectoryWatchEntryStretchBuffer* directoryWatchBuffer = &osContext->system.directoryWatchEntries;
-	K15_DirectoryWatchEntry* directoryWatchEntry = K15_GetDirectoryWatchEntryStretchBufferElementConditional(directoryWatchBuffer, K15_InternalDirectoryWatchComparer, dirPath);
+	char* dirPath = K15_GetPathWithoutFileName(p_FilePath);
+
+	K15_DirectoryWatchEntry* directoryWatchEntry = K15_InternalGetDirectoryWatch(osContext, dirPath);
 
 	if (!directoryWatchEntry)
 	{
-		K15_DirectoryWatchEntry* newDirectoryWatchEntry = (K15_DirectoryWatchEntry*)K15_OS_MALLOC(sizeof(K15_DirectoryWatchEntry));
-		memset(newDirectoryWatchEntry, 0, sizeof(K15_DirectoryWatchEntry));
-		newDirectoryWatchEntry->dirPath = dirPath;
-		
-		K15_CreateFileWatchEntryStretchBuffer(&newDirectoryWatchEntry->fileWatchEntries);
-		K15_PushDirectoryWatchEntryStretchBufferElement(directoryWatchBuffer, *newDirectoryWatchEntry);
-
-		directoryWatchEntry = newDirectoryWatchEntry;
+		directoryWatchEntry = K15_InternalAddDirectoryWatch(osContext, dirPath);
 	}
 	else
 	{
@@ -97,11 +107,6 @@ K15_FileWatchEntry* K15_AddFileWatch(const char* p_FilePath, K15_FileChangeNotif
 	}
 
 	K15_FileWatchEntryStretchBuffer* fileWatchBuffer = &directoryWatchEntry->fileWatchEntries;
-
-	if (isDirectory)
-	{
-		filePath = ".";
-	}
 
 	//check if file is already being watched
 	K15_FileWatchEntry* fileWatchEntry = K15_GetFileWatchEntryStretchBufferElementConditional(fileWatchBuffer, K15_InternalFileWatchComparer, (void*)p_FilePath);
@@ -123,6 +128,7 @@ K15_FileWatchEntry* K15_AddFileWatch(const char* p_FilePath, K15_FileChangeNotif
 	newFileWatchEntry->userParamter = p_UserData;
 	newFileWatchEntry->notification = p_NotificationFnc;
 	newFileWatchEntry->flags = p_Flags;
+	newFileWatchEntry->lastWriteTime = 0;
 
 	K15_PushFileWatchEntryStretchBufferElement(fileWatchBuffer, *newFileWatchEntry);
 
@@ -156,6 +162,27 @@ K15_FileWatchEntry* K15_AddFileWatchAndCopyUserData(const char* p_FilePath, K15_
 	}
 
 	return watchEntry;
+}
+/*********************************************************************************/
+unsigned char K15_FileIsBeingWatched(const char* p_FilePath)
+{
+	assert(p_FilePath);
+
+	K15_OSContext* osContext = K15_GetOSLayerContext();
+	char* dirPath = K15_GetPathWithoutFileName(p_FilePath);
+
+	K15_DirectoryWatchEntry* directoryWatchEntry = K15_InternalGetDirectoryWatch(osContext, dirPath);
+	bool8 isBeingWatched = K15_FALSE;
+
+	if (directoryWatchEntry)
+	{
+		K15_FileWatchEntry* fileWatchEntry = K15_GetFileWatchEntryStretchBufferElementConditional(&directoryWatchEntry->fileWatchEntries, K15_InternalFileWatchComparer, (void*)p_FilePath);
+		isBeingWatched = fileWatchEntry != 0;
+	}
+
+	K15_OS_FREE(dirPath);
+
+	return isBeingWatched;
 }
 /*********************************************************************************/
 void K15_DeleteFileWatch(K15_FileWatchEntry* p_FileWatch)

@@ -23,6 +23,7 @@ struct K15_DirectoryWatchEntry
 struct K15_FileWatchEntry
 {
 	K15_FileChangeNotificationFnc notification;
+	unsigned long long lastWriteTime;
 	char* filePath;
 	char* fileName;
 	void* userParamter; //userData from the user
@@ -33,6 +34,8 @@ struct K15_FileWatchEntry
 K15_FileWatchEntry* K15_AddDirectoryWatch(const char* p_DirectoryWatch, K15_FileChangeNotificationFnc p_NotificationFnc, void* p_UserData, unsigned int p_Flags = 0);
 K15_FileWatchEntry* K15_AddFileWatch(const char* p_FilePath, K15_FileChangeNotificationFnc p_NotificationFnc, void* p_UserData, unsigned int p_Flags = 0);
 K15_FileWatchEntry* K15_AddFileWatchAndCopyUserData(const char* p_FilePath, K15_FileChangeNotificationFnc p_NotificationFnc, void* p_UserData, unsigned int p_UserDataSize, unsigned int p_Flags = 0);
+
+unsigned char K15_FileIsBeingWatched(const char* p_FilePath);
 
 void K15_DeleteFileWatch(K15_FileWatchEntry* p_FileWatch);
 

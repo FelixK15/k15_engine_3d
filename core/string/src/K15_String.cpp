@@ -11,6 +11,28 @@
 #include <cstdarg>
 
 /*********************************************************************************/
+static char** K15_InternalVCreateStringArrayIntoBuffer(char** p_Buffer, unsigned int p_NumStrings, va_list p_ArgumentList)
+{
+	assert(p_NumStrings);
+	assert(p_Buffer);
+
+	char** stringArray = p_Buffer;
+
+	for (unsigned int stringIndex = 0;
+		stringIndex < p_NumStrings;
+		++stringIndex)
+	{
+		char* currentString = va_arg(p_ArgumentList, char*);
+		stringArray[stringIndex] = K15_CopyString(currentString);
+	}
+
+	return stringArray;
+}
+/*********************************************************************************/
+
+
+
+/*********************************************************************************/
 unsigned int K15_GetLines(const char* p_String, char** p_Lines)
 {
 	unsigned int stringLength = 0;
@@ -82,7 +104,7 @@ char* K15_CopyString(const char* p_String, unsigned int p_StringLength)
 		p_StringLength= (unsigned int)strlen(p_String);
 	} 
 
-	char* buffer = (char*)malloc(p_StringLength);
+	char* buffer = (char*)malloc(p_StringLength + 1);
 
 	return K15_CopyStringIntoBuffer(p_String, buffer, p_StringLength);
 }
@@ -208,22 +230,22 @@ char* K15_ConcatStringsIntoBuffer(const char* p_String1, const char* p_String2, 
 /*********************************************************************************/
 char** K15_CreateStringArray(unsigned int p_NumStrings, ...)
 {
-	assert(p_NumStrings !=0);
-
 	va_list argumentList;
-	int arguments = 0;
-
-	char** stringArray = (char**)malloc(sizeof(char*) * p_NumStrings);
-
 	va_start(argumentList, p_NumStrings);
 
-	for (unsigned int stringIndex = 0;
-		stringIndex < p_NumStrings;
-		++stringIndex)
-	{
-		char* currentString = va_arg(argumentList, char*);
-		stringArray[stringIndex] = K15_CopyString(currentString);
-	}
+	char** stringArray = K15_InternalVCreateStringArrayIntoBuffer((char**)malloc(sizeof(char*) * p_NumStrings), p_NumStrings, argumentList);
+
+	va_end(argumentList);
+
+	return stringArray;
+}
+/*********************************************************************************/
+char** K15_CreateStringArrayIntoBuffer(char** p_Buffer, unsigned int p_NumStrings, ...)
+{
+	va_list argumentList;
+	va_start(argumentList, p_NumStrings);
+	
+	char** stringArray = K15_InternalVCreateStringArrayIntoBuffer(p_Buffer, p_NumStrings, argumentList);
 
 	va_end(argumentList);
 

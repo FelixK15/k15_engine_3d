@@ -10,7 +10,7 @@
 #include "K15_FileSystem.h"
 #include "K15_FileWatch.h"
 
-#define K15_WIN32_READDIRECTORYCHANGES_NOTIFICATION_COUNT 8
+#define K15_WIN32_READDIRECTORYCHANGES_NOTIFICATION_COUNT 32
 
 /*********************************************************************************/
 struct K15_DirectoryWatchOverlapped
@@ -52,25 +52,64 @@ intern inline VOID WINAPI K15_Win32InternalFileChangeCallback(DWORD dwErrorCode,
 
 	for(;;)
 	{
+		char* dirPath = watchEntry->dirPath;
 		wchar_t* fileNameW = currentNotification->FileName;
 		size_t fileNameLength = wcslen(fileNameW) + 1;
+		size_t directoryLength = strlen(watchEntry->dirPath);
 		//uint32 fileNameLength = currentNotification->FileNameLength + 1; //apparently not 0 terminated.
 
 		char* fileName = (char*)alloca(fileNameLength);
+		char* filePath = (char*)alloca(fileNameLength + directoryLength);
+		wchar_t* filePathW = (wchar_t*)alloca((fileNameLength + directoryLength) * sizeof(wchar_t));
 
 		K15_Win32ConvertWStringToString(fileNameW, fileNameLength, fileName);
 		
+		filePath = K15_ConcatStringsIntoBuffer(dirPath, fileName, filePath);
+
+		K15_Win32ConvertStringToWString(filePath, fileNameLength + directoryLength, filePathW);
+
 		K15_FileWatchEntry* fileWatchEntry = K15_GetFileWatchEntryStretchBufferElementConditional(fileWatchBuffer, K15_InternalWin32FileWatchEntryComparer, fileName);
 
 		//check if file is being watched
-		if (fileWatchEntry)
+		if (fileWatchEntry &&
+			(currentNotification->Action == FILE_ACTION_MODIFIED ||
+			currentNotification->Action == FILE_ACTION_ADDED))
 		{
-			if (currentNotification->Action == FILE_ACTION_MODIFIED ||
-				currentNotification->Action == FILE_ACTION_ADDED)
+			//automatically notify on file added
+			bool8 notify = currentNotification->Action == FILE_ACTION_ADDED;
+
+			//check the time the file got touched last. (so we can avoid sending change events more than once)
+			HANDLE fileHandle = CreateFileW(filePathW, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, 0, OPEN_EXISTING, 0, 0);
+
+			if (fileHandle != INVALID_HANDLE_VALUE)
 			{
-				void* fileWatchUserData = fileWatchEntry->userParamter;
-				char* fullFilePath = K15_ConcatStringsIntoBuffer(watchEntry->dirPath, fileName, (char*)alloca(512));
-				fileWatchEntry->notification(fullFilePath, fileWatchUserData);
+				//only check last written time on modified file actions
+				if (currentNotification->Action == FILE_ACTION_MODIFIED)
+				{
+					FILETIME lastWrittenTimeWin32 = {};
+					GetFileTime(fileHandle, 0, 0, &lastWrittenTimeWin32);
+
+					CloseHandle(fileHandle);
+
+					LARGE_INTEGER largeLastWrittenTime = {};
+					largeLastWrittenTime.HighPart = lastWrittenTimeWin32.dwHighDateTime;
+					largeLastWrittenTime.LowPart = lastWrittenTimeWin32.dwLowDateTime;
+
+					unsigned long long lastWrittenTime = largeLastWrittenTime.QuadPart;
+
+					if (fileWatchEntry->lastWriteTime < lastWrittenTime)
+					{
+						fileWatchEntry->lastWriteTime = lastWrittenTime;
+						notify = K15_TRUE;
+					}
+				}
+
+				if (notify)
+				{
+					void* fileWatchUserData = fileWatchEntry->userParamter;
+					char* fullFilePath = K15_ConcatStringsIntoBuffer(watchEntry->dirPath, fileName, (char*)alloca(512));
+					fileWatchEntry->notification(fullFilePath, fileWatchUserData);
+				}
 			}
 		}
 
@@ -88,7 +127,7 @@ intern inline VOID WINAPI K15_Win32InternalFileChangeCallback(DWORD dwErrorCode,
 intern inline uint8 K15_Win32InternalRegisterChangeNotification(HANDLE p_DirectoryHandle, K15_DirectoryWatchEntry* p_DirectoryWatchEntry, K15_DirectoryWatchEntryWin32* p_DirectoryWatchEntryWin32)
 {
 	uint32 notificationBufferSize = sizeof(FILE_NOTIFY_INFORMATION) * K15_WIN32_READDIRECTORYCHANGES_NOTIFICATION_COUNT;
-	uint32 notificationFilter = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_ATTRIBUTES/* | FILE_NOTIFY_CHANGE_SIZE*/;
+	uint32 notificationFilter = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_SIZE/* | FILE_NOTIFY_CHANGE_LAST_WRITE*/;
 
 	K15_DirectoryWatchOverlapped* overlapped = &p_DirectoryWatchEntryWin32->overlapped;
 	overlapped->directoryWatchEntry = p_DirectoryWatchEntry;

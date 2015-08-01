@@ -24,6 +24,10 @@ struct K15_ConfigFileContext
 /*********************************************************************************/
 
 uint8 K15_LoadConfigFile(const char* p_ConfigFile, K15_ConfigFileContext* p_ConfigFileContext);
+
+uint32 K15_GetNumConfigValuesForCategory(K15_ConfigFileContext* p_ConfigFileContext, const char* p_Category);
+void K15_CopyCategoryConfigValuesIntoBuffer(K15_ConfigFileContext* p_ConfigFileContext, const char* p_Category, K15_ConfigValue** p_ConfigValueBuffer);
+
 float K15_GetConfigValueAsFloat(K15_ConfigFileContext* p_ConfigFileContext, const char* p_ConfigValueName, float p_DefaultValue = 0.f);
 int K15_GetConfigValueAsInt(K15_ConfigFileContext* p_ConfigFileContext, const char* p_ConfigValueName, int p_DefaultValue = 0);
 bool8 K15_GetConfigValueAsBool(K15_ConfigFileContext* p_ConfigFileContext, const char* p_ConfigValueName, bool8 p_DefaultValue = 0);

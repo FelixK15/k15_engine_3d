@@ -85,13 +85,11 @@ void K15_ParseCommandLineArguments()
 		if (strstr(argument, "/workingdir=") == argument)
 		{
 			char* workingDir = K15_InternalGetWorkingDirectory(argument);
-
-			g_InternalOSContext.system.homeDir = K15_ConvertToSystemPath(workingDir);
+			K15_SetWorkingDirectory(workingDir);
 		}
 		else if (strstr(argument, "/numWorkThreads=") == argument)
 		{
 			int numWorkingThreads = K15_InternalGetNumWorkingThreads(argument);
-
 			g_InternalOSContext.threading.numHardwareThreads = (uint32)numWorkingThreads;
 		}
 		else

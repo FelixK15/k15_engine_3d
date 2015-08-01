@@ -1,5 +1,6 @@
 #include "K15_FileSystem.h"
 
+#include "K15_Logging.h"
 #include "K15_String.h"
 #include "K15_DefaultCLibraries.h"
 #include "K15_OSContext.h"
@@ -41,6 +42,24 @@ byte* K15_GetWholeFileContentWithFileSize(const char* p_FilePath, uint32* p_File
 bool8 K15_IsAbsolutePath(const char* p_FilePath)
 {
 	return !K15_IsRelativePath(p_FilePath);
+}
+/*********************************************************************************/
+const char* K15_SetWorkingDirectory(const char* p_HomeDirectory)
+{
+	K15_ASSERT_TEXT(p_HomeDirectory, "Home directory is NULL.");
+
+	if (!K15_DirectoryExists(p_HomeDirectory))
+	{
+		K15_LOG_ERROR_MESSAGE("New working directory '%s' does not exist.", p_HomeDirectory);
+		return p_HomeDirectory;
+	}
+
+	K15_OSContext* osContext = K15_GetOSLayerContext();
+	free(osContext->system.homeDir);
+
+	osContext->system.homeDir = K15_ConvertToDirectoryPath(p_HomeDirectory);
+	
+	return osContext->system.homeDir;
 }
 /*********************************************************************************/
 char* K15_GetPathWithoutFileName(const char* p_FilePath)

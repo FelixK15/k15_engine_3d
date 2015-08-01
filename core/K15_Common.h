@@ -60,6 +60,8 @@
 #define K15_TRUE 1
 #define K15_FALSE 0
 
+#define K15_SAFE_FREE(ptr) free(ptr); ptr = 0;
+
 #define K15_ARRAY_COUNT(arr) (sizeof(arr)/sizeof(arr[0]))
 
 #define K15_ASSERT(expr, text) assert(expr && text)

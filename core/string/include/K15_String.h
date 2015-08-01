@@ -15,5 +15,6 @@ char* K15_ConcatStringsIntoBuffer(const char* p_String1, const char* p_String2, 
 
 char* K15_GenerateString(const char* p_Format, char* p_Buffer, ...);
 char** K15_CreateStringArray(unsigned int p_NumStrings, ...);
+char** K15_CreateStringArrayIntoBuffer(char** p_Buffer, unsigned int p_NumStrings, ...);
 
 #endif //_K15_Runtime_String_h_

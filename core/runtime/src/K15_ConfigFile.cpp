@@ -285,6 +285,54 @@ uint8 K15_LoadConfigFile(const char* p_ConfigFile, K15_ConfigFileContext* p_Conf
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
+uint32 K15_GetNumConfigValuesForCategory(K15_ConfigFileContext* p_ConfigFileContext, const char* p_Category)
+{
+	K15_ASSERT_TEXT(p_ConfigFileContext, "Config File Context is NULL.");
+	K15_ASSERT_TEXT(p_Category, "Category Name is NULL.");
+
+	K15_ConfigValueStretchBuffer* configValueStretchBuffer = &p_ConfigFileContext->configValues;
+	uint32 categoryElements = 0;
+
+	for (uint32 elementIndex = 0;
+		elementIndex < configValueStretchBuffer->numElements;
+		++elementIndex)
+	{
+		K15_ConfigValue* configValue = K15_GetConfigValueStretchBufferElement(configValueStretchBuffer, elementIndex);
+
+		if (configValue->category)
+		{
+			if (strcmp(configValue->category, p_Category) == 0)
+			{
+				++categoryElements;
+			}
+		}
+	}
+
+	return categoryElements;
+}
+/*********************************************************************************/
+void K15_CopyCategoryConfigValuesIntoBuffer(K15_ConfigFileContext* p_ConfigFileContext, const char* p_Category, K15_ConfigValue** p_ConfigValueBuffer)
+{
+	K15_ASSERT_TEXT(p_ConfigFileContext, "Config File Context is NULL.");
+	K15_ASSERT_TEXT(p_Category, "Category Name is NULL.");
+	K15_ASSERT_TEXT(p_ConfigValueBuffer, "Config value buffer is NULL.");
+
+	K15_ConfigValueStretchBuffer* configValueStretchBuffer = &p_ConfigFileContext->configValues;
+	uint32 configValueBufferIndex = 0;
+
+	for (uint32 elementIndex = 0;
+		elementIndex < configValueStretchBuffer->numElements;
+		++elementIndex)
+	{
+		K15_ConfigValue* configValue = K15_GetConfigValueStretchBufferElement(configValueStretchBuffer, elementIndex);
+
+		if (strcmp(configValue->category, p_Category) == 0)
+		{
+			p_ConfigValueBuffer[configValueBufferIndex++] = configValue;
+		}
+	}
+}
+/*********************************************************************************/
 float K15_GetConfigValueAsFloat(K15_ConfigFileContext* p_ConfigFileContext, const char* p_ConfigValueName, float p_DefaultValue)
 {
 	K15_ASSERT_TEXT(p_ConfigFileContext, "Config File Context is NULL.");

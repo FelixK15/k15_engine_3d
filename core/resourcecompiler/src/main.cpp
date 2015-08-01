@@ -5,12 +5,15 @@
 #include "K15_FileWatch.h"
 #include "K15_Logging.h"
 #include "K15_String.h"
+#include "K15_Thread.h"
 #include "K15_AsyncOperation.h"
 
 #include "enums/K15_FormatValues.h"
 #include "K15_DataAccessHelper.h"
 #include "K15_MeshFormat.h"
 #include "K15_ConfigFile.h"
+
+#include "generated/K15_ResourceDependencyStretchBuffer.h"
 
 #include <stdio.h>
 #include <csignal>
@@ -68,22 +71,12 @@ void K15_PrintDaemonInfo()
 #include "K15_ResourceCompiler.cpp"
 
 /*********************************************************************************/
-void K15_OnResourceFileChanged(const char* p_ResourceFilePath, void* p_UserData)
-{
-	K15_ResourceCompilerContext* compilerContext = (K15_ResourceCompilerContext*)p_UserData;
-
-	//filter for k15resourceinfo files
-	if (K15_IsSubstringR(p_ResourceFilePath, ".k15resourceinfo"))
-	{
-		uint32 numFilesToCompile = 0;
-		K15_CompileResources(compilerContext, K15_CreateStringArray(1, p_ResourceFilePath), 1);
-	}
-}
-/*********************************************************************************/
 int main(int argc, char** argv)
 {
 	K15_InitializeOSLayer();
 	K15_OSContext* osContext = K15_GetOSLayerContext();
+
+	osContext->threading.numHardwareThreads = 1;
 
 	K15_ArgumentParser argumentParser = {};
 	K15_AsyncContext* asyncContext = K15_CreateAsyncContext(osContext);
@@ -102,10 +95,13 @@ int main(int argc, char** argv)
 
 	compilerContext.asyncContext = asyncContext;
 	compilerContext.argumentParser = &argumentParser;
+	compilerContext.dependencyMutex = K15_CreateMutex();
+
+	K15_CreateResourceDependencyStretchBuffer(&compilerContext.resourceDependencyStretchBuffer);
+	K15_CreateResourceDependencyStretchBuffer(&compilerContext.bufferedResourceDependencyStretchBuffer);
 
 	K15_CreateDefaultResourceCompiler(&compilerContext);
-
-	K15_AddDirectoryWatch(argumentParser.inputPath, K15_OnResourceFileChanged, (void*)&compilerContext);
+	K15_SetWorkingDirectory(argumentParser.inputPath);
 
 	char** filesToCompile = K15_GetFilesInDirectory(argumentParser.inputPath, &numFilesToCompile, "*.k15resourceinfo");
 
@@ -115,6 +111,7 @@ int main(int argc, char** argv)
 	{
 		while(true)
 		{
+			K15_AddBufferResourceDependenciesToFileWatch(&compilerContext);
 			K15_SleepThreadForSeconds(10);
 		}
 	}
