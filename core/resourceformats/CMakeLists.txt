@@ -4,6 +4,7 @@ project(k15_resourceformats)
 
 include_directories(./../)
 include_directories(./include)
+include_directories(./../string/include)
 include_directories(./../../dependencies/zlib/include)
 
 set(RF_INC 		"./include/K15_MeshFormat.h"
@@ -11,6 +12,7 @@ set(RF_INC 		"./include/K15_MeshFormat.h"
 				"./include/K15_TextureFormat.h"
 				"./include/K15_HeaderFormat.h"
 				"./include/K15_FontFormat.h"
+				"./include/K15_SamplerFormat.h"
 				"./include/K15_DataAccessHelper.h"
 				"./include/K15_ResourceFormats_Prerequisites.h"
 				"./include/K15_ResourceFormats_Config.h")
@@ -22,6 +24,7 @@ set(RF_SRC 		"./src/K15_MeshFormat.cpp"
 				"./src/K15_DataAccessHelper.cpp"
 				"./src/K15_MaterialFormat.cpp"
 				"./src/K15_FontFormat.cpp"
+				"./src/K15_SamplerFormat.cpp"
 				"./src/K15_TextureFormat.cpp"
 				"./src/K15_HeaderFormat.cpp")
 

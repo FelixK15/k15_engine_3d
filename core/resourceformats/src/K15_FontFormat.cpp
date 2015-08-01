@@ -24,16 +24,6 @@ intern void K15_InternalInitializeKernFormatBuffer(K15_KerningFormat* p_KernForm
 			uint32 charIndex = characterIndex + p_StartCharacter;
 			uint32 charIndex2 = characterIndex2 + p_StartCharacter;
 
-// 			if (charIndex == charIndex2)
-// 			{
-// 				if (sameCharactersPassed == K15_TRUE)
-// 				{
-// 					continue;
-// 				}
-// 
-// 				sameCharactersPassed = K15_TRUE;
-// 			}
-
 			K15_KerningFormat* currentKernFormat = &p_KernFormatBuffer[kernFormatBufferIndex++];
 
 			currentKernFormat->shiftedCharacters = (charIndex << 16) | charIndex2;
@@ -58,6 +48,9 @@ intern uint8 K15_InternalSaveFontFormat(K15_DataAccessContext* p_DataAccessConte
 
 	//write font name
 	K15_WriteData(p_DataAccessContext, p_FontFormat->fontNameLength, p_FontFormat->fontName);
+
+	//write font size
+	K15_WriteData(p_DataAccessContext, sizeof(float), &p_FontFormat->fontSize);
 
 	//write font texture width
 	K15_WriteData(p_DataAccessContext, sizeof(uint32), &p_FontFormat->texture.width);
@@ -129,6 +122,9 @@ intern uint8 K15_InternalLoadFontFormat(K15_DataAccessContext* p_DataAccessConte
 	//read font name
 	K15_ReadData(p_DataAccessContext, nameLength, nameBuffer);
 	p_FontFormat->fontName = nameBuffer;
+
+	//read font size
+	K15_ReadData(p_DataAccessContext, sizeof(float), &p_FontFormat->fontSize);
 
 	//read font texture width
 	K15_ReadData(p_DataAccessContext, sizeof(uint32), &p_FontFormat->texture.width);

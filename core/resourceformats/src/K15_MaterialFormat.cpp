@@ -2,6 +2,8 @@
 #include "K15_HeaderFormat.h"
 #include "K15_DataAccessHelper.h"
 
+#include "K15_String.h"
+
 #include "enums/K15_ReturnValues.h"
 #include "enums/K15_FormatValues.h"
 
@@ -18,107 +20,76 @@ intern uint8 K15_InternalLoadMaterialFormat(K15_DataAccessContext* p_DataAcessCo
 		return headerResult;
 	}
 
-	//material name
-	uint32 nameLength = 0;
-	char* nameBuffer = 0;
+	//read material name length
+	K15_ReadData(p_DataAcessContext, sizeof(uint32), &p_MaterialFormat->materialNameLength);
 
-	//name length
-	K15_ReadData(p_DataAcessContext, sizeof(uint32), &nameLength);
+	//create material name buffer
+	p_MaterialFormat->materialName = (char*)malloc(p_MaterialFormat->materialNameLength);
 
-	nameBuffer = (char*)K15_RF_MALLOC(nameLength + 1); //+1 for 0 terminator
+	//Read material name 
+	K15_ReadData(p_DataAcessContext, p_MaterialFormat->materialNameLength, p_MaterialFormat->materialName);
 
-	if(!nameBuffer)
+	//Read number of material passes
+	K15_ReadData(p_DataAcessContext, sizeof(uint32), &p_MaterialFormat->numMaterialPasses);
+
+	//create material pass buffer
+	p_MaterialFormat->passTemplates = (K15_MaterialPassTemplateFormat*)malloc(p_MaterialFormat->numMaterialPasses * sizeof(K15_MaterialPassTemplateFormat));
+
+	//read material passes
+	for (uint32 materialPassIndex = 0;
+		materialPassIndex < p_MaterialFormat->numMaterialPasses;
+		++materialPassIndex)
 	{
-		return K15_ERROR_OUT_OF_MEMORY;
-	}
+		K15_MaterialPassTemplateFormat materialPassFormat = {};
 
-	//material name
-	K15_ReadData(p_DataAcessContext, nameLength, nameBuffer);
+		//read number of samplers
+		K15_ReadData(p_DataAcessContext, sizeof(uint32), &materialPassFormat.numSamplers);
 
-	nameBuffer[nameLength] = 0;
+		//read vertex shader path length
+		K15_ReadData(p_DataAcessContext, sizeof(uint32), &materialPassFormat.vertexShaderPathLength);
 
-	p_MaterialFormat->materialName = nameBuffer;
-	p_MaterialFormat->materialNameLength = nameLength;
+		//read fragment shader path length
+		K15_ReadData(p_DataAcessContext, sizeof(uint32), &materialPassFormat.fragmentShaderPathLength);
 
-	//submaterial count
-	K15_ReadData(p_DataAcessContext, sizeof(uint16), &p_MaterialFormat->submaterialCount);
+		//create vertex / fragment shader path buffer
+		materialPassFormat.vertexShaderPath = (char*)malloc(materialPassFormat.vertexShaderPathLength);
+		materialPassFormat.fragmentShaderPath = (char*)malloc(materialPassFormat.fragmentShaderPathLength);
 
-	K15_SubMaterialFormat* submaterialMemory = (K15_SubMaterialFormat*)K15_RF_MALLOC(sizeof(K15_SubMaterialFormat) * p_MaterialFormat->submaterialCount);
+		//read vertex shader path
+		K15_ReadData(p_DataAcessContext, materialPassFormat.vertexShaderPathLength, materialPassFormat.vertexShaderPath);
 
-	if(!submaterialMemory)
-	{
-		return K15_ERROR_OUT_OF_MEMORY;
-	}
+		//read fragment shader path
+		K15_ReadData(p_DataAcessContext, materialPassFormat.fragmentShaderPathLength, materialPassFormat.fragmentShaderPath);
 
-	p_MaterialFormat->subMaterials = submaterialMemory;
+		//create sampler buffer
+		materialPassFormat.samplerFormats = (K15_MaterialPassTemplateSamplerFormat*)malloc(materialPassFormat.numSamplers * sizeof(K15_MaterialPassTemplateSamplerFormat));
 
-	for(uint32 submaterialIndex = 0;
-		submaterialIndex < p_MaterialFormat->submaterialCount;
-		++submaterialIndex)
-	{
-		K15_SubMaterialFormat* currentSubmaterial = &p_MaterialFormat->subMaterials[submaterialIndex];
-
-		//diffuse color
-		K15_ReadData(p_DataAcessContext, sizeof(float) * 3, &currentSubmaterial->diffuseColor);
-
-		//specular color
-		K15_ReadData(p_DataAcessContext, sizeof(float) * 3, &currentSubmaterial->specularColor);
-
-		//ambient color
-		K15_ReadData(p_DataAcessContext, sizeof(float) * 3, &currentSubmaterial->ambientColor);
-
-		//shininess
-		K15_ReadData(p_DataAcessContext, sizeof(float), &currentSubmaterial->shininess);
-
-		//shininess power
-		K15_ReadData(p_DataAcessContext, sizeof(float), &currentSubmaterial->sininessStrength);
-
-		//diffuse texture count
-		K15_ReadData(p_DataAcessContext, sizeof(uint8), &currentSubmaterial->diffuseTextureCount);
-
-		K15_SubMaterialTextureFormat* textureFormatMemory = (K15_SubMaterialTextureFormat*)K15_RF_MALLOC(sizeof(K15_SubMaterialTextureFormat) * currentSubmaterial->diffuseTextureCount);
-		if(!textureFormatMemory)
+		for (uint32 samplerIndex = 0;
+			samplerIndex < materialPassFormat.numSamplers;
+			++samplerIndex)
 		{
-			K15_RF_FREE(submaterialMemory);
-			return K15_ERROR_OUT_OF_MEMORY;
+			K15_MaterialPassTemplateSamplerFormat samplerFormat = {};
+			
+			//read sampler name length
+			K15_ReadData(p_DataAcessContext, sizeof(uint32), &samplerFormat.samplerNameLength);
+
+			//read sampler path length
+			K15_ReadData(p_DataAcessContext, sizeof(uint32), &samplerFormat.samplerPathLength);
+
+			//create sampler name and sampler path buffer
+			samplerFormat.samplerName = (char*)malloc(samplerFormat.samplerNameLength);
+			samplerFormat.samplerPath = (char*)malloc(samplerFormat.samplerPathLength);
+
+			//read sampler name
+			K15_ReadData(p_DataAcessContext, samplerFormat.samplerNameLength, samplerFormat.samplerName);
+
+			//read sampler path
+			K15_ReadData(p_DataAcessContext, samplerFormat.samplerPathLength, samplerFormat.samplerPath);
+
+			K15_AddMaterialPassTemplateSampler(&materialPassFormat, samplerFormat.samplerName, samplerFormat.samplerPath);
 		}
 
-		currentSubmaterial->diffuseTextureFormat = textureFormatMemory;
-
-		for(uint32 diffuseTextureIndex = 0;
-			diffuseTextureIndex < currentSubmaterial->diffuseTextureCount;
-			++diffuseTextureIndex)
-		{
-			K15_SubMaterialTextureFormat* submaterialTextureFormat = &currentSubmaterial->diffuseTextureFormat[diffuseTextureIndex];
-
-			//texture name length
-			K15_ReadData(p_DataAcessContext, sizeof(uint32), &submaterialTextureFormat->textureNameLength);
-
-			//create buffer for texture name
-			char* textureName = (char*)K15_RF_MALLOC(submaterialTextureFormat->textureNameLength + 1); //+1 for null terminator
-
-			//texture name
-			K15_ReadData(p_DataAcessContext, submaterialTextureFormat->textureNameLength, textureName);
-
-			textureName[submaterialTextureFormat->textureNameLength] = 0;
-
-			submaterialTextureFormat->textureName = textureName;
-
-			//blend strength
-			K15_ReadData(p_DataAcessContext, sizeof(float), &submaterialTextureFormat->blendStrength);
-
-			//blend operation
-			K15_ReadData(p_DataAcessContext, sizeof(uint8), &submaterialTextureFormat->blendOperation);
-
-			//texture mapping (U)
-			K15_ReadData(p_DataAcessContext, sizeof(uint8), &submaterialTextureFormat->textureMappingU);
-
-			//texture mapping (V)
-			K15_ReadData(p_DataAcessContext, sizeof(uint8), &submaterialTextureFormat->textureMappingV);
-
-			//alpha usage
-			K15_ReadData(p_DataAcessContext, sizeof(uint8), &submaterialTextureFormat->hasAlpha);
-		}
+		K15_AddMaterialPassTemplateFormat(p_MaterialFormat, &materialPassFormat);
 	}
 
 	return K15_SUCCESS;
@@ -132,65 +103,54 @@ intern uint8 K15_InternalSaveMaterialFormat(K15_DataAccessContext* p_DataAcessCo
 	//write resource header
 	K15_WriteData(p_DataAcessContext, sizeof(K15_HeaderFormat), &headerFormat);
 
-	//material name lenght
+	//write material name length
 	K15_WriteData(p_DataAcessContext, sizeof(uint32), &p_MaterialFormat->materialNameLength);
 
-	//material name
+	//write material name 
 	K15_WriteData(p_DataAcessContext, p_MaterialFormat->materialNameLength, p_MaterialFormat->materialName);
 
-	//submaterial count
-	K15_WriteData(p_DataAcessContext, sizeof(uint16), &p_MaterialFormat->submaterialCount);
+	//write number of material passes
+	K15_WriteData(p_DataAcessContext, sizeof(uint32), &p_MaterialFormat->numMaterialPasses);
 
-	for(uint16 submaterialIndex = 0;
-		submaterialIndex < p_MaterialFormat->submaterialCount;
-		++submaterialIndex)
+	//write material passes
+	for (uint32 materialPassIndex = 0;
+		materialPassIndex < p_MaterialFormat->numMaterialPasses;
+		++materialPassIndex)
 	{
-		K15_SubMaterialFormat* submaterialFormat = &p_MaterialFormat->subMaterials[submaterialIndex];
+		K15_MaterialPassTemplateFormat* materialPassFormat = &p_MaterialFormat->passTemplates[materialPassIndex]; 
 
-		//diffuse color
-		K15_WriteData(p_DataAcessContext, sizeof(float) * 3, &submaterialFormat->diffuseColor);
+		//write number of samplers
+		K15_WriteData(p_DataAcessContext, sizeof(uint32), &materialPassFormat->numSamplers);
 
-		//specular color
-		K15_WriteData(p_DataAcessContext, sizeof(float) * 3, &submaterialFormat->specularColor);
+		//write vertex shader path length
+		K15_WriteData(p_DataAcessContext, sizeof(uint32), &materialPassFormat->vertexShaderPathLength);
 
-		//ambient color
-		K15_WriteData(p_DataAcessContext, sizeof(float) * 3, &submaterialFormat->ambientColor);
+		//write fragment shader path length
+		K15_WriteData(p_DataAcessContext, sizeof(uint32), &materialPassFormat->fragmentShaderPathLength);
 
-		//shininess
-		K15_WriteData(p_DataAcessContext, sizeof(float), &submaterialFormat->shininess);
+		//write vertex shader path
+		K15_WriteData(p_DataAcessContext, materialPassFormat->vertexShaderPathLength, materialPassFormat->vertexShaderPath);
 
-		//shininess power
-		K15_WriteData(p_DataAcessContext, sizeof(float), &submaterialFormat->sininessStrength);
+		//write fragment shader path
+		K15_WriteData(p_DataAcessContext, materialPassFormat->fragmentShaderPathLength, materialPassFormat->fragmentShaderPath);
 
-		//diffuse texture count
-		K15_WriteData(p_DataAcessContext, sizeof(uint8), &submaterialFormat->diffuseTextureCount);
-
-		for(uint16 diffuseTextureIndex = 0;
-			diffuseTextureIndex < submaterialFormat->diffuseTextureCount;
-			++diffuseTextureIndex)
+		for (uint32 samplerIndex = 0;
+			samplerIndex < materialPassFormat->numSamplers;
+			++samplerIndex)
 		{
-			K15_SubMaterialTextureFormat* submaterialTextureFormat = &submaterialFormat->diffuseTextureFormat[diffuseTextureIndex];
+			K15_MaterialPassTemplateSamplerFormat* samplerFormat = &materialPassFormat->samplerFormats[samplerIndex];
 
-			//texture name length
-			K15_WriteData(p_DataAcessContext, sizeof(uint32), &submaterialTextureFormat->textureNameLength);
+			//write sampler name length
+			K15_WriteData(p_DataAcessContext, sizeof(uint32), &samplerFormat->samplerNameLength);
 
-			//texture name
-			K15_WriteData(p_DataAcessContext, submaterialTextureFormat->textureNameLength, submaterialTextureFormat->textureName);
+			//write sampler path length
+			K15_WriteData(p_DataAcessContext, sizeof(uint32), &samplerFormat->samplerPathLength);;
 
-			//blend strength
-			K15_WriteData(p_DataAcessContext, sizeof(float), &submaterialTextureFormat->blendStrength);
+			//write sampler name
+			K15_WriteData(p_DataAcessContext, samplerFormat->samplerNameLength, samplerFormat->samplerName);
 
-			//blend operation
-			K15_WriteData(p_DataAcessContext, sizeof(uint8), &submaterialTextureFormat->blendOperation);
-
-			//texture mapping (U)
-			K15_WriteData(p_DataAcessContext, sizeof(uint8), &submaterialTextureFormat->textureMappingU);
-
-			//texture mapping (V)
-			K15_WriteData(p_DataAcessContext, sizeof(uint8), &submaterialTextureFormat->textureMappingV);
-
-			//alpha usage
-			K15_WriteData(p_DataAcessContext, sizeof(uint8), &submaterialTextureFormat->hasAlpha);
+			//write sampler path
+			K15_WriteData(p_DataAcessContext, samplerFormat->samplerPathLength, samplerFormat->samplerPath);
 		}
 	}
 
@@ -202,98 +162,179 @@ intern uint8 K15_InternalSaveMaterialFormat(K15_DataAccessContext* p_DataAcessCo
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
+intern void K15_InternalFreeMaterialPassTemplateSamplerFormats(K15_MaterialPassTemplateFormat* p_MaterialPassTemplateFormat)
+{
+	uint32 numSamplers = p_MaterialPassTemplateFormat->currentNumSampler;
+
+	for (uint32 samplerIndex = 0;
+		samplerIndex < numSamplers;
+		++samplerIndex)
+	{
+		K15_RF_FREE(p_MaterialPassTemplateFormat->samplerFormats[samplerIndex].samplerName);
+		K15_RF_FREE(p_MaterialPassTemplateFormat->samplerFormats[samplerIndex].samplerPath);
+	}
+}
+/*********************************************************************************/
+intern void K15_InternalFreeMaterialPassTemplateFormats(K15_MaterialFormat* p_MaterialFormat)
+{
+	uint32 numMaterialPassTemplates = p_MaterialFormat->currentNumMaterialPasses;
+
+	for (uint32 materialPassTemplateIndex = 0;
+		materialPassTemplateIndex < numMaterialPassTemplates;
+		++materialPassTemplateIndex)
+	{
+		K15_RF_FREE(p_MaterialFormat->passTemplates[materialPassTemplateIndex].vertexShaderPath);
+		K15_RF_FREE(p_MaterialFormat->passTemplates[materialPassTemplateIndex].fragmentShaderPath);
+
+		K15_InternalFreeMaterialPassTemplateSamplerFormats(&p_MaterialFormat->passTemplates[materialPassTemplateIndex]);
+	}
+}
+/*********************************************************************************/
+
 
 
 
 /*********************************************************************************/
-uint8 K15_SetMaterialName(K15_MaterialFormat* p_MaterialFormat, const char* p_Name)
+uint8 K15_SetMaterialFormatName(K15_MaterialFormat* p_MaterialFormat, const char* p_Name)
 {
-	assert(p_MaterialFormat && p_Name);
+	assert(p_MaterialFormat);
+	assert(p_Name);
 
 	uint32 nameLength = (uint32)strlen(p_Name);
-	char* nameBuffer = (char*)K15_RF_MALLOC(nameLength);
-	
-	if (!nameBuffer)
-	{
-		return K15_ERROR_OUT_OF_MEMORY;
-	}
-
-	memcpy(nameBuffer, p_Name, nameLength);
 
 	p_MaterialFormat->materialNameLength = nameLength;
-	p_MaterialFormat->materialName = nameBuffer;
+	p_MaterialFormat->materialName = K15_CopyStringIntoBuffer(p_Name, (char*)K15_RF_MALLOC(nameLength + 1));
 
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-uint8 K15_SetSubMaterialCount(K15_MaterialFormat* p_MaterialFormat, uint16 p_SubMaterialCount)
+uint8 K15_SetMaterialFormatPassCount(K15_MaterialFormat* p_MaterialFormat, uint32 p_AmountPasses)
 {
-	assert(p_MaterialFormat && p_SubMaterialCount > 0);
+	assert(p_MaterialFormat);
+	assert(p_AmountPasses);
 
-	K15_SubMaterialFormat* subMaterialMemory = (K15_SubMaterialFormat*)K15_RF_MALLOC(sizeof(K15_SubMaterialFormat) * p_SubMaterialCount);
+	K15_MaterialPassTemplateFormat* materialPassTemplateBuffer = (K15_MaterialPassTemplateFormat*)K15_RF_MALLOC(p_AmountPasses * sizeof(K15_MaterialPassTemplateFormat));
+	memset(materialPassTemplateBuffer, 0, (p_AmountPasses * sizeof(K15_MaterialPassTemplateFormat)));
 
-	if(!subMaterialMemory)
+	if (p_MaterialFormat->passTemplates)
 	{
-		return K15_ERROR_OUT_OF_MEMORY;
+		K15_InternalFreeMaterialPassTemplateFormats(p_MaterialFormat);
+		K15_RF_FREE(p_MaterialFormat->passTemplates);
 	}
 
-	p_MaterialFormat->subMaterials = subMaterialMemory;
-	p_MaterialFormat->submaterialCount = p_SubMaterialCount;
-	
+	p_MaterialFormat->passTemplates = materialPassTemplateBuffer;
+	p_MaterialFormat->numMaterialPasses = p_AmountPasses;
+	p_MaterialFormat->currentNumMaterialPasses = 0;
+
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-uint8 K15_SetSubMaterialTextureCount(K15_SubMaterialFormat* p_SubMaterialFormat, uint32 p_TextureCount, uint32 p_TextureIdentifier)
+uint8 K15_AddMaterialPassTemplateFormat(K15_MaterialFormat* p_MaterialFormat, K15_MaterialPassTemplateFormat* p_MaterialPassTemplateFormat)
 {
-	assert(p_SubMaterialFormat && p_TextureCount > 0 && p_TextureIdentifier > 0);
+	assert(p_MaterialFormat);
+	assert(p_MaterialPassTemplateFormat);
 
-	K15_SubMaterialTextureFormat* textureFormatMemory = (K15_SubMaterialTextureFormat*)K15_RF_MALLOC(p_TextureCount * sizeof(K15_SubMaterialTextureFormat));
+	assert(p_MaterialFormat->numMaterialPasses != p_MaterialFormat->currentNumMaterialPasses);
 
-	if(!textureFormatMemory)
-	{
-		return K15_ERROR_OUT_OF_MEMORY;
-	}
+	K15_MaterialPassTemplateFormat* materialPassTemplateBuffer = p_MaterialFormat->passTemplates;
 
-	switch(p_TextureIdentifier)
-	{
-	case K15_MATERIAL_TEXTURE_DIFFUSE:
-		{
-			p_SubMaterialFormat->diffuseTextureFormat = textureFormatMemory;
-			p_SubMaterialFormat->diffuseTextureCount = p_TextureCount;
-			break;
-		}
-	default:
-		{
-			if(textureFormatMemory)
-			{
-				K15_RF_FREE(textureFormatMemory);
-			}
+	materialPassTemplateBuffer[p_MaterialFormat->currentNumMaterialPasses++] = *p_MaterialPassTemplateFormat;
 
-			return K15_ERROR_WRONG_DATA_IDENTIFIER;
-		}
-	}
-	
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-uint8 K15_SetSubMaterialTextureFormatTextureName(K15_SubMaterialTextureFormat* p_SubMaterialTextureFormat, const char* p_TextureName)
+K15_MaterialPassTemplateFormat* K15_GetMaterialPassTemplateFormat(K15_MaterialFormat* p_MaterialFormat, uint32 p_MaterialPassTemplateIndex)
 {
-	assert(p_SubMaterialTextureFormat && p_TextureName);
+	assert(p_MaterialFormat);
+	assert(p_MaterialPassTemplateIndex < p_MaterialFormat->numMaterialPasses);
 
-	uint32 lengthName = (uint32)strlen(p_TextureName);
-	char* nameBuffer = (char*)K15_RF_MALLOC(lengthName);
+	return &p_MaterialFormat->passTemplates[p_MaterialPassTemplateIndex];
+}
+/*********************************************************************************/
+uint8 K15_SetMaterialPassTemplateVertexShaderPath(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, const char* p_VertexShaderPath)
+{
+	assert(p_MaterialPassTemplate);
+	assert(p_VertexShaderPath);
 
-	if(!nameBuffer)
+	if (p_MaterialPassTemplate->vertexShaderPath)
 	{
-		return K15_ERROR_OUT_OF_MEMORY;
+		K15_RF_FREE(p_MaterialPassTemplate->vertexShaderPath);
 	}
 
-	memcpy(nameBuffer, p_TextureName, lengthName);
+	uint32 vertexShaderPathLength = (uint32)strlen(p_VertexShaderPath);
 
-	p_SubMaterialTextureFormat->textureNameLength = lengthName;
-	p_SubMaterialTextureFormat->textureName = nameBuffer;
+	p_MaterialPassTemplate->vertexShaderPath = K15_CopyStringIntoBuffer(p_VertexShaderPath, (char*)K15_RF_MALLOC(vertexShaderPathLength + 1));
+	p_MaterialPassTemplate->vertexShaderPathLength = vertexShaderPathLength;
 
 	return K15_SUCCESS;
+}
+/*********************************************************************************/
+uint8 K15_SetMaterialPassTemplateFragmentShaderPath(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, const char* p_FragmentShaderPath)
+{
+	assert(p_MaterialPassTemplate);
+	assert(p_FragmentShaderPath);
+
+	if (p_MaterialPassTemplate->fragmentShaderPath)
+	{
+		K15_RF_FREE(p_MaterialPassTemplate->fragmentShaderPath);
+	}
+
+	uint32 fragmentShaderPathLength = (uint32)strlen(p_FragmentShaderPath);
+
+	p_MaterialPassTemplate->fragmentShaderPath = K15_CopyStringIntoBuffer(p_FragmentShaderPath, (char*)K15_RF_MALLOC(fragmentShaderPathLength + 1));
+	p_MaterialPassTemplate->fragmentShaderPathLength = fragmentShaderPathLength;
+
+	return K15_SUCCESS;
+}
+/*********************************************************************************/
+uint8 K15_SetMaterialPassTemplateSamplerCount(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, uint32 p_SamplerCount)
+{
+	assert(p_MaterialPassTemplate);
+	assert(p_SamplerCount);
+
+	K15_MaterialPassTemplateSamplerFormat* samplerFormats = (K15_MaterialPassTemplateSamplerFormat*)K15_RF_MALLOC(p_SamplerCount * sizeof(K15_MaterialPassTemplateSamplerFormat));
+	memset(samplerFormats, 0, p_SamplerCount * sizeof(K15_MaterialPassTemplateSamplerFormat));
+
+	if (p_MaterialPassTemplate->samplerFormats)
+	{
+		K15_InternalFreeMaterialPassTemplateSamplerFormats(p_MaterialPassTemplate);
+		K15_RF_FREE(p_MaterialPassTemplate->samplerFormats);
+	}
+
+	p_MaterialPassTemplate->samplerFormats = samplerFormats;
+	p_MaterialPassTemplate->numSamplers = p_SamplerCount;
+	p_MaterialPassTemplate->currentNumSampler = 0;
+	return K15_SUCCESS;
+}
+/*********************************************************************************/
+uint8 K15_AddMaterialPassTemplateSampler(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, const char* p_SamplerName, const char* p_SamplerPath)
+{
+	assert(p_MaterialPassTemplate);
+	assert(p_SamplerName);
+	assert(p_SamplerPath);
+
+	assert(p_MaterialPassTemplate->numSamplers != p_MaterialPassTemplate->currentNumSampler);
+
+	uint32 samplerNameLength = (uint32)strlen(p_SamplerName);
+	uint32 samplerPathLength = (uint32)strlen(p_SamplerPath);
+
+	p_MaterialPassTemplate->samplerFormats[p_MaterialPassTemplate->currentNumSampler].samplerName = K15_CopyStringIntoBuffer(p_SamplerName, (char*)K15_RF_MALLOC(samplerNameLength + 1));
+	p_MaterialPassTemplate->samplerFormats[p_MaterialPassTemplate->currentNumSampler].samplerPath = K15_CopyStringIntoBuffer(p_SamplerPath, (char*)K15_RF_MALLOC(samplerPathLength + 1));
+
+	p_MaterialPassTemplate->samplerFormats[p_MaterialPassTemplate->currentNumSampler].samplerNameLength = samplerNameLength;
+	p_MaterialPassTemplate->samplerFormats[p_MaterialPassTemplate->currentNumSampler].samplerPathLength = samplerPathLength;
+
+	p_MaterialPassTemplate->currentNumSampler += 1;
+
+	return K15_SUCCESS;
+}
+/*********************************************************************************/
+K15_MaterialPassTemplateSamplerFormat* K15_GetMaterialPassTemplateSampler(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, uint32 p_MaterialPassTemplateSamplerIndex)
+{
+	assert(p_MaterialPassTemplate);
+	assert(p_MaterialPassTemplateSamplerIndex < p_MaterialPassTemplate->numSamplers);
+
+	return &p_MaterialPassTemplate->samplerFormats[p_MaterialPassTemplateSamplerIndex];
 }
 /*********************************************************************************/
 uint8 K15_SaveMaterialFormatToFile(K15_MaterialFormat* p_MaterialFormat, const char* p_Path, uint32 p_SaveFlag)
@@ -318,28 +359,8 @@ uint8 K15_SaveMaterialFormatToFile(K15_MaterialFormat* p_MaterialFormat, const c
 /*********************************************************************************/
 void K15_FreeMaterialFormat(K15_MaterialFormat p_MaterialFormat)
 {
-	for(uint16 submaterialFormatIndex = 0;
-		submaterialFormatIndex < p_MaterialFormat.submaterialCount;
-		++submaterialFormatIndex)
-	{
-		K15_SubMaterialFormat submaterialFormat = p_MaterialFormat.subMaterials[submaterialFormatIndex];
-	
-		for(uint16 submaterialDiffuseTextureIndex = 0;
-			submaterialDiffuseTextureIndex < submaterialFormat.diffuseTextureCount;
-			++submaterialDiffuseTextureIndex)
-		{
-			K15_SubMaterialTextureFormat submaterialDiffuseTextureFormat = submaterialFormat.diffuseTextureFormat[submaterialDiffuseTextureIndex];
-			K15_RF_FREE(submaterialDiffuseTextureFormat.textureName);
-			submaterialDiffuseTextureFormat.textureName = 0;
-		}
-
-		K15_RF_FREE(submaterialFormat.diffuseTextureFormat);
-		submaterialFormat.diffuseTextureFormat = 0;
-	}
-
 	K15_RF_FREE(p_MaterialFormat.materialName);
-	K15_RF_FREE(p_MaterialFormat.subMaterials);
-	p_MaterialFormat.subMaterials = 0;
+	K15_InternalFreeMaterialPassTemplateFormats(&p_MaterialFormat);
 }
 /*********************************************************************************/
 uint8 K15_LoadMaterialFormat(K15_MaterialFormat* p_MaterialFormat, const char* p_Path)

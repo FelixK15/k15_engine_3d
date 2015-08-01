@@ -33,6 +33,8 @@ struct K15_FontFormat
 		byte* data;
 	} texture;
 
+	float fontSize;
+
 	uint32 fontNameLength;
 	uint32 startCharacter;
 	uint32 endCharacter;

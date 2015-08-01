@@ -3,49 +3,54 @@
 
 #include "K15_ResourceFormats_Prerequisites.h"
 
-struct K15_SubMaterialTextureFormat
+struct K15_MaterialPassTemplateSamplerFormat
 {
-	char* textureName;
-	uint32 textureNameLength;
-	
-	float blendStrength;
-	uint8 blendOperation;
-	uint8 textureMappingU;
-	uint8 textureMappingV;
-	uint8 hasAlpha;
+	char* samplerName;
+	char* samplerPath;
+
+	uint32 samplerNameLength;
+	uint32 samplerPathLength;
 };
 
-struct K15_SubMaterialFormat
+struct K15_MaterialPassTemplateFormat
 {
-	K15_SubMaterialTextureFormat* diffuseTextureFormat;
+	char* vertexShaderPath;
+	char* fragmentShaderPath;
 
-	float diffuseColor[3];
-	float specularColor[3];
-	float ambientColor[3];
+	uint32 vertexShaderPathLength;
+	uint32 fragmentShaderPathLength;
 
-	float shininess;
-	float sininessStrength;
+	uint32 numSamplers;
+	uint32 currentNumSampler;
 
-	uint8 diffuseTextureCount;
+	K15_MaterialPassTemplateSamplerFormat* samplerFormats;
 };
 
 struct K15_MaterialFormat
 {
-	K15_SubMaterialFormat* subMaterials;
 	char* materialName;
 
 	uint32 materialNameLength;
-	uint16 submaterialCount;
+	uint32 numMaterialPasses;
+	uint32 currentNumMaterialPasses;
+
+	K15_MaterialPassTemplateFormat* passTemplates;
 };
 
-uint8 K15_SetMaterialName(K15_MaterialFormat* p_MaterialFormat, const char* p_Name);
+uint8 K15_SetMaterialFormatName(K15_MaterialFormat* p_MaterialFormat, const char* p_Name);
+uint8 K15_SetMaterialFormatPassCount(K15_MaterialFormat* p_MaterialFormat, uint32 p_AmountPasses);
 
-uint8 K15_SetSubMaterialCount(K15_MaterialFormat* p_MaterialFormat, uint16 p_SubMaterialCount);
+uint8 K15_AddMaterialPassTemplateFormat(K15_MaterialFormat* p_MaterialFormat, K15_MaterialPassTemplateFormat* p_MaterialPassTemplateFormat);
+K15_MaterialPassTemplateFormat* K15_GetMaterialPassTemplateFormat(K15_MaterialFormat* p_MaterialFormat, uint32 p_MaterialPassTemplateIndex);
 
-uint8 K15_SetSubMaterialTextureCount(K15_SubMaterialFormat* p_SubMaterialFormat, uint32 p_TextureCount, uint32 p_TextureIdentifier);
-uint8 K15_SetSubMaterialTextureFormatTextureName(K15_SubMaterialTextureFormat* p_SubMaterialTextureFormat, const char* p_TextureName);
+uint8 K15_SetMaterialPassTemplateVertexShaderPath(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, const char* p_VertexShaderPath);
+uint8 K15_SetMaterialPassTemplateFragmentShaderPath(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, const char* p_FragmentShaderPath);
 
-uint8 K15_SaveMaterialFormatgToFile(K15_MaterialFormat* p_MaterialFormat, const char* p_Path, uint32 p_SaveFlags);
+uint8 K15_SetMaterialPassTemplateSamplerCount(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, uint32 p_SamplerCount);
+uint8 K15_AddMaterialPassTemplateSampler(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, const char* p_SamplerName, const char* p_SamplerPath);
+K15_MaterialPassTemplateSamplerFormat* K15_GetMaterialPassTemplateSampler(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, uint32 p_MaterialPassTemplateSamplerIndex);
+
+uint8 K15_SaveMaterialFormatToFile(K15_MaterialFormat* p_MaterialFormat, const char* p_Path, uint32 p_SaveFlags);
 
 uint8 K15_LoadMaterialFormatFromFile(K15_MaterialFormat* p_MaterialFormat, const char* p_Path);
 uint8 K15_LoadMaterialFormatFromMemory(K15_MaterialFormat* p_MaterialFormat, byte* p_Memory, uint32 p_MemorySize);
