@@ -31,7 +31,7 @@ void K15_DeleteSubMeshFixedBuffer(K15_SubMeshFixedBuffer* p_FixedBuffer);
 void K15_ResizeSubMeshFixedBuffer(K15_SubMeshFixedBuffer* p_FixedBuffer, unsigned int p_Capacity);
 void K15_ClearSubMeshFixedBuffer(K15_SubMeshFixedBuffer* p_FixedBuffer);
 
-void K15_PushSubMeshFixedBufferElement(K15_SubMeshFixedBuffer* p_FixedBuffer, K15_SubMesh p_Element);
+K15_SubMesh* K15_PushSubMeshFixedBufferElement(K15_SubMeshFixedBuffer* p_FixedBuffer, K15_SubMesh p_Element);
 unsigned char K15_PopSubMeshFixedBufferIndex(K15_SubMeshFixedBuffer* p_FixedBuffer, unsigned int p_Index);
 unsigned char K15_PopSubMeshFixedBufferElement(K15_SubMeshFixedBuffer* p_FixedBuffer, K15_SubMesh p_Element);
 unsigned char K15_PopSubMeshFixedBufferCompare(K15_SubMeshFixedBuffer* p_FixedBuffer, K15_SubMesh p_Element, K15_SubMeshCompareFnc p_CompareFnc);

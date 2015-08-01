@@ -31,7 +31,7 @@ void K15_Delete$TYPE_NAME$FixedBuffer(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer)
 void K15_Resize$TYPE_NAME$FixedBuffer(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, unsigned int p_Capacity);
 void K15_Clear$TYPE_NAME$FixedBuffer(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer);
 
-void K15_Push$TYPE_NAME$FixedBufferElement(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, $TYPE$ p_Element);
+$TYPE$* K15_Push$TYPE_NAME$FixedBufferElement(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, $TYPE$ p_Element);
 unsigned char K15_Pop$TYPE_NAME$FixedBufferIndex(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, unsigned int p_Index);
 unsigned char K15_Pop$TYPE_NAME$FixedBufferElement(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, $TYPE$ p_Element);
 unsigned char K15_Pop$TYPE_NAME$FixedBufferCompare(K15_$TYPE_NAME$FixedBuffer* p_FixedBuffer, $TYPE$ p_Element, K15_$TYPE_NAME$CompareFnc p_CompareFnc);

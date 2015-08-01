@@ -31,7 +31,7 @@ void K15_DeleteThreadFixedBuffer(K15_ThreadFixedBuffer* p_FixedBuffer);
 void K15_ResizeThreadFixedBuffer(K15_ThreadFixedBuffer* p_FixedBuffer, unsigned int p_Capacity);
 void K15_ClearThreadFixedBuffer(K15_ThreadFixedBuffer* p_FixedBuffer);
 
-void K15_PushThreadFixedBufferElement(K15_ThreadFixedBuffer* p_FixedBuffer, K15_Thread* p_Element);
+K15_Thread** K15_PushThreadFixedBufferElement(K15_ThreadFixedBuffer* p_FixedBuffer, K15_Thread* p_Element);
 unsigned char K15_PopThreadFixedBufferIndex(K15_ThreadFixedBuffer* p_FixedBuffer, unsigned int p_Index);
 unsigned char K15_PopThreadFixedBufferElement(K15_ThreadFixedBuffer* p_FixedBuffer, K15_Thread* p_Element);
 unsigned char K15_PopThreadFixedBufferCompare(K15_ThreadFixedBuffer* p_FixedBuffer, K15_Thread* p_Element, K15_ThreadCompareFnc p_CompareFnc);

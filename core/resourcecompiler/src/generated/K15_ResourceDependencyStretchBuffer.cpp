@@ -2,19 +2,19 @@
 /*  THIS FILE HAS BEEN GENERATED AUTOMATICALLY. ANY CHANGES WILL BE OVERRIDDEN   */
 /*********************************************************************************/
 
-#include "generated/K15_GUIElementStretchBuffer.h"
+#include "generated/K15_ResourceDependencyStretchBuffer.h"
 
 
 /*********************************************************************************/
-void K15_CreateGUIElementStretchBufferWithCustomAllocator(K15_GUIElementStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_ElementCapacity)
+void K15_CreateResourceDependencyStretchBufferWithCustomAllocator(K15_ResourceDependencyStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_ElementCapacity)
 {
 	K15_ASSERT_TEXT(!p_StretchBuffer->elements, "Stretch Buffer has already been created.");
 	K15_ASSERT_TEXT(p_MemoryAllocator, "No memory allocator defined.");
 	K15_ASSERT_TEXT(p_ElementCapacity != 0, "Can not reserve 0 elements.");
 
-	unsigned int bytesToAllocate = p_ElementCapacity * sizeof(K15_GUIElement*);
+	unsigned int bytesToAllocate = p_ElementCapacity * sizeof(K15_ResourceDependency);
 	
-	K15_GUIElement** elements = (K15_GUIElement**)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, bytesToAllocate);
+	K15_ResourceDependency* elements = (K15_ResourceDependency*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, bytesToAllocate);
 
 	K15_ASSERT_TEXT(elements, "Out of memory.");
 
@@ -26,12 +26,12 @@ void K15_CreateGUIElementStretchBufferWithCustomAllocator(K15_GUIElementStretchB
 
 }
 /*********************************************************************************/
-void K15_CreateGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity)
+void K15_CreateResourceDependencyStretchBuffer(K15_ResourceDependencyStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity)
 {
-	K15_CreateGUIElementStretchBufferWithCustomAllocator(p_StretchBuffer, K15_CreateDefaultMemoryAllocator("GUIElement Default Stretch Buffer Allocator"), p_ElementCapacity);
+	K15_CreateResourceDependencyStretchBufferWithCustomAllocator(p_StretchBuffer, K15_CreateDefaultMemoryAllocator("ResourceDependency Default Stretch Buffer Allocator"), p_ElementCapacity);
 }
 /*********************************************************************************/
-void K15_DeleteGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuffer)
+void K15_DeleteResourceDependencyStretchBuffer(K15_ResourceDependencyStretchBuffer* p_StretchBuffer)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -44,11 +44,11 @@ void K15_DeleteGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuf
 	p_StretchBuffer->elements = 0;
 }
 /*********************************************************************************/
-void K15_ResizeGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity)
+void K15_ResizeResourceDependencyStretchBuffer(K15_ResourceDependencyStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
-	K15_ASSERT_TEXT((p_StretchBuffer->flags & K15_USE_EXTERNAL_BUFFER) == 0, "Stretch Buffer for Type '%s' can't be resized.", "K15_GUIElement*");
+	K15_ASSERT_TEXT((p_StretchBuffer->flags & K15_USE_EXTERNAL_BUFFER) == 0, "Stretch Buffer for Type '%s' can't be resized.", "K15_ResourceDependency");
 
 	unsigned int freeSlotIndex = p_StretchBuffer->numElements;
 	unsigned int capacity = p_StretchBuffer->numCapacity;
@@ -56,10 +56,10 @@ void K15_ResizeGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuf
 
 	if (freeSlotIndex >= capacity)
 	{
-		unsigned int newSizeInBytes = sizeof(K15_GUIElement*) * p_ElementCapacity;
-		unsigned int oldSizeInBytes = sizeof(K15_GUIElement*) * capacity;
-		K15_GUIElement** oldMemory = p_StretchBuffer->elements;
-		K15_GUIElement** newMemory = (K15_GUIElement**)K15_AllocateFromMemoryAllocator(memoryAllocator, newSizeInBytes);
+		unsigned int newSizeInBytes = sizeof(K15_ResourceDependency) * p_ElementCapacity;
+		unsigned int oldSizeInBytes = sizeof(K15_ResourceDependency) * capacity;
+		K15_ResourceDependency* oldMemory = p_StretchBuffer->elements;
+		K15_ResourceDependency* newMemory = (K15_ResourceDependency*)K15_AllocateFromMemoryAllocator(memoryAllocator, newSizeInBytes);
 		memcpy(newMemory, oldMemory, oldSizeInBytes);
 
 		K15_FreeFromMemoryAllocator(memoryAllocator, oldMemory);
@@ -69,7 +69,7 @@ void K15_ResizeGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuf
 	}
 }
 /*********************************************************************************/
-void K15_ClearGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuffer)
+void K15_ClearResourceDependencyStretchBuffer(K15_ResourceDependencyStretchBuffer* p_StretchBuffer)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -77,7 +77,7 @@ void K15_ClearGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuff
 	p_StretchBuffer->numElements = 0;
 }
 /*********************************************************************************/
-K15_GUIElement** K15_PushGUIElementStretchBufferElement(K15_GUIElementStretchBuffer* p_StretchBuffer, K15_GUIElement* p_Element)
+K15_ResourceDependency* K15_PushResourceDependencyStretchBufferElement(K15_ResourceDependencyStretchBuffer* p_StretchBuffer, K15_ResourceDependency p_Element)
 {	
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -87,7 +87,7 @@ K15_GUIElement** K15_PushGUIElementStretchBufferElement(K15_GUIElementStretchBuf
 
 	if (freeSlotIndex >= capacity)
 	{
-		K15_ResizeGUIElementStretchBuffer(p_StretchBuffer, capacity * 2);
+		K15_ResizeResourceDependencyStretchBuffer(p_StretchBuffer, capacity * 2);
 	}
 
 	p_StretchBuffer->elements[freeSlotIndex] = p_Element;
@@ -96,12 +96,12 @@ K15_GUIElement** K15_PushGUIElementStretchBufferElement(K15_GUIElementStretchBuf
 	return &p_StretchBuffer->elements[freeSlotIndex];
 }
 /*********************************************************************************/
-unsigned char K15_PopGUIElementStretchBufferIndex(K15_GUIElementStretchBuffer* p_StretchBuffer, unsigned int p_Index)
+unsigned char K15_PopResourceDependencyStretchBufferIndex(K15_ResourceDependencyStretchBuffer* p_StretchBuffer, unsigned int p_Index)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 
-	K15_GUIElement** elements = p_StretchBuffer->elements;
+	K15_ResourceDependency* elements = p_StretchBuffer->elements;
 	unsigned int numElements = p_StretchBuffer->numElements;
 
 	if (p_Index != (numElements - 1))
@@ -122,12 +122,12 @@ unsigned char K15_PopGUIElementStretchBufferIndex(K15_GUIElementStretchBuffer* p
 	return 1;
 }
 /*********************************************************************************/
-unsigned char K15_PopGUIElementStretchBufferElement(K15_GUIElementStretchBuffer* p_StretchBuffer, K15_GUIElement* p_Element)
+unsigned char K15_PopResourceDependencyStretchBufferElement(K15_ResourceDependencyStretchBuffer* p_StretchBuffer, K15_ResourceDependency p_Element)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 
-	K15_GUIElement** elements = p_StretchBuffer->elements;
+	K15_ResourceDependency* elements = p_StretchBuffer->elements;
 	unsigned int numElements = p_StretchBuffer->numElements;
 	unsigned char returnValue = 0;
 
@@ -135,9 +135,9 @@ unsigned char K15_PopGUIElementStretchBufferElement(K15_GUIElementStretchBuffer*
 		elementIndex < numElements;
 		++elementIndex)
 	{		
-		if (memcmp(&elements[elementIndex], &p_Element, sizeof(K15_GUIElement*)) == 0)
+		if (memcmp(&elements[elementIndex], &p_Element, sizeof(K15_ResourceDependency)) == 0)
 		{
-			K15_PopGUIElementStretchBufferIndex(p_StretchBuffer, elementIndex);
+			K15_PopResourceDependencyStretchBufferIndex(p_StretchBuffer, elementIndex);
 			returnValue = 1;
 			break;
 		}
@@ -146,13 +146,13 @@ unsigned char K15_PopGUIElementStretchBufferElement(K15_GUIElementStretchBuffer*
 	return returnValue;
 }
 /*********************************************************************************/
-unsigned char K15_PopGUIElementStretchBufferCompare(K15_GUIElementStretchBuffer* p_StretchBuffer, K15_GUIElement* p_Element, K15_GUIElementCompareFnc p_CompareFnc)
+unsigned char K15_PopResourceDependencyStretchBufferCompare(K15_ResourceDependencyStretchBuffer* p_StretchBuffer, K15_ResourceDependency p_Element, K15_ResourceDependencyCompareFnc p_CompareFnc)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 	K15_ASSERT_TEXT(p_CompareFnc, "Compare Function is NULL.");
 
-	K15_GUIElement** elements = p_StretchBuffer->elements;
+	K15_ResourceDependency* elements = p_StretchBuffer->elements;
 	unsigned int numElements = p_StretchBuffer->numElements;
 	unsigned char returnValue = 0;
 
@@ -162,7 +162,7 @@ unsigned char K15_PopGUIElementStretchBufferCompare(K15_GUIElementStretchBuffer*
 	{		
 		if (p_CompareFnc(&p_Element, &elements[elementIndex]) == 0)
 		{
-			K15_PopGUIElementStretchBufferIndex(p_StretchBuffer, elementIndex);
+			K15_PopResourceDependencyStretchBufferIndex(p_StretchBuffer, elementIndex);
 			returnValue = 1;
 			break;
 		}
@@ -171,7 +171,7 @@ unsigned char K15_PopGUIElementStretchBufferCompare(K15_GUIElementStretchBuffer*
 	return returnValue;
 }
 /*********************************************************************************/
-K15_GUIElement** K15_GetGUIElementStretchBufferElementUnsafe(K15_GUIElementStretchBuffer* p_StretchBuffer, unsigned int p_Index)
+K15_ResourceDependency* K15_GetResourceDependencyStretchBufferElementUnsafe(K15_ResourceDependencyStretchBuffer* p_StretchBuffer, unsigned int p_Index)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -179,14 +179,14 @@ K15_GUIElement** K15_GetGUIElementStretchBufferElementUnsafe(K15_GUIElementStret
 	return &p_StretchBuffer->elements[p_Index];
 }
 /*********************************************************************************/
-K15_GUIElement** K15_GetGUIElementStretchBufferElement(K15_GUIElementStretchBuffer* p_StretchBuffer, unsigned int p_Index)
+K15_ResourceDependency* K15_GetResourceDependencyStretchBufferElement(K15_ResourceDependencyStretchBuffer* p_StretchBuffer, unsigned int p_Index)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 
 	unsigned int numElements = p_StretchBuffer->numElements;
 
-	K15_GUIElement** returnValue = 0;
+	K15_ResourceDependency* returnValue = 0;
 
 	if (numElements > p_Index)
 	{
@@ -196,15 +196,15 @@ K15_GUIElement** K15_GetGUIElementStretchBufferElement(K15_GUIElementStretchBuff
 	return returnValue;
 }
 /*********************************************************************************/
-K15_GUIElement** K15_GetGUIElementStretchBufferElementConditional(K15_GUIElementStretchBuffer* p_StretchBuffer, K15_GUIElementConditionFnc p_ConditionFnc, void* p_UserData)
+K15_ResourceDependency* K15_GetResourceDependencyStretchBufferElementConditional(K15_ResourceDependencyStretchBuffer* p_StretchBuffer, K15_ResourceDependencyConditionFnc p_ConditionFnc, void* p_UserData)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 	K15_ASSERT_TEXT(p_ConditionFnc, "Condition Function is NULL.");
 
-	K15_GUIElement** elements = p_StretchBuffer->elements;
-	K15_GUIElement** returnElement = 0;
-	K15_GUIElement** currentElement = 0;
+	K15_ResourceDependency* elements = p_StretchBuffer->elements;
+	K15_ResourceDependency* returnElement = 0;
+	K15_ResourceDependency* currentElement = 0;
 
 	unsigned int numElements = p_StretchBuffer->numElements;
 

@@ -31,7 +31,7 @@ void K15_DeleteThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer);
 void K15_ResizeThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);
 void K15_ClearThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer);
 
-void K15_PushThreadStretchBufferElement(K15_ThreadStretchBuffer* p_StretchBuffer, K15_Thread* p_Element);
+K15_Thread** K15_PushThreadStretchBufferElement(K15_ThreadStretchBuffer* p_StretchBuffer, K15_Thread* p_Element);
 unsigned char K15_PopThreadStretchBufferIndex(K15_ThreadStretchBuffer* p_StretchBuffer, unsigned int p_Index);
 unsigned char K15_PopThreadStretchBufferElement(K15_ThreadStretchBuffer* p_StretchBuffer, K15_Thread* p_Element);
 unsigned char K15_PopThreadStretchBufferCompare(K15_ThreadStretchBuffer* p_StretchBuffer, K15_Thread* p_Element, K15_ThreadCompareFnc p_CompareFnc);

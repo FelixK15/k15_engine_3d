@@ -77,7 +77,7 @@ void K15_Clear$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBu
 	p_StretchBuffer->numElements = 0;
 }
 /*********************************************************************************/
-void K15_Push$TYPE_NAME$StretchBufferElement(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element)
+$TYPE$* K15_Push$TYPE_NAME$StretchBufferElement(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element)
 {	
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -92,6 +92,8 @@ void K15_Push$TYPE_NAME$StretchBufferElement(K15_$TYPE_NAME$StretchBuffer* p_Str
 
 	p_StretchBuffer->elements[freeSlotIndex] = p_Element;
 	++p_StretchBuffer->numElements;
+
+	return &p_StretchBuffer->elements[freeSlotIndex];
 }
 /*********************************************************************************/
 unsigned char K15_Pop$TYPE_NAME$StretchBufferIndex(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_Index)

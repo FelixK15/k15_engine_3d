@@ -31,7 +31,7 @@ void K15_DeleteGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuf
 void K15_ResizeGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);
 void K15_ClearGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuffer);
 
-void K15_PushGUIElementStretchBufferElement(K15_GUIElementStretchBuffer* p_StretchBuffer, K15_GUIElement* p_Element);
+K15_GUIElement** K15_PushGUIElementStretchBufferElement(K15_GUIElementStretchBuffer* p_StretchBuffer, K15_GUIElement* p_Element);
 unsigned char K15_PopGUIElementStretchBufferIndex(K15_GUIElementStretchBuffer* p_StretchBuffer, unsigned int p_Index);
 unsigned char K15_PopGUIElementStretchBufferElement(K15_GUIElementStretchBuffer* p_StretchBuffer, K15_GUIElement* p_Element);
 unsigned char K15_PopGUIElementStretchBufferCompare(K15_GUIElementStretchBuffer* p_StretchBuffer, K15_GUIElement* p_Element, K15_GUIElementCompareFnc p_CompareFnc);

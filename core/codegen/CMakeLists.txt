@@ -12,9 +12,10 @@ source_group(include FILES ${K15_CODEGEN_INC})
 
 include_directories(./include)
 include_directories(./src)
+include_directories(./../)
 include_directories(./../oslayer/include)
 include_directories(./../logging/include)
 
 add_executable(codegen ${K15_CODEGEN_CODE})
 
-target_link_libraries(codegen logging oslayer string math)
+target_link_libraries(codegen memory logging oslayer string math)

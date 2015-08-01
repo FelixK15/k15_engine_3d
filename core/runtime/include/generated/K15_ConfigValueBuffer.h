@@ -31,7 +31,7 @@ void K15_DeleteConfigValueStretchBuffer(K15_ConfigValueStretchBuffer* p_StretchB
 void K15_ResizeConfigValueStretchBuffer(K15_ConfigValueStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);
 void K15_ClearConfigValueStretchBuffer(K15_ConfigValueStretchBuffer* p_StretchBuffer);
 
-void K15_PushConfigValueStretchBufferElement(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_ConfigValue p_Element);
+K15_ConfigValue* K15_PushConfigValueStretchBufferElement(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_ConfigValue p_Element);
 unsigned char K15_PopConfigValueStretchBufferIndex(K15_ConfigValueStretchBuffer* p_StretchBuffer, unsigned int p_Index);
 unsigned char K15_PopConfigValueStretchBufferElement(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_ConfigValue p_Element);
 unsigned char K15_PopConfigValueStretchBufferCompare(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_ConfigValue p_Element, K15_ConfigValueCompareFnc p_CompareFnc);

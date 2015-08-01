@@ -77,7 +77,7 @@ void K15_ClearThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer)
 	p_StretchBuffer->numElements = 0;
 }
 /*********************************************************************************/
-void K15_PushThreadStretchBufferElement(K15_ThreadStretchBuffer* p_StretchBuffer, K15_Thread* p_Element)
+K15_Thread** K15_PushThreadStretchBufferElement(K15_ThreadStretchBuffer* p_StretchBuffer, K15_Thread* p_Element)
 {	
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -92,6 +92,8 @@ void K15_PushThreadStretchBufferElement(K15_ThreadStretchBuffer* p_StretchBuffer
 
 	p_StretchBuffer->elements[freeSlotIndex] = p_Element;
 	++p_StretchBuffer->numElements;
+
+	return &p_StretchBuffer->elements[freeSlotIndex];
 }
 /*********************************************************************************/
 unsigned char K15_PopThreadStretchBufferIndex(K15_ThreadStretchBuffer* p_StretchBuffer, unsigned int p_Index)

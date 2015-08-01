@@ -31,7 +31,7 @@ void K15_Delete$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchB
 void K15_Resize$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);
 void K15_Clear$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer);
 
-void K15_Push$TYPE_NAME$StretchBufferElement(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element);
+$TYPE$* K15_Push$TYPE_NAME$StretchBufferElement(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element);
 unsigned char K15_Pop$TYPE_NAME$StretchBufferIndex(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_Index);
 unsigned char K15_Pop$TYPE_NAME$StretchBufferElement(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element);
 unsigned char K15_Pop$TYPE_NAME$StretchBufferCompare(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element, K15_$TYPE_NAME$CompareFnc p_CompareFnc);

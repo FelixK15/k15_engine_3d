@@ -31,7 +31,7 @@ void K15_DeleteResourceStretchBuffer(K15_ResourceStretchBuffer* p_StretchBuffer)
 void K15_ResizeResourceStretchBuffer(K15_ResourceStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);
 void K15_ClearResourceStretchBuffer(K15_ResourceStretchBuffer* p_StretchBuffer);
 
-void K15_PushResourceStretchBufferElement(K15_ResourceStretchBuffer* p_StretchBuffer, K15_Resource p_Element);
+K15_Resource* K15_PushResourceStretchBufferElement(K15_ResourceStretchBuffer* p_StretchBuffer, K15_Resource p_Element);
 unsigned char K15_PopResourceStretchBufferIndex(K15_ResourceStretchBuffer* p_StretchBuffer, unsigned int p_Index);
 unsigned char K15_PopResourceStretchBufferElement(K15_ResourceStretchBuffer* p_StretchBuffer, K15_Resource p_Element);
 unsigned char K15_PopResourceStretchBufferCompare(K15_ResourceStretchBuffer* p_StretchBuffer, K15_Resource p_Element, K15_ResourceCompareFnc p_CompareFnc);

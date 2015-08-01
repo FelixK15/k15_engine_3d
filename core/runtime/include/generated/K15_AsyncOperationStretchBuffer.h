@@ -31,7 +31,7 @@ void K15_DeleteAsyncOperationStretchBuffer(K15_AsyncOperationStretchBuffer* p_St
 void K15_ResizeAsyncOperationStretchBuffer(K15_AsyncOperationStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);
 void K15_ClearAsyncOperationStretchBuffer(K15_AsyncOperationStretchBuffer* p_StretchBuffer);
 
-void K15_PushAsyncOperationStretchBufferElement(K15_AsyncOperationStretchBuffer* p_StretchBuffer, K15_AsyncOperation* p_Element);
+K15_AsyncOperation** K15_PushAsyncOperationStretchBufferElement(K15_AsyncOperationStretchBuffer* p_StretchBuffer, K15_AsyncOperation* p_Element);
 unsigned char K15_PopAsyncOperationStretchBufferIndex(K15_AsyncOperationStretchBuffer* p_StretchBuffer, unsigned int p_Index);
 unsigned char K15_PopAsyncOperationStretchBufferElement(K15_AsyncOperationStretchBuffer* p_StretchBuffer, K15_AsyncOperation* p_Element);
 unsigned char K15_PopAsyncOperationStretchBufferCompare(K15_AsyncOperationStretchBuffer* p_StretchBuffer, K15_AsyncOperation* p_Element, K15_AsyncOperationCompareFnc p_CompareFnc);

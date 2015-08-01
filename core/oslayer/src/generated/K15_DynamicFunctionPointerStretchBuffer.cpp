@@ -77,7 +77,7 @@ void K15_ClearDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStre
 	p_StretchBuffer->numElements = 0;
 }
 /*********************************************************************************/
-void K15_PushDynamicFunctionPointerStretchBufferElement(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, K15_DynamicFunctionPointer p_Element)
+K15_DynamicFunctionPointer* K15_PushDynamicFunctionPointerStretchBufferElement(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, K15_DynamicFunctionPointer p_Element)
 {	
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -92,6 +92,8 @@ void K15_PushDynamicFunctionPointerStretchBufferElement(K15_DynamicFunctionPoint
 
 	p_StretchBuffer->elements[freeSlotIndex] = p_Element;
 	++p_StretchBuffer->numElements;
+
+	return &p_StretchBuffer->elements[freeSlotIndex];
 }
 /*********************************************************************************/
 unsigned char K15_PopDynamicFunctionPointerStretchBufferIndex(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, unsigned int p_Index)

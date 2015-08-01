@@ -77,7 +77,7 @@ void K15_ClearConfigValueStretchBuffer(K15_ConfigValueStretchBuffer* p_StretchBu
 	p_StretchBuffer->numElements = 0;
 }
 /*********************************************************************************/
-void K15_PushConfigValueStretchBufferElement(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_ConfigValue p_Element)
+K15_ConfigValue* K15_PushConfigValueStretchBufferElement(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_ConfigValue p_Element)
 {	
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -92,6 +92,8 @@ void K15_PushConfigValueStretchBufferElement(K15_ConfigValueStretchBuffer* p_Str
 
 	p_StretchBuffer->elements[freeSlotIndex] = p_Element;
 	++p_StretchBuffer->numElements;
+
+	return &p_StretchBuffer->elements[freeSlotIndex];
 }
 /*********************************************************************************/
 unsigned char K15_PopConfigValueStretchBufferIndex(K15_ConfigValueStretchBuffer* p_StretchBuffer, unsigned int p_Index)

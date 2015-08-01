@@ -77,7 +77,7 @@ void K15_ClearDynamicLibraryStretchBuffer(K15_DynamicLibraryStretchBuffer* p_Str
 	p_StretchBuffer->numElements = 0;
 }
 /*********************************************************************************/
-void K15_PushDynamicLibraryStretchBufferElement(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, K15_DynamicLibrary* p_Element)
+K15_DynamicLibrary** K15_PushDynamicLibraryStretchBufferElement(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, K15_DynamicLibrary* p_Element)
 {	
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -92,6 +92,8 @@ void K15_PushDynamicLibraryStretchBufferElement(K15_DynamicLibraryStretchBuffer*
 
 	p_StretchBuffer->elements[freeSlotIndex] = p_Element;
 	++p_StretchBuffer->numElements;
+
+	return &p_StretchBuffer->elements[freeSlotIndex];
 }
 /*********************************************************************************/
 unsigned char K15_PopDynamicLibraryStretchBufferIndex(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, unsigned int p_Index)

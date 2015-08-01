@@ -50,7 +50,7 @@ void K15_ClearThreadFixedBuffer(K15_ThreadFixedBuffer* p_FixedBuffer)
 	p_FixedBuffer->numElements = 0;
 }
 /*********************************************************************************/
-void K15_PushThreadFixedBufferElement(K15_ThreadFixedBuffer* p_FixedBuffer, K15_Thread* p_Element)
+K15_Thread** K15_PushThreadFixedBufferElement(K15_ThreadFixedBuffer* p_FixedBuffer, K15_Thread* p_Element)
 {	
 	K15_ASSERT_TEXT(p_FixedBuffer, "Fixed Buffer is NULL.");
 	K15_ASSERT_TEXT(p_FixedBuffer->elements, "Fixed Buffer has not yet been created.");
@@ -62,6 +62,8 @@ void K15_PushThreadFixedBufferElement(K15_ThreadFixedBuffer* p_FixedBuffer, K15_
 
 	p_FixedBuffer->elements[freeSlotIndex] = p_Element;
 	++p_FixedBuffer->numElements;
+
+	return &p_FixedBuffer->elements[freeSlotIndex];
 }
 /*********************************************************************************/
 unsigned char K15_PopThreadFixedBufferIndex(K15_ThreadFixedBuffer* p_FixedBuffer, unsigned int p_Index)
