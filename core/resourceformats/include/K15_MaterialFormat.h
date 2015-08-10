@@ -5,10 +5,9 @@
 
 struct K15_MaterialPassTemplateSamplerFormat
 {
-	char* samplerName;
 	char* samplerPath;
 
-	uint32 samplerNameLength;
+	uint32 samplerNameHash;
 	uint32 samplerPathLength;
 };
 
@@ -28,9 +27,8 @@ struct K15_MaterialPassTemplateFormat
 
 struct K15_MaterialFormat
 {
-	char* materialName;
+	uint32 materialNameHash;
 
-	uint32 materialNameLength;
 	uint32 numMaterialPasses;
 	uint32 currentNumMaterialPasses;
 

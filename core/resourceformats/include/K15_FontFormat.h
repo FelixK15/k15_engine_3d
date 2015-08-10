@@ -23,7 +23,7 @@ struct K15_FontFormat
 {
 	K15_KerningFormat* kernFormats;
 	K15_GlyphFormat* glyphFormats;
-	char* fontName;
+	//char* fontName;
 
 	struct  
 	{
@@ -35,7 +35,7 @@ struct K15_FontFormat
 
 	float fontSize;
 
-	uint32 fontNameLength;
+	uint32 fontNameHash;
 	uint32 startCharacter;
 	uint32 endCharacter;
 };

@@ -30,10 +30,10 @@ struct K15_SubMeshFormat
 
 	K15_TriangleFormat* triangleData;
 
-	char* materialName;
+	uint32 materialNameHash;
+
 	float* vertexData;
 
-	uint32 materialNameLength;
 	uint32 vertexCount;
 	uint32 triangleCount;
 	uint32 materialIndex;
@@ -44,8 +44,7 @@ struct K15_SubMeshFormat
 struct K15_MeshFormat
 {
 	K15_SubMeshFormat* submeshes;
-	char* meshName;
-	uint32 meshNameLength;
+	uint32 meshNameHash;
 	uint16 submeshCount;
 };
 

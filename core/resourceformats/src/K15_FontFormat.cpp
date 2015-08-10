@@ -43,11 +43,8 @@ intern uint8 K15_InternalSaveFontFormat(K15_DataAccessContext* p_DataAccessConte
 	//write header
 	K15_WriteData(p_DataAccessContext, sizeof(K15_HeaderFormat), &headerFormat);
 
-	//write font name length
-	K15_WriteData(p_DataAccessContext, sizeof(uint32), &p_FontFormat->fontNameLength);
-
-	//write font name
-	K15_WriteData(p_DataAccessContext, p_FontFormat->fontNameLength, p_FontFormat->fontName);
+	//write font name hash
+	K15_WriteData(p_DataAccessContext, sizeof(uint32), &p_FontFormat->fontNameHash);
 
 	//write font size
 	K15_WriteData(p_DataAccessContext, sizeof(float), &p_FontFormat->fontSize);
@@ -105,23 +102,9 @@ intern uint8 K15_InternalLoadFontFormat(K15_DataAccessContext* p_DataAccessConte
 	{
 		return headerResult;
 	}
-	//read font name
-	uint32 nameLength = 0;
-	char* nameBuffer = 0;
 
-	//s font name length
-	K15_ReadData(p_DataAccessContext, sizeof(uint32), &nameLength);
-
-	nameBuffer = (char*)K15_RF_MALLOC(nameLength + 1); // +1 for 0 terminator
-
-	if (!nameBuffer)
-	{
-		return K15_ERROR_OUT_OF_MEMORY;
-	}
-
-	//read font name
-	K15_ReadData(p_DataAccessContext, nameLength, nameBuffer);
-	p_FontFormat->fontName = nameBuffer;
+	//read font name hash
+	K15_ReadData(p_DataAccessContext, sizeof(uint32), &p_FontFormat->fontNameHash);
 
 	//read font size
 	K15_ReadData(p_DataAccessContext, sizeof(float), &p_FontFormat->fontSize);
@@ -210,9 +193,10 @@ uint32 K15_GetKerningDataCount(K15_FontFormat* p_FontFormat)
 /*********************************************************************************/
 uint8 K15_SetFontName(K15_FontFormat* p_FontFormat, char* p_FontName)
 {
-	assert(p_FontFormat && p_FontName);
+	assert(p_FontFormat);
+	assert(p_FontName);
 
-	uint32 nameLength = (uint32)strlen(p_FontName);
+	/*uint32 nameLength = (uint32)strlen(p_FontName);
 	char* nameBuffer = (char*)K15_RF_MALLOC(nameLength);
 
 	if (!nameBuffer)
@@ -223,7 +207,9 @@ uint8 K15_SetFontName(K15_FontFormat* p_FontFormat, char* p_FontName)
 	memcpy(nameBuffer, p_FontName, nameLength);
 
 	p_FontFormat->fontNameLength = nameLength;
-	p_FontFormat->fontName = nameBuffer;
+	p_FontFormat->fontName = nameBuffer;*/
+
+	p_FontFormat->fontNameHash = K15_CreateHash(p_FontName);
 
 	return K15_SUCCESS;
 }
@@ -439,7 +425,7 @@ uint8 K15_LoadFontFormatFromMemory(K15_FontFormat* p_FontFormat, byte* p_Memory,
 /*********************************************************************************/
 void K15_FreeFontFormat(K15_FontFormat p_FontFormat)
 {
-	K15_RF_FREE(p_FontFormat.fontName);
+	//K15_RF_FREE(p_FontFormat.fontName);
 	K15_RF_FREE(p_FontFormat.texture.data);
 	K15_RF_FREE(p_FontFormat.glyphFormats);
 	K15_RF_FREE(p_FontFormat.kernFormats);

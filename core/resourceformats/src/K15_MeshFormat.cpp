@@ -38,28 +38,8 @@ intern uint8 K15_InternalLoadMeshFormat(K15_MeshFormat* p_MeshFormat, K15_DataAc
 
 	K15_MeshFormat meshFormat;
 
-	//skip header, as already read before to determine resource file type
-	//K15_SkipData(p_DataAccessContext, sizeof(K15_HeaderFormat));
-
-	uint32 nameBufferLength = 0;
-	char* nameBuffer = 0;
-
-	//mesh name
-	K15_ReadData(p_DataAccessContext, sizeof(uint32), &nameBufferLength);
-
-	nameBuffer = (char*)K15_RF_MALLOC(nameBufferLength + 1); //+1 for null terminator
-
-	if(!nameBuffer)
-	{
-		return K15_ERROR_OUT_OF_MEMORY;
-	}
-
-	K15_ReadData(p_DataAccessContext, nameBufferLength, nameBuffer);
-
-	nameBuffer[nameBufferLength] = 0;
-
-	meshFormat.meshName = nameBuffer;
-	meshFormat.meshNameLength = nameBufferLength;
+	//mesh name hash
+	K15_ReadData(p_DataAccessContext, sizeof(uint32), &meshFormat.meshNameHash);
 
 	//submesh count
 	K15_ReadData(p_DataAccessContext, sizeof(uint16), &meshFormat.submeshCount);
@@ -157,8 +137,7 @@ intern uint8 K15_InternalSaveMeshFormat(K15_MeshFormat* p_MeshFormat, K15_DataAc
 	K15_WriteData(p_DataAccessContext, sizeof(K15_HeaderFormat), &headerFormat);
 
 	//mesh name
-	K15_WriteData(p_DataAccessContext, sizeof(uint32), &p_MeshFormat->meshNameLength);
-	K15_WriteData(p_DataAccessContext, p_MeshFormat->meshNameLength, p_MeshFormat->meshName);
+	K15_WriteData(p_DataAccessContext, sizeof(uint32), &p_MeshFormat->meshNameHash);
 
 	//submesh count
 	K15_WriteData(p_DataAccessContext, sizeof(uint16), &p_MeshFormat->submeshCount);
@@ -269,9 +248,8 @@ uint8 K15_SetMeshSubmeshCount(K15_MeshFormat* p_MeshFormat, uint32 p_SubmeshCoun
 	{
 		memset(&submeshes[submeshIndex].helper, 0, sizeof(K15_SubmeshFormatHelper));
 
+		submeshes[submeshIndex].materialNameHash = 0;
 		submeshes[submeshIndex].colorChannelCount = 0;
-		submeshes[submeshIndex].materialNameLength = 0;
-		submeshes[submeshIndex].materialName = 0;
 		submeshes[submeshIndex].textureChannelCount = 0;
 		submeshes[submeshIndex].triangleCount = 0;
 		submeshes[submeshIndex].triangleData = 0;
@@ -284,21 +262,10 @@ uint8 K15_SetMeshSubmeshCount(K15_MeshFormat* p_MeshFormat, uint32 p_SubmeshCoun
 /*********************************************************************************/
 uint8 K15_SetMeshName(K15_MeshFormat* p_MeshFormat, const char* p_Name)
 {
-	assert(p_MeshFormat && p_Name);
+	assert(p_MeshFormat);
+	assert(p_Name);
 
-	
-	uint32 nameLength = (uint32)strlen(p_Name);
-	char* nameBuffer = (char*)K15_RF_MALLOC(nameLength);
-
-	if(!nameBuffer)
-	{
-		return K15_ERROR_OUT_OF_MEMORY;
-	}
-
-	memcpy(nameBuffer, p_Name, nameLength);
-
-	p_MeshFormat->meshNameLength = nameLength;
-	p_MeshFormat->meshName = nameBuffer;
+	p_MeshFormat->meshNameHash = K15_CreateHash(p_Name);
 
 	return K15_SUCCESS;
 }
@@ -608,7 +575,6 @@ void K15_FreeMeshFormat(K15_MeshFormat p_MeshFormat)
 		submeshFormat.triangleData = 0;
 	}
 
-	K15_RF_FREE(p_MeshFormat.meshName);
 	K15_RF_FREE(p_MeshFormat.submeshes);
 	p_MeshFormat.submeshes = 0;
 }

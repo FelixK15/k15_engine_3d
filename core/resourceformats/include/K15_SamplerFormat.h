@@ -12,8 +12,7 @@
 
 struct K15_SamplerFormat
 {
-	char* samplerName;
-	uint32 samplerNameLength;
+	uint32 samplerNameHash;
 
 	uint8 minificationFilter;
 	uint8 magnificationFilter;
@@ -35,7 +34,5 @@ uint8 K15_SetSamplerFormatAdressModeW(K15_SamplerFormat* p_SamplerFormat, uint8 
 uint8 K15_SaveSamplerFormatToFile(K15_SamplerFormat* p_SamplerFormat, const char* p_Path, uint32 p_SaveFlags);
 uint8 K15_LoadSamplerFormatFromFile(K15_SamplerFormat* p_SamplerFormat, const char* p_Path);
 uint8 K15_LoadSamplerFormatFromMemory(K15_SamplerFormat* p_SamplerFormat, byte* p_Memory, uint32 p_MemorySize);
-
-void K15_FreeSamplerFormat(K15_SamplerFormat p_SamplerFormat);
 
 #endif //_K15_ResourceFormat_SamplerFormat_h_

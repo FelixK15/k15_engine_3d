@@ -8,6 +8,25 @@
 #include "enums/K15_FormatValues.h"
 
 /*********************************************************************************/
+intern uint8 K15_InternalAddMaterialPassTemplateSamplerHash(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, uint32 p_SamplerNameHash, const char* p_SamplerPath)
+{
+	assert(p_MaterialPassTemplate);
+	assert(p_SamplerPath);
+
+	assert(p_MaterialPassTemplate->numSamplers != p_MaterialPassTemplate->currentNumSampler);
+
+	uint32 samplerPathLength = (uint32)strlen(p_SamplerPath);
+
+	p_MaterialPassTemplate->samplerFormats[p_MaterialPassTemplate->currentNumSampler].samplerNameHash = p_SamplerNameHash;
+
+	p_MaterialPassTemplate->samplerFormats[p_MaterialPassTemplate->currentNumSampler].samplerPath = K15_CopyStringIntoBuffer(p_SamplerPath, (char*)K15_RF_MALLOC(samplerPathLength + 1));
+	p_MaterialPassTemplate->samplerFormats[p_MaterialPassTemplate->currentNumSampler].samplerPathLength = samplerPathLength;
+
+	p_MaterialPassTemplate->currentNumSampler += 1;
+
+	return K15_SUCCESS;
+}
+/*********************************************************************************/
 intern uint8 K15_InternalLoadMaterialFormat(K15_DataAccessContext* p_DataAcessContext, K15_MaterialFormat* p_MaterialFormat)
 {
 	assert(p_MaterialFormat && p_DataAcessContext);
@@ -20,14 +39,8 @@ intern uint8 K15_InternalLoadMaterialFormat(K15_DataAccessContext* p_DataAcessCo
 		return headerResult;
 	}
 
-	//read material name length
-	K15_ReadData(p_DataAcessContext, sizeof(uint32), &p_MaterialFormat->materialNameLength);
-
-	//create material name buffer
-	p_MaterialFormat->materialName = (char*)malloc(p_MaterialFormat->materialNameLength);
-
-	//Read material name 
-	K15_ReadData(p_DataAcessContext, p_MaterialFormat->materialNameLength, p_MaterialFormat->materialName);
+	//read material name hash
+	K15_ReadData(p_DataAcessContext, sizeof(uint32), &p_MaterialFormat->materialNameHash);
 
 	//Read number of material passes
 	K15_ReadData(p_DataAcessContext, sizeof(uint32), &p_MaterialFormat->numMaterialPasses);
@@ -70,23 +83,19 @@ intern uint8 K15_InternalLoadMaterialFormat(K15_DataAccessContext* p_DataAcessCo
 		{
 			K15_MaterialPassTemplateSamplerFormat samplerFormat = {};
 			
-			//read sampler name length
-			K15_ReadData(p_DataAcessContext, sizeof(uint32), &samplerFormat.samplerNameLength);
+			//read sampler name hash
+			K15_ReadData(p_DataAcessContext, sizeof(uint32), &samplerFormat.samplerNameHash);
 
 			//read sampler path length
 			K15_ReadData(p_DataAcessContext, sizeof(uint32), &samplerFormat.samplerPathLength);
 
-			//create sampler name and sampler path buffer
-			samplerFormat.samplerName = (char*)malloc(samplerFormat.samplerNameLength);
+			//create sampler path buffer
 			samplerFormat.samplerPath = (char*)malloc(samplerFormat.samplerPathLength);
-
-			//read sampler name
-			K15_ReadData(p_DataAcessContext, samplerFormat.samplerNameLength, samplerFormat.samplerName);
 
 			//read sampler path
 			K15_ReadData(p_DataAcessContext, samplerFormat.samplerPathLength, samplerFormat.samplerPath);
 
-			K15_AddMaterialPassTemplateSampler(&materialPassFormat, samplerFormat.samplerName, samplerFormat.samplerPath);
+			K15_InternalAddMaterialPassTemplateSamplerHash(&materialPassFormat, samplerFormat.samplerNameHash, samplerFormat.samplerPath);
 		}
 
 		K15_AddMaterialPassTemplateFormat(p_MaterialFormat, &materialPassFormat);
@@ -103,11 +112,8 @@ intern uint8 K15_InternalSaveMaterialFormat(K15_DataAccessContext* p_DataAcessCo
 	//write resource header
 	K15_WriteData(p_DataAcessContext, sizeof(K15_HeaderFormat), &headerFormat);
 
-	//write material name length
-	K15_WriteData(p_DataAcessContext, sizeof(uint32), &p_MaterialFormat->materialNameLength);
-
-	//write material name 
-	K15_WriteData(p_DataAcessContext, p_MaterialFormat->materialNameLength, p_MaterialFormat->materialName);
+	//write material name hash
+	K15_WriteData(p_DataAcessContext, sizeof(uint32), &p_MaterialFormat->materialNameHash);
 
 	//write number of material passes
 	K15_WriteData(p_DataAcessContext, sizeof(uint32), &p_MaterialFormat->numMaterialPasses);
@@ -140,14 +146,11 @@ intern uint8 K15_InternalSaveMaterialFormat(K15_DataAccessContext* p_DataAcessCo
 		{
 			K15_MaterialPassTemplateSamplerFormat* samplerFormat = &materialPassFormat->samplerFormats[samplerIndex];
 
-			//write sampler name length
-			K15_WriteData(p_DataAcessContext, sizeof(uint32), &samplerFormat->samplerNameLength);
+			//write sampler name hash
+			K15_WriteData(p_DataAcessContext, sizeof(uint32), &samplerFormat->samplerNameHash);
 
 			//write sampler path length
-			K15_WriteData(p_DataAcessContext, sizeof(uint32), &samplerFormat->samplerPathLength);;
-
-			//write sampler name
-			K15_WriteData(p_DataAcessContext, samplerFormat->samplerNameLength, samplerFormat->samplerName);
+			K15_WriteData(p_DataAcessContext, sizeof(uint32), &samplerFormat->samplerPathLength);
 
 			//write sampler path
 			K15_WriteData(p_DataAcessContext, samplerFormat->samplerPathLength, samplerFormat->samplerPath);
@@ -170,7 +173,6 @@ intern void K15_InternalFreeMaterialPassTemplateSamplerFormats(K15_MaterialPassT
 		samplerIndex < numSamplers;
 		++samplerIndex)
 	{
-		K15_RF_FREE(p_MaterialPassTemplateFormat->samplerFormats[samplerIndex].samplerName);
 		K15_RF_FREE(p_MaterialPassTemplateFormat->samplerFormats[samplerIndex].samplerPath);
 	}
 }
@@ -200,10 +202,7 @@ uint8 K15_SetMaterialFormatName(K15_MaterialFormat* p_MaterialFormat, const char
 	assert(p_MaterialFormat);
 	assert(p_Name);
 
-	uint32 nameLength = (uint32)strlen(p_Name);
-
-	p_MaterialFormat->materialNameLength = nameLength;
-	p_MaterialFormat->materialName = K15_CopyStringIntoBuffer(p_Name, (char*)K15_RF_MALLOC(nameLength + 1));
+	p_MaterialFormat->materialNameHash = K15_CreateHash(p_Name);
 
 	return K15_SUCCESS;
 }
@@ -309,24 +308,7 @@ uint8 K15_SetMaterialPassTemplateSamplerCount(K15_MaterialPassTemplateFormat* p_
 /*********************************************************************************/
 uint8 K15_AddMaterialPassTemplateSampler(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, const char* p_SamplerName, const char* p_SamplerPath)
 {
-	assert(p_MaterialPassTemplate);
-	assert(p_SamplerName);
-	assert(p_SamplerPath);
-
-	assert(p_MaterialPassTemplate->numSamplers != p_MaterialPassTemplate->currentNumSampler);
-
-	uint32 samplerNameLength = (uint32)strlen(p_SamplerName);
-	uint32 samplerPathLength = (uint32)strlen(p_SamplerPath);
-
-	p_MaterialPassTemplate->samplerFormats[p_MaterialPassTemplate->currentNumSampler].samplerName = K15_CopyStringIntoBuffer(p_SamplerName, (char*)K15_RF_MALLOC(samplerNameLength + 1));
-	p_MaterialPassTemplate->samplerFormats[p_MaterialPassTemplate->currentNumSampler].samplerPath = K15_CopyStringIntoBuffer(p_SamplerPath, (char*)K15_RF_MALLOC(samplerPathLength + 1));
-
-	p_MaterialPassTemplate->samplerFormats[p_MaterialPassTemplate->currentNumSampler].samplerNameLength = samplerNameLength;
-	p_MaterialPassTemplate->samplerFormats[p_MaterialPassTemplate->currentNumSampler].samplerPathLength = samplerPathLength;
-
-	p_MaterialPassTemplate->currentNumSampler += 1;
-
-	return K15_SUCCESS;
+	return K15_InternalAddMaterialPassTemplateSamplerHash(p_MaterialPassTemplate, K15_CreateHash(p_SamplerName), p_SamplerPath);
 }
 /*********************************************************************************/
 K15_MaterialPassTemplateSamplerFormat* K15_GetMaterialPassTemplateSampler(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, uint32 p_MaterialPassTemplateSamplerIndex)
@@ -359,7 +341,6 @@ uint8 K15_SaveMaterialFormatToFile(K15_MaterialFormat* p_MaterialFormat, const c
 /*********************************************************************************/
 void K15_FreeMaterialFormat(K15_MaterialFormat p_MaterialFormat)
 {
-	K15_RF_FREE(p_MaterialFormat.materialName);
 	K15_InternalFreeMaterialPassTemplateFormats(&p_MaterialFormat);
 }
 /*********************************************************************************/

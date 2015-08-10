@@ -14,8 +14,6 @@
 
 #include "enums\K15_ReturnValues.h"
 
-#define K15_MAX(x, y) x > y ? x : y
-
 //Format specifier
 #define K15_RESOURCE_IDENTIFIER "K15_RES"
 #define K15_IDENTIFIER_LENGTH 7

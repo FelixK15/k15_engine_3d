@@ -14,10 +14,7 @@ intern uint8 K15_InternalSaveSamplerFormat(K15_DataAccessContext* p_DataAccessCo
 	K15_CreateHeader(&headerFormat, K15_RESOURCE_FORMAT_SAMPLER);
 
 	//write sampler name length
-	K15_WriteData(p_DataAccessContext, sizeof(uint32), &p_SamplerFormat->samplerNameLength);
-
-	//write sampler name
-	K15_WriteData(p_DataAccessContext, p_SamplerFormat->samplerNameLength, p_SamplerFormat->samplerName);
+	K15_WriteData(p_DataAccessContext, sizeof(uint32), &p_SamplerFormat->samplerNameHash);
 
 	//write minification filter
 	K15_WriteData(p_DataAccessContext, sizeof(uint8), &p_SamplerFormat->minificationFilter);
@@ -33,11 +30,6 @@ intern uint8 K15_InternalSaveSamplerFormat(K15_DataAccessContext* p_DataAccessCo
 
 	//write address move (w)
 	K15_WriteData(p_DataAccessContext, sizeof(uint8), &p_SamplerFormat->addressModeW);
-
-	if((p_SaveFlags & K15_SAVE_FLAG_FREE_DATA) > 0)
-	{
-		K15_FreeSamplerFormat(*p_SamplerFormat);
-	}
 
 	return K15_SUCCESS;
 }
@@ -56,13 +48,7 @@ intern uint8 K15_InternalLoadSamplerFormat(K15_DataAccessContext* p_DataAccessCo
 	}
 
 	//read sampler name length
-	K15_ReadData(p_DataAccessContext, sizeof(uint32), &p_SamplerFormat->samplerNameLength);
-
-	//create buffer for the sampler name
-	p_SamplerFormat->samplerName = (char*)K15_RF_MALLOC(p_SamplerFormat->samplerNameLength);
-
-	//read sampler name
-	K15_ReadData(p_DataAccessContext, p_SamplerFormat->samplerNameLength, p_SamplerFormat->samplerName);
+	K15_ReadData(p_DataAccessContext, sizeof(uint32), &p_SamplerFormat->samplerNameHash);
 
 	//read minification filter
 	K15_ReadData(p_DataAccessContext, sizeof(uint8), &p_SamplerFormat->minificationFilter);
@@ -92,13 +78,7 @@ uint8 K15_SetSamplerFormatName(K15_SamplerFormat* p_SamplerFormat, const char* p
 	assert(p_SamplerFormat);
 	assert(p_Name);
 
-	if (p_SamplerFormat->samplerName)
-	{
-		K15_RF_FREE(p_SamplerFormat->samplerName);
-	}
-
-	p_SamplerFormat->samplerName = K15_CopyString(p_Name);
-	p_SamplerFormat->samplerNameLength = (uint32)strlen(p_Name);
+	p_SamplerFormat->samplerNameHash = K15_CreateHash(p_Name);
 
 	return K15_SUCCESS;
 }
@@ -106,7 +86,7 @@ uint8 K15_SetSamplerFormatName(K15_SamplerFormat* p_SamplerFormat, const char* p
 uint8 K15_SetSamplerFormatMinificationFilter(K15_SamplerFormat* p_SamplerFormat, uint8 p_MinificationFilter)
 {
 	assert(p_SamplerFormat);
-	assert(p_MinificationFilter > 0 && p_MinificationFilter <= K15_FILTER_MODE_NEAREST);
+	assert(p_MinificationFilter >= 0 && p_MinificationFilter <= K15_FILTER_MODE_NEAREST);
 
 	p_SamplerFormat->minificationFilter = p_MinificationFilter;
 
@@ -116,7 +96,7 @@ uint8 K15_SetSamplerFormatMinificationFilter(K15_SamplerFormat* p_SamplerFormat,
 uint8 K15_SetSamplerFormatMagnificationFilter(K15_SamplerFormat* p_SamplerFormat, uint8 p_MagnificationFilter)
 {
 	assert(p_SamplerFormat);
-	assert(p_MagnificationFilter > 0 && p_MagnificationFilter <= K15_FILTER_MODE_NEAREST);
+	assert(p_MagnificationFilter >= 0 && p_MagnificationFilter <= K15_FILTER_MODE_NEAREST);
 
 	p_SamplerFormat->magnificationFilter = p_MagnificationFilter;
 
@@ -126,7 +106,7 @@ uint8 K15_SetSamplerFormatMagnificationFilter(K15_SamplerFormat* p_SamplerFormat
 uint8 K15_SetSamplerFormatAdressModeU(K15_SamplerFormat* p_SamplerFormat, uint8 p_AddressModeU)
 {
 	assert(p_SamplerFormat);
-	assert(p_AddressModeU > 0 && p_AddressModeU <= K15_ADDRESS_MODE_MIRROR);
+	assert(p_AddressModeU >= 0 && p_AddressModeU <= K15_ADDRESS_MODE_MIRROR);
 
 	p_SamplerFormat->addressModeU = p_AddressModeU;
 
@@ -136,7 +116,7 @@ uint8 K15_SetSamplerFormatAdressModeU(K15_SamplerFormat* p_SamplerFormat, uint8 
 uint8 K15_SetSamplerFormatAdressModeV(K15_SamplerFormat* p_SamplerFormat, uint8 p_AddressModeV)
 {
 	assert(p_SamplerFormat);
-	assert(p_AddressModeV > 0 && p_AddressModeV <= K15_ADDRESS_MODE_MIRROR);
+	assert(p_AddressModeV >= 0 && p_AddressModeV <= K15_ADDRESS_MODE_MIRROR);
 
 	p_SamplerFormat->addressModeV = p_AddressModeV;
 
@@ -146,7 +126,7 @@ uint8 K15_SetSamplerFormatAdressModeV(K15_SamplerFormat* p_SamplerFormat, uint8 
 uint8 K15_SetSamplerFormatAdressModeW(K15_SamplerFormat* p_SamplerFormat, uint8 p_AddressModeW)
 {
 	assert(p_SamplerFormat);
-	assert(p_AddressModeW > 0 && p_AddressModeW <= K15_ADDRESS_MODE_MIRROR);
+	assert(p_AddressModeW >= 0 && p_AddressModeW <= K15_ADDRESS_MODE_MIRROR);
 
 	p_SamplerFormat->addressModeW = p_AddressModeW;
 
@@ -215,10 +195,5 @@ uint8 K15_LoadSamplerFormatFromMemory(K15_SamplerFormat* p_SamplerFormat, byte* 
 	K15_CloseDataAccessContext(&accessContext);
 
 	return result;
-}
-/*********************************************************************************/
-void K15_FreeSamplerFormat(K15_SamplerFormat p_SamplerFormat)
-{
-	K15_RF_FREE(p_SamplerFormat.samplerName);
 }
 /*********************************************************************************/
