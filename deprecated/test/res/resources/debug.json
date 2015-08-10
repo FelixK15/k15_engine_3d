@@ -1,9 +1,0 @@
-{
-  "Name" : "Debug",
-  "Passes" : [
-  	{
-    	"VertexShader":"debug.vert",
-    	"FragmentShader":"debug.frag"
-	}
-  ]
-}
