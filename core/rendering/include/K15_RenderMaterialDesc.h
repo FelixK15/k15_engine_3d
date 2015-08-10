@@ -6,9 +6,9 @@
 struct K15_RenderMaterialPassDesc
 {
 	uint32 numSamplerHandles;
-	K15_RenderSamplerHandle* samplerHandles;
-	K15_RenderProgramHandle vertexShaderHandle;
-	K15_RenderProgramHandle fragmentShaderHandle;
+	K15_RenderResourceHandle* samplerHandles;
+	K15_RenderResourceHandle vertexShaderHandle;
+	K15_RenderResourceHandle fragmentShaderHandle;
 };
 
 struct K15_RenderMaterialDesc

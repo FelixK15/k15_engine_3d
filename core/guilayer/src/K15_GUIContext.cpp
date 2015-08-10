@@ -5,6 +5,7 @@
 #include "K15_OSContext.h"
 #include "K15_Window.h"
 
+#include "K15_MaterialFormat.h"
 #include "K15_TextureFormat.h"
 #include "K15_FontFormat.h"
 
@@ -32,10 +33,10 @@ K15_GUIContext* K15_CreateGUIContext(K15_ResourceContext* p_ResourceContext, K15
 	return K15_CreateGUIContextWithCustomAllocator(K15_CreateDefaultMemoryAllocator(), p_ResourceContext, p_RenderContext);
 }
 /*********************************************************************************/
-K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocator* p_MemoryAllocator, K15_ResourceContext* p_ResourceContext, K15_RenderContext* p_RenderContext)
+K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocator p_MemoryAllocator, K15_ResourceContext* p_ResourceContext, K15_RenderContext* p_RenderContext)
 {
 	K15_OSContext* osContext = K15_GetOSLayerContext();
-	K15_GUIContext* guiContext = (K15_GUIContext*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, sizeof(K15_GUIContext));
+	K15_GUIContext* guiContext = (K15_GUIContext*)K15_AllocateFromMemoryAllocator(&p_MemoryAllocator, sizeof(K15_GUIContext));
 
 	uint32 windowHeight = 0;
 	uint32 windowWidth = 0;
@@ -47,9 +48,9 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	}
 
 	guiContext->memoryAllocator = p_MemoryAllocator;
-	guiContext->guiMemory = (byte*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, K15_GUI_CONTEXT_MEMORY_SIZE);
+	guiContext->guiMemory = (byte*)K15_AllocateFromMemoryAllocator(&p_MemoryAllocator, K15_GUI_CONTEXT_MEMORY_SIZE);
 	guiContext->guiMemoryMaxSize = K15_GUI_CONTEXT_MEMORY_SIZE;
-	guiContext->guiRenderCommandBuffer = K15_CreateRenderCommandBuffer(p_RenderContext);
+	guiContext->guiRenderCommandBuffer = K15_CreateRenderCommandQueue(p_RenderContext);
 	guiContext->guiMemoryCurrentSize = 0;
 	guiContext->guiTemplateTexture = K15_INVALID_GPU_RESOURCE_HANDLE;
 	guiContext->windowHeight = windowHeight;
@@ -59,6 +60,7 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 
 	K15_Resource* guiTemplateTexture = K15_LoadResource(p_ResourceContext, "gui_template.k15texture", 0);
 	K15_Resource* guiFont = K15_LoadResource(p_ResourceContext, "gui_font.k15font", 0);
+	K15_Resource* guiMaterial = K15_LoadResource(p_ResourceContext, "gui_material.k15material", 0);
 
 	if (!guiTemplateTexture)
 	{
@@ -66,39 +68,27 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	}
 
 	K15_FontFormat fontFormat = {};
-	
-	if (K15_LoadFontFormatFromMemory(&fontFormat, guiFont->data, guiFont->dataSizeInBytes) == K15_SUCCESS)
+	K15_TextureFormat guiTextureFormat = {};
+	K15_MaterialFormat guiMaterialFormat = {};
+
+	if (guiFont
+		&& K15_LoadFontFormatFromMemory(&fontFormat, guiFont->data, guiFont->dataSizeInBytes) == K15_SUCCESS)
 	{
 
 	}
 
-	K15_TextureFormat guiTextureFormat = {};
-
-	if (K15_LoadTextureFormatFromMemory(&guiTextureFormat, guiTemplateTexture->data, guiTemplateTexture->dataSizeInBytes) == K15_SUCCESS)
+	if (guiMaterial
+		&& K15_LoadMaterialFormatFromMemory(&guiMaterialFormat, guiMaterial->data, guiMaterial->dataSizeInBytes) == K15_SUCCESS)
 	{
-		K15_RenderTextureDesc guiTextureDesc = {};
-		guiTextureDesc.createMipChain = K15_FALSE;
-		guiTextureDesc.dimension.depth = 0;
-		guiTextureDesc.dimension.height = guiTextureFormat.height;
-		guiTextureDesc.dimension.width = guiTextureFormat.width;
-		guiTextureDesc.mipmaps.count = guiTextureFormat.mipMapCount;
-		guiTextureDesc.mipmaps.data = (byte**)malloc(K15_PTR_SIZE * guiTextureFormat.mipMapCount);
-		guiTextureDesc.mipmaps.dataSize = (uint32*)malloc(sizeof(uint32) * guiTextureFormat.mipMapCount);
+		K15_RenderMaterialDesc guiMaterialDesc = {};
+		
+	}
 
-		for (uint32 imageIndex = 0;
-			imageIndex < guiTextureFormat.mipMapCount;
-			++imageIndex)
-		{
-			guiTextureDesc.mipmaps.dataSize[imageIndex] = K15_GetTextureMipMapSize(&guiTextureFormat, imageIndex);
-			guiTextureDesc.mipmaps.data[imageIndex] = K15_GetTextureMipMap(&guiTextureFormat, imageIndex);
-		}
-
-		guiTextureDesc.format = K15_RENDER_FORMAT_R8G8B8A8_UINT;
-		guiTextureDesc.type = K15_RENDER_TEXTURE_TYPE_2D;
-		guiTextureDesc.flags = K15_RENDER_DESC_AUTO_CLEANUP_FLAG;
-
-
-		K15_RenderCommandCreateTexture(guiContext->guiRenderCommandBuffer, &guiTextureDesc, &guiContext->guiTemplateTexture);
+	if (guiTemplateTexture &&
+		K15_LoadTextureFormatFromMemory(&guiTextureFormat, guiTemplateTexture->data, guiTemplateTexture->dataSizeInBytes) == K15_SUCCESS)
+	{
+		K15_RenderCommandCreateTextureFromTextureFormat(guiContext->guiRenderCommandBuffer, &guiContext->guiTemplateTexture, &guiTextureFormat);
+		
 	}
 
 	return guiContext;

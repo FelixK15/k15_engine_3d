@@ -39,7 +39,7 @@ struct K15_InternalRenderCameraDesc
 	K15_Matrix4 viewMatrix;
 	K15_Matrix4 projectionMatrix;
 
-	K15_RenderTargetHandle renderTargetHandle;
+	K15_RenderResourceHandle renderTargetHandle;
 };
 
 #endif //_K15_Rendering_RenderCameraDesc_h_

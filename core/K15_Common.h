@@ -64,7 +64,8 @@
 
 #define K15_ARRAY_COUNT(arr) (sizeof(arr)/sizeof(arr[0]))
 
-#define K15_ASSERT(expr, text) assert(expr && text)
+#define K15_ASSERT(expr) assert(expr)
+#define K15_ASSERT_TEXT_SIMPLE(expr, text) assert(expr && text)
 
 #ifdef K15_OS_WINDOWS
 #	define WIN32_LEAN_AND_MEAN
@@ -86,6 +87,11 @@
 		} \
 	}
 #endif //K15_OS_WINDOWS
+
+#define K15_FUNCTION_VARIABLE(returntype, type, arguments)		typedef returntype(*type) arguments;	\
+	static returntype type##_stubFnc arguments {	\
+	K15_ASSERT_TEXT(false, "Function \"%s\" not supported\\implemented on this platform.", #type);	\
+	return(returntype)(0);}	\
 
 #ifdef K15_OS_WINDOWS
 	//8 bit types
@@ -120,6 +126,7 @@
 
 typedef uint8 bool8;
 typedef uint8 byte;
+typedef uint8 result8;
 typedef float real32;
 
 #ifndef K15_EXPORT_SYMBOL

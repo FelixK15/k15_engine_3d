@@ -22,14 +22,13 @@ void K15_InitializeAsyncOperationMemoryPool(K15_AsyncOperationMemoryPool* p_Memo
 	K15_InitializeAsyncOperationMemoryPoolWithCustomAllocator(p_MemoryPool, K15_CreateDefaultMemoryAllocator("AsyncOperation Default Memory Pool Allocator"), p_NumElements);
 }
 /*********************************************************************************/
-void K15_InitializeAsyncOperationMemoryPoolWithCustomAllocator(K15_AsyncOperationMemoryPool* p_MemoryPool, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_NumElements)
+void K15_InitializeAsyncOperationMemoryPoolWithCustomAllocator(K15_AsyncOperationMemoryPool* p_MemoryPool, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_NumElements)
 {
 	K15_ASSERT_TEXT(p_MemoryPool, "Memory Pool for Type 'K15_AsyncOperation' is NULL.");
-	K15_ASSERT_TEXT(p_MemoryAllocator, "Custom Allocator is NULL.");
 	K15_ASSERT_TEXT(p_NumElements, "Element Count for Memory Pool 'K15_AsyncOperation' is 0.");
 
 	uint32 elementBufferSize = sizeof(K15_AsyncOperationMemoryPoolElement) * p_NumElements;
-	byte* elementBuffer = (byte*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, elementBufferSize);
+	byte* elementBuffer = (byte*)K15_AllocateFromMemoryAllocator(&p_MemoryAllocator, elementBufferSize);
 
 	memset(elementBuffer, 0, elementBufferSize);
 
@@ -103,6 +102,6 @@ void K15_FreeAsyncOperationMemoryPoolElement(K15_AsyncOperationMemoryPool* p_Mem
 /*********************************************************************************/
 void K15_ClearAsyncOperationMemoryPool(K15_AsyncOperationMemoryPool* p_MemoryPool)
 {
-	K15_FreeFromMemoryAllocator(p_MemoryPool->memoryAllocator, p_MemoryPool->elements);
+	K15_FreeFromMemoryAllocator(&p_MemoryPool->memoryAllocator, p_MemoryPool->elements);
 }
 /*********************************************************************************/

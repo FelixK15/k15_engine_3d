@@ -90,12 +90,11 @@ K15_AsyncContext* K15_CreateAsyncContext(K15_OSContext* p_OSContext)
 	return K15_CreateAsyncContextWithCustomAllocator(p_OSContext, K15_CreateDefaultMemoryAllocator());
 }
 /*********************************************************************************/
-K15_AsyncContext* K15_CreateAsyncContextWithCustomAllocator(K15_OSContext* p_OSContext, K15_CustomMemoryAllocator* p_CustomMemoryAllocator)
+K15_AsyncContext* K15_CreateAsyncContextWithCustomAllocator(K15_OSContext* p_OSContext, K15_CustomMemoryAllocator p_CustomMemoryAllocator)
 {
 	K15_ASSERT_TEXT(p_OSContext, "OS Context is NULL.");
-	K15_ASSERT_TEXT(p_CustomMemoryAllocator, "Custom memory allocator is NULL.");
 
-	K15_AsyncContext* asyncContext = (K15_AsyncContext*)K15_AllocateFromMemoryAllocator(p_CustomMemoryAllocator, sizeof(K15_AsyncContext));
+	K15_AsyncContext* asyncContext = (K15_AsyncContext*)K15_AllocateFromMemoryAllocator(&p_CustomMemoryAllocator, sizeof(K15_AsyncContext));
 
 	K15_AsyncOperationStretchBuffer asyncOperationBuffer = {};
 	K15_CreateAsyncOperationStretchBuffer(&asyncOperationBuffer);
@@ -120,7 +119,7 @@ K15_AsyncContext* K15_CreateAsyncContextWithCustomAllocator(K15_OSContext* p_OSC
 
 	asyncContext->memoryAllocator = p_CustomMemoryAllocator;
 
-	K15_AsyncThreadParameter* threadParameter = (K15_AsyncThreadParameter*)K15_AllocateFromMemoryAllocator(p_CustomMemoryAllocator, sizeof(K15_AsyncThreadParameter));
+	K15_AsyncThreadParameter* threadParameter = (K15_AsyncThreadParameter*)K15_AllocateFromMemoryAllocator(&p_CustomMemoryAllocator, sizeof(K15_AsyncThreadParameter));
 	threadParameter->asyncOperationBuffer = &asyncContext->asyncOperations;
 	threadParameter->asyncJobLock = asyncContext->asyncJobLock;
 	threadParameter->asyncWorkSynchronizer = asyncWorkerSynchronizer;
@@ -188,7 +187,7 @@ void K15_RemoveAsyncOperation(K15_AsyncContext* p_AsyncContext, K15_AsyncOperati
 
 	if ((p_AsyncOperation->flags & K15_ASYNC_OPERATION_CLEAR_AFTER_PROCESS_FLAG) > 0)
 	{
-		K15_FreeFromMemoryAllocator(p_AsyncContext->memoryAllocator, p_AsyncOperation->userData);
+		K15_FreeFromMemoryAllocator(&p_AsyncContext->memoryAllocator, p_AsyncOperation->userData);
 	}
 
 	K15_AsyncOperationMemoryPool* asyncMemoryPool = &p_AsyncContext->asyncMemoryPool;
@@ -206,7 +205,7 @@ void K15_InitializeAsyncOperation(K15_AsyncContext* p_AsyncContext, K15_AsyncOpe
 		K15_ASSERT_TEXT(p_UserData, "User Data is NULL.");
 		K15_ASSERT_TEXT(p_UserDataSize, "User Data Size is 0.");
 
-		byte* userDataCopy = (byte*)K15_AllocateFromMemoryAllocator(p_AsyncContext->memoryAllocator, p_UserDataSize);
+		byte* userDataCopy = (byte*)K15_AllocateFromMemoryAllocator(&p_AsyncContext->memoryAllocator, p_UserDataSize);
 		memcpy(userDataCopy, p_UserData, p_UserDataSize);
 		p_UserData = userDataCopy;
 		p_Flags |= K15_ASYNC_OPERATION_CLEAR_AFTER_PROCESS_FLAG;

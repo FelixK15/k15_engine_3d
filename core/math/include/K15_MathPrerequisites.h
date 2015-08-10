@@ -15,6 +15,9 @@
 #define K15_HALF_PI		1.57079632
 #define K15_QUATER_PI	0.78539816
 
+#define K15_MAX(a, b) (a) > (b) ? (a) : (b)
+#define K15_MIN(a, b) (a) < (b) ? (a) : (b)
+
 typedef float real32;
 
 struct K15_Vector2;

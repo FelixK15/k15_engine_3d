@@ -4,6 +4,7 @@ set(K15_OS_LAYER_SRC 	"src/K15_SystemEvents.cpp"
 			"src/K15_FileWatch.cpp"
 			"src/K15_Thread.cpp"
 			"src/K15_OSContext.cpp"
+			"src/K15_ErrorCodes.cpp"
 			"src/K15_FileSystem.cpp"
 			"src/K15_System.cpp")
 

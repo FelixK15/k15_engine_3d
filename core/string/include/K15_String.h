@@ -17,4 +17,10 @@ char* K15_GenerateString(const char* p_Format, char* p_Buffer, ...);
 char** K15_CreateStringArray(unsigned int p_NumStrings, ...);
 char** K15_CreateStringArrayIntoBuffer(char** p_Buffer, unsigned int p_NumStrings, ...);
 
+char* K15_ConvertToLower(char* p_String);
+char* K15_ConvertToLowerIntoBuffer(char* p_String, char* p_Buffer);
+
+char* K15_ConvertToUpper(char* p_String);
+char* K15_ConvertToUpperIntoBuffer(char* p_String, char* p_Buffer);
+
 #endif //_K15_Runtime_String_h_

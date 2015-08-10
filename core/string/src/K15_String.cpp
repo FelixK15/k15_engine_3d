@@ -228,6 +228,16 @@ char* K15_ConcatStringsIntoBuffer(const char* p_String1, const char* p_String2, 
 	return p_Buffer;
 }
 /*********************************************************************************/
+char* K15_GenerateString(const char* p_Format, char* p_Buffer, ...)
+{
+	va_list list;
+	va_start(list, p_Buffer);
+	vsprintf(p_Buffer, p_Format, list);
+	va_end(list);
+
+	return p_Buffer;
+}
+/*********************************************************************************/
 char** K15_CreateStringArray(unsigned int p_NumStrings, ...)
 {
 	va_list argumentList;
@@ -252,12 +262,62 @@ char** K15_CreateStringArrayIntoBuffer(char** p_Buffer, unsigned int p_NumString
 	return stringArray;
 }
 /*********************************************************************************/
-char* K15_GenerateString(const char* p_Format, char* p_Buffer, ...)
+char* K15_ConvertToLower(char* p_String)
 {
-	va_list list;
-	va_start(list, p_Buffer);
-	vsprintf(p_Buffer, p_Format, list);
-	va_end(list);
+	assert(p_String);
+
+	unsigned int stringLength = (unsigned int)strlen(p_String);
+
+	assert(stringLength);
+
+	char* stringBuffer = (char*)malloc(stringLength + 1);
+
+	return K15_ConvertToLowerIntoBuffer(p_String, stringBuffer);
+}
+/*********************************************************************************/
+char* K15_ConvertToLowerIntoBuffer(char* p_String, char* p_Buffer)
+{
+	assert(p_String);
+	assert(p_Buffer);
+
+	char* stringBuffer = p_Buffer;
+
+	while(*p_String)
+	{
+		*stringBuffer++ = tolower(*p_String++);
+	}
+
+	*stringBuffer = 0;
+
+	return p_Buffer;
+}
+/*********************************************************************************/
+char* K15_ConvertToUpper(char* p_String)
+{
+	assert(p_String);
+
+	unsigned int stringLength = (unsigned int)strlen(p_String);
+
+	assert(stringLength);
+
+	char* stringBuffer = (char*)malloc(stringLength + 1);
+
+	return K15_ConvertToUpperIntoBuffer(p_String, stringBuffer);
+}
+/*********************************************************************************/
+char* K15_ConvertToUpperIntoBuffer(char* p_String, char* p_Buffer)
+{
+	assert(p_String);
+	assert(p_Buffer);
+
+	char* stringBuffer = p_Buffer;
+
+	while(*p_String)
+	{
+		*stringBuffer++ = toupper(*p_String++);
+	}
+
+	*stringBuffer = 0;
 
 	return p_Buffer;
 }

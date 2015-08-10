@@ -5,9 +5,10 @@
 #ifndef _K15_Resource_Stretch_Buffer_h_
 #define _K15_Resource_Stretch_Buffer_h_
 
+#include "K15_CustomMemoryAllocator.h"
+
 //forward declaration
 struct K15_Resource;
-struct K15_CustomMemoryAllocator;
 
 //compare function
 typedef unsigned char (*K15_ResourceCompareFnc)(K15_Resource* p_LHS, K15_Resource* p_RHS);
@@ -17,15 +18,15 @@ typedef unsigned char (*K15_ResourceConditionFnc)(K15_Resource* p_Element, void*
 
 struct K15_ResourceStretchBuffer
 {
-	K15_CustomMemoryAllocator* memoryAllocator; //64bit
-	K15_Resource* elements;							//64bit
+	K15_CustomMemoryAllocator memoryAllocator;
+	K15_Resource* elements;
 
-	unsigned int numCapacity;					//32bit
-	unsigned int numElements;					//32bit
-	unsigned int flags;							//32bit
+	unsigned int numCapacity;
+	unsigned int numElements;
+	unsigned int flags;
 };
 
-void K15_CreateResourceStretchBufferWithCustomAllocator(K15_ResourceStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_ElementCapacity);
+void K15_CreateResourceStretchBufferWithCustomAllocator(K15_ResourceStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity);
 void K15_CreateResourceStretchBuffer(K15_ResourceStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity = 8);
 void K15_DeleteResourceStretchBuffer(K15_ResourceStretchBuffer* p_StretchBuffer);
 void K15_ResizeResourceStretchBuffer(K15_ResourceStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);

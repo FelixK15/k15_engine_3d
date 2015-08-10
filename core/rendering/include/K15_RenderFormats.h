@@ -61,4 +61,6 @@ enum K15_RenderFormat
 	K15_RENDER_FORMAT_RGB_3DC
 };
 
+K15_RenderFormat K15_ConvertToRenderFormat(uint8 p_PixelFormatFromTextureFormat);
+
 #endif //_K15_Rendering_RenderFormats_h_

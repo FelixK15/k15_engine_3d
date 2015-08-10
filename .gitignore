@@ -38,3 +38,4 @@ tools/resource_compiler/.git
 *.k15font
 *.k15mesh
 *.k15material
+core/rendering_backup/

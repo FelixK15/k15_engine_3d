@@ -34,6 +34,7 @@ struct K15_RenderTextureDesc
 	} mipmaps;
 
 	uint32 flags;
+	uint32 nameHash;
 
 	uint8 createMipChain;
 };
@@ -58,5 +59,7 @@ struct K15_RenderTextureUpdateDesc
 
 	uint32 flags;
 };
+
+//uint8 K15_ConvertToTexturePixelFormat
 
 #endif //_K15_Rendering_RenderTextureDesc_h_

@@ -5,9 +5,10 @@
 #ifndef _K15_DynamicFunctionPointer_Stretch_Buffer_h_
 #define _K15_DynamicFunctionPointer_Stretch_Buffer_h_
 
+#include "K15_CustomMemoryAllocator.h"
+
 //forward declaration
 struct K15_DynamicFunctionPointer;
-struct K15_CustomMemoryAllocator;
 
 //compare function
 typedef unsigned char (*K15_DynamicFunctionPointerCompareFnc)(K15_DynamicFunctionPointer* p_LHS, K15_DynamicFunctionPointer* p_RHS);
@@ -17,15 +18,15 @@ typedef unsigned char (*K15_DynamicFunctionPointerConditionFnc)(K15_DynamicFunct
 
 struct K15_DynamicFunctionPointerStretchBuffer
 {
-	K15_CustomMemoryAllocator* memoryAllocator; //64bit
-	K15_DynamicFunctionPointer* elements;							//64bit
+	K15_CustomMemoryAllocator memoryAllocator;
+	K15_DynamicFunctionPointer* elements;
 
-	unsigned int numCapacity;					//32bit
-	unsigned int numElements;					//32bit
-	unsigned int flags;							//32bit
+	unsigned int numCapacity;
+	unsigned int numElements;
+	unsigned int flags;
 };
 
-void K15_CreateDynamicFunctionPointerStretchBufferWithCustomAllocator(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_ElementCapacity);
+void K15_CreateDynamicFunctionPointerStretchBufferWithCustomAllocator(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity);
 void K15_CreateDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity = 8);
 void K15_DeleteDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer);
 void K15_ResizeDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);

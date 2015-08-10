@@ -11,14 +11,7 @@
 #define K15_MAIN_THREAD 0
 
 #define K15_FUNCTION_DEBUG_PRINTF(func) printf("Before "#func"\n"); func; printf("After "#func"\n")
-
-#define K15_FUNCTION_VARIABLE(returntype, type, arguments)		typedef returntype(*type) arguments;	\
-	static returntype type##_stubFnc arguments {	\
-	K15_LOG_ERROR_MESSAGE("Function \"%s\" not supported\\implemented on this platform.", #type);	\
-	return(returntype)(0);	\
-																};
-
-
+														
 #ifdef K15_OS_ANDROID
 #ifdef K15_CHECK_JNI_CALLS
 #define K15_JNI_CALL(jniEnv, call) {call; jthrowable ex = jniEnv->ExceptionOccurred(); if(ex){jniEnv->ExceptionDescribe(); jniEnv->ExceptionClear();}}

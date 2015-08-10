@@ -87,7 +87,7 @@ intern uint32 K15_InternalFileSystemGetResourceSize(K15_ResourceContext* p_Resou
 /*********************************************************************************/
 intern byte* K15_InternalFileSystemLoadResource(K15_ResourceContext* p_ResourceContext, uint32 p_ResourceSize, const char* p_Path)
 {
-	K15_CustomMemoryAllocator* resourceMemoryAllocator = p_ResourceContext->memoryAllocator;
+	K15_CustomMemoryAllocator* resourceMemoryAllocator = &p_ResourceContext->memoryAllocator;
 
 	uint32 dirPathLength= (uint32)strlen(p_ResourceContext->resourcePath);
 	uint32 filePathLength= (uint32)strlen(p_Path);
@@ -118,7 +118,7 @@ intern void K15_InternalAsyncResourceLoad(void* p_Parameter)
 	const char* path = loadParamter->resourcePath;
 	uint32 flags = loadParamter->flags;
 
-	K15_CustomMemoryAllocator* customAllocator = context->memoryAllocator;
+	K15_CustomMemoryAllocator* customAllocator = &context->memoryAllocator;
 
 	(*resourcePtr) = K15_LoadResource(context, path, flags);
 
@@ -126,7 +126,7 @@ intern void K15_InternalAsyncResourceLoad(void* p_Parameter)
 	K15_FreeFromMemoryAllocator(customAllocator, p_Parameter);
 }
 /*********************************************************************************/
-intern void K15_InternalInitializeResourceContext(K15_ResourceContext* p_ResourceContext, K15_CustomMemoryAllocator* p_MemoryAllocator, const char* p_ResourceCollectionPath, uint32 p_Flags)
+intern void K15_InternalInitializeResourceContext(K15_ResourceContext* p_ResourceContext, K15_CustomMemoryAllocator p_MemoryAllocator, const char* p_ResourceCollectionPath, uint32 p_Flags)
 {
 	//Create resource cache
 	K15_ResourceStretchBuffer resourceCache = {};
@@ -181,26 +181,22 @@ K15_ResourceContext* K15_CreateResourceContext(const char* p_ResourceCollectionP
 	return K15_CreateResourceContextWithCustomAllocator(p_ResourceCollectionPath, K15_CreateDefaultMemoryAllocator(), p_Flags);
 }
 /*********************************************************************************/
-K15_ResourceContext* K15_CreateResourceContextWithCustomAllocator(const char* p_ResourceCollectionPath, K15_CustomMemoryAllocator* p_CustomMemoryAllocator, uint32 p_Flags)
+K15_ResourceContext* K15_CreateResourceContextWithCustomAllocator(const char* p_ResourceCollectionPath, K15_CustomMemoryAllocator p_CustomMemoryAllocator, uint32 p_Flags)
 {
 	K15_ASSERT_TEXT(p_ResourceCollectionPath, "Resource collection path is NULL.");
-	K15_ASSERT_TEXT(p_CustomMemoryAllocator, "Custom Memory Allocator is NULL.");
 
 	K15_ResourceContext* resourceContext = 0;
 
 	//Check if the resource path is existent
 	if (K15_InternalResourcePathExists(p_ResourceCollectionPath))
 	{
-		resourceContext = (K15_ResourceContext*)K15_AllocateFromMemoryAllocator(p_CustomMemoryAllocator, sizeof(K15_ResourceContext));
+		resourceContext = (K15_ResourceContext*)K15_AllocateFromMemoryAllocator(&p_CustomMemoryAllocator, sizeof(K15_ResourceContext));
 		K15_InternalInitializeResourceContext(resourceContext, p_CustomMemoryAllocator, p_ResourceCollectionPath, p_Flags);
 	}
 	else
 	{
 		K15_LOG_ERROR_MESSAGE("Could not find resource path '%s'.", p_ResourceCollectionPath);
 	}
-
-	
-	
 
 	return resourceContext;
 }
@@ -226,8 +222,8 @@ K15_Resource* K15_LoadResource(K15_ResourceContext* p_ResourceContext, const cha
 
 		if (!resourceContext->resourceExists(resourceContext, p_ResourcePath))
 		{
-			//K15_LOG_ERROR_MESSAGE("Could not load resource '%s' (%s).", p_ResourcePath, K15_CopySystemErrorMessageIntoBuffer((char*)alloca(K15_ERROR_MESSAGE_LENGTH)));
-			K15_ASSERT_TEXT(false, "Could not load resource '%s' (%s).", p_ResourcePath, K15_CopySystemErrorMessageIntoBuffer((char*)alloca(K15_ERROR_MESSAGE_LENGTH)));
+			K15_LOG_ERROR_MESSAGE("Could not load resource '%s' (%s).", p_ResourcePath, K15_CopySystemErrorMessageIntoBuffer((char*)alloca(K15_ERROR_MESSAGE_LENGTH)));
+			//K15_ASSERT_TEXT(false, "Could not load resource '%s' (%s).", p_ResourcePath, K15_CopySystemErrorMessageIntoBuffer((char*)alloca(K15_ERROR_MESSAGE_LENGTH)));
 			return 0;
 		}
 
@@ -263,9 +259,9 @@ K15_AsyncOperation* K15_AsyncLoadResource(K15_AsyncContext* p_AsyncContext, K15_
 	K15_ASSERT_TEXT(p_ResourceContext, "ResourceContext is NULL.");
 	K15_ASSERT_TEXT(p_ResourcePath, "resource path is NULL.");
 
-	K15_CustomMemoryAllocator* resourceContextMalloc = p_ResourceContext->memoryAllocator;
+	K15_CustomMemoryAllocator* resourceContextAllocator = &p_ResourceContext->memoryAllocator;
 
-	K15_AsyncResourceLoadParameter* asyncParameter = (K15_AsyncResourceLoadParameter*)K15_AllocateFromMemoryAllocator(resourceContextMalloc, sizeof(K15_AsyncResourceLoadParameter));
+	K15_AsyncResourceLoadParameter* asyncParameter = (K15_AsyncResourceLoadParameter*)K15_AllocateFromMemoryAllocator(resourceContextAllocator, sizeof(K15_AsyncResourceLoadParameter));
 	asyncParameter->resourceContext = p_ResourceContext;
 	asyncParameter->resourcePath = p_ResourcePath;
 	asyncParameter->resourcePtr = p_ResourcePtr;

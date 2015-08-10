@@ -8,7 +8,5 @@
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 add_subdirectory(materialtool)
-add_subdirectory(lua_standalone)
 
-set_target_properties(lua_standalone PROPERTIES FOLDER tools)
 set_target_properties(materialtool PROPERTIES FOLDER tools)

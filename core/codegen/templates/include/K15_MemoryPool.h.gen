@@ -5,20 +5,21 @@
 #ifndef _K15_$TYPE_NAME$_Memory_Pool_h_
 #define _K15_$TYPE_NAME$_Memory_Pool_h_
 
+#include "K15_CustomMemoryAllocator.h"
+
 //forward declaration
 struct $TYPE_STRUCT_NAME$;
-struct K15_CustomMemoryAllocator;
 
 struct K15_$TYPE_NAME$MemoryPool 
 {
-	K15_CustomMemoryAllocator* memoryAllocator; 	//64bit
-	byte* elements;									//64bit
-	unsigned int numElements;						//32bit
-	unsigned int lastElementIndex;					//32bit
+	K15_CustomMemoryAllocator memoryAllocator;
+	byte* elements;
+	unsigned int numElements;
+	unsigned int lastElementIndex;
 };
 
 void K15_Initialize$TYPE_NAME$MemoryPool(K15_$TYPE_NAME$MemoryPool* p_MemoryPool, unsigned int p_NumElements);
-void K15_Initialize$TYPE_NAME$MemoryPoolWithCustomAllocator(K15_$TYPE_NAME$MemoryPool* p_MemoryPool, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_NumElements);
+void K15_Initialize$TYPE_NAME$MemoryPoolWithCustomAllocator(K15_$TYPE_NAME$MemoryPool* p_MemoryPool, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_NumElements);
 
 $TYPE$* K15_Get$TYPE_NAME$MemoryPoolElement(K15_$TYPE_NAME$MemoryPool* p_MemoryPool);
 

@@ -6,8 +6,8 @@
 struct K15_RenderMeshDesc
 {
 	uint32 submeshCount;
-	K15_RenderBufferHandle* vertexBufferHandles;
-	K15_RenderBufferHandle* indexBufferHandles;
+	K15_RenderResourceHandle* vertexBufferHandles;
+	K15_RenderResourceHandle* indexBufferHandles;
 };
 
 #endif //_K15_Rendering_RenderMesh_h_

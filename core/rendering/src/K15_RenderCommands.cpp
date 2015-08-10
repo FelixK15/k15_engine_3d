@@ -1,177 +1,73 @@
+#include "K15_RenderCommands.h"
+
+#include "K15_Rectangle.h"
+
+#include "K15_ErrorCodes.h"
+#include "K15_Logging.h"
+
+#include "K15_RenderMaterialDesc.h"
+
+#include "K15_TextureFormat.h"
+
 /*********************************************************************************/
-uint8 K15_RenderCommandClearScreen(K15_RenderCommandBuffer* p_RenderCommandBuffer)
+void K15_RenderCommandDraw2DTexture(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle, K15_RenderMaterialDesc* p_RenderMaterialDesc, K15_Rectangle p_DestinationRect, K15_Rectangle p_SourceRect)
 {
-	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_CLEAR_SCREEN);
-	return K15_EndRenderCommand(p_RenderCommandBuffer);
+	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
+	K15_ASSERT_TEXT(p_TextureHandle, "Texture handle is NULL.");
+	K15_ASSERT_TEXT(*p_TextureHandle != K15_INVALID_GPU_RESOURCE_HANDLE, "Invalid texture handle.");
+	K15_ASSERT_TEXT(p_RenderMaterialDesc, "Material Description is NULL.");
+	K15_ASSERT_TEXT(K15_CalculateRectangleArea(p_SourceRect) > 0.f, "Source Rectangle area is 0.");
+	K15_ASSERT_TEXT(K15_CalculateRectangleArea(p_DestinationRect) > 0.f, "Destination Rectangle area is 0.");
+
+	result8 result = K15_BeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_RENDER_2D_TEXTURE);
+
+	if (result != K15_SUCCESS)
+	{
+		K15_LOG_WARNING_MESSAGE("Could not add render command '%s' (%s)", K15_ConvertRenderCommandToString(K15_RENDER_COMMAND_RENDER_2D_TEXTURE), K15_GetErrorCodeString(result));
+		return;
+	}
+
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, K15_PTR_SIZE, p_TextureHandle));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_RenderMaterialDesc), p_RenderMaterialDesc));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_Rectangle), &p_DestinationRect));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_Rectangle), &p_SourceRect));
+	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));
 }
 /*********************************************************************************/
-uint8 K15_RenderCommandCreateBuffer(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderBufferDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr)
+void K15_RenderCommandCreateTextureFromTextureFormat(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle, K15_TextureFormat* p_TextureFormat)
 {
-	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_CREATE_BUFFER);
-	K15_AddRenderBufferHandleParameter(p_RenderCommandBuffer, p_RenderBufferHandlePtr);
-	K15_AddRenderBufferDescParameter(p_RenderCommandBuffer, p_RenderBufferDesc);
-	return K15_EndRenderCommand(p_RenderCommandBuffer);
+	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
+	K15_ASSERT_TEXT(p_TextureHandle, "Texture handle is NULL.");
+	K15_ASSERT_TEXT(p_TextureFormat, "Texture format is NULL.");
+
+	result8 result  = K15_BeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_CREATE_TEXTURE_FROM_TEXTURE_FORMAT);
+
+	if (result != K15_SUCCESS)
+	{
+		K15_LOG_WARNING_MESSAGE("Could not add render command '%s' (%s)", K15_ConvertRenderCommandToString(K15_RENDER_COMMAND_CREATE_TEXTURE_FROM_TEXTURE_FORMAT), K15_GetErrorCodeString(result));
+		return;
+	}
+
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, K15_PTR_SIZE, p_TextureHandle));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_TextureFormat), p_TextureFormat));
+	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));
 }
 /*********************************************************************************/
-uint8 K15_RenderCommandUpdateBuffer(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderBufferUpdateDesc* p_RenderBufferUpdateDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr)
-{
-	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_UPDATE_BUFFER);
-	K15_AddRenderBufferHandleParameter(p_RenderCommandBuffer, p_RenderBufferHandlePtr);
-	K15_AddRenderBufferUpdateDescParameter(p_RenderCommandBuffer, p_RenderBufferUpdateDesc);
-	return K15_EndRenderCommand(p_RenderCommandBuffer);
-}
-/*********************************************************************************/
-uint8 K15_RenderCommandDeleteBuffer(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderBufferHandle* p_RenderBufferHandlePtr)
-{
-	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_DELETE_BUFFER);
-	K15_AddRenderBufferHandleParameter(p_RenderCommandBuffer, p_RenderBufferHandlePtr);
-	return K15_EndRenderCommand(p_RenderCommandBuffer);
-}
-/*********************************************************************************/
-uint8 K15_RenderCommandCreateTexture(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTextureDesc* p_RenderTextureDesc, K15_RenderTextureHandle* p_RenderTextureHandlePtr)
-{
-	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_CREATE_TEXTURE);
-	K15_AddRenderTextureHandleParameter(p_RenderCommandBuffer, p_RenderTextureHandlePtr);
-	K15_AddRenderTextureDescParameter(p_RenderCommandBuffer, p_RenderTextureDesc);
-	return K15_EndRenderCommand(p_RenderCommandBuffer);
-}
-/*********************************************************************************/
-uint8 K15_RenderCommandCreateMesh(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_MeshFormat* p_MeshFormat, K15_RenderMeshHandle* p_RenderMeshHandlePtr)
-{
-	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_CREATE_MESH_FROM_MESH_FORMAT);
-	K15_AddRenderMeshHandleParameter(p_RenderCommandBuffer, p_RenderMeshHandlePtr);
-	K15_AddMeshFormatParameter(p_RenderCommandBuffer, p_MeshFormat);
-	return K15_EndRenderCommand(p_RenderCommandBuffer);
-}
-/*********************************************************************************/
-uint8 K15_RenderCommandDrawMesh(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderMeshHandle* p_RenderMeshHandlePtr, K15_Matrix4* p_WorldMatrix)
-{
-	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_DRAW_MESH);
-	K15_AddRenderMeshHandleParameter(p_RenderCommandBuffer, p_RenderMeshHandlePtr);
-	K15_AddMatrix4Parameter(p_RenderCommandBuffer, p_WorldMatrix);
-	return K15_EndRenderCommand(p_RenderCommandBuffer);
-}
-/*********************************************************************************/
-uint8 K15_RenderCommandCreateCamera(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderCameraHandle* p_RenderCameraHandlePtr, K15_RenderCameraDesc* p_RenderCameraDesc)
-{
-	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_CREATE_CAMERA);
-	K15_AddRenderCameraHandleParameter(p_RenderCommandBuffer, p_RenderCameraHandlePtr);
-	K15_AddRenderCameraDescParameter(p_RenderCommandBuffer, p_RenderCameraDesc);
-	return K15_EndRenderCommand(p_RenderCommandBuffer);
-}
-/*********************************************************************************/
-uint8 K15_RenderCommandBindCamera(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderCameraHandle* p_RenderCameraHandlePtr)
-{
-	K15_BeginRenderCommand(p_RenderCommandBuffer, K15_RENDER_COMMAND_BIND_CAMERA);
-	K15_AddRenderCameraHandleParameter(p_RenderCommandBuffer, p_RenderCameraHandlePtr);
-	return K15_EndRenderCommand(p_RenderCommandBuffer);
-}
-/*********************************************************************************/
-const char* K15_ConvertRenderCommandToString(K15_RenderCommand p_RenderCommand)
+const char* K15_ConvertRenderCommandToString(K15_RenderCommandType p_RenderCommandType)
 {
 	const char* renderCommandString = 0;
 
-	switch(p_RenderCommand)
+	switch(p_RenderCommandType)
 	{
-		case K15_RENDER_COMMAND_CLEAR_SCREEN:
+		case K15_RENDER_COMMAND_RENDER_2D_TEXTURE:
 		{
-			renderCommandString = "Clear Screen";
+			renderCommandString = "Render 2D Texture";
 			break;
 		}
 
-		case K15_RENDER_COMMAND_CREATE_BUFFER:
+		case K15_RENDER_COMMAND_CREATE_TEXTURE_FROM_TEXTURE_FORMAT:
 		{
-			renderCommandString = "Create Buffer";
-			break;
-		}
-
-		case K15_RENDER_COMMAND_UPDATE_BUFFER:
-		{
-			renderCommandString = "Update Buffer";
-			break;
-		}
-
-		case K15_RENDER_COMMAND_DELETE_BUFFER:
-		{
-			renderCommandString = "Delete Buffer";
-			break;
-		}
-
-		case K15_RENDER_COMMAND_CREATE_PROGRAM:
-		{
-			renderCommandString = "Create Program";
-			break;
-		}
-
-		case K15_RENDER_COMMAND_DELETE_PROGRAM:
-		{
-			renderCommandString = "Delete Program";
-			break;
-		}
-
-		case K15_RENDER_COMMAND_DELETE_RENDER_TARGET:
-		{
-			renderCommandString = "Delete Render Target";
-			break;
-		}
-
-		case K15_RENDER_COMMAND_DRAW_FULLSCREEN_QUAD:
-		{
-			renderCommandString = "Draw Fullscreen Quad";
-			break;
-		}
-
-		case K15_RENDER_COMMAND_CREATE_SAMPLER:
-		{
-			renderCommandString = "Create Sampler";
-			break;
-		}
-
-		case K15_RENDER_COMMAND_CREATE_TEXTURE:
-		{
-			renderCommandString = "Create Texture";
-			break;
-		}
-
-		case K15_RENDER_COMMAND_UPDATE_TEXTURE:
-		{
-			renderCommandString =  "Update Texture";
-			break;
-		}
-
-		case K15_RENDER_COMMAND_DELETE_TEXTURE:
-		{
-			renderCommandString = "Delete Texture";
-			break;
-		}
-
-		case K15_RENDER_COMMAND_BIND_RENDER_TARGET:
-		{
-			renderCommandString = "Bind Render Target";
-			break;
-		}
-
-		case K15_RENDER_COMMAND_DELETE_SAMPLER:
-		{
-			renderCommandString = "Delete Sampler";
-			break;
-		}
-
-		case K15_RENDER_COMMAND_DRAW_MESH:
-		{
-			renderCommandString = "Draw Mesh";
-			break;
-		}
-
-		case K15_RENDER_COMMAND_CREATE_CAMERA:
-		{
-			renderCommandString = "Create Camera";
-			break;
-		}
-
-		case K15_RENDER_COMMAND_UPDATE_CAMERA:
-		{
-			renderCommandString = "Update Camera";
+			renderCommandString = "Create texture from texture format";
 			break;
 		}
 
@@ -184,4 +80,6 @@ const char* K15_ConvertRenderCommandToString(K15_RenderCommand p_RenderCommand)
 
 	return renderCommandString;
 }
+
+
 /*********************************************************************************/

@@ -1,21 +1,15 @@
 #ifndef _K15_Rendering_RenderCommands_h_
 #define _K15_Rendering_RenderCommands_h_
 
+#include "K15_RenderCommand.h"
 #include "K15_RenderPrerequisites.h"
+#include "K15_Rectangle.h"
 
-uint8 K15_RenderCommandClearScreen(K15_RenderCommandBuffer* p_RenderCommandBuffer);
-uint8 K15_RenderCommandCreateBuffer(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderBufferDesc* p_RenderBufferDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr);
-uint8 K15_RenderCommandUpdateBuffer(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderBufferUpdateDesc* p_RenderBufferUpdateDesc, K15_RenderBufferHandle* p_RenderBufferHandlePtr);
-uint8 K15_RenderCommandDeleteBuffer(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderBufferHandle* p_RenderBufferHandlePtr);
-uint8 K15_RenderCommandBindBuffer(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderBufferHandle* p_RenderBufferHandlePtr);
-uint8 K15_RenderCommandCreateProgram(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderProgramDesc* p_RenderProgramDesc, K15_RenderProgramHandle* p_RenderProgramHandlePtr);
-uint8 K15_RenderCommandBindProgram(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderProgramHandle* p_RenderProgramHandlePtr);
-uint8 K15_RenderCommandDeleteProgram(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderProgramHandle* p_RenderProgramHandlePtr);
-uint8 K15_RenderCommandCreateTexture(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderTextureDesc* p_RenderTextureDesc, K15_RenderTextureHandle* p_RenderTextureHandlePtr);
-uint8 K15_RenderCommandCreateMesh(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_MeshFormat* p_MeshFormat, K15_RenderMeshHandle* p_RenderMeshDesc);
-uint8 K15_RenderCommandDrawMesh(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderMeshHandle* p_RenderMeshHandlePtr, K15_Matrix4* p_WorldMatrix);
-uint8 K15_RenderCommandCreateCamera(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderCameraHandle* p_RenderCameraHandlePtr, K15_RenderCameraDesc* p_RenderCameraDesc);
-uint8 K15_RenderCommandBindCamera(K15_RenderCommandBuffer* p_RenderCommandBuffer, K15_RenderCameraHandle* p_RenderCameraHandlePtr);
-const char* K15_ConvertRenderCommandToString(K15_RenderCommand p_RenderCommand);
+void K15_RenderCommandDraw2DTexture(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle, K15_RenderMaterialDesc* p_RenderMaterialDesc, 
+									K15_Rectangle p_DestinationRect, K15_Rectangle p_SourceRect);
+
+void K15_RenderCommandCreateTextureFromTextureFormat(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle, K15_TextureFormat* p_TextureFormat);
+
+const char* K15_ConvertRenderCommandToString(K15_RenderCommandType p_RenderCommandType);
 
 #endif //_K15_Rendering_RenderCommands_h_

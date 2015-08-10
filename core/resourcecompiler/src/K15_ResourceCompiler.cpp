@@ -472,7 +472,7 @@ bool8 K15_CompileTextureResourceWithSquish(K15_ResourceCompilerContext* p_Resour
 	char* imageName = 0;
 	char* targetDimension = 0;
 	bool8 generateMipMaps = 0;
-	uint32 compressionType = K15_TEXTURE_NO_COMPRESSION;
+	uint32 pixelFormat = K15_TEXTURE_R8G8B8_UBYTE;
 	uint32 numImages = 1;
 
 	stbi_uc** imageData = 0;
@@ -566,19 +566,24 @@ bool8 K15_CompileTextureResourceWithSquish(K15_ResourceCompilerContext* p_Resour
 	{
 		if (strcmp(compressionTypeString, "dxt1") == 0)
 		{
-			compressionType = K15_TEXTURE_DXT1_COMPRESSION;
+			pixelFormat = K15_TEXTURE_DXT1_COMPRESSION;
 		}
 		else if (strcmp(compressionTypeString, "dxt3") == 0)
 		{
-			compressionType = K15_TEXTURE_DXT3_COMPRESSION;
+			pixelFormat = K15_TEXTURE_DXT3_COMPRESSION;
 		}
 		else if(strcmp(compressionTypeString, "dxt5") == 0)
 		{
-			compressionType = K15_TEXTURE_DXT5_COMPRESSION;
+			pixelFormat = K15_TEXTURE_DXT5_COMPRESSION;
 		}
 		else if(strcmp(compressionTypeString, "uncompressed") != 0)
 		{
 			K15_LOG_WARNING_MESSAGE("Unrecognized texture compression '%s' for texture '%s'. Texture gets saved uncompressed.", compressionTypeString, imageFileName);
+		}
+
+		if (pixelFormat == K15_TEXTURE_R8G8B8_UBYTE)
+		{
+			pixelFormat = numColorComponents == 3 ? K15_TEXTURE_R8G8B8_UBYTE : K15_TEXTURE_R8G8B8A8_UBYTE;
 		}
 	}
 
@@ -636,19 +641,20 @@ bool8 K15_CompileTextureResourceWithSquish(K15_ResourceCompilerContext* p_Resour
 	}
 
 	//compress texture
-	if (compressionType != K15_TEXTURE_NO_COMPRESSION)
+	if (pixelFormat != K15_TEXTURE_R8G8B8_UBYTE ||
+		pixelFormat != K15_TEXTURE_R8G8B8A8_UBYTE)
 	{
-		if (compressionType == K15_TEXTURE_DXT1_COMPRESSION ||
-			compressionType == K15_TEXTURE_DXT3_COMPRESSION ||
-			compressionType == K15_TEXTURE_DXT5_COMPRESSION)
+		if (pixelFormat == K15_TEXTURE_DXT1_COMPRESSION ||
+			pixelFormat == K15_TEXTURE_DXT3_COMPRESSION ||
+			pixelFormat == K15_TEXTURE_DXT5_COMPRESSION)
 		{
 			int compressionFlags = 0;
 
-			if (compressionType == K15_TEXTURE_DXT1_COMPRESSION)
+			if (pixelFormat == K15_TEXTURE_DXT1_COMPRESSION)
 			{
 				compressionFlags = squish::kDxt1;
 			}
-			else if (compressionType == K15_TEXTURE_DXT3_COMPRESSION)
+			else if (pixelFormat == K15_TEXTURE_DXT3_COMPRESSION)
 			{
 				compressionFlags = squish::kDxt3;
 			}
@@ -712,7 +718,7 @@ bool8 K15_CompileTextureResourceWithSquish(K15_ResourceCompilerContext* p_Resour
 	textureFormat.width = targetWidth;
 	textureFormat.height = targetHeight;
 	textureFormat.colorComponentCount = numColorComponents;
-	textureFormat.compression = compressionType;
+	textureFormat.pixelFormat = pixelFormat;
 	textureFormat.mipMapCount = numImages;
 
 	K15_SetTextureMipMapCount(&textureFormat, numImages);

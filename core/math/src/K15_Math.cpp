@@ -1,6 +1,6 @@
 #include "K15_Math.h"
 
-
+#include "K15_Rectangle.cpp"
 #include "K15_Vector2.cpp"
 #include "K15_Vector3.cpp"
 #include "K15_Vector4.cpp"

@@ -18,16 +18,9 @@ if (${RENDERER_FOUND})
 		set(PLATFORM_RENDERER_SRC ./src/OpenGL/GLX/K15_X11RenderXGLContext.cpp)
 	endif()
 
-	if (${K15_RENDERER_VERSION} STREQUAL "2")
-		set(RENDERER_API_SRC 	./src/OpenGL/GL2/K15_RenderGL2Context.cpp
-					./src/OpenGL/GL2/K15_RenderGL2Types.cpp)
-
-		set(RENDERER_API_INC 	./include/OpenGL/K15_RenderGLContext.h
-					./include/OpenGL/K15_RenderGLConfig.h
-					./include/OpenGL/K15_RenderGLTypes.h)
-	elseif (${K15_RENDERER_VERSION} STREQUAL "3")
-		set(RENDERER_API_SRC 	./src/OpenGL/GL3/K15_RenderGL3Context.cpp
-					./src/OpenGL/GL3/K15_RenderGL3Types.cpp)
+	if (${K15_RENDERER} STREQUAL "OGL")
+		set(RENDERER_API_SRC 	./src/OpenGL/K15_RenderGLContext.cpp
+					./src/OpenGL/K15_RenderGLTypes.cpp)
 
 		set(RENDERER_API_INC 	./include/OpenGL/K15_RenderGLContext.h
 					./include/OpenGL/K15_RenderGLConfig.h

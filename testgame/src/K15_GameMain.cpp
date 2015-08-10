@@ -16,19 +16,20 @@
 
 #include <K15_RenderContext.h>
 
+#include <K15_Rectangle.h>
 #include <K15_Matrix4.h>
 
 #define K15_GAME_MEMORY_USAGE size_megabyte(20)
 
 struct K15_Sample1GameContext
 {
-	K15_RenderCommandBuffer* gameRenderBuffer;
+	K15_RenderCommandQueue* gameRenderQueue;
 	K15_ResourceContext* resourceContext;
 	K15_GUIContext* guiContext;
 
 	K15_Mesh* robbie;
 
-	K15_RenderCameraHandle camera;
+	K15_RenderCameraDesc camera;
 };
 
 intern uint8 g_Initialized = K15_FALSE;
@@ -67,10 +68,10 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 	sample1GameContext->resourceContext = resourceContext;
 
 	//create render command buffer for the game
-	K15_RenderCommandBuffer* renderBuffer = K15_CreateRenderCommandBuffer(p_GameContext->renderContext);
+	K15_RenderCommandQueue* mainRenderQueue = K15_CreateRenderCommandQueue(p_GameContext->renderContext);
 
 	//set render command buffer
-	sample1GameContext->gameRenderBuffer = renderBuffer;
+	sample1GameContext->gameRenderQueue = mainRenderQueue;
 
 	K15_RenderCameraDesc cameraDesc = {};
 
@@ -81,8 +82,9 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 	cameraDesc.flags = K15_RENDER_CAMERA_FLAG_DRAW_TO_RENDER_TARGET | K15_RENDER_CAMERA_FLAG_ACTIVATE_CAMERA;
 	cameraDesc.position = K15_CreateVector(0.0f, 0.0f, 0.f);
 
-	K15_RenderCommandCreateCamera(renderBuffer, &sample1GameContext->camera, &cameraDesc);
-	K15_RenderCommandBindCamera(renderBuffer, &sample1GameContext->camera);
+	//TODO
+	//K15_RenderCommandCreateCamera(renderBuffer, &sample1GameContext->camera, &cameraDesc);
+	//K15_RenderCommandBindCamera(renderBuffer, &sample1GameContext->camera);
 
 	K15_AsyncContext* asyncContext = p_GameContext->asyncContext;
 
@@ -123,14 +125,13 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 		g_Initialized = K15_TRUE;
 	}
 	K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->gameMemory->buffer;
-	K15_RenderCommandBuffer* gameRenderCommandBuffer = gameContext->gameRenderBuffer;
+	K15_RenderCommandQueue* gameRenderCommandQueue = gameContext->gameRenderQueue;
 
-	K15_RenderBeginFrame();
-		K15_RenderCommandDrawGUI(gameContext->guiContext->guiRenderCommandBuffer, gameContext->guiContext);
-	K15_RenderEndFrame();
-
-	K15_DispatchRenderCommandBuffer(gameContext->guiContext->guiRenderCommandBuffer);
-	K15_DispatchRenderCommandBuffer(gameRenderCommandBuffer);
+	K15_RenderCommandDraw2DTexture(gameRenderCommandQueue, &gameContext->guiContext->guiTemplateTexture, 
+		&gameContext->guiContext->guiTemplateTextureMaterial, K15_CreateRectangle(1.f, 1.f, -1.f, -1.f),
+		K15_CreateRectangle(0.f, 0.f, 1.f, 1.f));
+	
+	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameRenderCommandQueue);
 
 
 // 	if (p_GameContext->frameCounter >= 10)

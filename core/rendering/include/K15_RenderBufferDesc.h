@@ -32,7 +32,7 @@ struct K15_RenderBufferDesc
 	byte* data;
 	void* userData;
 	uint32 sizeInBytes;
-	uint32 singleElementSizeInBytes;
+	uint32 offsetInBytes;
 
 	K15_RenderBufferUsage usage;
 	K15_RenderBufferType type;
@@ -51,8 +51,8 @@ struct K15_RenderBufferUpdateDesc
 
 struct K15_RenderDoubleBufferDesc
 {
-	K15_RenderBufferHandle frontBufferHandle;
-	K15_RenderBufferHandle backBufferHandle;
+	K15_RenderResourceHandle frontBufferHandle;
+	K15_RenderResourceHandle backBufferHandle;
 };
 
 #endif //_K15_Rendering_RenderBufferDesc_h_

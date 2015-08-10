@@ -16,6 +16,6 @@ struct K15_AndroidGLContext
 	EGLContext context;
 };
 
-uint8 K15_AndroidCreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSLayerContext* p_OSContext);
+uint8 K15_AndroidCreateGLContext(K15_CustomMemoryAllocator* p_MemoryAllocator, K15_GLRenderContext* p_RenderContext, K15_OSLayerContext* p_OSContext);
 
 #endif //_K15_Rendering_GL_EGLContext_h_

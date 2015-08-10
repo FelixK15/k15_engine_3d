@@ -10,7 +10,7 @@ enum K15_MemoryBufferFlags
 
 struct K15_MemoryBuffer
 {
-	K15_CustomMemoryAllocator* memoryAllocator;
+	K15_CustomMemoryAllocator memoryAllocator;
 
 	byte* buffer;
 	uint32 sizeInBytes;
@@ -19,14 +19,14 @@ struct K15_MemoryBuffer
 };
 
 void K15_InitializeMemoryBuffer(K15_MemoryBuffer* p_MemoryBuffer, uint32 p_SizeInBytes, uint32 p_Flags);
-void K15_InitializeMemoryBufferWithCustomAllocator(K15_MemoryBuffer* p_MemoryBuffer, K15_CustomMemoryAllocator* p_CustomMemoryAllocator, uint32 p_SizeInBytes, uint32 p_Flags);
+void K15_InitializeMemoryBufferWithCustomAllocator(K15_MemoryBuffer* p_MemoryBuffer, K15_CustomMemoryAllocator p_CustomMemoryAllocator, uint32 p_SizeInBytes, uint32 p_Flags);
 void K15_InitializePreallocatedMemoryBuffer(K15_MemoryBuffer* p_MemoryBuffer, byte* p_PreallocatedMemory, uint32 p_SizeInBytes, uint32 p_Flags);
-void K15_InitializePreallocatedMemoryBufferWithCustomAllocator(K15_MemoryBuffer* p_MemoryBuffer, byte* p_PreallocatedMemory,  K15_CustomMemoryAllocator* p_CustomMemoryAllocator, uint32 p_SizeInBytes, uint32 p_Flags);
+void K15_InitializePreallocatedMemoryBufferWithCustomAllocator(K15_MemoryBuffer* p_MemoryBuffer, byte* p_PreallocatedMemory,  K15_CustomMemoryAllocator p_CustomMemoryAllocator, uint32 p_SizeInBytes, uint32 p_Flags);
 
 byte* K15_GetMemoryFromMemoryBuffer(K15_MemoryBuffer* p_MemoryBuffer, uint32 p_SizeInBytes);
 
 void K15_ClearMemoryBuffer(K15_MemoryBuffer* p_MemoryBuffer);
 
-K15_CustomMemoryAllocator* K15_CreateMemoryBufferAllocator(K15_MemoryBuffer* p_MemoryBuffer);
+K15_CustomMemoryAllocator K15_CreateMemoryBufferAllocator(K15_MemoryBuffer* p_MemoryBuffer);
 
 #endif //_K15_Runtime_Memory_Buffer_h_

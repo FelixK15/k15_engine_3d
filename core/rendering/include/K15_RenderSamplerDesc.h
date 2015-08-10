@@ -18,6 +18,8 @@ enum K15_RenderFilterAddressMode: uint32
 
 struct K15_RenderSamplerDesc
 {
+	uint32 nameHash;
+
 	struct  
 	{
 		K15_RenderFilterMode minification;

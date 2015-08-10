@@ -2,6 +2,9 @@
 #define _K15_GUILayer_Context_h_
 
 #include "K15_GUILayerPrerequisites.h"
+#include "K15_CustomMemoryAllocator.h"
+
+#include <K15_RenderMaterialDesc.h>
 
 enum K15_GUIElementType
 {
@@ -36,9 +39,12 @@ struct K15_GUIElementHeader
 
 struct K15_GUIContext
 {
-	K15_CustomMemoryAllocator* memoryAllocator;
-	K15_RenderCommandBuffer* guiRenderCommandBuffer;
-	K15_RenderTextureHandle guiTemplateTexture;
+	K15_CustomMemoryAllocator memoryAllocator;
+
+	K15_RenderMaterialDesc guiTemplateTextureMaterial;
+
+	K15_RenderCommandQueue* guiRenderCommandBuffer;
+	K15_RenderResourceHandle guiTemplateTexture;
 
 	byte* guiMemory;
 
@@ -53,7 +59,7 @@ struct K15_GUIContext
 };
 
 K15_GUIContext* K15_CreateGUIContext(K15_ResourceContext* p_ResourceContext, K15_RenderContext* p_RenderContext);
-K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocator* p_MemoryAllocator, K15_ResourceContext* p_ResourceContext, K15_RenderContext* p_RenderContext);
+K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocator p_MemoryAllocator, K15_ResourceContext* p_ResourceContext, K15_RenderContext* p_RenderContext);
 
 void K15_SetGUIContextWindowSize(K15_GUIContext* p_GUIContext, uint32 p_WindowWidth, uint32 p_WindowHeight);
 void K15_SetGUIContextMousePosition(K15_GUIContext* p_GUIContext, uint32 p_MouseX, uint32 p_MouseY);

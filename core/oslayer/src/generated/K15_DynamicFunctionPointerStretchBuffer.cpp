@@ -6,15 +6,14 @@
 
 
 /*********************************************************************************/
-void K15_CreateDynamicFunctionPointerStretchBufferWithCustomAllocator(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_ElementCapacity)
+void K15_CreateDynamicFunctionPointerStretchBufferWithCustomAllocator(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity)
 {
 	K15_ASSERT_TEXT(!p_StretchBuffer->elements, "Stretch Buffer has already been created.");
-	K15_ASSERT_TEXT(p_MemoryAllocator, "No memory allocator defined.");
 	K15_ASSERT_TEXT(p_ElementCapacity != 0, "Can not reserve 0 elements.");
 
 	unsigned int bytesToAllocate = p_ElementCapacity * sizeof(K15_DynamicFunctionPointer);
 	
-	K15_DynamicFunctionPointer* elements = (K15_DynamicFunctionPointer*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, bytesToAllocate);
+	K15_DynamicFunctionPointer* elements = (K15_DynamicFunctionPointer*)K15_AllocateFromMemoryAllocator(&p_MemoryAllocator, bytesToAllocate);
 
 	K15_ASSERT_TEXT(elements, "Out of memory.");
 
@@ -38,7 +37,7 @@ void K15_DeleteDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStr
 
 	if ((p_StretchBuffer->flags & K15_USE_EXTERNAL_BUFFER) == 0)
 	{
-		K15_FreeFromMemoryAllocator(p_StretchBuffer->memoryAllocator, p_StretchBuffer->elements);
+		K15_FreeFromMemoryAllocator(&p_StretchBuffer->memoryAllocator, p_StretchBuffer->elements);
 	}
 
 	p_StretchBuffer->elements = 0;
@@ -52,7 +51,7 @@ void K15_ResizeDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStr
 
 	unsigned int freeSlotIndex = p_StretchBuffer->numElements;
 	unsigned int capacity = p_StretchBuffer->numCapacity;
-	K15_CustomMemoryAllocator* memoryAllocator = p_StretchBuffer->memoryAllocator;
+	K15_CustomMemoryAllocator* memoryAllocator = &p_StretchBuffer->memoryAllocator;
 
 	if (freeSlotIndex >= capacity)
 	{

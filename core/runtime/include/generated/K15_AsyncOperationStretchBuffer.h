@@ -5,9 +5,10 @@
 #ifndef _K15_AsyncOperation_Stretch_Buffer_h_
 #define _K15_AsyncOperation_Stretch_Buffer_h_
 
+#include "K15_CustomMemoryAllocator.h"
+
 //forward declaration
 struct K15_AsyncOperation;
-struct K15_CustomMemoryAllocator;
 
 //compare function
 typedef unsigned char (*K15_AsyncOperationCompareFnc)(K15_AsyncOperation** p_LHS, K15_AsyncOperation** p_RHS);
@@ -17,15 +18,15 @@ typedef unsigned char (*K15_AsyncOperationConditionFnc)(K15_AsyncOperation** p_E
 
 struct K15_AsyncOperationStretchBuffer
 {
-	K15_CustomMemoryAllocator* memoryAllocator; //64bit
-	K15_AsyncOperation** elements;							//64bit
+	K15_CustomMemoryAllocator memoryAllocator;
+	K15_AsyncOperation** elements;
 
-	unsigned int numCapacity;					//32bit
-	unsigned int numElements;					//32bit
-	unsigned int flags;							//32bit
+	unsigned int numCapacity;
+	unsigned int numElements;
+	unsigned int flags;
 };
 
-void K15_CreateAsyncOperationStretchBufferWithCustomAllocator(K15_AsyncOperationStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_ElementCapacity);
+void K15_CreateAsyncOperationStretchBufferWithCustomAllocator(K15_AsyncOperationStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity);
 void K15_CreateAsyncOperationStretchBuffer(K15_AsyncOperationStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity = 8);
 void K15_DeleteAsyncOperationStretchBuffer(K15_AsyncOperationStretchBuffer* p_StretchBuffer);
 void K15_ResizeAsyncOperationStretchBuffer(K15_AsyncOperationStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);

@@ -126,20 +126,9 @@ enum K15_GLUniformUsage
 /*********************************************************************************/
 struct K15_GLBuffer
 {
-	GLvoid* data;
-	GLsizeiptr sizeInBytes;
-	GLsizei singleElementSizeInBytes;
 	GLuint buffer;
 	GLenum glBufferType;
 	K15_RenderBufferType bufferType;
-};
-/*********************************************************************************/
-struct K15_GLBufferAccessData
-{
-	K15_RenderBufferType bufferType;
-	uint32 glBufferIndex;
-	uint32 offset;
-	uint32 size;
 };
 /*********************************************************************************/
 struct K15_GLRenderTarget

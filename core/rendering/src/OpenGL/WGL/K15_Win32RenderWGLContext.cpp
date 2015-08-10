@@ -3,6 +3,8 @@
 #include "OpenGL/K15_RenderGLContext.h"
 #include "OpenGL/WGL/wglext.h"
 
+#include <K15_CustomMemoryAllocator.h>
+
 #include <K15_DefaultCLibraries.h>
 #include <K15_OSContext.h>
 #include <K15_Window.h>
@@ -111,7 +113,7 @@ intern GLvoid* K15_Win32GetProcAddress(const char* p_ProcName)
 /*********************************************************************************/
 intern GLboolean K15_Win32SwapBuffers(K15_GLRenderContext* p_RenderContext)
 {
-	K15_Win32GLContext* win32GLContext = (K15_Win32GLContext*)p_RenderContext->userData;
+	K15_Win32GLContext* win32GLContext = (K15_Win32GLContext*)p_RenderContext->platformContextData;
 	HDC dc = win32GLContext->dc;
 
 	SwapBuffers(dc);
@@ -119,7 +121,7 @@ intern GLboolean K15_Win32SwapBuffers(K15_GLRenderContext* p_RenderContext)
 	return GL_TRUE;
 }
 /*********************************************************************************/
-uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSContext* p_OSContext)
+uint8 K15_Win32CreateGLContext(K15_CustomMemoryAllocator* p_MemoryAllocator, K15_GLRenderContext* p_RenderContext, K15_OSContext* p_OSContext)
 {
 	K15_Win32Context* win32Context = (K15_Win32Context*)p_OSContext->userData;
 
@@ -128,7 +130,7 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSConte
 		return K15_OS_ERROR_NO_WINDOW;
 	}
 
-	if (p_RenderContext->userData)
+	if (p_RenderContext->platformContextData)
 	{
 		return K15_OS_ERROR_RENDER_CONTEXT_ALREADY_CREATED;
 	}
@@ -235,7 +237,7 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSConte
 	//re-retrieve function pointer for the new context
 	K15_Win32InternalGetWGLContextFunctionPointer();
 
-	K15_Win32GLContext* win32GLContext = (K15_Win32GLContext*)malloc(sizeof(K15_Win32GLContext));
+	K15_Win32GLContext* win32GLContext = (K15_Win32GLContext*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, sizeof(K15_Win32GLContext));
 
 	if (!win32GLContext)
 	{
@@ -245,7 +247,7 @@ uint8 K15_Win32CreateGLContext(K15_GLRenderContext* p_RenderContext, K15_OSConte
 	win32GLContext->context = context;
 	win32GLContext->dc = dc;
 
-	p_RenderContext->userData = (void*)win32GLContext;
+	p_RenderContext->platformContextData = (void*)win32GLContext;
 
 	kglSwapBuffers = K15_Win32SwapBuffers;
 	kglGetProcAddress = K15_Win32GetProcAddress;

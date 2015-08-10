@@ -22,14 +22,13 @@ void K15_Initialize$TYPE_NAME$MemoryPool(K15_$TYPE_NAME$MemoryPool* p_MemoryPool
 	K15_Initialize$TYPE_NAME$MemoryPoolWithCustomAllocator(p_MemoryPool, K15_CreateDefaultMemoryAllocator("$TYPE_NAME$ Default Memory Pool Allocator"), p_NumElements);
 }
 /*********************************************************************************/
-void K15_Initialize$TYPE_NAME$MemoryPoolWithCustomAllocator(K15_$TYPE_NAME$MemoryPool* p_MemoryPool, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_NumElements)
+void K15_Initialize$TYPE_NAME$MemoryPoolWithCustomAllocator(K15_$TYPE_NAME$MemoryPool* p_MemoryPool, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_NumElements)
 {
 	K15_ASSERT_TEXT(p_MemoryPool, "Memory Pool for Type '$TYPE$' is NULL.");
-	K15_ASSERT_TEXT(p_MemoryAllocator, "Custom Allocator is NULL.");
 	K15_ASSERT_TEXT(p_NumElements, "Element Count for Memory Pool '$TYPE$' is 0.");
 
 	uint32 elementBufferSize = sizeof(K15_$TYPE_NAME$MemoryPoolElement) * p_NumElements;
-	byte* elementBuffer = (byte*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, elementBufferSize);
+	byte* elementBuffer = (byte*)K15_AllocateFromMemoryAllocator(&p_MemoryAllocator, elementBufferSize);
 
 	memset(elementBuffer, 0, elementBufferSize);
 
@@ -103,6 +102,6 @@ void K15_Free$TYPE_NAME$MemoryPoolElement(K15_$TYPE_NAME$MemoryPool* p_MemoryPoo
 /*********************************************************************************/
 void K15_Clear$TYPE_NAME$MemoryPool(K15_$TYPE_NAME$MemoryPool* p_MemoryPool)
 {
-	K15_FreeFromMemoryAllocator(p_MemoryPool->memoryAllocator, p_MemoryPool->elements);
+	K15_FreeFromMemoryAllocator(&p_MemoryPool->memoryAllocator, p_MemoryPool->elements);
 }
 /*********************************************************************************/

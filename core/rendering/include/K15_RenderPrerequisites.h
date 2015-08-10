@@ -5,8 +5,9 @@
 	#define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include <K15_Prerequisites.h>
+#include "K15_Common.h"
 #include "K15_RendererConfig.h"
+#include "K15_ErrorCodes.h"
 
 #ifdef K15_OS_WINDOWS
 	#include "OpenGL/WGL/K15_Win32RenderWGLContext.h"	
@@ -28,23 +29,10 @@
 
 #define K15_INVALID_GPU_RESOURCE_HANDLE 0xffffffff
 
-#define K15_ERROR_MAX_RENDER_COMMAND_QUEUE_REACHED				210
-#define K15_ERROR_MAX_RENDER_COMMANDS_REACHED					211
-#define K15_ERROR_NO_RENDER_COMMAND								212
-#define K15_ERROR_MAX_COMMAND_PARAMETER_SIZE_BUFFER_REACHED		213
-#define K15_ERROR_RENDER_COMMAND_NOT_IMPLEMENTED				214
-#define K15_ERROR_INVALID_PARAMETER_SIZE						215
-#define K15_ERROR_INVALID_BUFFER_TYPE							216
-#define K15_ERROR_LAST_COMMAND_NOT_FINISHED						217
-#define K15_ERROR_RENDER_BUFFER_LOCKED							218
-#define K15_ERROR_RENDER_API									219
-#define K15_ERROR_RENDER_PROGRAM_COMPILATION					220
-#define K15_ERROR_RENDER_UNIFORM_NOT_FOUND						221
-
-#define K15_RENDER_MAX_GPU_BUFFER								4096
-#define K15_RENDER_MAX_GPU_PROGRAMS								4096
-#define K15_RENDER_MAX_GPU_TEXTURES								4096
-#define K15_RENDER_MAX_GPU_MESHES								4096
+#define K15_RENDER_MAX_GPU_BUFFER								1024
+#define K15_RENDER_MAX_GPU_PROGRAMS								1024
+#define K15_RENDER_MAX_GPU_TEXTURES								1024
+#define K15_RENDER_MAX_GPU_MESHES								1024
 #define K15_RENDER_MAX_GPU_SAMPLERS								32
 #define K15_RENDER_MAX_GPU_RENDER_TARGETS						32
 #define K15_RENDER_MAX_GPU_FONTS								32
@@ -63,42 +51,32 @@ enum K15_RenderDescFlags
 	K15_RENDER_DESC_AUTO_CLEANUP_FLAG = 0x001
 };
 
-typedef uint32 K15_RenderBufferHandle;
-typedef uint32 K15_RenderTextureHandle;
-typedef uint32 K15_RenderProgramHandle;
-typedef uint32 K15_RenderSamplerHandle;
-typedef uint32 K15_RenderTargetHandle;
-typedef uint32 K15_RenderFontHandle;
-typedef uint32 K15_RenderMeshHandle;
-typedef uint32 K15_RenderCameraHandle;
-typedef uint32 K15_RenderMaterialHandle;
+typedef uint32 K15_RenderResourceHandle;
 
 enum K15_UniformType : uint32;
-enum K15_RenderCommand : uint32;
 
-struct K15_InternalRenderCameraDesc;
-struct K15_RenderContext;
-struct K15_RenderCommandBuffer;
-struct K15_RenderCommandInstance;
-struct K15_RenderBufferDesc;
-struct K15_RenderBufferUpdateDesc;
+struct K15_CustomMemoryAllocator;
+struct K15_OSContext;
+
 struct K15_RenderProgramDesc;
+struct K15_RenderBufferDesc;
 struct K15_RenderTextureDesc;
-struct K15_RenderCameraDesc;
-struct K15_RenderCameraUpdateDesc;
-struct K15_RenderTextureUpdateDesc;
-struct K15_RenderUniformUpdateDesc;
-struct K15_RenderBlendStateDesc;
-struct K15_RenderStencilStateDesc;
-struct K15_RenderDepthStateDesc;
-struct K15_RenderViewportDesc;
-struct K15_RenderRasterizerStateDesc;
 struct K15_RenderSamplerDesc;
 struct K15_RenderTargetDesc;
-struct K15_RenderMeshDesc;
-struct K15_RenderFontDesc;
 struct K15_RenderMaterialDesc;
-struct K15_MeshFormat;
-struct K15_Matrix4;
+struct K15_RenderBufferUpdateDesc;
+struct K15_RenderCommandQueue;
+struct K15_RenderUniformUpdateDesc;
+struct K15_RenderCommand;
+struct K15_RenderBackEnd;
+struct K15_RenderFrontEnd;
+struct K15_RenderContext;
+struct K15_RenderTextureUpdateDesc;
+
+
+struct K15_Thread;
+
+
+struct K15_TextureFormat;
 
 #endif //K15_Render_Prerequisties_h_

@@ -12,6 +12,7 @@ include_directories(../resourceformats/include)
 
 set(RENDERER_SRC ./src/K15_RenderContext.cpp)
 set(RENDERER_INC ./include/K15_RenderContext.h
+		 ./include/K15_RenderBackEnd.h
 		 ./include/K15_RenderPrerequisites.h
 		 ./include/K15_RenderCommands.h
 		 ./include/K15_RenderProgramDesc.h

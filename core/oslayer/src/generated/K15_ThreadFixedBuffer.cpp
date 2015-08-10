@@ -6,14 +6,13 @@
 
 
 /*********************************************************************************/
-void K15_CreateThreadFixedBufferWithCustomAllocator(K15_ThreadFixedBuffer* p_FixedBuffer, K15_CustomMemoryAllocator* p_MemoryAllocator, unsigned int p_Capacity)
+void K15_CreateThreadFixedBufferWithCustomAllocator(K15_ThreadFixedBuffer* p_FixedBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_Capacity)
 {
 	K15_ASSERT_TEXT(p_Capacity != 0, "Can not reserve 0 elements.");
 	K15_ASSERT_TEXT(!p_FixedBuffer->elements, "Fixed Buffer has already been created.");
-	K15_ASSERT_TEXT(p_MemoryAllocator, "No memory allocator defined.");
 
 	unsigned int bytesToAllocate = p_Capacity * sizeof(K15_Thread*);
-	K15_Thread** elements = (K15_Thread**)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, bytesToAllocate);
+	K15_Thread** elements = (K15_Thread**)K15_AllocateFromMemoryAllocator(&p_MemoryAllocator, bytesToAllocate);
 
 	K15_ASSERT_TEXT(elements, "Out of memory.");
 
@@ -36,7 +35,7 @@ void K15_DeleteThreadFixedBuffer(K15_ThreadFixedBuffer* p_FixedBuffer)
 
 	if ((p_FixedBuffer->flags & K15_USE_EXTERNAL_BUFFER) == 0)
 	{
-		K15_FreeFromMemoryAllocator(p_FixedBuffer->memoryAllocator, p_FixedBuffer->elements);
+		K15_FreeFromMemoryAllocator(&p_FixedBuffer->memoryAllocator, p_FixedBuffer->elements);
 	}
 
 	p_FixedBuffer->elements = 0;

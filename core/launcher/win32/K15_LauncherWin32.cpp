@@ -172,8 +172,9 @@ int CALLBACK WinMain(
 		//let game run for 1 frame
 		K15_PostSemaphore(mainThreadSynchronizer);
 
+		//TODO
 		//start processing dispatched render buffer
-		K15_ProcessDispatchedRenderCommandBuffers(renderContext);
+		K15_ProcessDispatchedRenderCommandQueues(renderContext);
 
 		joinResult = K15_TryJoinThread(gameThread, 0);
 

@@ -19,8 +19,9 @@
 #define K15_InterlockedDecrement						InterlockedDecrement
 #define K15_InterlockedCompareExchange					InterlockedCompareExchange
 #define K15_InterlockedCompareExchangePointer			InterlockedCompareExchangePointer
-#define K15_InterlockedCompareExchangePointerAcquire	InterlockedCompareExchangePointerAcquire
-#define K15_InterlockedCompareExchangePointerRelease	InterlockedCompareExchangePointerRelease
+#define K15_InterlockedBitTestAndSet					InterlockedBitTestAndSet
+#define K15_InterlockedBitTestAndReset					InterlockedBitTestAndReset
+#define K15_InterlockedBitTestAndComplement				InterlockedBitTestAndComplement
 
 /*********************************************************************************/
 struct K15_Mutex
