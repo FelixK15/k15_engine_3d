@@ -262,7 +262,7 @@ char** K15_CreateStringArrayIntoBuffer(char** p_Buffer, unsigned int p_NumString
 	return stringArray;
 }
 /*********************************************************************************/
-char* K15_ConvertToLower(char* p_String)
+char* K15_ConvertToLower(const char* p_String)
 {
 	assert(p_String);
 
@@ -275,7 +275,7 @@ char* K15_ConvertToLower(char* p_String)
 	return K15_ConvertToLowerIntoBuffer(p_String, stringBuffer);
 }
 /*********************************************************************************/
-char* K15_ConvertToLowerIntoBuffer(char* p_String, char* p_Buffer)
+char* K15_ConvertToLowerIntoBuffer(const char* p_String, char* p_Buffer)
 {
 	assert(p_String);
 	assert(p_Buffer);
@@ -292,7 +292,7 @@ char* K15_ConvertToLowerIntoBuffer(char* p_String, char* p_Buffer)
 	return p_Buffer;
 }
 /*********************************************************************************/
-char* K15_ConvertToUpper(char* p_String)
+char* K15_ConvertToUpper(const char* p_String)
 {
 	assert(p_String);
 
@@ -305,7 +305,7 @@ char* K15_ConvertToUpper(char* p_String)
 	return K15_ConvertToUpperIntoBuffer(p_String, stringBuffer);
 }
 /*********************************************************************************/
-char* K15_ConvertToUpperIntoBuffer(char* p_String, char* p_Buffer)
+char* K15_ConvertToUpperIntoBuffer(const char* p_String, char* p_Buffer)
 {
 	assert(p_String);
 	assert(p_Buffer);
@@ -320,5 +320,55 @@ char* K15_ConvertToUpperIntoBuffer(char* p_String, char* p_Buffer)
 	*stringBuffer = 0;
 
 	return p_Buffer;
+}
+/*********************************************************************************/
+char* K15_ConcatStringArray(const char** p_StringArray, unsigned int p_ArrayLength)
+{
+	//get combined string length
+	unsigned int stringLength = 0;
+
+	for (unsigned int i = 0;
+		i < p_ArrayLength;
+		++i)
+	{
+		stringLength += (unsigned int)strlen(p_StringArray[i]);
+	}
+
+	return K15_ConcatStringArrayIntoBuffer(p_StringArray, (char*)malloc(stringLength), p_ArrayLength);
+}
+/*********************************************************************************/
+char* K15_ConcatStringArrayIntoBuffer(const char** p_StringArray, char* p_Buffer, unsigned int p_ArrayLength)
+{
+	unsigned int offset = 0;
+
+	for (unsigned int i = 0;
+		i < p_ArrayLength;
+		++i)
+	{
+		offset += sprintf(p_Buffer + offset, "%s", p_StringArray[i]);
+	}
+
+	p_Buffer[offset] = 0;
+	
+	return p_Buffer;
+}
+/*********************************************************************************/
+unsigned int K15_GenerateDataHash(const unsigned char* p_Data, unsigned int p_DataSize)
+{
+	unsigned int hash = 0;
+
+	for (unsigned int i = 0; i < p_DataSize; i++) 
+	{
+		hash = 33*hash + 720 + p_Data[i];
+	}
+
+	return hash;
+}
+/*********************************************************************************/
+unsigned int K15_GenerateStringHash(const char* p_String, unsigned int p_StringLength /*= 0*/)
+{
+	unsigned int size = p_StringLength == 0 ? (unsigned int)strlen(p_String) : 0;
+
+	return K15_GenerateDataHash((const unsigned char*)p_String, size);
 }
 /*********************************************************************************/

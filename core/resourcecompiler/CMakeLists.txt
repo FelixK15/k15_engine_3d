@@ -1,6 +1,6 @@
 project(resourcecompiler)
 
-
+set(RESOURCECOMPILER_INC "./include/K15_ResourceCompilerShader.h")
 set(RESOURCECOMPILER_SRC "./src/main.cpp")
 
 include_directories(./../)
@@ -17,7 +17,7 @@ include_directories(../../dependencies/assimp/include/)
 include_directories(../../dependencies/stb/)
 include_directories(../../dependencies/squish/)
 
-#source_group("include" FILES ${RESOURCECOMPILER_INC})
+source_group("include" FILES ${RESOURCECOMPILER_INC})
 source_group("src" FILES ${RESOURCECOMPILER_SRC})
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")

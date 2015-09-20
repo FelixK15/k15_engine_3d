@@ -17,10 +17,16 @@ char* K15_GenerateString(const char* p_Format, char* p_Buffer, ...);
 char** K15_CreateStringArray(unsigned int p_NumStrings, ...);
 char** K15_CreateStringArrayIntoBuffer(char** p_Buffer, unsigned int p_NumStrings, ...);
 
-char* K15_ConvertToLower(char* p_String);
-char* K15_ConvertToLowerIntoBuffer(char* p_String, char* p_Buffer);
+char* K15_ConvertToLower(const char* p_String);
+char* K15_ConvertToLowerIntoBuffer(const char* p_String, char* p_Buffer);
 
-char* K15_ConvertToUpper(char* p_String);
-char* K15_ConvertToUpperIntoBuffer(char* p_String, char* p_Buffer);
+char* K15_ConvertToUpper(const char* p_String);
+char* K15_ConvertToUpperIntoBuffer(const char* p_String, char* p_Buffer);
+
+char* K15_ConcatStringArray(const char** p_StringArray, unsigned int p_ArrayLength);
+char* K15_ConcatStringArrayIntoBuffer(const char** p_StringArray, char* p_Buffer, unsigned int p_ArrayLength);
+
+unsigned int K15_GenerateDataHash(const unsigned char* p_Data, unsigned int p_DataSize);
+unsigned int K15_GenerateStringHash(const char* p_String, unsigned int p_StringLength = 0);
 
 #endif //_K15_Runtime_String_h_

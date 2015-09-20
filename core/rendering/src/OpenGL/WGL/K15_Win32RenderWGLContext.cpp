@@ -96,6 +96,11 @@ intern inline void K15_Win32InternalGetWGLFunctionPointer(HMODULE p_LibModule)
 	K15_CHECK_ASSIGNMENT(kglViewport, (PFNGLVIEWPORTPROC)GetProcAddress(p_LibModule, "glViewport"));
 	K15_CHECK_ASSIGNMENT(kglGetIntegerv, (PFNGLGETINTEGERVPROC)GetProcAddress(p_LibModule, "glGetIntegerv"));
 	K15_CHECK_ASSIGNMENT(kglGetString, (PFNGLGETSTRINGPROC)GetProcAddress(p_LibModule, "glGetString"));
+
+	K15_CHECK_ASSIGNMENT(kglTexImage1D, (PFNGLTEXIMAGE1DPROC)GetProcAddress(p_LibModule, "glTexImage1D"));
+	K15_CHECK_ASSIGNMENT(kglTexImage2D, (PFNGLTEXIMAGE2DPROC)GetProcAddress(p_LibModule, "glTexImage2D"));
+
+	K15_CHECK_ASSIGNMENT(kglDrawArrays, (PFNGLDRAWARRAYSPROC)GetProcAddress(p_LibModule, "glDrawArrays"));
 }
 /*********************************************************************************/
 intern inline void K15_Win32InternalGetWGLContextFunctionPointer()
@@ -171,15 +176,21 @@ uint8 K15_Win32CreateGLContext(K15_CustomMemoryAllocator* p_MemoryAllocator, K15
 
 	HGLRC context = 0;
 
+	int dummyWindowPixelFormat = GetPixelFormat(tempDeviceContext);
+	PIXELFORMATDESCRIPTOR dummyWindowPixelFormatDesc = {};
+
+	DescribePixelFormat(tempDeviceContext, dummyWindowPixelFormat, sizeof(PIXELFORMATDESCRIPTOR), &dummyWindowPixelFormatDesc);
+
 	//create real context
 	const int pixelFormatAttributes[] = {
-		WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
-		WGL_DOUBLE_BUFFER_ARB,  GL_TRUE,
-		WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
-		WGL_PIXEL_TYPE_ARB,     WGL_TYPE_RGBA_ARB,
-		WGL_COLOR_BITS_ARB,     32,
-		WGL_DEPTH_BITS_ARB,     24,
-		WGL_STENCIL_BITS_ARB,   8,
+		WGL_DRAW_TO_WINDOW_ARB,				GL_TRUE,
+		WGL_DOUBLE_BUFFER_ARB,				GL_TRUE,
+		WGL_SUPPORT_OPENGL_ARB,				GL_TRUE,
+		WGL_ACCELERATION_ARB,				WGL_FULL_ACCELERATION_ARB,
+		WGL_PIXEL_TYPE_ARB,					WGL_TYPE_RGBA_ARB,
+		WGL_COLOR_BITS_ARB,					dummyWindowPixelFormatDesc.cColorBits,
+		WGL_DEPTH_BITS_ARB,					dummyWindowPixelFormatDesc.cDepthBits,
+		WGL_STENCIL_BITS_ARB,				dummyWindowPixelFormatDesc.cStencilBits,
 		0
 	};
 
@@ -199,14 +210,34 @@ uint8 K15_Win32CreateGLContext(K15_CustomMemoryAllocator* p_MemoryAllocator, K15
 	}
 
 	int contextFlags = WGL_CONTEXT_CORE_PROFILE_BIT_ARB;
+	int majorVersion = K15_MIN_GL_VERSION_MAJOR;
+	int minorVersion = K15_MIN_GL_VERSION_MINOR;
 
 #ifdef K15_OPENGL_CREATE_DEBUG_CONTEXT
 	contextFlags |= WGL_CONTEXT_DEBUG_BIT_ARB;
 #endif //K15_DEBUG
 
+#ifdef K15_OPENGL_FORCE_ES_2_0_CONTEXT
+	/*contextFlags |= WGL_CONTEXT_ES2_PROFILE_BIT_EXT;
+	majorVersion = 2;
+	minorVersion = 0;*/
+#elif defined K15_OPENGL_FORCE_ES_3_0_CONTEXT
+	contextFlags |= WGL_CONTEXT_ES3_PROFILE_BIT_EXT;
+	majorVersion = 3;
+	minorVersion = 0;
+#elif defined K15_OPENGL_FORCE_ES_3_1_CONTEXT
+	contextFlags |= WGL_CONTEXT_ES3_1_PROFILE_BIT_EXT;
+	majorVersion = 3;
+	minorVersion = 1;
+#elif defined K15_OPENGL_FORCE_ES_3_2_CONTEXT
+	contextFlags |= WGL_CONTEXT_ES3_2_PROFILE_BIT_EXT;
+	majorVersion = 3;
+	minorVersion = 2;
+#endif 
+
 	const int contextAttributes[] = {
-		WGL_CONTEXT_MAJOR_VERSION_ARB, K15_MIN_GL_VERSION_MAJOR,
-		WGL_CONTEXT_MINOR_VERSION_ARB, K15_MIN_GL_VERSION_MINOR,
+		WGL_CONTEXT_MAJOR_VERSION_ARB, majorVersion,
+		WGL_CONTEXT_MINOR_VERSION_ARB, minorVersion,
 		WGL_CONTEXT_FLAGS_ARB, contextFlags,
 		0 //END
 	};

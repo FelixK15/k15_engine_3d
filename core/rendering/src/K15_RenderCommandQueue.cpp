@@ -6,13 +6,18 @@ void K15_SwapRenderCommandQueueBuffer(K15_RenderCommandQueue* p_RenderCommandQue
 {
 	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
 	
-	K15_RenderCommandBuffer* tempCommandBufferPointer = 0;
+	K15_WaitSemaphore(p_RenderCommandQueue->processLock);
+
+	K15_RenderCommandBuffer tempCommandBufferPointer = {};
 	K15_RenderCommandBuffer* backCommandBufferPointer = &p_RenderCommandQueue->commandBuffers[K15_RENDERING_COMMAND_BACK_BUFFER_INDEX];
 	K15_RenderCommandBuffer* frontCommandBufferPointer = &p_RenderCommandQueue->commandBuffers[K15_RENDERING_COMMAND_FRONT_BUFFER_INDEX];
 
-	tempCommandBufferPointer = backCommandBufferPointer;
+	tempCommandBufferPointer = *backCommandBufferPointer;
 	*backCommandBufferPointer = *frontCommandBufferPointer;
-	*frontCommandBufferPointer = *backCommandBufferPointer;
+	*frontCommandBufferPointer = tempCommandBufferPointer;
+
+	//reset backbuffer
+	backCommandBufferPointer->offset = 0;
 }
 /*********************************************************************************/
 result8 K15_InitializeRenderCommandQueue(K15_CustomMemoryAllocator* p_MemoryAllocator, K15_RenderCommandQueue* p_RenderCommandQueue)
@@ -23,6 +28,7 @@ result8 K15_InitializeRenderCommandQueue(K15_CustomMemoryAllocator* p_MemoryAllo
 
 	p_RenderCommandQueue->lastCommand = 0;
 	p_RenderCommandQueue->name = 0;
+	p_RenderCommandQueue->processLock = K15_CreateSemaphoreWithInitialValue(1);
 
 	if (resultBackBuffer != K15_SUCCESS || 
 		resultFrontBuffer != K15_SUCCESS)

@@ -1,7 +1,6 @@
-in vec2 v_UV;
-uniform sampler2D DiffuseTexture;
-
-void main(void)
+K15_Vector4 ShadeFragment(in K15_Vector2 uv : TEXCOORD1, 
+						  in K15_2DSampler DiffuseSampler : DATA,
+						  in K15_2DTexture DiffuseTexture : DATA)
 {
-	gl_FragColor = texture2D(DiffuseTexture, v_UV);
+	return sampleTex2D(DiffuseSampler, DiffuseTexture, uv);
 }

@@ -9,12 +9,14 @@ include_directories(../logging/include)
 include_directories(../string/include)
 include_directories(../memory/include)
 include_directories(../resourceformats/include)
+include_directories(../shadercompilerlib/include)
 
 set(RENDERER_SRC ./src/K15_RenderContext.cpp)
 set(RENDERER_INC ./include/K15_RenderContext.h
 		 ./include/K15_RenderBackEnd.h
 		 ./include/K15_RenderPrerequisites.h
 		 ./include/K15_RenderCommands.h
+		 ./include/K15_RenderVertexFormatDesc.h
 		 ./include/K15_RenderProgramDesc.h
 		 ./include/K15_RenderBufferDesc.h
 		 ./include/K15_RenderStateDesc.h
@@ -24,16 +26,21 @@ set(RENDERER_INC ./include/K15_RenderContext.h
 		 ./include/K15_RenderTextureDesc.h
 		 ./include/K15_RenderSamplerDesc.h
 		 ./include/K15_RenderTargetDesc.h
-		 ./include/K15_RenderFormats.h)
+		 ./include/K15_RenderFormats.h
+		 ./include/K15_RenderGeometryDesc.h
+		 ./include/K15_RenderShaderSemantics.h)
 
-set(RENDERER_LIBS math logging)
+set(RENDERER_LIBS math logging shadercompilerlib)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 if (${K15_RENDERER} STREQUAL "OpenGL")
+	set(RENDERER_API_INC ./include/OpenGL/K15_RenderGLConfig.h
+			./include/OpenGL/K15_RenderGLContext.h
+			./include/OpenGL/K15_RenderGLTypes.h)
+
 	include(opengl)
 	source_group("include\\gl" FILES ${RENDERER_API_INC})
-	source_group("src\\gl" FILES ${RENDERER_API_SRC})
 else()
 	message(ERROR "Unsupported renderer: ${K15_RENDERER}")
 endif()

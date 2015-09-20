@@ -11,9 +11,6 @@
 #include "K15_RenderSamplerDesc.h"
 #include "K15_RenderUniformCache.h"
 
-//TODO render resources in one big buffer
-//K15_RenderResourceHeader with type and offset and next element and stuff
-
 struct K15_RenderState
 {
 	K15_RenderBlendStateDesc blendState;
@@ -22,18 +19,23 @@ struct K15_RenderState
 	K15_RenderRasterizerStateDesc rasterizerState;
 };
 
-struct K15_RenderCachedResources
+struct K15_RenderVertexData
 {
-	K15_RenderBufferDesc* bufferDescs[K15_RENDER_MAX_GPU_BUFFER];
-	K15_RenderProgramDesc* programDescs[K15_RENDER_MAX_GPU_PROGRAMS];
-	K15_RenderTextureDesc* textureDescs[K15_RENDER_MAX_GPU_TEXTURES];
-	K15_RenderSamplerDesc* samplerDescs[K15_RENDER_MAX_GPU_SAMPLERS];
-	K15_RenderTargetDesc* renderTargetDescs[K15_RENDER_MAX_GPU_RENDER_TARGETS];
+	K15_RenderResourceHandle vertexBufferHandle;
+	uint32 sizeInBytes;
+	uint32 offsetInBytes;
+	uint32 startVertexIndex;
+	uint32 numVertices;
+	void* buffer;
 };
 
 struct K15_RenderResources
 {
-	K15_RenderResourceHandle intermediateVertexBuffer;
+	K15_RenderResourceHandle intermediateVertexBufferHandle;
+	K15_RenderResourceHandle default2DVertexProgramHandle;
+	K15_RenderResourceHandle default3DVertexProgramHandle;
+	K15_RenderResourceHandle default2DFragmentProgramHandle;
+	K15_RenderResourceHandle default3DFragmentProgramHandle;
 };
 
 struct K15_RenderFeatures
@@ -47,52 +49,35 @@ struct K15_RenderFeatures
 struct K15_RenderInterface
 {
 	K15_ClearScreenCommandFnc clearScreen;
-
-	K15_CreateBufferCommandFnc createBuffer;
-	K15_UpdateBufferCommandFnc updateBuffer;
-	K15_BindBufferCommandFnc bindBuffer;
-	K15_DeleteBufferCommandFnc deleteBuffer;
-
-	K15_CreateProgramCommandFnc createProgram;
-	K15_DeleteProgramCommandFnc deleteProgram;
-	K15_BindProgramCommandFnc bindProgram;
-	K15_UpdateUniformCommandFnc updateUniform;
-	K15_UpdateDirtyUniformsCommandFnc updateDirtyUniforms;
-
-	K15_CreateTextureCommandFnc createTexture;
-	K15_UpdateTextureCommandFnc updateTexture;
-	K15_BindTextureCommandFnc bindTexture;
-	K15_DeleteTextureCommandFnc deleteTexture;
-
-	K15_CreateRenderTargetCommandFnc createRenderTarget;
-	K15_BindRenderTargetCommandFnc bindRenderTarget;
-	K15_UnbindRenderTargetCommandFnc unbindRenderTarget;
-	K15_DeleteRenderTargetCommandFnc deleteRenderTarget;
-
-	K15_CreateSamplerCommandFnc createSampler;
-	K15_DeleteSamplerCommandFnc deleteSampler;
-
+	K15_SwapFrameBufferCommandFnc swapFrameBuffer;
 	K15_SetDepthStateCommandFnc setDepthState;
 	K15_SetStencilStateCommandFnc setStencilState;
 	K15_SetRasterizerStateCommandFnc setRasterizerState;
 	K15_SetBlendStateCommandFnc setBlendState;
 
-	K15_DrawFullscreenQuadCommandFnc drawFullscreenQuad;
-	K15_DrawIndexedCommandFnc drawIndexed;
+	K15_CreateVertexFormatFromVertexFormatDescCommandFnc createVertexFormatFromVertexFormatDesc;
+	K15_CreateTextureFromTextureDescCommandFnc createTextureFromTextureDesc;
+	K15_CreateProgramCommandFnc createProgram;
+
+	K15_UpdateVertexDataCommandFnc updateVertexData;
+	K15_FreeVertexDataCommandFnc freeVertexData;
+
+	K15_DrawGeometryCommandFnc drawGeometry;
 };
 
 struct K15_RenderBackEnd
 {
 	K15_RenderContext* renderContext;
+	K15_ShaderProcessorContext* shaderProcessorContext;
 
 	K15_RenderUniformCache uniformCache;
 
-	K15_RenderResources resources;
-	K15_RenderCachedResources cachedResources;
+ 	K15_RenderResources resources;
 	K15_RenderInterface interface;
 	K15_RenderFeatures features;
 	K15_RenderState state;
 	K15_RenderState defaultState;
+
 
 	bool8 interfaceInitialized;
 
@@ -100,5 +85,7 @@ struct K15_RenderBackEnd
 };
 
 void K15_ProcessRenderCommands(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommandBuffer* p_RenderCommandBuffer);
+void K15_BeginFrame(K15_RenderBackEnd* p_RenderBackEnd);
+void K15_EndFrame(K15_RenderBackEnd	* p_RenderBackEnd);
 
 #endif //_K15_RenderBackEnd_h_

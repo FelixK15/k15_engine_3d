@@ -34,6 +34,8 @@ byte* K15_GetWholeFileContentWithFileSize(const char* p_FilePath, uint32* p_File
 		{
 			*p_FileSize = fileSize;
 		}
+
+		fileContent[fileSize] = 0;
 	}
 
 	return fileContent;

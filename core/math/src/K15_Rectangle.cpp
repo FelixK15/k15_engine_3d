@@ -52,10 +52,10 @@ real32 K15_CalculateRectangleArea(K15_Rectangle& p_Rectangle)
 {
 	K15_Vector2 ur = K15_GetUpperRightCorner(p_Rectangle);
 	K15_Vector2 ul = K15_GetUpperLeftCorner(p_Rectangle);
-	K15_Vector2 bl = K15_GetUpperLeftCorner(p_Rectangle);
+	K15_Vector2 bl = K15_GetBottomLeftCorner(p_Rectangle);
 
 	real32 a = ur.x - ul.x;
-	real32 b = bl.x - ul.y;
+	real32 b = bl.y - ul.y;
 
 	return a * b;
 }

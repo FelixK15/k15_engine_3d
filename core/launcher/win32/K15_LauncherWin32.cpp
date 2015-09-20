@@ -169,6 +169,9 @@ int CALLBACK WinMain(
 			//gpu bound
 		}
 
+		//swap dispatched buffers before starting a new frame.
+		K15_SwapDispatchedRenderCommandQueueBuffers(renderContext);
+
 		//let game run for 1 frame
 		K15_PostSemaphore(mainThreadSynchronizer);
 

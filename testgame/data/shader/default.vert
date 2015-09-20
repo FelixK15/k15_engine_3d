@@ -1,15 +1,13 @@
-in vec4 a_Position;
-in vec2 a_TexCoord;
-
-uniform mat4 g_ModelMatrix;
-uniform mat4 g_ProjMatrix;
-uniform mat4 g_ViewMatrix;
-
-out vec2 v_UV;
-
-void main(void)
+K15_Vector4 TransformVertex(in K15_Vector4 pos : POSITION,
+							in K15_Vector2 uv : TEXCOORD1,
+							out K15_Vector2 out_uv : TEXCOORD1,
+							in K15_Matrix4 modelMatrix : MODELMATRIX,
+							in K15_Matrix4 projMatrix : PROJECTIONMATRIX,
+							in K15_Matrix4 viewMatrix : VIEWMATRIX)
 {
-	mat4 mvp = g_ProjMatrix * (g_ViewMatrix * g_ModelMatrix);
-	v_UV = a_TexCoord;
-	gl_Position = mvp * a_Position;
+	K15_Matrix4 ModelViewProj = projMatrix * (viewMatrix * modelMatrix);
+	K15_Vector4 transformedPosition = projMatrix * pos;
+	out_uv = uv;
+
+	return transformedPosition;
 }

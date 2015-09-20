@@ -25,13 +25,18 @@ K15_Vector3 K15_Lerp(K15_Vector3& p_Start, K15_Vector3& p_End, real32 p_Time)
 	return (1.0f - p_Time) * p_Start + p_Time * p_End;
 }
 /*********************************************************************************/
+real32 K15_Log2(real32 p_Number)
+{
+	return (real32)(floor(log10(p_Number) / log10(2.0)));
+}
+/*********************************************************************************/
 real32 K15_ClampReal(real32 p_Value, real32 p_Max, real32 p_Min)
 {
 	if (p_Value > p_Max)
 	{
 		return p_Max;
 	}
-	else if(p_Value < p_Max)
+	else if(p_Value < p_Min)
 	{
 		return p_Min;
 	}

@@ -2,80 +2,39 @@
 #define _K15_Rendering_GL_Types_h_
 
 //EGL_KHR_create_context
-#define EGL_CONTEXT_MAJOR_VERSION_KHR           0x3098
-#define EGL_CONTEXT_MINOR_VERSION_KHR           0x30FB
-#define EGL_CONTEXT_FLAGS_KHR                   0x30FC
-#define EGL_CONTEXT_OPENGL_PROFILE_MASK_KHR     0x30FD
+#define EGL_CONTEXT_MAJOR_VERSION_KHR						0x3098
+#define EGL_CONTEXT_MINOR_VERSION_KHR						0x30FB
+#define EGL_CONTEXT_FLAGS_KHR								0x30FC
+#define EGL_CONTEXT_OPENGL_PROFILE_MASK_KHR					0x30FD
 #define EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY_KHR  0x31BD
-#define EGL_NO_RESET_NOTIFICATION_KHR           0x31BE
-#define EGL_LOSE_CONTEXT_ON_RESET_KHR           0x31BF
-#define EGL_CONTEXT_OPENGL_DEBUG_BIT_KHR               0x00000001
-#define EGL_CONTEXT_OPENGL_FORWARD_COMPATIBLE_BIT_KHR  0x00000002
-#define EGL_CONTEXT_OPENGL_ROBUST_ACCESS_BIT_KHR       0x00000004
-#define EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT_KHR          0x00000001
-#define EGL_CONTEXT_OPENGL_COMPATIBILITY_PROFILE_BIT_KHR 0x00000002
+#define EGL_NO_RESET_NOTIFICATION_KHR						0x31BE
+#define EGL_LOSE_CONTEXT_ON_RESET_KHR						0x31BF
+#define EGL_CONTEXT_OPENGL_DEBUG_BIT_KHR					0x00000001
+#define EGL_CONTEXT_OPENGL_FORWARD_COMPATIBLE_BIT_KHR		0x00000002
+#define EGL_CONTEXT_OPENGL_ROBUST_ACCESS_BIT_KHR			0x00000004
+#define EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT_KHR				0x00000001
+#define EGL_CONTEXT_OPENGL_COMPATIBILITY_PROFILE_BIT_KHR	0x00000002
 
 //GL_AMD_debug_output
-#define GL_MAX_DEBUG_MESSAGE_LENGTH_AMD 0x9143
-#define GL_MAX_DEBUG_LOGGED_MESSAGES_AMD 0x9144
-#define GL_DEBUG_LOGGED_MESSAGES_AMD 0x9145
-#define GL_DEBUG_SEVERITY_HIGH_AMD 0x9146
-#define GL_DEBUG_SEVERITY_MEDIUM_AMD 0x9147
-#define GL_DEBUG_SEVERITY_LOW_AMD 0x9148
-#define GL_DEBUG_CATEGORY_API_ERROR_AMD 0x9149
-#define GL_DEBUG_CATEGORY_WINDOW_SYSTEM_AMD 0x914A
-#define GL_DEBUG_CATEGORY_DEPRECATION_AMD 0x914B
-#define GL_DEBUG_CATEGORY_UNDEFINED_BEHAVIOR_AMD 0x914C
-#define GL_DEBUG_CATEGORY_PERFORMANCE_AMD 0x914D
-#define GL_DEBUG_CATEGORY_SHADER_COMPILER_AMD 0x914E
-#define GL_DEBUG_CATEGORY_APPLICATION_AMD 0x914F
-#define GL_DEBUG_CATEGORY_OTHER_AMD 0x9150
-
-//GL_KHR_debug
-#define GL_CONTEXT_FLAG_DEBUG_BIT 0x00000002
-#define GL_STACK_OVERFLOW 0x0503
-#define GL_STACK_UNDERFLOW 0x0504
-#define GL_DEBUG_OUTPUT_SYNCHRONOUS 0x8242
-#define GL_DEBUG_NEXT_LOGGED_MESSAGE_LENGTH 0x8243
-#define GL_DEBUG_CALLBACK_FUNCTION 0x8244
-#define GL_DEBUG_CALLBACK_USER_PARAM 0x8245
-#define GL_DEBUG_SOURCE_API 0x8246
-#define GL_DEBUG_SOURCE_WINDOW_SYSTEM 0x8247
-#define GL_DEBUG_SOURCE_SHADER_COMPILER 0x8248
-#define GL_DEBUG_SOURCE_THIRD_PARTY 0x8249
-#define GL_DEBUG_SOURCE_APPLICATION 0x824A
-#define GL_DEBUG_SOURCE_OTHER 0x824B
-#define GL_DEBUG_TYPE_ERROR 0x824C
-#define GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR 0x824D
-#define GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR 0x824E
-#define GL_DEBUG_TYPE_PORTABILITY 0x824F
-#define GL_DEBUG_TYPE_PERFORMANCE 0x8250
-#define GL_DEBUG_TYPE_OTHER 0x8251
-#define GL_DEBUG_TYPE_MARKER 0x8268
-#define GL_DEBUG_TYPE_PUSH_GROUP 0x8269
-#define GL_DEBUG_TYPE_POP_GROUP 0x826A
-#define GL_DEBUG_SEVERITY_NOTIFICATION 0x826B
-#define GL_MAX_DEBUG_GROUP_STACK_DEPTH 0x826C
-#define GL_DEBUG_GROUP_STACK_DEPTH 0x826D
-#define GL_BUFFER 0x82E0
-#define GL_SHADER 0x82E1
-#define GL_PROGRAM 0x82E2
-#define GL_QUERY 0x82E3
-#define GL_PROGRAM_PIPELINE 0x82E4
-#define GL_SAMPLER 0x82E6
-#define GL_DISPLAY_LIST 0x82E7
-#define GL_MAX_LABEL_LENGTH 0x82E8
-#define GL_MAX_DEBUG_MESSAGE_LENGTH 0x9143
-#define GL_MAX_DEBUG_LOGGED_MESSAGES 0x9144
-#define GL_DEBUG_LOGGED_MESSAGES 0x9145
-#define GL_DEBUG_SEVERITY_HIGH 0x9146
-#define GL_DEBUG_SEVERITY_MEDIUM 0x9147
-#define GL_DEBUG_SEVERITY_LOW 0x9148
-#define GL_DEBUG_OUTPUT 0x92E0
+#define GL_MAX_DEBUG_MESSAGE_LENGTH_AMD				0x9143
+#define GL_MAX_DEBUG_LOGGED_MESSAGES_AMD			0x9144
+#define GL_DEBUG_LOGGED_MESSAGES_AMD				0x9145
+#define GL_DEBUG_SEVERITY_HIGH_AMD					0x9146
+#define GL_DEBUG_SEVERITY_MEDIUM_AMD				0x9147
+#define GL_DEBUG_SEVERITY_LOW_AMD					0x9148
+#define GL_DEBUG_CATEGORY_API_ERROR_AMD				0x9149
+#define GL_DEBUG_CATEGORY_WINDOW_SYSTEM_AMD			0x914A
+#define GL_DEBUG_CATEGORY_DEPRECATION_AMD			0x914B
+#define GL_DEBUG_CATEGORY_UNDEFINED_BEHAVIOR_AMD	0x914C
+#define GL_DEBUG_CATEGORY_PERFORMANCE_AMD			0x914D
+#define GL_DEBUG_CATEGORY_SHADER_COMPILER_AMD		0x914E
+#define GL_DEBUG_CATEGORY_APPLICATION_AMD			0x914F
+#define GL_DEBUG_CATEGORY_OTHER_AMD					0x9150
 
 //GL_EXT_texture_filter_anisotropic
 #define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE 
+
 //GL_EXT_texture_compression_s3tc
 #define GL_COMPRESSED_RGB_S3TC_DXT1_EXT 0x83F0
 #define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT 0x83F1
@@ -84,12 +43,13 @@
 
 #include "K15_RenderPrerequisites.h"
 #include "K15_RenderGLConfig.h"
+#include "K15_ShaderCompiler.h"
 
 #define K15_INVALID_GL_BUFFER_INDEX 0xffffffff
 #define K15_INVALID_GL_PROGRAM_INDEX 0xffffffff
 
 #ifdef K15_OPENGL_ENABLE_ERROR_CHECK_CALLS
-	#define K15_OPENGL_CALL(x) {x; GLenum errorEnum = kglGetError(); assert(errorEnum == GL_NO_ERROR && #x);}
+#define K15_OPENGL_CALL(x) {{x; GLenum errorEnum = kglGetError(); K15_ASSERT_TEXT(errorEnum == GL_NO_ERROR, "OpenGL Error on calling '%s' (Errorcode: %i)", #x, errorEnum);}};
 #else
 	#define K15_OPENGL_CALL(x) x;
 #endif //K15_OPENGL_ENABLE_ERROR_CHECK_CALLS
@@ -126,36 +86,69 @@ enum K15_GLUniformUsage
 /*********************************************************************************/
 struct K15_GLBuffer
 {
-	GLuint buffer;
+	GLubyte* data;
+	GLuint bufferSizeInBytes;
+	GLuint glBufferHandle;
 	GLenum glBufferType;
 	K15_RenderBufferType bufferType;
 };
 /*********************************************************************************/
 struct K15_GLRenderTarget
 {
-	GLuint glFramebuffer;
-	GLuint glTextures[K15_RENDER_GL_MAX_COLOR_ATTACHMENTS];
-	GLuint glRenderbuffer;
+	GLuint glFramebufferHandle;
+	GLuint glTextureHandles[K15_RENDER_GL_MAX_COLOR_ATTACHMENTS];
+	GLuint glRenderbufferHandle;
 
 	uint32 textureCount;
 };
 /*********************************************************************************/
 struct K15_GLUniform
 {
-	K15_GLUniformUsage uniformUsage;
-	K15_UniformType uniformType;
+	uint32 typeID;
 	GLenum internalGLType;
-	GLint size;
+	GLint sizeInBytes;
 	GLint registerIndex; 
 	GLchar* name;
+};
+/*********************************************************************************/
+struct K15_GLInputLayoutElement
+{
+	uint32 typeID;
+	uint32 semanticID;
+	GLint sizeInBytes;
+	GLint glRegisterIndex;
+	GLenum glType;
+	const GLvoid* offset;
+};
+/*********************************************************************************/
+struct K15_GLInputLayout
+{
+	K15_GLInputLayoutElement* inputElements;
+	uint32 numInputElements;
+	uint32 stride;
 };
 /*********************************************************************************/
 struct K15_GLProgram
 {
 	K15_GLUniform uniforms[K15_RENDER_GL_MAX_PROGRAM_UNIFORMS];
+	K15_GLInputLayout inputLayout;
+	K15_ShaderInformation shaderInformations;
 	uint32 uniformCount;
-	GLuint program;
-	GLenum programType;
+	GLuint glProgramHandle;
+	GLenum glProgramType;
+};
+/*********************************************************************************/
+struct K15_GLVertexFormatElement
+{
+	GLuint index;
+	GLint numValues;
+	GLenum glValueType;
+};
+/*********************************************************************************/
+struct K15_GLVertexFormat
+{
+	uint32 numInputElements;
+	uint32 stride;
 };
 /*********************************************************************************/
 struct K15_GLTexture
@@ -164,16 +157,27 @@ struct K15_GLTexture
 	uint32 height;
 	uint32 depth;
 
+	GLboolean useAutoMipMaps;
+
+	GLuint numMipMaps;
+	GLubyte** textureData;
+	GLuint* textureDataSizeInBytes;
+
 	GLenum glTextureTarget;
 	GLenum glFormat;
 	GLenum glInternalFormat;
 	GLenum glFormatType;
-	GLuint glTexture;
+	GLuint glTextureHandle;
 };
 /*********************************************************************************/
 struct K15_GLSampler
 {
-	GLuint glSampler;
+	GLuint glSamplerHandle;
+	GLenum glMignificationFilter;
+	GLenum glMagnificationFilter;
+	GLenum glAddressModeU;
+	GLenum glAddressModeV;
+	GLenum glAddressModeW;
 };
 /*********************************************************************************/
 
@@ -182,6 +186,7 @@ typedef GLvoid (APIENTRY *PFNGLBINDTEXTUREPROC)(GLenum, GLuint);
 typedef GLvoid (APIENTRY *PFNGLDELETETEXTURESPROC)(GLsizei, const GLuint*);
 typedef GLvoid (APIENTRY *PFNGLDRAWELEMENTSPROC)(GLenum, GLsizei, GLenum, const GLvoid*);
 typedef GLvoid (APIENTRY *PFNGLGENTEXTURESPROC)(GLsizei, GLuint*);
+typedef GLvoid (APIENTRY *PFNGLDRAWARRAYSPROC)(GLenum, GLint, GLsizei);
 
 //windows gl
 typedef GLvoid* (WINAPI *PFNWGLGETPROCADDRESSPROC)(const char*);
@@ -198,27 +203,6 @@ typedef GLvoid*(*PFNKGLGETPROCADDRESSPROC)(const char*);
 //GL_AMD_debug_output typedefs
 typedef void(APIENTRY *GLDEBUGPROCAMD)(GLuint, GLenum, GLenum, GLsizei, const GLchar*, GLvoid*);
 typedef void(APIENTRY *PFNGLDEBUGMESSAGECALLBACKAMDPROC) (GLDEBUGPROCAMD callback, GLvoid *userParam);
-
-//GL_ARB_direct_state_access
-typedef GLvoid (APIENTRY *PFNGLTEXTUREBUFFEREXTPROC) (GLuint texture, GLenum target, GLenum internalformat, GLuint buffer);
-typedef GLvoid (APIENTRY *PFNGLTEXTUREIMAGE1DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
-typedef GLvoid (APIENTRY *PFNGLTEXTUREIMAGE2DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
-typedef GLvoid (APIENTRY *PFNGLTEXTUREIMAGE3DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
-typedef GLvoid (APIENTRY *PFNGLCOMPRESSEDTEXTUREIMAGE1DEXTPROC) (GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLint border, GLsizei imageSize, const GLvoid *data);
-typedef GLvoid (APIENTRY *PFNGLCOMPRESSEDTEXTUREIMAGE2DEXTPROC) (GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const GLvoid *data);
-typedef GLvoid (APIENTRY *PFNGLCOMPRESSEDTEXTUREIMAGE3DEXTPROC) (GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const GLvoid *data);
-typedef GLvoid (APIENTRY *PFNGLCOMPRESSEDTEXTURESUBIMAGE1DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const GLvoid *data);
-typedef GLvoid (APIENTRY *PFNGLCOMPRESSEDTEXTURESUBIMAGE2DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const GLvoid *data);
-typedef GLvoid (APIENTRY *PFNGLCOMPRESSEDTEXTURESUBIMAGE3DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const GLvoid *data);
-typedef GLvoid (APIENTRY *PFNGLTEXTURESUBIMAGE1DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels);
-typedef GLvoid (APIENTRY *PFNGLTEXTURESUBIMAGE2DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels);
-typedef GLvoid (APIENTRY *PFNGLTEXTURESUBIMAGE3DEXTPROC) (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const GLvoid *pixels);
-typedef GLvoid (APIENTRY *PFNGLGENERATETEXTUREMIPMAPEXTPROC) (GLuint texture, GLenum target);
-typedef GLvoid (APIENTRY *PFNGLNAMEDBUFFERDATAEXTPROC) (GLuint buffer, GLsizeiptr size, const GLvoid *data, GLenum usage);
-typedef GLvoid (APIENTRY *PFNGLNAMEDBUFFERSUBDATAEXTPROC) (GLuint buffer, GLintptr offset, GLsizeiptr size, const GLvoid *data);
-typedef GLvoid* (APIENTRY *PFNGLMAPNAMEDBUFFEREXTPROC) (GLuint buffer, GLenum access);
-typedef GLvoid* (APIENTRY *PFNGLMAPNAMEDBUFFERRANGEEXTPROC) (GLuint buffer, GLintptr offset, GLsizeiptr length, GLbitfield access);
-typedef GLboolean (APIENTRY *PFNGLUNMAPNAMEDBUFFEREXTPROC) (GLuint buffer);
 
 //GL_KHR_debug
 typedef GLvoid (APIENTRY* GLDEBUGPROC)(GLenum source,GLenum type,GLuint id,GLenum severity,GLsizei length,const GLchar *message,const void *userParam);
@@ -238,8 +222,19 @@ extern PFNWGLGETCURRENTCONTEXTPROC				kwglGetCurrentContext;
 extern PFNWGLGETCURRENTDCPROC					kwglGetCurrentDC;
 
 //default gl functions
+extern PFNGLCREATESHADERPROC					kglCreateShader;
+extern PFNGLSHADERSOURCEPROC					kglShaderSource;
+extern PFNGLCOMPILESHADERPROC					kglCompileShader;
+extern PFNGLCREATEPROGRAMPROC					kglCreateProgram;
+extern PFNGLGETSHADERIVPROC						kglGetShaderiv;
+extern PFNGLATTACHSHADERPROC					kglAttachShader;
+extern PFNGLLINKPROGRAMPROC						kglLinkProgram;
+extern PFNGLDETACHSHADERPROC					kglDetachShader;
+extern PFNGLGETSHADERINFOLOGPROC				kglGetShaderInfoLog;
 extern PFNGLGENBUFFERSPROC						kglGenBuffers; 
 extern PFNGLBINDBUFFERPROC						kglBindBuffer;
+extern PFNGLBUFFERDATAPROC						kglBufferData;
+extern PFNGLBUFFERSUBDATAPROC					kglBufferSubData;
 extern PFNGLBINDFRAGDATALOCATIONPROC			kglBindFragDataLocation;
 extern PFNGLVERTEXATTRIBPOINTERPROC				kglVertexAttribPointer;
 extern PFNGLENABLEVERTEXATTRIBARRAYPROC			kglEnableVertexAttribArray;	
@@ -277,6 +272,7 @@ extern PFNGLDRAWELEMENTSPROC					kglDrawElements;
 extern PFNGLDRAWRANGEELEMENTSPROC				kglDrawRangeElements;
 extern PFNGLDRAWELEMENTSBASEVERTEXPROC			kglDrawElementsBaseVertex;
 extern PFNGLDRAWRANGEELEMENTSBASEVERTEXPROC		kglDrawRangeElementsBaseVertex;
+extern PFNGLDRAWARRAYSPROC						kglDrawArrays;
 extern PFNGLENABLEPROC							kglEnable;
 extern PFNGLFRONTFACEPROC						kglFrontFace;
 extern PFNGLGENTEXTURESPROC						kglGenTextures;
@@ -287,6 +283,13 @@ extern PFNGLGETSTRINGPROC						kglGetString;
 extern PFNGLGETSTRINGIPROC						kglGetStringi;
 extern PFNGLPOLYGONMODEPROC						kglPolygonMode;
 extern PFNGLVIEWPORTPROC						kglViewport;
+extern PFNGLCOMPRESSEDTEXIMAGE1DPROC			kglCompressedTexImage1D;
+extern PFNGLCOMPRESSEDTEXIMAGE2DPROC			kglCompressedTexImage2D;
+extern PFNGLCOMPRESSEDTEXIMAGE3DPROC			kglCompressedTexImage3D;
+extern PFNGLTEXIMAGE1DPROC						kglTexImage1D;
+extern PFNGLTEXIMAGE2DPROC						kglTexImage2D;
+extern PFNGLTEXIMAGE3DPROC						kglTexImage3D;
+extern PFNGLGENERATEMIPMAPPROC					kglGenerateMipmap;
 
 //GL_ARB_vertex_array_object//
 extern PFNGLGENVERTEXARRAYSPROC	kglGenVertexArrays;
@@ -387,43 +390,26 @@ extern PFNGLGETSAMPLERPARAMETERIUIVPROC kglGetSamplerParameterIuiv;
 //GL_KHR_debug
 extern PFNGLDEBUGMESSAGECALLBACKPROC kglDebugMessageCallback;
 
-//GL_AMD_debug_output
-extern PFNGLDEBUGMESSAGECALLBACKAMDPROC kglDebugMessageCallbackAMD;
-
 //GL_ARB_direct_state_access
-extern PFNGLTEXTUREIMAGE1DEXTPROC kglTextureImage1DEXT;
-extern PFNGLTEXTUREIMAGE2DEXTPROC kglTextureImage2DEXT;
-extern PFNGLTEXTUREIMAGE3DEXTPROC kglTextureImage3DEXT;
-extern PFNGLTEXTURESUBIMAGE1DEXTPROC kglTextureSubImage1DEXT;
-extern PFNGLTEXTURESUBIMAGE2DEXTPROC kglTextureSubImage2DEXT;
-extern PFNGLTEXTURESUBIMAGE3DEXTPROC kglTextureSubImage3DEXT;
-extern PFNGLCOMPRESSEDTEXTUREIMAGE1DEXTPROC kglCompressedTextureImage1DEXT;
-extern PFNGLCOMPRESSEDTEXTUREIMAGE2DEXTPROC kglCompressedTextureImage2DEXT;
-extern PFNGLCOMPRESSEDTEXTUREIMAGE3DEXTPROC kglCompressedTextureImage3DEXT;
-extern PFNGLCOMPRESSEDTEXTURESUBIMAGE1DEXTPROC kglCompressedTextureSubImage1DEXT;
-extern PFNGLCOMPRESSEDTEXTURESUBIMAGE2DEXTPROC kglCompressedTextureSubImage2DEXT;
-extern PFNGLCOMPRESSEDTEXTURESUBIMAGE3DEXTPROC kglCompressedTextureSubImage3DEXT;
-extern PFNGLGENERATETEXTUREMIPMAPEXTPROC kglGenerateTextureMipmapEXT;
-extern PFNGLNAMEDBUFFERDATAEXTPROC kglNamedBufferDataEXT;
-extern PFNGLNAMEDBUFFERSUBDATAEXTPROC kglNamedBufferSubDataEXT;
-extern PFNGLMAPNAMEDBUFFEREXTPROC kglMapNamedBufferEXT;
-extern PFNGLMAPNAMEDBUFFERRANGEEXTPROC kglMapNamedBufferRangeEXT;
-extern PFNGLUNMAPNAMEDBUFFEREXTPROC kglUnmapNamedBufferEXT;
+extern PFNGLTEXTURESTORAGE1DPROC kglTextureStorage1D;
+extern PFNGLTEXTURESTORAGE2DPROC kglTextureStorage2D;
+extern PFNGLTEXTURESTORAGE3DPROC kglTextureStorage3D;
+extern PFNGLTEXTURESUBIMAGE1DPROC kglTextureSubImage1D;
+extern PFNGLTEXTURESUBIMAGE2DPROC kglTextureSubImage2D;
+extern PFNGLTEXTURESUBIMAGE3DPROC kglTextureSubImage3D;
+extern PFNGLCOMPRESSEDTEXTURESUBIMAGE1DPROC kglCompressedTextureSubImage1D;
+extern PFNGLCOMPRESSEDTEXTURESUBIMAGE2DPROC kglCompressedTextureSubImage2D;
+extern PFNGLCOMPRESSEDTEXTURESUBIMAGE3DPROC kglCompressedTextureSubImage3D;
+extern PFNGLGENERATETEXTUREMIPMAPPROC kglGenerateTextureMipmap;
+extern PFNGLNAMEDBUFFERDATAPROC kglNamedBufferData;
+extern PFNGLNAMEDBUFFERSUBDATAPROC kglNamedBufferSubData;
+extern PFNGLMAPNAMEDBUFFERPROC kglMapNamedBuffer;
+extern PFNGLMAPNAMEDBUFFERRANGEPROC kglMapNamedBufferRange;
+extern PFNGLUNMAPNAMEDBUFFERPROC kglUnmapNamedBuffer;
 
 //custom gl functions
 extern PFNKGLSWAPBUFFERSPROC kglSwapBuffers;
 extern PFNKGLGETPROCADDRESSPROC kglGetProcAddress;
-
-//GL_EXT_direct_state_access
-extern PFNGLTEXTUREIMAGE1DEXTPROC kglTextureImage1DEXT;
-extern PFNGLTEXTUREIMAGE2DEXTPROC kglTextureImage2DEXT;
-extern PFNGLTEXTURESUBIMAGE1DEXTPROC kglTextureSubImage1DEXT;
-extern PFNGLTEXTURESUBIMAGE2DEXTPROC kglTextureSubImage2DEXT;
-extern PFNGLNAMEDBUFFERDATAEXTPROC kglNamedBufferDataEXT;
-extern PFNGLNAMEDBUFFERSUBDATAEXTPROC kglNamedBufferSubDataEXT;
-extern PFNGLMAPNAMEDBUFFEREXTPROC kglMapNamedBufferEXT;
-extern PFNGLUNMAPNAMEDBUFFEREXTPROC kglUnmapNamedBufferEXT;
-
 
 /*********************************************************************************/
 

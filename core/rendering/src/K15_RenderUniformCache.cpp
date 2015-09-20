@@ -1,5 +1,5 @@
 /*********************************************************************************/
-intern void K15_InternalAddUniformToDirtyCache(K15_RenderUniformCache* p_RenderUniformCache, K15_AutoUniformType p_AutoUniformType)
+intern void K15_InternalAddUniformToDirtyCache(K15_RenderUniformCache* p_RenderUniformCache, uint32 p_SemanticID)
 {
 	//add uniform to 'dirty cache'
 	p_RenderUniformCache->dirtyAutoUniforms[p_AutoUniformType] = &p_RenderUniformCache->cachedAutoUniforms[p_AutoUniformType];
@@ -40,7 +40,7 @@ void K15_InitializeRenderUniformCache(K15_RenderUniformCache* p_RenderUniformCac
 	memset(p_RenderUniformCache->dirtyAutoUniforms, 0, sizeof(p_RenderUniformCache->dirtyAutoUniforms));
 }
 /*********************************************************************************/
-void K15_UpdateUniformCacheEntry(K15_RenderUniformCache* p_RenderUniformCache, K15_AutoUniformType p_AutoUniformType, byte* p_Data)
+void K15_UpdateUniformCacheEntry(K15_RenderUniformCache* p_RenderUniformCache, uint32 p_SemanticID, byte* p_Data)
 {
 	assert(p_RenderUniformCache);
 	assert(p_Data);

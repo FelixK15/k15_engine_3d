@@ -1,0 +1,2 @@
+DiffuseTexture=gui_template.k15texture
+DiffuseSampler=linear_clamp_sampler.k15sampler

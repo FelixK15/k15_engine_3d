@@ -68,7 +68,7 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 	sample1GameContext->resourceContext = resourceContext;
 
 	//create render command buffer for the game
-	K15_RenderCommandQueue* mainRenderQueue = K15_CreateRenderCommandQueue(p_GameContext->renderContext);
+	K15_RenderCommandQueue* mainRenderQueue = K15_CreateRenderCommandQueue(p_GameContext->renderContext, "MainRenderQueue");
 
 	//set render command buffer
 	sample1GameContext->gameRenderQueue = mainRenderQueue;
@@ -86,9 +86,8 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 	//K15_RenderCommandCreateCamera(renderBuffer, &sample1GameContext->camera, &cameraDesc);
 	//K15_RenderCommandBindCamera(renderBuffer, &sample1GameContext->camera);
 
-	K15_AsyncContext* asyncContext = p_GameContext->asyncContext;
-
-	sample1GameContext->guiContext = K15_CreateGUIContextWithCustomAllocator(K15_CreateMemoryBufferAllocator(guiMemoryBuffer), resourceContext, p_GameContext->renderContext);
+	//K15_AsyncContext* asyncContext = p_GameContext->asyncContext;
+	sample1GameContext->guiContext = K15_CreateGUIContextWithCustomAllocator(K15_CreateMemoryBufferAllocator(guiMemoryBuffer), resourceContext, mainRenderQueue);
 
 	//K15_DispatchRenderCommandBuffer(sample1GameContext->guiContext->guiRenderCommandBuffer);
 
@@ -113,8 +112,6 @@ K15_EXPORT_SYMBOL void K15_InitGame(K15_InitGameInputData* p_InputData, K15_Init
 /*********************************************************************************/
 K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 {
-	static bool forward = true;
-	static float z = -5.0f;
 	//Global 'initialized' variable is used to check if we need to set
 	//global contexts like OSContext or Logging. If the game library
 	//gets dynamically reloaded, the global contexts get reset.
@@ -124,52 +121,15 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 		K15_InternalSetGameContext(p_GameContext);
 		g_Initialized = K15_TRUE;
 	}
+
 	K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->gameMemory->buffer;
 	K15_RenderCommandQueue* gameRenderCommandQueue = gameContext->gameRenderQueue;
 
 	K15_RenderCommandDraw2DTexture(gameRenderCommandQueue, &gameContext->guiContext->guiTemplateTexture, 
 		&gameContext->guiContext->guiTemplateTextureMaterial, K15_CreateRectangle(1.f, 1.f, -1.f, -1.f),
 		K15_CreateRectangle(0.f, 0.f, 1.f, 1.f));
-	
+
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameRenderCommandQueue);
-
-
-// 	if (p_GameContext->frameCounter >= 10)
-// 	{
-// 		//Game context is an internal struct. We know that the head of the game memory, which the engines
-// 		//provides is reserved for the struct.
-// 		K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->gameMemory->buffer;
-// 
-// 		K15_Mesh* robbieMesh = gameContext->robbie;
-// 
-// 		K15_Matrix4 worldMatrix = K15_GetIdentityMatrix4();
-// 
-// 		worldMatrix._1_4 = 0.f;
-// 		worldMatrix._2_4 = 0.f;
-// 		worldMatrix._3_4 = z;
-// 
-// 		if(forward)
-// 		{
-// 			z -= 0.5f;
-// 
-// 			if (z <= -8.f)
-// 			{
-// 				forward = false;
-// 			}
-// 		}
-// 		else
-// 		{
-// 			z += 0.5f;
-// 
-// 			if (z >= -4.f)
-// 			{
-// 				forward = true;
-// 			}
-// 		}
-// 
-// 		K15_RenderCommandDrawMesh(gameRenderCommandBuffer, &robbieMesh->renderMeshHandle, &worldMatrix);
-// 
-// 	}
 }
 /*********************************************************************************/
 K15_EXPORT_SYMBOL void K15_OnInputEvent(K15_GameContext* p_GameContext, K15_SystemEvent* p_SystemEvent)

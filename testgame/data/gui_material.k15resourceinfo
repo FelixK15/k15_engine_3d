@@ -1,4 +1,5 @@
 ResourceType=Material
 AmountPasses=1
 MaterialPass0Template=materials/passtemplate/default_2D.k15materialpass
+MaterialPass0Data=materials/passdata/2d_gui.k15materialdata
 Destination=gui_material.k15material

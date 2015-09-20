@@ -339,65 +339,65 @@ intern inline GLenum K15_GLConvertCompareFunction(K15_Comparison p_Comparison)
 	return nativeCompareFunc;
 }
 /*********************************************************************************/
-intern inline GLenum K15_GLConvertUniformTypeToGLType(K15_UniformType p_UniformType)
+intern inline GLenum K15_GLConvertUniformTypeToGLType(uint32 p_TypeID)
 {
 	GLenum nativeUniformType = GL_INVALID_ENUM;
 
-	switch(p_UniformType)
+	switch(p_TypeID)
 	{
-		case K15_UNIFORM_TYPE_INT8:
-		case K15_UNIFORM_TYPE_INT16:
-		case K15_UNIFORM_TYPE_INT32:
-		{
+		case K15_TYPE_INT_ID:
+// 		case K15_UNIFORM_TYPE_INT16:
+// 		case K15_UNIFORM_TYPE_INT32:
+ 		{
 			nativeUniformType = GL_INT;
 			break;
 		}
 
-		case K15_UNIFORM_TYPE_UINT8:
-		case K15_UNIFORM_TYPE_UINT16:
-		case K15_UNIFORM_TYPE_UINT32:
-		{
-			nativeUniformType = GL_UNSIGNED_INT;
-			break;
-		}
+// 		case K15_UNIFORM_TYPE_UINT8:
+// 		case K15_UNIFORM_TYPE_UINT16:
+// 		case K15_UNIFORM_TYPE_UINT32:
+// 		{
+// 			nativeUniformType = GL_UNSIGNED_INT;
+// 			break;
+// 		}
 
-		case K15_UNIFORM_TYPE_FLOAT:
+		case K15_TYPE_FLOAT_ID:
 		{
 			nativeUniformType = GL_FLOAT;
 			break;
 		}
 
-		case K15_UNIFORM_TYPE_FLOAT2:
+		case K15_TYPE_FLOAT_VECTOR2_ID:
 		{
 			nativeUniformType = GL_FLOAT_VEC2;
 			break;
 		}
 
-		case K15_UNIFORM_TYPE_FLOAT3:
+		case K15_TYPE_FLOAT_VECTOR3_ID:
 		{
 			nativeUniformType = GL_FLOAT_VEC3;
 			break;
 		}
 
-		case K15_UNIFORM_TYPE_FLOAT4:
+		case K15_TYPE_FLOAT_VECTOR4_ID:
 		{
 			nativeUniformType = GL_FLOAT_VEC4;
 			break;
 		}
 
-		case K15_UNIFORM_TYPE_FLOAT2x2:
+		case K15_TYPE_FLOAT_MATRIX2_ID:
 		{
 			nativeUniformType = GL_FLOAT_MAT2;
 			break;
 		}
 
-		case K15_UNIFORM_TYPE_FLOAT3x3:
+		case K15_TYPE_FLOAT_MATRIX3_ID:
 		{
 			nativeUniformType = GL_FLOAT_MAT3;
 			break;
 		}
 
-		case K15_UNIFORM_TYPE_FLOAT4x4:
+		case K15_TYPE_FLOAT_MATRIX4_ID:
 		{
 			nativeUniformType = GL_FLOAT_MAT4;
 			break;
@@ -704,106 +704,213 @@ intern inline GLenum K15_GLConvertInternalRenderFormat(K15_RenderFormat p_Render
 	return nativeRenderFormat;
 }
 /*********************************************************************************/
-intern inline K15_UniformType K15_GLConvertGLTypeToUniformType(GLenum p_GLType, GLint p_TypeSizeInBytes)
-{
-	K15_UniformType uniformType = K15_UNIFORM_TYPE_INVALID;
-
-	switch(p_GLType)
-	{
-		case GL_INT:
-		{
-			if (p_TypeSizeInBytes == sizeof(int8))
-			{
-				uniformType = K15_UNIFORM_TYPE_INT8;
-			}
-			else if(p_TypeSizeInBytes == sizeof(int16))
-			{
-				uniformType = K15_UNIFORM_TYPE_INT16;
-			}
-			else if(p_TypeSizeInBytes == sizeof(int32))
-			{
-				uniformType = K15_UNIFORM_TYPE_INT32;
-			}
-			else
-			{
-				assert(false);
-			}
-
-			break;
-		}
-
-		case GL_UNSIGNED_INT:
-		{
-			if (p_TypeSizeInBytes == sizeof(uint8))
-			{
-				uniformType = K15_UNIFORM_TYPE_UINT8;
-			}
-			else if(p_TypeSizeInBytes == sizeof(uint16))
-			{
-				uniformType = K15_UNIFORM_TYPE_UINT16;
-			}
-			else if(p_TypeSizeInBytes == sizeof(uint32))
-			{
-				uniformType = K15_UNIFORM_TYPE_UINT32;
-			}
-			else
-			{
-				assert(false);
-			}
-
-			break;
-		}
-
-		case GL_FLOAT:
-		{
-			uniformType = K15_UNIFORM_TYPE_FLOAT;
-			break;
-		}
-
-		case GL_FLOAT_VEC2:
-		{
-			uniformType = K15_UNIFORM_TYPE_FLOAT2;
-			break;
-		}
-
-		case GL_FLOAT_VEC3:
-		{
-			uniformType = K15_UNIFORM_TYPE_FLOAT3;
-			break;
-		}
-
-		case GL_FLOAT_VEC4:
-		{
-			uniformType = K15_UNIFORM_TYPE_FLOAT4;
-			break;
-		}
-
-		case GL_FLOAT_MAT2:
-		{
-			uniformType = K15_UNIFORM_TYPE_FLOAT2x2;
-			break;
-		}
-
-		case GL_FLOAT_MAT3:
-		{
-			uniformType = K15_UNIFORM_TYPE_FLOAT3x3;
-			break;
-		}
-
-		case GL_FLOAT_MAT4:
-		{
-			uniformType = K15_UNIFORM_TYPE_FLOAT4x4;
-			break;
-		}
-
-		default:
-		{
-			assert(false);
-		}
-	}
-
-	return uniformType;
-}
+// intern inline K15_RenderVertexAttributeValueType K15_GLConvertGLTypeToVertexAttributeValueType(GLenum p_GLType, GLint p_TypeSizeInBytes)
+// {
+// 	K15_RenderVertexAttributeValueType attributeValueType = K15_VERTEX_ATTRIBUTE_VALUE_TYPE_INVALID;
+// 
+// 	switch(p_GLType)
+// 	{
+// 	case GL_INT:
+// 		{
+// 			if (p_TypeSizeInBytes == sizeof(int8))
+// 			{
+// 				//uniformType = K15_UNIFORM_TYPE_INT8;
+// 			}
+// 			else if(p_TypeSizeInBytes == sizeof(int16))
+// 			{
+// 				//uniformType = K15_UNIFORM_TYPE_INT16;
+// 			}
+// 			else if(p_TypeSizeInBytes == sizeof(int32))
+// 			{
+// 				//uniformType = K15_UNIFORM_TYPE_INT32;
+// 			}
+// 			else
+// 			{
+// 				assert(false);
+// 			}
+// 
+// 			break;
+// 		}
+// 
+// 	case GL_UNSIGNED_INT:
+// 		{
+// 			if (p_TypeSizeInBytes == sizeof(uint8))
+// 			{
+// 				//uniformType = K15_UNIFORM_TYPE_UINT8;
+// 			}
+// 			else if(p_TypeSizeInBytes == sizeof(uint16))
+// 			{
+// 				//uniformType = K15_UNIFORM_TYPE_UINT16;
+// 			}
+// 			else if(p_TypeSizeInBytes == sizeof(uint32))
+// 			{
+// 				//uniformType = K15_UNIFORM_TYPE_UINT32;
+// 			}
+// 			else
+// 			{
+// 				assert(false);
+// 			}
+// 
+// 			break;
+// 		}
+// 
+// 	case GL_FLOAT:
+// 		{
+// 			attributeValueType = K15_VALUE_TYPE_FLOAT;
+// 			break;
+// 		}
+// 
+// 	case GL_FLOAT_VEC2:
+// 		{
+// 			attributeValueType = K15_VALUE_TYPE_FLOAT_VECTOR_2;
+// 			break;
+// 		}
+// 
+// 	case GL_FLOAT_VEC3:
+// 		{
+// 			attributeValueType = K15_VALUE_TYPE_FLOAT_VECTOR_3;
+// 			break;
+// 		}
+// 
+// 	case GL_FLOAT_VEC4:
+// 		{
+// 			attributeValueType = K15_VALUE_TYPE_FLOAT_VECTOR_4;
+// 			break;
+// 		}
+// 
+// 	case GL_FLOAT_MAT2:
+// 		{
+// 			attributeValueType = K15_VALUE_TYPE_FLOAT_MATRIX_2x2;
+// 			break;
+// 		}
+// 
+// 	case GL_FLOAT_MAT3:
+// 		{
+// 			attributeValueType = K15_VALUE_TYPE_FLOAT_MATRIX_3x3;
+// 			break;
+// 		}
+// 
+// 	case GL_FLOAT_MAT4:
+// 		{
+// 			attributeValueType = K15_VALUE_TYPE_FLOAT_MATRIX_4x4;
+// 			break;
+// 		}
+// 
+// 	default:
+// 		{
+// 			assert(false);
+// 		}
+// 	}
+// 
+// 	return attributeValueType;
+// }
+// /*********************************************************************************/
+// intern inline K15_UniformType K15_GLConvertGLTypeToUniformType(GLenum p_GLType, GLint p_TypeSizeInBytes)
+// {
+// 	K15_UniformType uniformType = K15_UNIFORM_TYPE_INVALID;
+// 
+// 	switch(p_GLType)
+// 	{
+// 		case GL_INT:
+// 		{
+// 			if (p_TypeSizeInBytes == sizeof(int8))
+// 			{
+// 				uniformType = K15_UNIFORM_TYPE_INT8;
+// 			}
+// 			else if(p_TypeSizeInBytes == sizeof(int16))
+// 			{
+// 				uniformType = K15_UNIFORM_TYPE_INT16;
+// 			}
+// 			else if(p_TypeSizeInBytes == sizeof(int32))
+// 			{
+// 				uniformType = K15_UNIFORM_TYPE_INT32;
+// 			}
+// 			else
+// 			{
+// 				assert(false);
+// 			}
+// 
+// 			break;
+// 		}
+// 
+// 		case GL_UNSIGNED_INT:
+// 		{
+// 			if (p_TypeSizeInBytes == sizeof(uint8))
+// 			{
+// 				uniformType = K15_UNIFORM_TYPE_UINT8;
+// 			}
+// 			else if(p_TypeSizeInBytes == sizeof(uint16))
+// 			{
+// 				uniformType = K15_UNIFORM_TYPE_UINT16;
+// 			}
+// 			else if(p_TypeSizeInBytes == sizeof(uint32))
+// 			{
+// 				uniformType = K15_UNIFORM_TYPE_UINT32;
+// 			}
+// 			else
+// 			{
+// 				assert(false);
+// 			}
+// 
+// 			break;
+// 		}
+// 
+// 		case GL_FLOAT:
+// 		{
+// 			uniformType = K15_UNIFORM_TYPE_FLOAT;
+// 			break;
+// 		}
+// 
+// 		case GL_FLOAT_VEC2:
+// 		{
+// 			uniformType = K15_UNIFORM_TYPE_FLOAT2;
+// 			break;
+// 		}
+// 
+// 		case GL_FLOAT_VEC3:
+// 		{
+// 			uniformType = K15_UNIFORM_TYPE_FLOAT3;
+// 			break;
+// 		}
+// 
+// 		case GL_FLOAT_VEC4:
+// 		{
+// 			uniformType = K15_UNIFORM_TYPE_FLOAT4;
+// 			break;
+// 		}
+// 
+// 		case GL_FLOAT_MAT2:
+// 		{
+// 			uniformType = K15_UNIFORM_TYPE_FLOAT2x2;
+// 			break;
+// 		}
+// 
+// 		case GL_FLOAT_MAT3:
+// 		{
+// 			uniformType = K15_UNIFORM_TYPE_FLOAT3x3;
+// 			break;
+// 		}
+// 
+// 		case GL_FLOAT_MAT4:
+// 		{
+// 			uniformType = K15_UNIFORM_TYPE_FLOAT4x4;
+// 			break;
+// 		}
+// 
+// 		case GL_SAMPLER_2D:
+// 			{
+// 				uniformType = K15_UNIFORM_TYPE_SAMPLER_2D;
+// 				break;
+// 			}
+// 
+// 		default:
+// 		{
+// 			assert(false);
+// 		}
+// 	}
+// 
+// 	return uniformType;
+// }
 /*********************************************************************************/
 intern inline GLenum K15_GLConvertRenderFilterMode(K15_RenderFilterMode p_FilterMode)
 {
@@ -924,6 +1031,46 @@ K15_RenderProgramType K15_ConvertGLProgramType(GLenum p_GLProgramType)
 	}
 
 	return programType;
+}
+/*********************************************************************************/
+GLenum K15_GLConvertTopology(K15_RenderTopology p_Topology)
+{
+	GLenum nativeTopology = GL_INVALID_ENUM;
+
+	switch (p_Topology)
+	{
+		case K15_RENDER_TOPOLOGY_POINTS:
+		{
+			nativeTopology = GL_POINTS;
+			break;
+		}
+
+		case K15_RENDER_TOPOLOGY_LINES:
+		{
+			nativeTopology = GL_LINES;
+			break;
+		}
+
+		case K15_RENDER_TOPOLOGY_TRIANGLES:
+		{
+			nativeTopology = GL_TRIANGLES;
+			break;
+		}
+
+		case K15_RENDER_TOPOLOGY_TRIANGLE_FAN:
+		{
+			nativeTopology = GL_TRIANGLE_FAN;
+			break;
+		}
+
+		case K15_RENDER_TOPOLOGY_TRIANGLE_STRIP:
+		{
+			nativeTopology = GL_TRIANGLE_STRIP;
+			break;
+		}
+	}
+
+	return nativeTopology;
 }
 /*********************************************************************************/
 GLbitfield K15_GLConvertProgramTypeBit(GLenum p_GLProgramType)

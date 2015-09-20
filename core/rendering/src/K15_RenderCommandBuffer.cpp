@@ -46,7 +46,7 @@ result8 K15_GetMemoryFromCommandBuffer(K15_RenderCommandBuffer* p_RenderCommandB
 void K15_ReadMemoryFromCommandBuffer(K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_OffsetInBytes, uint32 p_SizeInBytes, void* p_DestinationMemory)
 {
 	K15_ASSERT_TEXT(p_RenderCommandBuffer, "Render Command Buffer is NULL.");
-	K15_ASSERT_TEXT(p_OffsetInBytes + p_SizeInBytes < p_RenderCommandBuffer->offset, "Offset + Size is too large.");
+	K15_ASSERT_TEXT(p_OffsetInBytes + p_SizeInBytes <= p_RenderCommandBuffer->offset, "Offset + Size is too large.");
 	K15_ASSERT_TEXT(p_DestinationMemory, "Destination memory is NULL.");
 
 	memcpy(p_DestinationMemory, p_RenderCommandBuffer->buffer + p_OffsetInBytes, p_SizeInBytes);

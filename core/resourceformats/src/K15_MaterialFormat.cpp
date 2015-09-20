@@ -7,25 +7,7 @@
 #include "enums/K15_ReturnValues.h"
 #include "enums/K15_FormatValues.h"
 
-/*********************************************************************************/
-intern uint8 K15_InternalAddMaterialPassTemplateSamplerHash(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, uint32 p_SamplerNameHash, const char* p_SamplerPath)
-{
-	assert(p_MaterialPassTemplate);
-	assert(p_SamplerPath);
 
-	assert(p_MaterialPassTemplate->numSamplers != p_MaterialPassTemplate->currentNumSampler);
-
-	uint32 samplerPathLength = (uint32)strlen(p_SamplerPath);
-
-	p_MaterialPassTemplate->samplerFormats[p_MaterialPassTemplate->currentNumSampler].samplerNameHash = p_SamplerNameHash;
-
-	p_MaterialPassTemplate->samplerFormats[p_MaterialPassTemplate->currentNumSampler].samplerPath = K15_CopyStringIntoBuffer(p_SamplerPath, (char*)K15_RF_MALLOC(samplerPathLength + 1));
-	p_MaterialPassTemplate->samplerFormats[p_MaterialPassTemplate->currentNumSampler].samplerPathLength = samplerPathLength;
-
-	p_MaterialPassTemplate->currentNumSampler += 1;
-
-	return K15_SUCCESS;
-}
 /*********************************************************************************/
 intern uint8 K15_InternalLoadMaterialFormat(K15_DataAccessContext* p_DataAcessContext, K15_MaterialFormat* p_MaterialFormat)
 {
@@ -55,9 +37,6 @@ intern uint8 K15_InternalLoadMaterialFormat(K15_DataAccessContext* p_DataAcessCo
 	{
 		K15_MaterialPassTemplateFormat materialPassFormat = {};
 
-		//read number of samplers
-		K15_ReadData(p_DataAcessContext, sizeof(uint32), &materialPassFormat.numSamplers);
-
 		//read vertex shader path length
 		K15_ReadData(p_DataAcessContext, sizeof(uint32), &materialPassFormat.vertexShaderPathLength);
 
@@ -73,30 +52,6 @@ intern uint8 K15_InternalLoadMaterialFormat(K15_DataAccessContext* p_DataAcessCo
 
 		//read fragment shader path
 		K15_ReadData(p_DataAcessContext, materialPassFormat.fragmentShaderPathLength, materialPassFormat.fragmentShaderPath);
-
-		//create sampler buffer
-		materialPassFormat.samplerFormats = (K15_MaterialPassTemplateSamplerFormat*)malloc(materialPassFormat.numSamplers * sizeof(K15_MaterialPassTemplateSamplerFormat));
-
-		for (uint32 samplerIndex = 0;
-			samplerIndex < materialPassFormat.numSamplers;
-			++samplerIndex)
-		{
-			K15_MaterialPassTemplateSamplerFormat samplerFormat = {};
-			
-			//read sampler name hash
-			K15_ReadData(p_DataAcessContext, sizeof(uint32), &samplerFormat.samplerNameHash);
-
-			//read sampler path length
-			K15_ReadData(p_DataAcessContext, sizeof(uint32), &samplerFormat.samplerPathLength);
-
-			//create sampler path buffer
-			samplerFormat.samplerPath = (char*)malloc(samplerFormat.samplerPathLength);
-
-			//read sampler path
-			K15_ReadData(p_DataAcessContext, samplerFormat.samplerPathLength, samplerFormat.samplerPath);
-
-			K15_InternalAddMaterialPassTemplateSamplerHash(&materialPassFormat, samplerFormat.samplerNameHash, samplerFormat.samplerPath);
-		}
 
 		K15_AddMaterialPassTemplateFormat(p_MaterialFormat, &materialPassFormat);
 	}
@@ -125,9 +80,6 @@ intern uint8 K15_InternalSaveMaterialFormat(K15_DataAccessContext* p_DataAcessCo
 	{
 		K15_MaterialPassTemplateFormat* materialPassFormat = &p_MaterialFormat->passTemplates[materialPassIndex]; 
 
-		//write number of samplers
-		K15_WriteData(p_DataAcessContext, sizeof(uint32), &materialPassFormat->numSamplers);
-
 		//write vertex shader path length
 		K15_WriteData(p_DataAcessContext, sizeof(uint32), &materialPassFormat->vertexShaderPathLength);
 
@@ -139,22 +91,6 @@ intern uint8 K15_InternalSaveMaterialFormat(K15_DataAccessContext* p_DataAcessCo
 
 		//write fragment shader path
 		K15_WriteData(p_DataAcessContext, materialPassFormat->fragmentShaderPathLength, materialPassFormat->fragmentShaderPath);
-
-		for (uint32 samplerIndex = 0;
-			samplerIndex < materialPassFormat->numSamplers;
-			++samplerIndex)
-		{
-			K15_MaterialPassTemplateSamplerFormat* samplerFormat = &materialPassFormat->samplerFormats[samplerIndex];
-
-			//write sampler name hash
-			K15_WriteData(p_DataAcessContext, sizeof(uint32), &samplerFormat->samplerNameHash);
-
-			//write sampler path length
-			K15_WriteData(p_DataAcessContext, sizeof(uint32), &samplerFormat->samplerPathLength);
-
-			//write sampler path
-			K15_WriteData(p_DataAcessContext, samplerFormat->samplerPathLength, samplerFormat->samplerPath);
-		}
 	}
 
 	if((p_SaveFlags & K15_SAVE_FLAG_FREE_DATA) > 0)
@@ -163,18 +99,6 @@ intern uint8 K15_InternalSaveMaterialFormat(K15_DataAccessContext* p_DataAcessCo
 	}
 
 	return K15_SUCCESS;
-}
-/*********************************************************************************/
-intern void K15_InternalFreeMaterialPassTemplateSamplerFormats(K15_MaterialPassTemplateFormat* p_MaterialPassTemplateFormat)
-{
-	uint32 numSamplers = p_MaterialPassTemplateFormat->currentNumSampler;
-
-	for (uint32 samplerIndex = 0;
-		samplerIndex < numSamplers;
-		++samplerIndex)
-	{
-		K15_RF_FREE(p_MaterialPassTemplateFormat->samplerFormats[samplerIndex].samplerPath);
-	}
 }
 /*********************************************************************************/
 intern void K15_InternalFreeMaterialPassTemplateFormats(K15_MaterialFormat* p_MaterialFormat)
@@ -187,8 +111,6 @@ intern void K15_InternalFreeMaterialPassTemplateFormats(K15_MaterialFormat* p_Ma
 	{
 		K15_RF_FREE(p_MaterialFormat->passTemplates[materialPassTemplateIndex].vertexShaderPath);
 		K15_RF_FREE(p_MaterialFormat->passTemplates[materialPassTemplateIndex].fragmentShaderPath);
-
-		K15_InternalFreeMaterialPassTemplateSamplerFormats(&p_MaterialFormat->passTemplates[materialPassTemplateIndex]);
 	}
 }
 /*********************************************************************************/
@@ -284,39 +206,6 @@ uint8 K15_SetMaterialPassTemplateFragmentShaderPath(K15_MaterialPassTemplateForm
 	p_MaterialPassTemplate->fragmentShaderPathLength = fragmentShaderPathLength;
 
 	return K15_SUCCESS;
-}
-/*********************************************************************************/
-uint8 K15_SetMaterialPassTemplateSamplerCount(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, uint32 p_SamplerCount)
-{
-	assert(p_MaterialPassTemplate);
-	assert(p_SamplerCount);
-
-	K15_MaterialPassTemplateSamplerFormat* samplerFormats = (K15_MaterialPassTemplateSamplerFormat*)K15_RF_MALLOC(p_SamplerCount * sizeof(K15_MaterialPassTemplateSamplerFormat));
-	memset(samplerFormats, 0, p_SamplerCount * sizeof(K15_MaterialPassTemplateSamplerFormat));
-
-	if (p_MaterialPassTemplate->samplerFormats)
-	{
-		K15_InternalFreeMaterialPassTemplateSamplerFormats(p_MaterialPassTemplate);
-		K15_RF_FREE(p_MaterialPassTemplate->samplerFormats);
-	}
-
-	p_MaterialPassTemplate->samplerFormats = samplerFormats;
-	p_MaterialPassTemplate->numSamplers = p_SamplerCount;
-	p_MaterialPassTemplate->currentNumSampler = 0;
-	return K15_SUCCESS;
-}
-/*********************************************************************************/
-uint8 K15_AddMaterialPassTemplateSampler(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, const char* p_SamplerName, const char* p_SamplerPath)
-{
-	return K15_InternalAddMaterialPassTemplateSamplerHash(p_MaterialPassTemplate, K15_CreateHash(p_SamplerName), p_SamplerPath);
-}
-/*********************************************************************************/
-K15_MaterialPassTemplateSamplerFormat* K15_GetMaterialPassTemplateSampler(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, uint32 p_MaterialPassTemplateSamplerIndex)
-{
-	assert(p_MaterialPassTemplate);
-	assert(p_MaterialPassTemplateSamplerIndex < p_MaterialPassTemplate->numSamplers);
-
-	return &p_MaterialPassTemplate->samplerFormats[p_MaterialPassTemplateSamplerIndex];
 }
 /*********************************************************************************/
 uint8 K15_SaveMaterialFormatToFile(K15_MaterialFormat* p_MaterialFormat, const char* p_Path, uint32 p_SaveFlag)

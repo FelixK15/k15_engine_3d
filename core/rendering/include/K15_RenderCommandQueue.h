@@ -14,6 +14,7 @@ struct K15_RenderCommandQueue
 	K15_RenderCommandBuffer commandBuffers[K15_RENDERING_COMMAND_BUFFER_COUNT];
 	K15_RenderCommand* lastCommand;
 
+	K15_Semaphore* processLock;
 	const char* name;
 
 #ifdef K15_DEBUG_MRT

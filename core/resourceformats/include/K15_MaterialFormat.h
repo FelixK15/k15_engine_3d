@@ -3,12 +3,15 @@
 
 #include "K15_ResourceFormats_Prerequisites.h"
 
-struct K15_MaterialPassTemplateSamplerFormat
+struct K15_MaterialPassDataFormat
 {
-	char* samplerPath;
+	union 
+	{
+		uint32 texture;
+		uint32 sampler;
+	} data;
 
-	uint32 samplerNameHash;
-	uint32 samplerPathLength;
+
 };
 
 struct K15_MaterialPassTemplateFormat
@@ -18,11 +21,12 @@ struct K15_MaterialPassTemplateFormat
 
 	uint32 vertexShaderPathLength;
 	uint32 fragmentShaderPathLength;
+};
 
-	uint32 numSamplers;
-	uint32 currentNumSampler;
-
-	K15_MaterialPassTemplateSamplerFormat* samplerFormats;
+struct K15_MaterialPassFormat
+{
+	K15_MaterialPassTemplateFormat* materialPassTemplate;
+	K15_MaterialPassDataFormat* materialPassData;
 };
 
 struct K15_MaterialFormat
@@ -43,10 +47,6 @@ K15_MaterialPassTemplateFormat* K15_GetMaterialPassTemplateFormat(K15_MaterialFo
 
 uint8 K15_SetMaterialPassTemplateVertexShaderPath(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, const char* p_VertexShaderPath);
 uint8 K15_SetMaterialPassTemplateFragmentShaderPath(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, const char* p_FragmentShaderPath);
-
-uint8 K15_SetMaterialPassTemplateSamplerCount(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, uint32 p_SamplerCount);
-uint8 K15_AddMaterialPassTemplateSampler(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, const char* p_SamplerName, const char* p_SamplerPath);
-K15_MaterialPassTemplateSamplerFormat* K15_GetMaterialPassTemplateSampler(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, uint32 p_MaterialPassTemplateSamplerIndex);
 
 uint8 K15_SaveMaterialFormatToFile(K15_MaterialFormat* p_MaterialFormat, const char* p_Path, uint32 p_SaveFlags);
 

@@ -16,7 +16,7 @@
 
 struct K15_RenderContext
 {
-	K15_RenderCommandQueue* dispatchedRenderCommandQueues[K15_RENDERING_DISPATCHED_COMMAND_QUEUE_BUFFER_COUNT][K15_MAX_RENDER_COMMAND_QUEUES];
+	K15_RenderCommandQueue** dispatchedRenderCommandQueues[K15_RENDERING_DISPATCHED_COMMAND_QUEUE_BUFFER_COUNT];
 	K15_RenderCommandQueue renderCommandQueues[K15_MAX_RENDER_COMMAND_QUEUES];
 	K15_CustomMemoryAllocator memoryAllocator;
 	K15_RenderBackEnd backEnd;
@@ -30,6 +30,8 @@ struct K15_RenderContext
 	char* error;
 };
 
+void K15_SetRenderContextError(K15_RenderContext* p_RenderContext, const char* p_ErrorMessage, uint32 p_ErrorMessageLength = 0);
+
 K15_RenderContext* K15_CreateRenderContext(K15_OSContext* p_OSContext);
 K15_RenderContext* K15_CreateRenderContextWithCustomAllocator(K15_OSContext* p_OSContext, K15_CustomMemoryAllocator p_CustomMemoryAllocator);
 
@@ -37,6 +39,7 @@ result8 K15_DispatchRenderCommandQueue(K15_RenderContext* p_RenderContext, K15_R
 
 K15_RenderCommandQueue* K15_CreateRenderCommandQueue(K15_RenderContext* p_RenderContext, const char* p_RenderCommandQueueName = 0);
 
+void K15_SwapDispatchedRenderCommandQueueBuffers(K15_RenderContext* p_RenderContext);
 void K15_ProcessDispatchedRenderCommandQueues(K15_RenderContext* p_RenderContext);
 
 #endif 

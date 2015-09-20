@@ -20,8 +20,8 @@
 #endif //K15_OS_WINDOWS
 
 #ifdef K15_DESKTOP_GL
-	#define K15_MIN_GL_VERSION_MAJOR 3
-	#define K15_MIN_GL_VERSION_MINOR 3
+	#define K15_MIN_GL_VERSION_MAJOR 4
+	#define K15_MIN_GL_VERSION_MINOR 5
 #elif defined K15_EMBEDDED_GL
 	#define K15_MIN_GL_VERSION_MAJOR 2
 	#define K15_MIN_GL_VERSION_MINOR 0
@@ -33,12 +33,12 @@
 #define K15_RENDER_MAX_GPU_PROGRAMS								1024
 #define K15_RENDER_MAX_GPU_TEXTURES								1024
 #define K15_RENDER_MAX_GPU_MESHES								1024
+#define K15_RENDER_MAX_GPU_MATERIALS							512
 #define K15_RENDER_MAX_GPU_SAMPLERS								32
 #define K15_RENDER_MAX_GPU_RENDER_TARGETS						32
 #define K15_RENDER_MAX_GPU_FONTS								32
 #define K15_RENDER_MAX_CAMERAS									32
 #define K15_RENDER_MAX_UNIFORMS									64
-#define K15_RENDER_MAX_GPU_MATERIALS							512
 
 #define K15_RENDER_IMMEDIATE_BUFFER_SIZE						size_kilobyte(512)
 
@@ -53,8 +53,6 @@ enum K15_RenderDescFlags
 
 typedef uint32 K15_RenderResourceHandle;
 
-enum K15_UniformType : uint32;
-
 struct K15_CustomMemoryAllocator;
 struct K15_OSContext;
 
@@ -67,12 +65,16 @@ struct K15_RenderMaterialDesc;
 struct K15_RenderBufferUpdateDesc;
 struct K15_RenderCommandQueue;
 struct K15_RenderUniformUpdateDesc;
+struct K15_RenderGeometryDesc;
 struct K15_RenderCommand;
 struct K15_RenderBackEnd;
 struct K15_RenderFrontEnd;
 struct K15_RenderContext;
 struct K15_RenderTextureUpdateDesc;
+struct K15_RenderVertexFormatDesc;
+struct K15_RenderVertexData;
 
+struct K15_ShaderProcessorContext;
 
 struct K15_Thread;
 

@@ -28,12 +28,12 @@ intern inline K15_GUIButton* K15_InternalCreateGUIButton(K15_GUIContext* p_GUICo
 
 
 /*********************************************************************************/
-K15_GUIContext* K15_CreateGUIContext(K15_ResourceContext* p_ResourceContext, K15_RenderContext* p_RenderContext)
+K15_GUIContext* K15_CreateGUIContext(K15_ResourceContext* p_ResourceContext, K15_RenderCommandQueue* p_RenderCommandQueue)
 {
-	return K15_CreateGUIContextWithCustomAllocator(K15_CreateDefaultMemoryAllocator(), p_ResourceContext, p_RenderContext);
+	return K15_CreateGUIContextWithCustomAllocator(K15_CreateDefaultMemoryAllocator(), p_ResourceContext, p_RenderCommandQueue);
 }
 /*********************************************************************************/
-K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocator p_MemoryAllocator, K15_ResourceContext* p_ResourceContext, K15_RenderContext* p_RenderContext)
+K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocator p_MemoryAllocator, K15_ResourceContext* p_ResourceContext, K15_RenderCommandQueue* p_RenderCommandQueue)
 {
 	K15_OSContext* osContext = K15_GetOSLayerContext();
 	K15_GUIContext* guiContext = (K15_GUIContext*)K15_AllocateFromMemoryAllocator(&p_MemoryAllocator, sizeof(K15_GUIContext));
@@ -50,7 +50,6 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	guiContext->memoryAllocator = p_MemoryAllocator;
 	guiContext->guiMemory = (byte*)K15_AllocateFromMemoryAllocator(&p_MemoryAllocator, K15_GUI_CONTEXT_MEMORY_SIZE);
 	guiContext->guiMemoryMaxSize = K15_GUI_CONTEXT_MEMORY_SIZE;
-	guiContext->guiRenderCommandBuffer = K15_CreateRenderCommandQueue(p_RenderContext);
 	guiContext->guiMemoryCurrentSize = 0;
 	guiContext->guiTemplateTexture = K15_INVALID_GPU_RESOURCE_HANDLE;
 	guiContext->windowHeight = windowHeight;
@@ -74,20 +73,19 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	if (guiFont
 		&& K15_LoadFontFormatFromMemory(&fontFormat, guiFont->data, guiFont->dataSizeInBytes) == K15_SUCCESS)
 	{
-
+		
 	}
 
 	if (guiMaterial
 		&& K15_LoadMaterialFormatFromMemory(&guiMaterialFormat, guiMaterial->data, guiMaterial->dataSizeInBytes) == K15_SUCCESS)
 	{
-		K15_RenderMaterialDesc guiMaterialDesc = {};
 		
 	}
 
 	if (guiTemplateTexture &&
 		K15_LoadTextureFormatFromMemory(&guiTextureFormat, guiTemplateTexture->data, guiTemplateTexture->dataSizeInBytes) == K15_SUCCESS)
 	{
-		K15_RenderCommandCreateTextureFromTextureFormat(guiContext->guiRenderCommandBuffer, &guiContext->guiTemplateTexture, &guiTextureFormat);
+		K15_RenderCommandCreateTextureFromTextureFormat(p_RenderCommandQueue, &guiContext->guiTemplateTexture, &guiTextureFormat);
 		
 	}
 
@@ -119,11 +117,14 @@ void K15_SetGUIContextMousePosition(K15_GUIContext* p_GUIContext, uint32 p_Mouse
 {
 	assert(p_GUIContext);
 
-	uint32 windowWidth = p_GUIContext->windowWidth;
-	uint32 windowHeight = p_GUIContext->windowHeight;
+	real32 windowWidth = (real32)p_GUIContext->windowWidth;
+	real32 windowHeight = (real32)p_GUIContext->windowHeight;
 
-	p_GUIContext->mousePosX = K15_ClampReal(p_MouseX / windowWidth, 1.0f, 0.0f);
-	p_GUIContext->mousePosY = K15_ClampReal(p_MouseY / windowHeight, 1.0f, 0.0f);
+	real32 x = (real32)p_MouseX;
+	real32 y = (real32)p_MouseY;
+
+	p_GUIContext->mousePosX = K15_ClampReal(x / windowWidth, 1.0f, 0.0f);
+	p_GUIContext->mousePosY = K15_ClampReal(y / windowHeight, 1.0f, 0.0f);
 }
 /*********************************************************************************/
 bool8 K15_Button(K15_GUIContext* p_GUIContext, float p_PositionX, float p_PositionY, const char* p_Caption)

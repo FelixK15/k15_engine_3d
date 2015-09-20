@@ -93,6 +93,12 @@
 	K15_ASSERT_TEXT(false, "Function \"%s\" not supported\\implemented on this platform.", #type);	\
 	return(returntype)(0);}	\
 
+#define K15_FUNCTION_VARIABLE_CUSTOM_RETURN(returntype, type, arguments) typedef returntype(*type) arguments;	\
+	static returntype type##_stubFnc arguments {	\
+	returntype r = {}; \
+	K15_ASSERT_TEXT(false, "Function \"%s\" not supported\\implemented on this platform.", #type);	\
+	return r;}	\
+
 #ifdef K15_OS_WINDOWS
 	//8 bit types
 	typedef signed    __int8  int8;

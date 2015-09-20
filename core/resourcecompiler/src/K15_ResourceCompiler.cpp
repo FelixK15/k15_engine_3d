@@ -556,7 +556,7 @@ bool8 K15_CompileTextureResourceWithSquish(K15_ResourceCompilerContext* p_Resour
 
 	compressionTypeString = K15_GetConfigValueAsString(p_TextureConfig, "Compression");
 	compressionQuality = K15_GetConfigValueAsString(p_TextureConfig, "CompressionQuality");
-	generateMipMaps = K15_GetConfigValueAsBool(p_TextureConfig, "GenerateMipMaps", K15_FALSE);
+	generateMipMaps = K15_GetConfigValueAsBool(p_TextureConfig, "GenerateMipmaps", K15_FALSE);
 
 	if (!compressionTypeString)
 	{
@@ -594,7 +594,7 @@ bool8 K15_CompileTextureResourceWithSquish(K15_ResourceCompilerContext* p_Resour
 	}
 
 	imageData = (stbi_uc**)malloc(numImages * K15_PTR_SIZE);
-	imageData[0] = stbi_load(resourcePath, &width, &height, &numColorComponents, 4);
+	imageData[0] = stbi_load(resourcePath, &width, &height, &numColorComponents, numColorComponents);
 
 	//scale texture to target size
 	if (targetWidth != width || targetHeight != height)
@@ -949,6 +949,7 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 	// * RENDER STATES
 	// * PARSE MATERIAL PASS DATA
 	// * (MAYBE) PARSE SHADER TO AUTOMATICALLY FIND OUT WHAT VARIABLES EXIST
+	// * DIFFERENT QUALITY LEVELS
 
 	bool8 compiled = K15_FALSE;
 	uint8 result = K15_SUCCESS;
@@ -972,6 +973,9 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 	char* materialPassVertexShaderAbsolute = 0;
 	char* materialPassFragmentShaderAbsolute = 0;
 	
+	char* vertexShaderCode = 0;
+	char* fragmentShaderCode = 0;
+
 	K15_MaterialFormat materialFormat = {};
 	K15_SetMaterialFormatName(&materialFormat, resourceName);
 
@@ -1015,10 +1019,14 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 
 		//pass data is optional
 		materialPassDataConfigRelativePath = K15_GetConfigValueAsString(p_MaterialConfig, materialDataPassNameBuffer);
-		if (materialPassDataConfigRelativePath)
+
+		if (!materialPassDataConfigRelativePath)
 		{
-			materialPassDataConfigPath = K15_ConvertToAbsolutePath(materialPassDataConfigRelativePath);
+			K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not find config value '%s' in resource config file '%s'.", (char*)malloc(512), materialDataPassNameBuffer, p_MaterialConfig->path));
+			goto free_resources;
 		}
+
+		materialPassDataConfigPath = K15_ConvertToAbsolutePath(materialPassDataConfigRelativePath);
 
 		//try to read material pass template
 		K15_ConfigFileContext materialPassTemplateConfig = {};
@@ -1039,11 +1047,11 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 			{
 				K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not open material data template file '%s'.", (char*)malloc(512), materialPassDataConfigPath));
 				goto free_resources;
-			}
-
-			//Add material template data config as dependency
-			K15_InternalAddResourceDependency(p_ResourceCompilerContext, p_MaterialConfig->path, materialPassDataConfigPath);
+			}	
 		}
+
+		//Add material template data config as dependency
+		K15_InternalAddResourceDependency(p_ResourceCompilerContext, p_MaterialConfig->path, materialPassDataConfigPath);
 
 		//get shader file data from pass template
 		materialPassVertexShader = K15_GetConfigValueAsString(&materialPassTemplateConfig, "VertexShader");
@@ -1078,6 +1086,23 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 			goto free_resources;
 		}
 
+// 		parse shader for external symbols which can be resolved via the material pass data config file
+// 		vertexShaderCode = (char*)K15_GetWholeFileContent(materialPassVertexShaderAbsolute);
+// 		fragmentShaderCode = (char*)K15_GetWholeFileContent(materialPassFragmentShaderAbsolute);
+// 
+// 		K15_ShaderParseResult result = {};
+// 
+// 		char* vertexShaderOutput = 0;
+// 		char* fragmentShaderOutput = 0;
+// 
+// 		//prase shader code to find external symbols
+// 		K15_ParseShaderCode(&result, &vertexShaderOutput, vertexShaderCode, K15_VERTEX_SHADER);
+// 		K15_ParseShaderCode(&result, &fragmentShaderOutput, fragmentShaderCode, K15_FRAGMENT_SHADER);
+// 
+// 		K15_SAFE_FREE(fragmentShaderCode);
+// 		K15_SAFE_FREE(vertexShaderCode);
+
+		//add relative shader file path to material pass
 		K15_SetMaterialPassTemplateVertexShaderPath(&materialTemplatePassFormat, materialPassVertexShader);
 		K15_SetMaterialPassTemplateFragmentShaderPath(&materialTemplatePassFormat, materialPassFragmentShader);
 
@@ -1090,7 +1115,7 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 		
 		if (materialTemplateSamplerCount > 0)
 		{
-			K15_SetMaterialPassTemplateSamplerCount(&materialTemplatePassFormat, materialTemplateSamplerCount);
+			//K15_SetMaterialPassTemplateSamplerCount(&materialTemplatePassFormat, materialTemplateSamplerCount);
 
 			//get sampler values from the config file
 			K15_ConfigValue** configValueBuffer = (K15_ConfigValue**)alloca(K15_PTR_SIZE * materialTemplateSamplerCount);
@@ -1117,14 +1142,14 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 				//add sampler as dependency
 				K15_InternalAddResourceDependency(p_ResourceCompilerContext, p_MaterialConfig->path, samplerPath);
 
-				K15_AddMaterialPassTemplateSampler(&materialTemplatePassFormat, samplerName, samplerPath);
+				//K15_AddMaterialPassTemplateSampler(&materialTemplatePassFormat, samplerName, samplerPath);
 
 				K15_SAFE_FREE(samplerName);
 				K15_SAFE_FREE(samplerPath);
 			}
 		}
 			
-		K15_AddMaterialPassTemplateFormat(&materialFormat, &materialTemplatePassFormat);
+		//K15_AddMaterialPassTemplateFormat(&materialFormat, &materialTemplatePassFormat);
 
 		K15_SAFE_FREE(materialTemplatePassNameBuffer);
 		K15_SAFE_FREE(materialDataPassNameBuffer);
@@ -1142,6 +1167,10 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 		K15_SAFE_FREE(materialPassFragmentShaderAbsolute);
 
 		K15_SAFE_FREE(materialPassDataConfigDirectory);
+
+		K15_SAFE_FREE(fragmentShaderCode);
+		K15_SAFE_FREE(vertexShaderCode);
+
 	}
 	
 	compiled = K15_SaveMaterialFormatToFile(&materialFormat, p_OutputPath, K15_SAVE_FLAG_FREE_DATA) == K15_SUCCESS;
