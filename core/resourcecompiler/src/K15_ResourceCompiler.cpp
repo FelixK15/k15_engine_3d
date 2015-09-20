@@ -293,6 +293,61 @@ intern uint8 K15_InternalConvertTextToSamplerAddressMode(const char* p_Text)
 	return addressMode;
 }
 /*********************************************************************************/
+intern bool8 K15_InternalIsStringValue(char* p_ValueText)
+{
+	char* value = p_ValueText;
+	bool8 isStringValue = K15_FALSE;
+
+	while(*value)
+	{
+		if (isalpha(*value++))
+		{
+			isStringValue = K15_TRUE;
+			break;
+		}
+	}
+
+	return isStringValue;
+}
+/*********************************************************************************/
+intern bool8 K15_InternalIsFloatValue(char* p_ValueText)
+{
+	char* value = p_ValueText;
+	bool8 isFloatValue = K15_TRUE;
+
+	while(*value)
+	{
+		if (!(isdigit(*value) || 
+			*value == '.' || 
+			*value == ','))
+		{
+			isFloatValue = K15_FALSE;
+			break;
+		}
+
+		*value++;
+	}
+
+	return isFloatValue;
+}
+/*********************************************************************************/
+intern bool8 K15_InternalIsIntValue(char* p_ValueText)
+{
+	char* value = p_ValueText;
+	bool8 isIntValue = K15_TRUE;
+
+	while(*value)
+	{
+		if (!isdigit(*value++))
+		{
+			isIntValue = K15_FALSE;
+			break;
+		}
+	}
+
+	return isIntValue;
+}
+/*********************************************************************************/
 
 
 
@@ -996,7 +1051,9 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 		passIndex < amountPasses;
 		++passIndex)
 	{
-		K15_MaterialPassTemplateFormat materialTemplatePassFormat = {};
+		K15_MaterialPassFormat materialPass = {};
+		K15_MaterialPassTemplateFormat* materialTemplatePassFormat = &materialPass.materialPassTemplate;
+		K15_MaterialPassDataFormat* maerialDataFormat = &materialPass.materialPassData;
 
 		materialTemplatePassNameBuffer = (char*)malloc(512);
 		materialDataPassNameBuffer = (char*)malloc(512);
@@ -1086,70 +1143,47 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 			goto free_resources;
 		}
 
-// 		parse shader for external symbols which can be resolved via the material pass data config file
-// 		vertexShaderCode = (char*)K15_GetWholeFileContent(materialPassVertexShaderAbsolute);
-// 		fragmentShaderCode = (char*)K15_GetWholeFileContent(materialPassFragmentShaderAbsolute);
-// 
-// 		K15_ShaderParseResult result = {};
-// 
-// 		char* vertexShaderOutput = 0;
-// 		char* fragmentShaderOutput = 0;
-// 
-// 		//prase shader code to find external symbols
-// 		K15_ParseShaderCode(&result, &vertexShaderOutput, vertexShaderCode, K15_VERTEX_SHADER);
-// 		K15_ParseShaderCode(&result, &fragmentShaderOutput, fragmentShaderCode, K15_FRAGMENT_SHADER);
-// 
-// 		K15_SAFE_FREE(fragmentShaderCode);
-// 		K15_SAFE_FREE(vertexShaderCode);
-
 		//add relative shader file path to material pass
-		K15_SetMaterialPassTemplateVertexShaderPath(&materialTemplatePassFormat, materialPassVertexShader);
-		K15_SetMaterialPassTemplateFragmentShaderPath(&materialTemplatePassFormat, materialPassFragmentShader);
+		K15_SetMaterialPassTemplateVertexShaderPath(materialTemplatePassFormat, materialPassVertexShader);
+		K15_SetMaterialPassTemplateFragmentShaderPath(materialTemplatePassFormat, materialPassFragmentShader);
 
 		//add vertex and fragment shader as dependency
 		K15_InternalAddResourceDependency(p_ResourceCompilerContext, p_MaterialConfig->path, materialPassVertexShaderAbsolute);
 		K15_InternalAddResourceDependency(p_ResourceCompilerContext, p_MaterialConfig->path, materialPassFragmentShaderAbsolute);
 
-		//check if the material template pass has any samplers
-		uint32 materialTemplateSamplerCount = K15_GetNumConfigValuesForCategory(&materialPassTemplateConfig, "[Sampler]");
-		
-		if (materialTemplateSamplerCount > 0)
+		//read data values
+		uint32 valueCount = K15_GetNumConfigValues(&materialPassDataConfig);
+		K15_SetMaterialPassDataValueCount(maerialDataFormat, valueCount);
+
+		for (uint32 valueIndex = 0;
+			valueIndex < valueCount;
+			++valueIndex)
 		{
-			//K15_SetMaterialPassTemplateSamplerCount(&materialTemplatePassFormat, materialTemplateSamplerCount);
+			K15_MaterialPassDataValue dataValue = {};
 
-			//get sampler values from the config file
-			K15_ConfigValue** configValueBuffer = (K15_ConfigValue**)alloca(K15_PTR_SIZE * materialTemplateSamplerCount);
-			K15_CopyCategoryConfigValuesIntoBuffer(&materialPassTemplateConfig, "[Sampler]", configValueBuffer);
+			K15_ConfigValue* value = K15_GetConfigValue(&materialPassDataConfig, valueIndex);
+			dataValue.name = K15_CopyString(value->name);
 
-			//push sampler value into the material template pass format
-			for (uint32 materialSamplerIndex = 0;
-				materialSamplerIndex < materialTemplateSamplerCount;
-				++materialSamplerIndex)
+			if (K15_InternalIsStringValue(value->value))
 			{
-				K15_ConfigValue* currentSamplerConfig = configValueBuffer[materialSamplerIndex];
-
-				samplerName = K15_CopyString(currentSamplerConfig->name);
-				samplerPath = K15_ConcatStrings(materialPassDataConfigDirectory, currentSamplerConfig->value);
-
-				if (!K15_FileExists(samplerPath))
-				{
-					K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not find sampler file '%s' specified for sampler '%s' in material pass template '%s'.", 
-						(char*)malloc(512), samplerPath, samplerName, materialPassTemplateConfigPath));
-
-					goto free_resources;
-				}
-
-				//add sampler as dependency
-				K15_InternalAddResourceDependency(p_ResourceCompilerContext, p_MaterialConfig->path, samplerPath);
-
-				//K15_AddMaterialPassTemplateSampler(&materialTemplatePassFormat, samplerName, samplerPath);
-
-				K15_SAFE_FREE(samplerName);
-				K15_SAFE_FREE(samplerPath);
+				dataValue.dataType = K15_MATERIAL_DATA_TYPE_STRING;
+				dataValue.asString = K15_GetConfigValueAsString(&materialPassDataConfig, value->name);
 			}
+			else if (K15_InternalIsIntValue(value->value))
+			{
+				dataValue.dataType = K15_MATERIAL_DATA_TYPE_INT;
+				dataValue.asInt = K15_GetConfigValueAsInt(&materialPassDataConfig, value->name);
+			}
+			else if (K15_InternalIsFloatValue(value->value))
+			{
+				dataValue.dataType = K15_MATERIAL_DATA_TYPE_INT;
+				dataValue.asFloat = K15_GetConfigValueAsFloat(&materialPassDataConfig, value->name);
+			}
+
+			K15_AddMaterialPassDataValue(maerialDataFormat, &dataValue, valueIndex);
 		}
-			
-		//K15_AddMaterialPassTemplateFormat(&materialFormat, &materialTemplatePassFormat);
+
+		K15_AddMaterialPassFormat(&materialFormat, &materialPass, passIndex);
 
 		K15_SAFE_FREE(materialTemplatePassNameBuffer);
 		K15_SAFE_FREE(materialDataPassNameBuffer);

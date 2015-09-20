@@ -27,6 +27,23 @@ intern inline uint32 K15_InternalGetEqualPosition(char* p_ConfigLine, uint32 p_C
 	return equalPosition;
 }
 /*********************************************************************************/
+intern inline bool8 K15_InternalIsEmptyLine(char* p_ConfigLine)
+{
+	char* configLine = p_ConfigLine;
+	bool8 emptyLine = K15_TRUE;
+
+	while (*configLine)
+	{
+		if (!isspace(*configLine++))
+		{
+			emptyLine = K15_FALSE;
+			break;
+		}
+	}
+
+	return emptyLine;
+}
+/*********************************************************************************/
 intern inline uint8 K15_InternalIsCategoryConfigLine(char* p_ConfigLine)
 {
 	uint8 result = K15_SUCCESS;
@@ -252,37 +269,53 @@ uint8 K15_LoadConfigFile(const char* p_ConfigFile, K15_ConfigFileContext* p_Conf
 	{
 		char* currentLine = configLines[lineIndex];
 
-		if (K15_InternalIsCategoryConfigLine(currentLine))
+		if (K15_InternalIsEmptyLine(currentLine) == K15_FALSE)
 		{
-			currentCategory = K15_InternalGetCategoryName(currentLine);
-		}
-		else if (K15_InternalIsValidConfigLine(currentLine))
-		{
-			currentValue = K15_InternalGetConfigLineValue(currentLine);
-			currentName = K15_InternalGetConfigLineName(currentLine);
-		}
-		else
-		{
-			K15_LOG_WARNING_MESSAGE("Could not parse line '%s' from config file '%s'.", currentLine, p_ConfigFile);
-		}
+			if (K15_InternalIsCategoryConfigLine(currentLine))
+			{
+				currentCategory = K15_InternalGetCategoryName(currentLine);
+			}
+			else if (K15_InternalIsValidConfigLine(currentLine))
+			{
+				currentValue = K15_InternalGetConfigLineValue(currentLine);
+				currentName = K15_InternalGetConfigLineName(currentLine);
+			}
+			else
+			{
+				K15_LOG_WARNING_MESSAGE("Could not parse line '%s' from config file '%s'.", currentLine, p_ConfigFile);
+			}
 
-		if (currentValue 
-			&& currentName)
-		{
-			K15_ConfigValue currentConfigValue;
-			currentConfigValue.name = currentName;
-			currentConfigValue.value = currentValue;
-			currentConfigValue.category = currentCategory;
+			if (currentValue 
+				&& currentName)
+			{
+				K15_ConfigValue currentConfigValue;
+				currentConfigValue.name = currentName;
+				currentConfigValue.value = currentValue;
+				currentConfigValue.category = currentCategory;
 
-			//add config value to stretch buffer
-			K15_PushConfigValueStretchBufferElement(configStretchBuffer, currentConfigValue);
+				//add config value to stretch buffer
+				K15_PushConfigValueStretchBufferElement(configStretchBuffer, currentConfigValue);
 
-			currentName = 0;
-			currentValue = 0;
+				currentName = 0;
+				currentValue = 0;
+			}
 		}
 	}
 
 	return K15_SUCCESS;
+}
+/*********************************************************************************/
+K15_ConfigValue* K15_GetConfigValue(K15_ConfigFileContext* p_ConfigFileContext, uint32 p_Index)
+{
+	K15_ASSERT_TEXT(p_ConfigFileContext, "Config File Context is NULL.");
+
+	return K15_GetConfigValueStretchBufferElementUnsafe(&p_ConfigFileContext->configValues, p_Index);
+}
+/*********************************************************************************/
+uint32 K15_GetNumConfigValues(K15_ConfigFileContext* p_ConfigFileContext)
+{
+	K15_ASSERT_TEXT(p_ConfigFileContext, "Config File Context is NULL.");
+	return p_ConfigFileContext->configValues.numElements;
 }
 /*********************************************************************************/
 uint32 K15_GetNumConfigValuesForCategory(K15_ConfigFileContext* p_ConfigFileContext, const char* p_Category)

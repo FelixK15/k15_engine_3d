@@ -3,15 +3,21 @@
 
 #include "K15_ResourceFormats_Prerequisites.h"
 
-struct K15_MaterialPassDataFormat
+#define K15_MATERIAL_DATA_TYPE_INT 1
+#define K15_MATERIAL_DATA_TYPE_FLOAT 2
+#define K15_MATERIAL_DATA_TYPE_STRING 3
+
+struct K15_MaterialPassDataValue
 {
 	union 
 	{
-		uint32 texture;
-		uint32 sampler;
-	} data;
+		int asInt;
+		float asFloat;
+		char* asString;
+	};
 
-
+	uint32 dataType;
+	char* name;
 };
 
 struct K15_MaterialPassTemplateFormat
@@ -23,10 +29,16 @@ struct K15_MaterialPassTemplateFormat
 	uint32 fragmentShaderPathLength;
 };
 
+struct K15_MaterialPassDataFormat
+{
+	K15_MaterialPassDataValue* values;
+	uint32 numValues;
+};
+
 struct K15_MaterialPassFormat
 {
-	K15_MaterialPassTemplateFormat* materialPassTemplate;
-	K15_MaterialPassDataFormat* materialPassData;
+	K15_MaterialPassTemplateFormat materialPassTemplate;
+	K15_MaterialPassDataFormat materialPassData;
 };
 
 struct K15_MaterialFormat
@@ -34,19 +46,20 @@ struct K15_MaterialFormat
 	uint32 materialNameHash;
 
 	uint32 numMaterialPasses;
-	uint32 currentNumMaterialPasses;
-
-	K15_MaterialPassTemplateFormat* passTemplates;
+	K15_MaterialPassFormat* materialPasses;
 };
 
 uint8 K15_SetMaterialFormatName(K15_MaterialFormat* p_MaterialFormat, const char* p_Name);
 uint8 K15_SetMaterialFormatPassCount(K15_MaterialFormat* p_MaterialFormat, uint32 p_AmountPasses);
 
-uint8 K15_AddMaterialPassTemplateFormat(K15_MaterialFormat* p_MaterialFormat, K15_MaterialPassTemplateFormat* p_MaterialPassTemplateFormat);
+uint8 K15_AddMaterialPassFormat(K15_MaterialFormat* p_MaterialFormat, K15_MaterialPassFormat* p_MaterialPassTemplateFormat, uint32 p_MaterialPassTemplateIndex);
 K15_MaterialPassTemplateFormat* K15_GetMaterialPassTemplateFormat(K15_MaterialFormat* p_MaterialFormat, uint32 p_MaterialPassTemplateIndex);
 
 uint8 K15_SetMaterialPassTemplateVertexShaderPath(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, const char* p_VertexShaderPath);
 uint8 K15_SetMaterialPassTemplateFragmentShaderPath(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, const char* p_FragmentShaderPath);
+
+uint8 K15_SetMaterialPassDataValueCount(K15_MaterialPassDataFormat* p_MaterialPassData, uint32 p_ValueCount);
+uint8 K15_AddMaterialPassDataValue(K15_MaterialPassDataFormat* p_MaterialPassData, K15_MaterialPassDataValue* p_MaterialPassDataValue, uint32 p_MaterialPassDataValueIndex);
 
 uint8 K15_SaveMaterialFormatToFile(K15_MaterialFormat* p_MaterialFormat, const char* p_Path, uint32 p_SaveFlags);
 

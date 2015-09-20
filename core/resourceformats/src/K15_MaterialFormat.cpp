@@ -28,32 +28,80 @@ intern uint8 K15_InternalLoadMaterialFormat(K15_DataAccessContext* p_DataAcessCo
 	K15_ReadData(p_DataAcessContext, sizeof(uint32), &p_MaterialFormat->numMaterialPasses);
 
 	//create material pass buffer
-	p_MaterialFormat->passTemplates = (K15_MaterialPassTemplateFormat*)malloc(p_MaterialFormat->numMaterialPasses * sizeof(K15_MaterialPassTemplateFormat));
+	p_MaterialFormat->materialPasses = (K15_MaterialPassFormat*)malloc(p_MaterialFormat->numMaterialPasses * sizeof(K15_MaterialPassFormat));
 
 	//read material passes
 	for (uint32 materialPassIndex = 0;
 		materialPassIndex < p_MaterialFormat->numMaterialPasses;
 		++materialPassIndex)
 	{
-		K15_MaterialPassTemplateFormat materialPassFormat = {};
+		K15_MaterialPassFormat* materialPassFormat = &p_MaterialFormat->materialPasses[materialPassIndex];
+
+		K15_MaterialPassTemplateFormat* templateFormat = &materialPassFormat->materialPassTemplate;
+		K15_MaterialPassDataFormat* dataFormat = &materialPassFormat->materialPassData;
 
 		//read vertex shader path length
-		K15_ReadData(p_DataAcessContext, sizeof(uint32), &materialPassFormat.vertexShaderPathLength);
+		K15_ReadData(p_DataAcessContext, sizeof(uint32), &templateFormat->vertexShaderPathLength);
 
 		//read fragment shader path length
-		K15_ReadData(p_DataAcessContext, sizeof(uint32), &materialPassFormat.fragmentShaderPathLength);
+		K15_ReadData(p_DataAcessContext, sizeof(uint32), &templateFormat->fragmentShaderPathLength);
 
 		//create vertex / fragment shader path buffer
-		materialPassFormat.vertexShaderPath = (char*)malloc(materialPassFormat.vertexShaderPathLength);
-		materialPassFormat.fragmentShaderPath = (char*)malloc(materialPassFormat.fragmentShaderPathLength);
+		templateFormat->vertexShaderPath = (char*)malloc(templateFormat->vertexShaderPathLength);
+		templateFormat->fragmentShaderPath = (char*)malloc(templateFormat->fragmentShaderPathLength);
 
 		//read vertex shader path
-		K15_ReadData(p_DataAcessContext, materialPassFormat.vertexShaderPathLength, materialPassFormat.vertexShaderPath);
+		K15_ReadData(p_DataAcessContext, templateFormat->vertexShaderPathLength, templateFormat->vertexShaderPath);
 
 		//read fragment shader path
-		K15_ReadData(p_DataAcessContext, materialPassFormat.fragmentShaderPathLength, materialPassFormat.fragmentShaderPath);
+		K15_ReadData(p_DataAcessContext, templateFormat->fragmentShaderPathLength, templateFormat->fragmentShaderPath);
 
-		K15_AddMaterialPassTemplateFormat(p_MaterialFormat, &materialPassFormat);
+		//write amount of material data values
+		K15_ReadData(p_DataAcessContext, sizeof(uint32), &dataFormat->numValues);
+
+		//write material data values
+		for (uint32 dataIndex = 0;
+			dataIndex < dataFormat->numValues;
+			++dataIndex)
+		{
+			K15_MaterialPassDataValue* dataValue = &dataFormat->values[dataIndex];
+			uint32 nameLength = 0;
+
+			//value name length
+			K15_ReadData(p_DataAcessContext, sizeof(uint32), &nameLength);
+
+			dataValue->name = (char*)malloc(nameLength);
+			dataValue->name[nameLength] = 0;
+
+			//value name
+			K15_ReadData(p_DataAcessContext, nameLength, dataValue->name);
+
+			//data type
+			K15_ReadData(p_DataAcessContext, sizeof(uint32), &dataValue->dataType);
+
+			//actual value
+			if (dataValue->dataType == K15_MATERIAL_DATA_TYPE_INT)
+			{
+				K15_ReadData(p_DataAcessContext, sizeof(int), &dataValue->asInt);
+			}
+			else if (dataValue->dataType == K15_MATERIAL_DATA_TYPE_FLOAT)
+			{
+				K15_ReadData(p_DataAcessContext, sizeof(float), &dataValue->asFloat);
+			}
+			else if (dataValue->dataType == K15_MATERIAL_DATA_TYPE_STRING)
+			{
+				uint32 length = 0;
+
+				//length
+				K15_ReadData(p_DataAcessContext, sizeof(uint32), &length);
+
+				dataValue->asString = (char*)malloc(length);
+				dataValue->asString[length] = 0;
+
+				//string
+				K15_ReadData(p_DataAcessContext, length, dataValue->asString);
+			}
+		}
 	}
 
 	return K15_SUCCESS;
@@ -78,7 +126,8 @@ intern uint8 K15_InternalSaveMaterialFormat(K15_DataAccessContext* p_DataAcessCo
 		materialPassIndex < p_MaterialFormat->numMaterialPasses;
 		++materialPassIndex)
 	{
-		K15_MaterialPassTemplateFormat* materialPassFormat = &p_MaterialFormat->passTemplates[materialPassIndex]; 
+		K15_MaterialPassTemplateFormat* materialPassFormat = &p_MaterialFormat->materialPasses[materialPassIndex].materialPassTemplate; 
+		K15_MaterialPassDataFormat* materialPassDataFormat = &p_MaterialFormat->materialPasses[materialPassIndex].materialPassData;
 
 		//write vertex shader path length
 		K15_WriteData(p_DataAcessContext, sizeof(uint32), &materialPassFormat->vertexShaderPathLength);
@@ -91,6 +140,47 @@ intern uint8 K15_InternalSaveMaterialFormat(K15_DataAccessContext* p_DataAcessCo
 
 		//write fragment shader path
 		K15_WriteData(p_DataAcessContext, materialPassFormat->fragmentShaderPathLength, materialPassFormat->fragmentShaderPath);
+
+		//write amount of material data values
+		K15_WriteData(p_DataAcessContext, sizeof(uint32), &materialPassDataFormat->numValues);
+
+		//write material data values
+		for (uint32 dataIndex = 0;
+			dataIndex < materialPassDataFormat->numValues;
+			++dataIndex)
+		{
+			K15_MaterialPassDataValue* dataValue = &materialPassDataFormat->values[dataIndex];
+			uint32 nameLength = (uint32)strlen(dataValue->name);
+
+			//value name length
+			K15_WriteData(p_DataAcessContext, sizeof(uint32), &nameLength);
+
+			//value name
+			K15_WriteData(p_DataAcessContext, nameLength, dataValue->name);
+
+			//data type
+			K15_WriteData(p_DataAcessContext, sizeof(uint32), &dataValue->dataType);
+
+			//actual value
+			if (dataValue->dataType == K15_MATERIAL_DATA_TYPE_INT)
+			{
+				K15_WriteData(p_DataAcessContext, sizeof(int), &dataValue->asInt);
+			}
+			else if (dataValue->dataType == K15_MATERIAL_DATA_TYPE_FLOAT)
+			{
+				K15_WriteData(p_DataAcessContext, sizeof(float), &dataValue->asFloat);
+			}
+			else if (dataValue->dataType == K15_MATERIAL_DATA_TYPE_STRING)
+			{
+				uint32 length = (uint32)strlen(dataValue->asString);
+
+				//length
+				K15_WriteData(p_DataAcessContext, sizeof(uint32), &length);
+
+				//string
+				K15_WriteData(p_DataAcessContext, length, dataValue->asString);
+			}
+		}
 	}
 
 	if((p_SaveFlags & K15_SAVE_FLAG_FREE_DATA) > 0)
@@ -101,16 +191,26 @@ intern uint8 K15_InternalSaveMaterialFormat(K15_DataAccessContext* p_DataAcessCo
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-intern void K15_InternalFreeMaterialPassTemplateFormats(K15_MaterialFormat* p_MaterialFormat)
+intern void K15_InternalFreeMaterialPassFormats(K15_MaterialFormat* p_MaterialFormat)
 {
-	uint32 numMaterialPassTemplates = p_MaterialFormat->currentNumMaterialPasses;
+	uint32 numMaterialPassTemplates = p_MaterialFormat->numMaterialPasses;
 
 	for (uint32 materialPassTemplateIndex = 0;
 		materialPassTemplateIndex < numMaterialPassTemplates;
 		++materialPassTemplateIndex)
 	{
-		K15_RF_FREE(p_MaterialFormat->passTemplates[materialPassTemplateIndex].vertexShaderPath);
-		K15_RF_FREE(p_MaterialFormat->passTemplates[materialPassTemplateIndex].fragmentShaderPath);
+		K15_RF_FREE(p_MaterialFormat->materialPasses[materialPassTemplateIndex].materialPassTemplate.vertexShaderPath);
+		K15_RF_FREE(p_MaterialFormat->materialPasses[materialPassTemplateIndex].materialPassTemplate.fragmentShaderPath);
+
+		for (uint32 dataValueIndex = 0;
+			dataValueIndex < p_MaterialFormat->materialPasses[materialPassTemplateIndex].materialPassData.numValues;
+			++dataValueIndex)
+		{
+			if (p_MaterialFormat->materialPasses[materialPassTemplateIndex].materialPassData.values[dataValueIndex].dataType == K15_MATERIAL_DATA_TYPE_STRING)
+			{
+				K15_RF_FREE(p_MaterialFormat->materialPasses[materialPassTemplateIndex].materialPassData.values[dataValueIndex].asString);
+			}
+		}
 	}
 }
 /*********************************************************************************/
@@ -134,32 +234,29 @@ uint8 K15_SetMaterialFormatPassCount(K15_MaterialFormat* p_MaterialFormat, uint3
 	assert(p_MaterialFormat);
 	assert(p_AmountPasses);
 
-	K15_MaterialPassTemplateFormat* materialPassTemplateBuffer = (K15_MaterialPassTemplateFormat*)K15_RF_MALLOC(p_AmountPasses * sizeof(K15_MaterialPassTemplateFormat));
-	memset(materialPassTemplateBuffer, 0, (p_AmountPasses * sizeof(K15_MaterialPassTemplateFormat)));
+	K15_MaterialPassFormat* materialPassBuffer = (K15_MaterialPassFormat*)K15_RF_MALLOC(p_AmountPasses * sizeof(K15_MaterialPassFormat));
+	memset(materialPassBuffer, 0, (p_AmountPasses * sizeof(K15_MaterialPassFormat)));
 
-	if (p_MaterialFormat->passTemplates)
+	if (p_MaterialFormat->materialPasses)
 	{
-		K15_InternalFreeMaterialPassTemplateFormats(p_MaterialFormat);
-		K15_RF_FREE(p_MaterialFormat->passTemplates);
+		K15_InternalFreeMaterialPassFormats(p_MaterialFormat);
+		K15_RF_FREE(p_MaterialFormat->materialPasses);
 	}
 
-	p_MaterialFormat->passTemplates = materialPassTemplateBuffer;
+	p_MaterialFormat->materialPasses = materialPassBuffer;
 	p_MaterialFormat->numMaterialPasses = p_AmountPasses;
-	p_MaterialFormat->currentNumMaterialPasses = 0;
 
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-uint8 K15_AddMaterialPassTemplateFormat(K15_MaterialFormat* p_MaterialFormat, K15_MaterialPassTemplateFormat* p_MaterialPassTemplateFormat)
+uint8 K15_AddMaterialPassFormat(K15_MaterialFormat* p_MaterialFormat, K15_MaterialPassFormat* p_MaterialPassFormat, uint32 p_MaterialPassIndex)
 {
 	assert(p_MaterialFormat);
-	assert(p_MaterialPassTemplateFormat);
+	assert(p_MaterialPassFormat);
+	assert(p_MaterialFormat->numMaterialPasses > p_MaterialPassIndex);
 
-	assert(p_MaterialFormat->numMaterialPasses != p_MaterialFormat->currentNumMaterialPasses);
-
-	K15_MaterialPassTemplateFormat* materialPassTemplateBuffer = p_MaterialFormat->passTemplates;
-
-	materialPassTemplateBuffer[p_MaterialFormat->currentNumMaterialPasses++] = *p_MaterialPassTemplateFormat;
+	K15_MaterialPassFormat* materialPassBuffer = p_MaterialFormat->materialPasses;
+	materialPassBuffer[p_MaterialPassIndex] = *p_MaterialPassFormat;
 
 	return K15_SUCCESS;
 }
@@ -169,7 +266,7 @@ K15_MaterialPassTemplateFormat* K15_GetMaterialPassTemplateFormat(K15_MaterialFo
 	assert(p_MaterialFormat);
 	assert(p_MaterialPassTemplateIndex < p_MaterialFormat->numMaterialPasses);
 
-	return &p_MaterialFormat->passTemplates[p_MaterialPassTemplateIndex];
+	return &p_MaterialFormat->materialPasses[p_MaterialPassTemplateIndex].materialPassTemplate;
 }
 /*********************************************************************************/
 uint8 K15_SetMaterialPassTemplateVertexShaderPath(K15_MaterialPassTemplateFormat* p_MaterialPassTemplate, const char* p_VertexShaderPath)
@@ -208,6 +305,34 @@ uint8 K15_SetMaterialPassTemplateFragmentShaderPath(K15_MaterialPassTemplateForm
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
+uint8 K15_SetMaterialPassDataValueCount(K15_MaterialPassDataFormat* p_MaterialPassData, uint32 p_ValueCount)
+{
+	assert(p_MaterialPassData);
+	
+	K15_MaterialPassDataValue* valueBuffer = (K15_MaterialPassDataValue*)K15_RF_MALLOC(p_ValueCount * sizeof(K15_MaterialPassDataValue));
+
+	if (p_MaterialPassData->values)
+	{
+		K15_RF_FREE(p_MaterialPassData->values);
+	}
+
+	p_MaterialPassData->values = valueBuffer;
+	p_MaterialPassData->numValues = p_ValueCount;
+
+	return K15_SUCCESS;
+}
+/*********************************************************************************/
+uint8 K15_AddMaterialPassDataValue(K15_MaterialPassDataFormat* p_MaterialPassData, K15_MaterialPassDataValue* p_MaterialPassDataValue, uint32 p_MaterialPassDataValueIndex)
+{
+	assert(p_MaterialPassData);
+	assert(p_MaterialPassDataValue);
+	assert(p_MaterialPassData->numValues > p_MaterialPassDataValueIndex);
+
+	p_MaterialPassData->values[p_MaterialPassDataValueIndex] = *p_MaterialPassDataValue;
+
+	return K15_SUCCESS;
+}
+/*********************************************************************************/
 uint8 K15_SaveMaterialFormatToFile(K15_MaterialFormat* p_MaterialFormat, const char* p_Path, uint32 p_SaveFlag)
 {
 	assert(p_MaterialFormat && p_Path);
@@ -230,7 +355,7 @@ uint8 K15_SaveMaterialFormatToFile(K15_MaterialFormat* p_MaterialFormat, const c
 /*********************************************************************************/
 void K15_FreeMaterialFormat(K15_MaterialFormat p_MaterialFormat)
 {
-	K15_InternalFreeMaterialPassTemplateFormats(&p_MaterialFormat);
+	K15_InternalFreeMaterialPassFormats(&p_MaterialFormat);
 }
 /*********************************************************************************/
 uint8 K15_LoadMaterialFormat(K15_MaterialFormat* p_MaterialFormat, const char* p_Path)
@@ -266,6 +391,5 @@ uint8 K15_LoadMaterialFormatFromMemory(K15_MaterialFormat* p_MaterialFormat, byt
 	K15_CloseDataAccessContext(&accessContext);
 
 	return result;
-
 }
 /*********************************************************************************/
