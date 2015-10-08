@@ -13,7 +13,7 @@ void K15_RenderCommandCreateMaterialFromMaterialFormat(K15_RenderCommandQueue* p
 void K15_RenderCommandCreateSamplerFromSamplerFormat(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_SamplerHandle , K15_SamplerFormat* p_SamplerFormat);
 void K15_RenderCommandCreateFontFromFontFormat(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_FontHandle , K15_FontFormat* p_FontFormat);
 void K15_RenderCommandCreateProgram(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_ProgramHandle, K15_RenderProgramDesc* p_ProgramDesc);
-
+void K15_RenderCommandWindowResized(K15_RenderCommandQueue* p_RenderCommandQueue, uint32 p_Width, uint32 p_Height);
 const char* K15_ConvertRenderCommandToString(K15_RenderCommandType p_RenderCommandType);
 
 #endif //_K15_Rendering_RenderCommands_h_

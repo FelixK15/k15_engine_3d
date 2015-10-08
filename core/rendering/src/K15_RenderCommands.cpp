@@ -130,6 +130,25 @@ void K15_RenderCommandCreateProgram(K15_RenderCommandQueue* p_RenderCommandQueue
 	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));
 }
 /*********************************************************************************/
+void K15_RenderCommandWindowResized(K15_RenderCommandQueue* p_RenderCommandQueue, uint32 p_Width, uint32 p_Height)
+{
+	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
+	K15_ASSERT_TEXT(p_Width > 0, "Width is 0");
+	K15_ASSERT_TEXT(p_Height > 0, "Height is 0");
+
+	result8 result  = K15_BeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_WINDOW_RESIZED);
+
+	if (result != K15_SUCCESS)
+	{
+		K15_LOG_WARNING_MESSAGE("Could not add render command '%s' (%s)", K15_ConvertRenderCommandToString(K15_RENDER_COMMAND_WINDOW_RESIZED), K15_GetErrorCodeString(result));
+		return;
+	}
+
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(uint32), &p_Width));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(uint32), &p_Height));
+	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));
+}
+/*********************************************************************************/
 const char* K15_ConvertRenderCommandToString(K15_RenderCommandType p_RenderCommandType)
 {
 	const char* renderCommandString = 0;
@@ -169,6 +188,12 @@ const char* K15_ConvertRenderCommandToString(K15_RenderCommandType p_RenderComma
 		case K15_RENDER_COMMAND_CREATE_PROGRAM:
 		{
 			renderCommandString = "Create Program";
+			break;
+		}
+
+		case K15_RENDER_COMMAND_WINDOW_RESIZED:
+		{
+			renderCommandString = "Window Resized";
 			break;
 		}
 

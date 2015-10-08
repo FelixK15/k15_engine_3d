@@ -179,6 +179,7 @@ K15_EXPORT_SYMBOL void K15_OnWindowEvent(K15_GameContext* p_GameContext, K15_Sys
 
 		K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->gameMemory->buffer;
 		K15_SetGUIContextWindowSize(gameContext->guiContext, width, height);
+		K15_RenderCommandWindowResized(gameContext->gameRenderQueue, width, height);
 	}
 }
 /*********************************************************************************/

@@ -67,6 +67,8 @@ struct K15_RenderInterface
 	K15_UpdateVertexDataCommandFnc updateVertexData;
 	K15_FreeVertexDataCommandFnc freeVertexData;
 
+	K15_ResizeViewportCommandFnc resizeViewport;
+
 	K15_DrawGeometryCommandFnc drawGeometry;
 };
 

@@ -28,6 +28,9 @@ K15_FUNCTION_VARIABLE(result8, K15_CreateProgramCommandFnc, (K15_RenderBackEnd* 
 //draw
 K15_FUNCTION_VARIABLE(result8, K15_DrawGeometryCommandFnc, (K15_RenderBackEnd* p_RenderBackEnd, K15_RenderGeometryDesc* p_RenderGeometry));
 
+//viewport
+K15_FUNCTION_VARIABLE(result8, K15_ResizeViewportCommandFnc, (K15_RenderBackEnd* p_RenderBackEnd, uint32 p_Width, uint32 p_Height));
+
 //buffer
 K15_FUNCTION_VARIABLE(K15_RenderVertexData*, K15_UpdateVertexDataCommandFnc, (K15_RenderBackEnd* p_RenderBackEnd, void* p_VertexData, uint32 p_NumVertices, K15_RenderVertexFormatDesc* p_VertexFormat));
 K15_FUNCTION_VARIABLE(void, K15_FreeVertexDataCommandFnc, (K15_RenderBackEnd* p_RenderBackEnd, K15_RenderVertexData* p_RenderVertexData));

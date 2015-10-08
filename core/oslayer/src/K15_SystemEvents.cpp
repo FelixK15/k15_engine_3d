@@ -20,20 +20,17 @@ uint8 K15_PumpSystemEvents()
 /*********************************************************************************/
 uint8 K15_GetSystemEventFromQueue(K15_SystemEvent* p_SystemEvent, uint32 p_Flags)
 {
-	uint32 index = g_MasterListSize;
-
-	if (index == 0)
+	if (g_MasterListSize == 0)
 	{
 		return K15_SYSTEM_EVENT_QUEUE_EMPTY;
 	}
 	
-	index -= 1;
-
-	*p_SystemEvent = g_MasterEventList[index];
+	*p_SystemEvent = g_MasterEventList[0];
 
 	if ((p_Flags & K15_REMOVE_SYSTEM_EVENT_FLAG) > 0)
 	{
-		g_MasterListSize = index;
+		g_MasterListSize -= 1;
+		memmove(g_MasterEventList, g_MasterEventList + 1, g_MasterListSize * sizeof(K15_SystemEvent));
 	}
 
 	return K15_SUCCESS;

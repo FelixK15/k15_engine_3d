@@ -251,6 +251,7 @@ intern inline void K15_InternalSetGLInterface(K15_RenderBackEnd* p_RenderBackEnd
 	//screen management
 	p_RenderBackEnd->renderInterface.clearScreen = K15_GLClearScreen;
 	p_RenderBackEnd->renderInterface.swapFrameBuffer = K15_GLSwapFrameBuffer;
+	p_RenderBackEnd->renderInterface.resizeViewport = K15_GLResizeViewport;
 
 	//state management
 	p_RenderBackEnd->renderInterface.setDepthState = K15_GLSetDepthStateDesc;

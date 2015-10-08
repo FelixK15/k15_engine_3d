@@ -269,6 +269,21 @@ intern result8 K15_InternalDrawGeometry(K15_RenderBackEnd* p_RenderBackEnd, K15_
 	return p_RenderBackEnd->renderInterface.drawGeometry(p_RenderBackEnd, p_RenderGeometryDesc);
 }
 /*********************************************************************************/
+intern result8 K15_InternalWindowResized(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommand* p_RenderCommand, K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_BufferOffset)
+{
+	uint32 localOffset = 0;
+	uint32 width = 0;
+	uint32 height = 0;
+
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(uint32), &width);
+	localOffset += sizeof(uint32);
+
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(uint32), &height);
+	localOffset += sizeof(uint32);
+
+	return p_RenderBackEnd->renderInterface.resizeViewport(p_RenderBackEnd, width, height);
+}
+/*********************************************************************************/
 intern void K15_InternalRender2DTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommand* p_RenderCommand, K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_BufferOffset)
 {
 	K15_RenderContext* renderContext = p_RenderBackEnd->renderContext;
@@ -563,6 +578,14 @@ void K15_ProcessRenderCommands(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCom
 				K15_InternalCreateShader(p_RenderBackEnd, command, p_RenderCommandBuffer, offset);
 				break;
 			}
+
+			case K15_RENDER_COMMAND_WINDOW_RESIZED:
+			{
+				K15_InternalWindowResized(p_RenderBackEnd, command, p_RenderCommandBuffer, offset);
+				break;
+			}
+
+
 		}
 
 		//advance offset
