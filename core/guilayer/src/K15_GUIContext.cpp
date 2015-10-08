@@ -51,43 +51,16 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	guiContext->guiMemory = (byte*)K15_AllocateFromMemoryAllocator(&p_MemoryAllocator, K15_GUI_CONTEXT_MEMORY_SIZE);
 	guiContext->guiMemoryMaxSize = K15_GUI_CONTEXT_MEMORY_SIZE;
 	guiContext->guiMemoryCurrentSize = 0;
-	guiContext->guiTemplateTexture = K15_INVALID_GPU_RESOURCE_HANDLE;
 	guiContext->windowHeight = windowHeight;
 	guiContext->windowWidth = windowWidth;
 	guiContext->mousePosX = 0.f;
 	guiContext->mousePosY = 0.f;
 
-	K15_Resource* guiTemplateTexture = K15_LoadResource(p_ResourceContext, "gui_template.k15texture", 0);
-	K15_Resource* guiFont = K15_LoadResource(p_ResourceContext, "gui_font.k15font", 0);
-	K15_Resource* guiMaterial = K15_LoadResource(p_ResourceContext, "gui_material.k15material", 0);
+	uint32 flags = 0;
 
-	if (!guiTemplateTexture)
-	{
-		K15_LOG_WARNING_MESSAGE("Could not load gui_template texture.");
-	}
-
-	K15_FontFormat fontFormat = {};
-	K15_TextureFormat guiTextureFormat = {};
-	K15_MaterialFormat guiMaterialFormat = {};
-
-	if (guiFont
-		&& K15_LoadFontFormatFromMemory(&fontFormat, guiFont->data, guiFont->dataSizeInBytes) == K15_SUCCESS)
-	{
-		
-	}
-
-	if (guiMaterial
-		&& K15_LoadMaterialFormatFromMemory(&guiMaterialFormat, guiMaterial->data, guiMaterial->dataSizeInBytes) == K15_SUCCESS)
-	{
-		
-	}
-
-	if (guiTemplateTexture &&
-		K15_LoadTextureFormatFromMemory(&guiTextureFormat, guiTemplateTexture->data, guiTemplateTexture->dataSizeInBytes) == K15_SUCCESS)
-	{
-		K15_RenderCommandCreateTextureFromTextureFormat(p_RenderCommandQueue, &guiContext->guiTemplateTexture, &guiTextureFormat);
-		
-	}
+	guiContext->guiRenderTexture = K15_LoadResource(p_ResourceContext, K15_TEXTURE_RESOURCE_IDENTIFIER, "gui_template.k15texture", flags);;
+	guiContext->guiRenderFont = K15_LoadResource(p_ResourceContext, K15_FONT_RESOURCE_IDENTIFIER, "gui_font.k15font", flags);;
+	guiContext->guiRenderMaterial = K15_LoadResource(p_ResourceContext, K15_MATERIAL_RESOURCE_IDENTIFIER, "gui_material.k15material", flags);;
 
 	return guiContext;
 }

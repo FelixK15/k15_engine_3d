@@ -5,7 +5,8 @@
 
 struct K15_RenderUniformCacheEntry
 {
-	const char* name;
+	/*const char* name;*/
+	uint32 nameHash;
 	byte* data;
 	uint32 typeID;
 	uint32 semanticID;

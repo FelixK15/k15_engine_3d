@@ -5,7 +5,8 @@
 
 #define K15_MATERIAL_DATA_TYPE_INT 1
 #define K15_MATERIAL_DATA_TYPE_FLOAT 2
-#define K15_MATERIAL_DATA_TYPE_STRING 3
+#define K15_MATERIAL_DATA_TYPE_TEXTURE 3
+#define K15_MATERIAL_DATA_TYPE_SAMPLER 4
 
 struct K15_MaterialPassDataValue
 {
@@ -27,6 +28,9 @@ struct K15_MaterialPassTemplateFormat
 
 	uint32 vertexShaderPathLength;
 	uint32 fragmentShaderPathLength;
+
+	uint32 vertexShaderNameHash;
+	uint32 fragmentShaderNameHash;
 };
 
 struct K15_MaterialPassDataFormat
@@ -60,6 +64,7 @@ uint8 K15_SetMaterialPassTemplateFragmentShaderPath(K15_MaterialPassTemplateForm
 
 uint8 K15_SetMaterialPassDataValueCount(K15_MaterialPassDataFormat* p_MaterialPassData, uint32 p_ValueCount);
 uint8 K15_AddMaterialPassDataValue(K15_MaterialPassDataFormat* p_MaterialPassData, K15_MaterialPassDataValue* p_MaterialPassDataValue, uint32 p_MaterialPassDataValueIndex);
+K15_MaterialPassDataValue* K15_GetMaterialPassDataValueByName(K15_MaterialPassDataFormat* p_MaterialPassData, const char* p_Name);
 
 uint8 K15_SaveMaterialFormatToFile(K15_MaterialFormat* p_MaterialFormat, const char* p_Path, uint32 p_SaveFlags);
 

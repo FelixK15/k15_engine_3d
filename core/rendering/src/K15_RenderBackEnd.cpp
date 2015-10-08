@@ -3,6 +3,7 @@
 #include "K15_TextureFormat.h"
 #include "K15_SamplerFormat.h"
 #include "K15_MaterialFormat.h"
+#include "K15_FontFormat.h"
 
 #include "K15_Rectangle.h"
 #include "K15_Vector2.h"
@@ -11,6 +12,8 @@
 #include "K15_RenderGeometryDesc.h"
 #include "K15_ErrorCodes.h"
 #include "K15_RenderMaterialDesc.h"
+
+#include "generated/K15_RenderMaterialDataDescStretchBuffer.cpp"
 
 #include "K15_RenderFormats.cpp"
 #include "K15_RenderVertexFormatDesc.cpp"
@@ -27,7 +30,7 @@ intern void K15_CreateDefaultRenderState(K15_RenderState* p_RenderState)
 	K15_RenderRasterizerStateDesc defaultRasterizerState = {};
 
 	/*********************************************************************************/
-	defaultRasterizerState.cullingMode = K15_CULLING_MODE_BACK;
+	defaultRasterizerState.cullingMode = K15_CULLING_MODE_NONE;
 	defaultRasterizerState.fillMode = K15_FILLMODE_SOLID;
 	defaultRasterizerState.scissoringEnabled = FALSE;
 	defaultRasterizerState.vertexOrder = K15_VERTEX_ORDER_COUNTER_CLOCKWISE;
@@ -37,7 +40,7 @@ intern void K15_CreateDefaultRenderState(K15_RenderState* p_RenderState)
 	/*********************************************************************************/
 	defaultStencilState.enabled = FALSE;
 	/*********************************************************************************/
-	defaultBlendState.enabled = TRUE;
+	defaultBlendState.enabled = FALSE;
 	defaultBlendState.sourceBlendFactorRGB = K15_BLEND_FACTOR_SRC_ALPHA;
 	defaultBlendState.sourceBlendFactorAlpha = K15_BLEND_FACTOR_ONE;
 	defaultBlendState.blendOperationRGB = K15_BLEND_OPERATION_ADD;
@@ -49,6 +52,7 @@ intern void K15_CreateDefaultRenderState(K15_RenderState* p_RenderState)
 	p_RenderState->stencilState = defaultStencilState;
 	p_RenderState->depthState = defaultDepthState;
 	p_RenderState->rasterizerState = defaultRasterizerState;
+	/*********************************************************************************/
 }
 /*********************************************************************************/
 intern void K15_CreateRenderResources(K15_RenderBackEnd* p_RendeBackEnd)
@@ -64,7 +68,7 @@ intern result8 K15_SetDefaultRenderState(K15_RenderBackEnd* p_RenderBackEnd)
 	if (p_RenderBackEnd->interfaceInitialized)
 	{
 		K15_RenderState* defaultState = &p_RenderBackEnd->defaultState;
-		p_RenderBackEnd->interface.setBlendState(p_RenderBackEnd, &defaultState->blendState);
+		p_RenderBackEnd->renderInterface.setBlendState(p_RenderBackEnd, &defaultState->blendState);
 	}
 }
 /*********************************************************************************/
@@ -79,6 +83,8 @@ intern result8 K15_InitializeRenderBackEnd(K15_CustomMemoryAllocator* p_MemoryAl
 	
 	p_RenderBackEnd->shaderProcessorContext->semanticTable = K15_CreateSemanticTable();
 	p_RenderBackEnd->shaderProcessorContext->typeTable = K15_CreateTypeTable();
+	p_RenderBackEnd->shaderProcessorContext->lastProcessResult.numErrors = 0;
+	p_RenderBackEnd->shaderProcessorContext->lastProcessResult.errors = 0;
 
 	return K15_SUCCESS;
 }
@@ -100,7 +106,7 @@ intern K15_RenderResourceHandle K15_AddRenderBufferDesc(K15_RenderBackEnd* p_Ren
 // 		}
 // 	}
 // 
-// 	p_RenderBackEnd->interface.createBuffer(p_RenderBackEnd, p_RenderBufferDesc, &handle);
+// 	p_RenderBackEnd->renderInterface.createBuffer(p_RenderBackEnd, p_RenderBufferDesc, &handle);
 // 
 // 	return handle;
 }
@@ -122,7 +128,7 @@ intern K15_RenderResourceHandle K15_AddRenderTextureDesc(K15_RenderBackEnd* p_Re
 // 		}
 // 	}
 // 
-// 	p_RenderBackEnd->interface.createTexture(p_RenderBackEnd, p_RenderTextureDesc, &handle);
+// 	p_RenderBackEnd->renderInterface.createTexture(p_RenderBackEnd, p_RenderTextureDesc, &handle);
 // 
 // 	return handle;
 }
@@ -144,7 +150,7 @@ intern K15_RenderResourceHandle K15_AddRenderSamplerDesc(K15_RenderBackEnd* p_Re
 // 		}
 // 	}
 // 
-// 	p_RenderBackEnd->interface.createSampler(p_RenderBackEnd, p_RenderSamplerDesc, &handle);
+// 	p_RenderBackEnd->renderInterface.createSampler(p_RenderBackEnd, p_RenderSamplerDesc, &handle);
 // 
 // 	return handle;
 }
@@ -177,9 +183,9 @@ intern void K15_InitializeRenderResources(K15_RenderBackEnd* p_RenderBackEnd)
 		default2DVertexProgramDesc.type = K15_RENDER_PROGRAM_TYPE_VERTEX;
 		default2DVertexProgramDesc.code = 
 			"K15_Vector4 TransformVertex(in K15_Vector2 pos : POSITION,"
-										"in K15_Vector2 uv : TEXCOORD0,"
+										"in K15_Vector2 uv : TEXCOORD1,"
 										"in K15_Matrix4 modelMatrix : MODELMATRIX,"
-										"out K15_Vector2 out_uv : TEXCOORD0)\n"
+										"out K15_Vector2 out_uv : TEXCOORD1)\n"
 			"{\n"
 			"	K15_Vector4 position = K15_Vector4(pos, 0.0, 1.0);\n"
 			"	out_uv = uv;\n"
@@ -188,7 +194,7 @@ intern void K15_InitializeRenderResources(K15_RenderBackEnd* p_RenderBackEnd)
 
 		default2DVertexProgramDesc.source = K15_RENDER_PROGRAM_SOURCE_CODE;
 
-		p_RenderBackEnd->interface.createProgram(p_RenderBackEnd, &default2DVertexProgramDesc, &p_RenderBackEnd->resources.default2DVertexProgramHandle);
+		p_RenderBackEnd->renderInterface.createProgram(p_RenderBackEnd, &default2DVertexProgramDesc, &p_RenderBackEnd->resources.default2DVertexProgramHandle);
 	}
 	/*********************************************************************************/
 
@@ -198,9 +204,9 @@ intern void K15_InitializeRenderResources(K15_RenderBackEnd* p_RenderBackEnd)
 		default3DVertexProgramDesc.type = K15_RENDER_PROGRAM_TYPE_VERTEX;
 		default3DVertexProgramDesc.code = 
 			"K15_Vector4 TransformVertex(in K15_Vector4 pos : POSITION,"
-										"in K15_Vector4 color : COLOR0,"
+										"in K15_Vector4 color : COLOR1,"
 										"in K15_Matrix4 mvp : MVPMATRIX,"
-										"out K15_Vector4 colorOut : COLOR0)\n"
+										"out K15_Vector4 colorOut : COLOR1)\n"
 			"{\n"
 			"   K15_Vector4 transformedPos = pos * mvp;\n"
 			"	colorOut = color;\n"
@@ -209,7 +215,7 @@ intern void K15_InitializeRenderResources(K15_RenderBackEnd* p_RenderBackEnd)
 
 		default3DVertexProgramDesc.source = K15_RENDER_PROGRAM_SOURCE_CODE;
 
-		p_RenderBackEnd->interface.createProgram(p_RenderBackEnd, &default3DVertexProgramDesc, &p_RenderBackEnd->resources.default3DVertexProgramHandle);
+		p_RenderBackEnd->renderInterface.createProgram(p_RenderBackEnd, &default3DVertexProgramDesc, &p_RenderBackEnd->resources.default3DVertexProgramHandle);
 	}
 	/*********************************************************************************/
 
@@ -218,7 +224,7 @@ intern void K15_InitializeRenderResources(K15_RenderBackEnd* p_RenderBackEnd)
 		K15_RenderProgramDesc default2DFragmentProgramDesc = {};
 		default2DFragmentProgramDesc.type = K15_RENDER_PROGRAM_TYPE_FRAGMENT;
 		default2DFragmentProgramDesc.code = 
-			"K15_Vector4 ShadeFragment(in K15_Vector2 uv : TEXCOORD0,"
+			"K15_Vector4 ShadeFragment(in K15_Vector2 uv : TEXCOORD1,"
 									  "in K15_2DTexture tex : DATA,"
 									  "in K15_2DSampler sampler : DATA)\n"
 			"{\n"
@@ -227,7 +233,7 @@ intern void K15_InitializeRenderResources(K15_RenderBackEnd* p_RenderBackEnd)
 
 		default2DFragmentProgramDesc.source = K15_RENDER_PROGRAM_SOURCE_CODE;
 
-		p_RenderBackEnd->interface.createProgram(p_RenderBackEnd, &default2DFragmentProgramDesc, &p_RenderBackEnd->resources.default2DFragmentProgramHandle);
+		p_RenderBackEnd->renderInterface.createProgram(p_RenderBackEnd, &default2DFragmentProgramDesc, &p_RenderBackEnd->resources.default2DFragmentProgramHandle);
 	}
 	/*********************************************************************************/
 
@@ -236,15 +242,20 @@ intern void K15_InitializeRenderResources(K15_RenderBackEnd* p_RenderBackEnd)
 		K15_RenderProgramDesc default3DFragmentProgramDesc = {};
 		default3DFragmentProgramDesc.type = K15_RENDER_PROGRAM_TYPE_FRAGMENT;
 		default3DFragmentProgramDesc.code = 
-			"K15_Vector4 ShadeFragment(in K15_Vector4 color : COLOR0)\n"
+			"K15_Vector4 ShadeFragment(in K15_Vector4 color : COLOR1)\n"
 			"{\n"
 			"   return color;\n"
 			"}";
 
 		default3DFragmentProgramDesc.source = K15_RENDER_PROGRAM_SOURCE_CODE;
 
-		p_RenderBackEnd->interface.createProgram(p_RenderBackEnd, &default3DFragmentProgramDesc, &p_RenderBackEnd->resources.default3DFragmentProgramHandle);
+		p_RenderBackEnd->renderInterface.createProgram(p_RenderBackEnd, &default3DFragmentProgramDesc, &p_RenderBackEnd->resources.default3DFragmentProgramHandle);
 	}
+	/*********************************************************************************/
+	p_RenderBackEnd->renderInterface.setBlendState(p_RenderBackEnd, &p_RenderBackEnd->defaultState.blendState);
+	p_RenderBackEnd->renderInterface.setDepthState(p_RenderBackEnd, &p_RenderBackEnd->defaultState.depthState);
+	p_RenderBackEnd->renderInterface.setRasterizerState(p_RenderBackEnd, &p_RenderBackEnd->defaultState.rasterizerState);
+	p_RenderBackEnd->renderInterface.setStencilState(p_RenderBackEnd, &p_RenderBackEnd->defaultState.stencilState);
 	/*********************************************************************************/
 }
 /*********************************************************************************/
@@ -255,7 +266,7 @@ intern void K15_InitializeRenderResources(K15_RenderBackEnd* p_RenderBackEnd)
 /*********************************************************************************/
 intern result8 K15_InternalDrawGeometry(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderGeometryDesc* p_RenderGeometryDesc)
 {
-	return p_RenderBackEnd->interface.drawGeometry(p_RenderBackEnd, p_RenderGeometryDesc);
+	return p_RenderBackEnd->renderInterface.drawGeometry(p_RenderBackEnd, p_RenderGeometryDesc);
 }
 /*********************************************************************************/
 intern void K15_InternalRender2DTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommand* p_RenderCommand, K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_BufferOffset)
@@ -302,16 +313,16 @@ intern void K15_InternalRender2DTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_
 	K15_Vector2 s_br = K15_GetBottomRightCorner(sourceRect);
 
 	//vertex 1
-	vertexMemory[index++] = d_ul.x;
-	vertexMemory[index++] = d_ul.y;
-	vertexMemory[index++] = s_ul.x;
-	vertexMemory[index++] = s_ul.y;
-
-	//vertex 2
 	vertexMemory[index++] = d_bl.x;
 	vertexMemory[index++] = d_bl.y;
 	vertexMemory[index++] = s_bl.x;
 	vertexMemory[index++] = s_bl.y;
+
+	//vertex 2
+	vertexMemory[index++] = d_ul.x;
+	vertexMemory[index++] = d_ul.y;
+	vertexMemory[index++] = s_ul.x;
+	vertexMemory[index++] = s_ul.y;
 
 	//vertex 3
 	vertexMemory[index++] = d_br.x;
@@ -325,16 +336,17 @@ intern void K15_InternalRender2DTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_
 	vertexMemory[index++] = s_ur.x;
 	vertexMemory[index++] = s_ur.y;
 	
-	K15_RenderVertexData* vertexData = p_RenderBackEnd->interface.updateVertexData(p_RenderBackEnd, vertexMemory, numVertices, &vertexFormatDesc);
+	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexMemory, numVertices, &vertexFormatDesc);
 	K15_RenderGeometryDesc renderGeometry = {};
 
 	renderGeometry.vertexData = vertexData;
 	renderGeometry.topology = K15_RENDER_TOPOLOGY_TRIANGLE_STRIP;
 	renderGeometry.worldMatrix = K15_GetIdentityMatrix4();
+	renderGeometry.material = &renderMaterialDesc;
 
 	K15_InternalDrawGeometry(p_RenderBackEnd, &renderGeometry);
 
-	p_RenderBackEnd->interface.freeVertexData(p_RenderBackEnd, vertexData);
+	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexData);
 }
 /*********************************************************************************/
 intern void K15_InternalCreateTextureFromTextureFormat(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommand* p_RenderCommand, K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_BufferOffset)
@@ -353,8 +365,8 @@ intern void K15_InternalCreateTextureFromTextureFormat(K15_RenderBackEnd* p_Rend
 	K15_CustomMemoryAllocator* renderAllocator = &p_RenderBackEnd->renderContext->memoryAllocator;
 
 	K15_RenderTextureDesc textureDesc = {};
-	textureDesc.createMipChain = K15_FALSE;
-	/*textureDesc.dimension.depth = p_TextureFormat->depth*/
+	textureDesc.createMipChain = textureFormat.mipMapCount <= 1;
+	textureDesc.nameHash = textureFormat.textureNameHash;
 	textureDesc.dimension.height = textureFormat.height;
 	textureDesc.dimension.width = textureFormat.width;
 	textureDesc.mipmaps.count = textureFormat.mipMapCount;
@@ -375,72 +387,122 @@ intern void K15_InternalCreateTextureFromTextureFormat(K15_RenderBackEnd* p_Rend
 	textureDesc.type = K15_RENDER_TEXTURE_TYPE_2D;
 	textureDesc.flags = K15_RENDER_DESC_AUTO_CLEANUP_FLAG;
 
-	p_RenderBackEnd->interface.createTextureFromTextureDesc(p_RenderBackEnd, &textureDesc, textureHandle);
+	p_RenderBackEnd->renderInterface.createTextureFromTextureDesc(p_RenderBackEnd, &textureDesc, textureHandle);
 }
 /*********************************************************************************/
 intern void K15_InternalCreateSamplerFromSamplerFormat(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommand* p_RenderCommand, K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_BufferOffset)
 {
 	K15_RenderResourceHandle* samplerHandle = 0;
-	K15_SamplerFormat* samplerFormat = 0;
+	K15_SamplerFormat samplerFormat = {};
 
 	uint32 localOffset = 0;
 
 	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, K15_PTR_SIZE, &samplerHandle);
 	localOffset += K15_PTR_SIZE;
 
-	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(K15_SamplerFormat), samplerFormat);
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(K15_SamplerFormat), &samplerFormat);
 	localOffset += sizeof(K15_SamplerFormat);
 
 	K15_RenderSamplerDesc samplerDesc = {};
 
-	samplerDesc.nameHash = samplerFormat->samplerNameHash;
-	samplerDesc.address.u = (K15_RenderFilterAddressMode)samplerFormat->addressModeU;
-	samplerDesc.address.v = (K15_RenderFilterAddressMode)samplerFormat->addressModeV;
-	samplerDesc.address.w = (K15_RenderFilterAddressMode)samplerFormat->addressModeW;
-	samplerDesc.filtering.magnification =  (K15_RenderFilterMode)samplerFormat->magnificationFilter;
-	samplerDesc.filtering.minification =  (K15_RenderFilterMode)samplerFormat->minificationFilter;
+	samplerDesc.nameHash = samplerFormat.samplerNameHash;
+	samplerDesc.address.u = (K15_RenderFilterAddressMode)samplerFormat.addressModeU;
+	samplerDesc.address.v = (K15_RenderFilterAddressMode)samplerFormat.addressModeV;
+	samplerDesc.address.w = (K15_RenderFilterAddressMode)samplerFormat.addressModeW;
+	samplerDesc.filtering.magnification =  (K15_RenderFilterMode)samplerFormat.magnificationFilter;
+	samplerDesc.filtering.minification =  (K15_RenderFilterMode)samplerFormat.minificationFilter;
 
-	//*samplerHandle = K15_AddRenderSamplerDesc(p_RenderBackEnd, &samplerDesc);
+	p_RenderBackEnd->renderInterface.createSamplerFromSamplerDesc(p_RenderBackEnd, &samplerDesc, samplerHandle);
 }
 /*********************************************************************************/
 intern void K15_InternalCreateMaterialFromMaterialFormat(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommand* p_RenderCommand, K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_BufferOffset)
 {
-	K15_RenderResourceHandle* materialHandle = 0;
-	K15_MaterialFormat* materialFormat = 0;
+	K15_RenderMaterialDesc* renderMaterialDesc = 0;
+	K15_MaterialFormat materialFormat = {};
 	uint32 localOffset = 0;
 
-	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, K15_PTR_SIZE, &materialHandle);
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, K15_PTR_SIZE, &renderMaterialDesc);
 	localOffset += K15_PTR_SIZE;
 
-	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(K15_MaterialFormat), materialFormat);
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(K15_MaterialFormat), &materialFormat);
 	localOffset += sizeof(K15_MaterialFormat);
 
-	K15_RenderMaterialDesc materialDesc = {};
-
-	materialDesc.numMaterialPasses = materialFormat->numMaterialPasses;
-
-	for (uint32 passIndex = 0;
-		passIndex < materialFormat->numMaterialPasses;
+	renderMaterialDesc->numMaterialPasses = materialFormat.numMaterialPasses;
+	
+	for(uint32 passIndex = 0;
+		passIndex < renderMaterialDesc->numMaterialPasses;
 		++passIndex)
 	{
-		K15_MaterialPassTemplateFormat* passTemplate = K15_GetMaterialPassTemplateFormat(materialFormat, passIndex);
+		K15_MaterialPassFormat* materialPassFormat = &materialFormat.materialPasses[passIndex];
+		char* fragmentShaderRelativePath = materialPassFormat->materialPassTemplate.fragmentShaderPath;
+		char* vertexShaderRelativePath = materialPassFormat->materialPassTemplate.vertexShaderPath;
+
+// 		char* fragmentShaderName = K15_GetFileNameWithoutExtension(fragmentShaderRelativePath);
+// 		char* vertexShaderName = K15_GetFileNameWithoutExtension(vertexShaderRelativePath);
+
+		//renderMaterialDesc->materialPasses[passIndex].fragmentShaderHandle
 	}
+
+	//p_RenderBackEnd->renderInterface.createMaterialFromMaterialFormat(p_RenderBackEnd, materialFormat, materialHandle);
+}
+/*********************************************************************************/
+intern void K15_InternalCreateFontFromFontFormat(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommand* p_RenderCommand, K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_BufferOffset)
+{
+	K15_RenderResourceHandle* fontHandle = 0;
+	K15_FontFormat fontFormat = {};
+	uint32 localOffset = 0;
+
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, K15_PTR_SIZE, &fontHandle);
+	localOffset += K15_PTR_SIZE;
+
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(K15_FontFormat), &fontFormat);
+	localOffset += sizeof(K15_MaterialFormat);
+
+	uint32 fontTextureSize = K15_GetFontTextureSize(&fontFormat);
+	byte* fontTextureData = K15_GetFontTexture(&fontFormat);
+
+	K15_RenderTextureDesc fontTextureDesc = {};
+
+	fontTextureDesc.createMipChain = K15_FALSE;
+	fontTextureDesc.dimension.width = fontFormat.texture.width;
+	fontTextureDesc.dimension.height = fontFormat.texture.height;
+	fontTextureDesc.format = K15_RENDER_FORMAT_R8_UINT;
+	fontTextureDesc.mipmaps.count = 1;
+	fontTextureDesc.mipmaps.data[0] = fontTextureData;
+	fontTextureDesc.mipmaps.dataSize[0] = fontTextureSize;
+	fontTextureDesc.type = K15_RENDER_TEXTURE_TYPE_2D;
+	
+	//p_RenderBackEnd->renderInterface.createTextureFromTextureDesc(p_RenderBackEnd, &fontTextureDesc, );
 }
 /*********************************************************************************/
 intern void K15_InternalCreateShader(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommand* p_RenderCommand, K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_BufferOffset)
 {
 	K15_RenderResourceHandle* shaderHandle = 0;
-	K15_RenderProgramDesc* programDesc = 0;
+	K15_RenderProgramDesc programDesc = {};
 
 	uint32 localOffset = 0;
 
 	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, K15_PTR_SIZE, &shaderHandle);
 	localOffset += K15_PTR_SIZE;
 
-	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(K15_RenderProgramDesc), programDesc);
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(K15_RenderProgramDesc), &programDesc);
 	localOffset += sizeof(K15_SamplerFormat);
 
-	p_RenderBackEnd->interface.createProgram(p_RenderBackEnd, programDesc, shaderHandle);
+	result8 result = p_RenderBackEnd->renderInterface.createProgram(p_RenderBackEnd, &programDesc, shaderHandle);
+
+	if (result != K15_SUCCESS)
+	{
+		char* error = p_RenderBackEnd->renderContext->error;
+
+		if (programDesc.source == K15_RENDER_PROGRAM_SOURCE_FILE)
+		{
+			K15_LOG_ERROR_MESSAGE("Could not create shader '%s' ('%s')", programDesc.file, error);
+		}
+		else
+		{
+			K15_LOG_ERROR_MESSAGE("Could not create shader ('%s')", error);
+		}
+	}
 }
 /*********************************************************************************/
 
@@ -490,6 +552,12 @@ void K15_ProcessRenderCommands(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCom
 				break;
 			}
 
+			case K15_RENDER_COMMAND_CREATE_FONT_FROM_FONT_FORMAT:
+			{
+				K15_InternalCreateFontFromFontFormat(p_RenderBackEnd, command, p_RenderCommandBuffer, offset);
+				break;
+			}
+
 			case K15_RENDER_COMMAND_CREATE_PROGRAM:
 			{
 				K15_InternalCreateShader(p_RenderBackEnd, command, p_RenderCommandBuffer, offset);
@@ -506,13 +574,13 @@ void K15_BeginFrame(K15_RenderBackEnd* p_RenderBackEnd)
 {
 	K15_ASSERT_TEXT(p_RenderBackEnd, "Render Back End is NULL.");
 
-	p_RenderBackEnd->interface.clearScreen(p_RenderBackEnd);
+	p_RenderBackEnd->renderInterface.clearScreen(p_RenderBackEnd);
 }
 /*********************************************************************************/
 void K15_EndFrame(K15_RenderBackEnd * p_RenderBackEnd)
 {
 	K15_ASSERT_TEXT(p_RenderBackEnd, "Render Back End is NULL.");
 
-	p_RenderBackEnd->interface.swapFrameBuffer(p_RenderBackEnd);
+	p_RenderBackEnd->renderInterface.swapFrameBuffer(p_RenderBackEnd);
 }
 /*********************************************************************************/

@@ -33,6 +33,7 @@ struct K15_RenderBufferDesc
 	void* userData;
 	uint32 sizeInBytes;
 	uint32 offsetInBytes;
+	uint32 nameHash;
 
 	K15_RenderBufferUsage usage;
 	K15_RenderBufferType type;

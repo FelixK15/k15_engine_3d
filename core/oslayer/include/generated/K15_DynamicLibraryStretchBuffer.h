@@ -26,7 +26,7 @@ struct K15_DynamicLibraryStretchBuffer
 	unsigned int flags;
 };
 
-void K15_CreateDynamicLibraryStretchBufferWithCustomAllocator(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity);
+void K15_CreateDynamicLibraryStretchBufferWithCustomAllocator(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity = 8);
 void K15_CreateDynamicLibraryStretchBuffer(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity = 8);
 void K15_DeleteDynamicLibraryStretchBuffer(K15_DynamicLibraryStretchBuffer* p_StretchBuffer);
 void K15_ResizeDynamicLibraryStretchBuffer(K15_DynamicLibraryStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);

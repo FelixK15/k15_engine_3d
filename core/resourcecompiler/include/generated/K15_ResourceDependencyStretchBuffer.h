@@ -26,7 +26,7 @@ struct K15_ResourceDependencyStretchBuffer
 	unsigned int flags;
 };
 
-void K15_CreateResourceDependencyStretchBufferWithCustomAllocator(K15_ResourceDependencyStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity);
+void K15_CreateResourceDependencyStretchBufferWithCustomAllocator(K15_ResourceDependencyStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity = 8);
 void K15_CreateResourceDependencyStretchBuffer(K15_ResourceDependencyStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity = 8);
 void K15_DeleteResourceDependencyStretchBuffer(K15_ResourceDependencyStretchBuffer* p_StretchBuffer);
 void K15_ResizeResourceDependencyStretchBuffer(K15_ResourceDependencyStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);

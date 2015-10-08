@@ -11,7 +11,6 @@
 #define K15_CHECK_AND_SET_EXTENSIONS(c, s, e) if (!c->extensions.e.supported && strstr(s, #e)) { K15_InternalGetExtensionBoard(s, c->extensions.e.board); c->extensions.e.supported = K15_TRUE; }
 #define K15_CHECK_AND_SET_EXTENSIONS_BIT(c, s, e, b, m) if ((c->extensions.m & b) == 0 && strstr(s, #e)) { c->extensions.m |= b; }
 
-
 #include "K15_RenderContext.h"
 #include "K15_RenderBufferDesc.h"
 #include "K15_RenderProgramDesc.h"
@@ -33,17 +32,18 @@
 #include "OpenGL/K15_RenderGLTypes.cpp"
 
 /*********************************************************************************/
-intern inline K15_RenderResourceHandle K15_InternalAddGLObject(K15_GLRenderContext* p_GLContext, void* p_GLObjectData, uint32 p_GLObjectDataSize, K15_GLObjectType p_GLObjectType)
+intern inline K15_RenderResourceHandle K15_InternalAddGLObject(K15_GLRenderContext* p_GLContext, void* p_GLObjectData, uint32 p_GLObjectDataSize, uint32 p_GLObjectHash, K15_GLObjectType p_GLObjectType)
 {
 	K15_ASSERT(p_GLContext);
 	K15_ASSERT(p_GLObjectData);
 
-	uint32 nextIndex = p_GLContext->lastFreeGLObjectIndex + 1;
+	uint32 index = p_GLObjectHash % K15_RENDER_GL_MAX_OBJECTS;
+	//uint32 nextIndex = p_GLContext->lastFreeGLObjectIndex + 1;
 	uint32 indexFound = 0;
 
-	if (nextIndex != K15_RENDER_GL_MAX_OBJECTS && p_GLContext->glObjects[nextIndex].type == K15_GL_TYPE_INVALID)
+	if (p_GLContext->glObjects[index].type == K15_GL_TYPE_INVALID)
 	{
-		indexFound = nextIndex;
+		indexFound = index;
 	}
 
 	if (!indexFound)
@@ -52,7 +52,6 @@ intern inline K15_RenderResourceHandle K15_InternalAddGLObject(K15_GLRenderConte
 			glObjectIndex < K15_RENDER_GL_MAX_OBJECTS;
 			++glObjectIndex)
 		{
-			if (p_GLContext->glObjects[glObjectIndex].type == K15_GL_TYPE_INVALID)
 			{
 				indexFound = glObjectIndex;
 			}
@@ -67,7 +66,7 @@ intern inline K15_RenderResourceHandle K15_InternalAddGLObject(K15_GLRenderConte
 	currentObjectHeader->glObjectData = (byte*)K15_AllocateFromMemoryAllocator(p_GLContext->memoryAllocator, p_GLObjectDataSize);
 	memcpy(currentObjectHeader->glObjectData, p_GLObjectData, p_GLObjectDataSize);
 
-	p_GLContext->lastFreeGLObjectIndex = indexFound;
+	//p_GLContext->lastFreeGLObjectIndex = indexFound;
 
 	return (K15_RenderResourceHandle)indexFound;
 }
@@ -116,12 +115,13 @@ intern inline void K15_InternalGetExtensionBoard(char* p_Extension, char* p_Buff
 #include "OpenGL/K15_RenderGLConversion.cpp"
 #include "OpenGL/K15_RenderGLBuffer.cpp"
 #include "OpenGL/K15_RenderGLFrame.cpp"
-#include "OpenGL/K15_RenderGLProgram.cpp"
 #include "OpenGL/K15_RenderGLState.cpp"
 #include "OpenGL/K15_RenderGLTexture.cpp"
+#include "OpenGL/K15_RenderGLProgram.cpp"
 #include "OpenGL/K15_RenderGLVertexFormat.cpp"
-// #include "OpenGL/K15_RenderGLSampler.cpp"
+#include "OpenGL/K15_RenderGLSampler.cpp"
 // #include "OpenGL/K15_RenderGLRenderTarget.cpp"
+#include "OpenGL/K15_RenderGLMaterial.cpp"
 #include "OpenGL/K15_RenderGLDraw.cpp"
 
 typedef uint8 (*K15_CreatePlatformContextFnc)(K15_CustomMemoryAllocator*, K15_GLRenderContext*, K15_OSContext*);
@@ -249,27 +249,28 @@ intern void APIENTRY K15_DebugProcARB(GLenum source, GLenum type, GLuint id, GLe
 intern inline void K15_InternalSetGLInterface(K15_RenderBackEnd* p_RenderBackEnd)
 {
 	//screen management
-	p_RenderBackEnd->interface.clearScreen = K15_GLClearScreen;
-	p_RenderBackEnd->interface.swapFrameBuffer = K15_GLSwapFrameBuffer;
+	p_RenderBackEnd->renderInterface.clearScreen = K15_GLClearScreen;
+	p_RenderBackEnd->renderInterface.swapFrameBuffer = K15_GLSwapFrameBuffer;
 
 	//state management
-	p_RenderBackEnd->interface.setDepthState = K15_GLSetDepthStateDesc;
-	p_RenderBackEnd->interface.setBlendState = K15_GLSetBlendStateDesc;
-	p_RenderBackEnd->interface.setRasterizerState = K15_GLSetRasterizerStateDesc;
-	p_RenderBackEnd->interface.setStencilState = K15_GLSetStencilStateDesc;
+	p_RenderBackEnd->renderInterface.setDepthState = K15_GLSetDepthStateDesc;
+	p_RenderBackEnd->renderInterface.setBlendState = K15_GLSetBlendStateDesc;
+	p_RenderBackEnd->renderInterface.setRasterizerState = K15_GLSetRasterizerStateDesc;
+	p_RenderBackEnd->renderInterface.setStencilState = K15_GLSetStencilStateDesc;
 
 	//texture management
-	p_RenderBackEnd->interface.createTextureFromTextureDesc = K15_GLCreateTextureFromTextureDesc;
+	p_RenderBackEnd->renderInterface.createTextureFromTextureDesc = K15_GLCreateTextureFromTextureDesc;
+	p_RenderBackEnd->renderInterface.createSamplerFromSamplerDesc = K15_GLCreateSamplerFromSamplerDesc;
 
 	//program management
-	p_RenderBackEnd->interface.createProgram = K15_GLCreateProgram;
+	p_RenderBackEnd->renderInterface.createProgram = K15_GLCreateProgram;
 
 	//buffer management
-	p_RenderBackEnd->interface.updateVertexData = K15_GLUpdateVertexData;
-	p_RenderBackEnd->interface.freeVertexData = K15_GLFreeVertexData;
+	p_RenderBackEnd->renderInterface.updateVertexData = K15_GLUpdateVertexData;
+	p_RenderBackEnd->renderInterface.freeVertexData = K15_GLFreeVertexData;
 
 	//draw management
-	p_RenderBackEnd->interface.drawGeometry = K15_GLDrawGeometry;
+	p_RenderBackEnd->renderInterface.drawGeometry = K15_GLDrawGeometry;
 }
 /*********************************************************************************/
 intern int K15_CmpStringsSort(const void* a, const void* b)
@@ -461,6 +462,7 @@ intern uint8 K15_GLLoadExtensionFunctions(K15_GLRenderContext* p_GLRenderContext
 	K15_CHECK_ASSIGNMENT(kglCompressedTexImage2D, (PFNGLCOMPRESSEDTEXIMAGE2DPROC)kglGetProcAddress("glCompressedTexImage2D"));
 	K15_CHECK_ASSIGNMENT(kglCompressedTexImage3D, (PFNGLCOMPRESSEDTEXIMAGE3DPROC)kglGetProcAddress("glCompressedTexImage3D"));
 	K15_CHECK_ASSIGNMENT(kglGenerateMipmap, (PFNGLGENERATEMIPMAPPROC)kglGetProcAddress("glGenerateMipmap"));
+	K15_CHECK_ASSIGNMENT(kglActiveTexture, (PFNGLACTIVETEXTUREPROC)kglGetProcAddress("glActiveTexture"));
 
 	if(p_GLRenderContext->extensions.debug.supported)
 	{
@@ -500,7 +502,7 @@ intern uint8 K15_GLLoadExtensionFunctions(K15_GLRenderContext* p_GLRenderContext
 	{
 		K15_CHECK_ASSIGNMENT(kglGenSamplers, (PFNGLGENSAMPLERSPROC)K15_GLGetExtensionFunction("glGenSamplers", p_GLRenderContext->extensions.sampler_objects.board));
 		K15_CHECK_ASSIGNMENT(kglDeleteSamplers, (PFNGLDELETESAMPLERSPROC)K15_GLGetExtensionFunction("glDeleteSamplers", p_GLRenderContext->extensions.sampler_objects.board));
-		K15_CHECK_ASSIGNMENT(kglBindSampler, (PFNGLBINDSAMPLERPROC)K15_GLGetExtensionFunction("glBindSamplers", p_GLRenderContext->extensions.sampler_objects.board));
+		K15_CHECK_ASSIGNMENT(kglBindSampler, (PFNGLBINDSAMPLERPROC)K15_GLGetExtensionFunction("glBindSampler", p_GLRenderContext->extensions.sampler_objects.board));
 		K15_CHECK_ASSIGNMENT(kglSamplerParameteri, (PFNGLSAMPLERPARAMETERIPROC)K15_GLGetExtensionFunction("glSamplerParameteri", p_GLRenderContext->extensions.sampler_objects.board));
 		K15_CHECK_ASSIGNMENT(kglSamplerParameterf, (PFNGLSAMPLERPARAMETERFPROC)K15_GLGetExtensionFunction("glSamplerParameterf", p_GLRenderContext->extensions.sampler_objects.board));
 		K15_CHECK_ASSIGNMENT(kglSamplerParameteriv, (PFNGLSAMPLERPARAMETERIVPROC)K15_GLGetExtensionFunction("glSamplerParameteriv", p_GLRenderContext->extensions.sampler_objects.board));
@@ -584,26 +586,37 @@ intern void K15_InternalGLGetRenderCapabilities(K15_RenderFeatures* p_RenderFeat
 	GLint glMaxColorAttachments = 1;
 	GLint glMaxSamples = 0;
 	GLint glMaxTextureSize = 0;
+	GLint glMaxTextureUnits = 0;
 
 	K15_OPENGL_CALL(kglGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &glMaxAnistropy));
 	K15_OPENGL_CALL(kglGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &glMaxColorAttachments));
 	K15_OPENGL_CALL(kglGetIntegerv(GL_MAX_SAMPLES, &glMaxSamples));
 	K15_OPENGL_CALL(kglGetIntegerv(GL_MAX_TEXTURE_SIZE, &glMaxTextureSize));
+	K15_OPENGL_CALL(kglGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &glMaxTextureUnits));
 
 	p_RenderFeatures->maxAnisotropy = (float)glMaxAnistropy;
 	p_RenderFeatures->maxRenderTargets = (uint32)glMaxColorAttachments;
 	p_RenderFeatures->maxSamples = (uint32)glMaxSamples;
 	p_RenderFeatures->maxTextureDimension = (uint32)glMaxTextureSize;
+	p_RenderFeatures->maxTextureUnits = (uint32)glMaxTextureUnits;
 }
 /*********************************************************************************/
 intern void K15_InternalInitializeExtensions(K15_GLRenderContext* p_GLContext)
 {
-// 	if (p_GLContext->extensions.vertex_array_object.supported)
-// 	{
-// 		p_GLContext->extensions.vertex_array_object.vertexFormatCache.numCacheEntries = 0;
-// 		memset(p_GLContext->extensions.vertex_array_object.vertexFormatCache.cacheEntry, 0, 
-// 			sizeof(p_GLContext->extensions.vertex_array_object.vertexFormatCache.cacheEntry));
-// 	}
+	if (p_GLContext->extensions.vertex_array_object.supported)
+	{
+		GLuint glVertexArrayObject = 0;
+		K15_OPENGL_CALL(kglGenVertexArrays(1, &glVertexArrayObject));
+		K15_OPENGL_CALL(kglBindVertexArray(glVertexArrayObject));
+	}
+
+	if (p_GLContext->extensions.separate_shader_objects.supported)
+	{
+		GLuint glProgramPipelineObject = 0;
+		K15_OPENGL_CALL(kglGenProgramPipelines(1, &glProgramPipelineObject));
+		K15_OPENGL_CALL(kglBindProgramPipeline(glProgramPipelineObject));
+		p_GLContext->extensions.separate_shader_objects.programPipelineHandle = glProgramPipelineObject;
+	}
 }
 /*********************************************************************************/
 result8 K15_GLCreateRenderContext(K15_CustomMemoryAllocator* p_MemoryAllocator, K15_RenderBackEnd* p_RenderBackEnd, K15_OSContext* p_OSLayerContext)
@@ -642,18 +655,20 @@ result8 K15_GLCreateRenderContext(K15_CustomMemoryAllocator* p_MemoryAllocator, 
 		return result;
 	}
 
-	glContext->lastFreeGLObjectIndex = 0;
+	//glContext->lastFreeGLObjectIndex = 0;
 
 	//clear glObject array
 	memset(glContext->glObjects, 0, sizeof(glContext->glObjects));
 
 	//clear bound objects arrays
 	memset(glContext->glBoundObjects.boundBuffers, 0, sizeof(glContext->glBoundObjects.boundBuffers));
-	memset(glContext->glBoundObjects.boundTextures, 0, sizeof(glContext->glBoundObjects.boundTextures));
 	memset(glContext->glBoundObjects.boundPrograms, 0, sizeof(glContext->glBoundObjects.boundPrograms));
 
 	memset(glContext->vertexCache.cacheEntries, 0, sizeof(glContext->vertexCache.cacheEntries));
 	memset(glContext->pendingBufferUpdateManager.pendingUpdate, 0, sizeof(glContext->pendingBufferUpdateManager.pendingUpdate));
+
+	glContext->glBoundObjects.boundMaterialPass = 0;
+	glContext->glBoundObjects.boundVertexFormatHash = 0;
 
 	glContext->pendingBufferUpdateManager.numPendingUpdates = 0;
 	glContext->vertexCache.numEntries = 0;
@@ -716,6 +731,10 @@ result8 K15_GLCreateRenderContext(K15_CustomMemoryAllocator* p_MemoryAllocator, 
 	//ask the renderer api what features it has
 	K15_InternalGLGetRenderCapabilities(&p_RenderBackEnd->features);
 
+	//initialize texture manager
+	glContext->textureManager.numTextureSlots = 0;
+	glContext->textureManager.maxTextureSlots = p_RenderBackEnd->features.maxTextureUnits;
+	glContext->textureManager.textureSlots = (K15_GLTextureSlot*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, sizeof(K15_GLTextureSlot) * p_RenderBackEnd->features.maxTextureUnits);
 	return K15_SUCCESS;
 }
 /*********************************************************************************/

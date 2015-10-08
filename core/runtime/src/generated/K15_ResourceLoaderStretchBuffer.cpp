@@ -2,17 +2,18 @@
 /*  THIS FILE HAS BEEN GENERATED AUTOMATICALLY. ANY CHANGES WILL BE OVERRIDDEN   */
 /*********************************************************************************/
 
-#include "$INPUT_FILE$"
+#include "INPUT_FILE"
 
 
 /*********************************************************************************/
-void K15_Create$TYPE_NAME$StretchBufferWithCustomAllocator(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity)
+void K15_CreateResourceLoaderStretchBufferWithCustomAllocator(K15_ResourceLoaderStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity)
 {
+	K15_ASSERT_TEXT(!p_StretchBuffer->elements, "Stretch Buffer has already been created.");
 	K15_ASSERT_TEXT(p_ElementCapacity != 0, "Can not reserve 0 elements.");
 
-	unsigned int bytesToAllocate = p_ElementCapacity * sizeof($TYPE$);
+	unsigned int bytesToAllocate = p_ElementCapacity * sizeof(K15_ResourceLoader);
 	
-	$TYPE$* elements = ($TYPE$*)K15_AllocateFromMemoryAllocator(&p_MemoryAllocator, bytesToAllocate);
+	K15_ResourceLoader* elements = (K15_ResourceLoader*)K15_AllocateFromMemoryAllocator(&p_MemoryAllocator, bytesToAllocate);
 
 	K15_ASSERT_TEXT(elements, "Out of memory.");
 
@@ -24,14 +25,15 @@ void K15_Create$TYPE_NAME$StretchBufferWithCustomAllocator(K15_$TYPE_NAME$Stretc
 
 }
 /*********************************************************************************/
-void K15_Create$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity)
+void K15_CreateResourceLoaderStretchBuffer(K15_ResourceLoaderStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity)
 {
-	K15_Create$TYPE_NAME$StretchBufferWithCustomAllocator(p_StretchBuffer, K15_CreateDefaultMemoryAllocator("$TYPE_NAME$ Default Stretch Buffer Allocator"), p_ElementCapacity);
+	K15_CreateResourceLoaderStretchBufferWithCustomAllocator(p_StretchBuffer, K15_CreateDefaultMemoryAllocator("ResourceLoader Default Stretch Buffer Allocator"), p_ElementCapacity);
 }
 /*********************************************************************************/
-void K15_Delete$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer)
+void K15_DeleteResourceLoaderStretchBuffer(K15_ResourceLoaderStretchBuffer* p_StretchBuffer)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
+	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 
 	if ((p_StretchBuffer->flags & K15_USE_EXTERNAL_BUFFER) == 0)
 	{
@@ -41,11 +43,11 @@ void K15_Delete$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchB
 	p_StretchBuffer->elements = 0;
 }
 /*********************************************************************************/
-void K15_Resize$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity)
+void K15_ResizeResourceLoaderStretchBuffer(K15_ResourceLoaderStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
-	K15_ASSERT_TEXT((p_StretchBuffer->flags & K15_USE_EXTERNAL_BUFFER) == 0, "Stretch Buffer for Type '%s' can't be resized.", "$TYPE$");
+	K15_ASSERT_TEXT((p_StretchBuffer->flags & K15_USE_EXTERNAL_BUFFER) == 0, "Stretch Buffer for Type '%s' can't be resized.", "K15_ResourceLoader");
 
 	unsigned int freeSlotIndex = p_StretchBuffer->numElements;
 	unsigned int capacity = p_StretchBuffer->numCapacity;
@@ -53,10 +55,10 @@ void K15_Resize$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchB
 
 	if (freeSlotIndex >= capacity)
 	{
-		unsigned int newSizeInBytes = sizeof($TYPE$) * p_ElementCapacity;
-		unsigned int oldSizeInBytes = sizeof($TYPE$) * capacity;
-		$TYPE$* oldMemory = p_StretchBuffer->elements;
-		$TYPE$* newMemory = ($TYPE$*)K15_AllocateFromMemoryAllocator(memoryAllocator, newSizeInBytes);
+		unsigned int newSizeInBytes = sizeof(K15_ResourceLoader) * p_ElementCapacity;
+		unsigned int oldSizeInBytes = sizeof(K15_ResourceLoader) * capacity;
+		K15_ResourceLoader* oldMemory = p_StretchBuffer->elements;
+		K15_ResourceLoader* newMemory = (K15_ResourceLoader*)K15_AllocateFromMemoryAllocator(memoryAllocator, newSizeInBytes);
 		memcpy(newMemory, oldMemory, oldSizeInBytes);
 
 		K15_FreeFromMemoryAllocator(memoryAllocator, oldMemory);
@@ -66,7 +68,7 @@ void K15_Resize$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchB
 	}
 }
 /*********************************************************************************/
-void K15_Clear$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer)
+void K15_ClearResourceLoaderStretchBuffer(K15_ResourceLoaderStretchBuffer* p_StretchBuffer)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -74,7 +76,7 @@ void K15_Clear$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBu
 	p_StretchBuffer->numElements = 0;
 }
 /*********************************************************************************/
-$TYPE$* K15_Push$TYPE_NAME$StretchBufferElement(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element)
+K15_ResourceLoader* K15_PushResourceLoaderStretchBufferElement(K15_ResourceLoaderStretchBuffer* p_StretchBuffer, K15_ResourceLoader p_Element)
 {	
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -84,7 +86,7 @@ $TYPE$* K15_Push$TYPE_NAME$StretchBufferElement(K15_$TYPE_NAME$StretchBuffer* p_
 
 	if (freeSlotIndex >= capacity)
 	{
-		K15_Resize$TYPE_NAME$StretchBuffer(p_StretchBuffer, capacity * 2);
+		K15_ResizeResourceLoaderStretchBuffer(p_StretchBuffer, capacity * 2);
 	}
 
 	p_StretchBuffer->elements[freeSlotIndex] = p_Element;
@@ -93,12 +95,12 @@ $TYPE$* K15_Push$TYPE_NAME$StretchBufferElement(K15_$TYPE_NAME$StretchBuffer* p_
 	return &p_StretchBuffer->elements[freeSlotIndex];
 }
 /*********************************************************************************/
-unsigned char K15_Pop$TYPE_NAME$StretchBufferIndex(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_Index)
+unsigned char K15_PopResourceLoaderStretchBufferIndex(K15_ResourceLoaderStretchBuffer* p_StretchBuffer, unsigned int p_Index)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 
-	$TYPE$* elements = p_StretchBuffer->elements;
+	K15_ResourceLoader* elements = p_StretchBuffer->elements;
 	unsigned int numElements = p_StretchBuffer->numElements;
 
 	if (p_Index != (numElements - 1))
@@ -119,12 +121,12 @@ unsigned char K15_Pop$TYPE_NAME$StretchBufferIndex(K15_$TYPE_NAME$StretchBuffer*
 	return 1;
 }
 /*********************************************************************************/
-unsigned char K15_Pop$TYPE_NAME$StretchBufferElement(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element)
+unsigned char K15_PopResourceLoaderStretchBufferElement(K15_ResourceLoaderStretchBuffer* p_StretchBuffer, K15_ResourceLoader p_Element)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 
-	$TYPE$* elements = p_StretchBuffer->elements;
+	K15_ResourceLoader* elements = p_StretchBuffer->elements;
 	unsigned int numElements = p_StretchBuffer->numElements;
 	unsigned char returnValue = 0;
 
@@ -132,9 +134,9 @@ unsigned char K15_Pop$TYPE_NAME$StretchBufferElement(K15_$TYPE_NAME$StretchBuffe
 		elementIndex < numElements;
 		++elementIndex)
 	{		
-		if (memcmp(&elements[elementIndex], &p_Element, sizeof($TYPE$)) == 0)
+		if (memcmp(&elements[elementIndex], &p_Element, sizeof(K15_ResourceLoader)) == 0)
 		{
-			K15_Pop$TYPE_NAME$StretchBufferIndex(p_StretchBuffer, elementIndex);
+			K15_PopResourceLoaderStretchBufferIndex(p_StretchBuffer, elementIndex);
 			returnValue = 1;
 			break;
 		}
@@ -143,13 +145,13 @@ unsigned char K15_Pop$TYPE_NAME$StretchBufferElement(K15_$TYPE_NAME$StretchBuffe
 	return returnValue;
 }
 /*********************************************************************************/
-unsigned char K15_Pop$TYPE_NAME$StretchBufferCompare(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, $TYPE$ p_Element, K15_$TYPE_NAME$CompareFnc p_CompareFnc)
+unsigned char K15_PopResourceLoaderStretchBufferCompare(K15_ResourceLoaderStretchBuffer* p_StretchBuffer, K15_ResourceLoader p_Element, K15_ResourceLoaderCompareFnc p_CompareFnc)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 	K15_ASSERT_TEXT(p_CompareFnc, "Compare Function is NULL.");
 
-	$TYPE$* elements = p_StretchBuffer->elements;
+	K15_ResourceLoader* elements = p_StretchBuffer->elements;
 	unsigned int numElements = p_StretchBuffer->numElements;
 	unsigned char returnValue = 0;
 
@@ -159,7 +161,7 @@ unsigned char K15_Pop$TYPE_NAME$StretchBufferCompare(K15_$TYPE_NAME$StretchBuffe
 	{		
 		if (p_CompareFnc(&p_Element, &elements[elementIndex]) == 0)
 		{
-			K15_Pop$TYPE_NAME$StretchBufferIndex(p_StretchBuffer, elementIndex);
+			K15_PopResourceLoaderStretchBufferIndex(p_StretchBuffer, elementIndex);
 			returnValue = 1;
 			break;
 		}
@@ -168,7 +170,7 @@ unsigned char K15_Pop$TYPE_NAME$StretchBufferCompare(K15_$TYPE_NAME$StretchBuffe
 	return returnValue;
 }
 /*********************************************************************************/
-$TYPE$* K15_Get$TYPE_NAME$StretchBufferElementUnsafe(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_Index)
+K15_ResourceLoader* K15_GetResourceLoaderStretchBufferElementUnsafe(K15_ResourceLoaderStretchBuffer* p_StretchBuffer, unsigned int p_Index)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
@@ -176,14 +178,14 @@ $TYPE$* K15_Get$TYPE_NAME$StretchBufferElementUnsafe(K15_$TYPE_NAME$StretchBuffe
 	return &p_StretchBuffer->elements[p_Index];
 }
 /*********************************************************************************/
-$TYPE$* K15_Get$TYPE_NAME$StretchBufferElement(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_Index)
+K15_ResourceLoader* K15_GetResourceLoaderStretchBufferElement(K15_ResourceLoaderStretchBuffer* p_StretchBuffer, unsigned int p_Index)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 
 	unsigned int numElements = p_StretchBuffer->numElements;
 
-	$TYPE$* returnValue = 0;
+	K15_ResourceLoader* returnValue = 0;
 
 	if (numElements > p_Index)
 	{
@@ -193,15 +195,15 @@ $TYPE$* K15_Get$TYPE_NAME$StretchBufferElement(K15_$TYPE_NAME$StretchBuffer* p_S
 	return returnValue;
 }
 /*********************************************************************************/
-$TYPE$* K15_Get$TYPE_NAME$StretchBufferElementConditional(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, K15_$TYPE_NAME$ConditionFnc p_ConditionFnc, void* p_UserData)
+K15_ResourceLoader* K15_GetResourceLoaderStretchBufferElementConditional(K15_ResourceLoaderStretchBuffer* p_StretchBuffer, K15_ResourceLoaderConditionFnc p_ConditionFnc, void* p_UserData)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
 	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 	K15_ASSERT_TEXT(p_ConditionFnc, "Condition Function is NULL.");
 
-	$TYPE$* elements = p_StretchBuffer->elements;
-	$TYPE$* returnElement = 0;
-	$TYPE$* currentElement = 0;
+	K15_ResourceLoader* elements = p_StretchBuffer->elements;
+	K15_ResourceLoader* returnElement = 0;
+	K15_ResourceLoader* currentElement = 0;
 
 	unsigned int numElements = p_StretchBuffer->numElements;
 

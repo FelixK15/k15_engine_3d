@@ -27,7 +27,7 @@ intern K15_RenderVertexFormatElementDesc K15_InternalCreateVertexFormatElement(K
 
 	element.typeID = p_TypeID;
 	element.semanticID = p_SemanticID;
-
+	
 	return element;
 }
 /*********************************************************************************/
@@ -45,6 +45,8 @@ K15_RenderVertexFormatDesc K15_CreateRenderVertexFormatDesc(K15_RenderContext* p
 	K15_CustomMemoryAllocator* memoryAllocator = &p_RenderContext->memoryAllocator;
 	desc.elements = (K15_RenderVertexFormatElementDesc*)K15_AllocateFromMemoryAllocator(memoryAllocator, p_NumAttributes * sizeof(K15_RenderVertexFormatElementDesc));
 
+	uint32 offsetInBytes = 0;
+
 	for (uint32 attributeIndex = 0;
 		attributeIndex < p_NumAttributes;
 		++attributeIndex)
@@ -53,7 +55,10 @@ K15_RenderVertexFormatDesc K15_CreateRenderVertexFormatDesc(K15_RenderContext* p
 		int typeID = va_arg(vlist, int);
 
 		K15_RenderVertexFormatElementDesc currentElement = K15_InternalCreateVertexFormatElement(p_RenderContext, semanticID, typeID);
+		currentElement.offsetInBytes = offsetInBytes;
 		desc.elements[desc.numAttributes++] = currentElement;
+
+		offsetInBytes += K15_GetTypeSizeInBytesByTypeID(shaderProcessorContext, typeID);
 	}
 
 	desc.hash = K15_GenerateDataHash((byte*)desc.elements, sizeof(desc.elements));

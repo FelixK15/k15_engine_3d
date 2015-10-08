@@ -1,2 +1,2 @@
-VertexShader=../../shader/default.vert
-FragmentShader=../../shader/default.frag
+VertexShader=shader/default.vert
+FragmentShader=shader/default.frag

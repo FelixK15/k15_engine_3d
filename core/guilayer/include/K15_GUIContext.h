@@ -40,8 +40,9 @@ struct K15_GUIElementHeader
 struct K15_GUIContext
 {
 	K15_CustomMemoryAllocator memoryAllocator;
-	K15_RenderMaterialDesc guiTemplateTextureMaterial;
-	K15_RenderResourceHandle guiTemplateTexture;
+	K15_ResourceHandle guiRenderMaterial;
+	K15_ResourceHandle guiRenderTexture;
+	K15_ResourceHandle guiRenderFont;
 
 	byte* guiMemory;
 

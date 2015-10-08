@@ -13,6 +13,9 @@ intern uint8 K15_InternalSaveSamplerFormat(K15_DataAccessContext* p_DataAccessCo
 	K15_HeaderFormat headerFormat;
 	K15_CreateHeader(&headerFormat, K15_RESOURCE_FORMAT_SAMPLER);
 
+	//write header
+	K15_WriteData(p_DataAccessContext, sizeof(K15_HeaderFormat), &headerFormat);
+
 	//write sampler name length
 	K15_WriteData(p_DataAccessContext, sizeof(uint32), &p_SamplerFormat->samplerNameHash);
 

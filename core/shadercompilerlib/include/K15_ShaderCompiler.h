@@ -6,6 +6,7 @@
 #define K15_MAX_SHADER_SEMANTICS 64
 #define K15_MAX_SHADER_TYPES 64
 #define K15_MAX_SHADER_ARGUMENTS 64
+#define K15_MAX_TEXTURE_SAMPLER_DEPENDENCIES 64
 #define K15_MAX_SHADER_PROCESS_RESULT_ERRORS 128
 #define K15_MAX_SHADER_PROCESS_RESULT_ERROR_LENGTH 256
 
@@ -43,7 +44,7 @@ struct K15_ShaderProcessResult
 	bool8 valid;
 
 	uint32 numErrors;
-	char errors[K15_MAX_SHADER_PROCESS_RESULT_ERRORS][K15_MAX_SHADER_PROCESS_RESULT_ERROR_LENGTH];
+	char** errors;
 };
 
 struct K15_ShaderProcessorContext
@@ -63,10 +64,22 @@ struct K15_ShaderArgument
 	uint32 typeID;
 };
 
+struct K15_TextureSamplerDependency
+{
+	K15_ShaderArgument* textureShaderArgument;
+	K15_ShaderArgument* samplerShaderArgument;
+	char sampler[64];
+	char texture[64]; 
+	uint32 samplerNameHash;
+	uint32 textureNameHash;
+};
+
 struct K15_ShaderInformation
 {
 	K15_ShaderArgument arguments[K15_MAX_SHADER_ARGUMENTS];
+	K15_TextureSamplerDependency textureSamplerDependencies[K15_MAX_TEXTURE_SAMPLER_DEPENDENCIES];
 	uint32 numArguments;
+	uint32 numTextureSamplerDependencies;
 };
 
 K15_ShaderArgument* K15_GetShaderArgumentByName(K15_ShaderInformation* p_ShaderInformation, const char* p_ArgumentName);

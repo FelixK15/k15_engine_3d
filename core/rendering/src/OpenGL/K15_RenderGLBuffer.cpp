@@ -1,13 +1,18 @@
 /*********************************************************************************/
 intern inline K15_RenderBufferDesc K15_InternalCreateDefaultVertexBufferDesc(uint32 p_BufferSizeInBytes)
 {
+	static int vboCounter = 0; //for hash creation
+
+	char* vboName = K15_GenerateString("VBO_%d", (char*)alloca(64), vboCounter++);
+
 	K15_RenderBufferDesc defaultVertexBufferDesc = {};
 
 	defaultVertexBufferDesc.access = K15_RENDER_BUFFER_ACCESS_ALL;
 	defaultVertexBufferDesc.type = K15_RENDER_BUFFER_TYPE_VERTEX;
 	defaultVertexBufferDesc.usage = K15_RENDER_BUFFER_USAGE_DYNAMIC_DRAW;
 	defaultVertexBufferDesc.sizeInBytes = p_BufferSizeInBytes;
-	
+	defaultVertexBufferDesc.nameHash = K15_GenerateStringHash(vboName);
+
 	return defaultVertexBufferDesc;
 }
 /*********************************************************************************/
@@ -96,6 +101,7 @@ inline uint8 K15_GLCreateBuffer(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderBu
 	K15_RenderBufferUsage renderBufferUsage = p_RenderBufferDesc->usage;
 	byte* bufferData = p_RenderBufferDesc->data;
 	uint32 bufferDataSize = p_RenderBufferDesc->sizeInBytes;
+	uint32 hash = p_RenderBufferDesc->nameHash;
 
 	GLenum glBufferType = K15_GLConvertBufferType(renderBufferType);
 	GLenum glUsageType = K15_GLConvertBufferUsage(renderBufferUsage);
@@ -119,7 +125,7 @@ inline uint8 K15_GLCreateBuffer(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderBu
 		glBuffer.glBufferType = glBufferType;
 		glBuffer.bufferType = renderBufferType;
 
-		*p_RenderBufferHandlePtr = K15_InternalAddGLObject(glContext, &glBuffer, sizeof(glBuffer), K15_GL_TYPE_BUFFER);
+		*p_RenderBufferHandlePtr = K15_InternalAddGLObject(glContext, &glBuffer, sizeof(glBuffer), hash, K15_GL_TYPE_BUFFER);
 	}
 
 	return result;
@@ -258,6 +264,7 @@ inline K15_RenderVertexData* K15_GLUpdateVertexData(K15_RenderBackEnd* p_RenderB
 	vertexData->buffer = p_VertexData;
 	vertexData->numVertices = p_NumVertices;
 	vertexData->startVertexIndex = p_VertexFormat->stride / usedCacheEntry->capacityInBytes;
+	vertexData->vertexFormat = p_VertexFormat;
 
 	K15_GLBuffer* glBuffer = (K15_GLBuffer*)K15_InternalGetGLObjectData(glContext, usedCacheEntry->bufferHandle, K15_GL_TYPE_BUFFER);
 	K15_InternalGLAddPendingBufferUpdate(glContext, glBuffer->glBufferHandle, vertexData->offsetInBytes, vertexData->sizeInBytes, p_VertexData);

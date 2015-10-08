@@ -3,6 +3,7 @@
 
 #include "K15_Prerequisites.h"
 #include "K15_RenderPrerequisites.h"
+#include "K15_RuntimePrerequisites.h"
 
 struct K15_GUIContext;
 struct K15_GUIElement;

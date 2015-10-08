@@ -26,7 +26,7 @@ struct K15_FileWatchEntryStretchBuffer
 	unsigned int flags;
 };
 
-void K15_CreateFileWatchEntryStretchBufferWithCustomAllocator(K15_FileWatchEntryStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity);
+void K15_CreateFileWatchEntryStretchBufferWithCustomAllocator(K15_FileWatchEntryStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity = 8);
 void K15_CreateFileWatchEntryStretchBuffer(K15_FileWatchEntryStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity = 8);
 void K15_DeleteFileWatchEntryStretchBuffer(K15_FileWatchEntryStretchBuffer* p_StretchBuffer);
 void K15_ResizeFileWatchEntryStretchBuffer(K15_FileWatchEntryStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);

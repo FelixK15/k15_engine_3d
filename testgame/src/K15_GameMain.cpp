@@ -62,7 +62,7 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 	K15_InitializeMemoryBufferWithCustomAllocator(guiMemoryBuffer, K15_CreateMemoryBufferAllocator(memory), resourceBufferSize, 0);
 
 	//Create the resource context pointing to the 'data' directory of the working directory.
-	K15_ResourceContext* resourceContext = K15_CreateResourceContextWithCustomAllocator("data/", K15_CreateMemoryBufferAllocator(resourceMemoryBuffer), 0);
+	K15_ResourceContext* resourceContext = K15_CreateResourceContextWithCustomAllocator(p_GameContext->renderContext, "data/", K15_CreateMemoryBufferAllocator(resourceMemoryBuffer));
 
 	//set the resource context so we can use it later.
 	sample1GameContext->resourceContext = resourceContext;
@@ -125,10 +125,17 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->gameMemory->buffer;
 	K15_RenderCommandQueue* gameRenderCommandQueue = gameContext->gameRenderQueue;
 
-	K15_RenderCommandDraw2DTexture(gameRenderCommandQueue, &gameContext->guiContext->guiTemplateTexture, 
-		&gameContext->guiContext->guiTemplateTextureMaterial, K15_CreateRectangle(1.f, 1.f, -1.f, -1.f),
-		K15_CreateRectangle(0.f, 0.f, 1.f, 1.f));
+	K15_ResourceHandle guiTextureResource = gameContext->guiContext->guiRenderTexture;
+	K15_ResourceHandle guiMaterialResource = gameContext->guiContext->guiRenderMaterial;
 
+	K15_RenderResourceHandle* guiTextureHandle = K15_GetResourceRenderHandle(gameContext->resourceContext, guiTextureResource);
+	K15_RenderMaterialDesc* guiMaterialDesc = K15_GetResourceRenderMaterialDesc(gameContext->resourceContext, guiMaterialResource);
+
+	K15_RenderCommandDraw2DTexture(gameRenderCommandQueue, guiTextureHandle, 
+		guiMaterialDesc, K15_CreateRectangle(1.f, 1.f, -1.f, -1.f),
+		K15_CreateRectangle(1.f, 1.f, 0.f, 0.f));
+
+	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameContext->resourceContext->commandQueue);
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameRenderCommandQueue);
 }
 /*********************************************************************************/

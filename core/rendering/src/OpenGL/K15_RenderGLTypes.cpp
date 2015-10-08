@@ -81,6 +81,7 @@ PFNGLTEXIMAGE1DPROC						kglTexImage1D						= 0;
 PFNGLTEXIMAGE2DPROC						kglTexImage2D						= 0;
 PFNGLTEXIMAGE3DPROC						kglTexImage3D						= 0;
 PFNGLGENERATEMIPMAPPROC					kglGenerateMipmap					= 0;
+PFNGLACTIVETEXTUREPROC					kglActiveTexture					= 0;
 
 //GL_ARB_debug_output
 PFNGLDEBUGMESSAGECALLBACKPROC		kglDebugMessageCallback			= 0;
@@ -185,3 +186,61 @@ PFNGLGETPROGRAMPIPELINEINFOLOGPROC	kglGetProgramPipelineInfoLog	= 0;
 //custom gl functions
 PFNKGLSWAPBUFFERSPROC				kglSwapBuffers					= 0;
 PFNKGLGETPROCADDRESSPROC			kglGetProcAddress				= 0;
+
+#ifdef K15_OPENGL_ENABLE_ERROR_CHECK_CALLS
+const char* K15_GLConvertErrorCode(GLenum p_ErrorCode)
+{
+	const char* errorMessage = 0;
+	switch(p_ErrorCode)
+	{
+		case GL_INVALID_ENUM:
+		{
+			errorMessage = "GL_INVALID_ENUM";
+			break;
+		}
+
+		case GL_INVALID_VALUE:
+		{
+			errorMessage = "GL_INVALID_VALUE";
+			break;
+		}
+
+		case GL_INVALID_OPERATION:
+		{
+			errorMessage = "GL_INVALID_OPERATION";
+			break;
+		}
+
+		case GL_STACK_OVERFLOW:
+		{
+			errorMessage = "GL_STACK_OVERFLOW";
+			break;
+		}
+
+		case GL_STACK_UNDERFLOW:
+		{
+			errorMessage = "GL_STACK_UNDERFLOW";
+			break;
+		}
+
+		case GL_OUT_OF_MEMORY:
+		{
+			errorMessage = "GL_OUT_OF_MEMORY";
+			break;
+		}
+
+		case GL_INVALID_FRAMEBUFFER_OPERATION:
+		{
+			errorMessage = "GL_INVALID_FRAMEBUFFER_OPERATION";
+			break;
+		}
+
+		case GL_CONTEXT_LOST:
+		{
+			errorMessage = "GL_CONTEXT_LOST";
+			break;
+		}
+	}
+	return errorMessage;
+}
+#endif //K15_OPENGL_ENABLE_ERROR_CHECK_CALLS

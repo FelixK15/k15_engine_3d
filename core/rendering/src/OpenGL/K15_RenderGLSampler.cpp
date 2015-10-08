@@ -1,9 +1,11 @@
 /*********************************************************************************/
-intern uint8 K15_GLCreateSampler(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderSamplerDesc* p_RenderSamplerDesc, K15_RenderResourceHandle* p_RenderSamplerHandle)
+intern uint8 K15_GLCreateSamplerFromSamplerDesc(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderSamplerDesc* p_RenderSamplerDesc, K15_RenderResourceHandle* p_RenderSamplerHandle)
 {
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderBackEnd->specificRenderPlatform;
 
-	K15_GLSampler glSampler;
+	uint32 hash = p_RenderSamplerDesc->nameHash;
+
+	K15_GLSampler glSampler = {};
 	GLuint glSamplerHandle;
 
 	GLenum minifactionFilter = K15_GLConvertRenderMinificationFilterMode(p_RenderSamplerDesc->filtering.minification);
@@ -25,9 +27,11 @@ intern uint8 K15_GLCreateSampler(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderS
 	K15_OPENGL_CALL(kglSamplerParameteri(glSamplerHandle, GL_TEXTURE_WRAP_T, VAdressing));
 	K15_OPENGL_CALL(kglSamplerParameteri(glSamplerHandle, GL_TEXTURE_WRAP_R, WAdressing));
 
-	glSampler.glSampler = glSamplerHandle;
 
-	glContext->glObjects.samplers[*p_RenderSamplerHandle] = glSampler;
+	glSampler.glSamplerHandle = glSamplerHandle;
+	glSampler.boundSlot = K15_GL_INVALID_TEXTURE_SLOT;
+
+	*p_RenderSamplerHandle = K15_InternalAddGLObject(glContext, &glSampler, sizeof(K15_GLSampler), hash, K15_GL_TYPE_SAMPLER);
 
 	return K15_SUCCESS;
 }
@@ -36,9 +40,10 @@ intern uint8 K15_GLDeleteSampler(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderR
 {
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderBackEnd->specificRenderPlatform;
 
-	K15_GLSampler* glSampler = &glContext->glObjects.samplers[*p_RenderSamplerHandle];
+	K15_GLSampler* glSampler = (K15_GLSampler*)K15_InternalGetGLObjectData(glContext, *p_RenderSamplerHandle, K15_GL_TYPE_SAMPLER);
+	K15_OPENGL_CALL(kglDeleteSamplers(1, &glSampler->glSamplerHandle));
 
-	K15_OPENGL_CALL(kglDeleteSamplers(1, &glSampler->glSampler));
+	K15_InternalRemoveGLObject(glContext, p_RenderSamplerHandle, K15_GL_TYPE_SAMPLER);
 
 	return K15_SUCCESS;
 }

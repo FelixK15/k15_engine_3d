@@ -325,7 +325,7 @@ char* K15_ConvertToUpperIntoBuffer(const char* p_String, char* p_Buffer)
 char* K15_ConcatStringArray(const char** p_StringArray, unsigned int p_ArrayLength)
 {
 	//get combined string length
-	unsigned int stringLength = 0;
+	unsigned int stringLength = p_ArrayLength - 1; //new lines
 
 	for (unsigned int i = 0;
 		i < p_ArrayLength;
@@ -346,6 +346,11 @@ char* K15_ConcatStringArrayIntoBuffer(const char** p_StringArray, char* p_Buffer
 		++i)
 	{
 		offset += sprintf(p_Buffer + offset, "%s", p_StringArray[i]);
+		
+		if ((i + 1) < p_ArrayLength)
+		{
+			offset += sprintf(p_Buffer + offset, "\n");
+		}
 	}
 
 	p_Buffer[offset] = 0;

@@ -20,8 +20,8 @@
 #endif //K15_OS_WINDOWS
 
 #ifdef K15_DESKTOP_GL
-	#define K15_MIN_GL_VERSION_MAJOR 4
-	#define K15_MIN_GL_VERSION_MINOR 5
+	#define K15_MIN_GL_VERSION_MAJOR 3
+	#define K15_MIN_GL_VERSION_MINOR 3
 #elif defined K15_EMBEDDED_GL
 	#define K15_MIN_GL_VERSION_MAJOR 2
 	#define K15_MIN_GL_VERSION_MINOR 0
@@ -73,6 +73,7 @@ struct K15_RenderContext;
 struct K15_RenderTextureUpdateDesc;
 struct K15_RenderVertexFormatDesc;
 struct K15_RenderVertexData;
+struct K15_RenderMaterialPassDesc;
 
 struct K15_ShaderProcessorContext;
 
@@ -80,5 +81,8 @@ struct K15_Thread;
 
 
 struct K15_TextureFormat;
+struct K15_MaterialFormat;
+struct K15_SamplerFormat;
+struct K15_FontFormat;
 
 #endif //K15_Render_Prerequisties_h_

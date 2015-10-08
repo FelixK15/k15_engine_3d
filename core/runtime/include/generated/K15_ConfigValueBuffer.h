@@ -26,7 +26,7 @@ struct K15_ConfigValueStretchBuffer
 	unsigned int flags;
 };
 
-void K15_CreateConfigValueStretchBufferWithCustomAllocator(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity);
+void K15_CreateConfigValueStretchBufferWithCustomAllocator(K15_ConfigValueStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity = 8);
 void K15_CreateConfigValueStretchBuffer(K15_ConfigValueStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity = 8);
 void K15_DeleteConfigValueStretchBuffer(K15_ConfigValueStretchBuffer* p_StretchBuffer);
 void K15_ResizeConfigValueStretchBuffer(K15_ConfigValueStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);

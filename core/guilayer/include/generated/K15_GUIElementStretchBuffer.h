@@ -26,7 +26,7 @@ struct K15_GUIElementStretchBuffer
 	unsigned int flags;
 };
 
-void K15_CreateGUIElementStretchBufferWithCustomAllocator(K15_GUIElementStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity);
+void K15_CreateGUIElementStretchBufferWithCustomAllocator(K15_GUIElementStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity = 8);
 void K15_CreateGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity = 8);
 void K15_DeleteGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuffer);
 void K15_ResizeGUIElementStretchBuffer(K15_GUIElementStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);

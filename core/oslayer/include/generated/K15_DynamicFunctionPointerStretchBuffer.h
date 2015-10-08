@@ -26,7 +26,7 @@ struct K15_DynamicFunctionPointerStretchBuffer
 	unsigned int flags;
 };
 
-void K15_CreateDynamicFunctionPointerStretchBufferWithCustomAllocator(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity);
+void K15_CreateDynamicFunctionPointerStretchBufferWithCustomAllocator(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity = 8);
 void K15_CreateDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity = 8);
 void K15_DeleteDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer);
 void K15_ResizeDynamicFunctionPointerStretchBuffer(K15_DynamicFunctionPointerStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);

@@ -1,5 +1,5 @@
 ResourceType=Sampler
-Destination=linear_clamper_sampler.k15sampler
+Destination=linear_clamp_sampler.k15sampler
 MignificationFilter=Linear
 MagnificationFilter=Linear
 AddressModeU=Clamp

@@ -113,6 +113,12 @@ intern inline GLenum K15_GLConvertCullingMode(K15_CullingMode p_CullingMode)
 			nativeCullingMode = GL_BACK;
 			break;
 		}
+
+		case K15_CULLING_MODE_NONE:
+		{
+			nativeCullingMode = GL_FRONT_AND_BACK;
+			break;
+		}
 	}
 
 	return nativeCullingMode;
@@ -346,6 +352,7 @@ intern inline GLenum K15_GLConvertUniformTypeToGLType(uint32 p_TypeID)
 	switch(p_TypeID)
 	{
 		case K15_TYPE_INT_ID:
+		case K15_TYPE_SAMPLER_2D_ID:
 // 		case K15_UNIFORM_TYPE_INT16:
 // 		case K15_UNIFORM_TYPE_INT32:
  		{
@@ -450,6 +457,32 @@ intern inline GLenum K15_GLConvertTextureType(K15_RenderTextureType p_TextureTyp
 	}
 
 	return nativeTextureFormat;
+}
+/*********************************************************************************/
+intern inline GLenum K15_GLConvertToSingleType(GLenum p_GLType)
+{
+	GLenum nativeSingleType = p_GLType;
+
+	switch (p_GLType)
+	{
+		case GL_FLOAT_VEC2:
+		case GL_FLOAT_VEC3:
+		case GL_FLOAT_VEC4:
+		{
+			nativeSingleType = GL_FLOAT;
+			break;
+		}
+
+		case GL_INT_VEC2:
+		case GL_INT_VEC3:
+		case GL_INT_VEC4:
+		{
+			nativeSingleType = GL_INT;
+			break;
+		}
+	}
+
+	return nativeSingleType;
 }
 /*********************************************************************************/
 intern inline GLenum K15_GLConvertRenderFormatType(K15_RenderFormat p_RenderFormat)

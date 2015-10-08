@@ -20,11 +20,22 @@ intern void K15_InternalAddProcessResultError(K15_ShaderProcessResult* p_Process
 	uint32 oldErrorCount = p_ProcessResult->numErrors;
 	uint32 newErrorCount = oldErrorCount + 1;
 
+	char** errorBuffer = (char**)malloc(newErrorCount * K15_PTR_SIZE);
+
+	if (p_ProcessResult->errors)
+	{
+		memcpy(errorBuffer, p_ProcessResult->errors, oldErrorCount * K15_PTR_SIZE);
+		free(p_ProcessResult->errors);
+	}
+
+	p_ProcessResult->errors = errorBuffer;
+	
 	va_list list;
 	va_start(list, p_Error);
 
-	char* errorBuffer = p_ProcessResult->errors[oldErrorCount];
-	vsprintf(errorBuffer, p_Error, list);
+	char* errorTextBuffer = (char*)malloc(512);
+	vsprintf(errorTextBuffer, p_Error, list);
+	p_ProcessResult->errors[oldErrorCount] = errorTextBuffer;
 
 	va_end(list);
 	
@@ -205,6 +216,7 @@ void K15_ProcessShaderCode(K15_ShaderProcessorContext* p_ShaderProcessorContext,
 	bool8 eatChar = K15_FALSE;
 	bool8 processedMainArguments = K15_FALSE;
 	bool8 seekNextAlpha = K15_TRUE;
+	bool8 sampleTexParameter = K15_FALSE;
 
 	uint32 outputCharIndex = 0;
 	uint32 argumentIndex = 0;
@@ -268,7 +280,7 @@ void K15_ProcessShaderCode(K15_ShaderProcessorContext* p_ShaderProcessorContext,
 						{
 							K15_InternalAddProcessResultError(processResult, "Could not resolve typename '%s' (missing in the shader context type table).", token);
 							shaderIsValid = K15_FALSE;
-							goto set_process_result;
+							//goto set_process_result;
 						}
 						else
 						{
@@ -300,7 +312,7 @@ void K15_ProcessShaderCode(K15_ShaderProcessorContext* p_ShaderProcessorContext,
 					{
 						K15_InternalAddProcessResultError(processResult, "Could not resolve semantic '%s' (missing in the shader context semantic table).", token);
 						shaderIsValid = K15_FALSE;
-						goto set_process_result;
+						//goto set_process_result;
 					}
 					else
 					{
@@ -340,6 +352,54 @@ void K15_ProcessShaderCode(K15_ShaderProcessorContext* p_ShaderProcessorContext,
 				shaderIsValid = K15_FALSE;
 			}
 		}
+		else if (processedMainArguments)
+		{
+			if (isspace(shaderChar))
+			{
+				tokenIndex = 0;
+			}
+			else if (shaderChar == '(')
+			{
+				token[tokenIndex] = 0;
+				
+				//check for sampleTex2D function call (to resolve sampler<->texture dependencies)
+				if (!sampleTexParameter &&
+					strcmp(token, "sampleTex2D") == 0)
+				{
+					sampleTexParameter = K15_TRUE;
+				}
+
+				tokenIndex = 0;
+			}
+			else
+			{
+				if (sampleTexParameter)
+				{
+					if (shaderChar == ',')
+					{
+						uint32 textureSamplerIndex = p_ShaderInformation->numTextureSamplerDependencies;
+
+						token[tokenIndex] = 0;
+						if (strlen(p_ShaderInformation->textureSamplerDependencies[textureSamplerIndex].sampler) == 0)
+						{
+							K15_CopyStringIntoBuffer(token, p_ShaderInformation->textureSamplerDependencies[textureSamplerIndex].sampler);
+							p_ShaderInformation->textureSamplerDependencies[textureSamplerIndex].samplerNameHash = K15_GenerateStringHash(token);
+							p_ShaderInformation->textureSamplerDependencies[textureSamplerIndex].samplerShaderArgument = K15_GetShaderArgumentByName(p_ShaderInformation, token);
+						}
+						else
+						{
+							K15_CopyStringIntoBuffer(token, p_ShaderInformation->textureSamplerDependencies[textureSamplerIndex].texture);
+							p_ShaderInformation->textureSamplerDependencies[textureSamplerIndex].textureNameHash = K15_GenerateStringHash(token);
+							p_ShaderInformation->textureSamplerDependencies[textureSamplerIndex].textureShaderArgument = K15_GetShaderArgumentByName(p_ShaderInformation, token);
+							++p_ShaderInformation->numTextureSamplerDependencies;
+							sampleTexParameter = K15_FALSE;
+						}
+					}
+				}
+
+				token[tokenIndex++] = shaderChar;
+			}
+		}		
 
 		if (!eatChar)
 		{

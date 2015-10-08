@@ -22,6 +22,7 @@ struct K15_RenderState
 struct K15_RenderVertexData
 {
 	K15_RenderResourceHandle vertexBufferHandle;
+	K15_RenderVertexFormatDesc* vertexFormat;
 	uint32 sizeInBytes;
 	uint32 offsetInBytes;
 	uint32 startVertexIndex;
@@ -43,6 +44,7 @@ struct K15_RenderFeatures
 	float maxAnisotropy;
 	uint32 maxRenderTargets;
 	uint32 maxSamples;
+	uint32 maxTextureUnits;
 	uint32 maxTextureDimension;
 };
 
@@ -57,7 +59,10 @@ struct K15_RenderInterface
 
 	K15_CreateVertexFormatFromVertexFormatDescCommandFnc createVertexFormatFromVertexFormatDesc;
 	K15_CreateTextureFromTextureDescCommandFnc createTextureFromTextureDesc;
+	K15_CreateSamplerFromSamplerDescCommandFnc createSamplerFromSamplerDesc;
 	K15_CreateProgramCommandFnc createProgram;
+
+	K15_CreateMaterialFromMaterialFormatCommandFnc createMaterialFromMaterialFormat;
 
 	K15_UpdateVertexDataCommandFnc updateVertexData;
 	K15_FreeVertexDataCommandFnc freeVertexData;
@@ -73,11 +78,10 @@ struct K15_RenderBackEnd
 	K15_RenderUniformCache uniformCache;
 
  	K15_RenderResources resources;
-	K15_RenderInterface interface;
+	K15_RenderInterface renderInterface;
 	K15_RenderFeatures features;
 	K15_RenderState state;
 	K15_RenderState defaultState;
-
 
 	bool8 interfaceInitialized;
 

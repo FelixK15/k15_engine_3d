@@ -61,7 +61,11 @@ void* K15_AllocateFromMemoryAllocator(K15_CustomMemoryAllocator* p_MemoryAllocat
 void K15_FreeFromMemoryAllocator(K15_CustomMemoryAllocator* p_MemoryAllocator, void* p_Pointer)
 {
 	K15_ASSERT_TEXT_SIMPLE(p_MemoryAllocator, "Custom Memory Allocator is NULL.");
-	K15_ASSERT_TEXT_SIMPLE(p_Pointer, "Memory pointer is NULL.");
+
+	if (!p_Pointer)
+	{
+		return;
+	}
 
 	K15_FreeFnc memoryFree = p_MemoryAllocator->free;
 	void* userData = p_MemoryAllocator->userData;

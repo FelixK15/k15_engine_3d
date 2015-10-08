@@ -28,13 +28,16 @@ struct K15_RenderProgramUniform
 
 struct K15_RenderUniformUpdateDesc
 {
-	const char* name;
-	byte* data;
+	uint32 nameHash;
 	uint32 typeID;
-	uint32 size;
+	uint32 sizeInBytes;
 	uint32 flags;
 
-	//auto free data?
+	union 
+	{
+		byte* rawData;
+		uint32 textureSlot;
+	} data;
 };
 
 struct K15_RenderProgramDesc
@@ -44,6 +47,7 @@ struct K15_RenderProgramDesc
 	K15_RenderProgramType type;
 	K15_RenderProgramSource source;
 
+	uint32 nameHash;
 	uint32 numUniforms;
 	K15_RenderProgramUniform uniforms[K15_RENDER_MAX_UNIFORMS];
 };

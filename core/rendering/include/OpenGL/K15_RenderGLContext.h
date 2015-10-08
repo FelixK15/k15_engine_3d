@@ -115,16 +115,29 @@ struct K15_GLPendingBufferUpdateManager
 	uint32 numPendingUpdates;
 };
 
+struct K15_GLTextureSlot
+{
+	K15_GLTexture* glTexture;
+	K15_GLSampler* glSampler;
+};
+
+struct K15_GLTextureManager
+{
+	K15_GLTextureSlot* textureSlots;
+	uint32 numTextureSlots;
+	uint32 maxTextureSlots;
+};
+
 struct K15_GLRenderContext
 {
 	K15_GLExtensions extensions;
 	K15_GLObjectHeader glObjects[K15_RENDER_GL_MAX_OBJECTS];
 	K15_GLVertexCache vertexCache;
 	K15_GLPendingBufferUpdateManager pendingBufferUpdateManager;
-
+	K15_GLTextureManager textureManager;
 	K15_CustomMemoryAllocator* memoryAllocator;
 
-	uint32 lastFreeGLObjectIndex;
+	//uint32 lastFreeGLObjectIndex;
 
 	const char* vendorString;
 	const char* rendererString;
@@ -137,9 +150,10 @@ struct K15_GLRenderContext
 
 	struct 
 	{
-		K15_GLVertexFormat* boundVertexFormat;
+		//K15_GLVertexFormat* boundVertexFormat;
+		uint32 boundVertexFormatHash;
+		K15_RenderMaterialPassDesc* boundMaterialPass;
 		K15_GLBuffer* boundBuffers[K15_RENDER_BUFFER_TYPE_COUNT];
-		K15_GLTexture* boundTextures[K15_RENDER_TEXTURE_TYPE_COUNT];
 		K15_GLProgram* boundPrograms[K15_RENDER_PROGRAM_TYPE_COUNT];
 	} glBoundObjects;
 		

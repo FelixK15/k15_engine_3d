@@ -26,7 +26,7 @@ struct K15_ThreadStretchBuffer
 	unsigned int flags;
 };
 
-void K15_CreateThreadStretchBufferWithCustomAllocator(K15_ThreadStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity);
+void K15_CreateThreadStretchBufferWithCustomAllocator(K15_ThreadStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity = 8);
 void K15_CreateThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity = 8);
 void K15_DeleteThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer);
 void K15_ResizeThreadStretchBuffer(K15_ThreadStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);

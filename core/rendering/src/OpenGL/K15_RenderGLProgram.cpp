@@ -28,8 +28,17 @@ typedef uint8(*K15_InternalGLUpdateUniformFnc)(K15_GLProgram* p_GLProgram, uint3
 /*********************************************************************************/
 intern void K15_InternalGLUpdateUniform(uint32 p_TargetSize, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc, void* p_UniformData)
 {
-	byte* uniformData = p_RenderUniformUpdateDesc->data;
-	uint32 uniformDataSize = p_RenderUniformUpdateDesc->size;
+	byte* uniformData = 0;
+	
+	if (p_RenderUniformUpdateDesc->typeID == K15_TYPE_SAMPLER_2D_ID)
+	{
+		uniformData = (byte*)&p_RenderUniformUpdateDesc->data.textureSlot;
+	}
+	else
+	{
+		uniformData = p_RenderUniformUpdateDesc->data.rawData;
+	}
+	uint32 uniformDataSize = p_RenderUniformUpdateDesc->sizeInBytes;
 
 	assert(uniformDataSize <= p_TargetSize);
 
@@ -162,6 +171,26 @@ intern uint8 K15_InternalGLUpdateFloat4x4Uniform(K15_GLProgram* p_GLProgram, uin
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
+intern K15_GLUniform* K15_InternalGLGetProgramUniformByNameHash(K15_GLProgram* p_GLProgram, uint32 p_UniformNameHash)
+{
+	K15_GLUniform* uniform = 0;
+
+	for (uint32 uniformIndex = 0;
+		uniformIndex < p_GLProgram->uniformCount;
+		++uniformIndex)
+	{
+		K15_GLUniform* currentUniform = &p_GLProgram->uniforms[uniformIndex];
+
+		if (currentUniform->nameHash == p_UniformNameHash)
+		{
+			uniform = currentUniform;
+			break;
+		}
+	}
+
+	return uniform;
+}
+/*********************************************************************************/
 intern void K15_InternalGLGetIncludeFileName(const char* p_IncludeLine, char* p_IncludeFileBuffer)
 {
 	const char* start = strchr(p_IncludeLine, '\"') + 1;
@@ -176,6 +205,36 @@ intern void K15_InternalGLGetIncludeFileName(const char* p_IncludeLine, char* p_
 	memcpy(p_IncludeFileBuffer, p_IncludeLine + startIndex, includeFileNameSize);
 
 	p_IncludeFileBuffer[includeFileNameSize] = 0;
+}
+/*********************************************************************************/
+intern uint32 K15_InternalTypeSizeDivisor(uint32 p_TypeID)
+{
+	uint32 divisor = 1;
+
+	switch(p_TypeID)
+	{
+		case K15_TYPE_FLOAT_ID:
+		case K15_TYPE_FLOAT_VECTOR2_ID:
+		case K15_TYPE_FLOAT_VECTOR3_ID:
+		case K15_TYPE_FLOAT_VECTOR4_ID:
+		{
+			divisor = sizeof(float);
+			break;
+		}
+
+		case K15_TYPE_INT_ID:
+		{
+			divisor = sizeof(int);
+			break;
+		}
+
+		default:
+		{
+			assert(false);
+		}
+	}
+
+	return divisor;
 }
 /*********************************************************************************/
 intern char* K15_InternalGLPreprocessProgramCode(K15_CustomMemoryAllocator* p_MemoryAllocator, const char* p_FilePath, const char* p_ProgramCode)
@@ -292,6 +351,7 @@ intern void K15_InternGLReflectProgram(K15_RenderContext* p_RenderContext, K15_G
 
 		//copy name for later use
 		GLchar* name = (GLchar*)K15_CopyString(nameBuffer);
+		uint32 nameHash = K15_GenerateStringHash(nameBuffer);
 
 		//get register location using uniform name
 		K15_OPENGL_CALL(uniformRegister = kglGetUniformLocation(glProgram, nameBuffer));
@@ -311,11 +371,12 @@ intern void K15_InternGLReflectProgram(K15_RenderContext* p_RenderContext, K15_G
 		p_Program->uniforms[activeUniformIndex].internalGLType = currentValueType;
 		p_Program->uniforms[activeUniformIndex].typeID = typeID;
 		p_Program->uniforms[activeUniformIndex].name = name;
+		p_Program->uniforms[activeUniformIndex].nameHash = nameHash;
 
-		p_RenderProgramDesc->uniforms[activeUniformIndex].typeID = typeID;
+		/*p_RenderProgramDesc->uniforms[activeUniformIndex].typeID = typeID;
 		p_RenderProgramDesc->uniforms[activeUniformIndex].name = name;
 		p_RenderProgramDesc->uniforms[activeUniformIndex].semanticID = semanticID;
-		p_RenderProgramDesc->uniforms[activeUniformIndex].semanticGroupID = semanticGroupID;
+		p_RenderProgramDesc->uniforms[activeUniformIndex].semanticGroupID = semanticGroupID;*/
 
 		//memcpy(p_Program->uniforms[activeUniformIndex].name, nameBuffer, nameLength);
 
@@ -351,9 +412,11 @@ intern void K15_InternGLReflectProgram(K15_RenderContext* p_RenderContext, K15_G
 			K15_ASSERT(semanticID != K15_INVALID_ID);
 
 			uint32 attributeSizeInBytes = K15_GetTypeSizeInBytesByTypeID(shaderProcessorContext, typeID);
+			uint32 sizeDivisor = K15_InternalTypeSizeDivisor(typeID);
 
 			p_Program->inputLayout.inputElements[activeAttributeIndex].glRegisterIndex = uniformRegister;
-			p_Program->inputLayout.inputElements[activeAttributeIndex].glType = currentValueType;
+			p_Program->inputLayout.inputElements[activeAttributeIndex].glType = K15_GLConvertToSingleType(currentValueType);
+			p_Program->inputLayout.inputElements[activeAttributeIndex].elementSize = attributeSizeInBytes / sizeDivisor;
 			p_Program->inputLayout.inputElements[activeAttributeIndex].sizeInBytes = attributeSizeInBytes;
 			p_Program->inputLayout.inputElements[activeAttributeIndex].offset = (GLvoid*)offset;
 			p_Program->inputLayout.inputElements[activeAttributeIndex].typeID = typeID;
@@ -437,13 +500,13 @@ intern K15_InternalGLUpdateUniformFnc K15_InternalGLConvertToUpdateUniformFnc(ui
 	return updateUniformFnc;
 }
 /*********************************************************************************/
-int K15_GLUniformNameCompare(const void* p_UniformName, const void* p_Uniform)
-{
-	K15_GLUniform* glUniform = (K15_GLUniform*)(p_Uniform);
-	const char* uniformName = *(const char**)(p_UniformName);
-
-	return strcmp(glUniform->name, uniformName);
-}
+// int K15_GLUniformNameCompare(const void* p_UniformName, const void* p_Uniform)
+// {
+// 	K15_GLUniform* glUniform = (K15_GLUniform*)(p_Uniform);
+// 	const char* uniformName = *(const char**)(p_UniformName);
+// 
+// 	return strcmp(glUniform->name, uniformName);
+// }
 /*********************************************************************************/
 const char* K15_GLGenerateGLSLHeaderCode(GLenum p_GLProgramType)
 {
@@ -460,7 +523,7 @@ const char* K15_GLGenerateGLSLHeaderCode(GLenum p_GLProgramType)
 			"#define K15_Matrix4 mat4\n"
 			"#define K15_2DSampler sampler2D\n"
 			"#define K15_2DTexture int\n"
-			"#define sampleTex2D(s, t, uv) texture(s, uv)\n"
+			"#define sampleTex2D(s, t, uv) texture(s, vec2(uv.x, 1.0 - uv.y))\n"
 			"out gl_PerVertex{\n"
 			"vec4 gl_Position;\n"
 			"float gl_PointSize;\n"
@@ -478,7 +541,7 @@ const char* K15_GLGenerateGLSLHeaderCode(GLenum p_GLProgramType)
 			"#define K15_Matrix4 mat4\n"
 			"#define K15_2DSampler sampler2D\n"
 			"#define K15_2DTexture int\n"
-			"#define sampleTex2D(s, t, uv) texture(s, uv)\n";
+			"#define sampleTex2D(s, t, uv) texture(s, vec2(uv.x, 1.0 - uv.y))\n";
 	}
 	
 	return glslHeaderCode;
@@ -499,17 +562,16 @@ char* K15_GLGenerateGLSLWrapperCode(K15_CustomMemoryAllocator* p_MemoryAllocator
 	{
 		K15_ShaderArgument* arg = &p_ShaderInformation->arguments[argIndex];
 
-		if (arg->typeID == K15_TYPE_TEXTURE_2D_ID)
-		{
-			//skip textures for glsl
-			argumentListIndex += sprintf(argumentList + argumentListIndex, "0");
-		}
-		else
+		//if (arg->typeID != K15_TYPE_SAMPLER_2D_ID)
 		{
 			const char* semanticVariableName = K15_GetSemanticVariableName(p_ShaderProcessorContext, arg->semanticID);
 			const char* typeName = K15_GetTypeName(p_ShaderProcessorContext, arg->typeID);
 
-			if (arg->semanticID == K15_SEMANTIC_DATA_ID)
+			if (arg->typeID == K15_TYPE_TEXTURE_2D_ID)
+			{
+				argumentListIndex += sprintf(argumentList + argumentListIndex, "0");
+			}
+			else if (arg->semanticID == K15_SEMANTIC_DATA_ID)
 			{
 				index += sprintf(complianceCode + index, "uniform %s %s;\n", typeName, arg->name);
 				argumentListIndex += sprintf(argumentList + argumentListIndex, "%s", arg->name);
@@ -524,13 +586,12 @@ char* K15_GLGenerateGLSLWrapperCode(K15_CustomMemoryAllocator* p_MemoryAllocator
 				index += sprintf(complianceCode + index, "%s %s %s;\n", arg->qualifier, typeName, arg->name);
 				argumentListIndex += sprintf(argumentList + argumentListIndex, "%s", arg->name);
 			}
-		}
-		
 
-		//not end?
-		if (argIndex + 1 != p_ShaderInformation->numArguments)
-		{
-			argumentListIndex += sprintf(argumentList + argumentListIndex, ", ");
+			//not end?
+			if (argIndex + 1 != p_ShaderInformation->numArguments)
+			{
+				argumentListIndex += sprintf(argumentList + argumentListIndex, ", ");
+			}
 		}
 	}
 
@@ -568,6 +629,8 @@ result8 K15_GLCreateProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderProgra
 	K15_RenderContext* renderContext = p_RenderBackEnd->renderContext;
 	K15_CustomMemoryAllocator* memoryAllocator = &renderContext->memoryAllocator;
 
+	uint32 hash = p_RenderProgramDesc->nameHash;
+
 	GLenum glProgramType = K15_GLConvertProgramType(renderProgramType);
 	const char* programCode = 0;
 	const char* programFilePath = p_RenderProgramDesc->file;
@@ -581,7 +644,7 @@ result8 K15_GLCreateProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderProgra
 	//check where we have to get the shader code from
 	if (p_RenderProgramDesc->source == K15_RENDER_PROGRAM_SOURCE_FILE)
 	{
-		if (K15_FileExists(programFilePath) != K15_SUCCESS)
+		if (!K15_FileExists(programFilePath))
 		{
 			result = K15_OS_ERROR_FILE_NOT_FOUND;
 		}
@@ -622,6 +685,47 @@ result8 K15_GLCreateProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderProgra
 
 	K15_GLProgram program = {};
 	GLuint glProgram = 0;
+
+	//gl hack (manually create new sampler for each texture<->sampler combination
+	//remove old sampler afterwards as they got replaced by the new sampler
+	/*uint32 numArguments = shaderInformation.numArguments;
+	uint32 oldNumArguments = shaderInformation.numArguments;
+	for (uint32 textureSamplerIndex = 0;
+		textureSamplerIndex < shaderInformation.numTextureSamplerDependencies;
+		++textureSamplerIndex)
+	{
+		const char* textureName = shaderInformation.textureSamplerDependencies[textureSamplerIndex].texture;
+		const char* samplerName = shaderInformation.textureSamplerDependencies[textureSamplerIndex].sampler;
+		
+		sprintf(shaderInformation.arguments[numArguments].name, "%s%s", samplerName, textureName);
+		sprintf(shaderInformation.arguments[numArguments].qualifier, "%s", "in");
+		shaderInformation.arguments[numArguments].typeID = K15_TYPE_SAMPLER_2D_ID;
+		shaderInformation.arguments[numArguments].semanticID = K15_SEMANTIC_DATA_ID;
+		shaderInformation.arguments[numArguments].semanticGroupID = K15_SEMANTIC_GROUP_ID_PER_MATERIAL;
+
+		++shaderInformation.numArguments;
+		++numArguments;
+	}
+
+	//remove old sampler
+	for (uint32 argumentIndex = 0;
+		argumentIndex < oldNumArguments;
+		++argumentIndex)
+	{
+		K15_ShaderArgument* shaderArgument = &shaderInformation.arguments[argumentIndex];
+
+		//remove if sampler
+		if (shaderArgument->typeID == K15_TYPE_SAMPLER_2D_ID)
+		{
+			uint32 remainingElements = numArguments - argumentIndex;
+			memmove(shaderInformation.arguments + argumentIndex, shaderInformation.arguments + argumentIndex + 1, sizeof(K15_ShaderArgument) * remainingElements);
+			memset(shaderInformation.arguments + shaderInformation.numArguments, 0, sizeof(K15_ShaderArgument));
+
+			--shaderInformation.numArguments;
+			--oldNumArguments;
+			--argumentIndex;
+		}
+	}*/
 
 	if (result == K15_SUCCESS)
 	{
@@ -718,7 +822,7 @@ result8 K15_GLCreateProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderProgra
 	if (result == K15_SUCCESS)
 	{
 		K15_InternGLReflectProgram(p_RenderBackEnd->renderContext, &program, p_RenderProgramDesc);
-		*p_RenderProgramHandle = K15_InternalAddGLObject(glContext, &glProgram, sizeof(glProgram), K15_GL_TYPE_PROGRAM);
+		*p_RenderProgramHandle = K15_InternalAddGLObject(glContext, &program, sizeof(program), hash, K15_GL_TYPE_PROGRAM);
 	}
 
 	/*if (glProgramType == GL_FRAGMENT_SHADER)
@@ -775,9 +879,9 @@ result8 K15_GLBindProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResource
 	return result;
 }
 /*********************************************************************************/
-uint8 K15_GLUpdateDirtyUniforms(K15_RenderBackEnd* p_RenderBackEnd)
+result8 K15_GLUpdateDirtyUniforms(K15_RenderBackEnd* p_RenderBackEnd)
 {
-	uint8 result = K15_SUCCESS;
+	result8 result = K15_SUCCESS;
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderBackEnd->specificRenderPlatform;
 	K15_ShaderProcessorContext* shaderProcessorContext = p_RenderBackEnd->shaderProcessorContext;
 
@@ -791,7 +895,8 @@ uint8 K15_GLUpdateDirtyUniforms(K15_RenderBackEnd* p_RenderBackEnd)
 		if (uniformCache->dirtyAutoUniforms[dirtyUniformIndex])
 		{
 			K15_RenderUniformCacheEntry* cachedDirtyUniform = uniformCache->dirtyAutoUniforms[dirtyUniformIndex];
-			const char* cachedDirtyUniformName = cachedDirtyUniform->name;
+//			const char* cachedDirtyUniformName = cachedDirtyUniform->name;
+			uint32 chachedDirtyUniformNameHash = cachedDirtyUniform->nameHash;
 
 			for (uint32 gpuProgramIndex = 0;
 				gpuProgramIndex < K15_RENDER_PROGRAM_TYPE_COUNT;
@@ -808,18 +913,18 @@ uint8 K15_GLUpdateDirtyUniforms(K15_RenderBackEnd* p_RenderBackEnd)
 						++programUniformIndex)
 					{
 						K15_GLUniform* glUniform = &boundProgram->uniforms[programUniformIndex];
-						char* glUniformName = glUniform->name;
+						uint32 glUniformNameHash = glUniform->nameHash;
 						uint32 typeID = glUniform->typeID;
 
-						if (strcmp(glUniformName, cachedDirtyUniformName) == 0)
+						if (glUniformNameHash == chachedDirtyUniformNameHash)
 						{
 							K15_InternalGLUpdateUniformFnc updateUniform = K15_InternalGLConvertToUpdateUniformFnc(typeID);
 							K15_RenderUniformUpdateDesc updateUniformDesc = {};
 
 							updateUniformDesc.typeID = typeID;
-							updateUniformDesc.name = glUniformName;
-							updateUniformDesc.size = K15_GetTypeSizeInBytesByTypeID(shaderProcessorContext, typeID);
-							updateUniformDesc.data = cachedDirtyUniform->data;
+							updateUniformDesc.nameHash = glUniformNameHash;
+							updateUniformDesc.sizeInBytes = K15_GetTypeSizeInBytesByTypeID(shaderProcessorContext, typeID);
+							updateUniformDesc.data.rawData = cachedDirtyUniform->data;
 							updateUniformDesc.flags = 0;
 
 							updateUniform(boundProgram, glUniform->registerIndex, &updateUniformDesc);
@@ -836,88 +941,176 @@ uint8 K15_GLUpdateDirtyUniforms(K15_RenderBackEnd* p_RenderBackEnd)
 	return result;
 }
 /*********************************************************************************/
-uint8 K15_GLUpdateUniform(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc, K15_RenderResourceHandle* p_RenderProgramHandle)
+result8 K15_GLUpdateUniform(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderUniformUpdateDesc* p_RenderUniformUpdateDesc, K15_GLProgram* p_GLProgram)
 {
-	uint8 result = K15_ERROR_RENDER_UNIFORM_NOT_FOUND;
+	result8 result = K15_ERROR_RENDER_UNIFORM_NOT_FOUND;
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderBackEnd->specificRenderPlatform;
 
-	K15_GLProgram* glProgram = (K15_GLProgram*)K15_InternalGetGLObjectData(glContext, *p_RenderProgramHandle, K15_GL_TYPE_PROGRAM);
-
 	GLenum uniformType = K15_GLConvertUniformTypeToGLType(p_RenderUniformUpdateDesc->typeID);
-
-	uint32 uniformCount = glProgram->uniformCount;
+	uint32 uniformCount = p_GLProgram->uniformCount;
 
 	for (uint32 uniformIndex = 0;
 		uniformIndex < uniformCount;
 		++uniformIndex)
 	{
-		GLchar* uniformName = glProgram->uniforms[uniformIndex].name;
+		//GLchar* uniformName = glProgram->uniforms[uniformIndex].name;
+		uint32 uniformNameHash = p_GLProgram->uniforms[uniformIndex].nameHash;
 
-		if (strcmp(uniformName, p_RenderUniformUpdateDesc->name) == 0)
+		if (uniformNameHash == p_RenderUniformUpdateDesc->nameHash)
 		{
 			switch (uniformType)
 			{
-				case GL_INT:
+			case GL_INT:
 				{
-					result = K15_InternalGLUpdateIntUniform(glProgram, uniformIndex, p_RenderUniformUpdateDesc);
+					result = K15_InternalGLUpdateIntUniform(p_GLProgram, uniformIndex, p_RenderUniformUpdateDesc);
 					break;
 				}
 
-				case GL_UNSIGNED_INT:
+			case GL_UNSIGNED_INT:
 				{
-					result = K15_InternalGLUpdateUIntUniform(glProgram, uniformIndex, p_RenderUniformUpdateDesc);
+					result = K15_InternalGLUpdateUIntUniform(p_GLProgram, uniformIndex, p_RenderUniformUpdateDesc);
 					break;
 				}
 
-				case GL_FLOAT:
+			case GL_FLOAT:
 				{
-					result = K15_InternalGLUpdateFloatUniform(glProgram, uniformIndex, p_RenderUniformUpdateDesc);
+					result = K15_InternalGLUpdateFloatUniform(p_GLProgram, uniformIndex, p_RenderUniformUpdateDesc);
 					break;
 				}
 
-				case GL_FLOAT_VEC2:
+			case GL_FLOAT_VEC2:
 				{
-					result = K15_InternalGLUpdateFloat2Uniform(glProgram, uniformIndex, p_RenderUniformUpdateDesc);
+					result = K15_InternalGLUpdateFloat2Uniform(p_GLProgram, uniformIndex, p_RenderUniformUpdateDesc);
 					break;
 				}
 
-				case GL_FLOAT_VEC3:
+			case GL_FLOAT_VEC3:
 				{
-					result = K15_InternalGLUpdateFloat3Uniform(glProgram, uniformIndex, p_RenderUniformUpdateDesc);
+					result = K15_InternalGLUpdateFloat3Uniform(p_GLProgram, uniformIndex, p_RenderUniformUpdateDesc);
 					break;
 				}
 
-				case GL_FLOAT_VEC4:
+			case GL_FLOAT_VEC4:
 				{
-					result = K15_InternalGLUpdateFloat4Uniform(glProgram, uniformIndex, p_RenderUniformUpdateDesc);
+					result = K15_InternalGLUpdateFloat4Uniform(p_GLProgram, uniformIndex, p_RenderUniformUpdateDesc);
 					break;
 				}
 
-				case GL_FLOAT_MAT2:
+			case GL_FLOAT_MAT2:
 				{
-					result = K15_InternalGLUpdateFloat2x2Uniform(glProgram, uniformIndex, p_RenderUniformUpdateDesc);
+					result = K15_InternalGLUpdateFloat2x2Uniform(p_GLProgram, uniformIndex, p_RenderUniformUpdateDesc);
 					break;
 				}
 
-				case GL_FLOAT_MAT3:
+			case GL_FLOAT_MAT3:
 				{
-					result = K15_InternalGLUpdateFloat3x3Uniform(glProgram, uniformIndex, p_RenderUniformUpdateDesc);
+					result = K15_InternalGLUpdateFloat3x3Uniform(p_GLProgram, uniformIndex, p_RenderUniformUpdateDesc);
 					break;
 				}
 
-				case GL_FLOAT_MAT4:
+			case GL_FLOAT_MAT4:
 				{
-					result = K15_InternalGLUpdateFloat4x4Uniform(glProgram, uniformIndex, p_RenderUniformUpdateDesc);
+					result = K15_InternalGLUpdateFloat4x4Uniform(p_GLProgram, uniformIndex, p_RenderUniformUpdateDesc);
 					break;
 				}
 
-				default:
+			default:
 				{
 					assert(false);
 				}
 			}
 
 			break;
+		}
+	}
+
+	return result;
+}
+/*********************************************************************************/
+result8 K15_GLUpdateProgramDataUniforms(K15_RenderBackEnd* p_RenderBackEnd, K15_GLProgram* p_GLProgram, K15_RenderMaterialPassDesc* p_MaterialPassDesc)
+{
+	result8 result = K15_SUCCESS;
+	K15_ShaderProcessorContext* shaderProcessorContext = p_RenderBackEnd->shaderProcessorContext;
+	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderBackEnd->specificRenderPlatform;
+
+	for (uint32 argumentIndex = 0;
+		argumentIndex < p_MaterialPassDesc->materialData.numElements;
+		++argumentIndex)
+	{
+		K15_RenderMaterialDataDesc* materialDataDesc = 
+			K15_GetRenderMaterialDataDescStretchBufferElementUnsafe(&p_MaterialPassDesc->materialData, argumentIndex);
+
+		if (materialDataDesc->semanticID == K15_SEMANTIC_DATA_ID)
+		{
+			if (materialDataDesc->typeID != K15_TYPE_TEXTURE_2D_ID)
+			{
+				uint32 dataNameHash = materialDataDesc->nameHash;
+
+				//check if the material data is representative in the shader
+				K15_GLUniform* uniform = K15_InternalGLGetProgramUniformByNameHash(p_GLProgram, dataNameHash);
+				bool8 foundInShader = uniform != 0;
+
+				if (!foundInShader)
+				{
+					continue;
+				}
+
+				K15_RenderUniformUpdateDesc updateDesc = {};
+				updateDesc.typeID = materialDataDesc->typeID;
+				updateDesc.sizeInBytes = K15_GetTypeSizeInBytesByTypeID(shaderProcessorContext, materialDataDesc->typeID);
+				updateDesc.nameHash = dataNameHash;
+
+				if (materialDataDesc->typeID == K15_TYPE_SAMPLER_2D_ID)
+				{
+					K15_RenderResourceHandle* renderResourceHandle = (K15_RenderResourceHandle*)materialDataDesc->data;
+					K15_GLSampler* glSampler = (K15_GLSampler*)K15_InternalGetGLObjectData(glContext, *renderResourceHandle, K15_GL_TYPE_SAMPLER);
+
+					if (glSampler)
+					{
+						//check which textures should be bound for this sampler
+						for (uint32 samTexDependencyIndex = 0;
+							samTexDependencyIndex < p_GLProgram->shaderInformations.numTextureSamplerDependencies;
+							++samTexDependencyIndex)
+						{
+							K15_TextureSamplerDependency* dependency = &p_GLProgram->shaderInformations.textureSamplerDependencies[samTexDependencyIndex];
+
+							if (dependency->samplerNameHash == dataNameHash)
+							{
+								uint32 textureNameHash = dependency->textureNameHash;
+								K15_RenderMaterialDataDesc* textureDataDesc = 
+									K15_GetRenderMaterialDataDescStretchBufferElementConditional(&p_MaterialPassDesc->materialData, 
+									K15_RenderMaterialDescHashCompare, &textureNameHash);
+
+								if (textureDataDesc)
+								{
+									K15_RenderResourceHandle* textureRenderResourceHandle = (K15_RenderResourceHandle*)textureDataDesc->data;
+									K15_GLTexture* glTexture = (K15_GLTexture*)K15_InternalGetGLObjectData(glContext, *textureRenderResourceHandle, K15_GL_TYPE_TEXTURE);
+
+									uint32 uniformRegister = uniform->registerIndex;
+									
+									if (K15_GLBindTexture(p_RenderBackEnd, textureRenderResourceHandle, renderResourceHandle) == K15_SUCCESS)
+									{
+										uint32 textureSlot = glTexture->boundSlot;
+										updateDesc.data.textureSlot = textureSlot;
+									}
+									else
+									{
+										continue;
+									}
+								}
+
+								break;
+							}
+						}
+					}
+				}
+				else
+				{
+					updateDesc.data.rawData = materialDataDesc->data;
+				}
+
+				result = K15_GLUpdateUniform(p_RenderBackEnd, &updateDesc, p_GLProgram);
+			}
 		}
 	}
 

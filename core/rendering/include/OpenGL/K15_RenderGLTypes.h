@@ -48,13 +48,6 @@
 #define K15_INVALID_GL_BUFFER_INDEX 0xffffffff
 #define K15_INVALID_GL_PROGRAM_INDEX 0xffffffff
 
-#ifdef K15_OPENGL_ENABLE_ERROR_CHECK_CALLS
-#define K15_OPENGL_CALL(x) {{x; GLenum errorEnum = kglGetError(); K15_ASSERT_TEXT(errorEnum == GL_NO_ERROR, "OpenGL Error on calling '%s' (Errorcode: %i)", #x, errorEnum);}};
-#else
-	#define K15_OPENGL_CALL(x) x;
-#endif //K15_OPENGL_ENABLE_ERROR_CHECK_CALLS
-
-
 #ifdef K15_OS_WINDOWS
 	#include <gl/GL.h>
 	#include "OpenGL/WGL/wglext.h"
@@ -70,6 +63,13 @@
 #endif //APIENTRY
 	//#define APIENTRY GL_APIENTRYP
 #endif // K15_OS_WINDOWS
+
+#ifdef K15_OPENGL_ENABLE_ERROR_CHECK_CALLS
+	const char* K15_GLConvertErrorCode(GLenum p_ErrorCode);
+	#define K15_OPENGL_CALL(x) {{x; GLenum errorEnum = kglGetError(); K15_ASSERT_TEXT(errorEnum == GL_NO_ERROR, "OpenGL Error on calling '%s' (Error: %s)", #x, K15_GLConvertErrorCode(errorEnum));}};
+#else
+	#define K15_OPENGL_CALL(x) x;
+#endif //K15_OPENGL_ENABLE_ERROR_CHECK_CALLS
 
 typedef char GLchar;
 struct K15_GLRenderContext;
@@ -105,6 +105,7 @@ struct K15_GLRenderTarget
 struct K15_GLUniform
 {
 	uint32 typeID;
+	uint32 nameHash;
 	GLenum internalGLType;
 	GLint sizeInBytes;
 	GLint registerIndex; 
@@ -115,6 +116,7 @@ struct K15_GLInputLayoutElement
 {
 	uint32 typeID;
 	uint32 semanticID;
+	GLint elementSize;
 	GLint sizeInBytes;
 	GLint glRegisterIndex;
 	GLenum glType;
@@ -126,6 +128,16 @@ struct K15_GLInputLayout
 	K15_GLInputLayoutElement* inputElements;
 	uint32 numInputElements;
 	uint32 stride;
+};
+/*********************************************************************************/
+struct K15_GLMaterialPass
+{
+
+};
+/*********************************************************************************/
+struct K15_GLMaterial
+{
+
 };
 /*********************************************************************************/
 struct K15_GLProgram
@@ -156,6 +168,7 @@ struct K15_GLTexture
 	uint32 width;
 	uint32 height;
 	uint32 depth;
+	uint32 boundSlot;
 
 	GLboolean useAutoMipMaps;
 
@@ -172,6 +185,9 @@ struct K15_GLTexture
 /*********************************************************************************/
 struct K15_GLSampler
 {
+	uint32 nameHash;
+	uint32 boundSlot;
+
 	GLuint glSamplerHandle;
 	GLenum glMignificationFilter;
 	GLenum glMagnificationFilter;
@@ -290,6 +306,7 @@ extern PFNGLTEXIMAGE1DPROC						kglTexImage1D;
 extern PFNGLTEXIMAGE2DPROC						kglTexImage2D;
 extern PFNGLTEXIMAGE3DPROC						kglTexImage3D;
 extern PFNGLGENERATEMIPMAPPROC					kglGenerateMipmap;
+extern PFNGLACTIVETEXTUREPROC					kglActiveTexture;
 
 //GL_ARB_vertex_array_object//
 extern PFNGLGENVERTEXARRAYSPROC	kglGenVertexArrays;

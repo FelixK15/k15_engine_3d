@@ -26,7 +26,7 @@ struct K15_$TYPE_NAME$StretchBuffer
 	unsigned int flags;
 };
 
-void K15_Create$TYPE_NAME$StretchBufferWithCustomAllocator(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity);
+void K15_Create$TYPE_NAME$StretchBufferWithCustomAllocator(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity = 8);
 void K15_Create$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity = 8);
 void K15_Delete$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer);
 void K15_Resize$TYPE_NAME$StretchBuffer(K15_$TYPE_NAME$StretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);

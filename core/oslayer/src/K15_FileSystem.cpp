@@ -167,7 +167,7 @@ char* K15_GetFileExtension(const char* p_FilePath)
 	uint32 fileNameLength= (uint32)strlen(p_FilePath);
 
 	for (uint32 fileNameIndex = 0;
-		fileNameIndex > fileNameLength;
+		fileNameIndex < fileNameLength;
 		++fileNameIndex)
 	{
 		if (fileName[fileNameIndex] == '.')
@@ -183,7 +183,7 @@ char* K15_GetFileExtension(const char* p_FilePath)
 		}
 	}
 
-	return fileName;
+	return extension;
 }
 /*********************************************************************************/
 char* K15_ConvertToDirectoryPath(const char* p_String)

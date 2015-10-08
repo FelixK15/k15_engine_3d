@@ -11,6 +11,7 @@ struct K15_RenderVertexFormatElementDesc
 	int semanticID;
 	uint32 attributeInstance;
 	uint32 numValues; 
+	uint32 offsetInBytes;
 };
 
 struct K15_RenderVertexFormatDesc

@@ -17,6 +17,7 @@ struct K15_RenderGeometryDesc
 {
 	K15_RenderTopology topology;
 	K15_RenderVertexData* vertexData;
+	K15_RenderMaterialDesc* material;
 	K15_Matrix4 worldMatrix;
 };
 

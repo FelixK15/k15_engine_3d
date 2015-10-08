@@ -219,6 +219,8 @@ intern inline uint8 K15_GLCreateTextureFromTextureDesc(K15_RenderBackEnd* p_Rend
 	uint32 width = p_RenderTextureDesc->dimension.width;
 	uint32 depth = p_RenderTextureDesc->dimension.depth;
 
+	uint32 hash = p_RenderTextureDesc->nameHash;
+
 	K15_OPENGL_CALL(kglGenTextures(1, &glTextureHandle));
 	K15_OPENGL_CALL(kglBindTexture(glTextureType, glTextureHandle));
 
@@ -227,6 +229,7 @@ intern inline uint8 K15_GLCreateTextureFromTextureDesc(K15_RenderBackEnd* p_Rend
 	//Create gl texture struct
 	K15_GLTexture glTexture = {};
 
+	glTexture.boundSlot = K15_GL_INVALID_TEXTURE_SLOT;
 	glTexture.width = width;
 	glTexture.height = height;
 	glTexture.depth = depth;
@@ -272,7 +275,7 @@ intern inline uint8 K15_GLCreateTextureFromTextureDesc(K15_RenderBackEnd* p_Rend
 		K15_InternalCreateAutomaticMipmapTexture(&glTexture, textureFormat, glTextureHandle, p_RenderTextureDesc->mipmaps.data[0], dataSize);
 	}
 
-	*p_RenderTextureHandle = K15_InternalAddGLObject(glContext, &glTexture, sizeof(glTexture), K15_GL_TYPE_TEXTURE);
+	*p_RenderTextureHandle = K15_InternalAddGLObject(glContext, &glTexture, sizeof(glTexture), hash, K15_GL_TYPE_TEXTURE);
 
 	return K15_SUCCESS;
 }
@@ -281,7 +284,7 @@ intern inline uint8 K15_GLUpdateTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_
 {
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderBackEnd->specificRenderPlatform;
 
-	K15_GLTexture* glTexture = (K15_GLTexture*)K15_InternalGetGLObjectData(glContext, *p_RenderTextureHandle, K15_GL_TYPE_PROGRAM);
+	K15_GLTexture* glTexture = (K15_GLTexture*)K15_InternalGetGLObjectData(glContext, *p_RenderTextureHandle, K15_GL_TYPE_TEXTURE);
 
 	uint32 width = p_RenderTextureUpdateDesc->dimension.width;
 	uint32 height = p_RenderTextureUpdateDesc->dimension.height;
@@ -313,42 +316,115 @@ intern inline uint8 K15_GLUpdateTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-intern inline uint8 K15_GLBindTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResourceHandle* p_RenderTextureHandle)
+intern inline result8 K15_GLBindTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResourceHandle* p_RenderTextureHandle, K15_RenderResourceHandle* p_RenderSamplerHandle)
 {
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderBackEnd->specificRenderPlatform;
+	K15_GLTextureManager* glTextureManager = &glContext->textureManager;
 
-	K15_GLTexture* glTexture = (K15_GLTexture*)K15_InternalGetGLObjectData(glContext, *p_RenderTextureHandle, K15_GL_TYPE_PROGRAM);
-	GLenum glTextureType = glTexture->glTextureTarget;
-	
-	//don't bind already bound textre
-	if (glContext->glBoundObjects.boundTextures[glTextureType] == glTexture)
+	K15_GLTexture* glTexture = (K15_GLTexture*)K15_InternalGetGLObjectData(glContext, *p_RenderTextureHandle, K15_GL_TYPE_TEXTURE);
+	K15_GLSampler* glSampler = (K15_GLSampler*)K15_InternalGetGLObjectData(glContext, *p_RenderSamplerHandle, K15_GL_TYPE_SAMPLER);
+
+	result8 result = K15_SUCCESS;
+	bool8 slotFound = K15_FALSE;
+
+	if (glTexture &&
+		glSampler)
 	{
-		return K15_SUCCESS;
+		uint32 textureSlot = glTexture->boundSlot;
+		uint32 samplerSlot = glSampler->boundSlot;
+		uint32 activeSlot = K15_GL_INVALID_TEXTURE_SLOT;
+
+		if (textureSlot == K15_GL_INVALID_TEXTURE_SLOT &&
+			samplerSlot != K15_GL_INVALID_TEXTURE_SLOT)
+		{
+			activeSlot = samplerSlot;
+			slotFound = K15_TRUE;
+		}
+		else if(textureSlot != K15_GL_INVALID_TEXTURE_SLOT &&
+			samplerSlot == K15_GL_INVALID_TEXTURE_SLOT)
+		{
+			activeSlot = textureSlot;
+			slotFound = K15_TRUE;
+		}
+		else if (textureSlot == samplerSlot &&
+			textureSlot != K15_GL_INVALID_TEXTURE_SLOT &&
+			samplerSlot != K15_GL_INVALID_TEXTURE_SLOT)
+		{
+			slotFound = K15_FALSE;
+		}
+		else
+		{
+			uint32 numSlots = glTextureManager->numTextureSlots;
+
+			if (numSlots < glTextureManager->maxTextureSlots)
+			{
+				slotFound = K15_TRUE;
+				activeSlot = numSlots;
+				++glTextureManager->numTextureSlots;
+			}
+			else
+			{
+				result = K15_ERROR_TOO_MANY_TEXTURES_ACTIVE;
+			}
+		}
+
+		if (slotFound)
+		{
+			K15_GLTextureSlot* slot = &glTextureManager->textureSlots[activeSlot];
+
+			if (activeSlot != glTexture->boundSlot)
+			{
+				GLenum glTextureType = glTexture->glTextureTarget;
+				GLuint glTextureHandle = glTexture->glTextureHandle;
+
+				K15_OPENGL_CALL(kglActiveTexture(GL_TEXTURE0 + activeSlot));
+				K15_OPENGL_CALL(kglBindTexture(glTextureType, glTextureHandle));
+
+				slot->glTexture = glTexture;
+
+				if (glTexture->boundSlot != K15_GL_INVALID_TEXTURE_SLOT)
+				{
+					K15_GLTextureSlot* oldSlot = &glTextureManager->textureSlots[glTexture->boundSlot];
+					oldSlot->glTexture = 0;
+				}
+			}
+
+			if (activeSlot != glSampler->boundSlot)
+			{
+				GLenum glSamplerHandle = glSampler->glSamplerHandle;
+				K15_OPENGL_CALL(kglBindSampler(activeSlot, glSamplerHandle));
+				slot->glSampler = glSampler;
+
+				if (glSampler->boundSlot != K15_GL_INVALID_TEXTURE_SLOT)
+				{
+					K15_GLTextureSlot* oldSlot = &glTextureManager->textureSlots[glSampler->boundSlot];
+					oldSlot->glSampler = 0;
+				}
+			}
+
+			glSampler->boundSlot = activeSlot;
+			glTexture->boundSlot = activeSlot;
+		}
 	}
 	
-	GLuint glTextureHandle = glTexture->glTextureHandle;
-
-	K15_OPENGL_CALL(kglBindTexture(glTextureType, glTextureHandle));
-
-	//save bound texture
-	glContext->glBoundObjects.boundTextures[glTextureType] = glTexture;
-
-	return K15_SUCCESS;
+	return result;
 }
 /*********************************************************************************/
 intern inline uint8 K15_GLDeleteTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResourceHandle* p_RenderTextureHandle)
 {
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderBackEnd->specificRenderPlatform;
+	K15_GLTextureManager* glTextureManager = &glContext->textureManager;
 
-	K15_GLTexture* glTexture = (K15_GLTexture*)K15_InternalGetGLObjectData(glContext, *p_RenderTextureHandle, K15_GL_TYPE_PROGRAM);
+	K15_GLTexture* glTexture = (K15_GLTexture*)K15_InternalGetGLObjectData(glContext, *p_RenderTextureHandle, K15_GL_TYPE_TEXTURE);
 	GLenum glTextureType = glTexture->glTextureTarget;
 
 	K15_OPENGL_CALL(kglDeleteTextures(1, &glTexture->glTextureHandle));
 
-	//set saved bound texture to 0
-	if (glContext->glBoundObjects.boundTextures[glTextureType] == glTexture)
+	if (glTexture->boundSlot != K15_GL_INVALID_TEXTURE_SLOT)
 	{
-		glContext->glBoundObjects.boundTextures[glTextureType] = 0;
+		K15_GLTextureSlot* textureSlot = &glTextureManager->textureSlots[glTexture->boundSlot];
+		textureSlot->glTexture = 0;
+		//TODO CHECK IF SLOT IS EMPTY
 	}
 
 	K15_InternalRemoveGLObject(glContext, p_RenderTextureHandle, K15_GL_TYPE_PROGRAM);

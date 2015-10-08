@@ -100,6 +100,8 @@ intern inline char* K15_InternalGetCategoryName(char* p_ConfigLine)
 		}
 	}
 
+	name[nameIndex] = 0;
+
 	return name;
 }
 /*********************************************************************************/

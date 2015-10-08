@@ -1009,6 +1009,10 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 	bool8 compiled = K15_FALSE;
 	uint8 result = K15_SUCCESS;
 
+	K15_ConfigValue** valueConfigValues = 0;
+	K15_ConfigValue** textureConfigValues = 0;
+	K15_ConfigValue** samplerConfigValues = 0;
+
 	char* resourceName = K15_GetFileNameWithoutExtension(p_MaterialConfig->path);
 
 	char* samplerName = 0;
@@ -1067,7 +1071,9 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 
 		if (!materialPassTemplateConfigRelativePath)
 		{
-			K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not find config value '%s' in resource config file '%s'.", (char*)malloc(512), materialTemplatePassNameBuffer, p_MaterialConfig->path));
+			K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not find config value '%s' in resource config file '%s'.", 
+				(char*)malloc(512), materialTemplatePassNameBuffer, p_MaterialConfig->path));
+
 			goto free_resources;
 		}
 
@@ -1079,7 +1085,9 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 
 		if (!materialPassDataConfigRelativePath)
 		{
-			K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not find config value '%s' in resource config file '%s'.", (char*)malloc(512), materialDataPassNameBuffer, p_MaterialConfig->path));
+			K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not find config value '%s' in resource config file '%s'.", 
+				(char*)malloc(512), materialDataPassNameBuffer, p_MaterialConfig->path));
+
 			goto free_resources;
 		}
 
@@ -1102,7 +1110,9 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 		{
 			if (K15_LoadConfigFile(materialPassDataConfigPath, &materialPassDataConfig) != K15_SUCCESS)
 			{
-				K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not open material data template file '%s'.", (char*)malloc(512), materialPassDataConfigPath));
+				K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not open material data template file '%s'.", 
+					(char*)malloc(512), materialPassDataConfigPath));
+
 				goto free_resources;
 			}	
 		}
@@ -1116,30 +1126,38 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 
 		if (materialPassVertexShader == 0)
 		{
-			K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("'VertexShader' not set in material pass template file '%s'.", (char*)malloc(512), materialPassTemplateConfigPath));
+			K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("'VertexShader' not set in material pass template file '%s'.", 
+				(char*)malloc(512), materialPassTemplateConfigPath));
+
 			goto free_resources;
 		}
 
 		if (materialPassFragmentShader == 0)
 		{
-			K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("'FragmentShader' not set in material pass template file '%s'.", (char*)malloc(512), materialPassTemplateConfigPath));
+			K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("'FragmentShader' not set in material pass template file '%s'.", 
+				(char*)malloc(512), materialPassTemplateConfigPath));
+
 			goto free_resources;
 		}
 
 		//get absolute paths to the shader files
-		materialPassVertexShaderAbsolute = K15_ConcatStrings(materialPassDataConfigDirectory, materialPassVertexShader);
-		materialPassFragmentShaderAbsolute = K15_ConcatStrings(materialPassDataConfigDirectory, materialPassFragmentShader);
+		materialPassVertexShaderAbsolute = K15_ConvertToAbsolutePath(materialPassVertexShader);//K15_ConcatStrings(materialPassDataConfigDirectory, materialPassVertexShader);
+		materialPassFragmentShaderAbsolute = K15_ConvertToAbsolutePath(materialPassFragmentShader);//K15_ConcatStrings(materialPassDataConfigDirectory, materialPassFragmentShader);
 		
 		//check if the shader files are existent
 		if (!K15_FileExists(materialPassVertexShaderAbsolute))
 		{
-			K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Vertex Shader file '%s' can not be found.", (char*)malloc(512), materialPassVertexShaderAbsolute));
+			K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Vertex Shader file '%s' can not be found.", 
+				(char*)malloc(512), materialPassVertexShaderAbsolute));
+
 			goto free_resources;
 		}
 
 		if (!K15_FileExists(materialPassFragmentShaderAbsolute))
 		{
-			K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Fragment Shader file '%s' can not be found.", (char*)malloc(512), materialPassFragmentShaderAbsolute));
+			K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Fragment Shader file '%s' can not be found.", 
+				(char*)malloc(512), materialPassFragmentShaderAbsolute));
+
 			goto free_resources;
 		}
 
@@ -1152,35 +1170,148 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 		K15_InternalAddResourceDependency(p_ResourceCompilerContext, p_MaterialConfig->path, materialPassFragmentShaderAbsolute);
 
 		//read data values
-		uint32 valueCount = K15_GetNumConfigValues(&materialPassDataConfig);
-		K15_SetMaterialPassDataValueCount(maerialDataFormat, valueCount);
+		uint32 valueCount = K15_GetNumConfigValuesForCategory(&materialPassDataConfig, "Values");
+		uint32 textureCount = K15_GetNumConfigValuesForCategory(&materialPassDataConfig, "Textures");
+		uint32 samplerCount = K15_GetNumConfigValuesForCategory(&materialPassDataConfig, "Sampler");
+		uint32 overallValueIndex = 0;
 
+		K15_SetMaterialPassDataValueCount(maerialDataFormat, valueCount + textureCount + samplerCount);
+
+		if (valueCount > 0)
+		{
+			valueConfigValues = (K15_ConfigValue**)K15_RF_MALLOC(valueCount * K15_PTR_SIZE);
+			K15_CopyCategoryConfigValuesIntoBuffer(&materialPassDataConfig, "Values", valueConfigValues);
+		}
+
+		if (textureCount > 0)
+		{
+			textureConfigValues = (K15_ConfigValue**)K15_RF_MALLOC(textureCount * K15_PTR_SIZE);
+			K15_CopyCategoryConfigValuesIntoBuffer(&materialPassDataConfig, "Textures", textureConfigValues);
+		}
+
+		if (samplerCount > 0)
+		{
+			samplerConfigValues = (K15_ConfigValue**)K15_RF_MALLOC(samplerCount * K15_PTR_SIZE);
+			K15_CopyCategoryConfigValuesIntoBuffer(&materialPassDataConfig, "Sampler", samplerConfigValues);
+		}
+
+		//values
 		for (uint32 valueIndex = 0;
 			valueIndex < valueCount;
 			++valueIndex)
 		{
 			K15_MaterialPassDataValue dataValue = {};
+			K15_ConfigValue* value = valueConfigValues[valueIndex];
 
-			K15_ConfigValue* value = K15_GetConfigValue(&materialPassDataConfig, valueIndex);
-			dataValue.name = K15_CopyString(value->name);
+			bool8 foundType = K15_FALSE;
 
-			if (K15_InternalIsStringValue(value->value))
+			if (K15_InternalIsIntValue(value->value))
 			{
-				dataValue.dataType = K15_MATERIAL_DATA_TYPE_STRING;
-				dataValue.asString = K15_GetConfigValueAsString(&materialPassDataConfig, value->name);
-			}
-			else if (K15_InternalIsIntValue(value->value))
-			{
+				foundType = K15_TRUE;
 				dataValue.dataType = K15_MATERIAL_DATA_TYPE_INT;
 				dataValue.asInt = K15_GetConfigValueAsInt(&materialPassDataConfig, value->name);
 			}
 			else if (K15_InternalIsFloatValue(value->value))
 			{
-				dataValue.dataType = K15_MATERIAL_DATA_TYPE_INT;
+				foundType = K15_TRUE;
+				dataValue.dataType = K15_MATERIAL_DATA_TYPE_FLOAT;
 				dataValue.asFloat = K15_GetConfigValueAsFloat(&materialPassDataConfig, value->name);
 			}
+			else
+			{
+				K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not convert value '%s' to int or float.", 
+					(char*)malloc(512), value->name));
 
-			K15_AddMaterialPassDataValue(maerialDataFormat, &dataValue, valueIndex);
+				goto free_resources;
+			}
+
+			if (foundType)
+			{
+				dataValue.name = K15_CopyString(value->name);
+				K15_AddMaterialPassDataValue(maerialDataFormat, &dataValue, overallValueIndex++);
+			}
+		}
+
+		//textures
+		for (uint32 textureIndex = 0;
+			textureIndex < textureCount;
+			++textureIndex)
+		{
+			K15_MaterialPassDataValue textureValue = {};
+
+			K15_ConfigValue* value = textureConfigValues[textureIndex];
+			textureValue.name = K15_CopyString(value->name);
+
+			if (K15_InternalIsStringValue(value->value))
+			{
+				char* texturePath = value->value;
+				char* absoluteTexturePath = K15_ConvertToAbsolutePath(texturePath);//K15_ConcatStrings(materialPassDataConfigDirectory, texturePath);
+
+				if (!K15_FileExists(absoluteTexturePath))
+				{
+					K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not find texture '%s' for material '%s' (%d. pass - file: '%s').", 
+						(char*)malloc(512), texturePath, resourceName, passIndex, p_MaterialConfig->path));
+
+					goto free_resources;
+				}
+				else
+				{
+					textureValue.dataType = K15_MATERIAL_DATA_TYPE_TEXTURE;
+					textureValue.asString = K15_CopyString(texturePath);
+				}
+
+				free(absoluteTexturePath);
+			}
+			else
+			{
+				K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not convert value '%s' to texture path.", 
+					(char*)malloc(512), value->name));
+
+				goto free_resources;
+			}
+
+			K15_AddMaterialPassDataValue(maerialDataFormat, &textureValue, overallValueIndex++);
+		}
+
+		//samplers
+		for (uint32 samplerIndex = 0;
+			samplerIndex < samplerCount;
+			++samplerIndex)
+		{
+			K15_MaterialPassDataValue samplerValue = {};
+
+			K15_ConfigValue* value = samplerConfigValues[samplerIndex];
+			samplerValue.name = K15_CopyString(value->name);
+
+			if (K15_InternalIsStringValue(value->value))
+			{
+				char* samplerPath = value->value;
+				char* absoluteSamplerPath = K15_ConvertToAbsolutePath(samplerPath);//K15_ConcatStrings(materialPassDataConfigDirectory, samplerPath);
+
+				if (!K15_FileExists(absoluteSamplerPath))
+				{
+					K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not find sampler '%s' for material '%s' (%d. pass - file: '%s').", 
+						(char*)malloc(512), samplerPath, resourceName, passIndex, p_MaterialConfig->path));
+
+					goto free_resources;
+				}
+				else
+				{
+					samplerValue.dataType = K15_MATERIAL_DATA_TYPE_SAMPLER;
+					samplerValue.asString = K15_CopyString(samplerPath);
+				}
+
+				free(absoluteSamplerPath);
+			}
+			else
+			{
+				K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not convert value '%s' to sampler path.", 
+					(char*)malloc(512), value->name));
+
+				goto free_resources;
+			}
+
+			K15_AddMaterialPassDataValue(maerialDataFormat, &samplerValue, overallValueIndex++);
 		}
 
 		K15_AddMaterialPassFormat(&materialFormat, &materialPass, passIndex);
@@ -1205,15 +1336,12 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 		K15_SAFE_FREE(fragmentShaderCode);
 		K15_SAFE_FREE(vertexShaderCode);
 
+		K15_SAFE_FREE(valueConfigValues);
+		K15_SAFE_FREE(textureConfigValues);
+		K15_SAFE_FREE(samplerConfigValues);
 	}
 	
 	compiled = K15_SaveMaterialFormatToFile(&materialFormat, p_OutputPath, K15_SAVE_FLAG_FREE_DATA) == K15_SUCCESS;
-	
-	if (!compiled)
-	{
-		K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not compile material file '%s' (Could not access '%s').", (char*)malloc(512), resourceName, p_OutputPath));
-		goto free_resources;
-	}
 
 free_resources:
 	free(resourceName);

@@ -26,7 +26,7 @@ struct K15_DirectoryWatchEntryStretchBuffer
 	unsigned int flags;
 };
 
-void K15_CreateDirectoryWatchEntryStretchBufferWithCustomAllocator(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity);
+void K15_CreateDirectoryWatchEntryStretchBufferWithCustomAllocator(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity = 8);
 void K15_CreateDirectoryWatchEntryStretchBuffer(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity = 8);
 void K15_DeleteDirectoryWatchEntryStretchBuffer(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer);
 void K15_ResizeDirectoryWatchEntryStretchBuffer(K15_DirectoryWatchEntryStretchBuffer* p_StretchBuffer, unsigned int p_ElementCapacity);

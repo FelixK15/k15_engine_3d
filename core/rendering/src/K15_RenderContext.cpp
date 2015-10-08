@@ -11,6 +11,7 @@
 #include "K15_RenderCommands.cpp"
 
 #include "K15_RenderProgramDesc.cpp"
+#include "K15_RenderMaterialDesc.cpp"
 
 #include "OpenGL/K15_RenderGLContext.cpp"
 
@@ -124,7 +125,6 @@ K15_RenderContext* K15_CreateRenderContextWithCustomAllocator(K15_OSContext* p_O
 	renderContext->numDispatchedRenderCommandQueues = 0;
 
 	K15_InitializeRenderBackEnd(&renderContext->memoryAllocator, renderContext, &renderContext->backEnd);
-
 	result = K15_InternalCreateSpecificRenderContext(&renderContext->memoryAllocator, &renderContext->backEnd, p_OSContext);
 
 	if (result != K15_SUCCESS)
