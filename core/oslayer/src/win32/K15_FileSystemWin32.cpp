@@ -241,7 +241,9 @@ byte* K15_Win32ReadWholeFileIntoBuffer(const char* p_FilePath, byte* p_Buffer)
 	if (fileHandle != INVALID_HANDLE_VALUE &&
 		fileSize != INVALID_FILE_SIZE)
 	{
-		ReadFile(fileHandle, p_Buffer, fileSize, 0, 0);
+    DWORD bytesRead = 0;
+		ReadFile(fileHandle, p_Buffer, fileSize, &bytesRead, 0);
+    fileSize = bytesRead;
 	}
 	
 	if (fileHandle != INVALID_HANDLE_VALUE)
