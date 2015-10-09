@@ -96,27 +96,24 @@ intern inline void K15_Win32WindowActivated(HWND hWnd, UINT uMsg, WPARAM wParam,
 /*********************************************************************************/
 intern inline void K15_Win32WindowResized(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	if (wParam == SIZE_RESTORED)
+	K15_SystemEvent win32Event = {};
+
+	K15_OSContext* osLayerContext = K15_GetOSLayerContext();
+	K15_Window* window = osLayerContext->window.window;
+
+	if (window)
 	{
-		K15_SystemEvent win32Event = {};
+		WORD newWidth = (WORD)(lParam);
+		WORD newHeight = (WORD)(lParam >> 16);
 
-		K15_OSContext* osLayerContext = K15_GetOSLayerContext();
-		K15_Window* window = osLayerContext->window.window;
+		K15_SetWindowDimension(window, newHeight, newWidth);
 
-		if (window)
-		{
-			WORD newWidth = (WORD)(lParam);
-			WORD newHeight = (WORD)(lParam >> 16);
+		win32Event.event = K15_WINDOW_RESIZED;
+		win32Event.eventFlags = K15_WINDOW_EVENT_FLAG;
+		win32Event.params.size.width = newWidth;
+		win32Event.params.size.height = newHeight;
 
-			K15_SetWindowDimension(window, newHeight, newWidth);
-
-			win32Event.event = K15_WINDOW_RESIZED;
-			win32Event.eventFlags = K15_WINDOW_EVENT_FLAG;
-			win32Event.params.size.width = newWidth;
-			win32Event.params.size.height = newHeight;
-
-			K15_AddSystemEventToQueue(&win32Event);
-		}
+		K15_AddSystemEventToQueue(&win32Event);
 	}
 }
 /*********************************************************************************/
