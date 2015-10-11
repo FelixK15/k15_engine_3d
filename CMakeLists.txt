@@ -1,5 +1,5 @@
 #CMAKE Version 2.6 required
-cmake_minimum_required(VERSION 3.2.0)
+cmake_minimum_required(VERSION 3.0.0)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_LIST_DIR})
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
