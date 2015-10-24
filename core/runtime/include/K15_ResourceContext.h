@@ -73,6 +73,7 @@ K15_ResourceLoader* K15_AddResourceLoader(K15_ResourceContext* p_ResourceContext
 K15_ResourceData* K15_GetResourceData(K15_ResourceContext* p_ResourceContext, K15_ResourceHandle p_ResourceHandle);
 K15_RenderResourceHandle* K15_GetResourceRenderHandle(K15_ResourceContext* p_ResourceContext, K15_ResourceHandle p_ResourceHandle);
 K15_RenderMaterialDesc* K15_GetResourceRenderMaterialDesc(K15_ResourceContext* p_ResourceContext, K15_ResourceHandle p_ResourceHandle);
+K15_RenderFontDesc* K15_GetResourceFontDesc(K15_ResourceContext* p_ResourceContext, K15_ResourceHandle p_ResourceHandle);
 
 K15_ResourceContext* K15_CreateResourceContext(K15_RenderContext* p_RenderContext, const char* p_ResourceArchivePath);
 K15_ResourceContext* K15_CreateResourceContextWithCustomAllocator(K15_RenderContext* p_RenderContext, const char* p_ResourceArchivePath, K15_CustomMemoryAllocator p_CustomMemoryAllocator);

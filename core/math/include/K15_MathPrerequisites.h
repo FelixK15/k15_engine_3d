@@ -1,6 +1,8 @@
 #ifndef _K15_Math_Prerequisties_h_
 #define _K15_Math_Prerequisties_h_
 
+#include "K15_Common.h"
+
 #pragma warning(disable:4244)
 #pragma warning(disable:4305)
 

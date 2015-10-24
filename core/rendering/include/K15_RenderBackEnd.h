@@ -9,6 +9,7 @@
 #include "K15_RenderInterface.h"
 #include "K15_RenderTargetDesc.h"
 #include "K15_RenderSamplerDesc.h"
+#include "K15_RenderMaterialDesc.h"
 #include "K15_RenderUniformCache.h"
 
 struct K15_RenderState
@@ -33,6 +34,7 @@ struct K15_RenderVertexData
 struct K15_RenderResources
 {
 	K15_RenderResourceHandle intermediateVertexBufferHandle;
+	K15_RenderMaterialDesc defaultFontMaterial;
 	K15_RenderResourceHandle default2DVertexProgramHandle;
 	K15_RenderResourceHandle default3DVertexProgramHandle;
 	K15_RenderResourceHandle default2DFragmentProgramHandle;

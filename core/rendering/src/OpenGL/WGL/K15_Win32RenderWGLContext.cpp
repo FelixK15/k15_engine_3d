@@ -99,6 +99,7 @@ intern inline void K15_Win32InternalGetWGLFunctionPointer(HMODULE p_LibModule)
 
 	K15_CHECK_ASSIGNMENT(kglTexImage1D, (PFNGLTEXIMAGE1DPROC)GetProcAddress(p_LibModule, "glTexImage1D"));
 	K15_CHECK_ASSIGNMENT(kglTexImage2D, (PFNGLTEXIMAGE2DPROC)GetProcAddress(p_LibModule, "glTexImage2D"));
+	K15_CHECK_ASSIGNMENT(kglTexParameteri, (PFNGLTEXPARAMETERIPROC)GetProcAddress(p_LibModule, "glTexParameteri"));
 	K15_CHECK_ASSIGNMENT(kglDrawArrays, (PFNGLDRAWARRAYSPROC)GetProcAddress(p_LibModule, "glDrawArrays"));
 }
 /*********************************************************************************/

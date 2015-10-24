@@ -52,13 +52,16 @@ intern inline K15_RenderResourceHandle K15_InternalAddGLObject(K15_GLRenderConte
 			glObjectIndex < K15_RENDER_GL_MAX_OBJECTS;
 			++glObjectIndex)
 		{
+			indexFound = glObjectIndex;
+
+			if (p_GLContext->glObjects[glObjectIndex].type == K15_GL_TYPE_INVALID)
 			{
-				indexFound = glObjectIndex;
+				break;
 			}
 		}
 	}
 
-	K15_ASSERT(indexFound);
+	K15_ASSERT(indexFound != K15_RENDER_GL_MAX_OBJECTS);
 
 	K15_GLObjectHeader* currentObjectHeader = &p_GLContext->glObjects[indexFound];
 	currentObjectHeader->type = p_GLObjectType;

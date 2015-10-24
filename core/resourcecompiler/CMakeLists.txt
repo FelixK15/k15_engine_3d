@@ -1,6 +1,7 @@
 project(resourcecompiler)
 
-set(RESOURCECOMPILER_INC "./include/K15_ResourceCompilerShader.h")
+set(RESOURCECOMPILER_INC "./include/K15_ResourceCompilerShader.h"
+			 "./include/K15_TextureAtlas.h")
 set(RESOURCECOMPILER_SRC "./src/main.cpp")
 
 include_directories(./../)
@@ -13,6 +14,7 @@ include_directories(../string/include/)
 include_directories(../runtime/include/)
 include_directories(../rendering/include/)
 include_directories(../memory/include/)
+include_directories(../math/include/)
 include_directories(../../dependencies/assimp/include/)
 include_directories(../../dependencies/stb/)
 include_directories(../../dependencies/squish/)
@@ -26,4 +28,4 @@ endif()
 
 add_executable(resourcecompiler ${RESOURCECOMPILER_SRC})
 
-target_link_libraries(resourcecompiler zlib assimp squish resourceformats oslayer string logging runtime memory)
+target_link_libraries(resourcecompiler zlib assimp squish resourceformats math oslayer string logging runtime memory)

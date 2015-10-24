@@ -61,6 +61,7 @@ struct K15_RenderBufferDesc;
 struct K15_RenderTextureDesc;
 struct K15_RenderSamplerDesc;
 struct K15_RenderTargetDesc;
+struct K15_RenderFontDesc;
 struct K15_RenderMaterialDesc;
 struct K15_RenderBufferUpdateDesc;
 struct K15_RenderCommandQueue;

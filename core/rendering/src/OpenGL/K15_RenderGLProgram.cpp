@@ -1062,7 +1062,7 @@ result8 K15_GLUpdateProgramDataUniforms(K15_RenderBackEnd* p_RenderBackEnd, K15_
 
 				if (materialDataDesc->typeID == K15_TYPE_SAMPLER_2D_ID)
 				{
-					K15_RenderResourceHandle* renderResourceHandle = (K15_RenderResourceHandle*)materialDataDesc->data;
+					K15_RenderResourceHandle* renderResourceHandle = materialDataDesc->data.renderResourceHandle;
 					K15_GLSampler* glSampler = (K15_GLSampler*)K15_InternalGetGLObjectData(glContext, *renderResourceHandle, K15_GL_TYPE_SAMPLER);
 
 					if (glSampler)
@@ -1083,7 +1083,7 @@ result8 K15_GLUpdateProgramDataUniforms(K15_RenderBackEnd* p_RenderBackEnd, K15_
 
 								if (textureDataDesc)
 								{
-									K15_RenderResourceHandle* textureRenderResourceHandle = (K15_RenderResourceHandle*)textureDataDesc->data;
+									K15_RenderResourceHandle* textureRenderResourceHandle = textureDataDesc->data.renderResourceHandle;
 									K15_GLTexture* glTexture = (K15_GLTexture*)K15_InternalGetGLObjectData(glContext, *textureRenderResourceHandle, K15_GL_TYPE_TEXTURE);
 
 									uint32 uniformRegister = uniform->registerIndex;
@@ -1106,7 +1106,7 @@ result8 K15_GLUpdateProgramDataUniforms(K15_RenderBackEnd* p_RenderBackEnd, K15_
 				}
 				else
 				{
-					updateDesc.data.rawData = materialDataDesc->data;
+					K15_ASSERT(false);
 				}
 
 				result = K15_GLUpdateUniform(p_RenderBackEnd, &updateDesc, p_GLProgram);

@@ -37,6 +37,7 @@
 #include "K15_FontFormat.h"
 #include "K15_SamplerFormat.h"
 #include "K15_MaterialFormat.h"
+#include "K15_TextureAtlas.h"
 #include "K15_System.h"
 
 //forward decl
@@ -54,6 +55,7 @@ struct K15_ResourceDependency
 };
 /*********************************************************************************/
 
+#include "K15_TextureAtlas.cpp"
 #include "generated/K15_ResourceDependencyStretchBuffer.cpp"
 
 struct K15_ResourceCompiler;
@@ -244,18 +246,6 @@ intern uint32 K15_InternalCalculateImageMemorySizeCompressedSquish(uint32 p_Widt
 	return squish::GetStorageRequirements(p_Width, p_Height, p_CompressionFlags);
 }
 #endif //K15_RESOURCE_COMPILER_ENABLE_SQUISH
-/*********************************************************************************/
-intern uint32 K15_InternalGetNextPowerOfTwoSize(uint32 p_NonPowerOfTwoNumber)
-{
-	uint32 powerOfTwoNumber = 2;
-
-	while (powerOfTwoNumber < p_NonPowerOfTwoNumber)
-	{
-		powerOfTwoNumber *= 2;
-	}
-
-	return powerOfTwoNumber;
-}
 /*********************************************************************************/
 intern uint8 K15_InternalConvertTextToSamplerFilter(const char* p_Text)
 {
@@ -837,8 +827,8 @@ bool8 K15_CompileFontResourceWithStbTTF(K15_ResourceCompilerContext* p_ResourceC
 	int descent = 0;
 	int lineGap = 0;
 
-	int posX = 0;
-	int posY = 0;
+	uint32 posX = 0;
+	uint32 posY = 0;
 
 	int fontPixelWidth = 0;
 	int maxGlyphHeight = 0;
@@ -851,6 +841,7 @@ bool8 K15_CompileFontResourceWithStbTTF(K15_ResourceCompilerContext* p_ResourceC
 
 	stbtt_fontinfo fontInfo = {};
 	K15_FontFormat fontFormat = {};
+	K15_TextureAtlas fontTextureAtlas = K15_CreateTextureAtlas(1);
 
 	if (!resourcePath)
 	{
@@ -897,46 +888,6 @@ bool8 K15_CompileFontResourceWithStbTTF(K15_ResourceCompilerContext* p_ResourceC
 	
 	baseLine = (int)(ascent * scaleFactor);
 
-	//loop over all characters to calculate the size of the font texture
-	for (int codePoint = startCharacter;
-		codePoint < endCharacter;
-		++codePoint)
-	{
-		int boxLeft = 0;
-		int boxRight = 0;
-		int boxTop = 0;
-		int boxBottom = 0;
-
-		stbtt_GetCodepointBitmapBox(&fontInfo, codePoint, scaleFactor, scaleFactor, &boxLeft, &boxTop, &boxRight, &boxBottom);
-
-		int boxWidth = boxRight - boxLeft;
-		int boxHeight = boxBottom - boxTop;
-
-		posX += boxWidth;
-
-		K15_GlyphFormat currentGlyphFormat = {};
-
-		currentGlyphFormat.character = codePoint;
-		currentGlyphFormat.height = boxHeight;
-		currentGlyphFormat.width = boxWidth;
-		currentGlyphFormat.posX = posX;
-		currentGlyphFormat.posY = posY;
-
-		K15_AddFontGlyphData(&fontFormat, &currentGlyphFormat, codePoint);
-
-		maxGlyphHeight = max(maxGlyphHeight, boxHeight);
-		fontPixelWidth += boxWidth;
-	}
-
-	//very suboptimal approach
-	int fontTextureWidth = K15_InternalGetNextPowerOfTwoSize(fontPixelWidth);
-	int fontTextureHeight = K15_InternalGetNextPowerOfTwoSize(maxGlyphHeight);
-	int fontTexturePixelCount = fontTextureHeight * fontTextureWidth;
-
-	int stride = fontTextureWidth;
-
-	fontPixelData = (byte*)malloc(fontTexturePixelCount);
-
 	//set kerning data
 	uint32 numCharacters = endCharacter - startCharacter;
 	uint32 numCombinations = numCharacters * numCharacters;
@@ -958,24 +909,43 @@ bool8 K15_CompileFontResourceWithStbTTF(K15_ResourceCompilerContext* p_ResourceC
 		}
 	}
 
-	//loop again to create the actual texture data
+	float shift_x = 0.f;
+	float shift_y = 0.f;
+
+	//generate glyph texture 
+	K15_SetTextureCount(&fontTextureAtlas, endCharacter - startCharacter);
+
+	//loop over all characters to calculate the size of the font texture
 	for (int codePoint = startCharacter;
 		codePoint < endCharacter;
 		++codePoint)
 	{
-		K15_GlyphFormat* currentGlyphFormat = K15_GetFontGlyphData(&fontFormat, codePoint);
+		int width = 0;
+		int height = 0;
+		int xOffset = 0;
+		int yOffset = 0;
 
-		uint32 glyphWidth = currentGlyphFormat->width;
-		uint32 glyphHeight = currentGlyphFormat->height;
-		uint32 glyphX = currentGlyphFormat->posX;
+		int glyphIndex = stbtt_FindGlyphIndex(&fontInfo, codePoint);
 
-		uint32 pixelIndex = glyphX;
+		byte* glyphPixelData = stbtt_GetGlyphBitmapSubpixel(&fontInfo, scaleFactor, scaleFactor, shift_x, shift_y, glyphIndex, &width, &height, &xOffset, &yOffset);
+		K15_AddTextureToAtlas(&fontTextureAtlas, glyphPixelData, width, height, codePoint - startCharacter, &posX, &posY);
+		
+		K15_GlyphFormat currentGlyphFormat = {};
 
-		//Create pixel data for the current character
-		stbtt_MakeCodepointBitmap(&fontInfo, &fontPixelData[pixelIndex], glyphWidth, glyphHeight, stride, scaleFactor, scaleFactor, codePoint);
+		currentGlyphFormat.character = codePoint;
+		currentGlyphFormat.width = width;
+		currentGlyphFormat.height = height;
+		currentGlyphFormat.posX = posX;
+		currentGlyphFormat.posY = posY;
+
+		K15_AddFontGlyphData(&fontFormat, &currentGlyphFormat, codePoint);
 	}
 
-	K15_SetFontTexture(&fontFormat, fontPixelData, fontTextureWidth, fontTextureHeight);
+	byte* textureAtlasPixelData = fontTextureAtlas.pixelData;
+	uint32 textureAtlasWidth = fontTextureAtlas.width;
+	uint32 textureAtlasHeight = fontTextureAtlas.height;
+
+	K15_SetFontTexture(&fontFormat, textureAtlasPixelData, textureAtlasWidth, textureAtlasHeight);
 
 	if(K15_SaveFontFormatToFile(&fontFormat, p_OutputPath, K15_SAVE_FLAG_FREE_DATA) != K15_SUCCESS)
 	{
@@ -993,6 +963,7 @@ free_resources:
 	free(resourceName);
 	free(resourceFileName);
 	free(fontPixelData);
+	K15_FreeTextureAtlas(&fontTextureAtlas);
 
 	return compiled;
 }

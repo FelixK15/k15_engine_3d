@@ -15,6 +15,8 @@ struct K15_GlyphFormat
 	uint32 posY;
 	uint32 width;
 	uint32 height;
+	uint32 xOffset;
+	uint32 yOffset;
 
 	uint16 character;
 };

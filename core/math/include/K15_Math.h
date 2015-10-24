@@ -19,4 +19,6 @@ real32 K15_LowPrecisionCos(real32 p_Number);
 real32 K15_HighPrecisionSin(real32 p_Number);
 real32 K15_HighPrecisionCos(real32 p_Number);
 
+uint32 K15_GetNextPowerOfTwoSize(uint32 p_NonPowerOfTwoNumber);
+
 #endif //_K15_Math_Math_h_

@@ -44,6 +44,8 @@ intern inline void K15_InternalCreateManualMipmapTexture(K15_GLTexture* p_GLText
 // 	}
 
 	K15_OPENGL_CALL(kglBindTexture(glTextureType, p_GLTextureHandle));
+	K15_OPENGL_CALL(kglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0));
+	K15_OPENGL_CALL(kglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, p_MipmapCount));
 
 	for (uint32 mipmapIndex = 0;
 		mipmapIndex < p_MipmapCount;

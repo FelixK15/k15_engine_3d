@@ -180,3 +180,15 @@ real32 K15_HighPrecisionCos(real32 p_Number)
 	return cosine;
 }
 /*********************************************************************************/
+uint32 K15_GetNextPowerOfTwoSize(uint32 p_NonPowerOfTwoNumber)
+{
+	uint32 powerOfTwoNumber = 2;
+
+	while (powerOfTwoNumber < p_NonPowerOfTwoNumber)
+	{
+		powerOfTwoNumber *= 2;
+	}
+
+	return powerOfTwoNumber;
+}
+/*********************************************************************************/

@@ -11,6 +11,8 @@
 #include "K15_DefaultCLibraries.h"
 
 #include "K15_RenderMaterialDesc.h"
+#include "K15_RenderFontDesc.h"
+
 #include "K15_MaterialFormat.h"
 #include "K15_TextureFormat.h"
 #include "K15_FontFormat.h"
@@ -244,7 +246,7 @@ intern void K15_InternalLoadFontResource(K15_ResourceContext* p_ResourceContext,
 										 K15_ResourceCompilerInput* p_ResourceCompilerInput,
 										 K15_ResourceData* p_ResourceCompilerOutput)
 {
-	bool8 result = K15_TRUE;
+	result8 result = K15_SUCCESS;
 
 	K15_RenderContext* renderContext = p_ResourceContext->renderContext;
 	K15_RenderCommandQueue* commandQueue = p_ResourceContext->commandQueue;
@@ -254,20 +256,72 @@ intern void K15_InternalLoadFontResource(K15_ResourceContext* p_ResourceContext,
 
 	byte* resourceFileContent = p_ResourceCompilerInput->fileContent;
 	uint32 resourceFileSize = p_ResourceCompilerInput->fileContentSizeInBytes;
-	result8 fontLoadResult = K15_LoadFontFormatFromMemory(&fontFormat, resourceFileContent, resourceFileSize);
+	result = K15_LoadFontFormatFromMemory(&fontFormat, resourceFileContent, resourceFileSize);
 
-	if (fontLoadResult != K15_SUCCESS)
+	if (result != K15_SUCCESS)
 	{
 		K15_LOG_ERROR_MESSAGE("Could not load font '%s'.", p_ResourceCompilerInput->path);
 		//load default sampler
 	}
 
+	K15_ResourceHandle blaresource = K15_LoadResource(p_ResourceContext, K15_SAMPLER_RESOURCE_IDENTIFIER, "linear_clamp_sampler.k15sampler", 0);
 
-	K15_RenderResourceHandle* fontRenderHandle = (K15_RenderResourceHandle*)K15_AllocateFromMemoryAllocator(resourceAllocator, sizeof(K15_RenderResourceHandle));
-	K15_RenderCommandCreateFontFromFontFormat(commandQueue, fontRenderHandle, &fontFormat);
+	K15_RenderFontDesc* renderFontDesc = (K15_RenderFontDesc*)K15_AllocateFromMemoryAllocator(resourceAllocator, sizeof(K15_RenderFontDesc));
+	renderFontDesc->textureHandle = (K15_RenderResourceHandle*)K15_AllocateFromMemoryAllocator(resourceAllocator, sizeof(K15_RenderResourceHandle));
+	renderFontDesc->bla = K15_GetResourceRenderHandle(p_ResourceContext, blaresource);
 
-	p_ResourceCompilerOutput->compiledResourceData = (byte*)fontRenderHandle;
-	p_ResourceCompilerOutput->compiledResourceDataSizeInBytes = sizeof(K15_RenderResourceHandle);
+	uint32 fontTextureSize = K15_GetFontTextureSize(&fontFormat);
+	byte* fontTextureData = K15_GetFontTexture(&fontFormat);
+
+	K15_RenderTextureDesc fontTextureDesc = {};
+
+	fontTextureDesc.createMipChain = K15_TRUE;
+	fontTextureDesc.dimension.width = fontFormat.texture.width;
+	fontTextureDesc.dimension.height = fontFormat.texture.height;
+	fontTextureDesc.format = K15_RENDER_FORMAT_R8_UINT;
+	fontTextureDesc.mipmaps.count = 1;
+	fontTextureDesc.mipmaps.data[0] = fontTextureData;
+	fontTextureDesc.mipmaps.dataSize[0] = fontTextureSize;
+	fontTextureDesc.type = K15_RENDER_TEXTURE_TYPE_2D;
+
+	K15_RenderCommandCreateTexture(commandQueue, renderFontDesc->textureHandle, &fontTextureDesc);
+
+	if (result == K15_SUCCESS)
+	{
+		renderFontDesc->startCharacter = fontFormat.startCharacter;
+		renderFontDesc->endCharacter = fontFormat.endCharacter;
+		renderFontDesc->fontNameHash = fontFormat.fontNameHash;
+
+		uint32 numGlyphs = fontFormat.endCharacter - fontFormat.startCharacter;
+		uint32 numKerning = numGlyphs * numGlyphs;
+
+		renderFontDesc->glyphDescs = (K15_RenderGlyphDesc*)K15_AllocateFromMemoryAllocator(resourceAllocator, sizeof(K15_RenderGlyphDesc) * numGlyphs);
+		renderFontDesc->kernDescs = (K15_RenderKerningDesc*)K15_AllocateFromMemoryAllocator(resourceAllocator, sizeof(K15_RenderKerningDesc) * numKerning);
+
+		//transfer glyph data
+		for (uint32 glyphIndex = fontFormat.startCharacter;
+			glyphIndex < fontFormat.endCharacter;
+			++glyphIndex)
+		{
+			uint32 arrayGlyphIndex = glyphIndex - fontFormat.startCharacter;
+			K15_GlyphFormat* glyphFormat = K15_GetFontGlyphData(&fontFormat, glyphIndex);
+			K15_RenderGlyphDesc* renderGlyphDesc = &renderFontDesc->glyphDescs[arrayGlyphIndex];
+
+			float x = (float)glyphFormat->posX / (float)fontFormat.texture.width;
+			float y = (float)glyphFormat->posY / (float)fontFormat.texture.height;
+			float w = (float)glyphFormat->width / (float)fontFormat.texture.width;
+			float h = (float)glyphFormat->height / (float)fontFormat.texture.height;
+
+			renderGlyphDesc->character = glyphIndex;
+			renderGlyphDesc->glyphTextureArea = K15_CreateRectangle(x + w, y + h, x, y);
+		}
+
+		//transfer kerning data (literally the same structure)
+		memcpy(renderFontDesc->kernDescs, fontFormat.kernFormats, sizeof(K15_RenderKerningDesc) * numKerning);
+	}
+
+	p_ResourceCompilerOutput->compiledResourceData = (byte*)renderFontDesc;
+	p_ResourceCompilerOutput->compiledResourceDataSizeInBytes = sizeof(K15_RenderFontDesc);
 }
 /*********************************************************************************/
 intern void K15_InternalLoadShaderResource(K15_ResourceContext* p_ResourceContext,
@@ -393,9 +447,6 @@ intern void K15_InternalLoadMaterialResource(K15_ResourceContext* p_ResourceCont
 			if (materialDataValue->dataType == K15_MATERIAL_DATA_TYPE_TEXTURE ||
 				materialDataValue->dataType == K15_MATERIAL_DATA_TYPE_SAMPLER)
 			{
-				materialdataDesc.data = (byte*)K15_AllocateFromMemoryAllocator(renderAllocator, sizeof(K15_RenderResourceHandle));
-				materialdataDesc.dataSizeInBytes = sizeof(K15_RenderResourceHandle);
-
 				char* path = materialDataValue->asString;
 				uint32 identifier = 0;
 
@@ -413,23 +464,17 @@ intern void K15_InternalLoadMaterialResource(K15_ResourceContext* p_ResourceCont
 				K15_ResourceHandle externResourceHandle = K15_LoadResource(p_ResourceContext, identifier, path, 0);
 				K15_ResourceData* externalResourceData = K15_GetResourceData(p_ResourceContext, externResourceHandle);
 
-				materialdataDesc.data = externalResourceData->compiledResourceData;
+				materialdataDesc.data.renderResourceHandle = (K15_RenderResourceHandle*)externalResourceData->compiledResourceData;
 			}
 			else if (materialDataValue->dataType == K15_MATERIAL_DATA_TYPE_INT)
 			{
-				materialdataDesc.data = (byte*)K15_AllocateFromMemoryAllocator(renderAllocator, sizeof(int));
-				materialdataDesc.dataSizeInBytes = sizeof(int);
 				materialdataDesc.typeID = K15_TYPE_INT_ID;
-
-				memcpy(materialdataDesc.data, &materialDataValue->asInt, sizeof(int));
+				memcpy(&materialdataDesc.data.intValue, &materialDataValue->asInt, sizeof(int));
 			}
 			else if (materialDataValue->dataType == K15_MATERIAL_DATA_TYPE_FLOAT)
 			{
-				materialdataDesc.data = (byte*)K15_AllocateFromMemoryAllocator(renderAllocator, sizeof(float));
-				materialdataDesc.dataSizeInBytes = sizeof(float);
 				materialdataDesc.typeID = K15_TYPE_FLOAT_ID;
-
-				memcpy(materialdataDesc.data, &materialDataValue->asFloat, sizeof(float));
+				memcpy(&materialdataDesc.data.floatValue, &materialDataValue->asFloat, sizeof(float));
 			}
 
 			K15_PushRenderMaterialDataDescStretchBufferElement(materialDataDescBuffer, materialdataDesc);
@@ -503,6 +548,20 @@ K15_RenderMaterialDesc* K15_GetResourceRenderMaterialDesc(K15_ResourceContext* p
 	return renderMaterialDesc;
 }
 /*********************************************************************************/
+K15_RenderFontDesc* K15_GetResourceFontDesc(K15_ResourceContext* p_ResourceContext, K15_ResourceHandle p_ResourceHandle)
+{
+	K15_ResourceData* resourceData = K15_GetResourceData(p_ResourceContext, p_ResourceHandle);
+	K15_RenderFontDesc* renderFontDesc = 0;
+
+	if (resourceData)
+	{
+		K15_ASSERT(resourceData->compiledResourceDataSizeInBytes == sizeof(K15_RenderFontDesc));
+		renderFontDesc = (K15_RenderFontDesc*)resourceData->compiledResourceData;
+	}
+
+	return renderFontDesc;
+}
+/*********************************************************************************/
 K15_ResourceContext* K15_CreateResourceContext(K15_RenderContext* p_RenderContext, const char* p_ArchivePath)
 {
 	return K15_CreateResourceContextWithCustomAllocator(p_RenderContext, p_ArchivePath, K15_CreateDefaultMemoryAllocator());
@@ -529,6 +588,7 @@ K15_ResourceContext* K15_CreateResourceContextWithCustomAllocator(K15_RenderCont
 	K15_AddResourceLoader(resourceContext, "Texture Loader", K15_TEXTURE_RESOURCE_IDENTIFIER, K15_InternalLoadTextureResource);
 	K15_AddResourceLoader(resourceContext, "Sampler Loader", K15_SAMPLER_RESOURCE_IDENTIFIER, K15_InternalLoadSamplerResource);
 	K15_AddResourceLoader(resourceContext, "Shader Loader", K15_SHADER_RESOURCE_IDENTIFIER, K15_InternalLoadShaderResource);
+	K15_AddResourceLoader(resourceContext, "Font Loader", K15_FONT_RESOURCE_IDENTIFIER, K15_InternalLoadFontResource);
 
 	return resourceContext;
 }
@@ -602,7 +662,7 @@ K15_ResourceHandle K15_LoadResource(K15_ResourceContext* p_ResourceContext, uint
 		}
 		else
 		{
-			K15_LOG_ERROR_MESSAGE("Could not find a load for resource '%s' (identifier '%d').", p_ResourcePath, p_ResourceIdentifier);
+			K15_LOG_ERROR_MESSAGE("Could not find a loader for resource '%s' (identifier '%d').", p_ResourcePath, p_ResourceIdentifier);
 		}
 	}
 

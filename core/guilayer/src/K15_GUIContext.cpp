@@ -59,7 +59,7 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	uint32 flags = 0;
 
 	guiContext->guiRenderTexture = K15_LoadResource(p_ResourceContext, K15_TEXTURE_RESOURCE_IDENTIFIER, "gui_template.k15texture", flags);;
-	guiContext->guiRenderFont = K15_LoadResource(p_ResourceContext, K15_FONT_RESOURCE_IDENTIFIER, "gui_font.k15font", flags);;
+	guiContext->guiRenderFont = K15_LoadResource(p_ResourceContext, K15_FONT_RESOURCE_IDENTIFIER, "gui_font.k15font", flags);
 	guiContext->guiRenderMaterial = K15_LoadResource(p_ResourceContext, K15_MATERIAL_RESOURCE_IDENTIFIER, "gui_material.k15material", flags);;
 
 	return guiContext;

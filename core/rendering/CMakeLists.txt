@@ -28,6 +28,7 @@ set(RENDERER_INC ./include/K15_RenderContext.h
 		 ./include/K15_RenderTargetDesc.h
 		 ./include/K15_RenderFormats.h
 		 ./include/K15_RenderGeometryDesc.h
+		 ./include/K15_RenderFontDesc.h
 		 ./include/K15_RenderShaderSemantics.h)
 
 set(RENDERER_LIBS math logging shadercompilerlib)

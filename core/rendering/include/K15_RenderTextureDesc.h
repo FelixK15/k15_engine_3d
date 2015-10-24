@@ -28,8 +28,8 @@ struct K15_RenderTextureDesc
 
 	struct  
 	{
-		byte** data;
-		uint32* dataSize;
+		byte* data[K15_MAX_MIP_MAPS];
+		uint32 dataSize[K15_MAX_MIP_MAPS];
 		uint32 count;
 	} mipmaps;
 

@@ -53,6 +53,7 @@ PFNGLFRAMEBUFFERTEXTUREPROC				kglFramebufferTexture				= 0;
 PFNGLCHECKFRAMEBUFFERSTATUSPROC			kglCheckFramebufferStatus			= 0;
 PFNGLDRAWBUFFERSPROC					kglDrawBuffers						= 0;
 PFNGLBINDTEXTUREPROC					kglBindTexture						= 0;
+PFNGLTEXPARAMETERIPROC					kglTexParameteri					= 0;
 PFNGLCLEARPROC							kglClear							= 0;
 PFNGLCLEARCOLORPROC						kglClearColor						= 0;
 PFNGLCULLFACEPROC						kglCullFace							= 0;

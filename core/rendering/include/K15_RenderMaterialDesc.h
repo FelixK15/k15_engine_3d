@@ -6,10 +6,17 @@
 
 struct K15_RenderMaterialDataDesc
 {
-	byte* data;
+	union
+	{
+		byte* rawData;
+		K15_RenderResourceHandle* renderResourceHandle;
+		float floatValue;
+		int intValue;
+	} data;
+	//byte* data;
 	//char* name;
 	uint32 nameHash;
-	uint32 dataSizeInBytes;
+	//uint32 dataSizeInBytes;
 	uint32 typeID;
 	uint32 semanticID;
 	uint32 semanticGroupID;
@@ -28,11 +35,10 @@ struct K15_RenderMaterialDesc
 	K15_RenderMaterialPassDesc* materialPasses;
 };
 
-//bool8 K15_RenderMaterialDescStringCompare(K15_RenderMaterialDataDesc* p_Element, void* p_UserData);
 bool8 K15_RenderMaterialDescHashCompare(K15_RenderMaterialDataDesc* p_Element, void* p_UserData);
 
-void K15_SetRenderMaterialDataAsString(K15_RenderMaterialPassDesc* p_MaterialPass, const char* p_DataValueName, const char* p_Value);
-void K15_SetRenderMaterialDataAsInt(K15_RenderMaterialPassDesc* p_MaterialPass, const char* p_DataValueName, int p_Value);
-void K15_SetRenderMaterialDataAsFloat(K15_RenderMaterialPassDesc* p_MaterialPass, const char* p_DataValueName, float p_Value);
+void K15_SetRenderMaterialRenderResourceDataByName(K15_RenderMaterialPassDesc* p_MaterialPass, const char* p_DataValueName, K15_RenderResourceHandle* p_RenderResourceHandle);
+void K15_SetRenderMaterialFloatValueDataByName(K15_RenderMaterialPassDesc* p_MaterialPass, const char* p_DataValueName, float p_Float);
+void K15_SetRenderMaterialIntValueByName(K15_RenderMaterialPassDesc* p_MaterialPass, const char* p_DataValueName, int p_Int);
 
 #endif //_K15_Rendering_RenderMaterialDesc_h_

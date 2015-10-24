@@ -13,6 +13,7 @@
 #include <K15_MemoryBuffer.h>
 
 #include <K15_RenderCameraDesc.h>
+#include <K15_RenderFontDesc.h>
 
 #include <K15_RenderContext.h>
 
@@ -124,16 +125,21 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 
 	K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->gameMemory->buffer;
 	K15_RenderCommandQueue* gameRenderCommandQueue = gameContext->gameRenderQueue;
+	K15_GUIContext* guiContext = gameContext->guiContext;
 
-	K15_ResourceHandle guiTextureResource = gameContext->guiContext->guiRenderTexture;
-	K15_ResourceHandle guiMaterialResource = gameContext->guiContext->guiRenderMaterial;
+	K15_ResourceHandle guiFont = guiContext->guiRenderFont;
+	K15_ResourceHandle guiMaterial = guiContext->guiRenderMaterial;
+	K15_RenderFontDesc* guiFontDesc = K15_GetResourceFontDesc(gameContext->resourceContext, guiFont);
+	K15_RenderMaterialDesc* guiMaterialDesc = K15_GetResourceRenderMaterialDesc(gameContext->resourceContext, guiMaterial);
 
-	K15_RenderResourceHandle* guiTextureHandle = K15_GetResourceRenderHandle(gameContext->resourceContext, guiTextureResource);
-	K15_RenderMaterialDesc* guiMaterialDesc = K15_GetResourceRenderMaterialDesc(gameContext->resourceContext, guiMaterialResource);
+	K15_SetRenderMaterialRenderResourceDataByName(&guiMaterialDesc->materialPasses[0], "DiffuseTexture", guiFontDesc->textureHandle);
 
-	K15_RenderCommandDraw2DTexture(gameRenderCommandQueue, guiTextureHandle, 
-		guiMaterialDesc, K15_CreateRectangle(1.f, 1.f, -1.f, -1.f),
-		K15_CreateRectangle(1.f, 1.f, 0.f, 0.f));
+// 	K15_RenderCommandDraw2DTexture(gameRenderCommandQueue, 
+// 		guiFontDesc->textureHandle, 
+// 		guiMaterialDesc, 
+// 		K15_CreateRectangle(1.f, 1.f, -1.f, -1.f),
+// 		K15_CreateRectangle(1.f, 1.f, 0.f, 0.f));
+	K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiFontDesc, "Wäs_ist_das?", K15_CreateVector(-1.0f, 0.0f));
 
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameContext->resourceContext->commandQueue);
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameRenderCommandQueue);

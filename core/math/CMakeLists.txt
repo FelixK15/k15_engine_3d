@@ -7,6 +7,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 include(math_core_src)
 include(math_compiler_settings)
 
+include_directories(./../)
 include_directories(./include)
 include_directories(./src)
 

@@ -278,6 +278,7 @@ extern PFNGLFRAMEBUFFERTEXTUREPROC				kglFramebufferTexture;
 extern PFNGLCHECKFRAMEBUFFERSTATUSPROC			kglCheckFramebufferStatus;
 extern PFNGLDRAWBUFFERSPROC						kglDrawBuffers;
 extern PFNGLBINDTEXTUREPROC						kglBindTexture;
+extern PFNGLTEXPARAMETERIPROC					kglTexParameteri;
 extern PFNGLCLEARPROC							kglClear;
 extern PFNGLCLEARCOLORPROC						kglClearColor;
 extern PFNGLCULLFACEPROC						kglCullFace;
