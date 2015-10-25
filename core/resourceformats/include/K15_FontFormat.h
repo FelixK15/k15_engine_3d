@@ -36,6 +36,7 @@ struct K15_FontFormat
 	} texture;
 
 	float fontSize;
+	float scaleFactor;
 
 	uint32 fontNameHash;
 	uint32 startCharacter;

@@ -878,14 +878,15 @@ bool8 K15_CompileFontResourceWithStbTTF(K15_ResourceCompilerContext* p_ResourceC
 	//Add font as dependency
 	K15_InternalAddResourceDependency(p_ResourceCompilerContext, p_FontConfig->path, resourcePath);
 
-	fontFormat.fontSize = fontSize;
-
 	K15_SetFontName(&fontFormat, resourceName);
 	K15_SetFontGlyphRange(&fontFormat, startCharacter, endCharacter);
 
 	float scaleFactor = stbtt_ScaleForPixelHeight(&fontInfo, fontSize);
 	stbtt_GetFontVMetrics(&fontInfo, &ascent, &descent, &lineGap);
 	
+	fontFormat.fontSize = fontSize;
+	fontFormat.scaleFactor = scaleFactor;
+
 	baseLine = (int)(ascent * scaleFactor);
 
 	//set kerning data

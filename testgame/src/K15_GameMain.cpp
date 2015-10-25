@@ -139,7 +139,11 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 // 		guiMaterialDesc, 
 // 		K15_CreateRectangle(1.f, 1.f, -1.f, -1.f),
 // 		K15_CreateRectangle(1.f, 1.f, 0.f, 0.f));
-	K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiFontDesc, "Wäs_ist_das?", K15_CreateVector(-1.0f, 0.0f));
+	static int bla = 0;
+	++bla;
+	char* blaText = (char*)alloca(10);
+	blaText = itoa(bla, blaText, 10);
+	K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiFontDesc, blaText, K15_CreateVector(-1.0f, 0.0f));
 
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameContext->resourceContext->commandQueue);
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameRenderCommandQueue);

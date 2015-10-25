@@ -291,12 +291,15 @@ intern void K15_InternalLoadFontResource(K15_ResourceContext* p_ResourceContext,
 		renderFontDesc->startCharacter = fontFormat.startCharacter;
 		renderFontDesc->endCharacter = fontFormat.endCharacter;
 		renderFontDesc->fontNameHash = fontFormat.fontNameHash;
+		renderFontDesc->scaleFactor = fontFormat.scaleFactor;
 
 		uint32 numGlyphs = fontFormat.endCharacter - fontFormat.startCharacter;
 		uint32 numKerning = numGlyphs * numGlyphs;
 
 		renderFontDesc->glyphDescs = (K15_RenderGlyphDesc*)K15_AllocateFromMemoryAllocator(resourceAllocator, sizeof(K15_RenderGlyphDesc) * numGlyphs);
 		renderFontDesc->kernDescs = (K15_RenderKerningDesc*)K15_AllocateFromMemoryAllocator(resourceAllocator, sizeof(K15_RenderKerningDesc) * numKerning);
+		renderFontDesc->textureHeight = fontFormat.texture.height;
+		renderFontDesc->textureWidth = fontFormat.texture.width;
 
 		//transfer glyph data
 		for (uint32 glyphIndex = fontFormat.startCharacter;
@@ -307,13 +310,16 @@ intern void K15_InternalLoadFontResource(K15_ResourceContext* p_ResourceContext,
 			K15_GlyphFormat* glyphFormat = K15_GetFontGlyphData(&fontFormat, glyphIndex);
 			K15_RenderGlyphDesc* renderGlyphDesc = &renderFontDesc->glyphDescs[arrayGlyphIndex];
 
-			float x = (float)glyphFormat->posX / (float)fontFormat.texture.width;
-			float y = (float)glyphFormat->posY / (float)fontFormat.texture.height;
+			float x = (float)glyphFormat->posX;
+			float y = (float)glyphFormat->posY;
 			float w = (float)glyphFormat->width / (float)fontFormat.texture.width;
 			float h = (float)glyphFormat->height / (float)fontFormat.texture.height;
-
+			
 			renderGlyphDesc->character = glyphIndex;
-			renderGlyphDesc->glyphTextureArea = K15_CreateRectangle(x + w, y + h, x, y);
+			renderGlyphDesc->x = x;
+			renderGlyphDesc->y = y;
+			renderGlyphDesc->width = w;
+			renderGlyphDesc->height = h;
 		}
 
 		//transfer kerning data (literally the same structure)
@@ -482,6 +488,11 @@ intern void K15_InternalLoadMaterialResource(K15_ResourceContext* p_ResourceCont
 	}
 }
 /*********************************************************************************/
+intern void K15_InternalResourceFileChangedCallback(const char* p_ResourcePath, void* p_UserData)
+{
+
+}
+/*********************************************************************************/
 
 
 
@@ -495,7 +506,7 @@ K15_ResourceLoader* K15_AddResourceLoader(K15_ResourceContext* p_ResourceContext
 	K15_ASSERT_TEXT(loaderIndex < K15_MAX_RESOURCE_LOADER, "Too many resource loader (limit is %d)", K15_MAX_RESOURCE_LOADER);
 
 	K15_ResourceLoader* resourceLoader = &p_ResourceContext->resourceLoader[loaderIndex];
-
+	
 	resourceLoader->name = p_Name;
 	resourceLoader->identifier = p_Identifier;
 	resourceLoader->resourceLoader = p_ResourceLoaderFnc;
@@ -657,6 +668,8 @@ K15_ResourceHandle K15_LoadResource(K15_ResourceContext* p_ResourceContext, uint
 			resource->refCount = 0;
 			
 			p_ResourceContext->resourceCache[resourceHash] = resource;
+
+			K15_AddFileWatch(p_ResourcePath, , (void*)resourceContext);
 
 			K15_LOG_SUCCESS_MESSAGE("Successfully loaded resource '%s'.", p_ResourcePath);
 		}

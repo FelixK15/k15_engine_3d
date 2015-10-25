@@ -62,7 +62,7 @@ struct K15_ResourceContext
 	K15_Resource* resourceCache[K15_MAX_RESOURCES];
 	K15_ResourceLoader resourceLoader[K15_MAX_RESOURCE_LOADER];	//Collection of different resource loader (provided by app)
 	K15_Mutex* resourceCacheLock;								//Mutex to control resource cache access.
-
+	
 	uint32 numResourceLoader;
 	uint32 flags;
 };

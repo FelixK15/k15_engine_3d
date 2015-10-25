@@ -12,7 +12,10 @@ struct K15_RenderKerningDesc
 
 struct K15_RenderGlyphDesc
 {
-	K15_Rectangle glyphTextureArea;
+	float x;
+	float y;
+	float width;
+	float height;
 	uint16 character;
 };
 
@@ -23,6 +26,9 @@ struct K15_RenderFontDesc
 
 	K15_RenderResourceHandle* textureHandle;
 	K15_RenderResourceHandle* bla;
+	float textureWidth;
+	float textureHeight;
+	float scaleFactor;
 	uint32 startCharacter;
 	uint32 endCharacter;
 	uint32 fontNameHash;

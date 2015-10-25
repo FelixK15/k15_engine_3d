@@ -436,6 +436,16 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 	float x = pos.x;
 	float y = pos.y;
 
+	float glyphX = 0.f;
+	float glyphY = 0.f;
+	float glyphW = 0.f;
+	float glyphH = 0.f;
+
+	float texelLeft = 0.f;
+	float texelTop = 0.f;
+	float texelRight = 0.f;
+	float texelBottom = 0.f;
+
 	float* vertexMemory = (float*)K15_AllocateFromMemoryAllocator(renderAllocator, sizeVerticesInBytes);
 	
 	for (uint32 charIndex = 0;
@@ -444,42 +454,79 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 	{
 		unsigned char currentChar = text[charIndex];
 
-		K15_ASSERT((uint32)currentChar >= fontDesc.startCharacter && 
-			(uint32)currentChar <= fontDesc.endCharacter);
+		if (currentChar == 0)
+		{
+			continue;
+		}
 
-		K15_RenderGlyphDesc* glyphDesc = &fontDesc.glyphDescs[currentChar - fontDesc.startCharacter];
+		if (isspace(currentChar))
+		{
+			glyphX = 0.0f;
+			glyphY = 0.f;
+			glyphW = fontDesc.scaleFactor;
+			glyphH = 0.f;
+
+			texelLeft = 0.f;
+			texelRight = 0.f;
+			texelBottom = 0.f;
+			texelTop = 0.f;
+		}
+		else if (currentChar >= fontDesc.startCharacter &&
+				currentChar <= fontDesc.endCharacter)
+		{
+			K15_RenderGlyphDesc* glyphDesc = &fontDesc.glyphDescs[currentChar - fontDesc.startCharacter];
+
+			float kerningX = 0.f;
+
+			if (charIndex+1 < textLength)
+			{
+				unsigned int shiftedCharacter = currentChar << text[charIndex+1];
+				//fontDesc.kernDescs[shiftedCharacter].kerning;
+			}
+			//fontDesc.kernDescs[]
+
+			glyphX = glyphDesc->x + kerningX;
+			glyphY = glyphDesc->y;
+			glyphW = glyphDesc->width;
+			glyphH = glyphDesc->height;
+
+			texelLeft = glyphX / fontDesc.textureWidth;
+			texelTop = glyphY / fontDesc.textureWidth;
+			texelRight = glyphW + texelLeft;
+			texelBottom = glyphH + texelTop;
+		}
 
 		vertexMemory[vertexIndex++] = x;
 		vertexMemory[vertexIndex++] = y;
-		vertexMemory[vertexIndex++] = glyphDesc->glyphTextureArea.minPosX;
-		vertexMemory[vertexIndex++] = 1.f - glyphDesc->glyphTextureArea.maxPosY;
+		vertexMemory[vertexIndex++] = texelLeft;
+		vertexMemory[vertexIndex++] = 1.f- texelBottom;//texelTop;
 
 		vertexMemory[vertexIndex++] = x;
-		vertexMemory[vertexIndex++] = y + glyphDesc->glyphTextureArea.maxPosY;
-		vertexMemory[vertexIndex++] = glyphDesc->glyphTextureArea.minPosX;
-		vertexMemory[vertexIndex++] = 1.f - glyphDesc->glyphTextureArea.minPosY;
+		vertexMemory[vertexIndex++] = y + glyphH;
+		vertexMemory[vertexIndex++] = texelLeft;
+		vertexMemory[vertexIndex++] = 1.f - texelTop;//texelBottom;
 
-		vertexMemory[vertexIndex++] = x + glyphDesc->glyphTextureArea.maxPosX;
+		vertexMemory[vertexIndex++] = x + glyphW;
 		vertexMemory[vertexIndex++] = y;
-		vertexMemory[vertexIndex++] = glyphDesc->glyphTextureArea.maxPosX;
-		vertexMemory[vertexIndex++] = 1.f - glyphDesc->glyphTextureArea.maxPosY;
+		vertexMemory[vertexIndex++] = texelRight;
+		vertexMemory[vertexIndex++] = 1.f - texelBottom;//texelTop;
 
 		vertexMemory[vertexIndex++] = x;
-		vertexMemory[vertexIndex++] = y + glyphDesc->glyphTextureArea.maxPosY;
-		vertexMemory[vertexIndex++] = glyphDesc->glyphTextureArea.minPosX;
-		vertexMemory[vertexIndex++] = 1.f - glyphDesc->glyphTextureArea.minPosY;
+		vertexMemory[vertexIndex++] = y + glyphH;
+		vertexMemory[vertexIndex++] = texelLeft;
+		vertexMemory[vertexIndex++] = 1.f - texelTop;//texelBottom;
 
-		vertexMemory[vertexIndex++] = x + glyphDesc->glyphTextureArea.maxPosX;
-		vertexMemory[vertexIndex++] = y + glyphDesc->glyphTextureArea.maxPosY;
-		vertexMemory[vertexIndex++] = glyphDesc->glyphTextureArea.maxPosX;
-		vertexMemory[vertexIndex++] = 1.f - glyphDesc->glyphTextureArea.minPosY;
+		vertexMemory[vertexIndex++] = x + glyphW;
+		vertexMemory[vertexIndex++] = y + glyphH;
+		vertexMemory[vertexIndex++] = texelRight;
+		vertexMemory[vertexIndex++] = 1.f - texelTop;//texelBottom;
 
-		vertexMemory[vertexIndex++] = x + glyphDesc->glyphTextureArea.maxPosX;
+		vertexMemory[vertexIndex++] = x + glyphW;
 		vertexMemory[vertexIndex++] = y;
-		vertexMemory[vertexIndex++] = glyphDesc->glyphTextureArea.maxPosX;
-		vertexMemory[vertexIndex++] = 1.f - glyphDesc->glyphTextureArea.maxPosY;
+		vertexMemory[vertexIndex++] = texelRight;
+		vertexMemory[vertexIndex++] = 1.f - texelBottom;//texelTop;
 
-		x += glyphDesc->glyphTextureArea.maxPosX;
+		x += glyphW;
 	}
 
 	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexMemory, numVertices, &vertexFormatDesc);
@@ -508,7 +555,7 @@ intern void K15_InternalCreateTextureFromTextureFormat(K15_RenderBackEnd* p_Rend
 
 	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(K15_TextureFormat), &textureFormat);
 	localOffset += sizeof(K15_TextureFormat);
-
+ 
 	K15_CustomMemoryAllocator* renderAllocator = &p_RenderBackEnd->renderContext->memoryAllocator;
 
 	K15_RenderTextureDesc textureDesc = {};

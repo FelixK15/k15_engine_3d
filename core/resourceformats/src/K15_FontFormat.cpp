@@ -49,6 +49,9 @@ intern uint8 K15_InternalSaveFontFormat(K15_DataAccessContext* p_DataAccessConte
 	//write font size
 	K15_WriteData(p_DataAccessContext, sizeof(float), &p_FontFormat->fontSize);
 
+	//write scale factor
+	K15_WriteData(p_DataAccessContext, sizeof(float), &p_FontFormat->scaleFactor);
+
 	//write font texture width
 	K15_WriteData(p_DataAccessContext, sizeof(uint32), &p_FontFormat->texture.width);
 
@@ -108,6 +111,9 @@ intern uint8 K15_InternalLoadFontFormat(K15_DataAccessContext* p_DataAccessConte
 
 	//read font size
 	K15_ReadData(p_DataAccessContext, sizeof(float), &p_FontFormat->fontSize);
+
+	//write scale factor
+	K15_ReadData(p_DataAccessContext, sizeof(float), &p_FontFormat->scaleFactor);
 
 	//read font texture width
 	K15_ReadData(p_DataAccessContext, sizeof(uint32), &p_FontFormat->texture.width);
