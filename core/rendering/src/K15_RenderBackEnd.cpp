@@ -399,15 +399,23 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 
 	K15_RenderFontDesc fontDesc = {};
 	K15_Vector2 pos = {};
-	const char* text = 0;
+	char* text = 0;
 
 	uint32 localOffset = 0;
+	uint32 textLength = 0;
 
 	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(K15_RenderFontDesc), &fontDesc);
 	localOffset += sizeof(K15_RenderFontDesc);
 
-	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, K15_PTR_SIZE, &text);
-	localOffset += K15_PTR_SIZE;
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(uint32), &textLength);
+	localOffset += sizeof(uint32);
+
+	text = (char*)alloca(textLength + 1);
+
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, textLength, text);
+	localOffset += textLength;
+
+	text[textLength] = 0;
 
 	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(K15_Vector2), &pos);
 	localOffset += sizeof(K15_Vector2);
@@ -415,10 +423,6 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 	K15_RenderMaterialDesc* fontMaterial = &p_RenderBackEnd->resources.defaultFontMaterial;
 	K15_SetRenderMaterialRenderResourceDataByName(&fontMaterial->materialPasses[0], "sampler", fontDesc.bla);
 	K15_SetRenderMaterialRenderResourceDataByName(&fontMaterial->materialPasses[0], "tex", fontDesc.textureHandle);
-
-	uint32 textLength = (uint32)strlen(text);
-
-	K15_ASSERT_TEXT(textLength > 0, "Textlength is 0!");
 
 	uint32 numVertices = textLength * 6;
 	uint32 vertexIndex = 0;

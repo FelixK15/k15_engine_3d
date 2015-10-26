@@ -669,7 +669,7 @@ K15_ResourceHandle K15_LoadResource(K15_ResourceContext* p_ResourceContext, uint
 			
 			p_ResourceContext->resourceCache[resourceHash] = resource;
 
-			K15_AddFileWatch(p_ResourcePath, , (void*)resourceContext);
+//			K15_AddFileWatch(p_ResourcePath, , (void*)resourceContext);
 
 			K15_LOG_SUCCESS_MESSAGE("Successfully loaded resource '%s'.", p_ResourcePath);
 		}

@@ -49,8 +49,11 @@ void K15_RenderCommandDraw2DText(K15_RenderCommandQueue* p_RenderCommandQueue, K
 
 	result8 result = K15_InternalBeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_RENDER_2D_TEXT);
 
+	uint32 textLength = (uint32)strlen(p_Text);
+
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_RenderFontDesc), p_FontDesc));
-	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, K15_PTR_SIZE, &p_Text));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(uint32), &textLength));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, textLength, (char*)p_Text));
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_Vector2), &p_Position));
 	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));
 }
