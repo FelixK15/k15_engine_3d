@@ -6,7 +6,7 @@
 struct K15_KerningFormat
 {
 	uint32 shiftedCharacters;
-	int32 kerning;
+	float kerning;
 };
 
 struct K15_GlyphFormat
@@ -15,8 +15,8 @@ struct K15_GlyphFormat
 	uint32 posY;
 	uint32 width;
 	uint32 height;
-	uint32 xOffset;
-	uint32 yOffset;
+
+  float advance;
 
 	uint16 character;
 };
@@ -37,6 +37,8 @@ struct K15_FontFormat
 
 	float fontSize;
 	float scaleFactor;
+  float lineGap;
+  float baseLine;
 
 	uint32 fontNameHash;
 	uint32 startCharacter;
@@ -52,9 +54,9 @@ byte* K15_GetFontTexture(K15_FontFormat* p_FontFormat);
 uint32 K15_GetFontTextureSize(K15_FontFormat* p_FontFormat);
 
 uint8 K15_AddFontGlyphData(K15_FontFormat* p_FontFormat, K15_GlyphFormat* p_GlyphFormat, uint32 p_Character);
-uint8 K15_AddFontKerningData(K15_FontFormat* p_FontFormat, uint16 p_Character1, uint16 p_Character2, int32 p_Kerning);
+uint8 K15_AddFontKerningData(K15_FontFormat* p_FontFormat, uint16 p_Character1, uint16 p_Character2, float p_Kerning);
 uint32 K15_GetKerningDataCount(K15_FontFormat* p_FontFormat);
-int32 K15_GetFontKerningData(K15_FontFormat* p_FontFormat, uint16 p_Character1, uint16 p_Characeter2);
+float K15_GetFontKerningData(K15_FontFormat* p_FontFormat, uint16 p_Character1, uint16 p_Characeter2);
 
 K15_GlyphFormat* K15_GetFontGlyphData(K15_FontFormat* p_FontFormat, uint32 p_Character);
 

@@ -7,7 +7,7 @@
 struct K15_RenderKerningDesc
 {
 	uint32 shiftedCharacters;
-	int32 kerning;
+	float kerning;
 };
 
 struct K15_RenderGlyphDesc
@@ -16,6 +16,7 @@ struct K15_RenderGlyphDesc
 	float y;
 	float width;
 	float height;
+  float advance;
 	uint16 character;
 };
 
@@ -29,6 +30,8 @@ struct K15_RenderFontDesc
 	float textureWidth;
 	float textureHeight;
 	float scaleFactor;
+  float baseLine;
+  float lineGap;
 	uint32 startCharacter;
 	uint32 endCharacter;
 	uint32 fontNameHash;

@@ -27,7 +27,7 @@ intern void K15_InternalInitializeKernFormatBuffer(K15_KerningFormat* p_KernForm
 			K15_KerningFormat* currentKernFormat = &p_KernFormatBuffer[kernFormatBufferIndex++];
 
 			currentKernFormat->shiftedCharacters = (charIndex << 16) | charIndex2;
-			currentKernFormat->kerning = 0;
+			currentKernFormat->kerning = 0.f;
 		}
 	}
 }
@@ -51,6 +51,12 @@ intern uint8 K15_InternalSaveFontFormat(K15_DataAccessContext* p_DataAccessConte
 
 	//write scale factor
 	K15_WriteData(p_DataAccessContext, sizeof(float), &p_FontFormat->scaleFactor);
+
+  //write baseline
+  K15_WriteData(p_DataAccessContext, sizeof(float), &p_FontFormat->baseLine);
+
+  //write line gap
+  K15_WriteData(p_DataAccessContext, sizeof(float), &p_FontFormat->lineGap);
 
 	//write font texture width
 	K15_WriteData(p_DataAccessContext, sizeof(uint32), &p_FontFormat->texture.width);
@@ -112,8 +118,14 @@ intern uint8 K15_InternalLoadFontFormat(K15_DataAccessContext* p_DataAccessConte
 	//read font size
 	K15_ReadData(p_DataAccessContext, sizeof(float), &p_FontFormat->fontSize);
 
-	//write scale factor
+	//read scale factor
 	K15_ReadData(p_DataAccessContext, sizeof(float), &p_FontFormat->scaleFactor);
+
+  //read baseline
+  K15_ReadData(p_DataAccessContext, sizeof(float), &p_FontFormat->baseLine);
+
+  //read line gap
+  K15_ReadData(p_DataAccessContext, sizeof(float), &p_FontFormat->lineGap);
 
 	//read font texture width
 	K15_ReadData(p_DataAccessContext, sizeof(uint32), &p_FontFormat->texture.width);
@@ -318,7 +330,7 @@ uint8 K15_AddFontGlyphData(K15_FontFormat* p_FontFormat, K15_GlyphFormat* p_Glyp
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-uint8 K15_AddFontKerningData(K15_FontFormat* p_FontFormat, uint16 p_Character1, uint16 p_Character2, int32 p_Kerning)
+uint8 K15_AddFontKerningData(K15_FontFormat* p_FontFormat, uint16 p_Character1, uint16 p_Character2, float p_Kerning)
 {
 	assert(p_FontFormat);
 	assert(p_Character1 >= p_FontFormat->startCharacter && p_Character1 <= p_FontFormat->endCharacter);
@@ -338,7 +350,7 @@ uint8 K15_AddFontKerningData(K15_FontFormat* p_FontFormat, uint16 p_Character1, 
 	return K15_ERROR_CHARACTER_OUT_OF_BOUNDS;
 }
 /*********************************************************************************/
-int32 K15_GetFontKerningData(K15_FontFormat* p_FontFormat, uint16 p_Character1, uint16 p_Character2)
+float K15_GetFontKerningData(K15_FontFormat* p_FontFormat, uint16 p_Character1, uint16 p_Character2)
 {
 	assert(p_FontFormat);
 	assert(p_Character1 >= p_FontFormat->startCharacter && p_Character1 <= p_FontFormat->endCharacter);

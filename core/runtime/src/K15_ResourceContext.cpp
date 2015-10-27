@@ -292,6 +292,8 @@ intern void K15_InternalLoadFontResource(K15_ResourceContext* p_ResourceContext,
 		renderFontDesc->endCharacter = fontFormat.endCharacter;
 		renderFontDesc->fontNameHash = fontFormat.fontNameHash;
 		renderFontDesc->scaleFactor = fontFormat.scaleFactor;
+    renderFontDesc->baseLine = fontFormat.baseLine;
+    renderFontDesc->lineGap = fontFormat.lineGap;
 
 		uint32 numGlyphs = fontFormat.endCharacter - fontFormat.startCharacter;
 		uint32 numKerning = numGlyphs * numGlyphs;
@@ -300,7 +302,7 @@ intern void K15_InternalLoadFontResource(K15_ResourceContext* p_ResourceContext,
 		renderFontDesc->kernDescs = (K15_RenderKerningDesc*)K15_AllocateFromMemoryAllocator(resourceAllocator, sizeof(K15_RenderKerningDesc) * numKerning);
 		renderFontDesc->textureHeight = fontFormat.texture.height;
 		renderFontDesc->textureWidth = fontFormat.texture.width;
-
+    
 		//transfer glyph data
 		for (uint32 glyphIndex = fontFormat.startCharacter;
 			glyphIndex < fontFormat.endCharacter;
@@ -320,6 +322,7 @@ intern void K15_InternalLoadFontResource(K15_ResourceContext* p_ResourceContext,
 			renderGlyphDesc->y = y;
 			renderGlyphDesc->width = w;
 			renderGlyphDesc->height = h;
+      renderGlyphDesc->advance = glyphFormat->advance;
 		}
 
 		//transfer kerning data (literally the same structure)
