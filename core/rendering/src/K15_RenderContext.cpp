@@ -124,7 +124,7 @@ K15_RenderContext* K15_CreateRenderContextWithCustomAllocator(K15_OSContext* p_O
 	renderContext->numRenderCommandQueues = 0;
 	renderContext->numDispatchedRenderCommandQueues = 0;
 
-	K15_InitializeRenderBackEnd(&renderContext->memoryAllocator, renderContext, &renderContext->backEnd);
+	K15_InitializeRenderBackEnd(&renderContext->memoryAllocator, renderContext, &renderContext->backEnd, p_OSContext);
 	result = K15_InternalCreateSpecificRenderContext(&renderContext->memoryAllocator, &renderContext->backEnd, p_OSContext);
 
 	if (result != K15_SUCCESS)

@@ -10,6 +10,8 @@
 #include "K15_Thread.h"
 #include "K15_DefaultCLibraries.h"
 
+#include "K15_FileWatch.h"
+
 #include "K15_RenderMaterialDesc.h"
 #include "K15_RenderFontDesc.h"
 
@@ -32,6 +34,14 @@ struct K15_AsyncResourceLoadParameter
 	const char* resourcePath;
 	uint32 resourceIdentifier;
 	uint32 flags;
+};
+/*********************************************************************************/
+struct K15_ResourceFileChangedInfo
+{
+	uint32 resourceIdentifier;
+	const char* resourcePath;
+	K15_ResourceHandle resourceHandle;
+	K15_ResourceContext* resourceContext;
 };
 /*********************************************************************************/
 
@@ -95,7 +105,17 @@ intern uint32 K15_InternalFileSystemGetResourceSize(K15_ResourceContext* p_Resou
 
 	char* resourceFilePath = K15_InternalCopyResourcePathIntoBuffer(p_ResourceArchive->resourcePath, p_Path, (char*)alloca(filePathBufferSize));
 
-	return K15_GetFileSize(resourceFilePath);
+	uint32 fileSize = 0;
+
+	if (K15_FileExists(resourceFilePath))
+	{
+		while(fileSize == 0)
+		{
+			fileSize = K15_GetFileSize(resourceFilePath);
+		}
+	}
+
+	return fileSize;
 }
 /*********************************************************************************/
 intern byte* K15_InternalFileSystemLoadResource(K15_ResourceContext* p_ResourceContext, K15_ResourceArchive* p_ResourceArchive, uint32 p_ResourceSize, const char* p_Path)
@@ -264,11 +284,11 @@ intern void K15_InternalLoadFontResource(K15_ResourceContext* p_ResourceContext,
 		//load default sampler
 	}
 
-	K15_ResourceHandle blaresource = K15_LoadResource(p_ResourceContext, K15_SAMPLER_RESOURCE_IDENTIFIER, "linear_clamp_sampler.k15sampler", 0);
+	K15_ResourceHandle sampler = K15_LoadResource(p_ResourceContext, K15_SAMPLER_RESOURCE_IDENTIFIER, "linear_clamp_sampler.k15sampler", 0);
 
 	K15_RenderFontDesc* renderFontDesc = (K15_RenderFontDesc*)K15_AllocateFromMemoryAllocator(resourceAllocator, sizeof(K15_RenderFontDesc));
 	renderFontDesc->textureHandle = (K15_RenderResourceHandle*)K15_AllocateFromMemoryAllocator(resourceAllocator, sizeof(K15_RenderResourceHandle));
-	renderFontDesc->bla = K15_GetResourceRenderHandle(p_ResourceContext, blaresource);
+	renderFontDesc->samplerHandle = K15_GetResourceRenderHandle(p_ResourceContext, sampler);
 
 	uint32 fontTextureSize = K15_GetFontTextureSize(&fontFormat);
 	byte* fontTextureData = K15_GetFontTexture(&fontFormat);
@@ -292,8 +312,8 @@ intern void K15_InternalLoadFontResource(K15_ResourceContext* p_ResourceContext,
 		renderFontDesc->endCharacter = fontFormat.endCharacter;
 		renderFontDesc->fontNameHash = fontFormat.fontNameHash;
 		renderFontDesc->scaleFactor = fontFormat.scaleFactor;
-    renderFontDesc->baseLine = fontFormat.baseLine;
-    renderFontDesc->lineGap = fontFormat.lineGap;
+		renderFontDesc->baseLine = fontFormat.baseLine;
+		renderFontDesc->lineGap = fontFormat.lineGap;
 
 		uint32 numGlyphs = fontFormat.endCharacter - fontFormat.startCharacter;
 		uint32 numKerning = numGlyphs * numGlyphs;
@@ -314,15 +334,15 @@ intern void K15_InternalLoadFontResource(K15_ResourceContext* p_ResourceContext,
 
 			float x = (float)glyphFormat->posX;
 			float y = (float)glyphFormat->posY;
-			float w = (float)glyphFormat->width / (float)fontFormat.texture.width;
-			float h = (float)glyphFormat->height / (float)fontFormat.texture.height;
+			float w = (float)glyphFormat->width;
+			float h = (float)glyphFormat->height;
 			
 			renderGlyphDesc->character = glyphIndex;
 			renderGlyphDesc->x = x;
 			renderGlyphDesc->y = y;
 			renderGlyphDesc->width = w;
 			renderGlyphDesc->height = h;
-      renderGlyphDesc->advance = glyphFormat->advance;
+			renderGlyphDesc->advance = glyphFormat->advance;
 		}
 
 		//transfer kerning data (literally the same structure)
@@ -491,12 +511,110 @@ intern void K15_InternalLoadMaterialResource(K15_ResourceContext* p_ResourceCont
 	}
 }
 /*********************************************************************************/
-intern void K15_InternalResourceFileChangedCallback(const char* p_ResourcePath, void* p_UserData)
+intern K15_ResourceLoader* K15_InternalGetResourceLoaderForIdentifier(K15_ResourceContext* p_ResourceContext, uint32 p_Identifier)
 {
+	K15_ResourceLoader* loader = 0;
 
+	for (uint32 loaderIndex = 0;
+		loaderIndex < p_ResourceContext->numResourceLoader;
+		++loaderIndex)
+	{
+		loader = &p_ResourceContext->resourceLoader[loaderIndex];
+
+		if (loader->identifier == p_Identifier)
+		{
+			break;
+		}
+		else
+		{
+			loader = 0;
+		}
+	}
+
+	return loader;
 }
 /*********************************************************************************/
+intern K15_Resource* K15_InternalLoadResource(K15_ResourceContext* p_ResourceContext, K15_ResourceLoader* p_Loader, const char* p_ResourcePath, uint32 p_Flags)
+{
+	K15_ResourceArchive* archive = &p_ResourceContext->resourceArchive;
+	if (!archive->resourceExists(p_ResourceContext, archive, p_ResourcePath))
+	{
+		K15_LOG_ERROR_MESSAGE("Could not load resource '%s' (%s).", p_ResourcePath, K15_CopySystemErrorMessageIntoBuffer((char*)alloca(K15_ERROR_MESSAGE_LENGTH)));
+		return 0;
+	}
 
+	K15_ResourceCompilerInput resourceCompilerInput = {};
+	K15_ResourceData resourceCompilerOutput = {};
+	K15_Resource* resource = 0;
+
+	resourceCompilerInput.path = K15_CopyString(p_ResourcePath);
+
+	resourceCompilerInput.fileContentSizeInBytes = archive->getResourceSize(p_ResourceContext, archive, p_ResourcePath);
+	K15_ASSERT_TEXT(resourceCompilerInput.fileContentSizeInBytes, "Size of the resource file '%s' is 0 (Maybe file was not accessible?).", p_ResourcePath);
+
+	if (resourceCompilerInput.fileContentSizeInBytes > 0)
+	{
+		resourceCompilerInput.fileContent = archive->getResourceData(p_ResourceContext, archive, resourceCompilerInput.fileContentSizeInBytes, p_ResourcePath);
+		K15_ASSERT_TEXT(resourceCompilerInput.fileContent, "Resource data from resource file '%s' is NULL (Maybe file was not accessible?).", p_ResourcePath);
+
+		if (resourceCompilerInput.fileContent)
+		{
+			//create and load resource
+			resource = (K15_Resource*)K15_AllocateFromMemoryAllocator(&p_ResourceContext->memoryAllocator, sizeof(K15_Resource));
+			p_Loader->resourceLoader(p_ResourceContext, &resourceCompilerInput, &resourceCompilerOutput);
+
+			//fill data
+			resource->compilerInput = resourceCompilerInput;
+			resource->resourceData = resourceCompilerOutput;
+			resource->flags = p_Flags;
+			resource->refCount = 0;
+		}
+	}
+
+	return resource;
+}
+/*********************************************************************************/
+intern void K15_InternalReloadResource(const char* p_ResourcePath, void* p_UserData)
+{
+	K15_ResourceFileChangedInfo* resourceChangedInfo = (K15_ResourceFileChangedInfo*)p_UserData;
+
+	K15_SleepThreadForMilliseconds(200);
+
+	const char* path = resourceChangedInfo->resourcePath;
+	K15_ResourceContext* resourceContext = resourceChangedInfo->resourceContext;
+	K15_ResourceHandle resourceHandle = resourceChangedInfo->resourceHandle;
+	uint32 resourceIdentifier = resourceChangedInfo->resourceIdentifier;
+
+	K15_Resource* resource = resourceContext->resourceCache[resourceHandle];
+
+	K15_ResourceLoader* loader = K15_InternalGetResourceLoaderForIdentifier(resourceContext, resourceIdentifier);
+	K15_Resource* newResource = K15_InternalLoadResource(resourceContext, loader, path, resource->flags);
+
+	if (newResource)
+	{
+		K15_InterlockedCompareExchangePointer((void**)&resourceContext->resourceCache[resourceHandle], newResource, resource);
+		//todo delete old resource
+	}
+}
+/*********************************************************************************/
+intern K15_FileWatchEntry* K15_InternalWatchResourceFile(K15_ResourceContext* p_ResourceContext, K15_ResourceHandle p_ResourceHandle, const char* p_ResourcePath, uint32 p_ResourceIdentifier)
+{
+	K15_ResourceFileChangedInfo* fileChangedInfo = (K15_ResourceFileChangedInfo*)malloc(sizeof(K15_ResourceFileChangedInfo));
+	fileChangedInfo->resourceHandle = p_ResourceHandle;
+	fileChangedInfo->resourceContext = p_ResourceContext;
+	fileChangedInfo->resourceIdentifier = p_ResourceIdentifier;
+	fileChangedInfo->resourcePath = p_ResourcePath;
+
+	uint32 dirPathLength= (uint32)strlen(p_ResourceContext->resourceArchive.resourcePath);
+	uint32 filePathLength= (uint32)strlen(p_ResourcePath);
+
+	uint32 filePathBufferSize = dirPathLength + filePathLength + 1; //+1 = 0 terminator
+
+	char* resourceFilePath = K15_InternalCopyResourcePathIntoBuffer(p_ResourceContext->resourceArchive.resourcePath, p_ResourcePath, (char*)alloca(filePathBufferSize));
+
+	return K15_AddFileWatch(resourceFilePath, K15_InternalReloadResource, fileChangedInfo, K15_USER_DATA_OWNERSHIP);
+}
+/*********************************************************************************/
 
 
 /*********************************************************************************/
@@ -622,59 +740,24 @@ K15_ResourceHandle K15_LoadResource(K15_ResourceContext* p_ResourceContext, uint
 
 	if (resource == 0)
 	{
-		bool8 foundLoader = K15_FALSE;
-		K15_ResourceLoader* loader = 0;
+		K15_ResourceLoader* loader = K15_InternalGetResourceLoaderForIdentifier(p_ResourceContext, p_ResourceIdentifier);
 
-		for (uint32 loaderIndex = 0;
-			loaderIndex < p_ResourceContext->numResourceLoader;
-			++loaderIndex)
-		{
-			loader = &p_ResourceContext->resourceLoader[loaderIndex];
-
-			if (loader->identifier == p_ResourceIdentifier)
-			{
-				foundLoader = K15_TRUE;
-				break;
-			}
-		}
-
-		if (foundLoader)
+		if (loader)
 		{
 			K15_LOG_NORMAL_MESSAGE("Resource '%s' could not be found in the cache. Loading resource via loader '%s'", p_ResourcePath, loader->name);
 
-			K15_ResourceArchive* archive = &resourceContext->resourceArchive;
-			if (!archive->resourceExists(resourceContext, archive, p_ResourcePath))
+			resource = K15_InternalLoadResource(p_ResourceContext, loader, p_ResourcePath, p_Flags);
+
+			if (resource)
 			{
-				K15_LOG_ERROR_MESSAGE("Could not load resource '%s' (%s).", p_ResourcePath, K15_CopySystemErrorMessageIntoBuffer((char*)alloca(K15_ERROR_MESSAGE_LENGTH)));
-				return 0;
+				p_ResourceContext->resourceCache[resourceHash] = resource;
+				K15_LOG_SUCCESS_MESSAGE("Successfully loaded resource '%s'.", p_ResourcePath);
+
+#ifdef K15_WATCH_RESOURCE_FILES
+				K15_InternalWatchResourceFile(p_ResourceContext, resourceHash, p_ResourcePath, p_ResourceIdentifier);
+#endif //K15_WATCH_RESOURCE_FILES
 			}
 
-			K15_ResourceCompilerInput resourceCompilerInput = {};
-			K15_ResourceData resourceCompilerOutput = {};
-
-			resourceCompilerInput.path = K15_CopyString(p_ResourcePath);
-
-			resourceCompilerInput.fileContentSizeInBytes = archive->getResourceSize(resourceContext, archive, p_ResourcePath);
-			K15_ASSERT_TEXT(resourceCompilerInput.fileContentSizeInBytes, "Size of the resource file '%s' is 0 (Maybe file was not accessible?).", p_ResourcePath);
-
-			resourceCompilerInput.fileContent = archive->getResourceData(resourceContext, archive, resourceCompilerInput.fileContentSizeInBytes, p_ResourcePath);
-			K15_ASSERT_TEXT(resourceCompilerInput.fileContent, "Resource data from resource file '%s' is NULL (Maybe file was not accessible?).", p_ResourcePath);
-
-			//get next free resource from the resource cache
-			resource = (K15_Resource*)K15_AllocateFromMemoryAllocator(&p_ResourceContext->memoryAllocator, sizeof(K15_Resource));
-			loader->resourceLoader(p_ResourceContext, &resourceCompilerInput, &resourceCompilerOutput);
-			
-			//fill data
-			resource->compilerInput = resourceCompilerInput;
-			resource->resourceData = resourceCompilerOutput;
-			resource->flags = p_Flags;
-			resource->refCount = 0;
-			
-			p_ResourceContext->resourceCache[resourceHash] = resource;
-
-//			K15_AddFileWatch(p_ResourcePath, , (void*)resourceContext);
-
-			K15_LOG_SUCCESS_MESSAGE("Successfully loaded resource '%s'.", p_ResourcePath);
 		}
 		else
 		{

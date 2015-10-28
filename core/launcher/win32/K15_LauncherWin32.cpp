@@ -172,6 +172,9 @@ int CALLBACK WinMain(
 		//swap dispatched buffers before starting a new frame.
 		K15_SwapDispatchedRenderCommandQueueBuffers(renderContext);
 
+		//check if there are any file watch events to process
+		K15_Win32RegisterDeferedFileWatch();
+
 		//let game run for 1 frame
 		K15_PostSemaphore(mainThreadSynchronizer);
 

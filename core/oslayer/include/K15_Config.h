@@ -24,5 +24,6 @@
 #endif //K15_OS_WINDOWS
 
 #define K15_MAX_CONTROLLER 4
+#define K15_MAX_DEFERED_FILE_WATCH 64
 
 #endif //_K15_Config_h_

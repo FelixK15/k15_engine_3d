@@ -8,7 +8,7 @@ typedef void(*K15_FileChangeNotificationFnc)(const char*, void*);
 /*********************************************************************************/
 enum K15_FileWatchFlags
 {
-	K15_USER_DATA_OWNERSHIP = 0x02 //Delete user data when deleting the file watch entry
+	K15_USER_DATA_OWNERSHIP = 0x02	//Delete user data when deleting the file watch entry
 };
 /*********************************************************************************/
 struct K15_DirectoryWatchEntry

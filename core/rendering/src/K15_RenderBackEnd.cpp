@@ -5,6 +5,8 @@
 #include "K15_MaterialFormat.h"
 #include "K15_FontFormat.h"
 
+#include "K15_Window.h"
+
 #include "K15_Rectangle.h"
 #include "K15_Vector2.h"
 
@@ -77,7 +79,7 @@ intern result8 K15_SetDefaultRenderState(K15_RenderBackEnd* p_RenderBackEnd)
 	}
 }
 /*********************************************************************************/
-intern result8 K15_InitializeRenderBackEnd(K15_CustomMemoryAllocator* p_MemoryAllocator, K15_RenderContext* p_RenderContext, K15_RenderBackEnd* p_RenderBackEnd)
+intern result8 K15_InitializeRenderBackEnd(K15_CustomMemoryAllocator* p_MemoryAllocator, K15_RenderContext* p_RenderContext, K15_RenderBackEnd* p_RenderBackEnd, K15_OSContext* p_OSContext)
 {
 	p_RenderBackEnd->interfaceInitialized = K15_FALSE;
 
@@ -90,6 +92,12 @@ intern result8 K15_InitializeRenderBackEnd(K15_CustomMemoryAllocator* p_MemoryAl
 	p_RenderBackEnd->shaderProcessorContext->typeTable = K15_CreateTypeTable();
 	p_RenderBackEnd->shaderProcessorContext->lastProcessResult.numErrors = 0;
 	p_RenderBackEnd->shaderProcessorContext->lastProcessResult.errors = 0;
+
+	K15_Window* window = p_OSContext->window.window;
+
+	p_RenderBackEnd->viewportHeight = (float)window->height;
+	p_RenderBackEnd->viewportWidth = (float)window->width;
+	p_RenderBackEnd->viewportAspectRatio = p_RenderBackEnd->viewportWidth / p_RenderBackEnd->viewportHeight;
 
 	return K15_SUCCESS;
 }
@@ -316,6 +324,10 @@ intern result8 K15_InternalWindowResized(K15_RenderBackEnd* p_RenderBackEnd, K15
 	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(uint32), &height);
 	localOffset += sizeof(uint32);
 
+	p_RenderBackEnd->viewportHeight = (float)height;
+	p_RenderBackEnd->viewportWidth = (float)width;
+	p_RenderBackEnd->viewportAspectRatio = p_RenderBackEnd->viewportWidth / p_RenderBackEnd->viewportHeight;
+
 	return p_RenderBackEnd->renderInterface.resizeViewport(p_RenderBackEnd, width, height);
 }
 /*********************************************************************************/
@@ -429,7 +441,7 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 	localOffset += sizeof(K15_Vector2);
 
 	K15_RenderMaterialDesc* fontMaterial = &p_RenderBackEnd->resources.defaultFontMaterial;
-	K15_SetRenderMaterialRenderResourceDataByName(&fontMaterial->materialPasses[0], "sampler", fontDesc.bla);
+	K15_SetRenderMaterialRenderResourceDataByName(&fontMaterial->materialPasses[0], "sampler", fontDesc.samplerHandle);
 	K15_SetRenderMaterialRenderResourceDataByName(&fontMaterial->materialPasses[0], "tex", fontDesc.textureHandle);
 
 	uint32 numVertices = textLength * 6;
@@ -460,8 +472,8 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 
 	float* vertexMemory = (float*)K15_AllocateFromMemoryAllocator(renderAllocator, sizeVerticesInBytes);
 	
-  uint32 numCharacter = fontDesc.endCharacter - fontDesc.startCharacter;
-  uint32 numKerningElements = numCharacter * numCharacter;
+	uint32 numCharacter = fontDesc.endCharacter - fontDesc.startCharacter;
+	uint32 numKerningElements = numCharacter * numCharacter;
 
 	for (uint32 charIndex = 0;
 		charIndex < textLength;
@@ -474,7 +486,6 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 			continue;
 		}
 
-
 		if (currentChar >= fontDesc.startCharacter &&
 				currentChar <= fontDesc.endCharacter)
 		{
@@ -482,71 +493,76 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 
 			float kerningX = 0.f;
 
-      //get kerning
+			//get kerning
 			if (charIndex+1 < textLength)
 			{
 				unsigned int shiftedCharacter = (currentChar << 16) | text[charIndex+1];
-			  K15_RenderKerningDesc* kerningDesc = (K15_RenderKerningDesc*)bsearch(&shiftedCharacter, fontDesc.kernDescs, numKerningElements, sizeof(K15_RenderKerningDesc), K15_InternalCompareKerning);
+				K15_RenderKerningDesc* kerningDesc = (K15_RenderKerningDesc*)bsearch(&shiftedCharacter, fontDesc.kernDescs, numKerningElements, sizeof(K15_RenderKerningDesc), K15_InternalCompareKerning);
 
-        if (kerningDesc)
-        {
-          kerningX = kerningDesc->kerning;
-        }
+				if (kerningDesc)
+				{
+					kerningX = kerningDesc->kerning;
+				}
 			}
+			
+			//float texturePixelX = glyphDesc->x + glyphDesc->advance + kerningX;
 
-      x += + glyphDesc->advance / fontDesc.textureWidth + kerningX;
+			x += kerningX;
 
-      if (currentChar == '\n')
-      {
-        x = pos.x;
-        y -= fontDesc.scaleFactor;
-      }
+			if (currentChar == '\n')
+			{
+				x = pos.x;
+				y -= fontDesc.scaleFactor;
+			}
 
 			glyphX = glyphDesc->x;
 			glyphY = glyphDesc->y;
-			glyphW = glyphDesc->width;
-			glyphH = glyphDesc->height;
+			glyphW = glyphDesc->width / fontDesc.textureWidth;
+			glyphH = glyphDesc->height / fontDesc.textureHeight;
+
+			float glyphWScreen = glyphDesc->width / p_RenderBackEnd->viewportWidth;
+			float glyphHScreen = glyphDesc->height / p_RenderBackEnd->viewportHeight;
 
 			texelLeft = glyphX / fontDesc.textureWidth;
 			texelTop = glyphY / fontDesc.textureWidth;
 			texelRight = glyphW + texelLeft;
 			texelBottom = glyphH + texelTop;
 
-      if (!isspace(currentChar))
-      {
-        vertexMemory[vertexIndex++] = x;
-        vertexMemory[vertexIndex++] = y;
-        vertexMemory[vertexIndex++] = texelLeft;
-        vertexMemory[vertexIndex++] = 1.f- texelBottom;//texelTop;
+			if (!isspace(currentChar))
+			{
+				vertexMemory[vertexIndex++] = x;
+				vertexMemory[vertexIndex++] = y;
+				vertexMemory[vertexIndex++] = texelLeft;
+				vertexMemory[vertexIndex++] = 1.f- texelBottom;//texelTop;
 
-        vertexMemory[vertexIndex++] = x;
-        vertexMemory[vertexIndex++] = y + glyphH;
-        vertexMemory[vertexIndex++] = texelLeft;
-        vertexMemory[vertexIndex++] = 1.f - texelTop;//texelBottom;
+				vertexMemory[vertexIndex++] = x;
+				vertexMemory[vertexIndex++] = y + glyphHScreen;
+				vertexMemory[vertexIndex++] = texelLeft;
+				vertexMemory[vertexIndex++] = 1.f - texelTop;//texelBottom;
 
-        vertexMemory[vertexIndex++] = x + glyphW;
-        vertexMemory[vertexIndex++] = y;
-        vertexMemory[vertexIndex++] = texelRight;
-        vertexMemory[vertexIndex++] = 1.f - texelBottom;//texelTop;
+				vertexMemory[vertexIndex++] = x + glyphWScreen;
+				vertexMemory[vertexIndex++] = y;
+				vertexMemory[vertexIndex++] = texelRight;
+				vertexMemory[vertexIndex++] = 1.f - texelBottom;//texelTop;
 
-        vertexMemory[vertexIndex++] = x;
-        vertexMemory[vertexIndex++] = y + glyphH;
-        vertexMemory[vertexIndex++] = texelLeft;
-        vertexMemory[vertexIndex++] = 1.f - texelTop;//texelBottom;
+				vertexMemory[vertexIndex++] = x;
+				vertexMemory[vertexIndex++] = y + glyphHScreen;
+				vertexMemory[vertexIndex++] = texelLeft;
+				vertexMemory[vertexIndex++] = 1.f - texelTop;//texelBottom;
 
-        vertexMemory[vertexIndex++] = x + glyphW;
-        vertexMemory[vertexIndex++] = y + glyphH;
-        vertexMemory[vertexIndex++] = texelRight;
-        vertexMemory[vertexIndex++] = 1.f - texelTop;//texelBottom;
+				vertexMemory[vertexIndex++] = x + glyphWScreen;
+				vertexMemory[vertexIndex++] = y + glyphHScreen;
+				vertexMemory[vertexIndex++] = texelRight;
+				vertexMemory[vertexIndex++] = 1.f - texelTop;//texelBottom;
 
-        vertexMemory[vertexIndex++] = x + glyphW;
-        vertexMemory[vertexIndex++] = y;
-        vertexMemory[vertexIndex++] = texelRight;
-        vertexMemory[vertexIndex++] = 1.f - texelBottom;//texelTop;
-      }
+				vertexMemory[vertexIndex++] = x + glyphWScreen;
+				vertexMemory[vertexIndex++] = y;
+				vertexMemory[vertexIndex++] = texelRight;
+				vertexMemory[vertexIndex++] = 1.f - texelBottom;//texelTop;
+			}
 
-		  x += glyphW;
-    }
+			x += glyphWScreen;
+		}
 	}
 
 	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexMemory, numVertices, &vertexFormatDesc);

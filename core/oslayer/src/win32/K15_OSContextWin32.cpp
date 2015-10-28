@@ -355,6 +355,25 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
+void K15_Win32RegisterDeferedFileWatch()
+{
+	bool8 isMainThread = K15_GetCurrentThread() == K15_MAIN_THREAD;
+	K15_ASSERT(isMainThread);
+
+	K15_OSContext* osContext = K15_GetOSLayerContext();
+	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
+
+	for (uint32 deferedFileWatchIndex = 0;
+		deferedFileWatchIndex < win32Context->numDeferedFileWatch;
+		++deferedFileWatchIndex)
+	{
+		K15_Win32DeferedFileWatchRegistration* deferedFileWatch = &win32Context->deferedFileWatch[deferedFileWatchIndex];
+		K15_Win32RegisterChangeNotification(deferedFileWatch->directoryHandle, deferedFileWatch->directoryWatchEntry, deferedFileWatch->directoryWatchEntryWin32);
+	}
+
+	win32Context->numDeferedFileWatch = 0;
+}
+/*********************************************************************************/
 char* K15_Win32GetError(char* p_OutputBuffer)
 {
 	DWORD errorNo = GetLastError();

@@ -143,7 +143,7 @@ K15_FileWatchEntry* K15_AddFileWatch(const char* p_FilePath, K15_FileChangeNotif
 		K15_DeleteFileWatch(fileWatchEntry);
 		fileWatchEntry = 0;
 	}
-
+	
 	return fileWatchEntry;
 }
 /*********************************************************************************/

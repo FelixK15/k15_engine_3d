@@ -16,7 +16,7 @@ struct K15_RenderGlyphDesc
 	float y;
 	float width;
 	float height;
-  float advance;
+	float advance;
 	uint16 character;
 };
 
@@ -26,12 +26,12 @@ struct K15_RenderFontDesc
 	K15_RenderGlyphDesc* glyphDescs;
 
 	K15_RenderResourceHandle* textureHandle;
-	K15_RenderResourceHandle* bla;
+	K15_RenderResourceHandle* samplerHandle;
 	float textureWidth;
 	float textureHeight;
 	float scaleFactor;
-  float baseLine;
-  float lineGap;
+	float baseLine;
+	float lineGap;
 	uint32 startCharacter;
 	uint32 endCharacter;
 	uint32 fontNameHash;

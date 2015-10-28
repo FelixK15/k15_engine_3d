@@ -79,7 +79,7 @@ struct K15_RenderMaterialPassDesc;
 struct K15_ShaderProcessorContext;
 
 struct K15_Thread;
-
+struct K15_ResourceContext;
 
 struct K15_TextureFormat;
 struct K15_MaterialFormat;

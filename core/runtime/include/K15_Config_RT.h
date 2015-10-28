@@ -20,6 +20,8 @@
 #define K15_MESH_RESOURCE_IDENTIFIER 5
 #define K15_SHADER_RESOURCE_IDENTIFIER 6
 
+#define K15_WATCH_RESOURCE_FILES
+
 typedef unsigned int K15_ResourceHandle;
 
 #endif //_K15_Runtime_Config_h_

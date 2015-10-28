@@ -10,25 +10,8 @@
 #include "K15_FileSystem.h"
 #include "K15_FileWatch.h"
 
-#define K15_WIN32_READDIRECTORYCHANGES_NOTIFICATION_COUNT 32
-
-/*********************************************************************************/
-struct K15_DirectoryWatchOverlapped
-{
-	OVERLAPPED overlapped;
-	K15_DirectoryWatchEntry* directoryWatchEntry;
-};
-/*********************************************************************************/
-struct K15_DirectoryWatchEntryWin32
-{
-	FILE_NOTIFY_INFORMATION notificationBuffer[K15_WIN32_READDIRECTORYCHANGES_NOTIFICATION_COUNT];
-	K15_DirectoryWatchOverlapped overlapped;
-	HANDLE directoryHandle;
-};
-/*********************************************************************************/
-
-//forward declaration for the callback
-intern inline uint8 K15_Win32InternalRegisterChangeNotification(HANDLE, K15_DirectoryWatchEntry*, K15_DirectoryWatchEntryWin32*);
+#include "K15_Thread.h"
+#include "K15_OSContext.h"
 
 /*********************************************************************************/
 intern uint8 K15_InternalWin32FileWatchEntryComparer(K15_FileWatchEntry* p_FileWatchEntry, void* p_UserData)
@@ -121,10 +104,43 @@ intern inline VOID WINAPI K15_Win32InternalFileChangeCallback(DWORD dwErrorCode,
 		currentNotification = (FILE_NOTIFY_INFORMATION*)(((byte*)currentNotification) + currentNotification->NextEntryOffset);
 	}
 
-	K15_Win32InternalRegisterChangeNotification(directoryHandle, watchEntry, watchEntryWin32);
+	K15_Win32RegisterChangeNotification(directoryHandle, watchEntry, watchEntryWin32);
 }
 /*********************************************************************************/
-intern inline uint8 K15_Win32InternalRegisterChangeNotification(HANDLE p_DirectoryHandle, K15_DirectoryWatchEntry* p_DirectoryWatchEntry, K15_DirectoryWatchEntryWin32* p_DirectoryWatchEntryWin32)
+intern result8 K15_Win32InternalDeferRegisterChangeNotification(HANDLE p_DirectoryHandle, K15_DirectoryWatchEntry* p_DirectoryWatchEntry, K15_DirectoryWatchEntryWin32* p_DirectoryWatchEntryWin32)
+{
+	K15_OSContext* osContext = K15_GetOSLayerContext();
+	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
+
+	K15_Win32DeferedFileWatchRegistration deferedFileWatch = {};
+
+	deferedFileWatch.directoryHandle = p_DirectoryHandle;
+	deferedFileWatch.directoryWatchEntry = p_DirectoryWatchEntry;
+	deferedFileWatch.directoryWatchEntryWin32 = p_DirectoryWatchEntryWin32;
+
+	uint32 currentIndex = win32Context->numDeferedFileWatch;
+	uint32 nextIndex = currentIndex + 1;
+
+	for(;;)
+	{
+		if (win32Context->numDeferedFileWatch == nextIndex)
+		{
+			break;
+		}
+		else
+		{
+			currentIndex = win32Context->numDeferedFileWatch;
+			nextIndex = currentIndex + 1;
+		}
+		K15_InterlockedCompareExchange(&win32Context->numDeferedFileWatch, nextIndex, currentIndex);
+	}
+	
+	win32Context->deferedFileWatch[currentIndex] = deferedFileWatch;
+
+	return K15_SUCCESS;
+}
+/*********************************************************************************/
+result8 K15_Win32RegisterChangeNotification(HANDLE p_DirectoryHandle, K15_DirectoryWatchEntry* p_DirectoryWatchEntry, K15_DirectoryWatchEntryWin32* p_DirectoryWatchEntryWin32)
 {
 	uint32 notificationBufferSize = sizeof(FILE_NOTIFY_INFORMATION) * K15_WIN32_READDIRECTORYCHANGES_NOTIFICATION_COUNT;
 	uint32 notificationFilter = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_SIZE/* | FILE_NOTIFY_CHANGE_LAST_WRITE*/;
@@ -166,7 +182,17 @@ uint8 K15_Win32RegisterFileWatch(K15_OSContext* p_OSContext, K15_FileWatchEntry*
 
 		p_DirectoryWatchEntry->userData = win32DirWatchEntry;
 
-		result = K15_Win32InternalRegisterChangeNotification(directoryHandle, p_DirectoryWatchEntry, win32DirWatchEntry);
+		//defer registration if we're currently not in the main thread
+		bool8 mainThread = K15_GetCurrentThread() == K15_MAIN_THREAD;
+
+		if (mainThread)
+		{
+			result = K15_Win32RegisterChangeNotification(directoryHandle, p_DirectoryWatchEntry, win32DirWatchEntry);
+		}
+		else
+		{
+			result = K15_Win32InternalDeferRegisterChangeNotification(directoryHandle, p_DirectoryWatchEntry, win32DirWatchEntry);
+		}
 	}
 
 	return result;

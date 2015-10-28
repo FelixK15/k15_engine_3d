@@ -87,6 +87,10 @@ struct K15_RenderBackEnd
 	K15_RenderState state;
 	K15_RenderState defaultState;
 
+	float viewportWidth;
+	float viewportHeight;
+	float viewportAspectRatio;
+
 	bool8 interfaceInitialized;
 
 	void* specificRenderPlatform;

@@ -886,8 +886,8 @@ bool8 K15_CompileFontResourceWithStbTTF(K15_ResourceCompilerContext* p_ResourceC
 	
 	fontFormat.fontSize = fontSize;
 	fontFormat.scaleFactor = scaleFactor;
-  fontFormat.lineGap = scaleFactor * (float)lineGap;
-  fontFormat.baseLine = scaleFactor * (float)ascent;
+	fontFormat.lineGap = scaleFactor * (float)lineGap;
+	fontFormat.baseLine = scaleFactor * (float)ascent;
 
 	//set kerning data
 	uint32 numCharacters = endCharacter - startCharacter;
@@ -905,7 +905,7 @@ bool8 K15_CompileFontResourceWithStbTTF(K15_ResourceCompilerContext* p_ResourceC
 			uint32 char2 = character2 + startCharacter;
 
 			float kernAdvance = stbtt_GetCodepointKernAdvance(&fontInfo, char1, char2);
-      kernAdvance *= scaleFactor;
+			kernAdvance *= scaleFactor;
 
 			K15_AddFontKerningData(&fontFormat, char1, char2, kernAdvance);
 		}
@@ -924,12 +924,12 @@ bool8 K15_CompileFontResourceWithStbTTF(K15_ResourceCompilerContext* p_ResourceC
 	{
 		int width = 0;
 		int height = 0;
-    int advance = 0;
-    int lsb = 0;
+		int advance = 0;
+		int lsb = 0;
 
 		int glyphIndex = stbtt_FindGlyphIndex(&fontInfo, codePoint);
 
-    stbtt_GetGlyphHMetrics(&fontInfo, glyphIndex, &advance, &lsb);
+		stbtt_GetGlyphHMetrics(&fontInfo, glyphIndex, &advance, &lsb);
 
 		byte* glyphPixelData = stbtt_GetGlyphBitmapSubpixel(&fontInfo, scaleFactor, scaleFactor, shift_x, shift_y, glyphIndex, &width, &height, 0, 0);
 		K15_AddTextureToAtlas(&fontTextureAtlas, glyphPixelData, width, height, codePoint - startCharacter, &posX, &posY);
@@ -941,7 +941,7 @@ bool8 K15_CompileFontResourceWithStbTTF(K15_ResourceCompilerContext* p_ResourceC
 		currentGlyphFormat.height = height;
 		currentGlyphFormat.posX = posX;
 		currentGlyphFormat.posY = posY;
-    currentGlyphFormat.advance = (float)advance * scaleFactor;
+		currentGlyphFormat.advance = (float)advance * scaleFactor;
 
 		K15_AddFontGlyphData(&fontFormat, &currentGlyphFormat, codePoint);
 	}
