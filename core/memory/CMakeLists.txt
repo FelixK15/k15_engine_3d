@@ -4,10 +4,12 @@ include_directories(./../)
 include_directories(./include)
 include_directories(./src)
 
-set(K15_MEMORY_SRC "./src/K15_Memory.cpp")
+set(K15_MEMORY_SRC 	"./src/K15_Memory.cpp")
 set(K15_MEMORY_INC 	"./include/K15_MemoryBuffer.h"
-					"./include/K15_MemoryPrerequisites.h"
-					"./include/K15_CustomMemoryAllocator.h")
+			"./include/K15_MemoryPrerequisites.h"
+			"./include/K15_CustomMemoryAllocator.h"
+			"./include/K15_StackAllocator.h"
+			"./include/K15_BlockAllocator.h")
 
 source_group(src FILES ${K15_MEMORY_SRC})
 source_group(include FILES ${K15_MEMORY_INC})

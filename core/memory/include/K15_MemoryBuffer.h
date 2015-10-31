@@ -14,7 +14,7 @@ struct K15_MemoryBuffer
 
 	byte* buffer;
 	uint32 sizeInBytes;
-	uint32 usedBytesOffset;
+	uint32 usedBytesOffset; //todo remove - too much information for memory block
 	uint32 flags;
 };
 
@@ -24,7 +24,6 @@ void K15_InitializePreallocatedMemoryBuffer(K15_MemoryBuffer* p_MemoryBuffer, by
 void K15_InitializePreallocatedMemoryBufferWithCustomAllocator(K15_MemoryBuffer* p_MemoryBuffer, byte* p_PreallocatedMemory,  K15_CustomMemoryAllocator p_CustomMemoryAllocator, uint32 p_SizeInBytes, uint32 p_Flags);
 
 byte* K15_GetMemoryFromMemoryBuffer(K15_MemoryBuffer* p_MemoryBuffer, uint32 p_SizeInBytes);
-
 void K15_ClearMemoryBuffer(K15_MemoryBuffer* p_MemoryBuffer);
 
 K15_CustomMemoryAllocator K15_CreateMemoryBufferAllocator(K15_MemoryBuffer* p_MemoryBuffer);

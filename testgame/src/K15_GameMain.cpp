@@ -11,6 +11,7 @@
 #include <K15_Mesh.h>
 #include <K15_GUIContext.h>
 #include <K15_MemoryBuffer.h>
+#include <K15_BlockAllocator.h>
 
 #include <K15_RenderCameraDesc.h>
 #include <K15_RenderFontDesc.h>
@@ -63,7 +64,7 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 	K15_InitializeMemoryBufferWithCustomAllocator(guiMemoryBuffer, K15_CreateMemoryBufferAllocator(memory), resourceBufferSize, 0);
 
 	//Create the resource context pointing to the 'data' directory of the working directory.
-	K15_ResourceContext* resourceContext = K15_CreateResourceContextWithCustomAllocator(p_GameContext->renderContext, "data/", K15_CreateMemoryBufferAllocator(resourceMemoryBuffer));
+	K15_ResourceContext* resourceContext = K15_CreateResourceContextWithCustomAllocator(p_GameContext->renderContext, "data/", K15_CreateBlockAllocator(resourceMemoryBuffer));
 
 	//set the resource context so we can use it later.
 	sample1GameContext->resourceContext = resourceContext;

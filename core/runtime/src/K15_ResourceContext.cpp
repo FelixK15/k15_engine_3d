@@ -577,7 +577,6 @@ intern K15_Resource* K15_InternalLoadResource(K15_ResourceContext* p_ResourceCon
 intern void K15_InternalReloadResource(const char* p_ResourcePath, void* p_UserData)
 {
 	K15_ResourceFileChangedInfo* resourceChangedInfo = (K15_ResourceFileChangedInfo*)p_UserData;
-
 	K15_SleepThreadForMilliseconds(200);
 
 	const char* path = resourceChangedInfo->resourcePath;
@@ -585,15 +584,24 @@ intern void K15_InternalReloadResource(const char* p_ResourcePath, void* p_UserD
 	K15_ResourceHandle resourceHandle = resourceChangedInfo->resourceHandle;
 	uint32 resourceIdentifier = resourceChangedInfo->resourceIdentifier;
 
+	K15_CustomMemoryAllocator* memoryAlloctor = &resourceContext->memoryAllocator;
+
 	K15_Resource* resource = resourceContext->resourceCache[resourceHandle];
 
 	K15_ResourceLoader* loader = K15_InternalGetResourceLoaderForIdentifier(resourceContext, resourceIdentifier);
 	K15_Resource* newResource = K15_InternalLoadResource(resourceContext, loader, path, resource->flags);
 
+	//move ref count
+	K15_InterlockedExchange(&newResource->refCount, resource->refCount);
+
 	if (newResource)
 	{
 		K15_InterlockedCompareExchangePointer((void**)&resourceContext->resourceCache[resourceHandle], newResource, resource);
-		//todo delete old resource
+		
+		//delete old resource data
+		K15_FreeFromMemoryAllocator(memoryAlloctor, resource->compilerInput.fileContent);
+		K15_FreeFromMemoryAllocator(memoryAlloctor, resource->resourceData.compiledResourceData);
+		K15_FreeFromMemoryAllocator(memoryAlloctor, resource);
 	}
 }
 /*********************************************************************************/
