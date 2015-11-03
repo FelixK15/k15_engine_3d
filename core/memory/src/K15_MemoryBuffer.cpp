@@ -49,7 +49,7 @@ void K15_InitializePreallocatedMemoryBufferWithCustomAllocator(K15_MemoryBuffer*
 {
 	K15_ASSERT_TEXT_SIMPLE(p_MemoryBuffer, "Memory Buffer is NULL.");
 	K15_ASSERT_TEXT_SIMPLE(p_SizeInBytes > 0, "Memory Buffer size is 0.");
-	K15_ASSERT_TEXT_SIMPLE(p_PreallocatedMemory, "Preallocated memmory is NULL.");
+	K15_ASSERT_TEXT_SIMPLE(p_PreallocatedMemory, "Preallocated memory is NULL.");
 
 	p_MemoryBuffer->buffer = p_PreallocatedMemory;
 	p_MemoryBuffer->sizeInBytes = p_SizeInBytes;
@@ -105,16 +105,5 @@ void K15_DeleteMemoryBuffer(K15_MemoryBuffer* p_MemoryBuffer)
 	K15_CustomMemoryAllocator* memoryAllocator = &p_MemoryBuffer->memoryAllocator;
 
 	K15_FreeFromMemoryAllocator(memoryAllocator, p_MemoryBuffer->buffer);
-}
-/*********************************************************************************/
-K15_CustomMemoryAllocator K15_CreateMemoryBufferAllocator(K15_MemoryBuffer* p_MemoryBuffer)
-{
-	K15_ASSERT_TEXT_SIMPLE(p_MemoryBuffer, "Memory buffer is NULL.");
-
-	K15_CustomMemoryAllocator customAllocator = {};
-
-	K15_InitializeCustomMemoryAllocator(&customAllocator, K15_InternalMemoryBufferAllocation, K15_InternalMemoryBufferFree, p_MemoryBuffer);
-
-	return customAllocator;
 }
 /*********************************************************************************/

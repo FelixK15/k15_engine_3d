@@ -26,6 +26,4 @@ void K15_InitializePreallocatedMemoryBufferWithCustomAllocator(K15_MemoryBuffer*
 byte* K15_GetMemoryFromMemoryBuffer(K15_MemoryBuffer* p_MemoryBuffer, uint32 p_SizeInBytes);
 void K15_ClearMemoryBuffer(K15_MemoryBuffer* p_MemoryBuffer);
 
-K15_CustomMemoryAllocator K15_CreateMemoryBufferAllocator(K15_MemoryBuffer* p_MemoryBuffer);
-
 #endif //_K15_Runtime_Memory_Buffer_h_

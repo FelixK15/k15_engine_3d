@@ -12,6 +12,7 @@
 #include <K15_GUIContext.h>
 #include <K15_MemoryBuffer.h>
 #include <K15_BlockAllocator.h>
+#include <K15_StackAllocator.h>
 
 #include <K15_RenderCameraDesc.h>
 #include <K15_RenderFontDesc.h>
@@ -60,8 +61,8 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 	K15_MemoryBuffer* resourceMemoryBuffer = (K15_MemoryBuffer*)K15_GetMemoryFromMemoryBuffer(memory, sizeof(K15_MemoryBuffer));
 	K15_MemoryBuffer* guiMemoryBuffer = (K15_MemoryBuffer*)K15_GetMemoryFromMemoryBuffer(memory, K15_GUI_CONTEXT_MEMORY_SIZE);
 
-	K15_InitializeMemoryBufferWithCustomAllocator(resourceMemoryBuffer, K15_CreateMemoryBufferAllocator(memory), resourceBufferSize, 0);
-	K15_InitializeMemoryBufferWithCustomAllocator(guiMemoryBuffer, K15_CreateMemoryBufferAllocator(memory), resourceBufferSize, 0);
+	K15_InitializeMemoryBufferWithCustomAllocator(resourceMemoryBuffer, K15_CreateStackAllocator(memory), resourceBufferSize, 0);
+	K15_InitializeMemoryBufferWithCustomAllocator(guiMemoryBuffer, K15_CreateStackAllocator(memory), resourceBufferSize, 0);
 
 	//Create the resource context pointing to the 'data' directory of the working directory.
 	K15_ResourceContext* resourceContext = K15_CreateResourceContextWithCustomAllocator(p_GameContext->renderContext, "data/", K15_CreateBlockAllocator(resourceMemoryBuffer));
@@ -92,7 +93,7 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 	//K15_RenderCommandBindCamera(renderBuffer, &sample1GameContext->camera);
 
 	//K15_AsyncContext* asyncContext = p_GameContext->asyncContext;
-	sample1GameContext->guiContext = K15_CreateGUIContextWithCustomAllocator(K15_CreateMemoryBufferAllocator(guiMemoryBuffer), resourceContext, mainRenderQueue);
+	sample1GameContext->guiContext = K15_CreateGUIContextWithCustomAllocator(K15_CreateStackAllocator(guiMemoryBuffer), resourceContext, mainRenderQueue);
 
 	//K15_DispatchRenderCommandBuffer(sample1GameContext->guiContext->guiRenderCommandBuffer);
 

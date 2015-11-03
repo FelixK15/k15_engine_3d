@@ -21,6 +21,7 @@ int globalTestResult = 0;
 #define K15_TEST_FAILED(f)							K15_PRINT_INDENT("Test '%s' - FAILED.", K15_LOG_PRIORITY_ERROR, f); _TESTVAR_ = FALSE
 #define K15_TEST_SUCCEEDED(f)						K15_PRINT_INDENT("Test '%s' - SUCCEEDED.", K15_LOG_PRIORITY_SUCCESS, f)
 
+#define K15_TEST_BOOL_FUNCTION(f)					{bool8 fR = f(); if (fR != K15_TRUE){K15_TEST_FAILED(#f); K15_PRINT_INDENT("Test %s returned false.", K15_LOG_PRIORITY_ERROR, #f);}else{K15_TEST_SUCCEEDED(#f);}}
 #define K15_TEST_EQUAL_FUNCTION(f, r)				{int32 fR = f(); if (fR != r){K15_TEST_FAILED(#f); K15_PRINT_INDENT("Test '%s' - Expected '%d' and got '%d'.", K15_LOG_PRIORITY_ERROR, #f, r, fR);}else{K15_TEST_SUCCEEDED(#f);}}
 #define K15_TEST_FLOAT_FUNCTION_APPROX(f, r, a)		{real32 fR = f(); if (!(fR > (r - a) && fR < (r + a))){K15_TEST_FAILED(#f); K15_PRINT_INDENT("Test '%s' - Expected '%f' and got '%f'.", K15_LOG_PRIORITY_ERROR, #f, r, fR);}else{K15_TEST_SUCCEEDED(#f);}}
 
@@ -28,7 +29,7 @@ int globalTestResult = 0;
 #include "K15_OSLayerTest.cpp"
 #include "K15_RuntimeTest.cpp"
 #include "K15_ContainerTest.cpp"
-
+#include "K15_MemoryTest.cpp"
 
 #ifdef K15_OS_WINDOWS
 /*********************************************************************************/
@@ -101,6 +102,14 @@ void K15_InternalDoOSLayerTests()
 	K15_END_TESTS
 }
 /*********************************************************************************/
+void K15_InternalDoMemoryTests()
+{
+	K15_START_TESTS("Memory Test")
+		K15_TEST_EQUAL_FUNCTION(K15_MemoryTest, TRUE);
+	K15_END_TESTS
+}
+/*********************************************************************************/
+
 
 /*********************************************************************************/
 int main(int argc, char** argv)
@@ -111,7 +120,7 @@ int main(int argc, char** argv)
 
 	K15_InternalDoMathTests();
 	K15_InternalDoOSLayerTests();
-
+	K15_InternalDoMemoryTests();
 
 	return globalTestResult;
 }

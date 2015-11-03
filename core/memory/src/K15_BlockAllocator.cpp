@@ -4,11 +4,11 @@
 /*********************************************************************************/
 struct K15_BlockHeaderInfo
 {
-	uint32 size;
-	uint32 offset;
+	uint32 memorySize;
+	uint32 memoryOffsetFromBuffer;
 	bool8 free;
 };
-
+/*********************************************************************************/
 struct K15_BlockAllocatorInfo
 {
 	K15_BlockHeaderInfo* firstBlock;
@@ -17,39 +17,64 @@ struct K15_BlockAllocatorInfo
 /*********************************************************************************/
 intern void* K15_InternalFindFreeBlock_r(K15_BlockHeaderInfo* p_BlockHeader, uint32 p_MemoryBlockSize, uint32 p_SizeInBytes)
 {
-	byte* memory = (byte*)p_BlockHeader;
-	memory += sizeof(K15_BlockHeaderInfo);
+	//p_SizeInBytes = size to allocate without the size of the block header info struct
+	uint32 sizeInBytesInclHeaderInfo = p_SizeInBytes + sizeof(K15_BlockHeaderInfo);
+	byte* memoryFromBlock = (byte*)p_BlockHeader;
+	memoryFromBlock += sizeof(K15_BlockHeaderInfo);
 
 	if (p_BlockHeader->free && 
-		p_BlockHeader->size >= p_SizeInBytes)
+		p_BlockHeader->memorySize >= sizeInBytesInclHeaderInfo)
 	{
 		//calculate new size for the current block
-		p_BlockHeader->size -= p_SizeInBytes;
+		p_BlockHeader->memorySize -= sizeInBytesInclHeaderInfo;
 		
 		//create new block
-		K15_BlockHeaderInfo* newBlock = (K15_BlockHeaderInfo*)(memory + p_BlockHeader->size);
-		newBlock->offset = p_BlockHeader->offset + p_BlockHeader->size;
-		newBlock->size = p_SizeInBytes;
+		K15_BlockHeaderInfo* newBlock = (K15_BlockHeaderInfo*)(memoryFromBlock + p_BlockHeader->memorySize);
+		newBlock->memoryOffsetFromBuffer = p_BlockHeader->memoryOffsetFromBuffer + p_BlockHeader->memorySize + sizeof(K15_BlockHeaderInfo);
+		newBlock->memorySize = p_SizeInBytes;
 		newBlock->free = K15_FALSE;
 
-		memory = (byte*)newBlock;
+		memoryFromBlock = (byte*)newBlock;
 		//get memory after the block
-		return memory + sizeof(K15_BlockHeaderInfo);
+		return memoryFromBlock + sizeof(K15_BlockHeaderInfo);
 	}
 
-	if (p_BlockHeader->offset + p_SizeInBytes >= p_MemoryBlockSize)
+	//are we at the end of the buffer?
+	if (p_BlockHeader->memoryOffsetFromBuffer + p_BlockHeader->memorySize + sizeof(K15_BlockHeaderInfo) >= p_MemoryBlockSize)
 	{
 		return 0;
 	}
 
-	K15_BlockHeaderInfo* nextBlock = (K15_BlockHeaderInfo*)(memory + p_BlockHeader->offset + p_BlockHeader->size);
+	K15_BlockHeaderInfo* nextBlock = (K15_BlockHeaderInfo*)(memoryFromBlock + p_BlockHeader->memorySize);
 
 	return K15_InternalFindFreeBlock_r(nextBlock, p_MemoryBlockSize, p_SizeInBytes);
 }
 /*********************************************************************************/
-intern void K15_InternalDefragmentMemoryBlocks_r(K15_BlockHeaderInfo* p_BlockHeader)
+intern void K15_InternalDefragmentMemoryBlocks_r(K15_BlockHeaderInfo* p_BlockHeader, uint32 p_MemoryBlockSize)
 {
+	K15_BlockHeaderInfo* currentBlock = p_BlockHeader;
+	K15_BlockHeaderInfo* nextBlock = 0;
 
+	if (currentBlock->memoryOffsetFromBuffer + currentBlock->memorySize + sizeof(K15_BlockHeaderInfo) >= p_MemoryBlockSize)
+	{
+		return;
+	}
+
+	byte* blockMemory = (byte*)currentBlock;
+	blockMemory += sizeof(K15_BlockHeaderInfo);
+
+	nextBlock = (K15_BlockHeaderInfo*)(blockMemory + currentBlock->memorySize);
+
+	if (currentBlock->free &&
+		nextBlock->free)
+	{
+		currentBlock->memorySize += nextBlock->memorySize + sizeof(K15_BlockHeaderInfo);
+		K15_InternalDefragmentMemoryBlocks_r(currentBlock, p_MemoryBlockSize);
+	}
+	else
+	{
+		K15_InternalDefragmentMemoryBlocks_r(nextBlock, p_MemoryBlockSize);
+	}
 }
 /*********************************************************************************/
 intern void* K15_InternalBlockAlloc(size_t p_SizeInBytes, void* p_UserData)
@@ -61,15 +86,15 @@ intern void* K15_InternalBlockAlloc(size_t p_SizeInBytes, void* p_UserData)
 	uint32 memoryBlockSize = allocatorInfo->memoryBlockSize;
 
 	//add book keeping size
-	uint32 sizeInBytes = (uint32)(p_SizeInBytes + sizeof(K15_BlockHeaderInfo));
-	void* memory = K15_InternalFindFreeBlock_r(blockHeader, memoryBlockSize, sizeInBytes);
+	//uint32 sizeInBytes = (uint32)(p_SizeInBytes + sizeof(K15_BlockHeaderInfo));
+	void* memory = K15_InternalFindFreeBlock_r(blockHeader, memoryBlockSize, (uint32)p_SizeInBytes);
 
 	if (!memory)
 	{
-		K15_InternalDefragmentMemoryBlocks_r(blockHeader);
+		K15_InternalDefragmentMemoryBlocks_r(blockHeader, memoryBlockSize);
 	}
 
-	return K15_InternalFindFreeBlock_r(blockHeader, memoryBlockSize, sizeInBytes);
+	return memory ? memory : K15_InternalFindFreeBlock_r(blockHeader, memoryBlockSize, (uint32)p_SizeInBytes);
 }
 /*********************************************************************************/
 intern void K15_InternalBlockFree(void* p_Pointer, void* p_UserData)
@@ -81,6 +106,15 @@ intern void K15_InternalBlockFree(void* p_Pointer, void* p_UserData)
 	blockHeader->free = K15_TRUE;
 }
 /*********************************************************************************/
+intern void K15_InternalBlockClear(void* p_UserData)
+{
+	K15_BlockAllocatorInfo* allocatorInfo = (K15_BlockAllocatorInfo*)p_UserData;
+	
+	uint32 memorySize = allocatorInfo->memoryBlockSize;
+	allocatorInfo->firstBlock->memorySize = memorySize - sizeof(K15_BlockAllocatorInfo);
+	allocatorInfo->firstBlock->free = K15_TRUE;
+}
+/*********************************************************************************/
 K15_CustomMemoryAllocator K15_CreateBlockAllocator(K15_MemoryBuffer* p_MemoryBuffer, char* p_AllocatorName)
 {
 	K15_BlockAllocatorInfo* allocatorInfo = (K15_BlockAllocatorInfo*)K15_GetMemoryFromMemoryBuffer(p_MemoryBuffer, sizeof(K15_BlockAllocatorInfo));
@@ -90,12 +124,12 @@ K15_CustomMemoryAllocator K15_CreateBlockAllocator(K15_MemoryBuffer* p_MemoryBuf
 	K15_BlockHeaderInfo* firstBlock = (K15_BlockHeaderInfo*)bufferMemory;
 
 	firstBlock->free = K15_TRUE;
-	firstBlock->size = p_MemoryBuffer->sizeInBytes - sizeof(K15_BlockAllocatorInfo);
-	firstBlock->offset = sizeof(K15_BlockAllocatorInfo);
+	firstBlock->memorySize = p_MemoryBuffer->sizeInBytes - sizeof(K15_BlockAllocatorInfo);
+	firstBlock->memoryOffsetFromBuffer = sizeof(K15_BlockHeaderInfo);
 
 	allocatorInfo->firstBlock = firstBlock;
 	allocatorInfo->memoryBlockSize = p_MemoryBuffer->sizeInBytes;
 
-	return K15_CreateCustomMemoryAllocator(K15_InternalBlockAlloc, K15_InternalBlockFree, allocatorInfo, p_AllocatorName);
+	return K15_CreateCustomMemoryAllocator(K15_InternalBlockAlloc, K15_InternalBlockFree, K15_InternalBlockClear, allocatorInfo, p_AllocatorName);
 }
 /*********************************************************************************/

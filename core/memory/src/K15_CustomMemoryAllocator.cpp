@@ -15,34 +15,43 @@ static void K15_InternalFreeWrapper(void* p_Pointer, void* p_UserData)
 	::free(p_Pointer);
 }
 /*********************************************************************************/
+static void K15_InternalClearWrapper(void* p_UserData)
+{
+
+}
+/*********************************************************************************/
+
 
 
 /*********************************************************************************/
 K15_CustomMemoryAllocator K15_CreateDefaultMemoryAllocator(char* p_AllocatorName)
 {
-	return K15_CreateCustomMemoryAllocator(K15_InternalMallocWrapper, K15_InternalFreeWrapper, 0, p_AllocatorName);
+	return K15_CreateCustomMemoryAllocator(K15_InternalMallocWrapper, K15_InternalFreeWrapper, K15_InternalClearWrapper, 0, p_AllocatorName);
 }
 /*********************************************************************************/
-K15_CustomMemoryAllocator K15_CreateCustomMemoryAllocator(K15_MallocFnc p_CustomMallocFnc, K15_FreeFnc p_CustomFreeFnc, void* p_UserData, char* p_AllocatorName)
+K15_CustomMemoryAllocator K15_CreateCustomMemoryAllocator(K15_MallocFnc p_CustomMallocFnc, K15_FreeFnc p_CustomFreeFnc, K15_ClearFnc p_CustomClearFnc, void* p_UserData, char* p_AllocatorName)
 {
 	K15_ASSERT_TEXT_SIMPLE(p_CustomMallocFnc, "Custom Malloc is NULL.");
 	K15_ASSERT_TEXT_SIMPLE(p_CustomFreeFnc, "Custom Free is NULL.");
+	K15_ASSERT_TEXT_SIMPLE(p_CustomFreeFnc, "Custom Clear is NULL.");
 
 	K15_CustomMemoryAllocator customAllocator = {};
 
-	K15_InitializeCustomMemoryAllocator(&customAllocator, p_CustomMallocFnc, p_CustomFreeFnc, p_UserData, p_AllocatorName);
+	K15_InitializeCustomMemoryAllocator(&customAllocator, p_CustomMallocFnc, p_CustomFreeFnc, p_CustomClearFnc, p_UserData, p_AllocatorName);
 
 	return customAllocator;
 }
 /*********************************************************************************/
-void K15_InitializeCustomMemoryAllocator(K15_CustomMemoryAllocator* p_CustomMemoryAllocator, K15_MallocFnc p_CustomMallocFnc, K15_FreeFnc p_CustomFreeFnc, void* p_UserData, char* p_AllocatorName)
+void K15_InitializeCustomMemoryAllocator(K15_CustomMemoryAllocator* p_CustomMemoryAllocator, K15_MallocFnc p_CustomMallocFnc, K15_FreeFnc p_CustomFreeFnc, K15_ClearFnc p_CustomClearFnc, void* p_UserData, char* p_AllocatorName)
 {
 	K15_ASSERT_TEXT_SIMPLE(p_CustomMemoryAllocator, "Custom Memory Allocator is NULL.");
 	K15_ASSERT_TEXT_SIMPLE(p_CustomMallocFnc, "Custom Malloc is NULL.");
 	K15_ASSERT_TEXT_SIMPLE(p_CustomFreeFnc, "Custom Free is NULL.");
+	K15_ASSERT_TEXT_SIMPLE(p_CustomFreeFnc, "Custom Clear is NULL.");
 
 	p_CustomMemoryAllocator->alloc = p_CustomMallocFnc;
 	p_CustomMemoryAllocator->free = p_CustomFreeFnc;
+	p_CustomMemoryAllocator->clear = p_CustomClearFnc;
 	p_CustomMemoryAllocator->userData = p_UserData;
 	p_CustomMemoryAllocator->name = p_AllocatorName;
 }
@@ -71,5 +80,15 @@ void K15_FreeFromMemoryAllocator(K15_CustomMemoryAllocator* p_MemoryAllocator, v
 	void* userData = p_MemoryAllocator->userData;
 
 	memoryFree(p_Pointer, userData);
+}
+/*********************************************************************************/
+void K15_ClearMemoryAllocator(K15_CustomMemoryAllocator* p_MemoryAllocator)
+{
+	K15_ASSERT_TEXT_SIMPLE(p_MemoryAllocator, "Custom Memory Allocator is NULL.");
+
+	K15_ClearFnc memoryClear = p_MemoryAllocator->clear;
+	void* userData = p_MemoryAllocator->userData;
+
+	memoryClear(userData);
 }
 /*********************************************************************************/
