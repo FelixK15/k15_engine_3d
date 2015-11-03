@@ -693,7 +693,42 @@ intern result8 K15_InternalCreateShader(K15_RenderBackEnd* p_RenderBackEnd, K15_
 	return result;
 }
 /*********************************************************************************/
+intern result8 K15_InternalDeleteTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommand* p_RenderCommand, K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_BufferOffset)
+{
+	K15_RenderResourceHandle* textureHandle = 0;
+	uint32 localOffset = 0;
 
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, K15_PTR_SIZE, &textureHandle);
+	localOffset += K15_PTR_SIZE;
+
+	result8 result = p_RenderBackEnd->renderInterface.deleteTexture(p_RenderBackEnd, textureHandle);
+	return result;
+}
+/*********************************************************************************/
+intern result8 K15_InternalDeleteSampler(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommand* p_RenderCommand, K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_BufferOffset)
+{
+	K15_RenderResourceHandle* samplerHandle = 0;
+	uint32 localOffset = 0;
+
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, K15_PTR_SIZE, &samplerHandle);
+	localOffset += K15_PTR_SIZE;
+
+	result8 result = p_RenderBackEnd->renderInterface.deleteSampler(p_RenderBackEnd, samplerHandle);
+	return result;
+}
+/*********************************************************************************/
+intern result8 K15_InternalDeleteProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommand* p_RenderCommand, K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_BufferOffset)
+{
+	K15_RenderResourceHandle* programHandle = 0;
+	uint32 localOffset = 0;
+
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, K15_PTR_SIZE, &programHandle);
+	localOffset += K15_PTR_SIZE;
+
+	result8 result = p_RenderBackEnd->renderInterface.deleteProgram(p_RenderBackEnd, programHandle);
+	return result;
+}
+/*********************************************************************************/
 
 
 
@@ -752,13 +787,29 @@ void K15_ProcessRenderCommands(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCom
 				break;
 			}
 
+			case K15_RENDER_COMMAND_DELETE_TEXTURE:
+			{
+				K15_InternalDeleteTexture(p_RenderBackEnd, command, p_RenderCommandBuffer, offset);
+				break;
+			}
+
+			case K15_RENDER_COMMAND_DELETE_SAMPLER:
+			{
+				K15_InternalDeleteSampler(p_RenderBackEnd, command, p_RenderCommandBuffer, offset);
+				break;
+			}
+
+			case K15_RENDER_COMMAND_DELETE_PROGRAM:
+			{
+				K15_InternalDeleteProgram(p_RenderBackEnd, command, p_RenderCommandBuffer, offset);
+				break;
+			}
+
 			case K15_RENDER_COMMAND_WINDOW_RESIZED:
 			{
 				K15_InternalWindowResized(p_RenderBackEnd, command, p_RenderCommandBuffer, offset);
 				break;
 			}
-
-
 		}
 
 		//advance offset

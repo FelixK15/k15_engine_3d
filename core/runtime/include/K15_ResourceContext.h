@@ -15,6 +15,7 @@ typedef uint32 (*K15_GetResourceSizeFromArchiveFnc)(K15_ResourceContext*, K15_Re
 typedef byte* (*K15_GetResourceDataFromArchiveFnc)(K15_ResourceContext*, K15_ResourceArchive*, uint32, const char*);
 
 typedef void (*K15_LoadResourceFromLoaderFnc)(K15_ResourceContext*, K15_ResourceCompilerInput*, K15_ResourceData*);
+typedef void (*K15_UnloadResourceFromLoaderFnc)(K15_ResourceContext*, K15_Resource*);
 
 /*********************************************************************************/
 struct K15_ResourceCompilerInput
@@ -32,8 +33,10 @@ struct K15_ResourceData
 /*********************************************************************************/
 struct K15_Resource
 {
+	K15_ResourceHandle handle;
 	K15_ResourceData resourceData;
 	K15_ResourceCompilerInput compilerInput;
+	uint32 identifier;
 	uint32 refCount;
 	uint32 flags;
 };
@@ -43,6 +46,7 @@ struct K15_ResourceLoader
 	const char* name;
 	uint32 identifier;	//custom identifier
 	K15_LoadResourceFromLoaderFnc resourceLoader;
+	K15_UnloadResourceFromLoaderFnc resourceUnloader;
 };
 /*********************************************************************************/
 struct K15_ResourceArchive

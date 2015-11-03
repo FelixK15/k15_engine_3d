@@ -18,6 +18,7 @@
 #define K15_InterlockedIncrement						InterlockedIncrement
 #define K15_InterlockedDecrement						InterlockedDecrement
 #define K15_InterlockedExchange							InterlockedExchange
+#define K15_InterlockedExchangePointer					InterlockedExchangePointer
 #define K15_InterlockedCompareExchange					InterlockedCompareExchange
 #define K15_InterlockedCompareExchangePointer			InterlockedCompareExchangePointer
 #define K15_InterlockedBitTestAndSet					InterlockedBitTestAndSet

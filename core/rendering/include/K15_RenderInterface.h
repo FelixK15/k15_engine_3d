@@ -18,12 +18,15 @@ K15_FUNCTION_VARIABLE(result8, K15_CreateMaterialFromMaterialFormatCommandFnc, (
 //texture
 K15_FUNCTION_VARIABLE(result8, K15_CreateTextureFromTextureDescCommandFnc, (K15_RenderBackEnd* p_RenderBackEnd, K15_RenderTextureDesc* p_RenderTextureDesc, K15_RenderResourceHandle* p_RenderResourceHandle));
 K15_FUNCTION_VARIABLE(result8, K15_CreateSamplerFromSamplerDescCommandFnc, (K15_RenderBackEnd* p_RenderBackEnd, K15_RenderSamplerDesc* p_RenderSamplerDesc, K15_RenderResourceHandle* p_RenderResourceHandle));
+K15_FUNCTION_VARIABLE(result8, K15_DeleteTextureCommandFnc, (K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResourceHandle* p_RenderResourceHandle));
+K15_FUNCTION_VARIABLE(result8, K15_DeleteSamplerCommandFnc, (K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResourceHandle* p_RenderResourceHandle));
 
 //vertex format
 K15_FUNCTION_VARIABLE(result8, K15_CreateVertexFormatFromVertexFormatDescCommandFnc, (K15_RenderBackEnd* p_RenderBackEnd, K15_RenderVertexFormatDesc* p_VertexFormatDesc, K15_RenderResourceHandle* p_RenderResourceHandle));
 
 //program
 K15_FUNCTION_VARIABLE(result8, K15_CreateProgramCommandFnc, (K15_RenderBackEnd* p_RenderBackEnd, K15_RenderProgramDesc* p_RenderProgramDesc, K15_RenderResourceHandle* p_RenderResourceHandle));
+K15_FUNCTION_VARIABLE(result8, K15_DeleteProgramCommandFnc, (K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResourceHandle* p_RenderResourceHandle));
 
 //draw
 K15_FUNCTION_VARIABLE(result8, K15_DrawGeometryCommandFnc, (K15_RenderBackEnd* p_RenderBackEnd, K15_RenderGeometryDesc* p_RenderGeometry));

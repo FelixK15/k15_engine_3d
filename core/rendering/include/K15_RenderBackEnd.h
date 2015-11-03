@@ -63,8 +63,11 @@ struct K15_RenderInterface
 	K15_CreateTextureFromTextureDescCommandFnc createTextureFromTextureDesc;
 	K15_CreateSamplerFromSamplerDescCommandFnc createSamplerFromSamplerDesc;
 	K15_CreateProgramCommandFnc createProgram;
-
 	K15_CreateMaterialFromMaterialFormatCommandFnc createMaterialFromMaterialFormat;
+
+	K15_DeleteTextureCommandFnc deleteTexture;
+	K15_DeleteSamplerCommandFnc deleteSampler;
+	K15_DeleteProgramCommandFnc deleteProgram;
 
 	K15_UpdateVertexDataCommandFnc updateVertexData;
 	K15_FreeVertexDataCommandFnc freeVertexData;

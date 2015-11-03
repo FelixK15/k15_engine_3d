@@ -420,14 +420,20 @@ intern inline uint8 K15_GLDeleteTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_
 	K15_GLTexture* glTexture = (K15_GLTexture*)K15_InternalGetGLObjectData(glContext, *p_RenderTextureHandle, K15_GL_TYPE_TEXTURE);
 	GLenum glTextureType = glTexture->glTextureTarget;
 
-	K15_OPENGL_CALL(kglDeleteTextures(1, &glTexture->glTextureHandle));
-
 	if (glTexture->boundSlot != K15_GL_INVALID_TEXTURE_SLOT)
 	{
-		K15_GLTextureSlot* textureSlot = &glTextureManager->textureSlots[glTexture->boundSlot];
+		uint32 boundSlot = glTexture->boundSlot;
+
+		//unbind texture
+		K15_OPENGL_CALL(kglActiveTexture(GL_TEXTURE0 + boundSlot));
+		K15_OPENGL_CALL(kglBindTexture(glTextureType, 0));
+
+		K15_GLTextureSlot* textureSlot = &glTextureManager->textureSlots[boundSlot];
 		textureSlot->glTexture = 0;
 		//TODO CHECK IF SLOT IS EMPTY
 	}
+
+	K15_OPENGL_CALL(kglDeleteTextures(1, &glTexture->glTextureHandle));
 
 	K15_InternalRemoveGLObject(glContext, p_RenderTextureHandle, K15_GL_TYPE_PROGRAM);
 

@@ -56,16 +56,17 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 
 	//Let the game context for this project be the first thing we allocate, so we *know* that the game context is always first in memory.
 	K15_Sample1GameContext* sample1GameContext = (K15_Sample1GameContext*)K15_GetMemoryFromMemoryBuffer(memory, sizeof(K15_Sample1GameContext));
+	K15_CustomMemoryAllocator gameMemoryAllocator = K15_CreateStackAllocator(memory, "Game Memory Allocator");
 
 	//Create the memory buffer for the resource context (this buffer will be used for resource caching).
-	K15_MemoryBuffer* resourceMemoryBuffer = (K15_MemoryBuffer*)K15_GetMemoryFromMemoryBuffer(memory, sizeof(K15_MemoryBuffer));
-	K15_MemoryBuffer* guiMemoryBuffer = (K15_MemoryBuffer*)K15_GetMemoryFromMemoryBuffer(memory, K15_GUI_CONTEXT_MEMORY_SIZE);
+	K15_MemoryBuffer* resourceMemoryBuffer = (K15_MemoryBuffer*)K15_AllocateFromMemoryAllocator(&gameMemoryAllocator, sizeof(K15_MemoryBuffer));
+	K15_MemoryBuffer* guiMemoryBuffer = (K15_MemoryBuffer*)K15_AllocateFromMemoryAllocator(&gameMemoryAllocator, sizeof(K15_MemoryBuffer));
 
-	K15_InitializeMemoryBufferWithCustomAllocator(resourceMemoryBuffer, K15_CreateStackAllocator(memory), resourceBufferSize, 0);
-	K15_InitializeMemoryBufferWithCustomAllocator(guiMemoryBuffer, K15_CreateStackAllocator(memory), resourceBufferSize, 0);
+	K15_InitializePreallocatedMemoryBuffer(resourceMemoryBuffer, (byte*)K15_AllocateFromMemoryAllocator(&gameMemoryAllocator, resourceBufferSize), resourceBufferSize, 0);
+	K15_InitializePreallocatedMemoryBuffer(guiMemoryBuffer, (byte*)K15_AllocateFromMemoryAllocator(&gameMemoryAllocator, K15_GUI_CONTEXT_MEMORY_SIZE), resourceBufferSize, 0);
 
 	//Create the resource context pointing to the 'data' directory of the working directory.
-	K15_ResourceContext* resourceContext = K15_CreateResourceContextWithCustomAllocator(p_GameContext->renderContext, "data/", K15_CreateBlockAllocator(resourceMemoryBuffer));
+	K15_ResourceContext* resourceContext = K15_CreateResourceContextWithCustomAllocator(p_GameContext->renderContext, "data/", K15_CreateBlockAllocator(resourceMemoryBuffer, "Resource Allocator"));
 
 	//set the resource context so we can use it later.
 	sample1GameContext->resourceContext = resourceContext;
@@ -93,7 +94,7 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 	//K15_RenderCommandBindCamera(renderBuffer, &sample1GameContext->camera);
 
 	//K15_AsyncContext* asyncContext = p_GameContext->asyncContext;
-	sample1GameContext->guiContext = K15_CreateGUIContextWithCustomAllocator(K15_CreateStackAllocator(guiMemoryBuffer), resourceContext, mainRenderQueue);
+	sample1GameContext->guiContext = K15_CreateGUIContextWithCustomAllocator(K15_CreateStackAllocator(guiMemoryBuffer, "GUI Stack Allocator"), resourceContext, mainRenderQueue);
 
 	//K15_DispatchRenderCommandBuffer(sample1GameContext->guiContext->guiRenderCommandBuffer);
 

@@ -265,9 +265,12 @@ intern inline void K15_InternalSetGLInterface(K15_RenderBackEnd* p_RenderBackEnd
 	//texture management
 	p_RenderBackEnd->renderInterface.createTextureFromTextureDesc = K15_GLCreateTextureFromTextureDesc;
 	p_RenderBackEnd->renderInterface.createSamplerFromSamplerDesc = K15_GLCreateSamplerFromSamplerDesc;
+	p_RenderBackEnd->renderInterface.deleteTexture = K15_GLDeleteTexture;
+	p_RenderBackEnd->renderInterface.deleteSampler = K15_GLDeleteSampler;
 
 	//program management
 	p_RenderBackEnd->renderInterface.createProgram = K15_GLCreateProgram;
+	p_RenderBackEnd->renderInterface.deleteProgram = K15_GLDeleteProgram;
 
 	//buffer management
 	p_RenderBackEnd->renderInterface.updateVertexData = K15_GLUpdateVertexData;

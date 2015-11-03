@@ -26,6 +26,7 @@ struct K15_RenderMaterialPassDesc
 {
 	K15_RenderResourceHandle* vertexShaderHandle;
 	K15_RenderResourceHandle* fragmentShaderHandle;
+
 	K15_RenderMaterialDataDescStretchBuffer materialData;
 };
 

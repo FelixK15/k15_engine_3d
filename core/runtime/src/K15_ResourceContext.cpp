@@ -231,7 +231,7 @@ intern void K15_InternalLoadTextureResource(K15_ResourceContext* p_ResourceConte
 	K15_RenderCommandCreateTextureFromTextureFormat(commandQueue, textureRenderHandle, &textureFormat);
 
 	p_ResourceCompilerOutput->compiledResourceData = (byte*)textureRenderHandle;
-	p_ResourceCompilerOutput->compiledResourceDataSizeInBytes = sizeof(K15_RenderResourceHandle);
+	p_ResourceCompilerOutput->compiledResourceDataSizeInBytes = K15_PTR_SIZE;
 }
 /*********************************************************************************/
 intern void K15_InternalLoadSamplerResource(K15_ResourceContext* p_ResourceContext, 
@@ -259,7 +259,7 @@ intern void K15_InternalLoadSamplerResource(K15_ResourceContext* p_ResourceConte
 	K15_RenderCommandCreateSamplerFromSamplerFormat(commandQueue, samplerResourceHandle, &samplerFormat);
 
 	p_ResourceCompilerOutput->compiledResourceData = (byte*)samplerResourceHandle;
-	p_ResourceCompilerOutput->compiledResourceDataSizeInBytes = sizeof(K15_RenderResourceHandle);
+	p_ResourceCompilerOutput->compiledResourceDataSizeInBytes = K15_PTR_SIZE;
 }
 /*********************************************************************************/
 intern void K15_InternalLoadFontResource(K15_ResourceContext* p_ResourceContext, 
@@ -350,7 +350,7 @@ intern void K15_InternalLoadFontResource(K15_ResourceContext* p_ResourceContext,
 	}
 
 	p_ResourceCompilerOutput->compiledResourceData = (byte*)renderFontDesc;
-	p_ResourceCompilerOutput->compiledResourceDataSizeInBytes = sizeof(K15_RenderFontDesc);
+	p_ResourceCompilerOutput->compiledResourceDataSizeInBytes = K15_PTR_SIZE;
 }
 /*********************************************************************************/
 intern void K15_InternalLoadShaderResource(K15_ResourceContext* p_ResourceContext,
@@ -405,11 +405,19 @@ intern void K15_InternalLoadShaderResource(K15_ResourceContext* p_ResourceContex
 		K15_RenderCommandCreateProgram(commandQueue, shaderRenderHandle, &programDesc);
 
 		p_ResourceCompilerOutput->compiledResourceData = (byte*)shaderRenderHandle;
-		p_ResourceCompilerOutput->compiledResourceDataSizeInBytes = sizeof(K15_RenderResourceHandle);
+		p_ResourceCompilerOutput->compiledResourceDataSizeInBytes = K15_PTR_SIZE;//sizeof(K15_RenderResourceHandle);
 	}
 
 	free(shaderName);
 	free(shaderExtensions);
+}
+/*********************************************************************************/
+intern void K15_InternalUnloadShaderResource(K15_ResourceContext* p_ResourceContext, K15_Resource* p_Resource)
+{
+	K15_RenderResourceHandle* programHandle = (K15_RenderResourceHandle*)p_Resource->resourceData.compiledResourceData;
+	K15_RenderCommandQueue* commandQueue = p_ResourceContext->commandQueue;
+
+	K15_RenderCommandDeleteProgram(commandQueue, programHandle);
 }
 /*********************************************************************************/
 intern void K15_InternalLoadMaterialResource(K15_ResourceContext* p_ResourceContext, 
@@ -430,7 +438,7 @@ intern void K15_InternalLoadMaterialResource(K15_ResourceContext* p_ResourceCont
 	K15_LoadMaterialFormatFromMemory(&materialFormat, fileContent, fileSize);
 
 	byte* compiledResourceData = (byte*)K15_AllocateFromMemoryAllocator(resourceAllocator, sizeof(K15_RenderMaterialDesc));
-	uint32 compiledResourceDataSizeInBytes = sizeof(K15_RenderMaterialDesc);
+	uint32 compiledResourceDataSizeInBytes = K15_PTR_SIZE;
 
 	K15_RenderMaterialDesc* renderMaterialDesc = (K15_RenderMaterialDesc*)compiledResourceData;
 	renderMaterialDesc->numMaterialPasses = materialFormat.numMaterialPasses;
@@ -534,7 +542,7 @@ intern K15_ResourceLoader* K15_InternalGetResourceLoaderForIdentifier(K15_Resour
 	return loader;
 }
 /*********************************************************************************/
-intern K15_Resource* K15_InternalLoadResource(K15_ResourceContext* p_ResourceContext, K15_ResourceLoader* p_Loader, const char* p_ResourcePath, uint32 p_Flags)
+intern K15_Resource* K15_InternalLoadResource(K15_ResourceContext* p_ResourceContext, K15_ResourceLoader* p_Loader, const char* p_ResourcePath, uint32 p_ResourceIdentifier, K15_ResourceHandle p_ResourceHandle, uint32 p_Flags)
 {
 	K15_ResourceArchive* archive = &p_ResourceContext->resourceArchive;
 	if (!archive->resourceExists(p_ResourceContext, archive, p_ResourcePath))
@@ -567,11 +575,31 @@ intern K15_Resource* K15_InternalLoadResource(K15_ResourceContext* p_ResourceCon
 			resource->compilerInput = resourceCompilerInput;
 			resource->resourceData = resourceCompilerOutput;
 			resource->flags = p_Flags;
+			resource->identifier = p_ResourceIdentifier;
+			resource->handle = p_ResourceHandle;
 			resource->refCount = 0;
 		}
 	}
 
 	return resource;
+}
+/*********************************************************************************/
+intern void K15_InternalUnloadResource(K15_ResourceContext* p_ResourceContext, K15_Resource* p_Resource)
+{
+	K15_RenderResourceHandle resourceHandle = p_Resource->handle;
+	uint32 resourceIdentifier = p_Resource->identifier;
+
+	K15_ResourceLoader* loader = K15_InternalGetResourceLoaderForIdentifier(p_ResourceContext, resourceIdentifier);
+
+	K15_InterlockedExchangePointer((void**)&p_ResourceContext->resourceCache[resourceHandle], 0);
+
+	loader->resourceUnloader(p_ResourceContext, p_Resource);
+
+	K15_CustomMemoryAllocator* allocator = &p_ResourceContext->memoryAllocator;
+
+// 	K15_FreeFromMemoryAllocator(allocator, p_Resource->compilerInput.fileContent);
+// 	K15_FreeFromMemoryAllocator(allocator, p_Resource->resourceData.compiledResourceData);
+// 	K15_FreeFromMemoryAllocator(allocator, p_Resource);
 }
 /*********************************************************************************/
 intern void K15_InternalReloadResource(const char* p_ResourcePath, void* p_UserData)
@@ -589,19 +617,20 @@ intern void K15_InternalReloadResource(const char* p_ResourcePath, void* p_UserD
 	K15_Resource* resource = resourceContext->resourceCache[resourceHandle];
 
 	K15_ResourceLoader* loader = K15_InternalGetResourceLoaderForIdentifier(resourceContext, resourceIdentifier);
-	K15_Resource* newResource = K15_InternalLoadResource(resourceContext, loader, path, resource->flags);
+	K15_Resource* newResource = K15_InternalLoadResource(resourceContext, loader, path, resource->handle, resourceIdentifier, resource->flags);
 
 	//move ref count
 	K15_InterlockedExchange(&newResource->refCount, resource->refCount);
 
 	if (newResource)
 	{
-		K15_InterlockedCompareExchangePointer((void**)&resourceContext->resourceCache[resourceHandle], newResource, resource);
-		
-		//delete old resource data
-		K15_FreeFromMemoryAllocator(memoryAlloctor, resource->compilerInput.fileContent);
-		K15_FreeFromMemoryAllocator(memoryAlloctor, resource->resourceData.compiledResourceData);
-		K15_FreeFromMemoryAllocator(memoryAlloctor, resource);
+		//K15_LockMutex(resourceContext->resourceCacheLock);
+		//unload old resource
+		K15_InternalUnloadResource(resourceContext, resource);
+		K15_InterlockedExchangePointer((void**)&resourceContext->resourceCache[resourceHandle], newResource);
+		//K15_UnlockMutex(resourceContext->resourceCacheLock);
+
+		memcpy(resource->resourceData.compiledResourceData, newResource->resourceData.compiledResourceData, K15_PTR_SIZE);
 	}
 }
 /*********************************************************************************/
@@ -626,7 +655,7 @@ intern K15_FileWatchEntry* K15_InternalWatchResourceFile(K15_ResourceContext* p_
 
 
 /*********************************************************************************/
-K15_ResourceLoader* K15_AddResourceLoader(K15_ResourceContext* p_ResourceContext, const char* p_Name, uint32 p_Identifier, K15_LoadResourceFromLoaderFnc p_ResourceLoaderFnc)
+K15_ResourceLoader* K15_AddResourceLoader(K15_ResourceContext* p_ResourceContext, const char* p_Name, uint32 p_Identifier, K15_LoadResourceFromLoaderFnc p_ResourceLoaderFnc, K15_UnloadResourceFromLoaderFnc p_ResourceUnloaderFnc)
 {
 	K15_ASSERT_TEXT(p_ResourceContext, "ResourceContext is NULL.");
 
@@ -639,6 +668,7 @@ K15_ResourceLoader* K15_AddResourceLoader(K15_ResourceContext* p_ResourceContext
 	resourceLoader->name = p_Name;
 	resourceLoader->identifier = p_Identifier;
 	resourceLoader->resourceLoader = p_ResourceLoaderFnc;
+	resourceLoader->resourceUnloader = p_ResourceUnloaderFnc;
 
 	++p_ResourceContext->numResourceLoader;
 
@@ -653,8 +683,10 @@ K15_ResourceData* K15_GetResourceData(K15_ResourceContext* p_ResourceContext, K1
 
 	if (p_ResourceHandle != K15_INVALID_RESOURCE_HANDLE)
 	{
+		//K15_LockMutex(p_ResourceContext->resourceCacheLock);
 		K15_Resource* resource = p_ResourceContext->resourceCache[p_ResourceHandle];
 		resourceData = &resource->resourceData;
+		//K15_UnlockMutex(p_ResourceContext->resourceCacheLock);
 	}
 
 	return resourceData;
@@ -667,7 +699,7 @@ K15_RenderResourceHandle* K15_GetResourceRenderHandle(K15_ResourceContext* p_Res
 
 	if (resourceData)
 	{
-		K15_ASSERT(resourceData->compiledResourceDataSizeInBytes == sizeof(K15_RenderResourceHandle));
+		K15_ASSERT(resourceData->compiledResourceDataSizeInBytes == K15_PTR_SIZE);
 		renderResourceHandle = (K15_RenderResourceHandle*)resourceData->compiledResourceData;
 	}
 
@@ -681,7 +713,7 @@ K15_RenderMaterialDesc* K15_GetResourceRenderMaterialDesc(K15_ResourceContext* p
 
 	if (resourceData)
 	{
-		K15_ASSERT(resourceData->compiledResourceDataSizeInBytes == sizeof(K15_RenderMaterialDesc));
+		K15_ASSERT(resourceData->compiledResourceDataSizeInBytes == K15_PTR_SIZE);
 		renderMaterialDesc = (K15_RenderMaterialDesc*)resourceData->compiledResourceData;
 	}
 
@@ -695,7 +727,7 @@ K15_RenderFontDesc* K15_GetResourceFontDesc(K15_ResourceContext* p_ResourceConte
 
 	if (resourceData)
 	{
-		K15_ASSERT(resourceData->compiledResourceDataSizeInBytes == sizeof(K15_RenderFontDesc));
+		K15_ASSERT(resourceData->compiledResourceDataSizeInBytes == K15_PTR_SIZE);
 		renderFontDesc = (K15_RenderFontDesc*)resourceData->compiledResourceData;
 	}
 
@@ -724,11 +756,11 @@ K15_ResourceContext* K15_CreateResourceContextWithCustomAllocator(K15_RenderCont
 		K15_LOG_ERROR_MESSAGE("Could not find resource path '%s'.", p_ArchivePath);
 	}
 
-	K15_AddResourceLoader(resourceContext, "Material Loader", K15_MATERIAL_RESOURCE_IDENTIFIER, K15_InternalLoadMaterialResource);
-	K15_AddResourceLoader(resourceContext, "Texture Loader", K15_TEXTURE_RESOURCE_IDENTIFIER, K15_InternalLoadTextureResource);
-	K15_AddResourceLoader(resourceContext, "Sampler Loader", K15_SAMPLER_RESOURCE_IDENTIFIER, K15_InternalLoadSamplerResource);
-	K15_AddResourceLoader(resourceContext, "Shader Loader", K15_SHADER_RESOURCE_IDENTIFIER, K15_InternalLoadShaderResource);
-	K15_AddResourceLoader(resourceContext, "Font Loader", K15_FONT_RESOURCE_IDENTIFIER, K15_InternalLoadFontResource);
+	K15_AddResourceLoader(resourceContext, "Material Loader", K15_MATERIAL_RESOURCE_IDENTIFIER, K15_InternalLoadMaterialResource, 0);
+	K15_AddResourceLoader(resourceContext, "Texture Loader", K15_TEXTURE_RESOURCE_IDENTIFIER, K15_InternalLoadTextureResource, 0);
+	K15_AddResourceLoader(resourceContext, "Sampler Loader", K15_SAMPLER_RESOURCE_IDENTIFIER, K15_InternalLoadSamplerResource, 0);
+	K15_AddResourceLoader(resourceContext, "Shader Loader", K15_SHADER_RESOURCE_IDENTIFIER, K15_InternalLoadShaderResource, K15_InternalUnloadShaderResource);
+	K15_AddResourceLoader(resourceContext, "Font Loader", K15_FONT_RESOURCE_IDENTIFIER, K15_InternalLoadFontResource, 0);
 
 	return resourceContext;
 }
@@ -754,7 +786,7 @@ K15_ResourceHandle K15_LoadResource(K15_ResourceContext* p_ResourceContext, uint
 		{
 			K15_LOG_NORMAL_MESSAGE("Resource '%s' could not be found in the cache. Loading resource via loader '%s'", p_ResourcePath, loader->name);
 
-			resource = K15_InternalLoadResource(p_ResourceContext, loader, p_ResourcePath, p_Flags);
+			resource = K15_InternalLoadResource(p_ResourceContext, loader, p_ResourcePath, p_ResourceIdentifier, resourceHash, p_Flags);
 
 			if (resource)
 			{
@@ -794,9 +826,7 @@ void K15_UnloadResource(K15_ResourceContext* p_ResourceContext, K15_ResourceHand
 	K15_InterlockedDecrement(&resource->refCount);
 	if (resource->refCount == 0)
 	{
-		K15_InterlockedCompareExchangePointer((PVOID*)p_ResourceContext->resourceCache[p_ResourceHandle], 0, 0);
-		K15_CustomMemoryAllocator* allocator = &p_ResourceContext->memoryAllocator;
-		K15_FreeFromMemoryAllocator(allocator, resource);
+		K15_InternalUnloadResource(p_ResourceContext, resource);
 	}
 }
 /*********************************************************************************/
