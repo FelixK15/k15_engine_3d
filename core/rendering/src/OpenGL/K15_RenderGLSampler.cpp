@@ -36,11 +36,11 @@ intern uint8 K15_GLCreateSamplerFromSamplerDesc(K15_RenderBackEnd* p_RenderBackE
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-intern uint8 K15_GLDeleteSampler(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResourceHandle* p_RenderSamplerHandle)
+intern uint8 K15_GLDeleteSampler(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResourceHandle p_RenderSamplerHandle)
 {
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderBackEnd->specificRenderPlatform;
 
-	K15_GLSampler* glSampler = (K15_GLSampler*)K15_InternalGetGLObjectData(glContext, *p_RenderSamplerHandle, K15_GL_TYPE_SAMPLER);
+	K15_GLSampler* glSampler = (K15_GLSampler*)K15_InternalGetGLObjectData(glContext, p_RenderSamplerHandle, K15_GL_TYPE_SAMPLER);
 	K15_OPENGL_CALL(kglDeleteSamplers(1, &glSampler->glSamplerHandle));
 
 	K15_InternalRemoveGLObject(glContext, p_RenderSamplerHandle, K15_GL_TYPE_SAMPLER);

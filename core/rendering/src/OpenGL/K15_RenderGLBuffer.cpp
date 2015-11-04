@@ -158,17 +158,17 @@ inline uint8 K15_GLUpdateBuffer(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderBu
 	return result;
 }
 /*********************************************************************************/
-inline uint8 K15_GLDeleteBuffer(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResourceHandle* p_RenderBufferHandlePtr)
+inline uint8 K15_GLDeleteBuffer(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResourceHandle p_RenderBufferHandle)
 {
 	uint8 result = K15_SUCCESS;
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderBackEnd->specificRenderPlatform;
 
-	uint32 glBufferIndex = *p_RenderBufferHandlePtr;
+	uint32 glBufferIndex = p_RenderBufferHandle;
 
 	assert(glBufferIndex != K15_INVALID_GPU_RESOURCE_HANDLE);
 	assert(glBufferIndex < K15_RENDER_MAX_GPU_BUFFER);
 
-	K15_GLBuffer* glBuffer = (K15_GLBuffer*)K15_InternalGetGLObjectData(glContext, *p_RenderBufferHandlePtr, K15_GL_TYPE_BUFFER);
+	K15_GLBuffer* glBuffer = (K15_GLBuffer*)K15_InternalGetGLObjectData(glContext, p_RenderBufferHandle, K15_GL_TYPE_BUFFER);
 	K15_RenderBufferType bufferType = glBuffer->bufferType;
 
 	if (glContext->glBoundObjects.boundBuffers[bufferType] == glBuffer)
@@ -179,7 +179,7 @@ inline uint8 K15_GLDeleteBuffer(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderRe
 	GLuint glBufferHandle = glBuffer->glBufferHandle;
 	K15_OPENGL_CALL(kglDeleteBuffers(1, &glBufferHandle));
 
-	K15_InternalRemoveGLObject(glContext, p_RenderBufferHandlePtr, K15_GL_TYPE_BUFFER);
+	K15_InternalRemoveGLObject(glContext, p_RenderBufferHandle, K15_GL_TYPE_BUFFER);
 
 	return result;
 }

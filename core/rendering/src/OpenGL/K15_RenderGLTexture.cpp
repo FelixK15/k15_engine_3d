@@ -412,12 +412,12 @@ intern inline result8 K15_GLBindTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_
 	return result;
 }
 /*********************************************************************************/
-intern inline uint8 K15_GLDeleteTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResourceHandle* p_RenderTextureHandle)
+intern inline uint8 K15_GLDeleteTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResourceHandle p_RenderTextureHandle)
 {
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderBackEnd->specificRenderPlatform;
 	K15_GLTextureManager* glTextureManager = &glContext->textureManager;
 
-	K15_GLTexture* glTexture = (K15_GLTexture*)K15_InternalGetGLObjectData(glContext, *p_RenderTextureHandle, K15_GL_TYPE_TEXTURE);
+	K15_GLTexture* glTexture = (K15_GLTexture*)K15_InternalGetGLObjectData(glContext, p_RenderTextureHandle, K15_GL_TYPE_TEXTURE);
 	GLenum glTextureType = glTexture->glTextureTarget;
 
 	if (glTexture->boundSlot != K15_GL_INVALID_TEXTURE_SLOT)
@@ -435,7 +435,7 @@ intern inline uint8 K15_GLDeleteTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_
 
 	K15_OPENGL_CALL(kglDeleteTextures(1, &glTexture->glTextureHandle));
 
-	K15_InternalRemoveGLObject(glContext, p_RenderTextureHandle, K15_GL_TYPE_PROGRAM);
+	K15_InternalRemoveGLObject(glContext, p_RenderTextureHandle, K15_GL_TYPE_TEXTURE);
 
 	return K15_SUCCESS;
 }

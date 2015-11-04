@@ -7,18 +7,18 @@
 #include "generated/K15_ResourceStretchBuffer.h"
 
 struct K15_ResourceArchive;
-struct K15_ResourceCompilerInput;
+struct K15_ResourceFileData;
 struct K15_ResourceData;
 
 typedef result8 (*K15_ResourceExistsInArchiveFnc)(K15_ResourceContext*, K15_ResourceArchive*, const char*);
 typedef uint32 (*K15_GetResourceSizeFromArchiveFnc)(K15_ResourceContext*, K15_ResourceArchive*, const char*);
 typedef byte* (*K15_GetResourceDataFromArchiveFnc)(K15_ResourceContext*, K15_ResourceArchive*, uint32, const char*);
 
-typedef void (*K15_LoadResourceFromLoaderFnc)(K15_ResourceContext*, K15_ResourceCompilerInput*, K15_ResourceData*);
+typedef void (*K15_LoadResourceFromLoaderFnc)(K15_ResourceContext*, K15_ResourceFileData*, K15_ResourceData*);
 typedef void (*K15_UnloadResourceFromLoaderFnc)(K15_ResourceContext*, K15_Resource*);
 
 /*********************************************************************************/
-struct K15_ResourceCompilerInput
+struct K15_ResourceFileData
 {
 	const char* path;
 	byte* fileContent;
@@ -35,7 +35,7 @@ struct K15_Resource
 {
 	K15_ResourceHandle handle;
 	K15_ResourceData resourceData;
-	K15_ResourceCompilerInput compilerInput;
+	K15_ResourceFileData resourceFileData;
 	uint32 identifier;
 	uint32 refCount;
 	uint32 flags;

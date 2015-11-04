@@ -821,6 +821,7 @@ result8 K15_GLCreateProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderProgra
 	//if everything went smooth so far, try to reflect the program
 	if (result == K15_SUCCESS)
 	{
+		K15_LOG_DEBUG_MESSAGE("Create Program (%d)", program.glProgramHandle);
 		K15_InternGLReflectProgram(p_RenderBackEnd->renderContext, &program, p_RenderProgramDesc);
 		*p_RenderProgramHandle = K15_InternalAddGLObject(glContext, &program, sizeof(program), hash, K15_GL_TYPE_PROGRAM);
 	}
@@ -833,15 +834,16 @@ result8 K15_GLCreateProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderProgra
 	return result;
 }
 /*********************************************************************************/
-result8 K15_GLDeleteProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResourceHandle* p_RenderProgramHandle)
+result8 K15_GLDeleteProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResourceHandle p_RenderProgramHandle)
 {
 	result8 result = K15_SUCCESS;
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderBackEnd->specificRenderPlatform;
 
-	K15_GLProgram* glProgram = (K15_GLProgram*)K15_InternalGetGLObjectData(glContext, *p_RenderProgramHandle, K15_GL_TYPE_PROGRAM);
+	K15_GLProgram* glProgram = (K15_GLProgram*)K15_InternalGetGLObjectData(glContext, p_RenderProgramHandle, K15_GL_TYPE_PROGRAM);
 	GLenum glProgramType = glProgram->glProgramType;
 	K15_RenderProgramType programType = K15_ConvertGLProgramType(glProgramType);
 
+	K15_LOG_DEBUG_MESSAGE("Delete Program (%d)", glProgram->glProgramHandle);
 	K15_OPENGL_CALL(kglDeleteProgram(glProgram->glProgramHandle));
 
 	if (glContext->glBoundObjects.boundPrograms[programType] == glProgram)
@@ -871,6 +873,7 @@ result8 K15_GLBindProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResource
 
 	GLuint glProgramHandle = glProgram->glProgramHandle;
 	GLbitfield glProgramTypeBit = K15_GLConvertProgramTypeBit(glProgramType);
+	K15_LOG_DEBUG_MESSAGE("Bind Program (%d)", glProgramHandle);
 
 	K15_OPENGL_CALL(kglUseProgramStages(glProgramPipelineHandle, glProgramTypeBit ,glProgramHandle));
 

@@ -86,13 +86,13 @@ intern inline byte* K15_InternalGetGLObjectData(K15_GLRenderContext* p_GLContext
 	return currentObjectHeader->glObjectData;
 }
 /*********************************************************************************/
-intern inline bool8 K15_InternalRemoveGLObject(K15_GLRenderContext* p_GLContext, K15_RenderResourceHandle* p_ResourceHandle, K15_GLObjectType p_GLObjectType)
+intern inline bool8 K15_InternalRemoveGLObject(K15_GLRenderContext* p_GLContext, K15_RenderResourceHandle p_ResourceHandle, K15_GLObjectType p_GLObjectType)
 {
 	K15_ASSERT(p_GLContext);
 	K15_ASSERT(p_ResourceHandle);
-	K15_ASSERT(*p_ResourceHandle != K15_INVALID_GPU_RESOURCE_HANDLE);
+	K15_ASSERT(p_ResourceHandle != K15_INVALID_GPU_RESOURCE_HANDLE);
 
-	K15_GLObjectHeader* objectHeader = &p_GLContext->glObjects[*p_ResourceHandle];
+	K15_GLObjectHeader* objectHeader = &p_GLContext->glObjects[p_ResourceHandle];
 
 	K15_ASSERT(objectHeader->type == p_GLObjectType);
 
@@ -101,8 +101,6 @@ intern inline bool8 K15_InternalRemoveGLObject(K15_GLRenderContext* p_GLContext,
 	objectHeader->glObjectData = 0;
 	//objectHeader->offsetNextEntry = sizeof(K15_GLObjectHeader);
 	objectHeader->type = K15_GL_TYPE_INVALID;
-
-	*p_ResourceHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
 
 	return K15_TRUE;
 }

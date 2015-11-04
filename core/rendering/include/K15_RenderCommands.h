@@ -15,9 +15,9 @@ void K15_RenderCommandCreateTexture(K15_RenderCommandQueue* p_RenderCommandQueue
 void K15_RenderCommandCreateProgram(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_ProgramHandle, K15_RenderProgramDesc* p_ProgramDesc);
 void K15_RenderCommandWindowResized(K15_RenderCommandQueue* p_RenderCommandQueue, uint32 p_Width, uint32 p_Height);
 
-void K15_RenderCommandDeleteTexture(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle);
-void K15_RenderCommandDeleteSampler(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_SamplerHandle);
-void K15_RenderCommandDeleteProgram(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_ProgramHandle);
+void K15_RenderCommandDeleteTexture(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle p_TextureHandle);
+void K15_RenderCommandDeleteSampler(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle p_SamplerHandle);
+void K15_RenderCommandDeleteProgram(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle p_ProgramHandle);
 
 const char* K15_ConvertRenderCommandToString(K15_RenderCommandType p_RenderCommandType);
 

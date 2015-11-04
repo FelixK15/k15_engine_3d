@@ -123,36 +123,36 @@ void K15_RenderCommandWindowResized(K15_RenderCommandQueue* p_RenderCommandQueue
 	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));
 }
 /*********************************************************************************/
-void K15_RenderCommandDeleteTexture(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle)
+void K15_RenderCommandDeleteTexture(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle p_TextureHandle)
 {
 	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
-	K15_ASSERT_TEXT(*p_TextureHandle != K15_INVALID_GPU_RESOURCE_HANDLE, "Texture handle is invalid");
+	K15_ASSERT_TEXT(p_TextureHandle != K15_INVALID_GPU_RESOURCE_HANDLE, "Texture handle is invalid");
 
 	result8 result = K15_InternalBeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_DELETE_TEXTURE);
 
-	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, K15_PTR_SIZE, &p_TextureHandle));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_RenderResourceHandle), &p_TextureHandle));
 	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));
 }
 /*********************************************************************************/
-void K15_RenderCommandDeleteSampler(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_SamplerHandle)
+void K15_RenderCommandDeleteSampler(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle p_SamplerHandle)
 {
 	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
-	K15_ASSERT_TEXT(*p_SamplerHandle != K15_INVALID_GPU_RESOURCE_HANDLE, "Sampler handle is invalid");
+	K15_ASSERT_TEXT(p_SamplerHandle != K15_INVALID_GPU_RESOURCE_HANDLE, "Sampler handle is invalid");
 
 	result8 result = K15_InternalBeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_DELETE_SAMPLER);
 
-	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, K15_PTR_SIZE, &p_SamplerHandle));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_RenderResourceHandle), &p_SamplerHandle));
 	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));
 }
 /*********************************************************************************/
-void K15_RenderCommandDeleteProgram(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_ProgramHandle)
+void K15_RenderCommandDeleteProgram(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle p_ProgramHandle)
 {
 	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
-	K15_ASSERT_TEXT(*p_ProgramHandle != K15_INVALID_GPU_RESOURCE_HANDLE, "Program handle is invalid");
+	K15_ASSERT_TEXT(p_ProgramHandle != K15_INVALID_GPU_RESOURCE_HANDLE, "Program handle is invalid");
 
 	result8 result = K15_InternalBeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_DELETE_PROGRAM);
 
-	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, K15_PTR_SIZE, &p_ProgramHandle));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_RenderResourceHandle), &p_ProgramHandle));
 	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));
 }
 /*********************************************************************************/
