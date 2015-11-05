@@ -52,21 +52,24 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 	K15_InternalSetOSLayerContext(*p_GameContext->osContext);
 #endif //K15_LOAD_GAME_LIB_DYNAMIC
 
-	//Get memory from the engine (that is the memory we asked for in the K15_InitGame)
-	K15_MemoryBuffer* memory = p_GameContext->gameMemory;
-
 	//How much memory should be used for resource caching?
-	uint32 resourceBufferSize = size_megabyte(5) + size_kilobyte(20); //20 kilobyte for bookkeeping
+	const uint32 resourceBufferSize = size_megabyte(5) + size_kilobyte(20); //20 kilobyte for bookkeeping
+
+	//Get memory from the engine (that is the memory we asked for in the K15_InitGame)
+	K15_MemoryBuffer* gameMemoryBuffer = p_GameContext->gameMemory;
 
 	//Let the game context for this project be the first thing we allocate, so we *know* that the game context is always first in memory.
-	K15_Sample1GameContext* sample1GameContext = (K15_Sample1GameContext*)K15_GetMemoryFromMemoryBuffer(memory, sizeof(K15_Sample1GameContext));
-	K15_CustomMemoryAllocator gameMemoryAllocator = K15_CreateStackAllocator(memory, "Game Memory Allocator");
-
+	K15_Sample1GameContext* sample1GameContext = (K15_Sample1GameContext*)K15_GetMemoryFromMemoryBuffer(gameMemoryBuffer, sizeof(K15_Sample1GameContext));
+		
+	//allocator for game data
+	K15_CustomMemoryAllocator gameMemoryAllocator = K15_CreateStackAllocator(gameMemoryBuffer, "Game Memory Allocator");
+	
 	//Create the memory buffer for the resource context (this buffer will be used for resource caching).
 	K15_MemoryBuffer* resourceMemoryBuffer = (K15_MemoryBuffer*)K15_AllocateFromMemoryAllocator(&gameMemoryAllocator, sizeof(K15_MemoryBuffer));
-	K15_MemoryBuffer* guiMemoryBuffer = (K15_MemoryBuffer*)K15_AllocateFromMemoryAllocator(&gameMemoryAllocator, sizeof(K15_MemoryBuffer));
-
 	K15_InitializePreallocatedMemoryBuffer(resourceMemoryBuffer, (byte*)K15_AllocateFromMemoryAllocator(&gameMemoryAllocator, resourceBufferSize), resourceBufferSize, 0);
+
+	//Create the memory buffer for the gui context
+	K15_MemoryBuffer* guiMemoryBuffer = (K15_MemoryBuffer*)K15_AllocateFromMemoryAllocator(&gameMemoryAllocator, sizeof(K15_MemoryBuffer));
 	K15_InitializePreallocatedMemoryBuffer(guiMemoryBuffer, (byte*)K15_AllocateFromMemoryAllocator(&gameMemoryAllocator, K15_GUI_CONTEXT_MEMORY_SIZE), resourceBufferSize, 0);
 
 	//Create the resource context pointing to the 'data' directory of the working directory.
@@ -141,16 +144,17 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	K15_ResourceHandle guiMaterial = guiContext->guiRenderMaterial;
 	K15_RenderFontDesc* guiFontDesc = K15_GetResourceFontDesc(gameContext->resourceContext, guiFont);
 	K15_RenderMaterialDesc* guiMaterialDesc = K15_GetResourceRenderMaterialDesc(gameContext->resourceContext, guiMaterial);
-// 
-// 	K15_SetRenderMaterialRenderResourceDataByName(&guiMaterialDesc->materialPasses[0], "DiffuseTexture", guiFontDesc->textureHandle);
-// 
-// 	K15_RenderCommandDraw2DTexture(gameRenderCommandQueue, 
-// 		guiFontDesc->textureHandle, 
-// 		guiMaterialDesc, 
-// 		K15_CreateRectangle(1.f, 1.f, -1.f, -1.f),
-// 		K15_CreateRectangle(1.f, 1.f, 0.f, 0.f));
+	K15_RenderResourceHandle* guiTextureHandle = K15_GetResourceRenderHandle(gameContext->resourceContext, guiContext->guiRenderTexture);
 
-	K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiFontDesc, "BlaUmbruch", K15_CreateVector(-1.0f, 0.0f));
+	K15_SetRenderMaterialRenderResourceDataByName(&guiMaterialDesc->materialPasses[0], "DiffuseTexture", guiTextureHandle);
+
+	K15_RenderCommandDraw2DTexture(gameRenderCommandQueue, 
+		guiTextureHandle, 
+		guiMaterialDesc, 
+		K15_CreateRectangle(1.f, 1.f, -1.f, -1.f),
+		K15_CreateRectangle(1.f, 1.f, 0.f, 0.f));
+
+	//K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiFontDesc, "BlaUmbruch", K15_CreateVector(-1.0f, 0.0f));
 
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameContext->resourceContext->commandQueue);
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameRenderCommandQueue);

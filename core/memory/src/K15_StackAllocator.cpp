@@ -25,7 +25,7 @@ intern void* K15_InternalStackAlloc(size_t p_SizeInBytes, void* p_UserData)
 		return 0;
 	}
 
-	void* memory =  allocatorBuffer->buffer + allocatorInfo->sizeInBytes;
+	void* memory =  allocatorBuffer->buffer + allocatorInfo->sizeInBytes + allocatorBuffer->usedBytesOffset;
 
 	allocatorInfo->sizeInBytes = newSizeInBytes;
 

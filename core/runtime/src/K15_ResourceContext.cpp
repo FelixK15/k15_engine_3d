@@ -660,6 +660,7 @@ intern void K15_InternalReloadResource(const char* p_ResourcePath, void* p_UserD
 {
 	K15_ResourceFileChangedInfo* resourceChangedInfo = (K15_ResourceFileChangedInfo*)p_UserData;
 	K15_SleepThreadForMilliseconds(500);
+	//TODO: check if file write has been finished
 
 	const char* path = resourceChangedInfo->resourcePath;
 	K15_ResourceContext* resourceContext = resourceChangedInfo->resourceContext;
