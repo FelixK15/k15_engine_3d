@@ -141,23 +141,17 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	K15_ResourceHandle guiMaterial = guiContext->guiRenderMaterial;
 	K15_RenderFontDesc* guiFontDesc = K15_GetResourceFontDesc(gameContext->resourceContext, guiFont);
 	K15_RenderMaterialDesc* guiMaterialDesc = K15_GetResourceRenderMaterialDesc(gameContext->resourceContext, guiMaterial);
-
-	K15_SetRenderMaterialRenderResourceDataByName(&guiMaterialDesc->materialPasses[0], "DiffuseTexture", guiFontDesc->textureHandle);
-
+// 
+// 	K15_SetRenderMaterialRenderResourceDataByName(&guiMaterialDesc->materialPasses[0], "DiffuseTexture", guiFontDesc->textureHandle);
+// 
 // 	K15_RenderCommandDraw2DTexture(gameRenderCommandQueue, 
 // 		guiFontDesc->textureHandle, 
 // 		guiMaterialDesc, 
 // 		K15_CreateRectangle(1.f, 1.f, -1.f, -1.f),
 // 		K15_CreateRectangle(1.f, 1.f, 0.f, 0.f));
-// 	static int bla = 0;
-// 	++bla;
-// 	char* blaText = (char*)alloca(10);
-// 	blaText = itoa(bla, blaText, 10);
-//	K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiFontDesc, "BlaUmbruch", K15_CreateVector(-1.0f, 0.0f));
-// 
-  	K15_SleepThreadForMilliseconds(100);
- 	K15_LOG_DEBUG_MESSAGE("material frag shader=%u", *guiFontDesc->textureHandle);
-// 	K15_LOG_DEBUG_MESSAGE("material vertex shader=%u", *guiMaterialDesc->materialPasses[0].vertexShaderHandle);
+
+	K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiFontDesc, "BlaUmbruch", K15_CreateVector(-1.0f, 0.0f));
+
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameContext->resourceContext->commandQueue);
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameRenderCommandQueue);
 }

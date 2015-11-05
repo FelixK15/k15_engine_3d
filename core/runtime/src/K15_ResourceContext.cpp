@@ -659,7 +659,7 @@ intern void K15_InternalDeleteResource(K15_ResourceContext* p_ResourceContext, K
 intern void K15_InternalReloadResource(const char* p_ResourcePath, void* p_UserData)
 {
 	K15_ResourceFileChangedInfo* resourceChangedInfo = (K15_ResourceFileChangedInfo*)p_UserData;
-	K15_SleepThreadForMilliseconds(200);
+	K15_SleepThreadForMilliseconds(500);
 
 	const char* path = resourceChangedInfo->resourcePath;
 	K15_ResourceContext* resourceContext = resourceChangedInfo->resourceContext;

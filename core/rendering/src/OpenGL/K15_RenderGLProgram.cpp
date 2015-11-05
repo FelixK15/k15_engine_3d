@@ -821,7 +821,6 @@ result8 K15_GLCreateProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderProgra
 	//if everything went smooth so far, try to reflect the program
 	if (result == K15_SUCCESS)
 	{
-		K15_LOG_DEBUG_MESSAGE("Create Program (%d)", program.glProgramHandle);
 		K15_InternGLReflectProgram(p_RenderBackEnd->renderContext, &program, p_RenderProgramDesc);
 		*p_RenderProgramHandle = K15_InternalAddGLObject(glContext, &program, sizeof(program), hash, K15_GL_TYPE_PROGRAM);
 	}
@@ -843,7 +842,6 @@ result8 K15_GLDeleteProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResour
 	GLenum glProgramType = glProgram->glProgramType;
 	K15_RenderProgramType programType = K15_ConvertGLProgramType(glProgramType);
 
-	K15_LOG_DEBUG_MESSAGE("Delete Program (%d)", glProgram->glProgramHandle);
 	K15_OPENGL_CALL(kglDeleteProgram(glProgram->glProgramHandle));
 
 	if (glContext->glBoundObjects.boundPrograms[programType] == glProgram)
@@ -873,7 +871,6 @@ result8 K15_GLBindProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResource
 
 	GLuint glProgramHandle = glProgram->glProgramHandle;
 	GLbitfield glProgramTypeBit = K15_GLConvertProgramTypeBit(glProgramType);
-	K15_LOG_DEBUG_MESSAGE("Bind Program (%d)", glProgramHandle);
 
 	K15_OPENGL_CALL(kglUseProgramStages(glProgramPipelineHandle, glProgramTypeBit ,glProgramHandle));
 
@@ -1087,6 +1084,14 @@ result8 K15_GLUpdateProgramDataUniforms(K15_RenderBackEnd* p_RenderBackEnd, K15_
 								if (textureDataDesc)
 								{
 									K15_RenderResourceHandle* textureRenderResourceHandle = textureDataDesc->data.renderResourceHandle;
+
+#								ifdef K15_TOLERATE_INVALID_GPU_HANDLES
+									if (*textureRenderResourceHandle == K15_INVALID_GPU_RESOURCE_HANDLE)
+									{
+										break;
+									}
+#								endif //K15_TOLERATE_INVALID_GPU_HANDLES
+
 									K15_GLTexture* glTexture = (K15_GLTexture*)K15_InternalGetGLObjectData(glContext, *textureRenderResourceHandle, K15_GL_TYPE_TEXTURE);
 
 									uint32 uniformRegister = uniform->registerIndex;

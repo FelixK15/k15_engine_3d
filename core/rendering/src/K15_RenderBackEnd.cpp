@@ -353,7 +353,15 @@ intern void K15_InternalRender2DTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_
 
 	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(K15_Rectangle), &sourceRect);
 	localOffset += sizeof(K15_Rectangle);
-	
+
+#ifdef K15_TOLERATE_INVALID_GPU_HANDLES
+	//ignore non loaded textures
+	if (*textureHandle == K15_INVALID_GPU_RESOURCE_HANDLE)
+	{
+		return;
+	}
+#endif //K15_TOLERATE_INVALID_GPU_HANDLES
+
 	K15_RenderVertexFormatDesc vertexFormatDesc = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 2, 
 		K15_SEMANTIC_POSITION_ID, K15_TYPE_FLOAT_VECTOR2_ID,
 		K15_SEMANTIC_TEXCOORD1_ID, K15_TYPE_FLOAT_VECTOR2_ID);
@@ -439,6 +447,14 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 
 	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(K15_Vector2), &pos);
 	localOffset += sizeof(K15_Vector2);
+
+#ifdef K15_TOLERATE_INVALID_GPU_HANDLES
+	//ignore non loaded textures
+	if (*fontDesc.textureHandle == K15_INVALID_GPU_RESOURCE_HANDLE)
+	{
+		return;
+	}
+#endif //K15_TOLERATE_INVALID_GPU_HANDLES
 
 	K15_RenderMaterialDesc* fontMaterial = &p_RenderBackEnd->resources.defaultFontMaterial;
 	K15_SetRenderMaterialRenderResourceDataByName(&fontMaterial->materialPasses[0], "sampler", fontDesc.samplerHandle);
