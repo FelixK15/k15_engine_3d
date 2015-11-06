@@ -115,20 +115,24 @@ intern void K15_InternalBlockClear(void* p_UserData)
 	allocatorInfo->firstBlock->free = K15_TRUE;
 }
 /*********************************************************************************/
-K15_CustomMemoryAllocator K15_CreateBlockAllocator(K15_MemoryBuffer* p_MemoryBuffer, char* p_AllocatorName)
+K15_CustomMemoryAllocator K15_CreateBlockAllocator(K15_MemoryBuffer p_MemoryBuffer, char* p_AllocatorName)
 {
-	K15_BlockAllocatorInfo* allocatorInfo = (K15_BlockAllocatorInfo*)K15_GetMemoryFromMemoryBuffer(p_MemoryBuffer, sizeof(K15_BlockAllocatorInfo));
+	K15_ASSERT(p_MemoryBuffer.sizeInBytes >= sizeof(K15_BlockAllocatorInfo) + sizeof(K15_BlockHeaderInfo));
+	K15_BlockAllocatorInfo* allocatorInfo = (K15_BlockAllocatorInfo*)p_MemoryBuffer.buffer;
+
+	p_MemoryBuffer.buffer += sizeof(K15_BlockAllocatorInfo);
+	p_MemoryBuffer.sizeInBytes -= sizeof(K15_BlockAllocatorInfo);
 
 	//create first block header
-	byte* bufferMemory = p_MemoryBuffer->buffer + p_MemoryBuffer->usedBytesOffset;
+	byte* bufferMemory = p_MemoryBuffer.buffer;
 	K15_BlockHeaderInfo* firstBlock = (K15_BlockHeaderInfo*)bufferMemory;
 
 	firstBlock->free = K15_TRUE;
-	firstBlock->memorySize = p_MemoryBuffer->sizeInBytes - sizeof(K15_BlockAllocatorInfo);
+	firstBlock->memorySize = p_MemoryBuffer.sizeInBytes;
 	firstBlock->memoryOffsetFromBuffer = sizeof(K15_BlockHeaderInfo);
 
 	allocatorInfo->firstBlock = firstBlock;
-	allocatorInfo->memoryBlockSize = p_MemoryBuffer->sizeInBytes;
+	allocatorInfo->memoryBlockSize = p_MemoryBuffer.sizeInBytes;
 
 	return K15_CreateCustomMemoryAllocator(K15_InternalBlockAlloc, K15_InternalBlockFree, K15_InternalBlockClear, allocatorInfo, p_AllocatorName);
 }
