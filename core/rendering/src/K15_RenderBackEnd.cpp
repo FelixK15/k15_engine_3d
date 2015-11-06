@@ -88,6 +88,8 @@ intern result8 K15_InitializeRenderBackEnd(K15_CustomMemoryAllocator* p_MemoryAl
 	p_RenderBackEnd->renderContext = p_RenderContext;
 	p_RenderBackEnd->shaderProcessorContext = (K15_ShaderProcessorContext*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, sizeof(K15_ShaderProcessorContext));
 	
+	p_RenderBackEnd->vertexFormatCache.numVertexFormats = 0;
+
 	p_RenderBackEnd->shaderProcessorContext->semanticTable = K15_CreateSemanticTable();
 	p_RenderBackEnd->shaderProcessorContext->typeTable = K15_CreateTypeTable();
 	p_RenderBackEnd->shaderProcessorContext->lastProcessResult.numErrors = 0;

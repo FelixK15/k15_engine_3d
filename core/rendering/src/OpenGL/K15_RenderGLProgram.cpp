@@ -1085,12 +1085,12 @@ result8 K15_GLUpdateProgramDataUniforms(K15_RenderBackEnd* p_RenderBackEnd, K15_
 								{
 									K15_RenderResourceHandle* textureRenderResourceHandle = textureDataDesc->data.renderResourceHandle;
 
-#								ifdef K15_TOLERATE_INVALID_GPU_HANDLES
-									if (*textureRenderResourceHandle == K15_INVALID_GPU_RESOURCE_HANDLE)
-									{
-										break;
-									}
-#								endif //K15_TOLERATE_INVALID_GPU_HANDLES
+// #								ifdef K15_TOLERATE_INVALID_GPU_HANDLES
+// 									if (*textureRenderResourceHandle == K15_INVALID_GPU_RESOURCE_HANDLE)
+// 									{
+// 										break;
+// 									}
+// #								endif //K15_TOLERATE_INVALID_GPU_HANDLES
 
 									K15_GLTexture* glTexture = (K15_GLTexture*)K15_InternalGetGLObjectData(glContext, *textureRenderResourceHandle, K15_GL_TYPE_TEXTURE);
 

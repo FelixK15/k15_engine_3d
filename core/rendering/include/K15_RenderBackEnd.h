@@ -31,6 +31,12 @@ struct K15_RenderVertexData
 	void* buffer;
 };
 
+struct K15_RenderVertexFormatCache
+{
+	K15_RenderVertexFormatDesc* vertexFormats[K15_RENDER_MAX_VERTEX_FORMATS];
+	uint32 numVertexFormats;
+};
+
 struct K15_RenderResources
 {
 	K15_RenderResourceHandle intermediateVertexBufferHandle;
@@ -83,6 +89,7 @@ struct K15_RenderBackEnd
 	K15_ShaderProcessorContext* shaderProcessorContext;
 
 	K15_RenderUniformCache uniformCache;
+	K15_RenderVertexFormatCache vertexFormatCache;
 
  	K15_RenderResources resources;
 	K15_RenderInterface renderInterface;

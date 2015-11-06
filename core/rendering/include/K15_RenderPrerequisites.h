@@ -39,6 +39,7 @@
 #define K15_RENDER_MAX_GPU_FONTS								32
 #define K15_RENDER_MAX_CAMERAS									32
 #define K15_RENDER_MAX_UNIFORMS									64
+#define K15_RENDER_MAX_VERTEX_FORMATS							64
 
 #define K15_RENDER_IMMEDIATE_BUFFER_SIZE						size_kilobyte(512)
 
