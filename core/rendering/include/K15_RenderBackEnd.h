@@ -6,6 +6,7 @@
 #include "K15_RenderBufferDesc.h"
 #include "K15_RenderProgramDesc.h"
 #include "K15_RenderTextureDesc.h"
+#include "K15_RenderVertexFormatDesc.h"
 #include "K15_RenderInterface.h"
 #include "K15_RenderTargetDesc.h"
 #include "K15_RenderSamplerDesc.h"
@@ -33,7 +34,7 @@ struct K15_RenderVertexData
 
 struct K15_RenderVertexFormatCache
 {
-	K15_RenderVertexFormatDesc* vertexFormats[K15_RENDER_MAX_VERTEX_FORMATS];
+	K15_RenderVertexFormatDesc vertexFormats[K15_RENDER_MAX_VERTEX_FORMATS];
 	uint32 numVertexFormats;
 };
 

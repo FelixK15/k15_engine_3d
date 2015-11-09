@@ -34,7 +34,7 @@ intern K15_RenderVertexFormatElementDesc K15_InternalCreateVertexFormatElement(K
 intern bool8 K15_InternalFindVertexFormatInCache(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderVertexFormatDesc* p_VertexFormat, uint32 p_NumAttributes, va_list p_VList)
 {
 	uint32 numVertexFormats = p_RenderBackEnd->vertexFormatCache.numVertexFormats;
-	K15_RenderVertexFormatDesc** cachedVertexFormats = p_RenderBackEnd->vertexFormatCache.vertexFormats;
+	K15_RenderVertexFormatDesc* cachedVertexFormats = p_RenderBackEnd->vertexFormatCache.vertexFormats;
 
 	bool8 foundVertexCacheFormat = K15_FALSE;
 
@@ -42,7 +42,7 @@ intern bool8 K15_InternalFindVertexFormatInCache(K15_RenderBackEnd* p_RenderBack
 		vertexFormatCacheIndex < numVertexFormats;
 		++vertexFormatCacheIndex)
 	{
-		K15_RenderVertexFormatDesc* cachedVertexFormat = cachedVertexFormats[vertexFormatCacheIndex];
+		K15_RenderVertexFormatDesc* cachedVertexFormat = &cachedVertexFormats[vertexFormatCacheIndex];
 
 		if (cachedVertexFormat->numAttributes == p_NumAttributes)
 		{
@@ -105,7 +105,7 @@ intern void K15_InternalCreateVertexFormat(K15_RenderBackEnd* p_RenderBackEnd, K
 	p_VertexFormatDesc->hash = K15_GenerateDataHash((byte*)p_VertexFormatDesc->elements, sizeof(p_VertexFormatDesc->elements));
 	p_VertexFormatDesc->stride = K15_InternalCalculateVertexSizeInBytes(shaderProcessorContext, p_VertexFormatDesc);
 
-	p_RenderBackEnd->vertexFormatCache.vertexFormats[numCachedVertexFormats] = p_VertexFormatDesc;
+	p_RenderBackEnd->vertexFormatCache.vertexFormats[numCachedVertexFormats] = *p_VertexFormatDesc;
 
 	p_RenderBackEnd->vertexFormatCache.numVertexFormats++;
 }
@@ -125,7 +125,7 @@ K15_RenderVertexFormatDesc K15_CreateRenderVertexFormatDesc(K15_RenderContext* p
 
 	if (!foundVertexFormat)
 	{
-		//va_start(vlist, p_NumAttributes);
+		va_start(vlist, p_NumAttributes);
 		K15_InternalCreateVertexFormat(backEnd, &desc, p_NumAttributes, vlist);
 	}
 
