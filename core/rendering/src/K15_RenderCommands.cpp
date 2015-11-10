@@ -23,19 +23,17 @@ intern result8 K15_InternalBeginRenderCommand(K15_RenderCommandQueue* p_RenderCo
 	return result;
 }
 /*********************************************************************************/
-void K15_RenderCommandDraw2DTexture(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle, K15_RenderMaterialDesc* p_RenderMaterialDesc, K15_Rectangle p_DestinationRect, K15_Rectangle p_SourceRect)
+void K15_RenderCommandDraw2DTexture(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle, K15_Rectangle p_DestinationRect, K15_Rectangle p_SourceRect)
 {
 	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
 	K15_ASSERT_TEXT(p_TextureHandle, "Texture handle is NULL.");
 	//K15_ASSERT_TEXT(*p_TextureHandle != K15_INVALID_GPU_RESOURCE_HANDLE, "Invalid texture handle.");
-	K15_ASSERT_TEXT(p_RenderMaterialDesc, "Material Description is NULL.");
 	K15_ASSERT_TEXT(K15_CalculateRectangleArea(p_SourceRect) > 0.f, "Source Rectangle area is 0.");
 	K15_ASSERT_TEXT(K15_CalculateRectangleArea(p_DestinationRect) > 0.f, "Destination Rectangle area is 0.");
 
 	result8 result = K15_InternalBeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_RENDER_2D_TEXTURE);
 
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, K15_PTR_SIZE, &p_TextureHandle));
-	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_RenderMaterialDesc), p_RenderMaterialDesc));
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_Rectangle), &p_DestinationRect));
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_Rectangle), &p_SourceRect));
 	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));
@@ -64,6 +62,8 @@ void K15_RenderCommandCreateTextureFromTextureFormat(K15_RenderCommandQueue* p_R
 	K15_ASSERT_TEXT(p_TextureHandle, "Texture handle is NULL.");
 	K15_ASSERT_TEXT(p_TextureFormat, "Texture format is NULL.");
 
+	*p_TextureHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
+
 	result8 result  = K15_InternalBeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_CREATE_TEXTURE_FROM_TEXTURE_FORMAT);
 
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, K15_PTR_SIZE, &p_TextureHandle));
@@ -76,6 +76,8 @@ void K15_RenderCommandCreateSamplerFromSamplerFormat(K15_RenderCommandQueue* p_R
 	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
 	K15_ASSERT_TEXT(p_SamplerHandle, "sampler handle is NULL.");
 	K15_ASSERT_TEXT(p_SamplerFormat, "Sampler format is NULL.");
+
+	*p_SamplerHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
 
 	result8 result  = K15_InternalBeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_CREATE_SAMPLER_FROM_SAMPLER_FORMAT);
 
@@ -90,6 +92,8 @@ void K15_RenderCommandCreateTexture(K15_RenderCommandQueue* p_RenderCommandQueue
 	K15_ASSERT_TEXT(p_TextureHandle, "texture handle is NULL.");
 	K15_ASSERT_TEXT(p_RenderTextureDesc, "Texture desc is NULL.");
 
+	*p_TextureHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
+
 	result8 result  = K15_InternalBeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_CREATE_TEXTURE);
 
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, K15_PTR_SIZE, &p_TextureHandle));
@@ -102,6 +106,8 @@ void K15_RenderCommandCreateProgram(K15_RenderCommandQueue* p_RenderCommandQueue
 	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
 	K15_ASSERT_TEXT(p_ProgramHandle, "Program handle is NULL.");
 	K15_ASSERT_TEXT(p_ProgramDesc, "Program description is NULL.");
+
+	*p_ProgramHandle = K15_INVALID_GPU_RESOURCE_HANDLE;
 
 	result8 result  = K15_InternalBeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_CREATE_PROGRAM);
 
@@ -126,6 +132,12 @@ void K15_RenderCommandWindowResized(K15_RenderCommandQueue* p_RenderCommandQueue
 void K15_RenderCommandDeleteTexture(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle p_TextureHandle)
 {
 	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
+	
+	if (p_TextureHandle == K15_INVALID_GPU_RESOURCE_HANDLE)
+	{
+		return;
+	}
+	
 	K15_ASSERT_TEXT(p_TextureHandle != K15_INVALID_GPU_RESOURCE_HANDLE, "Texture handle is invalid");
 
 	result8 result = K15_InternalBeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_DELETE_TEXTURE);

@@ -914,6 +914,8 @@ bool8 K15_CompileFontResourceWithStbTTF(K15_ResourceCompilerContext* p_ResourceC
 	float shift_x = 0.f;
 	float shift_y = 0.f;
 
+	float totalPosX = 0.f;
+
 	//generate glyph texture 
 	K15_SetTextureCount(&fontTextureAtlas, endCharacter - startCharacter);
 
@@ -942,6 +944,8 @@ bool8 K15_CompileFontResourceWithStbTTF(K15_ResourceCompilerContext* p_ResourceC
 		currentGlyphFormat.posX = posX;
 		currentGlyphFormat.posY = posY;
 		currentGlyphFormat.advance = (float)advance * scaleFactor;
+
+		//shift_x = currentGlyphFormat.advance;
 
 		K15_AddFontGlyphData(&fontFormat, &currentGlyphFormat, codePoint);
 	}

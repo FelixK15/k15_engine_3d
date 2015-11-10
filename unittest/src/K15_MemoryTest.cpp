@@ -5,10 +5,8 @@
 /*********************************************************************************/
 bool8 K15_MemoryBlockAllocatorTest()
 {
-	K15_MemoryBuffer memoryBuffer = {};
-	K15_InitializeMemoryBuffer(&memoryBuffer, 1024, 0);
-
-	K15_CustomMemoryAllocator blockAllocator = K15_CreateBlockAllocator(&memoryBuffer);
+	K15_MemoryBuffer memoryBuffer = K15_CreateMemoryBuffer(1024);
+	K15_CustomMemoryAllocator blockAllocator = K15_CreateBlockAllocator(memoryBuffer);
 
 	void* memory = K15_AllocateFromMemoryAllocator(&blockAllocator, 512);
 	memset(memory, 0xFF, 512);

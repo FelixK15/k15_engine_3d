@@ -32,7 +32,6 @@ void K15_CreateRenderMaterialDataDescStretchBuffer(K15_RenderMaterialDataDescStr
 void K15_DeleteRenderMaterialDataDescStretchBuffer(K15_RenderMaterialDataDescStretchBuffer* p_StretchBuffer)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
-	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 
 	if ((p_StretchBuffer->flags & K15_USE_EXTERNAL_BUFFER) == 0)
 	{

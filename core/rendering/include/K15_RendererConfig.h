@@ -10,6 +10,10 @@
 //comment to disable loading shader from resource context (load from blob instead) - WIP
 #define K15_LOAD_SHADER_FROM_RESOURCE_CONTEXT
 
+//comment to disable checks for invalid gpu handles (added for runtime resource reloading because render resource
+//would have an invalid handle for one frame. Shouldn't occur in the final product)
+#define K15_TOLERATE_INVALID_GPU_HANDLES
+
 #define K15_MAX_MIP_MAPS 20
 
 #endif //_K15_Render_Config_h_

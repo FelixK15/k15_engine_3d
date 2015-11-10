@@ -27,7 +27,6 @@ intern uint8 K15_GLCreateSamplerFromSamplerDesc(K15_RenderBackEnd* p_RenderBackE
 	K15_OPENGL_CALL(kglSamplerParameteri(glSamplerHandle, GL_TEXTURE_WRAP_T, VAdressing));
 	K15_OPENGL_CALL(kglSamplerParameteri(glSamplerHandle, GL_TEXTURE_WRAP_R, WAdressing));
 
-
 	glSampler.glSamplerHandle = glSamplerHandle;
 	glSampler.boundSlot = K15_GL_INVALID_TEXTURE_SLOT;
 

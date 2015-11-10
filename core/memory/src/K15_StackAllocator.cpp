@@ -3,7 +3,7 @@
 /*********************************************************************************/
 struct K15_StackAllocatorInfo
 {
-	K15_MemoryBuffer* memoryBuffer;
+	K15_MemoryBuffer memoryBuffer;
 	uint32 sizeInBytes;
 };
 /*********************************************************************************/
@@ -14,10 +14,10 @@ struct K15_StackAllocatorInfo
 intern void* K15_InternalStackAlloc(size_t p_SizeInBytes, void* p_UserData)
 {
 	K15_StackAllocatorInfo* allocatorInfo = (K15_StackAllocatorInfo*)p_UserData;
-	K15_MemoryBuffer* allocatorBuffer = allocatorInfo->memoryBuffer;
+	K15_MemoryBuffer allocatorBuffer = allocatorInfo->memoryBuffer;
 
 	uint32 newSizeInBytes = allocatorInfo->sizeInBytes + (uint32)p_SizeInBytes;
-	uint32 allocatorMemorySizeInBytes = allocatorBuffer->sizeInBytes;
+	uint32 allocatorMemorySizeInBytes = allocatorBuffer.sizeInBytes;
 	
 	if (newSizeInBytes >= allocatorMemorySizeInBytes)
 	{
@@ -25,7 +25,7 @@ intern void* K15_InternalStackAlloc(size_t p_SizeInBytes, void* p_UserData)
 		return 0;
 	}
 
-	void* memory =  allocatorBuffer->buffer + allocatorInfo->sizeInBytes;
+	void* memory =  allocatorBuffer.buffer + allocatorInfo->sizeInBytes;
 
 	allocatorInfo->sizeInBytes = newSizeInBytes;
 
@@ -43,9 +43,13 @@ intern void K15_InternalStackClear(void* p_UserData)
 	allocatorInfo->sizeInBytes = 0;
 }
 /*********************************************************************************/
-K15_CustomMemoryAllocator K15_CreateStackAllocator(K15_MemoryBuffer* p_MemoryBuffer, char* p_AllocatorName)
+K15_CustomMemoryAllocator K15_CreateStackAllocator(K15_MemoryBuffer p_MemoryBuffer, char* p_AllocatorName)
 {
-	K15_StackAllocatorInfo* allocatorInfo = (K15_StackAllocatorInfo*)K15_GetMemoryFromMemoryBuffer(p_MemoryBuffer, sizeof(K15_StackAllocatorInfo));
+	K15_ASSERT(p_MemoryBuffer.sizeInBytes >= sizeof(K15_StackAllocatorInfo));
+
+	K15_StackAllocatorInfo* allocatorInfo = (K15_StackAllocatorInfo*)p_MemoryBuffer.buffer;
+	p_MemoryBuffer.buffer += sizeof(K15_StackAllocatorInfo);
+	p_MemoryBuffer.sizeInBytes -= sizeof(K15_StackAllocatorInfo);
 
 	allocatorInfo->memoryBuffer = p_MemoryBuffer;
 	allocatorInfo->sizeInBytes = 0;

@@ -10,6 +10,7 @@ K15_Vector3 K15_Lerp(K15_Vector3& p_Start, K15_Vector3& p_End, real32 p_Time);
 real32 K15_Log2(real32 p_Number);
 
 real32 K15_ClampReal(real32 p_Value, real32 p_Max, real32 p_Min);
+real32 K15_SafeDivide(real32 p_Number, real32 p_Divisor);
 
 real32 K15_FastSqrt(real32 p_Number);
 

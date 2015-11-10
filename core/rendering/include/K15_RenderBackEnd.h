@@ -6,6 +6,7 @@
 #include "K15_RenderBufferDesc.h"
 #include "K15_RenderProgramDesc.h"
 #include "K15_RenderTextureDesc.h"
+#include "K15_RenderVertexFormatDesc.h"
 #include "K15_RenderInterface.h"
 #include "K15_RenderTargetDesc.h"
 #include "K15_RenderSamplerDesc.h"
@@ -31,14 +32,35 @@ struct K15_RenderVertexData
 	void* buffer;
 };
 
+struct K15_RenderVertexFormatCache
+{
+	K15_RenderVertexFormatDesc vertexFormats[K15_RENDER_MAX_VERTEX_FORMATS];
+	uint32 numVertexFormats;
+};
+
 struct K15_RenderResources
 {
 	K15_RenderResourceHandle intermediateVertexBufferHandle;
-	K15_RenderMaterialDesc defaultFontMaterial;
-	K15_RenderResourceHandle default2DVertexProgramHandle;
-	K15_RenderResourceHandle default3DVertexProgramHandle;
-	K15_RenderResourceHandle default2DFragmentProgramHandle;
-	K15_RenderResourceHandle default3DFragmentProgramHandle;
+	
+	struct 
+	{
+		K15_RenderMaterialDesc defaultFontMaterial;
+		K15_RenderMaterialDesc default2DMaterial;
+	} materials;
+
+	struct 
+	{
+		K15_RenderResourceHandle* default2DVertexProgramHandle;
+		K15_RenderResourceHandle* default3DVertexProgramHandle;
+		K15_RenderResourceHandle* defaultFragmentProgramHandle;
+		K15_RenderResourceHandle* defaultFontFragmentProgramHandle;
+	} shaders;
+
+	struct 
+	{
+		K15_RenderResourceHandle linearClampSamplerHandle;
+		K15_RenderResourceHandle nearestClampSamplerHandle;
+	} samplers;
 };
 
 struct K15_RenderFeatures
@@ -83,6 +105,7 @@ struct K15_RenderBackEnd
 	K15_ShaderProcessorContext* shaderProcessorContext;
 
 	K15_RenderUniformCache uniformCache;
+	K15_RenderVertexFormatCache vertexFormatCache;
 
  	K15_RenderResources resources;
 	K15_RenderInterface renderInterface;

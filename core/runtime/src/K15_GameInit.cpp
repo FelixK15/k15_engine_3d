@@ -8,13 +8,15 @@
 uint8 K15_GameThreadMain(void* p_Parameter)
 {
 	K15_GameContext* gameContext = (K15_GameContext*)p_Parameter;
-	K15_MemoryBuffer* memory = gameContext->gameMemory;
+	//K15_MemoryBuffer memory = gameContext->gameMemory;
 	K15_Semaphore* mainThreadSynchronizer = gameContext->mainThreadSynchronizer;
 	K15_Semaphore* gameThreadSynchronizer = gameContext->gameThreadSynchronizer;
 
 #ifdef K15_LOAD_GAME_LIB_DYNAMIC
 	K15_Mutex* gameLibrarySynchronizer = gameContext->gameLibrarySynchronizer;
 #endif //K15_LOAD_GAME_LIB_DYNAMIC
+
+	gameContext->frameCounter = K15_CreateFrameCounter();
 
 	K15_TickGameFnc K15_TickGame = gameContext->tickFnc;
 	K15_OnInputEventFnc K15_OnInputEvent = gameContext->onInputEventFnc;
@@ -34,6 +36,8 @@ uint8 K15_GameThreadMain(void* p_Parameter)
 		K15_OnWindowEvent = gameContext->onWindowEventFnc;
 		K15_OnSystemEvent = gameContext->onSystemEventFnc;
 #endif //K15_LOAD_GAME_LIB_DYNAMIC
+
+		K15_StartFrame(&gameContext->frameCounter);
 
 		while (K15_GetSystemEventFromQueue(&event, K15_REMOVE_SYSTEM_EVENT_FLAG) != K15_SYSTEM_EVENT_QUEUE_EMPTY)
 		{
@@ -67,7 +71,7 @@ uint8 K15_GameThreadMain(void* p_Parameter)
 		K15_PostSemaphore(gameThreadSynchronizer);
 		K15_WaitSemaphore(mainThreadSynchronizer);
 
-		++gameContext->frameCounter;
+		K15_EndFrame(&gameContext->frameCounter);
 	}
 
 	//increment semaphore on exit. Some systems close the thread deferred :(

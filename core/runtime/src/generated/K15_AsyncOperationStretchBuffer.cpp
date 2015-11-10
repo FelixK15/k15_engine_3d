@@ -8,7 +8,6 @@
 /*********************************************************************************/
 void K15_CreateAsyncOperationStretchBufferWithCustomAllocator(K15_AsyncOperationStretchBuffer* p_StretchBuffer, K15_CustomMemoryAllocator p_MemoryAllocator, unsigned int p_ElementCapacity)
 {
-	K15_ASSERT_TEXT(!p_StretchBuffer->elements, "Stretch Buffer has already been created.");
 	K15_ASSERT_TEXT(p_ElementCapacity != 0, "Can not reserve 0 elements.");
 
 	unsigned int bytesToAllocate = p_ElementCapacity * sizeof(K15_AsyncOperation*);
@@ -33,7 +32,6 @@ void K15_CreateAsyncOperationStretchBuffer(K15_AsyncOperationStretchBuffer* p_St
 void K15_DeleteAsyncOperationStretchBuffer(K15_AsyncOperationStretchBuffer* p_StretchBuffer)
 {
 	K15_ASSERT_TEXT(p_StretchBuffer, "Stretch Buffer is NULL.");
-	K15_ASSERT_TEXT(p_StretchBuffer->elements, "Stretch Buffer has not yet been created.");
 
 	if ((p_StretchBuffer->flags & K15_USE_EXTERNAL_BUFFER) == 0)
 	{

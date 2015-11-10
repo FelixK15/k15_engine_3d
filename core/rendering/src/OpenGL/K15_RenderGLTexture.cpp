@@ -323,6 +323,12 @@ intern inline result8 K15_GLBindTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderBackEnd->specificRenderPlatform;
 	K15_GLTextureManager* glTextureManager = &glContext->textureManager;
 
+	if (*p_RenderTextureHandle == K15_INVALID_GPU_RESOURCE_HANDLE ||
+		*p_RenderSamplerHandle == K15_INVALID_GPU_RESOURCE_HANDLE)
+	{
+		return K15_SUCCESS;
+	}
+
 	K15_GLTexture* glTexture = (K15_GLTexture*)K15_InternalGetGLObjectData(glContext, *p_RenderTextureHandle, K15_GL_TYPE_TEXTURE);
 	K15_GLSampler* glSampler = (K15_GLSampler*)K15_InternalGetGLObjectData(glContext, *p_RenderSamplerHandle, K15_GL_TYPE_SAMPLER);
 
@@ -382,6 +388,11 @@ intern inline result8 K15_GLBindTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_
 				K15_OPENGL_CALL(kglActiveTexture(GL_TEXTURE0 + activeSlot));
 				K15_OPENGL_CALL(kglBindTexture(glTextureType, glTextureHandle));
 
+				if (slot->glTexture)
+				{
+					slot->glTexture->boundSlot = K15_GL_INVALID_TEXTURE_SLOT;
+				}
+
 				slot->glTexture = glTexture;
 
 				if (glTexture->boundSlot != K15_GL_INVALID_TEXTURE_SLOT)
@@ -395,6 +406,12 @@ intern inline result8 K15_GLBindTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_
 			{
 				GLenum glSamplerHandle = glSampler->glSamplerHandle;
 				K15_OPENGL_CALL(kglBindSampler(activeSlot, glSamplerHandle));
+				
+				if (slot->glSampler)
+				{
+					slot->glSampler->boundSlot = K15_GL_INVALID_TEXTURE_SLOT;
+				}
+
 				slot->glSampler = glSampler;
 
 				if (glSampler->boundSlot != K15_GL_INVALID_TEXTURE_SLOT)

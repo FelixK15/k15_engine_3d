@@ -36,6 +36,7 @@ K15_RenderContext* K15_CreateRenderContext(K15_OSContext* p_OSContext);
 K15_RenderContext* K15_CreateRenderContextWithCustomAllocator(K15_OSContext* p_OSContext, K15_CustomMemoryAllocator p_CustomMemoryAllocator);
 
 result8 K15_DispatchRenderCommandQueue(K15_RenderContext* p_RenderContext, K15_RenderCommandQueue* p_RenderCommandQueue);
+void K15_LoadStockShader(K15_RenderContext* p_RenderContext, K15_ResourceContext* p_ResourceContext);
 
 K15_RenderCommandQueue* K15_CreateRenderCommandQueue(K15_RenderContext* p_RenderContext, const char* p_RenderCommandQueueName = 0);
 

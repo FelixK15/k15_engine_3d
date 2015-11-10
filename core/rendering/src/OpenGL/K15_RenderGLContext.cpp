@@ -740,6 +740,7 @@ result8 K15_GLCreateRenderContext(K15_CustomMemoryAllocator* p_MemoryAllocator, 
 	glContext->textureManager.numTextureSlots = 0;
 	glContext->textureManager.maxTextureSlots = p_RenderBackEnd->features.maxTextureUnits;
 	glContext->textureManager.textureSlots = (K15_GLTextureSlot*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, sizeof(K15_GLTextureSlot) * p_RenderBackEnd->features.maxTextureUnits);
+	memset(glContext->textureManager.textureSlots, 0, sizeof(K15_GLTextureSlot) * p_RenderBackEnd->features.maxTextureUnits);
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
