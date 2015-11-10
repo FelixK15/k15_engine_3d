@@ -19,6 +19,7 @@
 
 #include <K15_RenderContext.h>
 
+
 #include <K15_Rectangle.h>
 #include <K15_Matrix4.h>
 
@@ -145,11 +146,15 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 
 	K15_SetRenderMaterialRenderResourceDataByName(&guiMaterialDesc->materialPasses[0], "DiffuseTexture", guiTextureHandle);
 
-	K15_RenderCommandDraw2DTexture(gameRenderCommandQueue, 
-		guiTextureHandle, 
-		guiMaterialDesc, 
-		K15_CreateRectangle(1.f, 1.f, -1.f, -1.f),
-		K15_CreateRectangle(1.f, 1.f, 0.f, 0.f));
+// 	K15_RenderCommandDraw2DTexture(gameRenderCommandQueue, 
+// 		guiTextureHandle, 
+// 		guiMaterialDesc, 
+// 		K15_CreateRectangle(1.f, 1.f, -1.f, -1.f),
+// 		K15_CreateRectangle(1.f, 1.f, 0.f, 0.f));
+
+	char* text = (char*)alloca(64);
+	sprintf(text, "FPS: %u", p_GameContext->frameCounter.FPS);
+	K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiFontDesc, text, K15_CreateVector(0.5f, 0.5f));
 
 	//K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiFontDesc, "BlaUmbruch", K15_CreateVector(-1.0f, 0.0f));
 

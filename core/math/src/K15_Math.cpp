@@ -44,6 +44,16 @@ real32 K15_ClampReal(real32 p_Value, real32 p_Max, real32 p_Min)
 	return p_Value;
 }
 /*********************************************************************************/
+real32 K15_SafeDivide(real32 p_Number, real32 p_Divisor)
+{
+	if (p_Divisor == 0.0)
+	{
+		p_Divisor = 1.0;
+	}
+
+	return p_Number / p_Divisor;
+}
+/*********************************************************************************/
 real32 K15_FastSqrt(real32 p_Number)
 {
 	//http://en.wikipedia.org/wiki/Fast_inverse_square_root
