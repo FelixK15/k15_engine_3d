@@ -27,30 +27,25 @@ void K15_EndFrame(K15_FrameCounter* p_FrameCounter)
 
 	double deltaFrameTime = endTime - startTime;
 	double deltaTime = deltaFrameTime;
+	double sumDeltaTime = 0.0;
 
-	double sumDeltaTime = p_FrameCounter->sumDeltaTime + deltaTime;
+	int sampleIndex = p_FrameCounter->sampleIndex;
 
-	if (sumDeltaTime >= 1.0)
+	p_FrameCounter->deltaSamples[sampleIndex] = deltaTime;
+
+	for (int deltaIndex = 0;
+		deltaIndex < K15_MAX_DELTA_TIME_SAMPLES;
+		++deltaIndex)
 	{
-		int fpsSampleIndex = p_FrameCounter->numFrameSamples;
-		p_FrameCounter->samplesFPS[fpsSampleIndex] = p_FrameCounter->frameCountPerSecond;
-		p_FrameCounter->numFrameSamples = p_FrameCounter->numFrameSamples == K15_MAX_DELTA_TIME_SAMPLES ? K15_MAX_DELTA_TIME_SAMPLES : p_FrameCounter->numFrameSamples + 1;
-		p_FrameCounter->frameCountPerSecond = 0;
-		p_FrameCounter->frameSampleIndex = (p_FrameCounter->frameSampleIndex + 1) % K15_MAX_DELTA_TIME_SAMPLES;
-		sumDeltaTime = 0.0;
+		sumDeltaTime += p_FrameCounter->deltaSamples[deltaIndex];
 	}
 
-	unsigned int sumFPSSamples = 0;
-	for (unsigned int sampleIndex = 0;
-		sampleIndex < p_FrameCounter->frameSampleIndex;
-		++sampleIndex)
-	{
-		sumFPSSamples += p_FrameCounter->samplesFPS[sampleIndex];
-	}
+	double avgDeltaTime = sumDeltaTime / K15_MAX_DELTA_TIME_SAMPLES;
 
-	p_FrameCounter->sumDeltaTime = sumDeltaTime;
-	p_FrameCounter->FPS = K15_SafeDivide(sumFPSSamples, p_FrameCounter->numFrameSamples);
-	p_FrameCounter->frameCount += 1;
-	p_FrameCounter->frameCountPerSecond += 1;
+	sampleIndex = (sampleIndex + 1) % K15_MAX_DELTA_TIME_SAMPLES;
+
+	p_FrameCounter->sampleIndex = sampleIndex;
+	p_FrameCounter->FPS = floor(1.0f / avgDeltaTime); 
+	p_FrameCounter->avgDeltaTime = avgDeltaTime;
 }
 /*********************************************************************************/

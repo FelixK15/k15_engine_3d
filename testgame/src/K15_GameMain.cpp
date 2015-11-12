@@ -148,12 +148,12 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 
 	K15_RenderCommandDraw2DTexture(gameRenderCommandQueue, 
 		guiTextureHandle, 
-		K15_CreateRectangle(1.f, 1.f, -1.f, -1.f),
-		K15_CreateRectangle(1.f, 1.f, 0.f, 0.f));
+		K15_CreateRectangle(0.f, 0.f, .5f, .5f),
+		K15_CreateRectangle(0.f, 0.f, 1.f, 1.f));
 
 	char* text = (char*)alloca(64);
-	sprintf(text, "FPS: %u", p_GameContext->frameCounter.FPS);
-	K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiFontDesc, text, K15_CreateVector(0.5f, 0.5f));
+	sprintf(text, "FPS: %.1f\nms: %.3f", p_GameContext->frameCounter.FPS, p_GameContext->frameCounter.avgDeltaTime);
+	K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiFontDesc, text, K15_CreateVector(0.0f, 0.5f));
 
 
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameContext->resourceContext->commandQueue);

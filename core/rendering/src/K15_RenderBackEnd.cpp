@@ -26,6 +26,8 @@
 
 #include "K15_ShaderCompiler.h"
 
+#define K15_CONVERT_TO_NDC(x) (((x)*2)-1)
+
 /*********************************************************************************/
 intern int K15_InternalCompareKerning(const void* p_Key, const void* p_Element)
 {
@@ -393,26 +395,26 @@ intern void K15_InternalRender2DTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_
 	K15_Vector2 s_br = K15_GetBottomRightCorner(sourceRect);
 
 	//vertex 1
-	vertexMemory[index++] = d_bl.x;
-	vertexMemory[index++] = d_bl.y;
+	vertexMemory[index++] = K15_CONVERT_TO_NDC(d_bl.x);
+	vertexMemory[index++] = K15_CONVERT_TO_NDC(d_bl.y);
 	vertexMemory[index++] = s_bl.x;
 	vertexMemory[index++] = s_bl.y;
 
 	//vertex 2
-	vertexMemory[index++] = d_ul.x;
-	vertexMemory[index++] = d_ul.y;
+	vertexMemory[index++] = K15_CONVERT_TO_NDC(d_ul.x);
+	vertexMemory[index++] = K15_CONVERT_TO_NDC(d_ul.y);
 	vertexMemory[index++] = s_ul.x;
 	vertexMemory[index++] = s_ul.y;
 
 	//vertex 3
-	vertexMemory[index++] = d_br.x;
-	vertexMemory[index++] = d_br.y;
+	vertexMemory[index++] = K15_CONVERT_TO_NDC(d_br.x);
+	vertexMemory[index++] = K15_CONVERT_TO_NDC(d_br.y);
 	vertexMemory[index++] = s_br.x;
 	vertexMemory[index++] = s_br.y;
 
 	//vertex 4
-	vertexMemory[index++] = d_ur.x;
-	vertexMemory[index++] = d_ur.y;
+	vertexMemory[index++] = K15_CONVERT_TO_NDC(d_ur.x);
+	vertexMemory[index++] = K15_CONVERT_TO_NDC(d_ur.y);
 	vertexMemory[index++] = s_ur.x;
 	vertexMemory[index++] = s_ur.y;
 	
@@ -469,7 +471,7 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 #endif //K15_TOLERATE_INVALID_GPU_HANDLES
 
 	K15_RenderMaterialDesc* fontMaterial = &p_RenderBackEnd->resources.materials.defaultFontMaterial;
-	K15_SetRenderMaterialRenderResourceDataByName(&fontMaterial->materialPasses[0], "sampler", fontDesc.samplerHandle);
+	//K15_SetRenderMaterialRenderResourceDataByName(&fontMaterial->materialPasses[0], "sampler", fontDesc.samplerHandle);
 	K15_SetRenderMaterialRenderResourceDataByName(&fontMaterial->materialPasses[0], "tex", fontDesc.textureHandle);
 
 	uint32 numVertices = textLength * 6;
@@ -485,8 +487,8 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 
 	float xOffset = 0.f;
 	float yOffset = 0.f;
-	float x = pos.x;
-	float y = pos.y;
+	float x = K15_CONVERT_TO_NDC(pos.x);
+	float y = K15_CONVERT_TO_NDC(pos.y);
 
 	float glyphX = 0.f;
 	float glyphY = 0.f;
@@ -599,7 +601,7 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 	renderGeometry.vertexData = vertexData;
 	renderGeometry.topology = K15_RENDER_TOPOLOGY_TRIANGLES;
 	renderGeometry.worldMatrix = K15_GetIdentityMatrix4();
-	renderGeometry.material = &p_RenderBackEnd->resources.materials.defaultFontMaterial;
+	renderGeometry.material = fontMaterial;
 
 	K15_InternalDrawGeometry(p_RenderBackEnd, &renderGeometry);
 

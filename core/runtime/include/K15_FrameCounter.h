@@ -5,13 +5,10 @@
 
 struct K15_FrameCounter
 {
-	unsigned int FPS;
-	unsigned int samplesFPS[K15_MAX_DELTA_TIME_SAMPLES];
-	unsigned int frameCount;
-	unsigned int frameCountPerSecond;
-	unsigned int numFrameSamples;
-	unsigned int frameSampleIndex;
-	double sumDeltaTime;
+	int sampleIndex;
+	float FPS;
+	float avgDeltaTime;
+	double deltaSamples[K15_MAX_DELTA_TIME_SAMPLES];
 	double deltaTime;
 	double startFrameTime;
 	double endFrameTime;
