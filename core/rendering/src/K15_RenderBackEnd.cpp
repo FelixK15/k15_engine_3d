@@ -468,11 +468,7 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 	}
 #endif //K15_TOLERATE_INVALID_GPU_HANDLES
 
-<<<<<<< HEAD
 	K15_RenderMaterialDesc* fontMaterial = &p_RenderBackEnd->resources.materials.defaultFontMaterial;
-=======
-	K15_RenderMaterialDesc* fontMaterial = &p_RenderBackEnd->resources.defaultFontMaterial;
->>>>>>> 3630a7e93c86249517bb3dc3fffae82c960d0f0d
 	K15_SetRenderMaterialRenderResourceDataByName(&fontMaterial->materialPasses[0], "sampler", fontDesc.samplerHandle);
 	K15_SetRenderMaterialRenderResourceDataByName(&fontMaterial->materialPasses[0], "tex", fontDesc.textureHandle);
 
