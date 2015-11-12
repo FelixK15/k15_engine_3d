@@ -5,7 +5,7 @@
 #include "K15_RenderPrerequisites.h"
 #include "K15_Rectangle.h"
 
-void K15_RenderCommandDraw2DTexture(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle, K15_RenderMaterialDesc* p_RenderMaterialDesc, 
+void K15_RenderCommandDraw2DTexture(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle, 
 									K15_Rectangle p_DestinationRect, K15_Rectangle p_SourceRect);
 void K15_RenderCommandDraw2DText(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderFontDesc* p_FontDesc, const char* p_Text, K15_Vector2 p_Position);
 

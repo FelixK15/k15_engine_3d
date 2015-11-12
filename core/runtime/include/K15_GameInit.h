@@ -52,7 +52,6 @@ struct K15_GameContext
 	K15_Semaphore* gameThreadSynchronizer;
 	K15_Semaphore* mainThreadSynchronizer;
 	K15_FrameCounter frameCounter;
-
 	void* userData;
 
 #ifdef K15_LOAD_GAME_LIB_DYNAMIC

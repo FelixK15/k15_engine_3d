@@ -388,6 +388,11 @@ intern inline result8 K15_GLBindTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_
 				K15_OPENGL_CALL(kglActiveTexture(GL_TEXTURE0 + activeSlot));
 				K15_OPENGL_CALL(kglBindTexture(glTextureType, glTextureHandle));
 
+				if (slot->glTexture)
+				{
+					slot->glTexture->boundSlot = K15_GL_INVALID_TEXTURE_SLOT;
+				}
+
 				slot->glTexture = glTexture;
 
 				if (glTexture->boundSlot != K15_GL_INVALID_TEXTURE_SLOT)
@@ -401,6 +406,12 @@ intern inline result8 K15_GLBindTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_
 			{
 				GLenum glSamplerHandle = glSampler->glSamplerHandle;
 				K15_OPENGL_CALL(kglBindSampler(activeSlot, glSamplerHandle));
+				
+				if (slot->glSampler)
+				{
+					slot->glSampler->boundSlot = K15_GL_INVALID_TEXTURE_SLOT;
+				}
+
 				slot->glSampler = glSampler;
 
 				if (glSampler->boundSlot != K15_GL_INVALID_TEXTURE_SLOT)

@@ -41,11 +41,26 @@ struct K15_RenderVertexFormatCache
 struct K15_RenderResources
 {
 	K15_RenderResourceHandle intermediateVertexBufferHandle;
-	K15_RenderMaterialDesc defaultFontMaterial;
-	K15_RenderResourceHandle default2DVertexProgramHandle;
-	K15_RenderResourceHandle default3DVertexProgramHandle;
-	K15_RenderResourceHandle default2DFragmentProgramHandle;
-	K15_RenderResourceHandle default3DFragmentProgramHandle;
+	
+	struct 
+	{
+		K15_RenderMaterialDesc defaultFontMaterial;
+		K15_RenderMaterialDesc default2DMaterial;
+	} materials;
+
+	struct 
+	{
+		K15_RenderResourceHandle* default2DVertexProgramHandle;
+		K15_RenderResourceHandle* default3DVertexProgramHandle;
+		K15_RenderResourceHandle* defaultFragmentProgramHandle;
+		K15_RenderResourceHandle* defaultFontFragmentProgramHandle;
+	} shaders;
+
+	struct 
+	{
+		K15_RenderResourceHandle linearClampSamplerHandle;
+		K15_RenderResourceHandle nearestClampSamplerHandle;
+	} samplers;
 };
 
 struct K15_RenderFeatures

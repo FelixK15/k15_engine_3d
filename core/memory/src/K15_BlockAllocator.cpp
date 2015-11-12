@@ -100,6 +100,11 @@ intern void* K15_InternalFindFreeBlock_r(K15_BlockHeaderInfo* p_BlockHeader, uin
 		blockMemory = blockHeaderAsByte + sizeof(K15_BlockHeaderInfo);
 	}
 
+<<<<<<< HEAD
+	K15_ASSERT(freeBlockHeader->prevBlock == p_BlockHeader && p_BlockHeader->nextBlock == freeBlockHeader);
+
+=======
+>>>>>>> 3630a7e93c86249517bb3dc3fffae82c960d0f0d
 	return blockMemory ? blockMemory : K15_InternalFindFreeBlock_r(p_BlockHeader->nextBlock, p_SizeInBytes);
 }
 /*********************************************************************************/
@@ -141,6 +146,19 @@ intern void K15_InternalBlockFree(void* p_Pointer, void* p_UserData)
 	K15_BlockHeaderInfo* blockHeader = (K15_BlockHeaderInfo*)(bytePointer - sizeof(K15_BlockHeaderInfo));
 	blockHeader->free = K15_TRUE;
 
+<<<<<<< HEAD
+	if (blockHeader->nextBlock)
+	{
+		K15_ASSERT(blockHeader->nextBlock->prevBlock == blockHeader);
+	}
+
+	if (blockHeader->prevBlock)
+	{
+		K15_ASSERT(blockHeader->prevBlock->nextBlock == blockHeader);
+	}
+
+=======
+>>>>>>> 3630a7e93c86249517bb3dc3fffae82c960d0f0d
 	K15_InternalTryToMergeWithNeighbours(blockHeader);
 }
 /*********************************************************************************/

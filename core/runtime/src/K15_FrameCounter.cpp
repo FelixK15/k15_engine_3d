@@ -34,21 +34,21 @@ void K15_EndFrame(K15_FrameCounter* p_FrameCounter)
 	{
 		int fpsSampleIndex = p_FrameCounter->numFrameSamples;
 		p_FrameCounter->samplesFPS[fpsSampleIndex] = p_FrameCounter->frameCountPerSecond;
-		p_FrameCounter->numFrameSamples = p_FrameCounter->numFrameSamples == K15_MAX_DELTA_TIME_SAMPLES ? K15_MAX_DELTA_TIME_SAMPLES : p_FrameCounter->numFrameSamples + 1;
+		p_FrameCounter->numFrameSamples = p_FrameCounter->numFrameSamples == K15_MAX_DELTA_TIME_SAMPLES ? 0 : p_FrameCounter->numFrameSamples + 1;
 		p_FrameCounter->frameCountPerSecond = 0;
 		sumDeltaTime = 0.0;
 	}
 
 	unsigned int sumFPSSamples = 0;
 	for (unsigned int sampleIndex = 0;
-		sampleIndex < p_FrameCounter->numFrameSamples;
+		sampleIndex < K15_MAX_DELTA_TIME_SAMPLES;
 		++sampleIndex)
 	{
 		sumFPSSamples += p_FrameCounter->samplesFPS[sampleIndex];
 	}
 
 	p_FrameCounter->sumDeltaTime = sumDeltaTime;
-	p_FrameCounter->FPS = K15_SafeDivide(sumFPSSamples, p_FrameCounter->numFrameSamples);
+	p_FrameCounter->FPS = K15_SafeDivide(sumFPSSamples, K15_MAX_DELTA_TIME_SAMPLES);
 	p_FrameCounter->frameCount += 1;
 	p_FrameCounter->frameCountPerSecond += 1;
 }

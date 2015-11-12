@@ -23,19 +23,17 @@ intern result8 K15_InternalBeginRenderCommand(K15_RenderCommandQueue* p_RenderCo
 	return result;
 }
 /*********************************************************************************/
-void K15_RenderCommandDraw2DTexture(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle, K15_RenderMaterialDesc* p_RenderMaterialDesc, K15_Rectangle p_DestinationRect, K15_Rectangle p_SourceRect)
+void K15_RenderCommandDraw2DTexture(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle, K15_Rectangle p_DestinationRect, K15_Rectangle p_SourceRect)
 {
 	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
 	K15_ASSERT_TEXT(p_TextureHandle, "Texture handle is NULL.");
 	//K15_ASSERT_TEXT(*p_TextureHandle != K15_INVALID_GPU_RESOURCE_HANDLE, "Invalid texture handle.");
-	K15_ASSERT_TEXT(p_RenderMaterialDesc, "Material Description is NULL.");
 	K15_ASSERT_TEXT(K15_CalculateRectangleArea(p_SourceRect) > 0.f, "Source Rectangle area is 0.");
 	K15_ASSERT_TEXT(K15_CalculateRectangleArea(p_DestinationRect) > 0.f, "Destination Rectangle area is 0.");
 
 	result8 result = K15_InternalBeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_RENDER_2D_TEXTURE);
 
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, K15_PTR_SIZE, &p_TextureHandle));
-	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_RenderMaterialDesc), p_RenderMaterialDesc));
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_Rectangle), &p_DestinationRect));
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_Rectangle), &p_SourceRect));
 	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));

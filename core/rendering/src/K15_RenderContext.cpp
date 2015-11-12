@@ -82,6 +82,17 @@ void K15_SetRenderContextError(K15_RenderContext* p_RenderContext, const char* p
 	p_RenderContext->error = K15_CopyStringIntoBuffer(p_ErrorMessage, (char*)K15_AllocateFromMemoryAllocator(&p_RenderContext->memoryAllocator, lengthErrorMessage), lengthErrorMessage);
 }
 /*********************************************************************************/
+void K15_LoadStockShader(K15_RenderContext* p_RenderContext, K15_ResourceContext* p_ResourceContext)
+{
+	K15_ASSERT_TEXT(p_RenderContext, "Render Context is NULL.");
+	K15_ASSERT_TEXT(p_ResourceContext, "Resource Context is NULL.");
+
+	K15_RenderBackEnd* backEnd = &p_RenderContext->backEnd;
+	K15_CustomMemoryAllocator* renderAllocator = &p_RenderContext->memoryAllocator;
+
+	K15_InternalLoadBackEndStockShader(backEnd, p_ResourceContext, renderAllocator);
+}
+/*********************************************************************************/
 K15_RenderContext* K15_CreateRenderContext(K15_OSContext* p_OSContext)
 {
 	return K15_CreateRenderContextWithCustomAllocator(p_OSContext, K15_CreateDefaultMemoryAllocator());
