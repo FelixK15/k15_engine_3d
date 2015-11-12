@@ -3,7 +3,10 @@
 
 #include "K15_RuntimePrerequisites.h"
 #include "K15_MemoryBuffer.h"
+<<<<<<< HEAD
 #include "K15_FrameCounter.h"
+=======
+>>>>>>> 3630a7e93c86249517bb3dc3fffae82c960d0f0d
 
 struct K15_RenderContext;
 struct K15_ConfigFileContext;
@@ -52,6 +55,8 @@ struct K15_GameContext
 	K15_Semaphore* gameThreadSynchronizer;
 	K15_Semaphore* mainThreadSynchronizer;
 	K15_FrameCounter frameCounter;
+
+	void* userData;
 
 	void* userData;
 

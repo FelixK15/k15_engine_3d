@@ -79,6 +79,8 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 
 	K15_GUIContext* guiContext = K15_CreateGUIContextWithCustomAllocator(K15_CreateStackAllocator(guiMemoryBuffer, "GUI Stack Allocator"), resourceContext, mainRenderQueue);
 
+	K15_GUIContext* guiContext = K15_CreateGUIContextWithCustomAllocator(K15_CreateStackAllocator(guiMemoryBuffer, "GUI Stack Allocator"), resourceContext, mainRenderQueue);
+
 	//set the resource context so we can use it later.
 	sample1GameContext->resourceContext = resourceContext;
 	sample1GameContext->guiContext = guiContext;
@@ -95,8 +97,11 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 
 	p_GameContext->userData = sample1GameContext;
 
+<<<<<<< HEAD
 	K15_LoadStockShader(p_GameContext->renderContext, resourceContext);
 
+=======
+>>>>>>> 3630a7e93c86249517bb3dc3fffae82c960d0f0d
 	//TODO
 	//K15_RenderCommandCreateCamera(renderBuffer, &sample1GameContext->camera, &cameraDesc);
 	//K15_RenderCommandBindCamera(renderBuffer, &sample1GameContext->camera);
@@ -146,6 +151,7 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	K15_RenderMaterialDesc* guiMaterialDesc = K15_GetResourceRenderMaterialDesc(gameContext->resourceContext, guiMaterial);
 	K15_RenderResourceHandle* guiTextureHandle = K15_GetResourceRenderHandle(gameContext->resourceContext, guiContext->guiRenderTexture);
 
+<<<<<<< HEAD
 // 	K15_RenderCommandDraw2DTexture(gameRenderCommandQueue, 
 // 		guiTextureHandle, 
 // 		K15_CreateRectangle(1.f, 1.f, -1.f, -1.f),
@@ -155,6 +161,15 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	sprintf(text, "FPS: %u", p_GameContext->frameCounter.FPS);
 	//K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiFontDesc, text, K15_CreateVector(0.5f, 0.5f));
 	//K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiFontDesc, "Ta", K15_CreateVector(0.f, 0.0f));
+=======
+	K15_SetRenderMaterialRenderResourceDataByName(&guiMaterialDesc->materialPasses[0], "DiffuseTexture", guiTextureHandle);
+
+	K15_RenderCommandDraw2DTexture(gameRenderCommandQueue, 
+		guiTextureHandle, 
+		guiMaterialDesc, 
+		K15_CreateRectangle(1.f, 1.f, -1.f, -1.f),
+		K15_CreateRectangle(1.f, 1.f, 0.f, 0.f));
+>>>>>>> 3630a7e93c86249517bb3dc3fffae82c960d0f0d
 
 	//K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiFontDesc, "BlaUmbruch", K15_CreateVector(-1.0f, 0.0f));
 
