@@ -377,3 +377,42 @@ unsigned int K15_GenerateStringHash(const char* p_String, unsigned int p_StringL
 	return K15_GenerateDataHash((const unsigned char*)p_String, size);
 }
 /*********************************************************************************/
+char* K15_Replace(char* p_String, char* p_SearchFor, char p_ReplaceWith, unsigned int p_StringLength)
+{
+	return K15_ReplaceIntoBuffer(p_String, p_String, p_SearchFor, p_ReplaceWith, p_StringLength);
+}
+/*********************************************************************************/
+char* K15_ReplaceIntoBuffer(const char* p_String, char* p_Buffer, char* p_SearchFor, char p_ReplaceWith, unsigned int p_StringLength)
+{
+	if (p_StringLength == 0)
+	{
+		p_StringLength = (unsigned int)strlen(p_String);
+	}
+
+	unsigned int searchForStringLength = (unsigned int)strlen(p_SearchFor);
+
+	for (unsigned int stringIndex = 0;
+		stringIndex < p_StringLength;
+		++stringIndex)
+	{
+		char character = p_String[stringIndex];
+
+		for (unsigned int searchIndex = 0;
+			searchIndex < searchForStringLength;
+			++searchIndex)
+		{
+			const char replacedCharacter = p_SearchFor[searchIndex];
+
+			if (character == replacedCharacter)
+			{
+				character = p_ReplaceWith;
+				break;
+			}
+		}
+
+		p_Buffer[stringIndex] = character;
+	}
+
+	return p_Buffer;
+}
+/*********************************************************************************/

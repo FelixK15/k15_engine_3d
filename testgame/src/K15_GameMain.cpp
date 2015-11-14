@@ -34,7 +34,6 @@ struct K15_Sample1GameContext
 	K15_RenderCommandQueue* gameRenderQueue;
 	K15_ResourceContext* resourceContext;
 	K15_GUIContext* guiContext;
-
 	K15_Mesh* robbie;
 
 	K15_RenderCameraDesc camera;
@@ -78,7 +77,7 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 	K15_ResourceContext* resourceContext = K15_CreateResourceContextWithCustomAllocator(p_GameContext->renderContext, "data/", K15_CreateDefaultMemoryAllocator());//,K15_CreateBlockAllocator(resourceMemoryBuffer, "Resource Allocator"));
 
 	K15_GUIContext* guiContext = K15_CreateGUIContextWithCustomAllocator(K15_CreateStackAllocator(guiMemoryBuffer, "GUI Stack Allocator"), resourceContext, mainRenderQueue);
-
+	
 	//set the resource context so we can use it later.
 	sample1GameContext->resourceContext = resourceContext;
 	sample1GameContext->guiContext = guiContext;
@@ -148,7 +147,7 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 
 	K15_RenderCommandDraw2DTexture(gameRenderCommandQueue, 
 		guiTextureHandle, 
-		K15_CreateRectangle(0.f, 0.f, .5f, .5f),
+		K15_CreateRectangle(0.f, 0.f, 1.f, 1.f),
 		K15_CreateRectangle(0.f, 0.f, 1.f, 1.f));
 
 	char* text = (char*)alloca(64);

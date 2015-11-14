@@ -1,0 +1,5 @@
+ResourceType=Texture
+Source=textures/texture_missing.png
+Compression=uncompressed
+Destination=backup_texture.k15texture
+GenerateMipmaps=false

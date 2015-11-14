@@ -9,6 +9,7 @@
 #include "K15_RenderCommandBuffer.cpp"
 #include "K15_RenderCommandQueue.cpp"
 #include "K15_RenderCommands.cpp"
+#include "K15_RenderFontDesc.cpp"
 
 #include "K15_RenderProgramDesc.cpp"
 #include "K15_RenderMaterialDesc.cpp"

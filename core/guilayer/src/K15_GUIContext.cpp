@@ -115,9 +115,10 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, float p_PositionX, float p_Positi
 	K15_GUIButton* button = (K15_GUIButton*)p_GUIContext->guiMemory + offset + sizeof(K15_GUIElementHeader);
 
 	buttonHeader->type = K15_GUI_TYPE_BUTTON;
-
 	button->state = K15_GUI_BUTTON_STATE_NORMAL;
-
+	buttonHeader->positionX = p_PositionX;
+	buttonHeader->positionY = p_PositionY;
+	//buttonHeader->width
 	return K15_FALSE;
 }
 /*********************************************************************************/

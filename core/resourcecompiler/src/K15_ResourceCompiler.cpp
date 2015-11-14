@@ -932,7 +932,7 @@ bool8 K15_CompileFontResourceWithStbTTF(K15_ResourceCompilerContext* p_ResourceC
 		int glyphIndex = stbtt_FindGlyphIndex(&fontInfo, codePoint);
 
 		stbtt_GetGlyphHMetrics(&fontInfo, glyphIndex, &advance, &lsb);
-
+		
 		byte* glyphPixelData = stbtt_GetGlyphBitmapSubpixel(&fontInfo, scaleFactor, scaleFactor, shift_x, shift_y, glyphIndex, &width, &height, 0, 0);
 		K15_AddTextureToAtlas(&fontTextureAtlas, glyphPixelData, width, height, codePoint - startCharacter, &posX, &posY);
 		

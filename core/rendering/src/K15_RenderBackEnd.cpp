@@ -509,90 +509,70 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 		charIndex < textLength;
 		++charIndex)
 	{
-		unsigned char currentChar = text[charIndex];
+		float advanceX = 0.f;
+		float advanceY = 0.f;
+		float glyphX = 0.f;
+		float glyphY = 0.f;
+		float glyphWidth = 0.f;
+		float glyphHeight = 0.f;
+		bool8 renderable = K15_FALSE;
 
-		if (currentChar == 0)
+		K15_GetFontCharacterInfo(&fontDesc, text, textLength, charIndex, &glyphX, &glyphY, &glyphWidth, &glyphHeight, &advanceX, &advanceY, &renderable);
+
+		if (abs(advanceY) > abs(advanceX))
 		{
+			x = K15_CONVERT_TO_NDC(pos.x);
+			y += advanceY;
 			continue;
 		}
 
-		if (currentChar >= fontDesc.startCharacter &&
-				currentChar <= fontDesc.endCharacter)
+		glyphX = glyphX;
+		glyphY = glyphY;
+		glyphW = glyphWidth / fontDesc.textureWidth;
+		glyphH = glyphHeight / fontDesc.textureHeight;
+
+		float glyphWScreen = glyphWidth/ p_RenderBackEnd->viewportWidth;
+		float glyphHScreen = glyphHeight/ p_RenderBackEnd->viewportHeight;
+
+		texelLeft = glyphX / fontDesc.textureWidth;
+		texelTop = glyphY / fontDesc.textureWidth;
+		texelRight = glyphW + texelLeft;
+		texelBottom = glyphH + texelTop;
+
+		if (renderable)
 		{
-			K15_RenderGlyphDesc* glyphDesc = &fontDesc.glyphDescs[currentChar - fontDesc.startCharacter];
+			vertexMemory[vertexIndex++] = x;
+			vertexMemory[vertexIndex++] = y;
+			vertexMemory[vertexIndex++] = texelLeft;
+			vertexMemory[vertexIndex++] = 1.f- texelBottom;//texelTop;
 
-			float kerningX = 0.f;
+			vertexMemory[vertexIndex++] = x;
+			vertexMemory[vertexIndex++] = y + glyphHScreen;
+			vertexMemory[vertexIndex++] = texelLeft;
+			vertexMemory[vertexIndex++] = 1.f - texelTop;//texelBottom;
 
-			//get kerning
-			if (charIndex+1 < textLength)
-			{
-				unsigned int shiftedCharacter = (currentChar << 16) | text[charIndex+1];
-				K15_RenderKerningDesc* kerningDesc = (K15_RenderKerningDesc*)bsearch(&shiftedCharacter, fontDesc.kernDescs, numKerningElements, sizeof(K15_RenderKerningDesc), K15_InternalCompareKerning);
+			vertexMemory[vertexIndex++] = x + glyphWScreen;
+			vertexMemory[vertexIndex++] = y;
+			vertexMemory[vertexIndex++] = texelRight;
+			vertexMemory[vertexIndex++] = 1.f - texelBottom;//texelTop;
 
-				if (kerningDesc)
-				{
-					kerningX = kerningDesc->kerning;
-				}
-			}
-			
-			//float texturePixelX = glyphDesc->x + glyphDesc->advance + kerningX;
+			vertexMemory[vertexIndex++] = x;
+			vertexMemory[vertexIndex++] = y + glyphHScreen;
+			vertexMemory[vertexIndex++] = texelLeft;
+			vertexMemory[vertexIndex++] = 1.f - texelTop;//texelBottom;
 
-			x += kerningX;
+			vertexMemory[vertexIndex++] = x + glyphWScreen;
+			vertexMemory[vertexIndex++] = y + glyphHScreen;
+			vertexMemory[vertexIndex++] = texelRight;
+			vertexMemory[vertexIndex++] = 1.f - texelTop;//texelBottom;
 
-			if (currentChar == '\n')
-			{
-				x = pos.x;
-				y -= fontDesc.scaleFactor;
-			}
-
-			glyphX = glyphDesc->x;
-			glyphY = glyphDesc->y;
-			glyphW = glyphDesc->width / fontDesc.textureWidth;
-			glyphH = glyphDesc->height / fontDesc.textureHeight;
-
-			float glyphWScreen = glyphDesc->width / p_RenderBackEnd->viewportWidth;
-			float glyphHScreen = glyphDesc->height / p_RenderBackEnd->viewportHeight;
-
-			texelLeft = glyphX / fontDesc.textureWidth;
-			texelTop = glyphY / fontDesc.textureWidth;
-			texelRight = glyphW + texelLeft;
-			texelBottom = glyphH + texelTop;
-
-			if (!isspace(currentChar))
-			{
-				vertexMemory[vertexIndex++] = x;
-				vertexMemory[vertexIndex++] = y;
-				vertexMemory[vertexIndex++] = texelLeft;
-				vertexMemory[vertexIndex++] = 1.f- texelBottom;//texelTop;
-
-				vertexMemory[vertexIndex++] = x;
-				vertexMemory[vertexIndex++] = y + glyphHScreen;
-				vertexMemory[vertexIndex++] = texelLeft;
-				vertexMemory[vertexIndex++] = 1.f - texelTop;//texelBottom;
-
-				vertexMemory[vertexIndex++] = x + glyphWScreen;
-				vertexMemory[vertexIndex++] = y;
-				vertexMemory[vertexIndex++] = texelRight;
-				vertexMemory[vertexIndex++] = 1.f - texelBottom;//texelTop;
-
-				vertexMemory[vertexIndex++] = x;
-				vertexMemory[vertexIndex++] = y + glyphHScreen;
-				vertexMemory[vertexIndex++] = texelLeft;
-				vertexMemory[vertexIndex++] = 1.f - texelTop;//texelBottom;
-
-				vertexMemory[vertexIndex++] = x + glyphWScreen;
-				vertexMemory[vertexIndex++] = y + glyphHScreen;
-				vertexMemory[vertexIndex++] = texelRight;
-				vertexMemory[vertexIndex++] = 1.f - texelTop;//texelBottom;
-
-				vertexMemory[vertexIndex++] = x + glyphWScreen;
-				vertexMemory[vertexIndex++] = y;
-				vertexMemory[vertexIndex++] = texelRight;
-				vertexMemory[vertexIndex++] = 1.f - texelBottom;//texelTop;
-			}
-
-			x += glyphWScreen;
+			vertexMemory[vertexIndex++] = x + glyphWScreen;
+			vertexMemory[vertexIndex++] = y;
+			vertexMemory[vertexIndex++] = texelRight;
+			vertexMemory[vertexIndex++] = 1.f - texelBottom;//texelTop;
 		}
+
+		x += glyphWScreen;
 	}
 
 	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexMemory, numVertices, &vertexFormatDesc);

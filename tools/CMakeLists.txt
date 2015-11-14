@@ -9,6 +9,8 @@
 
 add_subdirectory(materialtool)
 add_subdirectory(shadercompiler)
+add_subdirectory(binary_cpp_generator)
 
 set_target_properties(materialtool PROPERTIES FOLDER tools)
 set_target_properties(shadercompiler PROPERTIES FOLDER tools)
+set_target_properties(binary_cpp_generator PROPERTIES FOLDER tools)

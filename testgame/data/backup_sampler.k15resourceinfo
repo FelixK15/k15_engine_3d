@@ -1,0 +1,7 @@
+ResourceType=Sampler
+Destination=backup_sampler.k15sampler
+MignificationFilter=Linear
+MagnificationFilter=Linear
+AddressModeU=Clamp
+AddressModeV=Clamp
+AddressModeW=Clamp

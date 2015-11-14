@@ -16,6 +16,7 @@ typedef byte* (*K15_GetResourceDataFromArchiveFnc)(K15_ResourceContext*, K15_Res
 
 typedef void (*K15_LoadResourceFromLoaderFnc)(K15_ResourceContext*, K15_ResourceFileData*, K15_ResourceData*);
 typedef void (*K15_UnloadResourceFromLoaderFnc)(K15_ResourceContext*, K15_Resource*);
+typedef void (*K15_LoadBackupResourceFromLoaderFnc)(K15_ResourceContext*, K15_Resource*);
 
 /*********************************************************************************/
 struct K15_ResourceFileData
@@ -47,6 +48,7 @@ struct K15_ResourceLoader
 	uint32 identifier;	//custom identifier
 	K15_LoadResourceFromLoaderFnc resourceLoader;
 	K15_UnloadResourceFromLoaderFnc resourceUnloader;
+	K15_LoadBackupResourceFromLoaderFnc resourceBackupLoader;
 };
 /*********************************************************************************/
 struct K15_ResourceArchive

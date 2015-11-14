@@ -26,6 +26,9 @@ char* K15_ConvertToUpperIntoBuffer(const char* p_String, char* p_Buffer);
 char* K15_ConcatStringArray(const char** p_StringArray, unsigned int p_ArrayLength);
 char* K15_ConcatStringArrayIntoBuffer(const char** p_StringArray, char* p_Buffer, unsigned int p_ArrayLength);
 
+char* K15_Replace(char* p_String, char* p_SearchFor, char p_ReplaceWith, unsigned int p_StringLength = 0);
+char* K15_ReplaceIntoBuffer(const char* p_String, char* p_Buffer, char* p_SearchFor, char p_ReplaceWith, unsigned int p_StringLength = 0);
+
 unsigned int K15_GenerateDataHash(const unsigned char* p_Data, unsigned int p_DataSize);
 unsigned int K15_GenerateStringHash(const char* p_String, unsigned int p_StringLength = 0);
 
