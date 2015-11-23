@@ -15,12 +15,14 @@
 #ifdef K15_RESOURCE_COMPILER_ENABLE_STB_IMAGE
 	#define STB_IMAGE_IMPLEMENTATION
 	#define STB_IMAGE_RESIZE_IMPLEMENTATION
+	#define STB_IMAGE_WRITE_IMPLEMENTATION
 	#define STBI_FAILURE_USERMSG
 	#define STBI_ONLY_JPEG
 	#define STBI_ONLY_PNG
 	#define STBI_ONLY_TGA
 	#include "stb_image.h"
 	#include "stb_image_resize.h"
+	#include "stb_image_write.h"
 #else
 	#error missing texture loader implementation	
 #endif //K15_RESOURCE_COMPILER_ENABLE_STB_IMAGE
@@ -887,7 +889,8 @@ bool8 K15_CompileFontResourceWithStbTTF(K15_ResourceCompilerContext* p_ResourceC
 	fontFormat.fontSize = fontSize;
 	fontFormat.scaleFactor = scaleFactor;
 	fontFormat.lineGap = scaleFactor * (float)lineGap;
-	fontFormat.baseLine = scaleFactor * (float)ascent;
+	fontFormat.ascent = scaleFactor * (float)ascent;
+	fontFormat.descent = scaleFactor * (float)descent;
 
 	//set kerning data
 	uint32 numCharacters = endCharacter - startCharacter;
@@ -931,8 +934,19 @@ bool8 K15_CompileFontResourceWithStbTTF(K15_ResourceCompilerContext* p_ResourceC
 
 		int glyphIndex = stbtt_FindGlyphIndex(&fontInfo, codePoint);
 
+		int x0 = 0;
+		int x1 = 0;
+		int y0 = 0;
+		int y1 = 0;
+
 		stbtt_GetGlyphHMetrics(&fontInfo, glyphIndex, &advance, &lsb);
-		
+		stbtt_GetGlyphBox(&fontInfo, glyphIndex, &x0, &y0, &x1, &y1);
+
+		x0 *= scaleFactor;
+		x1 *= scaleFactor;
+		y0 *= scaleFactor;
+		y1 *= scaleFactor;
+
 		byte* glyphPixelData = stbtt_GetGlyphBitmapSubpixel(&fontInfo, scaleFactor, scaleFactor, shift_x, shift_y, glyphIndex, &width, &height, 0, 0);
 		K15_AddTextureToAtlas(&fontTextureAtlas, glyphPixelData, width, height, codePoint - startCharacter, &posX, &posY);
 		
@@ -944,6 +958,10 @@ bool8 K15_CompileFontResourceWithStbTTF(K15_ResourceCompilerContext* p_ResourceC
 		currentGlyphFormat.posX = posX;
 		currentGlyphFormat.posY = posY;
 		currentGlyphFormat.advance = (float)advance * scaleFactor;
+		currentGlyphFormat.glyphLeft = x0;
+		currentGlyphFormat.glyphRight = x1;
+		currentGlyphFormat.glyphTop = y0;
+		currentGlyphFormat.glyphBottom = y1;
 
 		//shift_x = currentGlyphFormat.advance;
 

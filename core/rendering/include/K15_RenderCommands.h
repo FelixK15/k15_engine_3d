@@ -5,9 +5,23 @@
 #include "K15_RenderPrerequisites.h"
 #include "K15_Rectangle.h"
 
-void K15_RenderCommandDraw2DTexture(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle, 
-									K15_Rectangle p_DestinationRect, K15_Rectangle p_SourceRect);
-void K15_RenderCommandDraw2DText(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderFontDesc* p_FontDesc, const char* p_Text, K15_Vector2 p_Position);
+void K15_RenderCommandDraw2DTexture(K15_RenderCommandQueue* p_RenderCommandQueue, 
+									K15_RenderResourceHandle* p_TextureHandle,
+									float p_PosX, float p_PosY,
+									float p_Width, float p_Height);
+
+void K15_RenderCommandDraw2DTextureEX(K15_RenderCommandQueue* p_RenderCommandQueue,
+									  K15_RenderResourceHandle* p_TextureHandle,
+									  float p_PosX, float p_PosY,
+									  float p_Width, float p_Height,
+									  float p_TexU, float p_TexV,
+									  float p_TexWidth, float p_TexHeight);
+
+
+void K15_RenderCommandDraw2DText(K15_RenderCommandQueue* p_RenderCommandQueue, 
+								 K15_RenderFontDesc* p_FontDesc, 
+								 const char* p_Text, 
+								 float p_PosX, float p_PosY);
 
 void K15_RenderCommandCreateTextureFromTextureFormat(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle, K15_TextureFormat* p_TextureFormat);
 void K15_RenderCommandCreateSamplerFromSamplerFormat(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_SamplerHandle , K15_SamplerFormat* p_SamplerFormat);

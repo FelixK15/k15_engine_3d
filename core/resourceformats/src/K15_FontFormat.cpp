@@ -52,11 +52,14 @@ intern uint8 K15_InternalSaveFontFormat(K15_DataAccessContext* p_DataAccessConte
 	//write scale factor
 	K15_WriteData(p_DataAccessContext, sizeof(float), &p_FontFormat->scaleFactor);
 
-  //write baseline
-  K15_WriteData(p_DataAccessContext, sizeof(float), &p_FontFormat->baseLine);
+	//write ascent
+	K15_WriteData(p_DataAccessContext, sizeof(float), &p_FontFormat->ascent);
 
-  //write line gap
-  K15_WriteData(p_DataAccessContext, sizeof(float), &p_FontFormat->lineGap);
+	//write descent
+	K15_WriteData(p_DataAccessContext, sizeof(float), &p_FontFormat->descent);
+
+	//write line gap
+	K15_WriteData(p_DataAccessContext, sizeof(float), &p_FontFormat->lineGap);
 
 	//write font texture width
 	K15_WriteData(p_DataAccessContext, sizeof(uint32), &p_FontFormat->texture.width);
@@ -121,11 +124,14 @@ intern uint8 K15_InternalLoadFontFormat(K15_DataAccessContext* p_DataAccessConte
 	//read scale factor
 	K15_ReadData(p_DataAccessContext, sizeof(float), &p_FontFormat->scaleFactor);
 
-  //read baseline
-  K15_ReadData(p_DataAccessContext, sizeof(float), &p_FontFormat->baseLine);
+	//read ascent
+	K15_ReadData(p_DataAccessContext, sizeof(float), &p_FontFormat->ascent);
 
-  //read line gap
-  K15_ReadData(p_DataAccessContext, sizeof(float), &p_FontFormat->lineGap);
+	//read descent
+	K15_ReadData(p_DataAccessContext, sizeof(float), &p_FontFormat->descent);
+
+	//read line gap
+	K15_ReadData(p_DataAccessContext, sizeof(float), &p_FontFormat->lineGap);
 
 	//read font texture width
 	K15_ReadData(p_DataAccessContext, sizeof(uint32), &p_FontFormat->texture.width);

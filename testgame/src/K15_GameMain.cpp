@@ -139,22 +139,17 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	K15_RenderCommandQueue* gameRenderCommandQueue = gameContext->gameRenderQueue;
 	K15_GUIContext* guiContext = gameContext->guiContext;
 
-	K15_ResourceHandle guiFont = guiContext->guiRenderFont;
-	K15_ResourceHandle guiMaterial = guiContext->guiRenderMaterial;
-	K15_RenderFontDesc* guiFontDesc = K15_GetResourceFontDesc(gameContext->resourceContext, guiFont);
-	K15_RenderMaterialDesc* guiMaterialDesc = K15_GetResourceRenderMaterialDesc(gameContext->resourceContext, guiMaterial);
-	K15_RenderResourceHandle* guiTextureHandle = K15_GetResourceRenderHandle(gameContext->resourceContext, guiContext->guiRenderTexture);
+	K15_RenderFontDesc* guiFontDesc = guiContext->guiRenderFont;
+	K15_RenderMaterialDesc* guiMaterialDesc = guiContext->guiRenderMaterial;
+	K15_RenderResourceHandle* guiTextureHandle = guiContext->guiRenderTexture;
 
 	K15_RenderCommandDraw2DTexture(gameRenderCommandQueue, 
-		guiTextureHandle, 
-		K15_CreateRectangle(0.f, 0.f, 1.f, 1.f),
-		K15_CreateRectangle(0.f, 0.f, 1.f, 1.f));
-
-	char* text = (char*)alloca(64);
+		guiTextureHandle, 0.f, 0.f, 1.f, 1.f);
+	
+	char* text = (char*)alloca(128);
 	sprintf(text, "FPS: %.1f\nms: %.3f", p_GameContext->frameCounter.FPS, p_GameContext->frameCounter.avgDeltaTime);
-	K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiFontDesc, text, K15_CreateVector(0.0f, 0.5f));
-
-
+	K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiFontDesc, text, 0.0f, 0.1f);
+	
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameContext->resourceContext->commandQueue);
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameRenderCommandQueue);
 }

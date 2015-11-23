@@ -43,11 +43,12 @@ void K15_GetFontCharacterInfo(K15_RenderFontDesc* p_RenderFontDesc, const char* 
 
 		if (currentChar == '\n')
 		{
-			advanceY -= p_RenderFontDesc->scaleFactor;
+			advanceY -= p_RenderFontDesc->ascent - p_RenderFontDesc->descent + p_RenderFontDesc->lineGap;
 		}
 		else
 		{
-			advanceX += kerningX + glyphWidth;
+			advanceX += kerningX + glyphWidth + glyphDesc->glyphLeft;
+			advanceY = glyphDesc->glyphTop;
 		}
 
 		if (isspace(currentChar))
@@ -92,7 +93,7 @@ void K15_GetFontCharacterInfo(K15_RenderFontDesc* p_RenderFontDesc, const char* 
 	}
 }
 /*********************************************************************************/
-void K15_Get2DTextSize(K15_RenderFontDesc* p_RenderFontDesc, float* p_OutWidth, float* p_OutHeight, const char* p_Text, unsigned int p_TextLength)
+void K15_GetTextSize(K15_RenderFontDesc* p_RenderFontDesc, float* p_OutWidth, float* p_OutHeight, const char* p_Text, unsigned int p_TextLength)
 {
 	float textWidth = 0.f;
 	float textHeight = 0.f;
@@ -107,19 +108,34 @@ void K15_Get2DTextSize(K15_RenderFontDesc* p_RenderFontDesc, float* p_OutWidth, 
 		}
 	}
 
+	float baseHeight = 0.f;
+
 	for (uint32 charIndex = 0;
 		charIndex < p_TextLength;
 		++charIndex)
 	{
+		float glyphWidth = 0.f;
 		float advanceX = 0.f;
 		float advanceY = 0.f;
-		
-		K15_GetFontCharacterInfo(p_RenderFontDesc, p_Text, p_TextLength, charIndex, 0, 0, 0, 0, &advanceX, &advanceY, 0);
+		float glyphHeight = 0.f;
+	
+		K15_GetFontCharacterInfo(p_RenderFontDesc, p_Text, p_TextLength, charIndex, 0, 0, &glyphWidth, &glyphHeight, &advanceX, &advanceY, 0);
 
-		textWidth += advanceX;
+		baseHeight = K15_MAX(baseHeight, glyphHeight);
+
+		textWidth += glyphWidth;
 		textHeight += advanceY;
 	}
 
+	if (p_OutWidth)
+	{
+		*p_OutWidth = textWidth;
+	}
+
+	if (p_OutHeight)
+	{
+		*p_OutHeight = textHeight + baseHeight;
+	}
 }
 /*********************************************************************************/
 K15_RenderFontDesc* K15_CreateRenderFontDescFromFontFormat(K15_FontFormat* p_FontFormat, K15_RenderCommandQueue* p_RenderCommandQueue, K15_CustomMemoryAllocator* p_MemoryAllocator)
@@ -151,7 +167,8 @@ K15_RenderFontDesc* K15_CreateRenderFontDescFromFontFormat(K15_FontFormat* p_Fon
 	renderFontDesc->endCharacter = p_FontFormat->endCharacter;
 	renderFontDesc->fontNameHash = p_FontFormat->fontNameHash;
 	renderFontDesc->scaleFactor = p_FontFormat->scaleFactor;
-	renderFontDesc->baseLine = p_FontFormat->baseLine;
+	renderFontDesc->ascent = p_FontFormat->ascent;
+	renderFontDesc->descent = p_FontFormat->descent;
 	renderFontDesc->lineGap = p_FontFormat->lineGap;
 
 	uint32 numGlyphs = p_FontFormat->endCharacter - p_FontFormat->startCharacter;
@@ -175,10 +192,18 @@ K15_RenderFontDesc* K15_CreateRenderFontDescFromFontFormat(K15_FontFormat* p_Fon
 		float y = (float)glyphFormat->posY;
 		float w = (float)glyphFormat->width;
 		float h = (float)glyphFormat->height;
+		float gl = (float)glyphFormat->glyphLeft;
+		float gr = (float)glyphFormat->glyphRight;
+		float gt = (float)glyphFormat->glyphTop;
+		float gb = (float)glyphFormat->glyphBottom;
 
 		renderGlyphDesc->character = glyphIndex;
 		renderGlyphDesc->x = x;
 		renderGlyphDesc->y = y;
+		renderGlyphDesc->glyphLeft = gl;
+		renderGlyphDesc->glyphRight = gr;
+		renderGlyphDesc->glyphBottom = gb;
+		renderGlyphDesc->glyphTop = gt;
 		renderGlyphDesc->width = w;
 		renderGlyphDesc->height = h;
 		renderGlyphDesc->advance = glyphFormat->advance;

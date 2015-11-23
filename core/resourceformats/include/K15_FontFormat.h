@@ -16,7 +16,13 @@ struct K15_GlyphFormat
 	uint32 width;
 	uint32 height;
 
-  float advance;
+	//for alignment
+	int32 glyphLeft;
+	int32 glyphRight;
+	int32 glyphTop;
+	int32 glyphBottom;
+
+	float advance;
 
 	uint16 character;
 };
@@ -37,8 +43,9 @@ struct K15_FontFormat
 
 	float fontSize;
 	float scaleFactor;
-  float lineGap;
-  float baseLine;
+	float lineGap;
+	float ascent;
+	float descent;
 
 	uint32 fontNameHash;
 	uint32 startCharacter;

@@ -23,23 +23,43 @@ intern result8 K15_InternalBeginRenderCommand(K15_RenderCommandQueue* p_RenderCo
 	return result;
 }
 /*********************************************************************************/
-void K15_RenderCommandDraw2DTexture(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle, K15_Rectangle p_DestinationRect, K15_Rectangle p_SourceRect)
+void K15_RenderCommandDraw2DTexture(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle, float p_PosX, float p_PosY, float p_Width, float p_Height)
 {
 	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
 	K15_ASSERT_TEXT(p_TextureHandle, "Texture handle is NULL.");
-	//K15_ASSERT_TEXT(*p_TextureHandle != K15_INVALID_GPU_RESOURCE_HANDLE, "Invalid texture handle.");
-	K15_ASSERT_TEXT(K15_CalculateRectangleArea(p_SourceRect) > 0.f, "Source Rectangle area is 0.");
-	K15_ASSERT_TEXT(K15_CalculateRectangleArea(p_DestinationRect) > 0.f, "Destination Rectangle area is 0.");
-
+	
 	result8 result = K15_InternalBeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_RENDER_2D_TEXTURE);
 
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, K15_PTR_SIZE, &p_TextureHandle));
-	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_Rectangle), &p_DestinationRect));
-	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_Rectangle), &p_SourceRect));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_PosX));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_PosY));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_Width));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_Height));
+
 	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));
 }
 /*********************************************************************************/
-void K15_RenderCommandDraw2DText(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderFontDesc* p_FontDesc, const char* p_Text, K15_Vector2 p_Position)
+void K15_RenderCommandDraw2DTextureEX(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle, float p_PosX, float p_PosY, float p_Width, float p_Height, float p_TexU, float p_TexV, float p_TexWidth, float p_TexHeight)
+{
+	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
+	K15_ASSERT_TEXT(p_TextureHandle, "Texture handle is NULL.");
+
+	result8 result = K15_InternalBeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_RENDER_2D_TEXTURE_EX);
+
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, K15_PTR_SIZE, &p_TextureHandle));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_PosX));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_PosY));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_Width));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_Height));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_TexU));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_TexV));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_TexWidth));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_TexHeight));
+
+	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));
+}
+/*********************************************************************************/
+void K15_RenderCommandDraw2DText(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderFontDesc* p_FontDesc, const char* p_Text, float p_PosX, float p_PosY)
 {
 	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
 	K15_ASSERT_TEXT(p_FontDesc, "Font desc is NULL.");
@@ -52,7 +72,8 @@ void K15_RenderCommandDraw2DText(K15_RenderCommandQueue* p_RenderCommandQueue, K
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_RenderFontDesc), p_FontDesc));
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(uint32), &textLength));
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, textLength, (char*)p_Text));
-	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_Vector2), &p_Position));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_PosX));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_PosY));
 	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));
 }
 /*********************************************************************************/
