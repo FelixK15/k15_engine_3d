@@ -93,7 +93,7 @@ void K15_GetFontCharacterInfo(K15_RenderFontDesc* p_RenderFontDesc, const char* 
 	}
 }
 /*********************************************************************************/
-void K15_GetTextSize(K15_RenderFontDesc* p_RenderFontDesc, float* p_OutWidth, float* p_OutHeight, const char* p_Text, unsigned int p_TextLength)
+void K15_GetTextSizeInPixels(K15_RenderFontDesc* p_RenderFontDesc, float* p_OutWidth, float* p_OutHeight, const char* p_Text, unsigned int p_TextLength)
 {
 	float textWidth = 0.f;
 	float textHeight = 0.f;

@@ -22,4 +22,7 @@ real32 K15_HighPrecisionCos(real32 p_Number);
 
 uint32 K15_GetNextPowerOfTwoSize(uint32 p_NonPowerOfTwoNumber);
 
+bool8 K15_Collision2DBoxPoint(float p_BoxLeft, float p_BoxTop, float p_BoxRight, float p_BoxBottom,
+							  float p_PointX, float p_PointY);
+
 #endif //_K15_Math_Math_h_

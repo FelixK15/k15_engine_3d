@@ -9,6 +9,7 @@
 #include "K15_TextureFormat.h"
 #include "K15_FontFormat.h"
 
+#include "K15_RenderFontDesc.h"
 #include "K15_RenderTextureDesc.h"
 #include "K15_RenderCommands.h"
 #include "K15_RenderContext.h"
@@ -31,14 +32,36 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 
 	//button style
 	{
-		defaultStyle.guiButtonStyle.posPixelX = 0;
-		defaultStyle.guiButtonStyle.posPixelY = 0;
-		defaultStyle.guiButtonStyle.pixelWidth = 31;
-		defaultStyle.guiButtonStyle.pixelHeight = 23;
-		defaultStyle.guiButtonStyle.marginLeft = 4;
-		defaultStyle.guiButtonStyle.marginTop = 4;
-		defaultStyle.guiButtonStyle.marginBottom = 4;
-		defaultStyle.guiButtonStyle.marginRight = 4;
+		//normal
+		/*********************************************************************************/
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].posPixelX = 0;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].posPixelY = 0;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].pixelWidth = 29;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].pixelHeight = 20;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].marginLeft = 3;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].marginTop = 3;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].marginBottom = 3;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].marginRight = 3;
+		//pressed
+		/*********************************************************************************/
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].posPixelX = 0;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].posPixelY = 21;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].pixelWidth = 29;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].pixelHeight = 20;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].marginLeft = 3;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].marginTop = 3;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].marginBottom = 3;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].marginRight = 3;
+		//hovered
+		/*********************************************************************************/
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].posPixelX = 0;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].posPixelY = 42;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].pixelWidth = 29;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].pixelHeight = 20;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].marginLeft = 4;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].marginTop = 4;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].marginBottom = 5;
+		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].marginRight = 5;
 	}
 	
 	return defaultStyle;
@@ -129,8 +152,10 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption)
 {
 	assert(p_GUIContext);
 
+	uint32 captionLength = (uint32)strlen(p_Caption);
 	uint32 offset = p_GUIContext->guiMemoryCurrentSize;
-	uint32 newOffset = offset + sizeof(K15_GUIElementHeader) + sizeof(K15_GUIButton);
+	uint32 memoryCaptionPos =  offset + sizeof(K15_GUIElementHeader) + sizeof(K15_GUIButton);
+	uint32 newOffset = memoryCaptionPos + captionLength;
 
 	K15_ASSERT_TEXT(newOffset <= p_GUIContext->guiMemoryMaxSize, "Out of GUI memory.");
 
@@ -139,15 +164,34 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption)
 	K15_GUIElementHeader* buttonHeader = (K15_GUIElementHeader*)(p_GUIContext->guiMemory + offset);
 	K15_GUIButton* button = (K15_GUIButton*)(p_GUIContext->guiMemory + offset + sizeof(K15_GUIElementHeader));
 
+	K15_RenderFontDesc* guiFont = p_GUIContext->style.styleFont;
+
+	float textWidth = 0.f;
+	float textHeight = 0.f;
+
+	K15_GetTextSizeInPixels(guiFont, &textWidth, &textHeight, p_Caption, captionLength);
+
 	button->state = K15_GUI_BUTTON_STATE_NORMAL;
 	buttonHeader->type = K15_GUI_TYPE_BUTTON;
 	buttonHeader->posPixelX = 0;
 	buttonHeader->posPixelY = 400;
-	buttonHeader->pixelWidth = 40;
-	buttonHeader->pixelHeight = 20;
+	buttonHeader->pixelWidth = textWidth;
+	buttonHeader->pixelHeight = textHeight;
 	buttonHeader->offset = newOffset;
 
-	//buttonHeader->width
+	bool8 mouseInside = K15_Collision2DBoxPoint(buttonHeader->posPixelX, buttonHeader->posPixelY, 
+		buttonHeader->posPixelX + buttonHeader->pixelWidth,
+		buttonHeader->posPixelY + buttonHeader->pixelHeight,
+		p_GUIContext->mousePosPixelX, p_GUIContext->mousePosPixelY);
+
+	if (mouseInside)
+	{
+		button->state = K15_GUI_BUTTON_STATE_HOVERED;
+	}
+
+	//copy text
+	memcpy(p_GUIContext->guiMemory + memoryCaptionPos, p_Caption, captionLength);
+
 	return K15_FALSE;
 }
 /*********************************************************************************/

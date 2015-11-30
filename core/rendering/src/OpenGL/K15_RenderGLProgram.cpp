@@ -541,7 +541,7 @@ const char* K15_GLGenerateGLSLHeaderCode(GLenum p_GLProgramType)
 			"#define K15_Matrix4 mat4\n"
 			"#define K15_2DSampler sampler2D\n"
 			"#define K15_2DTexture int\n"
-			"#define sampleTex2D(s, t, uv) texture(s, vec2(uv.x, 1.f - uv.y))\n";
+			"#define sampleTex2D(s, t, uv) texture(s, vec2(uv.x, uv.y))\n";
 	}
 	
 	return glslHeaderCode;

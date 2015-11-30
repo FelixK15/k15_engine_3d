@@ -17,7 +17,9 @@ enum K15_GUIButtonState
 	K15_GUI_BUTTON_STATE_NORMAL = 0,
 	K15_GUI_BUTTON_STATE_PRESSED,
 	K15_GUI_BUTTON_STATE_HOVERED,
-	K15_GUI_BUTTON_STATE_DISABLED
+	K15_GUI_BUTTON_STATE_DISABLED,
+
+	K15_GUI_BUTTON_STATE_COUNT
 };
 
 enum K15_GUICategoryLayout
@@ -53,14 +55,18 @@ struct K15_GUIContextStyle
 
 	struct 
 	{
-		uint32 posPixelX;
-		uint32 posPixelY;
-		uint32 pixelWidth;
-		uint32 pixelHeight;
-		uint32 marginLeft;
-		uint32 marginRight;
-		uint32 marginTop;
-		uint32 marginBottom;
+		struct 
+		{
+			uint32 marginLeft;
+			uint32 marginRight;
+			uint32 marginTop;
+			uint32 marginBottom;
+			uint32 posPixelX;
+			uint32 posPixelY;
+			uint32 pixelWidth;
+			uint32 pixelHeight;
+		} stateStyle[K15_GUI_BUTTON_STATE_COUNT];
+
 	} guiButtonStyle;
 };
 

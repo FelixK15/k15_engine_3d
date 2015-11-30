@@ -631,7 +631,7 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	uint32 vertexBufferSizeInFloats = K15_InteralFillGUIContextVertexBuffer(p_RenderBackEnd, guiContext, 
 		vertexBuffer, numVertices);
 
-	uint32 actualNumberOfVertices = (vertexBufferSizeInFloats * 4)/vertexFormatDesc.stride;
+	uint32 actualNumberOfVertices = (vertexBufferSizeInFloats*sizeof(float))/vertexFormatDesc.stride;
 
 	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexBuffer, actualNumberOfVertices, &vertexFormatDesc);
 
@@ -643,7 +643,7 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	K15_RenderGeometryDesc renderGeometry = {};
 
 	renderGeometry.vertexData = vertexData;
-	renderGeometry.topology = K15_RENDER_TOPOLOGY_TRIANGLE_STRIP;
+	renderGeometry.topology = K15_RENDER_TOPOLOGY_TRIANGLES;
 	renderGeometry.worldMatrix = K15_GetIdentityMatrix4();
 	renderGeometry.material = guiMaterial;
 
