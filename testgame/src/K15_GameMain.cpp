@@ -34,7 +34,7 @@ struct K15_Sample1GameContext
 	K15_RenderCommandQueue* gameRenderQueue;
 	K15_ResourceContext* resourceContext;
 	K15_GUIContext* guiContext;
-	K15_Mesh* robbie;
+	K15_RenderFontDesc* gameFont;
 
 	K15_RenderCameraDesc camera;
 };
@@ -77,11 +77,14 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 	K15_ResourceContext* resourceContext = K15_CreateResourceContextWithCustomAllocator(p_GameContext->renderContext, "data/", K15_CreateDefaultMemoryAllocator());//,K15_CreateBlockAllocator(resourceMemoryBuffer, "Resource Allocator"));
 
 	K15_GUIContext* guiContext = K15_CreateGUIContextWithCustomAllocator(K15_CreateStackAllocator(guiMemoryBuffer, "GUI Stack Allocator"), resourceContext, mainRenderQueue);
-	
+
+	K15_ResourceHandle gameFont = K15_LoadResource(resourceContext, K15_FONT_RESOURCE_IDENTIFIER, "gameFont.k15font", 0);
+
 	//set the resource context so we can use it later.
 	sample1GameContext->resourceContext = resourceContext;
 	sample1GameContext->guiContext = guiContext;
 	sample1GameContext->gameRenderQueue = mainRenderQueue;
+	sample1GameContext->gameFont = K15_GetResourceFontDesc(resourceContext, gameFont);
 
 	K15_RenderCameraDesc cameraDesc = {};
 
@@ -138,18 +141,18 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->userData;
 	K15_RenderCommandQueue* gameRenderCommandQueue = gameContext->gameRenderQueue;
 	K15_GUIContext* guiContext = gameContext->guiContext;
+	K15_RenderFontDesc* gameFont = gameContext->gameFont;
 
-	K15_RenderFontDesc* guiFontDesc = guiContext->guiRenderFont;
-	K15_RenderMaterialDesc* guiMaterialDesc = guiContext->guiRenderMaterial;
-	K15_RenderResourceHandle* guiTextureHandle = guiContext->guiRenderTexture;
-
-	K15_RenderCommandDraw2DTexture(gameRenderCommandQueue, 
-		guiTextureHandle, 0.f, 0.f, 1.f, 1.f);
-	
 	char* text = (char*)alloca(128);
 	sprintf(text, "FPS: %.1f\nms: %.3f", p_GameContext->frameCounter.FPS, p_GameContext->frameCounter.avgDeltaTime);
-	K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiFontDesc, text, 0.0f, 0.1f);
+	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, 0.0f, 0.1f);
 	
+	K15_Button(guiContext, "bla");
+
+	K15_RenderCommandDraw2DGUI(gameRenderCommandQueue, guiContext);
+
+	K15_ResetGUIContextMemory(guiContext);
+
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameContext->resourceContext->commandQueue);
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameRenderCommandQueue);
 }

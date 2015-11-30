@@ -9,6 +9,7 @@
 
 #include "K15_TextureFormat.h"
 #include "K15_FontFormat.h"
+#include "K15_GUIContext.h"
 
 /*********************************************************************************/
 intern result8 K15_InternalBeginRenderCommand(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderCommandType p_RenderCommand)
@@ -55,6 +56,23 @@ void K15_RenderCommandDraw2DTextureEX(K15_RenderCommandQueue* p_RenderCommandQue
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_TexV));
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_TexWidth));
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_TexHeight));
+
+	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));
+}
+/*********************************************************************************/
+void K15_RenderCommandDraw2DGUI(K15_RenderCommandQueue* p_RenderCommandQueue, K15_GUIContext* p_GUIContext)
+{
+	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
+	K15_ASSERT_TEXT(p_GUIContext, "GUI Context is NULL.");
+
+	result8 result = K15_InternalBeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_RENDER_2D_GUI);
+
+	uint32 guiMemorySize = p_GUIContext->guiMemoryCurrentSize;
+	byte* guiMemory = p_GUIContext->guiMemory;
+
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_GUIContext), p_GUIContext));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(uint32), &guiMemorySize));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, guiMemorySize, guiMemory));
 
 	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));
 }

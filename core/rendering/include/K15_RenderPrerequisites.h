@@ -43,6 +43,9 @@
 
 #define K15_RENDER_IMMEDIATE_BUFFER_SIZE						size_kilobyte(512)
 
+#define K15_CONVERT_TO_NDC_X(x) (((x)*2)-1)
+#define K15_CONVERT_TO_NDC_Y(y) (((1.f - (y))*2)-1)
+
 #define K15_IS_POW2(x) ((x != 0) && !(x & (x - 1))
 #define K15_CHECK_ASSIGNMENT(variable, value) {variable = value; K15_ASSERT_TEXT(variable, "Could not assign to variable \'%s\'.", #variable);}
 
@@ -81,7 +84,7 @@ struct K15_ShaderProcessorContext;
 
 struct K15_Thread;
 struct K15_ResourceContext;
-
+struct K15_GUIContext;
 struct K15_TextureFormat;
 struct K15_MaterialFormat;
 struct K15_SamplerFormat;

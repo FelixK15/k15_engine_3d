@@ -20,6 +20,13 @@ enum K15_GUIButtonState
 	K15_GUI_BUTTON_STATE_DISABLED
 };
 
+enum K15_GUICategoryLayout
+{
+	K15_GUI_LAYOUT_HORIZONTAL = 0,
+	K15_GUI_LAYOUT_VERTICAL,
+	K15_GUI_LAYOUT_GRID
+};
+
 struct K15_GUIButton
 {
 	K15_GUIButtonState state;
@@ -29,40 +36,77 @@ struct K15_GUIElementHeader
 {
 	K15_GUIElementType type;
 
-	real32 positionX;
-	real32 positionY;
-	real32 width;
-	real32 height;
+	uint32 posPixelX;
+	uint32 posPixelY;
+	uint32 pixelWidth;
+	uint32 pixelHeight;
 
 	uint32 offset;
+};
+
+//TODO define K15_GUIContextStyle
+
+struct K15_GUIContextStyle
+{
+	K15_RenderResourceHandle* styleTexture;
+	K15_RenderFontDesc* styleFont;
+
+	struct 
+	{
+		uint32 posPixelX;
+		uint32 posPixelY;
+		uint32 pixelWidth;
+		uint32 pixelHeight;
+		uint32 marginLeft;
+		uint32 marginRight;
+		uint32 marginTop;
+		uint32 marginBottom;
+	} guiButtonStyle;
+};
+
+struct K15_GUICategory
+{
+	uint32 posPixelX;
+	uint32 posPixelY;
+	K15_GUICategoryLayout layout;
 };
 
 struct K15_GUIContext
 {
 	K15_CustomMemoryAllocator memoryAllocator;
 
-	K15_RenderFontDesc* guiRenderFont;
 	K15_RenderMaterialDesc* guiRenderMaterial;
-	K15_RenderResourceHandle* guiRenderTexture;
+
+	K15_GUICategory categoryStack[K15_GUI_MAX_CATEGORIES];
+	K15_GUIContextStyle style;
 
 	byte* guiMemory;
+
+	uint32 categoryIndex;
 
 	uint32 guiMemoryMaxSize;
 	uint32 guiMemoryCurrentSize;
 
-	real32 mousePosX;
-	real32 mousePosY;
+	uint32 mousePosPixelX;
+	uint32 mousePosPixelY;
 
-	uint32 windowHeight;
+	uint32 virtualResolutionWidth;
+	uint32 virtualResolutionHeight;
+
 	uint32 windowWidth;
+	uint32 windowHeight;
 };
 
 K15_GUIContext* K15_CreateGUIContext(K15_ResourceContext* p_ResourceContext, K15_RenderCommandQueue* p_RenderCommandQueue);
 K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocator p_MemoryAllocator, K15_ResourceContext* p_ResourceContext, K15_RenderCommandQueue* p_RenderCommandQueue);
 
+void K15_ResetGUIContextMemory(K15_GUIContext* p_GUIContext);
+
+void K15_SetGUIContextVirtualResolution(K15_GUIContext* p_GUIContext, uint32 p_VirtualWidth, uint32 p_VirtualHeight);
+
 void K15_SetGUIContextWindowSize(K15_GUIContext* p_GUIContext, uint32 p_WindowWidth, uint32 p_WindowHeight);
 void K15_SetGUIContextMousePosition(K15_GUIContext* p_GUIContext, uint32 p_MouseX, uint32 p_MouseY);
 
-bool8 K15_Button(K15_GUIContext* p_GUIContext, float p_PositionX, float p_PositionY, const char* p_Caption);
+bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption);
 
 #endif //_K15_GUILayer_Context_h_

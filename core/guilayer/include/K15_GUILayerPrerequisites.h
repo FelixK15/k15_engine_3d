@@ -12,6 +12,7 @@ struct K15_ResourceContext;
 struct K15_RenderCommandQueue;
 struct K15_RenderContext;
 
-#define K15_GUI_CONTEXT_MEMORY_SIZE size_megabyte(5)
+#define K15_GUI_CONTEXT_MEMORY_SIZE size_kilobyte(100)
+#define K15_GUI_MAX_CATEGORIES 20
 
 #endif //_K15_GUILayer_Prerequisites_h_

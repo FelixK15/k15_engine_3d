@@ -17,6 +17,8 @@ void K15_RenderCommandDraw2DTextureEX(K15_RenderCommandQueue* p_RenderCommandQue
 									  float p_TexU, float p_TexV,
 									  float p_TexWidth, float p_TexHeight);
 
+void K15_RenderCommandDraw2DGUI(K15_RenderCommandQueue* p_RenderCommandQueue,
+								K15_GUIContext* p_GUIContext);
 
 void K15_RenderCommandDraw2DText(K15_RenderCommandQueue* p_RenderCommandQueue, 
 								 K15_RenderFontDesc* p_FontDesc, 

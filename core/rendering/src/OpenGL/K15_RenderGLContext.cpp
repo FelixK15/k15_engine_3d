@@ -730,6 +730,8 @@ result8 K15_GLCreateRenderContext(K15_CustomMemoryAllocator* p_MemoryAllocator, 
 	//5th get interface function poiunter based on available extensions
 	K15_InternalSetGLInterface(p_RenderBackEnd);
 
+	kglClearColor(1.f, 1.f, 1.f, 1.f);
+
 	//set pointer to gl context
 	p_RenderBackEnd->specificRenderPlatform = (void*)glContext;
 

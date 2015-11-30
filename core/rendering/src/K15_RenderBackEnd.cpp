@@ -10,6 +10,8 @@
 #include "K15_Rectangle.h"
 #include "K15_Vector2.h"
 
+#include "K15_GUIContext.h"
+
 #include "K15_RenderCommandBuffer.h"
 #include "K15_RenderGeometryDesc.h"
 #include "K15_RenderFontDesc.h"
@@ -23,11 +25,10 @@
 #include "K15_RenderFormats.cpp"
 #include "K15_RenderVertexFormatDesc.cpp"
 #include "K15_RenderShaderSemantics.cpp"
+#include "K15_RenderUtil.cpp"
+#include "K15_RenderGUIContext.cpp"
 
 #include "K15_ShaderCompiler.h"
-
-#define K15_CONVERT_TO_NDC_X(x) (((x)*2)-1)
-#define K15_CONVERT_TO_NDC_Y(y) (((1.f - (y))*2)-1)
 
 /*********************************************************************************/
 intern int K15_InternalCompareKerning(const void* p_Key, const void* p_Element)
@@ -324,11 +325,6 @@ intern void K15_InitializeRenderResources(K15_RenderBackEnd* p_RenderBackEnd)
 
 //RENDER COMMANDS
 /*********************************************************************************/
-intern result8 K15_InternalDrawGeometry(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderGeometryDesc* p_RenderGeometryDesc)
-{
-	return p_RenderBackEnd->renderInterface.drawGeometry(p_RenderBackEnd, p_RenderGeometryDesc);
-}
-/*********************************************************************************/
 intern result8 K15_InternalWindowResized(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommand* p_RenderCommand, K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_BufferOffset)
 {
 	uint32 localOffset = 0;
@@ -348,38 +344,8 @@ intern result8 K15_InternalWindowResized(K15_RenderBackEnd* p_RenderBackEnd, K15
 	return p_RenderBackEnd->renderInterface.resizeViewport(p_RenderBackEnd, width, height);
 }
 /*********************************************************************************/
-intern void K15_InternalAdd2DTextureVetices(float* p_VertexBuffer, float p_PosX, float p_PosY, 
-											float p_Width, float p_Height, float p_TexU, float p_TexV,
-											float p_TexWidth, float p_TextHeight)
-{
-	uint32 index = 0;
-	//vertex 1
-	p_VertexBuffer[index++] = K15_CONVERT_TO_NDC_X(p_PosX);
-	p_VertexBuffer[index++] = K15_CONVERT_TO_NDC_Y(p_PosY);
-	p_VertexBuffer[index++] = p_TexU;
-	p_VertexBuffer[index++] = p_TexV;
-
-	//vertex 2
-	p_VertexBuffer[index++] = K15_CONVERT_TO_NDC_X(p_PosX);
-	p_VertexBuffer[index++] = K15_CONVERT_TO_NDC_Y(p_PosY + p_Height);
-	p_VertexBuffer[index++] = p_TexU;
-	p_VertexBuffer[index++] = p_TexV + p_TextHeight;
-
-	//vertex 3
-	p_VertexBuffer[index++] = K15_CONVERT_TO_NDC_X(p_PosX + p_Width);
-	p_VertexBuffer[index++] = K15_CONVERT_TO_NDC_Y(p_PosY);
-	p_VertexBuffer[index++] = p_TexU + p_TexWidth;
-	p_VertexBuffer[index++] = p_TexV;
-
-	//vertex 4
-	p_VertexBuffer[index++] = K15_CONVERT_TO_NDC_X(p_PosX + p_Width);
-	p_VertexBuffer[index++] = K15_CONVERT_TO_NDC_Y(p_PosY + p_Height);
-	p_VertexBuffer[index++] = p_TexU + p_TexWidth;
-	p_VertexBuffer[index++] = p_TexV + p_TextHeight;
-}
-/*********************************************************************************/
 intern void K15_InternalRender2DTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommand* p_RenderCommand, K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_BufferOffset)
-{
+	{
 	K15_RenderContext* renderContext = p_RenderBackEnd->renderContext;
 	K15_CustomMemoryAllocator* renderAllocator = &renderContext->memoryAllocator;
 	K15_RenderResourceHandle* textureHandle = 0;
@@ -418,31 +384,8 @@ intern void K15_InternalRender2DTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_
 	}
 #endif //K15_TOLERATE_INVALID_GPU_HANDLES
 
-	K15_RenderVertexFormatDesc vertexFormatDesc = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 2, 
-		K15_SEMANTIC_POSITION_ID, K15_TYPE_FLOAT_VECTOR2_ID,
-		K15_SEMANTIC_TEXCOORD1_ID, K15_TYPE_FLOAT_VECTOR2_ID);
-
-	uint32 numVertices = 4;
-	uint32 sizeVerticesInBytes = vertexFormatDesc.stride * numVertices;
-	
-	float* vertexMemory = (float*)K15_AllocateFromMemoryAllocator(renderAllocator, sizeVerticesInBytes);
-	
-	K15_InternalAdd2DTextureVetices(vertexMemory, posX, posY, width, height, 0.f, 0.f, 1.f, 1.f);
-
-	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexMemory, numVertices, &vertexFormatDesc);
-	K15_RenderGeometryDesc renderGeometry = {};
-
-	K15_SetRenderMaterialRenderResourceDataByName(&p_RenderBackEnd->resources.materials.default2DMaterial.materialPasses[0], "tex", textureHandle);
-
-	renderGeometry.vertexData = vertexData;
-	renderGeometry.topology = K15_RENDER_TOPOLOGY_TRIANGLE_STRIP;
-	renderGeometry.worldMatrix = K15_GetIdentityMatrix4();
-	renderGeometry.material = &p_RenderBackEnd->resources.materials.default2DMaterial;
-
-	K15_InternalDrawGeometry(p_RenderBackEnd, &renderGeometry);
-
-	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexData);
-	K15_FreeFromMemoryAllocator(renderAllocator, vertexMemory);
+	K15_InternalDrawDefault2DTexture(p_RenderBackEnd, textureHandle, 
+		posX, posX + width, posY, posY + height, 0.f, 1.f, 0.f, 1.f);
 }
 /*********************************************************************************/
 intern void K15_InternalRender2DTextureEX(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommand* p_RenderCommand, K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_BufferOffset)
@@ -505,31 +448,9 @@ intern void K15_InternalRender2DTextureEX(K15_RenderBackEnd* p_RenderBackEnd, K1
 	}
 #endif //K15_TOLERATE_INVALID_GPU_HANDLES
 
-	K15_RenderVertexFormatDesc vertexFormatDesc = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 2, 
-		K15_SEMANTIC_POSITION_ID, K15_TYPE_FLOAT_VECTOR2_ID,
-		K15_SEMANTIC_TEXCOORD1_ID, K15_TYPE_FLOAT_VECTOR2_ID);
-
-	uint32 numVertices = 4;
-	uint32 sizeVerticesInBytes = vertexFormatDesc.stride * numVertices;
-
-	float* vertexMemory = (float*)K15_AllocateFromMemoryAllocator(renderAllocator, sizeVerticesInBytes);
-
-	K15_InternalAdd2DTextureVetices(vertexMemory, posX, posY, width, height, texU, texV, texWidth, texHeight);
-
-	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexMemory, numVertices, &vertexFormatDesc);
-	K15_RenderGeometryDesc renderGeometry = {};
-
-	K15_SetRenderMaterialRenderResourceDataByName(&p_RenderBackEnd->resources.materials.default2DMaterial.materialPasses[0], "tex", textureHandle);
-
-	renderGeometry.vertexData = vertexData;
-	renderGeometry.topology = K15_RENDER_TOPOLOGY_TRIANGLE_STRIP;
-	renderGeometry.worldMatrix = K15_GetIdentityMatrix4();
-	renderGeometry.material = &p_RenderBackEnd->resources.materials.default2DMaterial;
-
-	K15_InternalDrawGeometry(p_RenderBackEnd, &renderGeometry);
-
-	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexData);
-	K15_FreeFromMemoryAllocator(renderAllocator, vertexMemory);
+	K15_InternalDrawDefault2DTexture(p_RenderBackEnd, textureHandle, 
+		posX, posX + width, posY, posY + height,
+		texU, texV, texU + texWidth, texV + texHeight);
 }
 /*********************************************************************************/
 intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommand* p_RenderCommand, K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_BufferOffset)
@@ -649,41 +570,9 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 
 		if (renderable)
 		{
-			vertexMemory[vertexIndex++] = x;
-			vertexMemory[vertexIndex++] = y + offsetY;
-			vertexMemory[vertexIndex++] = texelLeft;
-			//vertexMemory[vertexIndex++] = texelTop;
-			vertexMemory[vertexIndex++] = texelBottom;
-
-			vertexMemory[vertexIndex++] = x;
-			vertexMemory[vertexIndex++] = y + glyphHScreen + offsetY;
-			vertexMemory[vertexIndex++] = texelLeft;
-			//vertexMemory[vertexIndex++] = texelBottom;
-			vertexMemory[vertexIndex++] = texelTop;
-
-			vertexMemory[vertexIndex++] = x + glyphWScreen;
-			vertexMemory[vertexIndex++] = y + offsetY;
-			vertexMemory[vertexIndex++] = texelRight;
-			//vertexMemory[vertexIndex++] = texelTop;
-			vertexMemory[vertexIndex++] = texelBottom;
-
-			vertexMemory[vertexIndex++] = x;
-			vertexMemory[vertexIndex++] = y + glyphHScreen + offsetY;
-			vertexMemory[vertexIndex++] = texelLeft;
-			//vertexMemory[vertexIndex++] = texelBottom;
-			vertexMemory[vertexIndex++] = texelTop;
-
-			vertexMemory[vertexIndex++] = x + glyphWScreen;
-			vertexMemory[vertexIndex++] = y + glyphHScreen + offsetY;
-			vertexMemory[vertexIndex++] = texelRight;
-			//vertexMemory[vertexIndex++] = texelBottom;
-			vertexMemory[vertexIndex++] = texelTop;
-
-			vertexMemory[vertexIndex++] = x + glyphWScreen;
-			vertexMemory[vertexIndex++] = y + offsetY;
-			vertexMemory[vertexIndex++] = texelRight;
-			//vertexMemory[vertexIndex++] = texelTop;
-			vertexMemory[vertexIndex++] = texelBottom;
+			vertexIndex = K15_InternalPush2DScreenspaceRect(p_RenderBackEnd, vertexMemory, vertexIndex, 
+								x, x + glyphWScreen, y, y + glyphHScreen + offsetY, 
+								texelLeft, texelRight, texelTop, texelBottom);
 		}
 
 		x += glyphWScreen;
@@ -702,6 +591,66 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 
 	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexData);
 	//K15_FreeFromMemoryAllocator(renderAllocator, vertexMemory);
+}
+/*********************************************************************************/
+intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommand* p_RenderCommand, K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_BufferOffset)
+{
+	K15_RenderContext* renderContext = p_RenderBackEnd->renderContext;
+	K15_CustomMemoryAllocator* renderAllocator = &renderContext->memoryAllocator;
+
+	K15_GUIContext* guiContext = (K15_GUIContext*)K15_AllocateFromMemoryAllocator(renderAllocator, sizeof(K15_GUIContext));
+	uint32 guiMemorySize = 0;
+	byte* guiMemoryBuffer = 0;
+
+	uint32 localOffset = 0;
+
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(K15_GUIContext), guiContext);
+	localOffset += sizeof(K15_GUIContext);
+
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(uint32), &guiMemorySize);
+	localOffset += sizeof(uint32);
+
+	guiMemoryBuffer = (byte*)K15_AllocateFromMemoryAllocator(renderAllocator, guiMemorySize);
+
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, guiMemorySize, guiMemoryBuffer);
+	localOffset += guiMemorySize;
+
+	guiContext->guiMemory = guiMemoryBuffer;
+	guiContext->guiMemoryCurrentSize = guiMemorySize; 
+
+	uint32 currentGUIMemoryOffset = 0;
+
+	K15_RenderVertexFormatDesc vertexFormatDesc = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 2, 
+		K15_SEMANTIC_POSITION_ID, K15_TYPE_FLOAT_VECTOR2_ID,
+		K15_SEMANTIC_TEXCOORD1_ID, K15_TYPE_FLOAT_VECTOR2_ID);
+	
+	//count vertices
+	uint32 numVertices = K15_InternalCountGUIContextVertices(guiContext);
+	float* vertexBuffer = (float*)alloca(numVertices * vertexFormatDesc.stride);
+
+	uint32 vertexBufferSizeInFloats = K15_InteralFillGUIContextVertexBuffer(p_RenderBackEnd, guiContext, 
+		vertexBuffer, numVertices);
+
+	uint32 actualNumberOfVertices = (vertexBufferSizeInFloats * 4)/vertexFormatDesc.stride;
+
+	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexBuffer, actualNumberOfVertices, &vertexFormatDesc);
+
+	K15_RenderMaterialDesc* guiMaterial = guiContext->guiRenderMaterial;
+	K15_RenderResourceHandle* guiTexture = guiContext->style.styleTexture;
+
+	K15_SetRenderMaterialRenderResourceDataByName(&guiMaterial->materialPasses[0], "DiffuseTexture", guiTexture);
+
+	K15_RenderGeometryDesc renderGeometry = {};
+
+	renderGeometry.vertexData = vertexData;
+	renderGeometry.topology = K15_RENDER_TOPOLOGY_TRIANGLE_STRIP;
+	renderGeometry.worldMatrix = K15_GetIdentityMatrix4();
+	renderGeometry.material = guiMaterial;
+
+	K15_InternalDrawGeometry(p_RenderBackEnd, &renderGeometry);
+
+	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexData);
+	//K15_FreeFromMemoryAllocator(renderAllocator, vertexBuffer);
 }
 /*********************************************************************************/
 intern void K15_InternalCreateTextureFromTextureFormat(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommand* p_RenderCommand, K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_BufferOffset)
@@ -891,6 +840,12 @@ void K15_ProcessRenderCommands(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCom
 			case K15_RENDER_COMMAND_RENDER_2D_TEXT:
 			{
 				K15_InternalRender2DText(p_RenderBackEnd, command, p_RenderCommandBuffer, offset);
+				break;
+			}
+
+			case K15_RENDER_COMMAND_RENDER_2D_GUI:
+			{
+				K15_InternalRender2DGUI(p_RenderBackEnd, command, p_RenderCommandBuffer, offset);
 				break;
 			}
 
