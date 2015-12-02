@@ -32,6 +32,8 @@ enum K15_GUICategoryLayout
 struct K15_GUIButton
 {
 	K15_GUIButtonState state;
+	const char* text;
+	uint32 textLength;
 };
 
 struct K15_GUIElementHeader

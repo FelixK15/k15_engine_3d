@@ -215,3 +215,22 @@ K15_RenderFontDesc* K15_CreateRenderFontDescFromFontFormat(K15_FontFormat* p_Fon
 	return renderFontDesc;
 }
 /*********************************************************************************/
+uint32 K15_GetTextVertexCount(K15_RenderFontDesc* p_RenderFontDesc, const char* p_Text, uint32 p_TextLength)
+{
+	uint32 numVertices = 0;
+	bool8 renderable = K15_TRUE;
+	for (uint32 textIndex = 0;
+		textIndex < p_TextLength;
+		++textIndex)
+	{
+		K15_GetFontCharacterInfo(p_RenderFontDesc, p_Text, p_TextLength, textIndex, 0, 0, 0, 0, 0, 0, &renderable);
+	
+		if (renderable)
+		{
+			numVertices += 6; //quad of two triangles
+		}
+	}
+
+	return numVertices;
+}
+/*********************************************************************************/

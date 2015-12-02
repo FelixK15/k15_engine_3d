@@ -263,7 +263,7 @@ inline K15_RenderVertexData* K15_GLUpdateVertexData(K15_RenderBackEnd* p_RenderB
 	vertexData->sizeInBytes = sizeInBytes;
 	vertexData->buffer = p_VertexData;
 	vertexData->numVertices = p_NumVertices;
-	vertexData->startVertexIndex = p_VertexFormat->stride / usedCacheEntry->capacityInBytes;
+	vertexData->startVertexIndex = usedCacheEntry->sizeInBytes / p_VertexFormat->stride;
 	vertexData->vertexFormat = p_VertexFormat;
 
 	K15_GLBuffer* glBuffer = (K15_GLBuffer*)K15_InternalGetGLObjectData(glContext, usedCacheEntry->bufferHandle, K15_GL_TYPE_BUFFER);

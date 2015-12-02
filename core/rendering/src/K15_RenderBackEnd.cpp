@@ -509,75 +509,9 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 
 	uint32 sizeVerticesInBytes = vertexFormatDesc.stride * numVertices;
 
-	float xOffset = 0.f;
-	float yOffset = 0.f;
-	float x = K15_CONVERT_TO_NDC_X(posX);
-	float y = K15_CONVERT_TO_NDC_Y(posY);
-
-	float glyphX = 0.f;
-	float glyphY = 0.f;
-	float glyphW = 0.f;
-	float glyphH = 0.f;
-
-	float texelLeft = 0.f;
-	float texelTop = 0.f;
-	float texelRight = 0.f;
-	float texelBottom = 0.f;
-
 	float* vertexMemory = (float*)K15_AllocateFromMemoryAllocator(renderAllocator, sizeVerticesInBytes);
-	
-	uint32 numCharacter = fontDesc.endCharacter - fontDesc.startCharacter;
-	uint32 numKerningElements = numCharacter * numCharacter;
-	float gx = 0.f;
 
-	for (uint32 charIndex = 0;
-		charIndex < textLength;
-		++charIndex)
-	{
-		float offsetY = 0.f;
-		float advanceX = 0.f;
-		float advanceY = 0.f;
-		float glyphX = 0.f;
-		float glyphY = 0.f;
-		float glyphWidth = 0.f;
-		float glyphHeight = 0.f;
-		bool8 renderable = K15_FALSE;
-
-		K15_GetFontCharacterInfo(&fontDesc, text, textLength, charIndex, &glyphX, &glyphY, &glyphWidth, &glyphHeight, &advanceX, &advanceY, &renderable);
-
-		if (text[charIndex] == '\n')
-		{
-			x = K15_CONVERT_TO_NDC_X(posX);
-			y += advanceY / p_RenderBackEnd->viewportHeight;
-			continue;
-		}
-		else
-		{
-			offsetY += advanceY / p_RenderBackEnd->viewportHeight;
-		}
-
-		glyphX = glyphX;
-		glyphY = glyphY;
-		glyphW = glyphWidth / fontDesc.textureWidth;
-		glyphH = glyphHeight / fontDesc.textureHeight;
-
-		float glyphWScreen = glyphWidth/ p_RenderBackEnd->viewportWidth;
-		float glyphHScreen = glyphHeight/ p_RenderBackEnd->viewportHeight;
-		texelLeft = glyphX / fontDesc.textureWidth;
-		texelTop = glyphY / fontDesc.textureWidth;
-		texelRight = glyphW + texelLeft;
-		texelBottom = glyphH + texelTop;
-
-		if (renderable)
-		{
-			vertexIndex = K15_InternalPush2DScreenspaceRect(p_RenderBackEnd, vertexMemory, vertexIndex, 
-								x, x + glyphWScreen, y, y + glyphHScreen + offsetY, 
-								texelLeft, texelRight, texelTop, texelBottom);
-		}
-
-		x += glyphWScreen;
-		gx += glyphWScreen;
-	}
+	K15_InternalPush2DTextVertices(p_RenderBackEnd, &fontDesc, vertexMemory, 0, posX, posY, text, textLength);
 
 	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexMemory, numVertices, &vertexFormatDesc);
 	K15_RenderGeometryDesc renderGeometry = {};
@@ -625,31 +559,65 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 		K15_SEMANTIC_TEXCOORD1_ID, K15_TYPE_FLOAT_VECTOR2_ID);
 	
 	//count vertices
-	uint32 numVertices = K15_InternalCountGUIContextVertices(guiContext);
-	float* vertexBuffer = (float*)alloca(numVertices * vertexFormatDesc.stride);
+	uint32 numVertices = 0;
+	uint32 numTextVertices = 0;
+	
+	K15_InternalCountGUIContextVertices(guiContext, &numVertices, &numTextVertices);
+	
+	float* vertexBuffer		= (float*)alloca(numVertices * vertexFormatDesc.stride);
+	float* textVertexBuffer = (float*)alloca(numTextVertices * vertexFormatDesc.stride);
 
-	uint32 vertexBufferSizeInFloats = K15_InteralFillGUIContextVertexBuffer(p_RenderBackEnd, guiContext, 
-		vertexBuffer, numVertices);
+	uint32 vertexBufferSizeInFloats = 0;
+	uint32 textVertexBufferSizeInFloats = 0;
+	
+	K15_InternalFillGUIContextVertexBuffer(p_RenderBackEnd, guiContext, 
+		vertexBuffer, &vertexBufferSizeInFloats, 
+		textVertexBuffer, &textVertexBufferSizeInFloats);
 
-	uint32 actualNumberOfVertices = (vertexBufferSizeInFloats*sizeof(float))/vertexFormatDesc.stride;
-
-	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexBuffer, actualNumberOfVertices, &vertexFormatDesc);
+	uint32 actualNumberOfVertices		= (vertexBufferSizeInFloats*sizeof(float))/vertexFormatDesc.stride;
+	uint32 actualNumberOfTextVertices	= (textVertexBufferSizeInFloats*sizeof(float))/vertexFormatDesc.stride;
 
 	K15_RenderMaterialDesc* guiMaterial = guiContext->guiRenderMaterial;
+	K15_RenderMaterialDesc* fontMaterial = &p_RenderBackEnd->resources.materials.defaultFontMaterial;
 	K15_RenderResourceHandle* guiTexture = guiContext->style.styleTexture;
+
+	K15_RenderFontDesc* guiStyleFont = guiContext->style.styleFont;
+
+	K15_RenderVertexData* textVertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, textVertexBuffer, actualNumberOfTextVertices, &vertexFormatDesc);
+	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexBuffer, actualNumberOfVertices, &vertexFormatDesc);
 
 	K15_SetRenderMaterialRenderResourceDataByName(&guiMaterial->materialPasses[0], "DiffuseTexture", guiTexture);
 
-	K15_RenderGeometryDesc renderGeometry = {};
+	//render gui
+	{
+		K15_RenderGeometryDesc renderGeometry = {};
 
-	renderGeometry.vertexData = vertexData;
-	renderGeometry.topology = K15_RENDER_TOPOLOGY_TRIANGLES;
-	renderGeometry.worldMatrix = K15_GetIdentityMatrix4();
-	renderGeometry.material = guiMaterial;
+		renderGeometry.vertexData = vertexData;
+		renderGeometry.topology = K15_RENDER_TOPOLOGY_TRIANGLES;
+		renderGeometry.worldMatrix = K15_GetIdentityMatrix4();
+		renderGeometry.material = guiMaterial;
 
-	K15_InternalDrawGeometry(p_RenderBackEnd, &renderGeometry);
+		K15_InternalDrawGeometry(p_RenderBackEnd, &renderGeometry);
+	}
+	
+	K15_SetRenderMaterialRenderResourceDataByName(&fontMaterial->materialPasses[0], "tex", guiStyleFont->textureHandle);
 
+	//render gui text
+	{
+
+		K15_RenderGeometryDesc textGeometry = {};
+
+		textGeometry.vertexData = textVertexData;
+		textGeometry.topology = K15_RENDER_TOPOLOGY_TRIANGLES;
+		textGeometry.worldMatrix = K15_GetIdentityMatrix4();
+		textGeometry.material = fontMaterial;
+
+		K15_InternalDrawGeometry(p_RenderBackEnd, &textGeometry);
+	}
+
+	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, textVertexData);
 	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexData);
+
 	//K15_FreeFromMemoryAllocator(renderAllocator, vertexBuffer);
 }
 /*********************************************************************************/

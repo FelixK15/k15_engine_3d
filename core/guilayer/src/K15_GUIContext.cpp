@@ -172,6 +172,9 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption)
 	K15_GetTextSizeInPixels(guiFont, &textWidth, &textHeight, p_Caption, captionLength);
 
 	button->state = K15_GUI_BUTTON_STATE_NORMAL;
+	button->textLength = captionLength;
+	button->text = (const char*)(p_GUIContext->guiMemory + memoryCaptionPos);
+
 	buttonHeader->type = K15_GUI_TYPE_BUTTON;
 	buttonHeader->posPixelX = 0;
 	buttonHeader->posPixelY = 400;
@@ -189,7 +192,7 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption)
 		button->state = K15_GUI_BUTTON_STATE_HOVERED;
 	}
 
-	//copy text
+	//copy text incl 0 terminator
 	memcpy(p_GUIContext->guiMemory + memoryCaptionPos, p_Caption, captionLength);
 
 	return K15_FALSE;
