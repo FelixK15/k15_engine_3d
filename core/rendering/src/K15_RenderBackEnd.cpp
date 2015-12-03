@@ -524,7 +524,7 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 	K15_InternalDrawGeometry(p_RenderBackEnd, &renderGeometry);
 
 	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexData);
-	//K15_FreeFromMemoryAllocator(renderAllocator, vertexMemory);
+	K15_FreeFromMemoryAllocator(renderAllocator, vertexMemory);
 }
 /*********************************************************************************/
 intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderCommand* p_RenderCommand, K15_RenderCommandBuffer* p_RenderCommandBuffer, uint32 p_BufferOffset)

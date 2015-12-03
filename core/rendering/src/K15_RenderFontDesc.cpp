@@ -47,7 +47,7 @@ void K15_GetFontCharacterInfo(K15_RenderFontDesc* p_RenderFontDesc, const char* 
 		}
 		else
 		{
-			advanceX += kerningX + glyphWidth + glyphDesc->glyphLeft;
+			advanceX += kerningX + glyphWidth/*- glyphDesc->glyphLeft*/;
 			advanceY = glyphDesc->glyphTop;
 		}
 

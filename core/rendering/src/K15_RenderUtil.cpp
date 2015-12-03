@@ -45,83 +45,85 @@ intern inline uint32 K15_InternalPush2DTextVertices(K15_RenderBackEnd* p_RenderB
 													float p_PosLeft, float p_PosTop, const char* p_Text,
 													uint32 p_TextLength)
 {
-	float xOffset = 0.f;
-	float yOffset = 0.f;
-	float x = p_PosLeft;
-	float y = p_PosTop;
-
-	float glyphX = 0.f;
-	float glyphY = 0.f;
-	float glyphW = 0.f;
-	float glyphH = 0.f;
-
-	float texelLeft = 0.f;
-	float texelTop = 0.f;
-	float texelRight = 0.f;
-	float texelBottom = 0.f;
-
-	float baseLine = p_RenderFontDesc->ascent / p_RenderFontDesc->textureHeight;
-
 	uint32 vertexIndex = p_VertexBufferOffsetIndex;
-	uint32 numCharacter = p_RenderFontDesc->endCharacter - p_RenderFontDesc->startCharacter;
-	uint32 numKerningElements = numCharacter * numCharacter;
-	float gx = 0.f;
 
-	for (uint32 charIndex = 0;
-		charIndex < p_TextLength;
-		++charIndex)
+	float leftPos = p_PosLeft;
+	float topPos  = p_PosTop;
+	
+	float fontTextureWidth	 = p_RenderFontDesc->textureWidth;
+	float fontTextureHeight  = p_RenderFontDesc->textureHeight;
+
+	float viewportWidth  = p_RenderBackEnd->viewportWidth;
+	float viewportHeight = p_RenderBackEnd->viewportHeight;
+
+	float maxGlyphPixelHeight = p_RenderFontDesc->ascent - p_RenderFontDesc->descent;
+	float maxGlyphHeight = maxGlyphPixelHeight / viewportHeight;
+
+	for (uint32 textIndex = 0;
+		textIndex < p_TextLength;
+		++textIndex)
 	{
-		float offsetY = 0.f;
-		float advanceX = 0.f;
-		float advanceY = 0.f;
-		float glyphX = 0.f;
-		float glyphY = 0.f;
-		float glyphWidth = 0.f;
-		float glyphHeight = 0.f;
-		bool8 renderable = K15_FALSE;
+		const char character = p_Text[textIndex];
 
-		K15_GetFontCharacterInfo(p_RenderFontDesc, p_Text, p_TextLength, charIndex, &glyphX, &glyphY, &glyphWidth, &glyphHeight, &advanceX, &advanceY, &renderable);
+		float glyphPixelX		= 0.f;
+		float glyphPixelY		= 0.f;
+		float glyphPixelWidth	= 0.f;
+		float glyphPixelHeight	= 0.f;
+		float advancePixelX		= 0.f;
+		float advancePixelY		= 0.f;
 
-		if (p_Text[charIndex] == '\n')
+		bool8 renderableCharacter = K15_FALSE;
+
+		K15_GetFontCharacterInfo(p_RenderFontDesc, p_Text, p_TextLength, textIndex, 
+			&glyphPixelX, &glyphPixelY, &glyphPixelWidth, &glyphPixelHeight,
+			&advancePixelX, &advancePixelY, &renderableCharacter);
+
+		float baseLine = topPos + (p_RenderFontDesc->ascent / viewportHeight);
+
+		float glyphLeftPixelPos	  = glyphPixelX;
+		float glyphTopPixelPos	  = glyphPixelY;
+		float glyphRightPixelPos  = glyphPixelX + glyphPixelWidth;
+		float glyphBottomPixelPos = glyphPixelY + glyphPixelHeight;
+
+		float glyphTexelLeft   = glyphLeftPixelPos / fontTextureWidth;
+		float glyphTexelTop    = glyphTopPixelPos / fontTextureHeight;
+		float glyphTexelRight  = glyphRightPixelPos / fontTextureWidth;
+		float glyphTexelBottom = glyphBottomPixelPos / fontTextureHeight;
+
+		if (character == 'o') 
 		{
-			x = p_PosLeft;
-			y -= advanceY / p_RenderBackEnd->viewportHeight;
-			continue;
-		}
-		else
-		{
-			offsetY += advanceY / p_RenderBackEnd->viewportHeight;
-		}
-
-		glyphX = glyphX;
-		glyphY = glyphY;
-		glyphW = glyphWidth / p_RenderFontDesc->textureWidth;
-		glyphH = glyphHeight / p_RenderFontDesc->textureHeight;
-
-		float glyphWScreen = glyphWidth/ p_RenderBackEnd->viewportWidth;
-		float glyphHScreen = glyphHeight/ p_RenderBackEnd->viewportHeight;
-
-		float glyphBaseLineDiff = (baseLine - glyphHScreen) + glyphHScreen;
-
-		float leftBound = K15_CONVERT_TO_NDC_X(x);
-		float rightBound = K15_CONVERT_TO_NDC_X(x + glyphWScreen);
-		float topBound = K15_CONVERT_TO_NDC_Y(y + glyphBaseLineDiff);
-		float bottomBound = K15_CONVERT_TO_NDC_Y(y + glyphHScreen + glyphBaseLineDiff);
-
-		texelLeft	= glyphX / p_RenderFontDesc->textureWidth;
-		texelTop	= glyphY / p_RenderFontDesc->textureWidth;
-		texelRight  = glyphW + texelLeft;
-		texelBottom = glyphH + texelTop;
-
-		if (renderable)
-		{
-			vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex, 
-				leftBound, rightBound, topBound, bottomBound, 
-				texelLeft, texelRight, texelTop, texelBottom);
+			advancePixelY -= 1;		
 		}
 
-		x += glyphWScreen;
-		gx += glyphWScreen;
+		float advanceX = advancePixelX / viewportWidth;
+		float advanceY = advancePixelY / viewportHeight;
+
+
+		float glyphHeight = glyphPixelHeight / viewportHeight;
+		float glyphWidth  = glyphPixelWidth / viewportWidth;
+
+		//new line - reset x and advance y
+		if (character == '\n')
+		{
+			leftPos = p_PosLeft;
+			topPos -= advanceY;  
+		}
+		
+		if (renderableCharacter)
+		{
+			//float topOffset	   = 
+			float leftPosNDC   = K15_CONVERT_TO_NDC_X(leftPos);
+			//float topPosNDC	   = K15_CONVERT_TO_NDC_Y(baseLine - advanceY - glyphHeight);
+			float rightPosNDC  = K15_CONVERT_TO_NDC_X(leftPos + glyphWidth);
+			//float bottomPosNDC = K15_CONVERT_TO_NDC_Y(baseLine - advanceY);
+			float topPosNDC = K15_CONVERT_TO_NDC_Y(baseLine - glyphHeight - advanceY);
+			float bottomPosNDC = K15_CONVERT_TO_NDC_Y(baseLine - advanceY);
+			vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
+				leftPosNDC, rightPosNDC, topPosNDC, bottomPosNDC,
+				glyphTexelLeft, glyphTexelRight, glyphTexelTop, glyphTexelBottom);
+		}
+
+		leftPos += advanceX;
 	}
 
 	return vertexIndex;
