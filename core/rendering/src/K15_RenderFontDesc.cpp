@@ -1,7 +1,12 @@
 #include "K15_RenderFontDesc.h"
 
 /*********************************************************************************/
-void K15_GetFontCharacterInfo(K15_RenderFontDesc* p_RenderFontDesc, const char* p_Text, uint32 p_TextLength, uint32 p_CharacterIndex, float* p_GlyphX, float* p_GlyphY, float* p_GlyphWidth, float* p_GlyphHeight, float* p_AdvanceX, float* p_AdvanceY, bool8* p_Renderable)
+void K15_GetFontCharacterInfo(K15_RenderFontDesc* p_RenderFontDesc, const char* p_Text, 
+							  uint32 p_TextLength, uint32 p_CharacterIndex, 
+							  float* p_GlyphX, float* p_GlyphY, 
+							  float* p_GlyphWidth, float* p_GlyphHeight, 
+							  float* p_AdvanceX, float* p_AdvanceY, 
+							  float* p_OffsetTop, bool8* p_Renderable)
 {
 	K15_ASSERT(p_Text);
 
@@ -13,9 +18,14 @@ void K15_GetFontCharacterInfo(K15_RenderFontDesc* p_RenderFontDesc, const char* 
 	float glyphHeight = 0.f;
 	float advanceX = 0.f;
 	float advanceY = 0.f;
+	float offsetTop = 0.f;
 	bool8 renderable = K15_TRUE;
 
-	if (currentChar >= p_RenderFontDesc->startCharacter &&
+	if (currentChar == '\n')
+	{
+		advanceY -= p_RenderFontDesc->ascent - p_RenderFontDesc->descent + p_RenderFontDesc->lineGap;
+	}
+	else if (currentChar >= p_RenderFontDesc->startCharacter &&
 		currentChar <= p_RenderFontDesc->endCharacter)
 	{
 		K15_RenderGlyphDesc* glyphDesc = &p_RenderFontDesc->glyphDescs[currentChar - p_RenderFontDesc->startCharacter];
@@ -26,7 +36,9 @@ void K15_GetFontCharacterInfo(K15_RenderFontDesc* p_RenderFontDesc, const char* 
 		glyphY = glyphDesc->y;
 		glyphWidth = glyphDesc->width;
 		glyphHeight = glyphDesc->height;
-
+		
+		offsetTop = glyphHeight - glyphDesc->glyphBottom;
+		
 		//get kerning
 		if (p_CharacterIndex+1 < p_TextLength)
 		{
@@ -40,16 +52,8 @@ void K15_GetFontCharacterInfo(K15_RenderFontDesc* p_RenderFontDesc, const char* 
 				kerningX = kerningDesc->kerning;
 			}
 		}
-
-		if (currentChar == '\n')
-		{
-			advanceY -= p_RenderFontDesc->ascent - p_RenderFontDesc->descent + p_RenderFontDesc->lineGap;
-		}
-		else
-		{
-			advanceX += kerningX + glyphWidth/*- glyphDesc->glyphLeft*/;
-			advanceY = glyphDesc->glyphTop;
-		}
+		
+		advanceX += -kerningX + glyphWidth/*- glyphDesc->glyphLeft*/;
 
 		if (isspace(currentChar))
 		{
@@ -87,6 +91,11 @@ void K15_GetFontCharacterInfo(K15_RenderFontDesc* p_RenderFontDesc, const char* 
 		*p_GlyphY = glyphY;
 	}
 
+	if (p_OffsetTop)
+	{
+		*p_OffsetTop = offsetTop;
+	}
+
 	if (p_Renderable)
 	{
 		*p_Renderable = renderable;
@@ -119,7 +128,8 @@ void K15_GetTextSizeInPixels(K15_RenderFontDesc* p_RenderFontDesc, float* p_OutW
 		float advanceY = 0.f;
 		float glyphHeight = 0.f;
 	
-		K15_GetFontCharacterInfo(p_RenderFontDesc, p_Text, p_TextLength, charIndex, 0, 0, &glyphWidth, &glyphHeight, &advanceX, &advanceY, 0);
+		K15_GetFontCharacterInfo(p_RenderFontDesc, p_Text, p_TextLength, charIndex, 
+			0, 0, &glyphWidth, &glyphHeight, &advanceX, &advanceY, 0, 0);
 
 		baseHeight = K15_MAX(baseHeight, glyphHeight);
 
@@ -223,7 +233,8 @@ uint32 K15_GetTextVertexCount(K15_RenderFontDesc* p_RenderFontDesc, const char* 
 		textIndex < p_TextLength;
 		++textIndex)
 	{
-		K15_GetFontCharacterInfo(p_RenderFontDesc, p_Text, p_TextLength, textIndex, 0, 0, 0, 0, 0, 0, &renderable);
+		K15_GetFontCharacterInfo(p_RenderFontDesc, p_Text, p_TextLength, textIndex, 
+			0, 0, 0, 0, 0, 0, 0, &renderable);
 	
 		if (renderable)
 		{

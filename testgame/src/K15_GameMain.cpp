@@ -148,7 +148,7 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 // 	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, 0.0f, 0.0f);
 	
 	sprintf(text, "abcdefghijklmnopqrstuvwxyz\nABCDEFGHIJKLMNOPQRSTUVXYZ\n1234567890.+-*/!£$%^&*()_#[]{}");
-	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, 0.0f, 0.5f);
+	K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiContext->style.styleFont, text, 0.0f, 0.5f);
 
 	//K15_Button(guiContext, "bla");
 

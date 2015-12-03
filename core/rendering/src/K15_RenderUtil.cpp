@@ -71,12 +71,13 @@ intern inline uint32 K15_InternalPush2DTextVertices(K15_RenderBackEnd* p_RenderB
 		float glyphPixelHeight	= 0.f;
 		float advancePixelX		= 0.f;
 		float advancePixelY		= 0.f;
-
+		float bottomPixelOffset	= 0.f;
 		bool8 renderableCharacter = K15_FALSE;
 
 		K15_GetFontCharacterInfo(p_RenderFontDesc, p_Text, p_TextLength, textIndex, 
 			&glyphPixelX, &glyphPixelY, &glyphPixelWidth, &glyphPixelHeight,
-			&advancePixelX, &advancePixelY, &renderableCharacter);
+			&advancePixelX, &advancePixelY, &bottomPixelOffset, 
+			&renderableCharacter);
 
 		float baseLine = topPos + (p_RenderFontDesc->ascent / viewportHeight);
 
@@ -90,14 +91,10 @@ intern inline uint32 K15_InternalPush2DTextVertices(K15_RenderBackEnd* p_RenderB
 		float glyphTexelRight  = glyphRightPixelPos / fontTextureWidth;
 		float glyphTexelBottom = glyphBottomPixelPos / fontTextureHeight;
 
-		if (character == 'o') 
-		{
-			advancePixelY -= 1;		
-		}
-
 		float advanceX = advancePixelX / viewportWidth;
 		float advanceY = advancePixelY / viewportHeight;
 
+		float bottomOffset = bottomPixelOffset / viewportHeight;
 
 		float glyphHeight = glyphPixelHeight / viewportHeight;
 		float glyphWidth  = glyphPixelWidth / viewportWidth;
@@ -116,8 +113,8 @@ intern inline uint32 K15_InternalPush2DTextVertices(K15_RenderBackEnd* p_RenderB
 			//float topPosNDC	   = K15_CONVERT_TO_NDC_Y(baseLine - advanceY - glyphHeight);
 			float rightPosNDC  = K15_CONVERT_TO_NDC_X(leftPos + glyphWidth);
 			//float bottomPosNDC = K15_CONVERT_TO_NDC_Y(baseLine - advanceY);
-			float topPosNDC = K15_CONVERT_TO_NDC_Y(baseLine - glyphHeight - advanceY);
-			float bottomPosNDC = K15_CONVERT_TO_NDC_Y(baseLine - advanceY);
+			float topPosNDC = K15_CONVERT_TO_NDC_Y(baseLine - glyphHeight - advanceY + bottomOffset);
+			float bottomPosNDC = K15_CONVERT_TO_NDC_Y(baseLine - advanceY + bottomOffset);
 			vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 				leftPosNDC, rightPosNDC, topPosNDC, bottomPosNDC,
 				glyphTexelLeft, glyphTexelRight, glyphTexelTop, glyphTexelBottom);
