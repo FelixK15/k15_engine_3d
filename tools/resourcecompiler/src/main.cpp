@@ -1,5 +1,3 @@
-#include "K15_ResourceCompilerConfig.h"
-
 #include "K15_OSContext.h"
 #include "K15_FileSystem.h"
 #include "K15_FileWatch.h"
@@ -8,12 +6,7 @@
 #include "K15_Thread.h"
 #include "K15_AsyncOperation.h"
 
-#include "enums/K15_FormatValues.h"
-#include "K15_DataAccessHelper.h"
-#include "K15_MeshFormat.h"
-#include "K15_ConfigFile.h"
-
-#include "generated/K15_ResourceDependencyStretchBuffer.h"
+#include "K15_ResourceCompiler.h"
 
 #include <stdio.h>
 #include <csignal>
@@ -68,15 +61,12 @@ void K15_PrintDaemonInfo()
 /*********************************************************************************/
 
 #include "K15_ArgumentParser.cpp"
-#include "K15_ResourceCompiler.cpp"
 
 /*********************************************************************************/
 int main(int argc, char** argv)
 {
 	K15_InitializeOSLayer();
 	K15_OSContext* osContext = K15_GetOSLayerContext();
-
-	osContext->threading.numHardwareThreads = 1;
 
 	K15_ArgumentParser argumentParser = {};
 	K15_AsyncContext* asyncContext = K15_CreateAsyncContext(osContext);

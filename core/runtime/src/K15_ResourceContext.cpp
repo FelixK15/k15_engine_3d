@@ -29,7 +29,7 @@
 #endif //K15_ENABLE_FALLBACK_RESOURCES
 
 #ifdef K15_ENABLE_RUNTIME_RESOURCE_COMPILATION
-#	include "K15_ResourceCompiler.cpp"
+#	include "K15_ResourceCompiler.h"
 #endif //K15_ENABLE_RUNTIME_RESOURCE_COMPILATION
 
 #include "generated/K15_ResourceStretchBuffer.cpp"

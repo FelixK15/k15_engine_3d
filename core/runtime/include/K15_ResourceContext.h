@@ -9,7 +9,7 @@
 struct K15_ResourceArchive;
 struct K15_ResourceFileData;
 struct K15_ResourceData;
-struct K15_ResourceCompiler;
+struct K15_ResourceCompilerContext;
 
 typedef result8 (*K15_ResourceExistsInArchiveFnc)(K15_ResourceContext*, K15_ResourceArchive*, const char*);
 typedef uint32 (*K15_GetResourceSizeFromArchiveFnc)(K15_ResourceContext*, K15_ResourceArchive*, const char*);

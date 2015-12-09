@@ -1,4 +1,4 @@
-#include "K15_ResourceCompilerConfig.h"
+#include "K15_ResourceCompiler.h"
 
 #ifdef K15_RESOURCE_COMPILER_ENABLE_ASSIMP
 	#include "assimp/Importer.hpp"
@@ -52,66 +52,8 @@
 #include "K15_DataAccessHelper.h"
 #include "K15_Logging.h"
 #include "K15_AsyncOperation.h"
-
-//forward decl
-struct K15_ResourceCompilerContext;
-void K15_CompileResources(K15_ResourceCompilerContext* p_ResourceCompilerContext, char** p_FilesToCompile, uint32 p_NumFilesToCompile);
-
-/*********************************************************************************/
-struct K15_ResourceDependency
-{
-	char* dependencyPath;
-	char* resourcePath;
-
-	K15_FileWatchEntry* fileWatchEntry;
-	K15_ResourceCompilerContext* resourceCompilerContext;
-};
-/*********************************************************************************/
-
 #include "K15_TextureAtlas.cpp"
 #include "generated/K15_ResourceDependencyStretchBuffer.cpp"
-
-struct K15_ResourceCompiler;
-
-typedef bool8 (*K15_CompileResourceFnc)(K15_ResourceCompilerContext*, K15_ResourceCompiler*, K15_ConfigFileContext*, const char*);
-
-/*********************************************************************************/
-enum K15_ResourceCompilerType
-{
-	K15_RESOURCE_COMPILER_INVALID = -1,
-	K15_RESOURCE_COMPILER_MESH = 0,
-	K15_RESOURCE_COMPILER_TEXTURE,
-	K15_RESOURCE_COMPILER_FONT,
-	K15_RESOURCE_COMPILER_MATERIAL,
-	K15_RESOURCE_COMPILER_SAMPLER,
-
-	K15_RESOURCE_COMPILER_COUNT
-};
-/*********************************************************************************/
-struct K15_ResourceCompiler
-{
-	K15_CompileResourceFnc compileResource;
-	const char* name;
-	char* error;
-};
-/*********************************************************************************/
-struct K15_ResourceCompilerContext
-{
-	K15_ResourceDependencyStretchBuffer resourceDependencyStretchBuffer;
-	K15_ResourceDependencyStretchBuffer bufferedResourceDependencyStretchBuffer;
-	K15_AsyncContext* asyncContext;
-	K15_Mutex* dependencyMutex;
-
-	K15_ResourceCompiler* resourceCompiler[K15_RESOURCE_COMPILER_COUNT];
-};
-/*********************************************************************************/
-struct K15_ResourceCompilerAsyncParameter
-{
-	K15_ResourceCompilerContext* resourceCompilerContext;
-	char* resourceFilePath;
-};
-/*********************************************************************************/
-
 
 /*********************************************************************************/
 intern void K15_InternalAddResourceInfoToOutput(const char* p_ResourceInfoPath, const char* p_ResourceFilePath)
@@ -1466,7 +1408,7 @@ void K15_CreateDefaultResourceCompiler(K15_ResourceCompilerContext* p_ResourceCo
 	samplerCompiler->compileResource = K15_CompileSamplerResource;
 
 	//add directory watch for the input resource files
-	K15_AddDirectoryWatch(p_ResourceCompilerContext->argumentParser->inputPath, K15_InternalOnResourceFileChanged, (void*)p_ResourceCompilerContext);
+	//K15_AddDirectoryWatch(p_ResourceCompilerContext->argumentParser->inputPath, K15_InternalOnResourceFileChanged, (void*)p_ResourceCompilerContext);
 
 	p_ResourceCompilerContext->resourceCompiler[K15_RESOURCE_COMPILER_MESH] = meshCompiler;
 	p_ResourceCompilerContext->resourceCompiler[K15_RESOURCE_COMPILER_TEXTURE] = textureCompiler;
@@ -1507,16 +1449,16 @@ bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext
 		goto free_resources;
 	}
 
-	outputCompletePath = K15_ConcatStrings(argumentOutputPath, outputPath);
-
-	if (!p_ResourceCompilerContext->argumentParser->replace)
-	{
-		if (K15_FileExists(outputCompletePath))
-		{
-			K15_LOG_WARNING_MESSAGE("Will not compile resource '%s' as the resource has already been compiled to '%s'. Provide the '-u' flag to override already compiled resource files.", p_ResourceFile, outputCompletePath);
-			goto free_resources;
-		}
-	}
+// 	outputCompletePath = K15_ConcatStrings(argumentOutputPath, outputPath);
+// 
+// 	if (!p_ResourceCompilerContext->argumentParser->replace)
+// 	{
+// 		if (K15_FileExists(outputCompletePath))
+// 		{
+// 			K15_LOG_WARNING_MESSAGE("Will not compile resource '%s' as the resource has already been compiled to '%s'. Provide the '-u' flag to override already compiled resource files.", p_ResourceFile, outputCompletePath);
+// 			goto free_resources;
+// 		}
+// 	}
 
 	K15_ResourceCompilerType compilerType = K15_RESOURCE_COMPILER_INVALID;
 

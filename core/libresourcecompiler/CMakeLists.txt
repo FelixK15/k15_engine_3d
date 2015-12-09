@@ -1,6 +1,6 @@
 project(libresourcecompiler)
 
-set(RESOURCECOMPILER_INC "./include/K15_ResourceCompilerShader.h"
+set(RESOURCECOMPILER_INC  "./include/K15_ResourceCompilerConfig.h"
 			"./include/K15_ResourceCompiler.h"
 			"./include/K15_TextureAtlas.h")
 
@@ -30,5 +30,5 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_CRT_SECURE_NO_WARNINGS")
 endif()
 
-add_library(libresourcecompiler STATIC ${RESOURCECOMPILER_SRC})
+add_library(libresourcecompiler STATIC ${RESOURCECOMPILER_SRC} ${RESOURCECOMPILER_INC})
 target_link_libraries(libresourcecompiler ${RESOURCECOMPILER_LIBS})
