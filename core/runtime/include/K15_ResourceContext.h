@@ -9,6 +9,7 @@
 struct K15_ResourceArchive;
 struct K15_ResourceFileData;
 struct K15_ResourceData;
+struct K15_ResourceCompiler;
 
 typedef result8 (*K15_ResourceExistsInArchiveFnc)(K15_ResourceContext*, K15_ResourceArchive*, const char*);
 typedef uint32 (*K15_GetResourceSizeFromArchiveFnc)(K15_ResourceContext*, K15_ResourceArchive*, const char*);
@@ -69,6 +70,10 @@ struct K15_ResourceContext
 	K15_ResourceLoader resourceLoader[K15_MAX_RESOURCE_LOADER];	//Collection of different resource loader (provided by app)
 	K15_Mutex* resourceCacheLock;								//Mutex to control resource cache access.
 	
+#ifdef K15_ENABLE_RUNTIME_RESOURCE_COMPILATION
+	K15_ResourceCompilerContext* resourceCompiler;
+#endif //K15_ENABLE_RUNTIME_RESOURCE_COMPILATION
+
 	uint32 numResourceLoader;
 	uint32 flags;
 };

@@ -5,6 +5,7 @@
 
 bool8 K15_Win32IsRelativePath(const char* p_Path);
 char** K15_Win32GetFilesInDirectory(const char* p_Path, uint32* p_FileCount, const char* p_Filter = "*.*", bool8 p_Recursively = K15_FALSE);
+uint64 K15_Win32GetFileLastAccessTimeStamp(const char* p_FilePath);
 uint32 K15_Win32GetFileSize(const char* p_FilePath);
 uint8 K15_Win32FileExists(const char* p_FilePath);
 uint8 K15_Win32CopyFile(const char* p_SourcePath, const char* p_DestinationPath);

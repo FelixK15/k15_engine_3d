@@ -1,3 +1,5 @@
+#include "K15_ResourceCompilerConfig.h"
+
 #ifdef K15_RESOURCE_COMPILER_ENABLE_ASSIMP
 	#include "assimp/Importer.hpp"
 	#include "assimp/scene.h"
@@ -39,8 +41,17 @@
 #include "K15_FontFormat.h"
 #include "K15_SamplerFormat.h"
 #include "K15_MaterialFormat.h"
+#include "K15_MeshFormat.h"
 #include "K15_TextureAtlas.h"
 #include "K15_System.h"
+#include "K15_ConfigFile.h"
+#include "K15_FileSystem.h"
+#include "K15_String.h"
+#include "K15_Thread.h"
+#include "K15_FileWatch.h"
+#include "K15_DataAccessHelper.h"
+#include "K15_Logging.h"
+#include "K15_AsyncOperation.h"
 
 //forward decl
 struct K15_ResourceCompilerContext;
@@ -88,7 +99,6 @@ struct K15_ResourceCompilerContext
 {
 	K15_ResourceDependencyStretchBuffer resourceDependencyStretchBuffer;
 	K15_ResourceDependencyStretchBuffer bufferedResourceDependencyStretchBuffer;
-	K15_ArgumentParser* argumentParser;
 	K15_AsyncContext* asyncContext;
 	K15_Mutex* dependencyMutex;
 
@@ -103,7 +113,22 @@ struct K15_ResourceCompilerAsyncParameter
 /*********************************************************************************/
 
 
+/*********************************************************************************/
+intern void K15_InternalAddResourceInfoToOutput(const char* p_ResourceInfoPath, const char* p_ResourceFilePath)
+{
+	char* resourceInfoFile = K15_GetFileNameWithoutPath(p_ResourceFilePath);
 
+	uint64 lastAccessedTime = K15_GetFileLastAccessTimeStamp(p_ResourceInfoPath);
+	uint32 resourceInfoPathLength = (uint32)strlen(resourceInfoFile);
+
+	FILE* resourceFileHandle = fopen(p_ResourceFilePath, "ab");
+	fwrite(resourceInfoFile, resourceInfoPathLength, 1, resourceFileHandle);
+	fwrite(&lastAccessedTime, sizeof(uint64), 1, resourceFileHandle);
+	fwrite(&resourceInfoPathLength, sizeof(uint32), 1, resourceFileHandle);
+	fclose(resourceFileHandle);
+
+	free(resourceInfoFile);
+}
 /*********************************************************************************/
 intern void K15_InternalOnResourceFileChanged(const char* p_ResourceFilePath, void* p_UserData)
 {
@@ -1466,8 +1491,8 @@ bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext
 
 	char* resourceType = K15_GetConfigValueAsString(&resourceFileConfig, "ResourceType");
 	char* outputPath = K15_GetConfigValueAsString(&resourceFileConfig, "Destination");
-	const char* argumentInputPath = p_ResourceCompilerContext->argumentParser->inputPath;
-	const char* argumentOutputPath = p_ResourceCompilerContext->argumentParser->outputPath;
+// 	const char* argumentInputPath = p_ResourceCompilerContext->argumentParser->inputPath;
+// 	const char* argumentOutputPath = p_ResourceCompilerContext->argumentParser->outputPath;
 	char* outputCompletePath = 0;
 
 	if (!resourceType)
@@ -1538,6 +1563,11 @@ bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext
 		resourceCompiler->error = 0;
 
 		goto free_resources;
+	}
+	else
+	{
+		//add last access time to the output resource file
+		K15_InternalAddResourceInfoToOutput(p_ResourceFile, outputCompletePath);
 	}
 
 	K15_LOG_SUCCESS_MESSAGE("Successful compiled resource '%s' to '%s'.", p_ResourceFile, outputPath);

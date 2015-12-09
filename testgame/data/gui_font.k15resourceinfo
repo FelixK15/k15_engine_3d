@@ -1,6 +1,6 @@
 ResourceType=Font
 Source=fonts/gui_font.ttf
 Destination=gui_font.k15font
-FontSize=24
-StartChar=32
+FontSize=32
+StartChar=31
 EndChar=255

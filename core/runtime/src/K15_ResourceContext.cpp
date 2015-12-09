@@ -24,7 +24,14 @@
 #include "K15_RenderCommands.h"
 #include "K15_RenderShaderSemantics.h"
 
-#include "K15_FallbackResources.cpp"
+#ifdef K15_ENABLE_FALLBACK_RESOURCES
+#	include "K15_FallbackResources.cpp"
+#endif //K15_ENABLE_FALLBACK_RESOURCES
+
+#ifdef K15_ENABLE_RUNTIME_RESOURCE_COMPILATION
+#	include "K15_ResourceCompiler.cpp"
+#endif //K15_ENABLE_RUNTIME_RESOURCE_COMPILATION
+
 #include "generated/K15_ResourceStretchBuffer.cpp"
 
 /*********************************************************************************/
@@ -604,6 +611,32 @@ intern K15_Resource* K15_InternalLoadResource(K15_ResourceContext* p_ResourceCon
 
 	if (K15_InternalGetResourceFileData(p_ResourceContext, p_ResourcePath, &resourceFileData))
 	{
+		uint32 sizeResourceInfo = sizeof(uint64) + sizeof(uint32);
+		byte* fileContent = resourceFileData.fileContent;
+		uint32 fileSizeInBytes = resourceFileData.fileContentSizeInBytes;
+		uint32 resourceInfoPathLength = 0;
+		char* resourceInfoFile = 0;
+		uint64 lastAccessTime = 0;
+	
+		memcpy(&resourceInfoPathLength, (fileContent + fileSizeInBytes - sizeof(uint32)), sizeof(uint32));
+		
+		resourceInfoFile = (char*)alloca(resourceInfoPathLength + 1);
+		resourceInfoFile[resourceInfoPathLength] = 0;
+
+		memcpy(&lastAccessTime, (fileContent + fileSizeInBytes - sizeof(uint64) - sizeof(uint32)), sizeof(uint64));
+		memcpy(resourceInfoFile, (fileContent + fileSizeInBytes - sizeResourceInfo - resourceInfoPathLength), resourceInfoPathLength);
+
+		const char* resourcePath = p_ResourceContext->resourceArchive.resourcePath;
+		char* resourceInfoPath = K15_ConcatStrings(resourcePath, resourceInfoFile);
+
+		uint64 lastAccessTimeResourceFile = K15_GetFileLastAccessTimeStamp(resourceInfoPath);
+
+		//is the resourceinfo file newer than the compiled resource file?
+		if (lastAccessTime < lastAccessTimeResourceFile)
+		{
+
+		}
+
 		//create and load resource
 		resource = (K15_Resource*)K15_AllocateFromMemoryAllocator(&p_ResourceContext->memoryAllocator, sizeof(K15_Resource));
 		p_Loader->resourceLoader(p_ResourceContext, &resourceFileData, &resourceCompilerOutput);

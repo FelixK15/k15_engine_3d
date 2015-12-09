@@ -9,7 +9,7 @@ include_directories(../logging/include)
 include_directories(../string/include)
 include_directories(../memory/include)
 include_directories(../resourceformats/include)
-include_directories(../shadercompilerlib/include)
+include_directories(../libshadercompiler/include)
 include_directories(../runtime/include)
 
 set(RENDERER_SRC ./src/K15_RenderContext.cpp)
@@ -32,7 +32,7 @@ set(RENDERER_INC ./include/K15_RenderContext.h
 		 ./include/K15_RenderFontDesc.h
 		 ./include/K15_RenderShaderSemantics.h)
 
-set(RENDERER_LIBS math logging shadercompilerlib runtime)
+set(RENDERER_LIBS math logging libshadercompiler runtime)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake")
 

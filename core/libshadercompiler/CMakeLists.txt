@@ -1,4 +1,4 @@
-project(shadercompilerlib)
+project(libshadercompiler)
 
 include_directories(./../)
 include_directories(./include)
@@ -15,4 +15,4 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_CRT_SECURE_NO_WARNINGS")
 endif()
 
-add_library(shadercompilerlib STATIC ${SC_INC} ${SC_SRC})
+add_library(libshadercompiler STATIC ${SC_INC} ${SC_SRC})

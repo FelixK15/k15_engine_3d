@@ -52,8 +52,8 @@ void K15_GetFontCharacterInfo(K15_RenderFontDesc* p_RenderFontDesc, const char* 
 				kerningX = kerningDesc->kerning;
 			}
 		}
-		
-		advanceX += -kerningX + glyphWidth/*- glyphDesc->glyphLeft*/;
+
+		advanceX += (glyphDesc->advance - glyphDesc->width) + kerningX + glyphWidth/*- glyphDesc->glyphLeft*/;
 
 		if (isspace(currentChar))
 		{

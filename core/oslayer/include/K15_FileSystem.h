@@ -6,6 +6,7 @@
 #ifdef K15_OS_WINDOWS
 	#include "win32/K15_FileSystemWin32.h"
 
+	#define K15_GetFileLastAccessTimeStamp		K15_Win32GetFileLastAccessTimeStamp
 	#define K15_GetFileSize						K15_Win32GetFileSize
 	#define K15_FileExists						K15_Win32FileExists
 	#define K15_CopyWholeFileContentIntoBuffer	K15_Win32ReadWholeFileIntoBuffer

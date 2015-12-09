@@ -129,6 +129,32 @@ char** K15_Win32GetFilesInDirectory(const char* p_Path, uint32* p_FileCounter, c
 	return filesInDirectory;
 }
 /*********************************************************************************/
+uint64 K15_Win32GetFileLastAccessTimeStamp(const char* p_FilePath)
+{
+	K15_ASSERT_TEXT(p_FilePath, "filepath is NULL.");
+
+	uint32 filePathLength= (uint32)strlen(p_FilePath) + 1;  //+1 for 0 terminator
+
+	wchar_t* wideFilePath = (wchar_t*)alloca(filePathLength * sizeof(wchar_t));
+
+	K15_Win32ConvertStringToWString(p_FilePath, filePathLength, wideFilePath);
+	
+	HANDLE fileHandle = CreateFileW(wideFilePath, GENERIC_READ, FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	uint64 lastAccessTimeStamp = 0;
+
+	if (fileHandle != INVALID_HANDLE_VALUE)
+	{
+		FILETIME lastAccessTime = {};
+		GetFileTime(fileHandle, 0, 0, &lastAccessTime);
+
+		lastAccessTimeStamp = (lastAccessTime.dwHighDateTime << lastAccessTime.dwLowDateTime);
+		CloseHandle(fileHandle);
+	}
+	
+	return lastAccessTimeStamp;
+}
+/*********************************************************************************/
 uint32 K15_Win32GetFileSize(const char* p_FilePath)
 {
 	K15_ASSERT_TEXT(p_FilePath, "filepath is NULL.");

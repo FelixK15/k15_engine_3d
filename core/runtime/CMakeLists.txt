@@ -10,6 +10,7 @@ include_directories(./../oslayer/include/)
 include_directories(./../memory/include/)
 include_directories(./../logging/include/)
 include_directories(./../string/include/)
+include_directories(./../libresourcecompiler/include/)
 
 set(K15_RUNTIME_SRC 	"src/K15_ConfigFile.cpp"
 			"src/K15_ResourceContext.cpp"

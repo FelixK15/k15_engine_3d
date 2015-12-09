@@ -1,20 +1,20 @@
 project(resourcecompiler)
 
-set(RESOURCECOMPILER_INC "./include/K15_ResourceCompilerShader.h"
-			 "./include/K15_TextureAtlas.h")
 set(RESOURCECOMPILER_SRC "./src/main.cpp")
+
+set(RESOURCECOMPILER_LIBS libresourcecompiler oslayer)
 
 include_directories(./../)
 include_directories(./include)
 include_directories(./src)
-include_directories(../resourceformats/include/)
-include_directories(../oslayer/include/)
-include_directories(../logging/include/)
-include_directories(../string/include/)
-include_directories(../runtime/include/)
-include_directories(../rendering/include/)
-include_directories(../memory/include/)
-include_directories(../math/include/)
+include_directories(../../core/libresourcecompiler/include/)
+include_directories(../../core/oslayer/include/)
+include_directories(../../core/logging/include/)
+include_directories(../../core/string/include/)
+include_directories(../../core/runtime/include/)
+include_directories(../../core/rendering/include/)
+include_directories(../../core/memory/include/)
+include_directories(../../core/math/include/)
 include_directories(../../dependencies/assimp/include/)
 include_directories(../../dependencies/stb/)
 include_directories(../../dependencies/squish/)
@@ -27,5 +27,4 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()
 
 add_executable(resourcecompiler ${RESOURCECOMPILER_SRC})
-
-target_link_libraries(resourcecompiler zlib assimp squish resourceformats math oslayer string logging runtime memory)
+target_link_libraries(resourcecompiler ${RESOURCECOMPILER_LIBS})
