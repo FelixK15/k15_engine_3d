@@ -4,6 +4,7 @@
 #include "K15_Logging.h"
 #include "K15_String.h"
 #include "K15_Thread.h"
+#include "K15_System.h"
 #include "K15_AsyncOperation.h"
 
 #include "K15_ResourceCompiler.h"
@@ -68,6 +69,8 @@ int main(int argc, char** argv)
 	K15_InitializeOSLayer();
 	K15_OSContext* osContext = K15_GetOSLayerContext();
 
+	osContext->threading.numHardwareThreads = 1;
+
 	K15_ArgumentParser argumentParser = {};
 	K15_AsyncContext* asyncContext = K15_CreateAsyncContext(osContext);
 
@@ -81,27 +84,18 @@ int main(int argc, char** argv)
 
 	uint32 numFilesToCompile = 0;
 
-	K15_ResourceCompilerContext compilerContext = {};
-
-	compilerContext.asyncContext = asyncContext;
-	compilerContext.argumentParser = &argumentParser;
-	compilerContext.dependencyMutex = K15_CreateMutex();
-
-	K15_CreateResourceDependencyStretchBuffer(&compilerContext.resourceDependencyStretchBuffer);
-	K15_CreateResourceDependencyStretchBuffer(&compilerContext.bufferedResourceDependencyStretchBuffer);
-
-	K15_CreateDefaultResourceCompiler(&compilerContext);
+	K15_ResourceCompilerContext* compilerContext = K15_CreateResourceCompilerContext(asyncContext);
 	K15_SetWorkingDirectory(argumentParser.inputPath);
 
 	char** filesToCompile = K15_GetFilesInDirectory(argumentParser.inputPath, &numFilesToCompile, "*.k15resourceinfo");
 
-	K15_CompileResources(&compilerContext, filesToCompile, numFilesToCompile);
+	K15_CompileResources(compilerContext, filesToCompile, numFilesToCompile);
 
 	if (argumentParser.daemon)
 	{
 		while(true)
 		{
-			K15_AddBufferResourceDependenciesToFileWatch(&compilerContext);
+//			K15_AddBufferResourceDependenciesToFileWatch(&compilerContext);
 			K15_SleepThreadForSeconds(10);
 		}
 	}

@@ -52,8 +52,10 @@
 #include "K15_DataAccessHelper.h"
 #include "K15_Logging.h"
 #include "K15_AsyncOperation.h"
+#include "K15_CustomMemoryAllocator.h"
+
 #include "K15_TextureAtlas.cpp"
-#include "generated/K15_ResourceDependencyStretchBuffer.cpp"
+
 
 /*********************************************************************************/
 intern void K15_InternalAddResourceInfoToOutput(const char* p_ResourceInfoPath, const char* p_ResourceFilePath)
@@ -83,97 +85,97 @@ intern void K15_InternalOnResourceFileChanged(const char* p_ResourceFilePath, vo
 	}
 }
 /*********************************************************************************/
-intern void K15_InternalOnDependencyResourceFileChanged(const char* p_DependencyResourceFilePath, void* p_UserData)
-{
-	K15_ResourceDependency* resourceDependency = (K15_ResourceDependency*)p_UserData;
-	K15_ResourceCompilerContext* resourceCompilerContext = resourceDependency->resourceCompilerContext;
-	
-	K15_ResourceDependencyStretchBuffer* resourceDependencyStretchBuffer = &resourceCompilerContext->resourceDependencyStretchBuffer;
-
-	char** filesToRecompile = 0;
-	uint32 numFilesToRecompile = 0;
-	uint32 numResourceDependencies = resourceDependencyStretchBuffer->numElements;
-	//iterate over all dependencies and get the actual resource file which we want to recompile
-	//we need two passes. one to get the amount of files associated with the current dependency 
-	//and another to add the files to an array.
-	for (uint32 resourceDependencyIndex = 0;
-		resourceDependencyIndex < numResourceDependencies;
-		++resourceDependencyIndex)
-	{
-		K15_ResourceDependency* currentDependency = K15_GetResourceDependencyStretchBufferElementUnsafe(resourceDependencyStretchBuffer, resourceDependencyIndex);
-
-		//if dependency paths match, add to list of resources that will get recompiled
-		if (strcmp(currentDependency->dependencyPath, resourceDependency->dependencyPath) == 0)
-		{
-			numFilesToRecompile += 1;
-		}
-	}
-
-	filesToRecompile = (char**)alloca(numFilesToRecompile * K15_PTR_SIZE);
-	numFilesToRecompile = 0;
-
-	//2nd pass
-	for (uint32 resourceDependencyIndex = 0;
-		resourceDependencyIndex < numResourceDependencies;
-		++resourceDependencyIndex)
-	{
-		K15_ResourceDependency* currentDependency = K15_GetResourceDependencyStretchBufferElementUnsafe(resourceDependencyStretchBuffer, resourceDependencyIndex);
-
-		//if dependency paths match, add to list of resources that will get recompiled
-		if (strcmp(currentDependency->dependencyPath, resourceDependency->dependencyPath) == 0)
-		{
-			filesToRecompile[numFilesToRecompile++] = currentDependency->resourcePath;
-		}
-	}
-
-	//recompile all affected resource files
-	K15_CompileResources(resourceCompilerContext, filesToRecompile, numFilesToRecompile);
-}
+// intern void K15_InternalOnDependencyResourceFileChanged(const char* p_DependencyResourceFilePath, void* p_UserData)
+// {
+// 	K15_ResourceDependency* resourceDependency = (K15_ResourceDependency*)p_UserData;
+// 	K15_ResourceCompilerContext* resourceCompilerContext = resourceDependency->resourceCompilerContext;
+// 	
+// 	K15_ResourceDependencyStretchBuffer* resourceDependencyStretchBuffer = &resourceCompilerContext->resourceDependencyStretchBuffer;
+// 
+// 	char** filesToRecompile = 0;
+// 	uint32 numFilesToRecompile = 0;
+// 	uint32 numResourceDependencies = resourceDependencyStretchBuffer->numElements;
+// 	//iterate over all dependencies and get the actual resource file which we want to recompile
+// 	//we need two passes. one to get the amount of files associated with the current dependency 
+// 	//and another to add the files to an array.
+// 	for (uint32 resourceDependencyIndex = 0;
+// 		resourceDependencyIndex < numResourceDependencies;
+// 		++resourceDependencyIndex)
+// 	{
+// 		K15_ResourceDependency* currentDependency = K15_GetResourceDependencyStretchBufferElementUnsafe(resourceDependencyStretchBuffer, resourceDependencyIndex);
+// 
+// 		//if dependency paths match, add to list of resources that will get recompiled
+// 		if (strcmp(currentDependency->dependencyPath, resourceDependency->dependencyPath) == 0)
+// 		{
+// 			numFilesToRecompile += 1;
+// 		}
+// 	}
+// 
+// 	filesToRecompile = (char**)alloca(numFilesToRecompile * K15_PTR_SIZE);
+// 	numFilesToRecompile = 0;
+// 
+// 	//2nd pass
+// 	for (uint32 resourceDependencyIndex = 0;
+// 		resourceDependencyIndex < numResourceDependencies;
+// 		++resourceDependencyIndex)
+// 	{
+// 		K15_ResourceDependency* currentDependency = K15_GetResourceDependencyStretchBufferElementUnsafe(resourceDependencyStretchBuffer, resourceDependencyIndex);
+// 
+// 		//if dependency paths match, add to list of resources that will get recompiled
+// 		if (strcmp(currentDependency->dependencyPath, resourceDependency->dependencyPath) == 0)
+// 		{
+// 			filesToRecompile[numFilesToRecompile++] = currentDependency->resourcePath;
+// 		}
+// 	}
+// 
+// 	//recompile all affected resource files
+// 	K15_CompileResources(resourceCompilerContext, filesToRecompile, numFilesToRecompile);
+// }
 /*********************************************************************************/
 intern void K15_InternalAddResourceDependencyFileWatch(K15_ResourceCompilerContext* p_ResourceCompilerContext, K15_ResourceDependency* p_ResourceDependency)
 {
-	//create link between dependency and compiler context
-	p_ResourceDependency->resourceCompilerContext = p_ResourceCompilerContext;
-
-	const char* dependencyFilePath = p_ResourceDependency->dependencyPath;
-
-	//Check if the file is already being watched.
-	if (!K15_FileIsBeingWatched(dependencyFilePath))
-	{
-		//add file watch to the dependency file (resourcedependency variable as parameter)
-		K15_FileWatchEntry* watchEntry = K15_AddFileWatch(dependencyFilePath, K15_InternalOnDependencyResourceFileChanged, p_ResourceDependency);
-
-		//save filewatch so we can delete it later
-		p_ResourceDependency->fileWatchEntry = watchEntry;
-	}
+// 	//create link between dependency and compiler context
+// 	p_ResourceDependency->resourceCompilerContext = p_ResourceCompilerContext;
+// 
+// 	const char* dependencyFilePath = p_ResourceDependency->dependencyPath;
+// 
+// 	//Check if the file is already being watched.
+// 	if (!K15_FileIsBeingWatched(dependencyFilePath))
+// 	{
+// 		//add file watch to the dependency file (resourcedependency variable as parameter)
+// 		K15_FileWatchEntry* watchEntry = K15_AddFileWatch(dependencyFilePath, K15_InternalOnDependencyResourceFileChanged, p_ResourceDependency);
+// 
+// 		//save filewatch so we can delete it later
+// 		p_ResourceDependency->fileWatchEntry = watchEntry;
+// 	}
 }
-/*********************************************************************************/
-intern uint8 K15_InternalResourceDependencyComparer(K15_ResourceDependency* p_Element, void* p_UserData)
-{
-	K15_ResourceDependency* userDependency = (K15_ResourceDependency*)p_UserData;
-	bool8 found = strcmp(userDependency->dependencyPath, p_Element->dependencyPath) == 0 && strcmp(userDependency->resourcePath, p_Element->resourcePath) == 0;
-	return found ? 0 : 1;
-}
-/*********************************************************************************/
+// /*********************************************************************************/
+// intern uint8 K15_InternalResourceDependencyComparer(K15_ResourceDependency* p_Element, void* p_UserData)
+// {
+// 	K15_ResourceDependency* userDependency = (K15_ResourceDependency*)p_UserData;
+// 	bool8 found = strcmp(userDependency->dependencyPath, p_Element->dependencyPath) == 0 && strcmp(userDependency->resourcePath, p_Element->resourcePath) == 0;
+// 	return found ? 0 : 1;
+// }
+// /*********************************************************************************/
 intern void K15_InternalAddResourceDependency(K15_ResourceCompilerContext* p_ResourceCompilerContext, char* p_ResourcePath, char* p_DependencyPath)
 {
-	K15_ResourceDependencyStretchBuffer* resourceDependencyBuffer = &p_ResourceCompilerContext->resourceDependencyStretchBuffer;
-	K15_ResourceDependencyStretchBuffer* bufferedResourceDependencyBuffer = &p_ResourceCompilerContext->bufferedResourceDependencyStretchBuffer;
-	K15_ResourceDependency resourceDependency = {};
-
-	resourceDependency.dependencyPath = K15_CopyString(p_DependencyPath);
-	resourceDependency.resourcePath = K15_CopyString(p_ResourcePath);
-
-	K15_LockMutex(p_ResourceCompilerContext->dependencyMutex);
-		K15_ResourceDependency* existingDependency = K15_GetResourceDependencyStretchBufferElementConditional(resourceDependencyBuffer, K15_InternalResourceDependencyComparer, &resourceDependency);
-
-		//add dependency only, if it has not been added before
-		if (!existingDependency)
-		{
-			//add dependency to the resource compiler contextg
-			K15_PushResourceDependencyStretchBufferElement(bufferedResourceDependencyBuffer, resourceDependency);
-		}
-	K15_UnlockMutex(p_ResourceCompilerContext->dependencyMutex);
+// 	K15_ResourceDependencyStretchBuffer* resourceDependencyBuffer = &p_ResourceCompilerContext->resourceDependencyStretchBuffer;
+// 	K15_ResourceDependencyStretchBuffer* bufferedResourceDependencyBuffer = &p_ResourceCompilerContext->bufferedResourceDependencyStretchBuffer;
+// 	K15_ResourceDependency resourceDependency = {};
+// 
+// 	resourceDependency.dependencyPath = K15_CopyString(p_DependencyPath);
+// 	resourceDependency.resourcePath = K15_CopyString(p_ResourcePath);
+// 
+// 	K15_LockMutex(p_ResourceCompilerContext->dependencyMutex);
+// 		K15_ResourceDependency* existingDependency = K15_GetResourceDependencyStretchBufferElementConditional(resourceDependencyBuffer, K15_InternalResourceDependencyComparer, &resourceDependency);
+// 
+// 		//add dependency only, if it has not been added before
+// 		if (!existingDependency)
+// 		{
+// 			//add dependency to the resource compiler contextg
+// 			K15_PushResourceDependencyStretchBufferElement(bufferedResourceDependencyBuffer, resourceDependency);
+// 		}
+// 	K15_UnlockMutex(p_ResourceCompilerContext->dependencyMutex);
 }
 /*********************************************************************************/
 intern int K15_InternalLog2(int x)
@@ -252,6 +254,46 @@ intern uint8 K15_InternalConvertTextToSamplerAddressMode(const char* p_Text)
 	return addressMode;
 }
 /*********************************************************************************/
+intern const char* K15_InternalGetResourceFileExtension(K15_ResourceCompilerType p_ResourceCompilerType)
+{
+	const char* fileExtension = 0;
+
+	switch(p_ResourceCompilerType)
+	{
+	case K15_RESOURCE_COMPILER_FONT:
+		fileExtension = "k15font";
+		break;
+
+	case K15_RESOURCE_COMPILER_MATERIAL:
+		fileExtension = "k15material";
+		break;
+
+	case K15_RESOURCE_COMPILER_MESH:
+		fileExtension = "k15mesh";
+		break;
+
+	case K15_RESOURCE_COMPILER_SAMPLER:
+		fileExtension = "k15sampler";
+		break;
+
+	case K15_RESOURCE_COMPILER_TEXTURE:
+		fileExtension = "k15texture";
+		break;
+
+	default:
+		break;
+	}
+
+	return fileExtension;
+}
+/*********************************************************************************/
+intern void K15_InternalCompileResourceAsync(void* p_ThreadParameter)
+{
+	K15_ResourceCompilerAsyncParameter* resourceCompilerAsyncParameter = (K15_ResourceCompilerAsyncParameter*)p_ThreadParameter;
+
+	K15_CompileResource(resourceCompilerAsyncParameter->resourceCompilerContext, resourceCompilerAsyncParameter->resourceFilePath);
+}
+/*********************************************************************************/
 intern bool8 K15_InternalIsStringValue(char* p_ValueText)
 {
 	char* value = p_ValueText;
@@ -311,37 +353,37 @@ intern bool8 K15_InternalIsIntValue(char* p_ValueText)
 
 
 /*********************************************************************************/
-void K15_AddBufferResourceDependenciesToFileWatch(K15_ResourceCompilerContext* p_ResourceCompilerContext)
-{
-	K15_ResourceDependencyStretchBuffer* bufferedDependencyStretchBuffer = &p_ResourceCompilerContext->bufferedResourceDependencyStretchBuffer;
-	K15_ResourceDependencyStretchBuffer* resourceDependencyStretchBuffer = &p_ResourceCompilerContext->resourceDependencyStretchBuffer;
-
-	uint32 numElements = bufferedDependencyStretchBuffer->numElements;
-
-	//only lock the buffered dependency buffer if there are buffered elements
-	if (numElements > 0)
-	{
-		K15_LockMutex(p_ResourceCompilerContext->dependencyMutex);
-		//add all buffered resource dependencies to the file watcher and add them
-		//to the 'real' resource dependency buffer
-		for(uint32 elementIndex = 0;
-			elementIndex < numElements;
-			++elementIndex)
-		{
-			//get resource dependency from the buffered array and add it to the file watch.
-			K15_ResourceDependency* currentResourceDependency = K15_GetResourceDependencyStretchBufferElementUnsafe(bufferedDependencyStretchBuffer, elementIndex);
-
-			//Add to the real resource dependency buffer
-			currentResourceDependency = K15_PushResourceDependencyStretchBufferElement(resourceDependencyStretchBuffer, *currentResourceDependency);
-			
-			K15_InternalAddResourceDependencyFileWatch(p_ResourceCompilerContext, currentResourceDependency);
-		}
-
-		//clear the buffered resource dependency buffer
-		K15_ClearResourceDependencyStretchBuffer(bufferedDependencyStretchBuffer);
-		K15_UnlockMutex(p_ResourceCompilerContext->dependencyMutex);
-	}
-}
+// void K15_AddBufferResourceDependenciesToFileWatch(K15_ResourceCompilerContext* p_ResourceCompilerContext)
+// {
+// 	K15_ResourceDependencyStretchBuffer* bufferedDependencyStretchBuffer = &p_ResourceCompilerContext->bufferedResourceDependencyStretchBuffer;
+// 	K15_ResourceDependencyStretchBuffer* resourceDependencyStretchBuffer = &p_ResourceCompilerContext->resourceDependencyStretchBuffer;
+// 
+// 	uint32 numElements = bufferedDependencyStretchBuffer->numElements;
+// 
+// 	//only lock the buffered dependency buffer if there are buffered elements
+// 	if (numElements > 0)
+// 	{
+// 		K15_LockMutex(p_ResourceCompilerContext->dependencyMutex);
+// 		//add all buffered resource dependencies to the file watcher and add them
+// 		//to the 'real' resource dependency buffer
+// 		for(uint32 elementIndex = 0;
+// 			elementIndex < numElements;
+// 			++elementIndex)
+// 		{
+// 			//get resource dependency from the buffered array and add it to the file watch.
+// 			K15_ResourceDependency* currentResourceDependency = K15_GetResourceDependencyStretchBufferElementUnsafe(bufferedDependencyStretchBuffer, elementIndex);
+// 
+// 			//Add to the real resource dependency buffer
+// 			currentResourceDependency = K15_PushResourceDependencyStretchBufferElement(resourceDependencyStretchBuffer, *currentResourceDependency);
+// 			
+// 			K15_InternalAddResourceDependencyFileWatch(p_ResourceCompilerContext, currentResourceDependency);
+// 		}
+// 
+// 		//clear the buffered resource dependency buffer
+// 		K15_ClearResourceDependencyStretchBuffer(bufferedDependencyStretchBuffer);
+// 		K15_UnlockMutex(p_ResourceCompilerContext->dependencyMutex);
+// 	}
+// }
 /*********************************************************************************/
 void K15_SetResourceCompilerError(K15_ResourceCompiler* p_ResourceCompiler, const char* p_ErrorMessage)
 {
@@ -756,6 +798,10 @@ bool8 K15_CompileTextureResourceWithSquish(K15_ResourceCompilerContext* p_Resour
 	if (K15_SaveTextureFormatToFile(&textureFormat, p_OutputPath, K15_SAVE_FLAG_FREE_DATA) == K15_SUCCESS)
 	{
 		compiled = K15_TRUE;
+	}
+	else
+	{
+		K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not open output file '%s'.", (char*)malloc(512), p_OutputPath));
 	}
 
 free_resources:
@@ -1308,6 +1354,11 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 	
 	compiled = K15_SaveMaterialFormatToFile(&materialFormat, p_OutputPath, K15_SAVE_FLAG_FREE_DATA) == K15_SUCCESS;
 
+	if (!compiled)
+	{
+		K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not open output file '%s'.", (char*)malloc(512), p_OutputPath));
+	}
+
 free_resources:
 	free(resourceName);
 	free(materialPassDataConfigDirectory);
@@ -1371,7 +1422,7 @@ free_resources:
 	return compiled;
 }
 /*********************************************************************************/
-void K15_CreateDefaultResourceCompiler(K15_ResourceCompilerContext* p_ResourceCompilerContext)
+intern void K15_InternalCreateDefaultResourceCompiler(K15_ResourceCompilerContext* p_ResourceCompilerContext)
 {
 	K15_ResourceCompiler* meshCompiler = (K15_ResourceCompiler*)malloc(sizeof(K15_ResourceCompiler));
 	meshCompiler->name = "Mesh Compiler";
@@ -1417,7 +1468,24 @@ void K15_CreateDefaultResourceCompiler(K15_ResourceCompilerContext* p_ResourceCo
 	p_ResourceCompilerContext->resourceCompiler[K15_RESOURCE_COMPILER_SAMPLER] = samplerCompiler;
 }
 /*********************************************************************************/
-bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext, const char* p_ResourceFile)
+K15_ResourceCompilerContext* K15_CreateResourceCompilerContext(K15_AsyncContext* p_AsyncContext)
+{
+	return K15_CreateResourceCompilerContextWithCustomAllocator(p_AsyncContext, K15_CreateDefaultMemoryAllocator());
+}
+/*********************************************************************************/
+K15_ResourceCompilerContext* K15_CreateResourceCompilerContextWithCustomAllocator(K15_AsyncContext* p_AsyncContext, 
+																				  K15_CustomMemoryAllocator p_Allocator)
+{
+	K15_ResourceCompilerContext* resourceCompilerContext = (K15_ResourceCompilerContext*)K15_AllocateFromMemoryAllocator(&p_Allocator, sizeof(K15_ResourceCompilerContext));
+	resourceCompilerContext->asyncContext = p_AsyncContext;
+	
+	K15_InternalCreateDefaultResourceCompiler(resourceCompilerContext);
+
+	return resourceCompilerContext;
+}
+/*********************************************************************************/
+bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext, 
+						  const char* p_ResourceFile)
 {
 	assert(p_ResourceCompilerContext);
 
@@ -1431,34 +1499,10 @@ bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext
 		return K15_FALSE;
 	}
 
+	char* resourceFolder = K15_GetPathWithoutFileName(p_ResourceFile);
+	char* resourceName = K15_GetFileNameWithoutExtension(p_ResourceFile);
 	char* resourceType = K15_GetConfigValueAsString(&resourceFileConfig, "ResourceType");
-	char* outputPath = K15_GetConfigValueAsString(&resourceFileConfig, "Destination");
-// 	const char* argumentInputPath = p_ResourceCompilerContext->argumentParser->inputPath;
-// 	const char* argumentOutputPath = p_ResourceCompilerContext->argumentParser->outputPath;
 	char* outputCompletePath = 0;
-
-	if (!resourceType)
-	{
-		K15_LOG_ERROR_MESSAGE("No resource type for resource file '%s' (Add 'ResourceType' value to the resource file)", p_ResourceFile);
-		goto free_resources;
-	}
-
-	if (!outputPath)
-	{
-		K15_LOG_ERROR_MESSAGE("No output path for resource '%s' (Add 'Destination' value to the resource file)", p_ResourceFile);
-		goto free_resources;
-	}
-
-// 	outputCompletePath = K15_ConcatStrings(argumentOutputPath, outputPath);
-// 
-// 	if (!p_ResourceCompilerContext->argumentParser->replace)
-// 	{
-// 		if (K15_FileExists(outputCompletePath))
-// 		{
-// 			K15_LOG_WARNING_MESSAGE("Will not compile resource '%s' as the resource has already been compiled to '%s'. Provide the '-u' flag to override already compiled resource files.", p_ResourceFile, outputCompletePath);
-// 			goto free_resources;
-// 		}
-// 	}
 
 	K15_ResourceCompilerType compilerType = K15_RESOURCE_COMPILER_INVALID;
 
@@ -1488,6 +1532,33 @@ bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext
 		goto free_resources;
 	}
 
+	if (!resourceType)
+	{
+		K15_LOG_ERROR_MESSAGE("No resource type for resource file '%s' (Add 'ResourceType' value to the resource file)", p_ResourceFile);
+		goto free_resources;
+	}
+
+// 	if (!outputPath)
+// 	{
+// 		K15_LOG_ERROR_MESSAGE("No output path for resource '%s' (Add 'Destination' value to the resource file)", p_ResourceFile);
+// 		goto free_resources;
+// 	}
+
+	outputCompletePath = K15_GenerateString("%sresources/%s/%s.%s", (char*)alloca(256), 
+		resourceFolder, K15_ConvertToLowerIntoBuffer(resourceType, (char*)alloca(64)), 
+		resourceName, K15_InternalGetResourceFileExtension(compilerType));
+
+// 	outputCompletePath = K15_ConcatStrings(argumentOutputPath, outputPath);
+// 
+// 	if (!p_ResourceCompilerContext->argumentParser->replace)
+// 	{
+// 		if (K15_FileExists(outputCompletePath))
+// 		{
+// 			K15_LOG_WARNING_MESSAGE("Will not compile resource '%s' as the resource has already been compiled to '%s'. Provide the '-u' flag to override already compiled resource files.", p_ResourceFile, outputCompletePath);
+// 			goto free_resources;
+// 		}
+// 	}
+
 	K15_ResourceCompiler* resourceCompiler = p_ResourceCompilerContext->resourceCompiler[compilerType];
 
 	if (!resourceCompiler)
@@ -1512,21 +1583,15 @@ bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext
 		K15_InternalAddResourceInfoToOutput(p_ResourceFile, outputCompletePath);
 	}
 
-	K15_LOG_SUCCESS_MESSAGE("Successful compiled resource '%s' to '%s'.", p_ResourceFile, outputPath);
+	K15_LOG_SUCCESS_MESSAGE("Successful compiled resource '%s' to '%s'.", p_ResourceFile, resourceName);
 
 free_resources:
 	free(resourceType);
-	free(outputPath);
-	free(outputCompletePath);
+	//free(outputCompletePath);
+	free(resourceFolder);
+	free(resourceName);
 
 	return compileResult;
-}
-/*********************************************************************************/
-void K15_CompileResourceAsync(void* p_ThreadParameter)
-{
-	K15_ResourceCompilerAsyncParameter* resourceCompilerAsyncParameter = (K15_ResourceCompilerAsyncParameter*)p_ThreadParameter;
-
-	K15_CompileResource(resourceCompilerAsyncParameter->resourceCompilerContext, resourceCompilerAsyncParameter->resourceFilePath);
 }
 /*********************************************************************************/
 void K15_CompileResources(K15_ResourceCompilerContext* p_ResourceCompilerContext, char** p_FilesToCompile, uint32 p_NumFilesToCompile)
@@ -1546,7 +1611,7 @@ void K15_CompileResources(K15_ResourceCompilerContext* p_ResourceCompilerContext
 		asyncParameter.resourceCompilerContext = p_ResourceCompilerContext;
 		asyncParameter.resourceFilePath = resourceFile;
 
-		K15_CreateAsyncOperation(p_ResourceCompilerContext->asyncContext, K15_CompileResourceAsync, 0, &asyncParameter, sizeof(K15_ResourceCompilerAsyncParameter), 
+		K15_CreateAsyncOperation(p_ResourceCompilerContext->asyncContext, K15_InternalCompileResourceAsync, 0, &asyncParameter, sizeof(K15_ResourceCompilerAsyncParameter), 
 			K15_ASYNC_OPERATION_FIRE_AND_FORGET_FLAG | K15_ASYNC_OPERATION_USER_DATA_COPY_FLAG);
 	}
 }

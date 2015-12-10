@@ -145,15 +145,12 @@ uint8 K15_SaveSamplerFormatToFile(K15_SamplerFormat* p_SamplerFormat, const char
 
 	uint8 result = K15_CreateDataAccessContextFromFile(&accessContext, p_Path, K15_DATA_ACCESS_USAGE_SAVE);
 
-	if(result != K15_SUCCESS)
+	if(result == K15_SUCCESS)
 	{
-		//error
+		result = K15_InternalSaveSamplerFormat(&accessContext, p_SamplerFormat, p_SaveFlags);
+		K15_CloseDataAccessContext(&accessContext);
 	}
-
-	result = K15_InternalSaveSamplerFormat(&accessContext, p_SamplerFormat, p_SaveFlags);
-
-	K15_CloseDataAccessContext(&accessContext);
-
+	
 	return result;
 }
 /*********************************************************************************/
@@ -166,14 +163,11 @@ uint8 K15_LoadSamplerFormatFromFile(K15_SamplerFormat* p_SamplerFormat, const ch
 
 	uint8 result = K15_CreateDataAccessContextFromFile(&accessContext, p_Path, K15_DATA_ACCESS_USAGE_LOAD);
 
-	if(result != K15_SUCCESS)
+	if(result == K15_SUCCESS)
 	{
-		//error
+		result = K15_InternalLoadSamplerFormat(&accessContext, p_SamplerFormat);
+		K15_CloseDataAccessContext(&accessContext);
 	}
-
-	result = K15_InternalLoadSamplerFormat(&accessContext, p_SamplerFormat);
-
-	K15_CloseDataAccessContext(&accessContext);
 
 	return result;
 }
@@ -188,14 +182,11 @@ uint8 K15_LoadSamplerFormatFromMemory(K15_SamplerFormat* p_SamplerFormat, byte* 
 
 	uint8 result = K15_CreateDataAccessContextFromMemory(&accessContext, p_Memory, p_MemorySize, K15_DATA_ACCESS_USAGE_LOAD);
 
-	if(result != K15_SUCCESS)
+	if(result == K15_SUCCESS)
 	{
-		//error
+		result = K15_InternalLoadSamplerFormat(&accessContext, p_SamplerFormat);
+		K15_CloseDataAccessContext(&accessContext);
 	}
-
-	result = K15_InternalLoadSamplerFormat(&accessContext, p_SamplerFormat);
-
-	K15_CloseDataAccessContext(&accessContext);
 
 	return result;
 }

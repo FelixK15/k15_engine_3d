@@ -382,15 +382,12 @@ uint8 K15_SaveMaterialFormatToFile(K15_MaterialFormat* p_MaterialFormat, const c
 
 	uint8 result = K15_CreateDataAccessContextFromFile(&accessContext, p_Path, K15_DATA_ACCESS_USAGE_SAVE);
 
-	if(result != K15_SUCCESS)
+	if(result == K15_SUCCESS)
 	{
-		//error
+		result = K15_InternalSaveMaterialFormat(&accessContext, p_MaterialFormat, p_SaveFlag);
+		K15_CloseDataAccessContext(&accessContext);
 	}
-
-	result = K15_InternalSaveMaterialFormat(&accessContext, p_MaterialFormat, p_SaveFlag);
-
-	K15_CloseDataAccessContext(&accessContext);
-
+	
 	return result;
 }
 /*********************************************************************************/
@@ -409,12 +406,9 @@ uint8 K15_LoadMaterialFormat(K15_MaterialFormat* p_MaterialFormat, const char* p
 
 	if (result != K15_SUCCESS)
 	{
-		//error
+		result = K15_InternalLoadMaterialFormat(&accessContext, p_MaterialFormat);
+		K15_CloseDataAccessContext(&accessContext);
 	}
-
-	result = K15_InternalLoadMaterialFormat(&accessContext, p_MaterialFormat);
-
-	K15_CloseDataAccessContext(&accessContext);
 
 	return result;
 }

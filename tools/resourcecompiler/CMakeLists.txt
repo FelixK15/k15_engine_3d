@@ -4,9 +4,9 @@ set(RESOURCECOMPILER_SRC "./src/main.cpp")
 
 set(RESOURCECOMPILER_LIBS libresourcecompiler oslayer)
 
-include_directories(./../)
 include_directories(./include)
 include_directories(./src)
+include_directories(../../core/)
 include_directories(../../core/libresourcecompiler/include/)
 include_directories(../../core/oslayer/include/)
 include_directories(../../core/logging/include/)
