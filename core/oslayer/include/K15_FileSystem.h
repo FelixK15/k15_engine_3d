@@ -42,5 +42,6 @@ char* K15_ConvertToDirectoryPath(const char* p_String);
 char* K15_ConvertToAbsolutePath(const char* p_FilePath);
 char* K15_ConvertToSystemPath(const char* p_FilePath);
 char* K15_ConvertToSystemPathInplace(char* p_FilePath);
+char* K15_ConvertToSystemPathIntoBuffer(const char* p_FilePath, char* p_Buffer);
 
 #endif //_K15_FileSystem_h_

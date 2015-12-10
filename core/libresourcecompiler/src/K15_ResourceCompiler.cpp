@@ -1468,17 +1468,19 @@ intern void K15_InternalCreateDefaultResourceCompiler(K15_ResourceCompilerContex
 	p_ResourceCompilerContext->resourceCompiler[K15_RESOURCE_COMPILER_SAMPLER] = samplerCompiler;
 }
 /*********************************************************************************/
-K15_ResourceCompilerContext* K15_CreateResourceCompilerContext(K15_AsyncContext* p_AsyncContext)
+K15_ResourceCompilerContext* K15_CreateResourceCompilerContext(K15_AsyncContext* p_AsyncContext, const char* p_InputPath)
 {
-	return K15_CreateResourceCompilerContextWithCustomAllocator(p_AsyncContext, K15_CreateDefaultMemoryAllocator());
+	return K15_CreateResourceCompilerContextWithCustomAllocator(p_AsyncContext, p_InputPath, K15_CreateDefaultMemoryAllocator());
 }
 /*********************************************************************************/
 K15_ResourceCompilerContext* K15_CreateResourceCompilerContextWithCustomAllocator(K15_AsyncContext* p_AsyncContext, 
+																				  const char* p_InputPath,
 																				  K15_CustomMemoryAllocator p_Allocator)
 {
 	K15_ResourceCompilerContext* resourceCompilerContext = (K15_ResourceCompilerContext*)K15_AllocateFromMemoryAllocator(&p_Allocator, sizeof(K15_ResourceCompilerContext));
 	resourceCompilerContext->asyncContext = p_AsyncContext;
-	
+	resourceCompilerContext->inputPath = K15_ConvertToSystemPath(p_InputPath);
+
 	K15_InternalCreateDefaultResourceCompiler(resourceCompilerContext);
 
 	return resourceCompilerContext;
@@ -1502,6 +1504,7 @@ bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext
 	char* resourceFolder = K15_GetPathWithoutFileName(p_ResourceFile);
 	char* resourceName = K15_GetFileNameWithoutExtension(p_ResourceFile);
 	char* resourceType = K15_GetConfigValueAsString(&resourceFileConfig, "ResourceType");
+	char* outputPath = K15_GetConfigValueAsString(&resourceFileConfig, "Destination");
 	char* outputCompletePath = 0;
 
 	K15_ResourceCompilerType compilerType = K15_RESOURCE_COMPILER_INVALID;
@@ -1538,18 +1541,14 @@ bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext
 		goto free_resources;
 	}
 
-// 	if (!outputPath)
-// 	{
-// 		K15_LOG_ERROR_MESSAGE("No output path for resource '%s' (Add 'Destination' value to the resource file)", p_ResourceFile);
-// 		goto free_resources;
-// 	}
+	if (!outputPath)
+	{
+		K15_LOG_ERROR_MESSAGE("No output path for resource '%s' (Add 'Destination' value to the resource file)", p_ResourceFile);
+		goto free_resources;
+	}
 
-	outputCompletePath = K15_GenerateString("%sresources/%s/%s.%s", (char*)alloca(256), 
-		resourceFolder, K15_ConvertToLowerIntoBuffer(resourceType, (char*)alloca(64)), 
-		resourceName, K15_InternalGetResourceFileExtension(compilerType));
+	outputCompletePath = K15_ConcatStringsIntoBuffer(p_ResourceCompilerContext->inputPath, outputPath, (char*)alloca(256));
 
-// 	outputCompletePath = K15_ConcatStrings(argumentOutputPath, outputPath);
-// 
 // 	if (!p_ResourceCompilerContext->argumentParser->replace)
 // 	{
 // 		if (K15_FileExists(outputCompletePath))
@@ -1587,7 +1586,7 @@ bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext
 
 free_resources:
 	free(resourceType);
-	//free(outputCompletePath);
+	free(outputPath);
 	free(resourceFolder);
 	free(resourceName);
 

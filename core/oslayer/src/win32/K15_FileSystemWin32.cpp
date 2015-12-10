@@ -47,26 +47,65 @@ intern void K15_InternalSaveFiles(WIN32_FIND_DATAW* p_FindData, const char* p_De
 	++(*savedFilesPtr);
 }
 /*********************************************************************************/
-intern void K15_InternalRecursiveWin32GetFiles(K15_InternalWin32FindFile* findFile, const char* p_DefaultPath, wchar_t* p_WidePath, bool8 p_Recursively)
+intern void K15_InternalRecursiveWin32GetFiles(K15_InternalWin32FindFile* findFile, const char* p_Path, const char* p_Wildcard, bool8 p_Recursively)
 {
+	uint32 pathLength = (uint32)strlen(p_Path);
+	uint32 wildcardLength = (uint32)strlen(p_Wildcard);
+
+	wchar_t* wideWildcardPath = (wchar_t*)alloca((pathLength + (wildcardLength < 3 ? 3 : wildcardLength) + 1) * sizeof(wchar_t));
+	K15_Win32ConvertStringToWString(p_Path, pathLength+1, wideWildcardPath);
+	K15_Win32ConvertStringToWString(p_Wildcard, wildcardLength+1, wideWildcardPath+pathLength);
+
 	WIN32_FIND_DATAW findData = {};
-	HANDLE findFileHandle = FindFirstFileW(p_WidePath, &findData);
+	HANDLE findFileHandle = FindFirstFileW(wideWildcardPath, &findData);
 
 	while (findFileHandle != INVALID_HANDLE_VALUE)
 	{
-		if ((findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) > 0
-			&& p_Recursively == K15_TRUE)
-		{
-			K15_InternalRecursiveWin32GetFiles(findFile, p_DefaultPath, findData.cFileName, p_Recursively);
-		}
-
-		findFile->function(&findData, p_DefaultPath, &findFile->userData);
+		findFile->function(&findData, p_Path, &findFile->userData);
 
 		if (FindNextFileW(findFileHandle, &findData) == FALSE)
 		{
 			FindClose(findFileHandle);
 			findFileHandle = INVALID_HANDLE_VALUE;
 			break;
+		}
+	}
+
+	//search again with *.* wildcard
+	if (p_Recursively)
+	{
+		wideWildcardPath[pathLength] = L'*';
+		wideWildcardPath[pathLength+1] = L'.';
+		wideWildcardPath[pathLength+2] = L'*';
+		wideWildcardPath[pathLength+3] = L'\0';
+
+		findFileHandle = FindFirstFileW(wideWildcardPath, &findData);
+
+		while (findFileHandle != INVALID_HANDLE_VALUE)
+		{
+			if ((findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) > 0
+				&& wcscmp(findData.cFileName, L".") != 0
+				&& wcscmp(findData.cFileName, L"..") != 0)
+			{
+				uint32 dirNameLength = (uint32)wcslen(findData.cFileName);
+				char* dirName = (char*)alloca(dirNameLength + 2);
+				K15_Win32ConvertWStringToString(findData.cFileName, dirNameLength+1, dirName);
+				
+				//hacky shit
+				dirName[dirNameLength] = '/';
+				dirName[dirNameLength+1] = 0;
+
+				char* newPath = K15_ConcatStringsIntoBuffer(p_Path, dirName, (char*)alloca(256));
+
+				K15_InternalRecursiveWin32GetFiles(findFile, newPath, p_Wildcard, p_Recursively);
+			}
+
+			if (FindNextFileW(findFileHandle, &findData) == FALSE)
+			{
+				FindClose(findFileHandle);
+				findFileHandle = INVALID_HANDLE_VALUE;
+				break;
+			}
 		}
 	}
 }
@@ -85,31 +124,22 @@ bool8 K15_Win32IsRelativePath(const char* p_Path)
 	return isRelative;
 }
 /*********************************************************************************/
-char** K15_Win32GetFilesInDirectory(const char* p_Path, uint32* p_FileCounter, const char* p_Filter, bool8 p_Recursively)
+char** K15_Win32GetFilesInDirectory(const char* p_Path, uint32* p_FileCounter, const char* p_Wildcard, bool8 p_Recursively)
 {
 	K15_ASSERT_TEXT(p_Path, "path is NULL.");
-	K15_ASSERT_TEXT(p_Filter, "filter is NULL.");
+	K15_ASSERT_TEXT(p_Wildcard, "wildcard is NULL.");
 	K15_ASSERT_TEXT(p_FileCounter, "filecounter is NULL.");
 
+	char* path = K15_ConvertToSystemPathIntoBuffer(p_Path, (char*)alloca(128));
+
 	uint32 fileCount = 0;
-	uint32 pathLength= (uint32)strlen(p_Path) + 1;  //+1 for 0 terminator
-	uint32 filterLength= (uint32)strlen(p_Filter);
-
-	char* completeSearchPath = (char*)alloca(pathLength + filterLength);
-	sprintf(completeSearchPath, "%s%s", p_Path, p_Filter);
-	
-	uint32 completePathLength= (uint32)strlen(completeSearchPath) + 1;
-
-	wchar_t* widePath = (wchar_t*)alloca(completePathLength * sizeof(wchar_t));
 	char** filesInDirectory = 0;
-
-	K15_Win32ConvertStringToWString(completeSearchPath, completePathLength, widePath);
 
 	K15_InternalWin32FindFile countFiles = {};
 	countFiles.function = K15_InternalCountFiles;
 	countFiles.userData = &fileCount;
 
-	K15_InternalRecursiveWin32GetFiles(&countFiles, p_Path, widePath, p_Recursively);
+	K15_InternalRecursiveWin32GetFiles(&countFiles, path, p_Wildcard, p_Recursively);
 
 	*p_FileCounter = fileCount;
 
@@ -124,7 +154,7 @@ char** K15_Win32GetFilesInDirectory(const char* p_Path, uint32* p_FileCounter, c
 	saveFiles.function = K15_InternalSaveFiles;
 	saveFiles.userData = filesInDirectory;
 
-	K15_InternalRecursiveWin32GetFiles(&saveFiles, p_Path, widePath, p_Recursively);
+	K15_InternalRecursiveWin32GetFiles(&saveFiles, path, p_Wildcard, p_Recursively);
 
 	return filesInDirectory;
 }

@@ -69,7 +69,7 @@ int main(int argc, char** argv)
 	K15_InitializeOSLayer();
 	K15_OSContext* osContext = K15_GetOSLayerContext();
 
-	osContext->threading.numHardwareThreads = 1;
+	//osContext->threading.numHardwareThreads = 1;
 
 	K15_ArgumentParser argumentParser = {};
 	K15_AsyncContext* asyncContext = K15_CreateAsyncContext(osContext);
@@ -83,11 +83,12 @@ int main(int argc, char** argv)
 	}
 
 	uint32 numFilesToCompile = 0;
+	bool8 searchFilesRecursively = argumentParser.recursive;
 
-	K15_ResourceCompilerContext* compilerContext = K15_CreateResourceCompilerContext(asyncContext);
+	K15_ResourceCompilerContext* compilerContext = K15_CreateResourceCompilerContext(asyncContext, argumentParser.inputPath);
 	K15_SetWorkingDirectory(argumentParser.inputPath);
 
-	char** filesToCompile = K15_GetFilesInDirectory(argumentParser.inputPath, &numFilesToCompile, "*.k15resourceinfo");
+	char** filesToCompile = K15_GetFilesInDirectory(argumentParser.inputPath, &numFilesToCompile, "*.k15resourceinfo", searchFilesRecursively);
 
 	K15_CompileResources(compilerContext, filesToCompile, numFilesToCompile);
 

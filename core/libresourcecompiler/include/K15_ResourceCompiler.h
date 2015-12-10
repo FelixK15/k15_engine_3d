@@ -38,6 +38,7 @@ struct K15_ResourceDependency
 /*********************************************************************************/
 struct K15_ResourceCompilerContext
 {
+	char* inputPath;
 	K15_AsyncContext* asyncContext;
 	K15_ResourceCompiler* resourceCompiler[K15_RESOURCE_COMPILER_COUNT];
 };
@@ -56,8 +57,8 @@ struct K15_ResourceCompilerAsyncParameter
 };
 /*********************************************************************************/
 
-K15_ResourceCompilerContext* K15_CreateResourceCompilerContext(K15_AsyncContext* p_AsyncContext);
-K15_ResourceCompilerContext* K15_CreateResourceCompilerContextWithCustomAllocator(K15_AsyncContext* p_AsyncContext, K15_CustomMemoryAllocator p_Allocator);
+K15_ResourceCompilerContext* K15_CreateResourceCompilerContext(K15_AsyncContext* p_AsyncContext, const char* p_InputPath);
+K15_ResourceCompilerContext* K15_CreateResourceCompilerContextWithCustomAllocator(K15_AsyncContext* p_AsyncContext, const char* p_InputPath, K15_CustomMemoryAllocator p_Allocator);
 bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext, const char* p_ResourceFile);
 void K15_CompileResources(K15_ResourceCompilerContext* p_ResourceCompilerContext, char** p_FilesToCompile, uint32 p_NumFilesToCompile);
  

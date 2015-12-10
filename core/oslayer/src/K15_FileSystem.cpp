@@ -238,19 +238,30 @@ char* K15_ConvertToSystemPath(const char* p_FilePath)
 /*********************************************************************************/
 char* K15_ConvertToSystemPathInplace(char* p_FilePath)
 {
+	return K15_ConvertToSystemPathIntoBuffer(p_FilePath, p_FilePath);
+}
+/*********************************************************************************/
+char* K15_ConvertToSystemPathIntoBuffer(const char* p_FilePath, char* p_Buffer)
+{
 	K15_ASSERT_TEXT(p_FilePath, "Filepath is NULL.");
+	K15_ASSERT_TEXT(p_Buffer, "Buffer is NULL.");
 
-	char* convertedFilePath = p_FilePath;
+	char* convertedFilePath = p_Buffer;
 
 	while(*p_FilePath)
 	{
 		if (*p_FilePath == '\\')
 		{
-			*p_FilePath = '/';
+			*p_Buffer++ = '/';
 		}
-
+		else
+		{
+			*p_Buffer++ = *p_FilePath;
+		}
 		++p_FilePath;
 	}
+
+	*p_Buffer++ = 0;
 
 	return convertedFilePath;
 }

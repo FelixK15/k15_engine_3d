@@ -2,15 +2,13 @@
 enum K15_ArgumentParserState
 {
 	K15_PARSER_STATE_NONE = 0,
-	K15_PARSER_STATE_INPUT,
-	K15_PARSER_STATE_OUTPUT
+	K15_PARSER_STATE_INPUT
 };
 /*********************************************************************************/
 struct K15_ArgumentParser
 {
 	K15_ArgumentParserState state;
 	char* inputPath;
-	char* outputPath;
 	bool8 recursive;
 	bool8 replace;
 	bool8 daemon;
@@ -36,10 +34,10 @@ void K15_ParseArguments(K15_ArgumentParser* p_ArgumentParser, int p_ArgumentCoun
 				parserState = K15_PARSER_STATE_INPUT;
 			}
 
-			if (strcmp(argument, "-o") == 0)
-			{
-				parserState = K15_PARSER_STATE_OUTPUT;
-			}
+// 			if (strcmp(argument, "-o") == 0)
+// 			{
+// 				parserState = K15_PARSER_STATE_OUTPUT;
+// 			}
 
 			if (strcmp(argument, "-r") == 0)
 			{
@@ -66,7 +64,7 @@ void K15_ParseArguments(K15_ArgumentParser* p_ArgumentParser, int p_ArgumentCoun
 				exit(0);
 			}
 		}
-		else if (parserState == K15_PARSER_STATE_INPUT || parserState == K15_PARSER_STATE_OUTPUT)
+		else if (parserState == K15_PARSER_STATE_INPUT/* || parserState == K15_PARSER_STATE_OUTPUT*/)
 		{
 			char* convertedArgument = K15_ConvertToDirectoryPath(argument);
 			
@@ -87,16 +85,16 @@ void K15_ParseArguments(K15_ArgumentParser* p_ArgumentParser, int p_ArgumentCoun
 
 				p_ArgumentParser->inputPath = convertedArgument;
 			}
-			else
-			{
-				if (p_ArgumentParser->outputPath)
-				{
-					K15_LOG_WARNING_MESSAGE("Output path already set. Overwriting old output path '%s' with new output path '%s'", p_ArgumentParser->outputPath, convertedArgument);
-					free(p_ArgumentParser->outputPath);
-				}
-
-				p_ArgumentParser->outputPath = convertedArgument;
-			}
+// 			else
+// 			{
+// 				if (p_ArgumentParser->outputPath)
+// 				{
+// 					K15_LOG_WARNING_MESSAGE("Output path already set. Overwriting old output path '%s' with new output path '%s'", p_ArgumentParser->outputPath, convertedArgument);
+// 					free(p_ArgumentParser->outputPath);
+// 				}
+// 
+// 				p_ArgumentParser->outputPath = convertedArgument;
+// 			}
 
 			parserState = K15_PARSER_STATE_NONE;
 		}
@@ -120,16 +118,16 @@ bool8 K15_CheckArguments(K15_ArgumentParser* p_ArgumentParser)
 		valid = K15_FALSE;
 	}
 
-	if (!p_ArgumentParser->outputPath)
-	{
-		K15_LOG_ERROR_MESSAGE("No output path specified. Use option '-o' to specify an output path.");
-		valid = K15_FALSE;
-	}
-	else if(K15_DirectoryExists(p_ArgumentParser->outputPath) == K15_FALSE)
-	{
-		K15_LOG_ERROR_MESSAGE("Output path '%s' is not a valid directory or the directory does not exist.", p_ArgumentParser->outputPath);
-		valid = K15_FALSE;
-	}
+// 	if (!p_ArgumentParser->outputPath)
+// 	{
+// 		K15_LOG_ERROR_MESSAGE("No output path specified. Use option '-o' to specify an output path.");
+// 		valid = K15_FALSE;
+// 	}
+// 	else if(K15_DirectoryExists(p_ArgumentParser->outputPath) == K15_FALSE)
+// 	{
+// 		K15_LOG_ERROR_MESSAGE("Output path '%s' is not a valid directory or the directory does not exist.", p_ArgumentParser->outputPath);
+// 		valid = K15_FALSE;
+// 	}
 
 	if (p_ArgumentParser->state != K15_PARSER_STATE_NONE)
 	{

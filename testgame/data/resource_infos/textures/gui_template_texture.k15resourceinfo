@@ -1,0 +1,5 @@
+ResourceType=Texture
+Source=raw/textures/gui_template.png
+Compression=uncompressed
+Destination=compiled_resources/textures/gui_template.k15texture
+GenerateMipmaps=false

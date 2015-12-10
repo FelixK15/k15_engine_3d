@@ -1,0 +1,4 @@
+ResourceType=Texture
+Source=raw/textures/Robbie_the_Rabbit_d.tga
+Destination=compiled_resources/textures/robbie_diffuse.k15texture
+Compression=dxt5
