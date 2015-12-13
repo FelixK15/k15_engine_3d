@@ -1,6 +1,0 @@
-ResourceType=Font
-Source=raw/fonts/arial.ttf
-Destination=compiled_resources/fonts/backup_font.k15font
-FontSize=32
-StartChar=32
-EndChar=255

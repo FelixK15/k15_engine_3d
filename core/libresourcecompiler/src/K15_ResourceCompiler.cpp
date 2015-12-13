@@ -56,7 +56,18 @@
 
 #include "K15_TextureAtlas.cpp"
 
+/*********************************************************************************/
+intern char* K15_InternalGetFileNameWithoutMetaExtension(char* p_FileName)
+{
+	uint32 fileNameLength = (uint32)strlen(p_FileName);
 
+	if (strcmp(p_FileName + fileNameLength - 4, "k15m") == 0)
+	{
+		p_FileName[fileNameLength-5] = 0;
+	}
+
+	return p_FileName;
+}
 /*********************************************************************************/
 intern void K15_InternalAddResourceInfoToOutput(const char* p_ResourceInfoPath, const char* p_ResourceFilePath)
 {
@@ -1502,10 +1513,21 @@ bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext
 	}
 
 	char* resourceFolder = K15_GetPathWithoutFileName(p_ResourceFile);
+	char* resourceFileName = K15_GetFileNameWithoutPath(p_ResourceFile);
 	char* resourceName = K15_GetFileNameWithoutExtension(p_ResourceFile);
 	char* resourceType = K15_GetConfigValueAsString(&resourceFileConfig, "ResourceType");
-	char* outputPath = K15_GetConfigValueAsString(&resourceFileConfig, "Destination");
-	char* outputCompletePath = 0;
+	char* outputPath = p_ResourceCompilerContext->inputPath;
+	char* outputCompletePath = 0;	
+
+	resourceFileName = K15_InternalGetFileNameWithoutMetaExtension(resourceFileName);
+
+	char* resourceSourceFilePath = K15_ConcatStrings(resourceFolder, resourceFileName);
+
+	if (!K15_FileExists(resourceSourceFilePath))
+	{
+		K15_LOG_WARNING_MESSAGE("Source file '%s' from resource '%s' does not exist.", resourceSourceFilePath, p_ResourceFile);
+		goto free_resources;
+	}
 
 	K15_ResourceCompilerType compilerType = K15_RESOURCE_COMPILER_INVALID;
 
@@ -1541,13 +1563,7 @@ bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext
 		goto free_resources;
 	}
 
-	if (!outputPath)
-	{
-		K15_LOG_ERROR_MESSAGE("No output path for resource '%s' (Add 'Destination' value to the resource file)", p_ResourceFile);
-		goto free_resources;
-	}
-
-	outputCompletePath = K15_ConcatStringsIntoBuffer(p_ResourceCompilerContext->inputPath, outputPath, (char*)alloca(256));
+	outputCompletePath = K15_ConcatStrings(resourceSourceFilePath, ".k15c");
 
 // 	if (!p_ResourceCompilerContext->argumentParser->replace)
 // 	{
@@ -1586,9 +1602,12 @@ bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext
 
 free_resources:
 	free(resourceType);
-	free(outputPath);
+	//free(outputPath);
+	free(outputCompletePath);
+	free(resourceSourceFilePath);
 	free(resourceFolder);
 	free(resourceName);
+	free(resourceFileName);
 
 	return compileResult;
 }

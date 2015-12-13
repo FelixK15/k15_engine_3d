@@ -69,7 +69,7 @@ int main(int argc, char** argv)
 	K15_InitializeOSLayer();
 	K15_OSContext* osContext = K15_GetOSLayerContext();
 
-	//osContext->threading.numHardwareThreads = 1;
+	osContext->threading.numHardwareThreads = 1;
 
 	K15_ArgumentParser argumentParser = {};
 	K15_AsyncContext* asyncContext = K15_CreateAsyncContext(osContext);
@@ -88,7 +88,7 @@ int main(int argc, char** argv)
 	K15_ResourceCompilerContext* compilerContext = K15_CreateResourceCompilerContext(asyncContext, argumentParser.inputPath);
 	K15_SetWorkingDirectory(argumentParser.inputPath);
 
-	char** filesToCompile = K15_GetFilesInDirectory(argumentParser.inputPath, &numFilesToCompile, "*.k15resourceinfo", searchFilesRecursively);
+	char** filesToCompile = K15_GetFilesInDirectory(argumentParser.inputPath, &numFilesToCompile, "*.k15m", searchFilesRecursively);
 
 	K15_CompileResources(compilerContext, filesToCompile, numFilesToCompile);
 
