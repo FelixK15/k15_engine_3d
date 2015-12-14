@@ -71,18 +71,11 @@ intern char* K15_InternalGetFileNameWithoutMetaExtension(char* p_FileName)
 /*********************************************************************************/
 intern void K15_InternalAddResourceInfoToOutput(const char* p_ResourceInfoPath, const char* p_ResourceFilePath)
 {
-	char* resourceInfoFile = K15_GetFileNameWithoutPath(p_ResourceFilePath);
-
 	uint64 lastAccessedTime = K15_GetFileLastAccessTimeStamp(p_ResourceInfoPath);
-	uint32 resourceInfoPathLength = (uint32)strlen(resourceInfoFile);
 
 	FILE* resourceFileHandle = fopen(p_ResourceFilePath, "ab");
-	fwrite(resourceInfoFile, resourceInfoPathLength, 1, resourceFileHandle);
 	fwrite(&lastAccessedTime, sizeof(uint64), 1, resourceFileHandle);
-	fwrite(&resourceInfoPathLength, sizeof(uint32), 1, resourceFileHandle);
 	fclose(resourceFileHandle);
-
-	free(resourceInfoFile);
 }
 /*********************************************************************************/
 intern void K15_InternalOnResourceFileChanged(const char* p_ResourceFilePath, void* p_UserData)
@@ -222,6 +215,16 @@ intern uint32 K15_InternalCalculateImageMemorySizeUncompressed(uint32 p_Width, u
 	return memoryNeeded * p_ComponentCount;
 }
 /*********************************************************************************/
+intern char* K15_InternalConvertToResourceFilePath(const char* p_ResourceInfoFilePath, char* p_Buffer)
+{
+	uint32 resourceInfoFilePathLength = (uint32)strlen(p_ResourceInfoFilePath);
+	p_Buffer[resourceInfoFilePathLength-5] = 0;
+
+	memcpy(p_Buffer, p_ResourceInfoFilePath, resourceInfoFilePathLength-5);
+
+	return p_Buffer;
+}
+/*********************************************************************************/
 #ifdef K15_RESOURCE_COMPILER_ENABLE_SQUISH
 intern uint32 K15_InternalCalculateImageMemorySizeCompressedSquish(uint32 p_Width, uint32 p_Height, int p_CompressionFlags)
 {
@@ -263,39 +266,6 @@ intern uint8 K15_InternalConvertTextToSamplerAddressMode(const char* p_Text)
 	}
 
 	return addressMode;
-}
-/*********************************************************************************/
-intern const char* K15_InternalGetResourceFileExtension(K15_ResourceCompilerType p_ResourceCompilerType)
-{
-	const char* fileExtension = 0;
-
-	switch(p_ResourceCompilerType)
-	{
-	case K15_RESOURCE_COMPILER_FONT:
-		fileExtension = "k15font";
-		break;
-
-	case K15_RESOURCE_COMPILER_MATERIAL:
-		fileExtension = "k15material";
-		break;
-
-	case K15_RESOURCE_COMPILER_MESH:
-		fileExtension = "k15mesh";
-		break;
-
-	case K15_RESOURCE_COMPILER_SAMPLER:
-		fileExtension = "k15sampler";
-		break;
-
-	case K15_RESOURCE_COMPILER_TEXTURE:
-		fileExtension = "k15texture";
-		break;
-
-	default:
-		break;
-	}
-
-	return fileExtension;
 }
 /*********************************************************************************/
 intern void K15_InternalCompileResourceAsync(void* p_ThreadParameter)
@@ -414,7 +384,7 @@ bool8 K15_CompileMeshResourceWithAssimp(K15_ResourceCompilerContext* p_ResourceC
 {
 	Assimp::Importer importer;
 
-	char* resourcePath = K15_GetConfigValueAsString(p_MeshConfig, "Source");
+	char* resourcePath = K15_InternalConvertToResourceFilePath(p_OutputPath, (char*)malloc(512));
 
 	if (!resourcePath)
 	{
@@ -545,17 +515,13 @@ bool8 K15_CompileTextureResourceWithSquish(K15_ResourceCompilerContext* p_Resour
 	stbi_uc** imageData = 0;
 	stbi_uc** compressedImageData = 0;
 
-	char* resourcePath = K15_GetConfigValueAsString(p_TextureConfig, "Source");
+	char* resourcePath = K15_InternalConvertToResourceFilePath(p_OutputPath, (char*)malloc(512));
 
 	if (!resourcePath)
 	{
 		K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("No image file has been specified for texture '%s' (Define 'Source' in the resource config file).", (char*)malloc(512), resourcePath));
 		goto free_resources;
 	}
-
-	char* resourceAbsolutePath = K15_ConvertToAbsolutePath(resourcePath);
-	free(resourcePath);
-	resourcePath = resourceAbsolutePath;
 
 	if (!K15_FileExists(resourcePath))
 	{
@@ -844,7 +810,7 @@ bool8 K15_CompileFontResourceWithStbTTF(K15_ResourceCompilerContext* p_ResourceC
 {
 	bool8 compiled = K15_FALSE;
 
-	char* resourcePath = K15_GetConfigValueAsString(p_FontConfig, "Source");
+	char* resourcePath = K15_InternalConvertToResourceFilePath(p_FontConfig->path, (char*)malloc(512));
 	char* resourceFileName = 0;
 	char* resourceName = 0;
 
@@ -873,10 +839,6 @@ bool8 K15_CompileFontResourceWithStbTTF(K15_ResourceCompilerContext* p_ResourceC
 		K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Not font file specified for font resource '%s' (specify 'Source' in the resource config file).", (char*)malloc(512), p_FontConfig->path));
 		goto free_resources;
 	}
-
-	char* resourceAbsolutePath = K15_ConvertToAbsolutePath(resourcePath);
-	free(resourcePath);
-	resourcePath = resourceAbsolutePath;
 
 	if (!K15_FileExists(resourcePath))
 	{
@@ -1268,8 +1230,9 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 			{
 				char* texturePath = value->value;
 				char* absoluteTexturePath = K15_ConvertToAbsolutePath(texturePath);//K15_ConcatStrings(materialPassDataConfigDirectory, texturePath);
+				char* absoluteCompiledTexturePath = K15_ConcatStrings(absoluteTexturePath, ".k15c");
 
-				if (!K15_FileExists(absoluteTexturePath))
+				if (!K15_FileExists(absoluteCompiledTexturePath))
 				{
 					K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not find texture '%s' for material '%s' (%d. pass - file: '%s').", 
 						(char*)malloc(512), texturePath, resourceName, passIndex, p_MaterialConfig->path));
@@ -1283,6 +1246,7 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 				}
 
 				free(absoluteTexturePath);
+				free(absoluteCompiledTexturePath);
 			}
 			else
 			{
@@ -1309,8 +1273,9 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 			{
 				char* samplerPath = value->value;
 				char* absoluteSamplerPath = K15_ConvertToAbsolutePath(samplerPath);//K15_ConcatStrings(materialPassDataConfigDirectory, samplerPath);
+				char* absoluteCompiledSamplerPath = K15_ConcatStrings(absoluteSamplerPath, ".k15c");
 
-				if (!K15_FileExists(absoluteSamplerPath))
+				if (!K15_FileExists(absoluteCompiledSamplerPath))
 				{
 					K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not find sampler '%s' for material '%s' (%d. pass - file: '%s').", 
 						(char*)malloc(512), samplerPath, resourceName, passIndex, p_MaterialConfig->path));
@@ -1324,6 +1289,7 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 				}
 
 				free(absoluteSamplerPath);
+				free(absoluteCompiledSamplerPath);
 			}
 			else
 			{
@@ -1523,11 +1489,11 @@ bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext
 
 	char* resourceSourceFilePath = K15_ConcatStrings(resourceFolder, resourceFileName);
 
-	if (!K15_FileExists(resourceSourceFilePath))
-	{
-		K15_LOG_WARNING_MESSAGE("Source file '%s' from resource '%s' does not exist.", resourceSourceFilePath, p_ResourceFile);
-		goto free_resources;
-	}
+// 	if (!K15_FileExists(resourceSourceFilePath))
+// 	{
+// 		K15_LOG_WARNING_MESSAGE("Source file '%s' from resource '%s' does not exist.", resourceSourceFilePath, p_ResourceFile);
+// 		goto free_resources;
+// 	}
 
 	K15_ResourceCompilerType compilerType = K15_RESOURCE_COMPILER_INVALID;
 
@@ -1598,7 +1564,7 @@ bool8 K15_CompileResource(K15_ResourceCompilerContext* p_ResourceCompilerContext
 		K15_InternalAddResourceInfoToOutput(p_ResourceFile, outputCompletePath);
 	}
 
-	K15_LOG_SUCCESS_MESSAGE("Successful compiled resource '%s' to '%s'.", p_ResourceFile, resourceName);
+	K15_LOG_SUCCESS_MESSAGE("Successful compiled resource '%s' to '%s'.", p_ResourceFile, outputCompletePath);
 
 free_resources:
 	free(resourceType);

@@ -24,8 +24,8 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 {
 	K15_GUIContextStyle defaultStyle = {};
 
-	K15_ResourceHandle styleTextureResource = K15_LoadResource(p_ResourceContext, K15_TEXTURE_RESOURCE_IDENTIFIER, "gui_template.k15texture", 0); 
-	K15_ResourceHandle styleFontResource = K15_LoadResource(p_ResourceContext, K15_FONT_RESOURCE_IDENTIFIER, "gui_font.k15font", 0); 
+	K15_ResourceHandle styleTextureResource = K15_LoadResource(p_ResourceContext, K15_TEXTURE_RESOURCE_IDENTIFIER, "textures/gui_template.png", 0); 
+	K15_ResourceHandle styleFontResource = K15_LoadResource(p_ResourceContext, K15_FONT_RESOURCE_IDENTIFIER, "fonts/gui_font.ttf", 0); 
 
 	defaultStyle.styleTexture = K15_GetResourceRenderHandle(p_ResourceContext, styleTextureResource);
 	defaultStyle.styleFont = K15_GetResourceFontDesc(p_ResourceContext, styleFontResource);
@@ -115,7 +115,7 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 
 	uint32 flags = 0;
 
-	K15_ResourceHandle guiMaterial = K15_LoadResource(p_ResourceContext, K15_MATERIAL_RESOURCE_IDENTIFIER, "gui_material.k15material", flags); 
+	K15_ResourceHandle guiMaterial = K15_LoadResource(p_ResourceContext, K15_MATERIAL_RESOURCE_IDENTIFIER, "materials/gui_material", flags); 
 
 	guiContext->guiRenderMaterial = K15_GetResourceRenderMaterialDesc(p_ResourceContext, guiMaterial);
 

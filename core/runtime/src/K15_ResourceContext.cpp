@@ -23,6 +23,7 @@
 #include "K15_RenderContext.h"
 #include "K15_RenderCommands.h"
 #include "K15_RenderShaderSemantics.h"
+#include "K15_ResourceCompiler.h"
 
 #ifdef K15_ENABLE_FALLBACK_RESOURCES
 #	include "K15_FallbackResources.cpp"
@@ -54,7 +55,24 @@ struct K15_ResourceFileChangedInfo
 /*********************************************************************************/
 
 
+/*********************************************************************************/
+intern bool8 K15_InternalResourceIsOutdated(const char* p_CompiledResourcePath, const char* p_MetaResourcePath)
+{
+	uint64 lastWriteAccessTime = 0;
 
+	FILE* compiledResourceFile = fopen(p_CompiledResourcePath, "rb");
+
+	if (compiledResourceFile)
+	{
+		uint32 fileSize = K15_GetFileSize(p_CompiledResourcePath);
+
+		fseek(compiledResourceFile, fileSize - sizeof(uint64), SEEK_CUR);
+		fread(&lastWriteAccessTime, sizeof(uint64), 1, compiledResourceFile);
+		fclose(compiledResourceFile);
+	}
+
+	return K15_GetFileLastAccessTimeStamp(p_MetaResourcePath) > lastWriteAccessTime;
+}
 /*********************************************************************************/
 intern bool8 K15_InternalGetResourceFileData(K15_ResourceContext* p_ResourceContext, const char* p_ResourcePath, K15_ResourceFileData* resourceFileData)
 {
@@ -178,7 +196,8 @@ intern void K15_InternalAsyncResourceLoad(void* p_Parameter)
 	K15_FreeFromMemoryAllocator(customAllocator, p_Parameter);
 }
 /*********************************************************************************/
-intern void K15_InternalInitializeResourceArchive(K15_ResourceArchive* p_ResourceArchive, const char* p_ResourceArchivePath)
+intern void K15_InternalInitializeResourceArchive(K15_ResourceArchive* p_ResourceArchive, 
+												  const char* p_ResourceArchivePath)
 {
 	char* resourcePath = K15_ConvertToAbsolutePath(p_ResourceArchivePath);
 	p_ResourceArchive->resourcePath = resourcePath;
@@ -196,8 +215,9 @@ intern void K15_InternalInitializeResourceArchive(K15_ResourceArchive* p_Resourc
 	}
 }
 /*********************************************************************************/
-intern void K15_InternalInitializeResourceContext(K15_ResourceContext* p_ResourceContext, K15_RenderContext* p_RenderContext, 
-												  K15_CustomMemoryAllocator p_MemoryAllocator, const char* p_ArchivePath)
+intern void K15_InternalInitializeResourceContext(K15_AsyncContext* p_AsyncContext, K15_ResourceContext* p_ResourceContext, 
+												  K15_RenderContext* p_RenderContext, K15_CustomMemoryAllocator p_MemoryAllocator, 
+												  const char* p_ArchivePath)
 {
 	//Create resource cache
 // 	K15_ResourceStretchBuffer resourceCache = {};
@@ -206,9 +226,14 @@ intern void K15_InternalInitializeResourceContext(K15_ResourceContext* p_Resourc
 
 	memset(p_ResourceContext->resourceCache, 0, sizeof(K15_PTR_SIZE) * K15_MAX_RESOURCES);
 
+#ifdef K15_ENABLE_RUNTIME_RESOURCE_COMPILATION
+	p_ResourceContext->resourceCompiler = K15_CreateResourceCompilerContext(p_AsyncContext, p_ArchivePath);
+#endif //K15_ENABLE_RUNTIME_RESOURCE_COMPILATION
+
 	p_ResourceContext->memoryAllocator = p_MemoryAllocator;
 	p_ResourceContext->resourceCacheLock = K15_CreateMutex();
 	p_ResourceContext->renderContext = p_RenderContext;
+	p_ResourceContext->asyncContext = p_AsyncContext;
 	p_ResourceContext->commandQueue = K15_CreateRenderCommandQueue(p_RenderContext, "Resource Loading Queue");
 	//p_ResourceContext->flags = p_Flags;
 	//p_ResourceContext->resourceCache = resourceCache;
@@ -597,7 +622,7 @@ intern K15_ResourceLoader* K15_InternalGetResourceLoaderForIdentifier(K15_Resour
 }
 /*********************************************************************************/
 intern K15_Resource* K15_InternalLoadResource(K15_ResourceContext* p_ResourceContext, K15_ResourceLoader* p_Loader, const char* p_ResourcePath, uint32 p_ResourceIdentifier, K15_ResourceHandle p_ResourceHandle, uint32 p_Flags)
-{
+ {
 	K15_ResourceArchive* archive = &p_ResourceContext->resourceArchive;
 	if (!archive->resourceExists(p_ResourceContext, archive, p_ResourcePath))
 	{
@@ -611,32 +636,6 @@ intern K15_Resource* K15_InternalLoadResource(K15_ResourceContext* p_ResourceCon
 
 	if (K15_InternalGetResourceFileData(p_ResourceContext, p_ResourcePath, &resourceFileData))
 	{
-		uint32 sizeResourceInfo = sizeof(uint64) + sizeof(uint32);
-		byte* fileContent = resourceFileData.fileContent;
-		uint32 fileSizeInBytes = resourceFileData.fileContentSizeInBytes;
-		uint32 resourceInfoPathLength = 0;
-		char* resourceInfoFile = 0;
-		uint64 lastAccessTime = 0;
-	
-		memcpy(&resourceInfoPathLength, (fileContent + fileSizeInBytes - sizeof(uint32)), sizeof(uint32));
-		
-		resourceInfoFile = (char*)alloca(resourceInfoPathLength + 1);
-		resourceInfoFile[resourceInfoPathLength] = 0;
-
-		memcpy(&lastAccessTime, (fileContent + fileSizeInBytes - sizeof(uint64) - sizeof(uint32)), sizeof(uint64));
-		memcpy(resourceInfoFile, (fileContent + fileSizeInBytes - sizeResourceInfo - resourceInfoPathLength), resourceInfoPathLength);
-
-		const char* resourcePath = p_ResourceContext->resourceArchive.resourcePath;
-		char* resourceInfoPath = K15_ConcatStrings(resourcePath, resourceInfoFile);
-
-		uint64 lastAccessTimeResourceFile = K15_GetFileLastAccessTimeStamp(resourceInfoPath);
-
-		//is the resourceinfo file newer than the compiled resource file?
-		if (lastAccessTime < lastAccessTimeResourceFile)
-		{
-
-		}
-
 		//create and load resource
 		resource = (K15_Resource*)K15_AllocateFromMemoryAllocator(&p_ResourceContext->memoryAllocator, sizeof(K15_Resource));
 		p_Loader->resourceLoader(p_ResourceContext, &resourceFileData, &resourceCompilerOutput);
@@ -819,12 +818,12 @@ K15_RenderFontDesc* K15_GetResourceFontDesc(K15_ResourceContext* p_ResourceConte
 	return renderFontDesc;
 }
 /*********************************************************************************/
-K15_ResourceContext* K15_CreateResourceContext(K15_RenderContext* p_RenderContext, const char* p_ArchivePath)
+K15_ResourceContext* K15_CreateResourceContext(K15_AsyncContext* p_AsyncContext, K15_RenderContext* p_RenderContext, const char* p_ArchivePath)
 {
-	return K15_CreateResourceContextWithCustomAllocator(p_RenderContext, p_ArchivePath, K15_CreateDefaultMemoryAllocator());
+	return K15_CreateResourceContextWithCustomAllocator(p_AsyncContext, p_RenderContext, p_ArchivePath, K15_CreateDefaultMemoryAllocator());
 }
 /*********************************************************************************/
-K15_ResourceContext* K15_CreateResourceContextWithCustomAllocator(K15_RenderContext* p_RenderContext, const char* p_ArchivePath, K15_CustomMemoryAllocator p_CustomMemoryAllocator)
+K15_ResourceContext* K15_CreateResourceContextWithCustomAllocator(K15_AsyncContext* p_AsyncContext, K15_RenderContext* p_RenderContext, const char* p_ArchivePath, K15_CustomMemoryAllocator p_CustomMemoryAllocator)
 {
 	K15_ASSERT_TEXT(p_ArchivePath, "Resource collection path is NULL.");
 
@@ -834,7 +833,8 @@ K15_ResourceContext* K15_CreateResourceContextWithCustomAllocator(K15_RenderCont
 	if (K15_InternalIsValidArchive(p_ArchivePath))
 	{
 		resourceContext = (K15_ResourceContext*)K15_AllocateFromMemoryAllocator(&p_CustomMemoryAllocator, sizeof(K15_ResourceContext));
-		K15_InternalInitializeResourceContext(resourceContext, p_RenderContext, p_CustomMemoryAllocator, p_ArchivePath);
+		K15_InternalInitializeResourceContext(p_AsyncContext, resourceContext, p_RenderContext, 
+			p_CustomMemoryAllocator, p_ArchivePath);
 	}
 	else
 	{
@@ -878,13 +878,43 @@ K15_ResourceHandle K15_LoadResource(K15_ResourceContext* p_ResourceContext, uint
 
 	if (resource == 0)
 	{
+#ifdef K15_ENABLE_RUNTIME_RESOURCE_COMPILATION
+		if (p_ResourceIdentifier != K15_SHADER_RESOURCE_IDENTIFIER)
+		{
+			char* compiledResourcePath = K15_GenerateString("%s%s.k15c", (char*)alloca(512), p_ResourceContext->resourceArchive.resourcePath, resourcePath, ".k15c");
+			char* resourceInfoPath = K15_GenerateString("%s%s.k15m", (char*)alloca(512), p_ResourceContext->resourceArchive.resourcePath, resourcePath, ".k15m");
+
+			if (!K15_FileExists(compiledResourcePath) ||
+				K15_InternalResourceIsOutdated(compiledResourcePath, resourceInfoPath))
+			{
+				K15_LOG_NORMAL_MESSAGE("On the fly recompiling of resource '%s'...", resourcePath);
+				K15_ResourceCompilerContext* resourceCompilerContext = p_ResourceContext->resourceCompiler;
+				K15_CompileResource(resourceCompilerContext, resourceInfoPath);
+			}
+		}
+#else 
+		K15_LOG_ERROR_MESSAGE("Could not find compiled resource '%s'.", compiledResourcePath);
+#endif //K15_ENABLE_RUNTIME_RESOURCE_COMPILATION
+
+
 		K15_ResourceLoader* loader = K15_InternalGetResourceLoaderForIdentifier(p_ResourceContext, p_ResourceIdentifier);
 
 		if (loader)
 		{
 			K15_LOG_NORMAL_MESSAGE("Resource '%s' could not be found in the cache. Loading resource via loader '%s'", resourcePath, loader->name);
 
-			resource = K15_InternalLoadResource(p_ResourceContext, loader, resourcePath, p_ResourceIdentifier, resourceHash, p_Flags);
+			char* resourceCompiledFileName = 0;
+			
+			if (p_ResourceIdentifier == K15_SHADER_RESOURCE_IDENTIFIER)
+			{
+				resourceCompiledFileName = resourcePath;
+			}
+			else
+			{
+				resourceCompiledFileName = K15_ConcatStringsIntoBuffer(resourcePath, ".k15c", (char*)alloca(512));
+			}
+			
+			resource = K15_InternalLoadResource(p_ResourceContext, loader, resourceCompiledFileName, p_ResourceIdentifier, resourceHash, p_Flags);
 
 			if (resource)
 			{
@@ -892,7 +922,7 @@ K15_ResourceHandle K15_LoadResource(K15_ResourceContext* p_ResourceContext, uint
 				K15_LOG_SUCCESS_MESSAGE("Successfully loaded resource '%s'.", resourcePath);
 
 #ifdef K15_WATCH_RESOURCE_FILES
-				K15_InternalWatchResourceFile(p_ResourceContext, resourceHash, resourcePath, p_ResourceIdentifier);
+				K15_InternalWatchResourceFile(p_ResourceContext, resourceHash, resourceCompiledFileName, p_ResourceIdentifier);
 #endif //K15_WATCH_RESOURCE_FILES
 			}
 			else
@@ -932,11 +962,10 @@ void K15_UnloadResource(K15_ResourceContext* p_ResourceContext, K15_ResourceHand
 	}
 }
 /*********************************************************************************/
-K15_AsyncOperation* K15_AsyncLoadResource(K15_AsyncContext* p_AsyncContext, K15_ResourceHandle* p_ResourceHandlePtr, 
-										  K15_ResourceContext* p_ResourceContext, uint32 p_ResourceIdentifier, 
-										  const char* p_ResourcePath, uint32 p_ResourceFlags, uint32 p_AsyncFlags)
+K15_AsyncOperation* K15_AsyncLoadResource(K15_ResourceHandle* p_ResourceHandlePtr, K15_ResourceContext* p_ResourceContext, 
+										  uint32 p_ResourceIdentifier, const char* p_ResourcePath, 
+										  uint32 p_ResourceFlags, uint32 p_AsyncFlags)
 {
-	K15_ASSERT_TEXT(p_AsyncContext, "AsyncContext is NULL.");
 	K15_ASSERT_TEXT(p_ResourceContext, "ResourceContext is NULL.");
 	K15_ASSERT_TEXT(p_ResourcePath, "resource path is NULL.");
 
@@ -949,8 +978,8 @@ K15_AsyncOperation* K15_AsyncLoadResource(K15_AsyncContext* p_AsyncContext, K15_
 	asyncParameter->resourceIdentifier = p_ResourceIdentifier;
 	asyncParameter->flags = p_ResourceFlags;
 	
-	K15_AsyncOperation* asyncOperation = K15_CreateAsyncOperation(p_AsyncContext, K15_InternalAsyncResourceLoad, 0, asyncParameter, sizeof(asyncParameter), p_AsyncFlags);
-	K15_IssueAsyncOperation(p_AsyncContext, asyncOperation);
+	K15_AsyncOperation* asyncOperation = K15_CreateAsyncOperation(p_ResourceContext->asyncContext, K15_InternalAsyncResourceLoad, 0, asyncParameter, sizeof(asyncParameter), p_AsyncFlags);
+	K15_IssueAsyncOperation(p_ResourceContext->asyncContext, asyncOperation);
 
 	return asyncOperation;
 }

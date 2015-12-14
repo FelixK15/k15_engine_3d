@@ -35,7 +35,6 @@ struct K15_Sample1GameContext
 	K15_ResourceContext* resourceContext;
 	K15_GUIContext* guiContext;
 	K15_RenderFontDesc* gameFont;
-
 	K15_RenderCameraDesc camera;
 };
 
@@ -74,11 +73,11 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 	K15_RenderCommandQueue* mainRenderQueue = K15_CreateRenderCommandQueue(p_GameContext->renderContext, "MainRenderQueue");
 
 	//Create the resource context pointing to the 'data' directory of the working directory.
-	K15_ResourceContext* resourceContext = K15_CreateResourceContextWithCustomAllocator(p_GameContext->renderContext, "data/", K15_CreateDefaultMemoryAllocator());//,K15_CreateBlockAllocator(resourceMemoryBuffer, "Resource Allocator"));
+	K15_ResourceContext* resourceContext = K15_CreateResourceContextWithCustomAllocator(p_GameContext->asyncContext, p_GameContext->renderContext, "data/", K15_CreateDefaultMemoryAllocator());//,K15_CreateBlockAllocator(resourceMemoryBuffer, "Resource Allocator"));
 
 	K15_GUIContext* guiContext = K15_CreateGUIContextWithCustomAllocator(K15_CreateStackAllocator(guiMemoryBuffer, "GUI Stack Allocator"), resourceContext, mainRenderQueue);
 
-	K15_ResourceHandle gameFont = K15_LoadResource(resourceContext, K15_FONT_RESOURCE_IDENTIFIER, "gameFont.k15font", 0);
+	K15_ResourceHandle gameFont = K15_LoadResource(resourceContext, K15_FONT_RESOURCE_IDENTIFIER, "gameFont.ttf", 0);
 
 	//set the resource context so we can use it later.
 	sample1GameContext->resourceContext = resourceContext;

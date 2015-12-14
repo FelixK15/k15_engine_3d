@@ -7,7 +7,7 @@ include_directories(../logging/include)
 include_directories(../runtime/include)
 include_directories(../memory/include)
 
-set(LAUNCHER_LIBRARIES resourceformats oslayer logging guilayer rendering runtime string zlib memory)
+set(LAUNCHER_LIBRARIES resourceformats oslayer logging guilayer rendering runtime string zlib memory libresourcecompiler)
 
 if(${K15_BUILD_DYNAMIC_GAME_LIBRARY} EQUAL 0)
 	set(LAUNCHER_LIBRARIES ${LAUNCHER_LIBRARIES} testgame)

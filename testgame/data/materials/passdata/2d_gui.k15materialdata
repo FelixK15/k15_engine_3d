@@ -1,5 +1,5 @@
 [Textures]
-DiffuseTexture=compiled_resources/textures/gui_template.k15texture
+DiffuseTexture=/textures/gui_template.png
 
 [Sampler]
-DiffuseSampler=compiled_resources/sampler/linear_clamp_sampler.k15sampler
+DiffuseSampler=/sampler/linear_clamp_sampler
