@@ -26,13 +26,18 @@ intern void K15_InternalPushGUIButtonVertices(K15_RenderBackEnd* p_RenderBackEnd
 	float buttonStylePixelWidth	 = guiStyle->guiButtonStyle.stateStyle[guiButtonState].pixelWidth;
 	float buttonStylePixelHeight = guiStyle->guiButtonStyle.stateStyle[guiButtonState].pixelHeight;
 
+	float pixelPadding = guiStyle->guiButtonStyle.padding;
+
 	float elementPosPixelX	 = (float)p_GUIElement->posPixelX;
 	float elementPosPixelY	 = (float)p_GUIElement->posPixelY;
-	float elementPixelWidth  = (float)p_GUIElement->pixelWidth;
-	float elementPixelHeight = (float)p_GUIElement->pixelHeight;
+	float elementPixelWidth  = (float)p_GUIElement->pixelWidth + pixelPadding*2;
+	float elementPixelHeight = (float)p_GUIElement->pixelHeight + pixelPadding*2;
 
 	float viewWidth	 = (float)viewportWidth;
 	float viewHeight = (float)viewportHeight;
+
+	float paddingHorizontal = pixelPadding / viewWidth;
+	float paddingVertical = pixelPadding / viewHeight;
 
 	float elementMarginLeft	  = (float)guiStyle->guiButtonStyle.stateStyle[guiButtonState].marginLeft;
 	float elementMarginRight  = (float)guiStyle->guiButtonStyle.stateStyle[guiButtonState].marginRight;
@@ -122,7 +127,7 @@ intern void K15_InternalPushGUIButtonVertices(K15_RenderBackEnd* p_RenderBackEnd
 	//text
 	/*********************************************************************************/
 	textVertexIndex = K15_InternalPush2DTextVertices(p_RenderBackEnd, guiStyleFont, p_TextVertexBuffer,
-		textVertexIndex, elementInnerLeft, elementInnerTop, text, textLength);
+		textVertexIndex, elementInnerLeft + paddingHorizontal, elementInnerTop + paddingVertical, text, textLength);
 
 	*p_VertexBufferIndexOffset = vertexIndex;
 	*p_TextVertexBufferIndexOffset = textVertexIndex;

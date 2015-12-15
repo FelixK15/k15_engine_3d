@@ -5,7 +5,7 @@
 
 struct K15_RenderUniformCacheEntry
 {
-	/*const char* name;*/
+	const char* name;
 	uint32 nameHash;
 	byte* data;
 	uint32 typeID;
@@ -21,7 +21,7 @@ struct K15_RenderUniformCache
 	uint32 numDirtyUniforms;
 };
 
-void K15_InitializeRenderUniformCache(K15_RenderUniformCache* p_RenderUniformCache);
+void K15_InitializeRenderUniformCache(K15_CustomMemoryAllocator* p_RenderAllocator, K15_RenderUniformCache* p_RenderUniformCache);
 void K15_UpdateUniformCacheEntry(K15_RenderUniformCache* p_RenderUniformCache, uint32 p_SemanticID, byte* p_Data); //size is implied by the uniform type
-void K15_SetAutoUniformGroupAsDirty(K15_RenderUniformCache* p_RenderUniformCache, uint32 p_SemanticGroupID);
+//void K15_SetAutoUniformGroupAsDirty(K15_RenderUniformCache* p_RenderUniformCache, uint32 p_SemanticGroupID);
 #endif //_K15_Rendering_RenderUniformCache_h_

@@ -548,7 +548,7 @@ intern void K15_InternalLoadMaterialResource(K15_ResourceContext* p_ResourceCont
 			K15_RenderMaterialDataDesc materialdataDesc = {};
 			K15_MaterialPassDataValue* materialDataValue = &materialPassData->values[dataIndex];
 
-			materialdataDesc.semanticID = K15_SEMANTIC_DATA_ID;
+			materialdataDesc.semanticID = K15_SEMANTIC_DATA;
 			materialdataDesc.nameHash = K15_GenerateStringHash(materialDataValue->name);
 			//materialdataDesc.name = K15_CopyString(materialDataValue->name);
 

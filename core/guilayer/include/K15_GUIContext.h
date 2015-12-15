@@ -69,6 +69,8 @@ struct K15_GUIContextStyle
 			uint32 pixelHeight;
 		} stateStyle[K15_GUI_BUTTON_STATE_COUNT];
 
+		uint32 padding;
+
 	} guiButtonStyle;
 };
 

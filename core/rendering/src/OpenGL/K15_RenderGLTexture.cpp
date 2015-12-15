@@ -18,6 +18,16 @@ intern inline bool8 K15_InternalIsCompressedRenderFormat(K15_RenderFormat p_Rend
 	return result;
 }
 /*********************************************************************************/
+intern inline void K15_InternalSetTextureUniforms(K15_RenderBackEnd* p_RenderBackEnd, K15_GLTexture* p_GLTexture, 
+												  uint8 p_GLTextureSlot)
+{
+	K15_RenderUniformCache* uniformCache = &p_RenderBackEnd->uniformCache;
+	uint8 uniformSemantic = K15_UNIFORM_SEMANTIC_TEXCOORD1_DIMENSION + p_GLTextureSlot;
+	
+	int textureDimension[2] = {(int)p_GLTexture->width, (int)p_GLTexture->height};
+	K15_UpdateUniformCacheEntry(uniformCache, uniformSemantic, (byte*)&textureDimension);
+}
+/*********************************************************************************/
 intern inline void K15_InternalCreateManualMipmapTexture(K15_GLTexture* p_GLTexture, K15_RenderFormat p_RenderFormat, GLuint p_GLTextureHandle, uint32 p_MipmapCount, byte** p_CompressedMipmapData, uint32* p_CompressedMipmapDataSize)
 {
 	uint32 width = p_GLTexture->width;
@@ -338,9 +348,9 @@ intern inline result8 K15_GLBindTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_
 	if (glTexture &&
 		glSampler)
 	{
-		uint32 textureSlot = glTexture->boundSlot;
-		uint32 samplerSlot = glSampler->boundSlot;
-		uint32 activeSlot = K15_GL_INVALID_TEXTURE_SLOT;
+		uint8 textureSlot = glTexture->boundSlot;
+		uint8 samplerSlot = glSampler->boundSlot;
+		uint8 activeSlot = K15_GL_INVALID_TEXTURE_SLOT;
 
 		if (textureSlot == K15_GL_INVALID_TEXTURE_SLOT &&
 			samplerSlot != K15_GL_INVALID_TEXTURE_SLOT)
@@ -394,6 +404,8 @@ intern inline result8 K15_GLBindTexture(K15_RenderBackEnd* p_RenderBackEnd, K15_
 				}
 
 				slot->glTexture = glTexture;
+
+				K15_InternalSetTextureUniforms(p_RenderBackEnd, glTexture, activeSlot);
 
 				if (glTexture->boundSlot != K15_GL_INVALID_TEXTURE_SLOT)
 				{

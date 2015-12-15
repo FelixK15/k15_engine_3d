@@ -27,6 +27,7 @@
 #include "K15_RenderShaderSemantics.cpp"
 #include "K15_RenderUtil.cpp"
 #include "K15_RenderGUIContext.cpp"
+#include "K15_RenderUniformCache.cpp"
 
 #include "K15_ShaderCompiler.h"
 
@@ -586,7 +587,7 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	K15_RenderVertexData* textVertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, textVertexBuffer, actualNumberOfTextVertices, &vertexFormatDesc);
 	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexBuffer, actualNumberOfVertices, &vertexFormatDesc);
 
-	K15_SetRenderMaterialRenderResourceDataByName(&guiMaterial->materialPasses[0], "DiffuseTexture", guiTexture);
+	K15_SetRenderMaterialRenderResourceDataByName(&guiMaterial->materialPasses[0], "tex", guiTexture);
 
 	//render gui
 	{

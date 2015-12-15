@@ -1,2 +1,2 @@
 VertexShader=shader/stock/default_2d.vert
-FragmentShader=shader/default.frag
+FragmentShader=shader/stock/default_2d.frag

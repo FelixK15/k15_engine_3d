@@ -106,6 +106,7 @@ void K15_GetTextSizeInPixels(K15_RenderFontDesc* p_RenderFontDesc, float* p_OutW
 {
 	float textWidth = 0.f;
 	float textHeight = 0.f;
+	float lineWidth = 0.f;
 
 	if (p_TextLength == 0)
 	{
@@ -117,7 +118,8 @@ void K15_GetTextSizeInPixels(K15_RenderFontDesc* p_RenderFontDesc, float* p_OutW
 		}
 	}
 
-	float baseHeight = 0.f;
+	float baseHeight = fabs(p_RenderFontDesc->descent) + p_RenderFontDesc->ascent;
+	textHeight = baseHeight;
 
 	for (uint32 charIndex = 0;
 		charIndex < p_TextLength;
@@ -131,10 +133,17 @@ void K15_GetTextSizeInPixels(K15_RenderFontDesc* p_RenderFontDesc, float* p_OutW
 		K15_GetFontCharacterInfo(p_RenderFontDesc, p_Text, p_TextLength, charIndex, 
 			0, 0, &glyphWidth, &glyphHeight, &advanceX, &advanceY, 0, 0);
 
-		baseHeight = K15_MAX(baseHeight, glyphHeight);
+		if (p_Text[charIndex] == '\n')
+		{
+			textHeight += baseHeight;
+			lineWidth = 0.f;
+		}
+		else
+		{
+			lineWidth += advanceX;
+		}
 
-		textWidth += glyphWidth;
-		textHeight += advanceY;
+		textWidth = K15_MAX(lineWidth, textWidth);
 	}
 
 	if (p_OutWidth)
@@ -144,7 +153,7 @@ void K15_GetTextSizeInPixels(K15_RenderFontDesc* p_RenderFontDesc, float* p_OutW
 
 	if (p_OutHeight)
 	{
-		*p_OutHeight = textHeight + baseHeight;
+		*p_OutHeight = textHeight;
 	}
 }
 /*********************************************************************************/

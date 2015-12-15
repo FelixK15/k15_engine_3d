@@ -143,15 +143,12 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	K15_RenderFontDesc* gameFont = gameContext->gameFont;
 
  	char* text = (char*)alloca(128);
-// 	sprintf(text, "FPS: %.1f\nms: %.3f", p_GameContext->frameCounter.FPS, p_GameContext->frameCounter.avgDeltaTime);
-// 	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, 0.0f, 0.0f);
-	
-	sprintf(text, "123123123123123123ooonononnnnnoo?");
-	K15_RenderCommandDraw2DText(gameRenderCommandQueue, guiContext->style.styleFont, text, 0.0f, 0.5f);
+ 	sprintf(text, "FPS: %.1f\nms: %.3f", p_GameContext->frameCounter.FPS, p_GameContext->frameCounter.avgDeltaTime);
+ 	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, 0.0f, 0.0f);
 
-	//K15_Button(guiContext, "bla");
+	K15_Button(guiContext, "bla");
 
-	//K15_RenderCommandDraw2DGUI(gameRenderCommandQueue, guiContext);
+	K15_RenderCommandDraw2DGUI(gameRenderCommandQueue, guiContext);
 
 	K15_ResetGUIContextMemory(guiContext);
 

@@ -15,6 +15,7 @@ result8 K15_GLBindMaterialPass(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderMat
 
 	K15_GLBindProgram(p_RenderBackEnd, p_MaterialPassDesc->vertexShaderHandle);
 	K15_GLBindProgram(p_RenderBackEnd, p_MaterialPassDesc->fragmentShaderHandle);
+	K15_GLUpdateDirtyUniforms(p_RenderBackEnd);
 
 	K15_GLProgram* vertexProgram = (K15_GLProgram*)K15_InternalGetGLObjectData(glContext, *p_MaterialPassDesc->vertexShaderHandle, K15_GL_TYPE_PROGRAM);
 	K15_GLProgram* fragmentProgram = (K15_GLProgram*)K15_InternalGetGLObjectData(glContext, *p_MaterialPassDesc->fragmentShaderHandle, K15_GL_TYPE_PROGRAM);
