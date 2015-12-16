@@ -548,7 +548,7 @@ intern void K15_InternalLoadMaterialResource(K15_ResourceContext* p_ResourceCont
 			K15_RenderMaterialDataDesc materialdataDesc = {};
 			K15_MaterialPassDataValue* materialDataValue = &materialPassData->values[dataIndex];
 
-			materialdataDesc.semanticID = K15_SEMANTIC_DATA;
+			materialdataDesc.semanticID = K15_UNIFORM_SEMANTIC_DATA;
 			materialdataDesc.nameHash = K15_GenerateStringHash(materialDataValue->name);
 			//materialdataDesc.name = K15_CopyString(materialDataValue->name);
 
@@ -561,12 +561,12 @@ intern void K15_InternalLoadMaterialResource(K15_ResourceContext* p_ResourceCont
 				if (materialDataValue->dataType == K15_MATERIAL_DATA_TYPE_TEXTURE)
 				{
 					identifier = K15_TEXTURE_RESOURCE_IDENTIFIER;
-					materialdataDesc.typeID = K15_TYPE_TEXTURE_2D_ID;
+					materialdataDesc.typeID = K15_TYPE_TEXTURE_2D;
 				}
 				else if (materialDataValue->dataType == K15_MATERIAL_DATA_TYPE_SAMPLER)
 				{
 					identifier = K15_SAMPLER_RESOURCE_IDENTIFIER;
-					materialdataDesc.typeID = K15_TYPE_SAMPLER_2D_ID;
+					materialdataDesc.typeID = K15_TYPE_SAMPLER_2D;
 				}
 
 				K15_ResourceHandle externResourceHandle = K15_LoadResource(p_ResourceContext, identifier, path, 0);
@@ -576,12 +576,12 @@ intern void K15_InternalLoadMaterialResource(K15_ResourceContext* p_ResourceCont
 			}
 			else if (materialDataValue->dataType == K15_MATERIAL_DATA_TYPE_INT)
 			{
-				materialdataDesc.typeID = K15_TYPE_INT_ID;
+				materialdataDesc.typeID = K15_TYPE_INT;
 				memcpy(&materialdataDesc.data.intValue, &materialDataValue->asInt, sizeof(int));
 			}
 			else if (materialDataValue->dataType == K15_MATERIAL_DATA_TYPE_FLOAT)
 			{
-				materialdataDesc.typeID = K15_TYPE_FLOAT_ID;
+				materialdataDesc.typeID = K15_TYPE_FLOAT;
 				memcpy(&materialdataDesc.data.floatValue, &materialDataValue->asFloat, sizeof(float));
 			}
 

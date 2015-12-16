@@ -22,7 +22,7 @@ intern inline void K15_InternalSetTextureUniforms(K15_RenderBackEnd* p_RenderBac
 												  uint8 p_GLTextureSlot)
 {
 	K15_RenderUniformCache* uniformCache = &p_RenderBackEnd->uniformCache;
-	uint8 uniformSemantic = K15_UNIFORM_SEMANTIC_TEXCOORD1_DIMENSION + p_GLTextureSlot;
+	K15_ShaderUniformSemantics uniformSemantic = (K15_ShaderUniformSemantics)(K15_UNIFORM_SEMANTIC_TEX1_DIMENSION + p_GLTextureSlot);
 	
 	int textureDimension[2] = {(int)p_GLTexture->width, (int)p_GLTexture->height};
 	K15_UpdateUniformCacheEntry(uniformCache, uniformSemantic, (byte*)&textureDimension);

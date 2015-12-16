@@ -194,16 +194,16 @@ intern void K15_InternalCreateDefault2DMaterial(K15_RenderBackEnd* p_RenderBackE
 
 	//sampler
 	K15_RenderMaterialDataDesc fontSampler = {};
-	fontSampler.typeID = K15_TYPE_SAMPLER_2D_ID;
-	fontSampler.semanticID = K15_SEMANTIC_DATA_ID;
-	fontSampler.semanticGroupID = K15_SEMANTIC_GROUP_ID_PER_MATERIAL;
+	fontSampler.typeID = K15_TYPE_SAMPLER_2D;
+	fontSampler.semanticID = K15_UNIFORM_SEMANTIC_DATA;
+	fontSampler.semanticGroupID = K15_UNIFORM_GROUP_PER_MATERIAL;
 	fontSampler.nameHash = K15_GenerateStringHash("sampler");
 
 	//texture
 	K15_RenderMaterialDataDesc fontTexture = {};
-	fontTexture.typeID = K15_TYPE_TEXTURE_2D_ID;
-	fontTexture.semanticID = K15_SEMANTIC_DATA_ID;
-	fontTexture.semanticGroupID = K15_SEMANTIC_GROUP_ID_PER_MATERIAL;
+	fontTexture.typeID = K15_TYPE_TEXTURE_2D;
+	fontTexture.semanticID = K15_UNIFORM_SEMANTIC_DATA;
+	fontTexture.semanticGroupID = K15_UNIFORM_GROUP_PER_MATERIAL;
 	fontTexture.nameHash = K15_GenerateStringHash("tex");
 
 	K15_PushRenderMaterialDataDescStretchBufferElement(&default2DMaterial.materialPasses[0].materialData, fontSampler);
@@ -226,16 +226,16 @@ intern void K15_InternalCreateDefaultFontMaterial(K15_RenderBackEnd* p_RenderBac
 
 	//sampler
 	K15_RenderMaterialDataDesc fontSampler = {};
-	fontSampler.typeID = K15_TYPE_SAMPLER_2D_ID;
-	fontSampler.semanticID = K15_SEMANTIC_DATA_ID;
-	fontSampler.semanticGroupID = K15_SEMANTIC_GROUP_ID_PER_MATERIAL;
+	fontSampler.typeID = K15_TYPE_SAMPLER_2D;
+	fontSampler.semanticID = K15_UNIFORM_SEMANTIC_DATA;
+	fontSampler.semanticGroupID = K15_UNIFORM_GROUP_PER_MATERIAL;
 	fontSampler.nameHash = K15_GenerateStringHash("sampler");
 
 	//texture
 	K15_RenderMaterialDataDesc fontTexture = {};
-	fontTexture.typeID = K15_TYPE_TEXTURE_2D_ID;
-	fontTexture.semanticID = K15_SEMANTIC_DATA_ID;
-	fontTexture.semanticGroupID = K15_SEMANTIC_GROUP_ID_PER_MATERIAL;
+	fontTexture.typeID = K15_TYPE_TEXTURE_2D;
+	fontTexture.semanticID = K15_UNIFORM_SEMANTIC_DATA;
+	fontTexture.semanticGroupID = K15_UNIFORM_GROUP_PER_MATERIAL;
 	fontTexture.nameHash = K15_GenerateStringHash("tex");
 
 	K15_PushRenderMaterialDataDescStretchBufferElement(&defaultFontMaterial.materialPasses[0].materialData, fontSampler);
@@ -505,8 +505,8 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 	uint16 index = 0;
 
 	K15_RenderVertexFormatDesc vertexFormatDesc = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 2, 
-		K15_SEMANTIC_POSITION_ID, K15_TYPE_FLOAT_VECTOR2_ID,
-		K15_SEMANTIC_TEXCOORD1_ID, K15_TYPE_FLOAT_VECTOR2_ID);
+		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
+		K15_ATTRIBUTE_SEMANTIC_TEXCOORD1, K15_TYPE_FLOAT_VECTOR2);
 
 	uint32 sizeVerticesInBytes = vertexFormatDesc.stride * numVertices;
 
@@ -556,8 +556,8 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	uint32 currentGUIMemoryOffset = 0;
 
 	K15_RenderVertexFormatDesc vertexFormatDesc = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 2, 
-		K15_SEMANTIC_POSITION_ID, K15_TYPE_FLOAT_VECTOR2_ID,
-		K15_SEMANTIC_TEXCOORD1_ID, K15_TYPE_FLOAT_VECTOR2_ID);
+		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
+		K15_ATTRIBUTE_SEMANTIC_TEXCOORD1, K15_TYPE_FLOAT_VECTOR2);
 	
 	//count vertices
 	uint32 numVertices = 0;

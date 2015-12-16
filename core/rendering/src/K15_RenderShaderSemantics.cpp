@@ -21,45 +21,45 @@ intern uint32 K15_InternalAddPerObjectUniformEntries(K15_SemanticTable* p_Semant
 /*********************************************************************************/
 intern uint32 K15_InternalAddPerMaterialUniformEntries(K15_SemanticTable* p_SemanticTable, uint32 p_Counter)
 {
-	p_SemanticTable->entries[p_Counter].semanticID = K15_UNIFORM_SEMANTIC_TEXCOORD1_DIMENSION;
+	p_SemanticTable->entries[p_Counter].semanticID = K15_UNIFORM_SEMANTIC_TEX1_DIMENSION;
 	p_SemanticTable->entries[p_Counter].semanticGroupID = K15_UNIFORM_GROUP_PER_MATERIAL;
-	p_SemanticTable->entries[p_Counter].variableName = K15_SEMANTIC_TEXCOORD1_DIMENSION_NAME;
-	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_TEXCOORD1_DIMENSION_SEMANTIC_NAME;
+	p_SemanticTable->entries[p_Counter].variableName = K15_SEMANTIC_TEX1_DIMENSION_NAME;
+	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_TEX1_DIMENSION_SEMANTIC_NAME;
 
-	p_SemanticTable->entries[p_Counter].semanticID = K15_UNIFORM_SEMANTIC_TEXCOORD2_DIMENSION;
+	p_SemanticTable->entries[p_Counter].semanticID = K15_UNIFORM_SEMANTIC_TEX2_DIMENSION;
 	p_SemanticTable->entries[p_Counter].semanticGroupID = K15_UNIFORM_GROUP_PER_MATERIAL;
-	p_SemanticTable->entries[p_Counter].variableName = K15_SEMANTIC_TEXCOORD2_DIMENSION_NAME;
-	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_TEXCOORD2_DIMENSION_SEMANTIC_NAME;
+	p_SemanticTable->entries[p_Counter].variableName = K15_SEMANTIC_TEX2_DIMENSION_NAME;
+	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_TEX2_DIMENSION_SEMANTIC_NAME;
 
-	p_SemanticTable->entries[p_Counter].semanticID = K15_UNIFORM_SEMANTIC_TEXCOORD3_DIMENSION;
+	p_SemanticTable->entries[p_Counter].semanticID = K15_UNIFORM_SEMANTIC_TEX3_DIMENSION;
 	p_SemanticTable->entries[p_Counter].semanticGroupID = K15_UNIFORM_GROUP_PER_MATERIAL;
-	p_SemanticTable->entries[p_Counter].variableName = K15_SEMANTIC_TEXCOORD3_DIMENSION_NAME;
-	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_TEXCOORD3_DIMENSION_SEMANTIC_NAME;
+	p_SemanticTable->entries[p_Counter].variableName = K15_SEMANTIC_TEX3_DIMENSION_NAME;
+	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_TEX3_DIMENSION_SEMANTIC_NAME;
 
-	p_SemanticTable->entries[p_Counter].semanticID = K15_UNIFORM_SEMANTIC_TEXCOORD4_DIMENSION;
+	p_SemanticTable->entries[p_Counter].semanticID = K15_UNIFORM_SEMANTIC_TEX4_DIMENSION;
 	p_SemanticTable->entries[p_Counter].semanticGroupID = K15_UNIFORM_GROUP_PER_MATERIAL;
-	p_SemanticTable->entries[p_Counter].variableName = K15_SEMANTIC_TEXCOORD4_DIMENSION_NAME;
-	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_TEXCOORD4_DIMENSION_SEMANTIC_NAME;
+	p_SemanticTable->entries[p_Counter].variableName = K15_SEMANTIC_TEX4_DIMENSION_NAME;
+	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_TEX4_DIMENSION_SEMANTIC_NAME;
 
-	p_SemanticTable->entries[p_Counter].semanticID = K15_UNIFORM_SEMANTIC_TEXCOORD5_DIMENSION;
+	p_SemanticTable->entries[p_Counter].semanticID = K15_UNIFORM_SEMANTIC_TEX5_DIMENSION;
 	p_SemanticTable->entries[p_Counter].semanticGroupID = K15_UNIFORM_GROUP_PER_MATERIAL;
-	p_SemanticTable->entries[p_Counter].variableName = K15_SEMANTIC_TEXCOORD5_DIMENSION_NAME;
-	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_TEXCOORD5_DIMENSION_SEMANTIC_NAME;
+	p_SemanticTable->entries[p_Counter].variableName = K15_SEMANTIC_TEX5_DIMENSION_NAME;
+	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_TEX5_DIMENSION_SEMANTIC_NAME;
 
-	p_SemanticTable->entries[p_Counter].semanticID = K15_UNIFORM_SEMANTIC_TEXCOORD6_DIMENSION;
+	p_SemanticTable->entries[p_Counter].semanticID = K15_UNIFORM_SEMANTIC_TEX6_DIMENSION;
 	p_SemanticTable->entries[p_Counter].semanticGroupID = K15_UNIFORM_GROUP_PER_MATERIAL;
-	p_SemanticTable->entries[p_Counter].variableName = K15_SEMANTIC_TEXCOORD6_DIMENSION_NAME;
-	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_TEXCOORD6_DIMENSION_SEMANTIC_NAME;
+	p_SemanticTable->entries[p_Counter].variableName = K15_SEMANTIC_TEX6_DIMENSION_NAME;
+	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_TEX6_DIMENSION_SEMANTIC_NAME;
 
-	p_SemanticTable->entries[p_Counter].semanticID = K15_UNIFORM_SEMANTIC_TEXCOORD7_DIMENSION;
+	p_SemanticTable->entries[p_Counter].semanticID = K15_UNIFORM_SEMANTIC_TEX7_DIMENSION;
 	p_SemanticTable->entries[p_Counter].semanticGroupID = K15_UNIFORM_GROUP_PER_MATERIAL;
-	p_SemanticTable->entries[p_Counter].variableName = K15_SEMANTIC_TEXCOORD7_DIMENSION_NAME;
-	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_TEXCOORD7_DIMENSION_SEMANTIC_NAME;
+	p_SemanticTable->entries[p_Counter].variableName = K15_SEMANTIC_TEX7_DIMENSION_NAME;
+	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_TEX7_DIMENSION_SEMANTIC_NAME;
 
-	p_SemanticTable->entries[p_Counter].semanticID = K15_UNIFORM_SEMANTIC_TEXCOORD8_DIMENSION;
+	p_SemanticTable->entries[p_Counter].semanticID = K15_UNIFORM_SEMANTIC_TEX8_DIMENSION;
 	p_SemanticTable->entries[p_Counter].semanticGroupID = K15_UNIFORM_GROUP_PER_MATERIAL;
-	p_SemanticTable->entries[p_Counter].variableName = K15_SEMANTIC_TEXCOORD8_DIMENSION_NAME;
-	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_TEXCOORD8_DIMENSION_SEMANTIC_NAME;
+	p_SemanticTable->entries[p_Counter].variableName = K15_SEMANTIC_TEX8_DIMENSION_NAME;
+	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_TEX8_DIMENSION_SEMANTIC_NAME;
 
 	return p_Counter;
 }

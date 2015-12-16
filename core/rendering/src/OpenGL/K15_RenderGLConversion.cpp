@@ -351,8 +351,8 @@ intern inline GLenum K15_GLConvertUniformTypeToGLType(uint32 p_TypeID)
 
 	switch(p_TypeID)
 	{
-		case K15_TYPE_INT_ID:
-		case K15_TYPE_SAMPLER_2D_ID:
+		case K15_TYPE_INT:
+		case K15_TYPE_SAMPLER_2D:
 // 		case K15_UNIFORM_TYPE_INT16:
 // 		case K15_UNIFORM_TYPE_INT32:
  		{
@@ -368,43 +368,43 @@ intern inline GLenum K15_GLConvertUniformTypeToGLType(uint32 p_TypeID)
 // 			break;
 // 		}
 
-		case K15_TYPE_FLOAT_ID:
+		case K15_TYPE_FLOAT:
 		{
 			nativeUniformType = GL_FLOAT;
 			break;
 		}
 
-		case K15_TYPE_FLOAT_VECTOR2_ID:
+		case K15_TYPE_FLOAT_VECTOR2:
 		{
 			nativeUniformType = GL_FLOAT_VEC2;
 			break;
 		}
 
-		case K15_TYPE_FLOAT_VECTOR3_ID:
+		case K15_TYPE_FLOAT_VECTOR3:
 		{
 			nativeUniformType = GL_FLOAT_VEC3;
 			break;
 		}
 
-		case K15_TYPE_FLOAT_VECTOR4_ID:
+		case K15_TYPE_FLOAT_VECTOR4:
 		{
 			nativeUniformType = GL_FLOAT_VEC4;
 			break;
 		}
 
-		case K15_TYPE_FLOAT_MATRIX2_ID:
+		case K15_TYPE_FLOAT_MATRIX2:
 		{
 			nativeUniformType = GL_FLOAT_MAT2;
 			break;
 		}
 
-		case K15_TYPE_FLOAT_MATRIX3_ID:
+		case K15_TYPE_FLOAT_MATRIX3:
 		{
 			nativeUniformType = GL_FLOAT_MAT3;
 			break;
 		}
 
-		case K15_TYPE_FLOAT_MATRIX4_ID:
+		case K15_TYPE_FLOAT_MATRIX4:
 		{
 			nativeUniformType = GL_FLOAT_MAT4;
 			break;

@@ -139,8 +139,8 @@ intern void K15_InternalDrawDefault2DTexture(K15_RenderBackEnd* p_RenderBackEnd,
 	K15_CustomMemoryAllocator* renderAllocator = &renderContext->memoryAllocator;
 
 	K15_RenderVertexFormatDesc vertexFormatDesc = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 2, 
-		K15_SEMANTIC_POSITION_ID, K15_TYPE_FLOAT_VECTOR2_ID,
-		K15_SEMANTIC_TEXCOORD1_ID, K15_TYPE_FLOAT_VECTOR2_ID);
+		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
+		K15_ATTRIBUTE_SEMANTIC_TEXCOORD1, K15_TYPE_FLOAT_VECTOR2);
 
 	uint32 numVertices = 6;
 	uint32 sizeVerticesInBytes = vertexFormatDesc.stride * numVertices;
