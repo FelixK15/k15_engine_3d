@@ -141,6 +141,7 @@ struct K15_GLRenderContext
 
 	const char* vendorString;
 	const char* rendererString;
+	const char* glslVersionString; //#version ...
 
 	struct  
 	{

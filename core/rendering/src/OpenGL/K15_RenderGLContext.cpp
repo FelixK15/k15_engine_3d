@@ -32,6 +32,50 @@
 #include "OpenGL/K15_RenderGLTypes.cpp"
 
 /*********************************************************************************/
+intern inline void K15_InternalGenerateGLSLVersionString(K15_GLRenderContext* p_GLContext)
+{
+	GLint major = p_GLContext->version.major;
+	GLint minor = p_GLContext->version.minor;
+	char* glslVersionIdentifier = "#version 100";
+	//https://www.opengl.org/wiki/Detecting_the_Shader_Model
+
+	if (major == 2)
+	{
+		if (minor == 0)
+		{
+			glslVersionIdentifier = "#version 110";
+		}
+		else if (minor == 1)
+		{
+			glslVersionIdentifier = "#version 120";
+		}
+	}
+	else if (major == 3 && minor < 3)
+	{
+		if (minor == 0)
+		{
+			glslVersionIdentifier = "#version 130";
+		}
+		else if (minor == 1)
+		{
+			glslVersionIdentifier = "#version 140";;
+		}
+		else if (minor == 2)
+		{
+			glslVersionIdentifier = "#version 150";
+		}
+	}
+	else
+	{
+		//glsl version = gl version
+		int glslVersion = major*100+minor*10;
+		glslVersionIdentifier = (char*)malloc(13);
+		sprintf(glslVersionIdentifier, "#version %d", glslVersion);
+	}
+
+	p_GLContext->glslVersionString = glslVersionIdentifier;
+}
+/*********************************************************************************/
 intern inline K15_RenderResourceHandle K15_InternalAddGLObject(K15_GLRenderContext* p_GLContext, void* p_GLObjectData, uint32 p_GLObjectDataSize, uint32 p_GLObjectHash, K15_GLObjectType p_GLObjectType)
 {
 	K15_ASSERT(p_GLContext);
@@ -706,6 +750,8 @@ result8 K15_GLCreateRenderContext(K15_CustomMemoryAllocator* p_MemoryAllocator, 
 	{
 		return K15_OS_ERROR_SYSTEM;
 	}
+
+	K15_InternalGenerateGLSLVersionString(glContext);
 
 	//1st get extension strings from API
 	K15_GLGetExtensionStrings(glContext, p_MemoryAllocator);

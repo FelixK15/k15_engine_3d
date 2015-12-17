@@ -1,7 +1,7 @@
-K15_Vector4 ShadeFragment(in K15_Vector2 uv : TEXCOORD1, 
-						  in K15_2DSampler DiffuseSampler : DATA,
-						  in K15_2DTexture DiffuseTexture : DATA)
+float4 ShadeFragment(in float2 uv : TEXCOORD1, 
+					in sampler2d DiffuseSampler : DATA,
+					in texture2d DiffuseTexture : DATA)
 {
-	K15_Vector4 c = sampleTex2D(DiffuseSampler, DiffuseTexture, uv);
-	return K15_Vector4(c.r, c.g, c.b, 1.f);
+	float4 c = sampleTex2D(DiffuseSampler, DiffuseTexture, uv);
+	return float4(c.r, c.g, c.b, 1.f);
 }

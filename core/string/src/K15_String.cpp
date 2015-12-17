@@ -334,6 +334,8 @@ char* K15_ConcatStringArray(const char** p_StringArray, unsigned int p_ArrayLeng
 		stringLength += (unsigned int)strlen(p_StringArray[i]);
 	}
 
+	stringLength += 1; //0 terminator
+
 	return K15_ConcatStringArrayIntoBuffer(p_StringArray, (char*)malloc(stringLength), p_ArrayLength);
 }
 /*********************************************************************************/

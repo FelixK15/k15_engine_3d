@@ -725,7 +725,7 @@ result8 K15_GLCreateProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderProgra
 	if (!shaderProcessResult->valid)
 	{
 		char* error = K15_ConcatStringArray((const char**)shaderProcessResult->errors, shaderProcessResult->numErrors);
-		K15_SetRenderContextError(renderContext, error, (uint32)strlen(error));
+		K15_SetRenderContextError(renderContext, error, (uint32)strlen(error)+1);
 		result = K15_ERROR_RENDER_PROGRAM_COMPILATION;
 	}
 
@@ -778,6 +778,7 @@ result8 K15_GLCreateProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderProgra
 		glslWrapperCode = K15_GLGenerateGLSLWrapperCode(memoryAllocator, renderProgramType, p_RenderBackEnd->shaderProcessorContext, compiledProgramCode, mainFunctionIdentifier, &shaderInformation);
 
 		const char* glslProgramCode[] = {
+			glContext->glslVersionString,
 			K15_GLGenerateGLSLHeaderCode(glProgramType),
 			compiledProgramCode,
 			glslWrapperCode
