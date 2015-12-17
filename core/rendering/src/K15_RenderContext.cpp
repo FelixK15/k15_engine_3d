@@ -80,7 +80,7 @@ void K15_SetRenderContextError(K15_RenderContext* p_RenderContext, const char* p
 	}
 
 	uint32 lengthErrorMessage = p_ErrorMessageLength == 0 ? (uint32)strlen(p_ErrorMessage) + 1 : p_ErrorMessageLength;
-	p_RenderContext->error = K15_CopyStringIntoBuffer(p_ErrorMessage, (char*)K15_AllocateFromMemoryAllocator(&p_RenderContext->memoryAllocator, lengthErrorMessage), lengthErrorMessage);
+	p_RenderContext->error = K15_CopyStringIntoBuffer(p_ErrorMessage, (char*)K15_AllocateFromMemoryAllocator(&p_RenderContext->memoryAllocator, lengthErrorMessage+1), lengthErrorMessage);
 }
 /*********************************************************************************/
 void K15_LoadStockShader(K15_RenderContext* p_RenderContext, K15_ResourceContext* p_ResourceContext)

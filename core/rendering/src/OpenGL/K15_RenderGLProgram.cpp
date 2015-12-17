@@ -725,7 +725,7 @@ result8 K15_GLCreateProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderProgra
 	if (!shaderProcessResult->valid)
 	{
 		char* error = K15_ConcatStringArray((const char**)shaderProcessResult->errors, shaderProcessResult->numErrors);
-		K15_SetRenderContextError(renderContext, error, (uint32)strlen(error)+1);
+		K15_SetRenderContextError(renderContext, error, (uint32)strlen(error));
 		result = K15_ERROR_RENDER_PROGRAM_COMPILATION;
 	}
 
@@ -813,7 +813,7 @@ result8 K15_GLCreateProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderProgra
 				}
 				else
 				{
-					char* infoLogBuffer = (char*)alloca(infoLogLength);
+					char* infoLogBuffer = (char*)alloca(infoLogLength+1);
 					K15_OPENGL_CALL(kglGetShaderInfoLog(glShaderHandle, infoLogLength, 0, infoLogBuffer));
 					K15_SetRenderContextError(renderContext, infoLogBuffer, infoLogLength);
 
