@@ -101,6 +101,8 @@ intern result8 K15_InitializeRenderBackEnd(K15_CustomMemoryAllocator* p_MemoryAl
 	p_RenderBackEnd->shaderProcessorContext->lastProcessResult.numErrors = 0;
 	p_RenderBackEnd->shaderProcessorContext->lastProcessResult.errors = 0;
 
+	K15_InitializeRenderUniformCache(p_RenderBackEnd, &p_RenderBackEnd->uniformCache);
+
 	K15_Window* window = p_OSContext->window.window;
 
 	p_RenderBackEnd->viewportHeight = (float)window->height;

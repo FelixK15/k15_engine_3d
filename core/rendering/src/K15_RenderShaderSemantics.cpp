@@ -156,6 +156,18 @@ K15_TypeTable K15_CreateTypeTable()
 	table.entries[counter].typeName = K15_TYPE_FLOAT_VECTOR4_NAME;
 	table.entries[counter++].typeSizeInBytes = sizeof(float) * 4;
 
+	table.entries[counter].typeID = K15_TYPE_INT_VECTOR2;
+	table.entries[counter].typeName = K15_TYPE_INT_VECTOR2_NAME;
+	table.entries[counter++].typeSizeInBytes = sizeof(int) * 2;
+
+	table.entries[counter].typeID = K15_TYPE_INT_VECTOR3;
+	table.entries[counter].typeName = K15_TYPE_INT_VECTOR3_NAME;
+	table.entries[counter++].typeSizeInBytes = sizeof(int) * 3;
+
+	table.entries[counter].typeID = K15_TYPE_INT_VECTOR4;
+	table.entries[counter].typeName = K15_TYPE_INT_VECTOR4_NAME;
+	table.entries[counter++].typeSizeInBytes = sizeof(int) * 4;
+
 	table.entries[counter].typeID = K15_TYPE_FLOAT_MATRIX2;
 	table.entries[counter].typeName = K15_TYPE_FLOAT_MATRIX2_NAME;
 	table.entries[counter++].typeSizeInBytes = sizeof(float) * 4;

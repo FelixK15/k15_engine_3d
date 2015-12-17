@@ -21,7 +21,6 @@ struct K15_RenderUniformCache
 	bool8 dirtyUniformSemantics[K15_UNIFORM_SEMANTIC_COUNT];
 
 	uint32 numUniforms;
-	uint32 numDirtyUniforms;
 };
 
 void K15_InitializeRenderUniformCache(K15_CustomMemoryAllocator* p_RenderAllocator, 

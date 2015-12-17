@@ -475,73 +475,73 @@ intern void K15_InternGLReflectProgram(K15_RenderContext* p_RenderContext, K15_G
 
 }
 /*********************************************************************************/
-intern K15_InternalGLUpdateUniformFnc K15_InternalGLConvertToUpdateUniformFnc(uint32 p_GLShaderType)
+intern K15_InternalGLUpdateUniformFnc K15_InternalGLConvertToUpdateUniformFnc(uint32 p_ShaderType)
 {
 	K15_InternalGLUpdateUniformFnc updateUniformFnc = 0;
 
-	switch(p_GLShaderType)
+	switch(p_ShaderType)
 	{
-		case GL_INT:
+		case K15_TYPE_INT:
 		{
 			updateUniformFnc = K15_InternalGLUpdateIntUniform;
 			break;
 		}
 
-		case GL_INT_VEC2:
+		case K15_TYPE_INT_VECTOR2:
 		{
 			updateUniformFnc = K15_InternalGLUpdateInt2Uniform;
 			break;
 		}
 		
-		case GL_INT_VEC3:
+		case K15_TYPE_INT_VECTOR3:
 		{
 			updateUniformFnc = K15_InternalGLUpdateInt3Uniform;
 			break;
 		}
 
-		case GL_INT_VEC4:
+		case K15_TYPE_INT_VECTOR4:
 		{
 			updateUniformFnc = K15_InternalGLUpdateInt4Uniform;
 			break;
 		}
 
-		case GL_FLOAT:
+		case K15_TYPE_FLOAT:
 		{
 			updateUniformFnc = K15_InternalGLUpdateFloatUniform;
 			break;
 		}
 
-		case GL_FLOAT_VEC2:
+		case K15_TYPE_FLOAT_VECTOR2:
 		{
 			updateUniformFnc = K15_InternalGLUpdateFloat2Uniform;
 			break;
 		}
 
-		case GL_FLOAT_MAT2:
+		case K15_TYPE_FLOAT_MATRIX2:
 		{
 			updateUniformFnc = K15_InternalGLUpdateFloat2x2Uniform;
 			break;
 		}
 
-		case GL_FLOAT_VEC3:
+		case K15_TYPE_FLOAT_VECTOR3:
 		{
 			updateUniformFnc = K15_InternalGLUpdateFloat3Uniform;
 			break;
 		}
 
-		case GL_FLOAT_MAT3:
+		case K15_TYPE_FLOAT_MATRIX3:
 		{
 			updateUniformFnc = K15_InternalGLUpdateFloat3x3Uniform;
 			break;
 		}
 
-		case GL_FLOAT_VEC4:
+		case K15_TYPE_FLOAT_VECTOR4:
 		{
 			updateUniformFnc = K15_InternalGLUpdateFloat4Uniform;
 			break;
 		}
 
-		case GL_FLOAT_MAT4:
+		case K15_TYPE_FLOAT_MATRIX4:
 		{
 			updateUniformFnc = K15_InternalGLUpdateFloat4x4Uniform;
 			break;
@@ -578,7 +578,7 @@ const char* K15_GLGenerateGLSLTypeDefs()
 /*********************************************************************************/
 const char* K15_GLGenerateGLSLHeaderCode(GLenum p_GLProgramType)
 {
-	const char* glslHeaderCode = 0;
+	const char* glslHeaderCode = "\n";
 
 	if (p_GLProgramType == GL_VERTEX_SHADER)
 	{
@@ -775,10 +775,15 @@ result8 K15_GLCreateProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderProgra
 
 	if (result == K15_SUCCESS)
 	{
+		const char* glslVersionString = glContext->glslVersionString;
+		char* glslVersionStringFormatted = (char*)alloca(strlen(glslVersionString) + 2);
+		sprintf(glslVersionStringFormatted, "%s\n", glslVersionString);
+
 		glslWrapperCode = K15_GLGenerateGLSLWrapperCode(memoryAllocator, renderProgramType, p_RenderBackEnd->shaderProcessorContext, compiledProgramCode, mainFunctionIdentifier, &shaderInformation);
 
 		const char* glslProgramCode[] = {
-			glContext->glslVersionString,
+			glslVersionStringFormatted,
+			K15_GLGenerateGLSLTypeDefs(),
 			K15_GLGenerateGLSLHeaderCode(glProgramType),
 			compiledProgramCode,
 			glslWrapperCode

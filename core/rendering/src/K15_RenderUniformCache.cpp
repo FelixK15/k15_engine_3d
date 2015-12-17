@@ -118,7 +118,6 @@ intern void K15_InternalAddRenderUniformCacheEntries(K15_RenderUniformCache* p_U
 /*********************************************************************************/
 intern void K15_InternalAddDirtyUniform(K15_RenderUniformCache* p_UniformCache, K15_ShaderUniformSemantics p_UniformSemantic)
 {
-	K15_ASSERT(p_UniformCache->numDirtyUniforms < K15_UNIFORM_SEMANTIC_COUNT);
 	p_UniformCache->dirtyUniformSemantics[p_UniformSemantic] = K15_TRUE;
 }
 /*********************************************************************************/
@@ -150,8 +149,12 @@ void K15_UpdateUniformCacheEntry(K15_RenderUniformCache* p_RenderUniformCache, K
 	K15_RenderUniformCacheEntry* uniformCacheEntry = &p_RenderUniformCache->cachedUniforms[p_SemanticID];
 	uint32 uniformTypeSizeInBytes = uniformCacheEntry->sizeInBytes;
 	
-	memcpy(uniformCacheEntry->data, p_Data, uniformTypeSizeInBytes);
-	K15_InternalAddDirtyUniform(p_RenderUniformCache, p_SemanticID);
+	//check if data has changed
+	if (memcmp(p_Data, uniformCacheEntry->data, uniformTypeSizeInBytes) != 0)
+	{
+		memcpy(uniformCacheEntry->data, p_Data, uniformTypeSizeInBytes);
+		K15_InternalAddDirtyUniform(p_RenderUniformCache, p_SemanticID);
+	}
 }
 /*********************************************************************************/
 void K15_ResetDirtyUniformFlags(K15_RenderUniformCache* p_RenderUniformCache)

@@ -1,5 +1,5 @@
 float4 ShadeFragment(in float2 uv : TEXCOORD1, 
-					  in float2 texDim : TEXCOORD_DIMENSION1,
+					  in int2 texDim : TEX_DIMENSION1,
 					  in sampler2d sampler : DATA,
 					  in texture2d tex : DATA)
 {
