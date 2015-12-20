@@ -161,7 +161,7 @@ uint8 K15_Win32InitializeLightOSLayer()
 	//system
 	win32OSContext.system.systemIdentifier = OS_WINDOWS;
 	win32OSContext.system.homeDir = K15_Win32GetWorkingDirectory();
-	win32OSContext.system.getElapsedSeconds = K15_Win32GetElapsedSeconds;
+	win32OSContext.system.getElapsedMilliseconds = K15_Win32GetElapsedMilliseconds;
 	win32OSContext.system.loadDynamicLibrary = K15_Win32LoadDynamicLibrary;
 	win32OSContext.system.unloadDynamicLibrary = K15_Win32UnloadDynamicLibrary;
 	win32OSContext.system.getProcAddress = K15_Win32GetProcAddress;
@@ -191,7 +191,7 @@ uint8 K15_Win32InitializeLightOSLayer()
 	LARGE_INTEGER performanceFrequency;
 	QueryPerformanceFrequency(&performanceFrequency);
 
-	win32SpecificContext->performanceFrequency = (float)performanceFrequency.QuadPart;
+	win32SpecificContext->performanceFrequency = performanceFrequency.QuadPart;
 
 	//win32 context as userdata
 	win32OSContext.userData = (void*)win32SpecificContext;
@@ -200,7 +200,9 @@ uint8 K15_Win32InitializeLightOSLayer()
 	LARGE_INTEGER counts;
 	QueryPerformanceCounter(&counts);
 
-	win32OSContext.timeStarted = (double)(counts.QuadPart / performanceFrequency.QuadPart);
+	counts.QuadPart *= 1000; //to milliseconds
+
+	win32OSContext.timeStartedInMilliseconds = (uint32)(counts.QuadPart / performanceFrequency.QuadPart);
 
 	K15_InternalGetSystemInfo(&win32OSContext);
 	K15_InternalSetOSLayerContext(win32OSContext);
@@ -254,7 +256,7 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	//system
 	win32OSContext.system.systemIdentifier = OS_WINDOWS;
 	win32OSContext.system.homeDir = K15_Win32GetWorkingDirectory();
-	win32OSContext.system.getElapsedSeconds = K15_Win32GetElapsedSeconds;
+	win32OSContext.system.getElapsedMilliseconds = K15_Win32GetElapsedMilliseconds;
 	win32OSContext.system.loadDynamicLibrary = K15_Win32LoadDynamicLibrary;
 	win32OSContext.system.unloadDynamicLibrary = K15_Win32UnloadDynamicLibrary;
 	win32OSContext.system.getProcAddress = K15_Win32GetProcAddress;
@@ -326,7 +328,7 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	LARGE_INTEGER performanceFrequency;
 	QueryPerformanceFrequency(&performanceFrequency);
 	
-	win32SpecificContext->performanceFrequency = (float)performanceFrequency.QuadPart;
+	win32SpecificContext->performanceFrequency = performanceFrequency.QuadPart;
 
 	//win32 context as userdata
 	win32OSContext.userData = (void*)win32SpecificContext;
@@ -348,7 +350,9 @@ uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance)
 	LARGE_INTEGER counts;
 	QueryPerformanceCounter(&counts);
 
-	win32OSContext.timeStarted = (double)(counts.QuadPart / performanceFrequency.QuadPart);
+	counts.QuadPart *= 1000; //to milliseconds
+
+	win32OSContext.timeStartedInMilliseconds = (uint32)(counts.QuadPart / performanceFrequency.QuadPart);
 
 	K15_InternalSetOSLayerContext(win32OSContext);
 
@@ -392,10 +396,9 @@ char* K15_Win32GetError(char* p_OutputBuffer)
 	return p_OutputBuffer;
 }
 /*********************************************************************************/
-void K15_Win32Sleep(double p_SleepTimeInSeconds)
+void K15_Win32Sleep(uint32 p_SleepTimeInMilliseconds)
 {
-	DWORD milliSeconds = (DWORD)(p_SleepTimeInSeconds * 1000.0);
-	SleepEx(milliSeconds, K15_TRUE);
+	SleepEx(p_SleepTimeInMilliseconds, K15_TRUE);
 }
 /*********************************************************************************/
 void K15_Win32ShutdownOSLayer()
@@ -422,7 +425,7 @@ void K15_Win32ShutdownOSLayer()
 	}
 }
 /*********************************************************************************/
-double K15_Win32GetElapsedSeconds()
+uint32 K15_Win32GetElapsedMilliseconds()
 {
 	K15_OSContext* osContext = K15_GetOSLayerContext();
 	K15_Win32Context* win32Context = (K15_Win32Context*)osContext->userData;
@@ -430,8 +433,9 @@ double K15_Win32GetElapsedSeconds()
 	LARGE_INTEGER counts;
 	QueryPerformanceCounter(&counts);
 
-	double seconds = counts.QuadPart / win32Context->performanceFrequency;
+	counts.QuadPart *= 1000; //seconds to milliseconds
+	uint32 milliseconds = (uint32)(counts.QuadPart / win32Context->performanceFrequency);
 
-	return seconds;
+	return milliseconds;
 }
 /*********************************************************************************/

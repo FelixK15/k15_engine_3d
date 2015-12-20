@@ -621,6 +621,9 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, textVertexData);
 	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexData);
 
+	K15_FreeFromMemoryAllocator(renderAllocator, guiMemoryBuffer);
+	K15_FreeFromMemoryAllocator(renderAllocator, guiContext);
+
 	//K15_FreeFromMemoryAllocator(renderAllocator, vertexBuffer);
 }
 /*********************************************************************************/

@@ -3,14 +3,20 @@
 #include "K15_OSContext.h"
 
 /*********************************************************************************/
-double K15_GetElapsedSeconds()
+uint32 K15_GetElapsedMilliseconds()
 {
 	K15_OSContext* osContext = K15_GetOSLayerContext();
 
-	double seconds = osContext->system.getElapsedSeconds();
-	seconds -= osContext->timeStarted;
+	uint32 milliseconds = osContext->system.getElapsedMilliseconds();
+	milliseconds -= osContext->timeStartedInMilliseconds;
 
-	return seconds;
+	return milliseconds;
+}
+/*********************************************************************************/
+double K15_GetElapsedSeconds()
+{
+	uint32 elapesMilliseconds = K15_GetElapsedMilliseconds();
+	return ((double)elapesMilliseconds / 1000.0);
 }
 /*********************************************************************************/
 char* K15_GetSystemErrorMessage()

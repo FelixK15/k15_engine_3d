@@ -55,7 +55,7 @@ struct K15_Win32DeferedFileWatchRegistration
 struct K15_Win32Context
 {
 	HINSTANCE hInstance;
-	float performanceFrequency;
+	LONGLONG performanceFrequency;
 	
 	struct
 	{
@@ -97,8 +97,8 @@ uint8 K15_Win32InitializeLightOSLayer(); //wihtout window, event support etc.
 uint8 K15_Win32InitializeOSLayer(HINSTANCE p_hInstance);
 void K15_Win32RegisterDeferedFileWatch();
 char* K15_Win32GetError(char* p_OutputBuffer);
-void K15_Win32Sleep(double p_SleepTimeInSeconds);
+void K15_Win32Sleep(uint32 p_SleepTimeInMilliseconds);
 void K15_Win32ShutdownOSLayer();
-double K15_Win32GetElapsedSeconds();
+uint32 K15_Win32GetElapsedMilliseconds();
 
 #endif //_K15_OSContext_Win32_h_

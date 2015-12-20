@@ -3,8 +3,8 @@
 
 #include "K15_OSLayer_Prerequisites.h"
 
-double K15_PosixGetElapsedSeconds();
-void K15_PosixSleep(double p_SleepTimeInSeconds);
+uint32 K15_PosixGetElapsedMilliseconds();
+void K15_PosixSleep(uint32 p_SleepTimeInMilliseconds);
 char* K15_PosixGetError();
 
 #endif //_K15_OSLAyer_System_Posix_h_

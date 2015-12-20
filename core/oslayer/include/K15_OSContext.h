@@ -14,7 +14,7 @@ typedef uint8 (*setWindowTitleFnc)(K15_OSContext*, K15_Window*, char*);
 typedef uint8 (*closeWindowFnc)(K15_OSContext*, K15_Window*);
 
 ///System
-typedef double (*getElapsedSecondsFnc)();
+typedef uint32 (*getElapsedMillisecondsFnc)();
 typedef uint8 (*loadDynamicLibraryFnc)(K15_OSContext*, K15_DynamicLibrary*, const char*);
 typedef uint8 (*unloadDynamicLibraryFnc)(K15_OSContext*, K15_DynamicLibrary*);
 typedef void* (*getProcAddressFnc)(K15_OSContext*, K15_DynamicLibrary*, const char*);
@@ -69,7 +69,7 @@ struct K15_OSContext
 	{
 		K15_DynamicLibraryStretchBuffer dynamicLibraries;
 		K15_DirectoryWatchEntryStretchBuffer directoryWatchEntries;
-		getElapsedSecondsFnc getElapsedSeconds;
+		getElapsedMillisecondsFnc getElapsedMilliseconds;
 		loadDynamicLibraryFnc loadDynamicLibrary;
 		unloadDynamicLibraryFnc unloadDynamicLibrary;
 		registerFileWatchFnc registerFileWatch;
@@ -95,7 +95,7 @@ struct K15_OSContext
 		//K15_Thread** threads;
 	} threading;
 
-	double timeStarted;
+	uint32 timeStartedInMilliseconds;
 	uint32 commandLineArgCount;
 	char** commandLineArgs;
 	void* userData;
