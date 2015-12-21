@@ -22,6 +22,12 @@ struct K15_SystemEvent		// 96 Bits
 		float batteryPercentage;
 		float triggerValue;
 		float thumbValue;
+		union 
+		{
+			uint8 utf8Char;
+			uint16 utf16Char;
+			uint32 utf32Char;
+		};
 		struct 
 		{
 			int16 x;

@@ -326,6 +326,20 @@ intern void K15_Win32PumpControllerEvents(K15_Win32Context* p_Win32Context, K15_
 	}
 }
 /*********************************************************************************/
+intern void K15_Win32TextInputReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	if (wParam == UNICODE_NOCHAR)
+	{
+		return;
+	}
+
+	K15_SystemEvent textInputEvent = {};
+	textInputEvent.event = K15_TEXT_INPUT;
+	textInputEvent.eventFlags = K15_INPUT_EVENT_FLAG;
+	textInputEvent.params.utf32Char = (uint32)wParam;
+	K15_AddSystemEventToQueue(&textInputEvent);
+}
+/*********************************************************************************/
 intern void K15_Win32CheckSystemPowerStatus(K15_Win32Context* p_Win32Context)
 {
 	SYSTEM_POWER_STATUS currentSystemPowerStatus = {};
@@ -424,6 +438,12 @@ LRESULT CALLBACK K15_Win32WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 	case WM_DEVICECHANGE:
 		K15_Win32DeviceChangeReceived(hWnd, uMsg, wParam, lParam);
 		messageHandled = K15_TRUE;
+		break;
+
+	case WM_CHAR:
+	case WM_UNICHAR:
+		K15_Win32TextInputReceived(hWnd, uMsg, wParam, lParam);
+		messageHandled = (wParam == UNICODE_NOCHAR);
 		break;
 	}
 

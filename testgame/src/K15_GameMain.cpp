@@ -182,6 +182,10 @@ K15_EXPORT_SYMBOL void K15_OnInputEvent(K15_GameContext* p_GameContext, K15_Syst
 		gameContext->guiContext->leftMouseDown = pressed && leftMouse;
 		gameContext->guiContext->rightMouseDown = pressed && rightMouse;
 	}
+	else if (p_SystemEvent->event == K15_TEXT_INPUT)
+	{
+		char character = p_SystemEvent->params.utf8Char;
+	}
 }
 /*********************************************************************************/
 K15_EXPORT_SYMBOL void K15_OnSystemEvent(K15_GameContext* p_GameContext, K15_SystemEvent* p_SystemEvent)
