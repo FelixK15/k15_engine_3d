@@ -17,6 +17,35 @@
 #include "win32/K15_HeaderExtensionsWin32.h"
 
 /*********************************************************************************/
+intern inline uint32 K15_Win32ConvertMouseButton(WPARAM wParam)
+{
+	uint32 mouseButton = 0;
+	switch(wParam)
+	{
+	case VK_LBUTTON:
+		mouseButton = K15_LEFT_MOUSE_BUTTON;
+		break;
+
+	case VK_RBUTTON:
+		mouseButton = K15_RIGHT_MOUSE_BUTTON;
+		break;
+
+	case VK_MBUTTON:
+		mouseButton = K15_MIDDLE_MOUSE_BUTTON;
+		break;
+
+	case VK_XBUTTON1:
+		mouseButton = K15_SPECIAL1_MOUSE_BUTTON;
+		break;
+
+	case VK_XBUTTON2:
+		mouseButton = K15_SPECIAL2_MOUSE_BUTTON;
+		break;
+	}
+
+	return mouseButton;
+}
+/*********************************************************************************/
 intern inline void K15_Win32WindowCreated(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	DWORD connectedController = 0;
@@ -157,7 +186,7 @@ intern inline void K15_Win32MouseInputReceived(HWND hWnd, UINT uMsg, WPARAM wPar
 	K15_SystemEvent win32Event = {};
 
 	win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
-	win32Event.params.mouseButton = (uint32)wParam;//K15_Win32ConvertKeyCode(wParam);
+	win32Event.params.mouseButton = K15_Win32ConvertMouseButton(wParam);
 
 	switch(uMsg)
 	{

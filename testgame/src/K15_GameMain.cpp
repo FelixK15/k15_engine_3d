@@ -171,6 +171,17 @@ K15_EXPORT_SYMBOL void K15_OnInputEvent(K15_GameContext* p_GameContext, K15_Syst
 		K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->userData;
 		K15_SetGUIContextMousePosition(gameContext->guiContext, posX, posY);
 	}
+	else if (p_SystemEvent->event == K15_MOUSE_BUTTON_PRESSED ||
+			p_SystemEvent->event == K15_MOUSE_BUTTON_RELEASED)
+	{
+		bool8 leftMouse = p_SystemEvent->params.mouseButton == K15_LEFT_MOUSE_BUTTON;
+		bool8 rightMouse = p_SystemEvent->params.mouseButton == K15_RIGHT_MOUSE_BUTTON;
+		bool8 pressed = p_SystemEvent->event == K15_MOUSE_BUTTON_PRESSED;
+
+		K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->userData;
+		gameContext->guiContext->leftMouseDown = pressed && leftMouse;
+		gameContext->guiContext->rightMouseDown = pressed && rightMouse;
+	}
 }
 /*********************************************************************************/
 K15_EXPORT_SYMBOL void K15_OnSystemEvent(K15_GameContext* p_GameContext, K15_SystemEvent* p_SystemEvent)

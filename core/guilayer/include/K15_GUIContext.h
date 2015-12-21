@@ -91,6 +91,9 @@ struct K15_GUIContext
 	K15_GUIContextStyle style;
 
 	byte* guiMemory;
+	
+	bool8 leftMouseDown;
+	bool8 rightMouseDown;
 
 	uint32 categoryIndex;
 

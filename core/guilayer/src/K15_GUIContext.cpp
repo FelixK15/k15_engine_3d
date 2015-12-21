@@ -111,7 +111,9 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	guiContext->mousePosPixelY = 0;
 	guiContext->virtualResolutionHeight = 0;
 	guiContext->virtualResolutionWidth = 0;
-	
+	guiContext->leftMouseDown = K15_FALSE;
+	guiContext->rightMouseDown = K15_FALSE;
+
 	//create and assign default style
 	guiContext->style = K15_InternalCreateDefaultStyle(p_ResourceContext);
 
@@ -158,6 +160,7 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption)
 	uint32 offset = p_GUIContext->guiMemoryCurrentSize;
 	uint32 memoryCaptionPos =  offset + sizeof(K15_GUIElementHeader) + sizeof(K15_GUIButton);
 	uint32 newOffset = memoryCaptionPos + captionLength;
+	bool8 pressed = K15_FALSE;
 
 	K15_ASSERT_TEXT(newOffset <= p_GUIContext->guiMemoryMaxSize, "Out of GUI memory.");
 
@@ -189,14 +192,32 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption)
 		buttonHeader->posPixelY + buttonHeader->pixelHeight,
 		p_GUIContext->mousePosPixelX, p_GUIContext->mousePosPixelY);
 
-	if (mouseInside)
+	if (button->state != K15_GUI_BUTTON_STATE_PRESSED)
 	{
-		button->state = K15_GUI_BUTTON_STATE_HOVERED;
+		if (p_GUIContext->leftMouseDown && 
+			mouseInside)
+		{
+			button->state = K15_GUI_BUTTON_STATE_PRESSED;
+		}
+		else if (mouseInside)
+		{
+			button->state = K15_GUI_BUTTON_STATE_HOVERED;
+		}
 	}
+	else
+	{
+		pressed = (!p_GUIContext->leftMouseDown && mouseInside);
+		
+		if (p_GUIContext->leftMouseDown)
+		{
+			button->state = mouseInside ? K15_GUI_BUTTON_STATE_HOVERED : K15_GUI_BUTTON_STATE_NORMAL;
+		}
+	}
+	
 
 	//copy text incl 0 terminator
 	memcpy(p_GUIContext->guiMemory + memoryCaptionPos, p_Caption, captionLength);
 
-	return K15_FALSE;
+	return pressed;
 }
 /*********************************************************************************/
