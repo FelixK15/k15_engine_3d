@@ -67,12 +67,12 @@ void K15_RenderCommandDraw2DGUI(K15_RenderCommandQueue* p_RenderCommandQueue, K1
 
 	result8 result = K15_InternalBeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_RENDER_2D_GUI);
 
-	uint32 guiMemorySize = p_GUIContext->guiMemoryCurrentSize;
-	byte* guiMemory = p_GUIContext->guiMemory;
+// 	uint32 guiMemorySize = p_GUIContext->guiMemoryCurrentSize;
+// 	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
 
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_GUIContext), p_GUIContext));
-	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(uint32), &guiMemorySize));
-	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, guiMemorySize, guiMemory));
+// 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(uint32), &guiMemorySize));
+// 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, guiMemorySize, guiMemory));
 
 	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));
 }

@@ -1,7 +1,7 @@
 #ifndef _K15_GUILayer_Context_h_
 #define _K15_GUILayer_Context_h_
 
-#include "K15_GUILayerPrerequisites.h"
+#include "K15_GUIContextPrerequisites.h"
 #include "K15_CustomMemoryAllocator.h"
 
 #include <K15_RenderMaterialDesc.h>
@@ -32,7 +32,7 @@ enum K15_GUICategoryLayout
 struct K15_GUIButton
 {
 	K15_GUIButtonState state;
-	const char* text;
+	uint32 textOffsetInBytes;
 	uint32 textLength;
 };
 
@@ -44,7 +44,7 @@ struct K15_GUIElementHeader
 	uint32 posPixelY;
 	uint32 pixelWidth;
 	uint32 pixelHeight;
-
+	uint32 identifierHash;
 	uint32 offset;
 };
 
@@ -90,7 +90,7 @@ struct K15_GUIContext
 	K15_GUICategory categoryStack[K15_GUI_MAX_CATEGORIES];
 	K15_GUIContextStyle style;
 
-	byte* guiMemory;
+	byte* guiMemory[K15_GUI_MEMORY_BUFFER_COUNT];
 	
 	bool8 leftMouseDown;
 	bool8 rightMouseDown;
@@ -98,7 +98,7 @@ struct K15_GUIContext
 	uint32 categoryIndex;
 
 	uint32 guiMemoryMaxSize;
-	uint32 guiMemoryCurrentSize;
+	uint32 guiMemoryCurrentSize[K15_GUI_MEMORY_BUFFER_COUNT];
 
 	uint32 mousePosPixelX;
 	uint32 mousePosPixelY;
@@ -120,6 +120,6 @@ void K15_SetGUIContextVirtualResolution(K15_GUIContext* p_GUIContext, uint32 p_V
 void K15_SetGUIContextWindowSize(K15_GUIContext* p_GUIContext, uint32 p_WindowWidth, uint32 p_WindowHeight);
 void K15_SetGUIContextMousePosition(K15_GUIContext* p_GUIContext, uint32 p_MouseX, uint32 p_MouseY);
 
-bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption);
+bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char* p_Identifier);
 
 #endif //_K15_GUILayer_Context_h_

@@ -535,25 +535,26 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	K15_RenderContext* renderContext = p_RenderBackEnd->renderContext;
 	K15_CustomMemoryAllocator* renderAllocator = &renderContext->memoryAllocator;
 
-	K15_GUIContext* guiContext = (K15_GUIContext*)K15_AllocateFromMemoryAllocator(renderAllocator, sizeof(K15_GUIContext));
+	K15_GUIContext guiContext = {};
 	uint32 guiMemorySize = 0;
 	byte* guiMemoryBuffer = 0;
 
 	uint32 localOffset = 0;
 
-	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(K15_GUIContext), guiContext);
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, 
+		sizeof(K15_GUIContext), &guiContext);
 	localOffset += sizeof(K15_GUIContext);
 
-	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(uint32), &guiMemorySize);
-	localOffset += sizeof(uint32);
-
-	guiMemoryBuffer = (byte*)K15_AllocateFromMemoryAllocator(renderAllocator, guiMemorySize);
-
-	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, guiMemorySize, guiMemoryBuffer);
-	localOffset += guiMemorySize;
-
-	guiContext->guiMemory = guiMemoryBuffer;
-	guiContext->guiMemoryCurrentSize = guiMemorySize; 
+// 	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(uint32), &guiMemorySize);
+// 	localOffset += sizeof(uint32);
+// 
+// 	guiMemoryBuffer = (byte*)K15_AllocateFromMemoryAllocator(renderAllocator, guiMemorySize);
+// 
+// 	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, guiMemorySize, guiMemoryBuffer);
+// 	localOffset += guiMemorySize;
+//
+// 	guiContext->guiMemory = guiMemoryBuffer;
+// 	guiContext->guiMemoryCurrentSize = guiMemorySize; 
 
 	uint32 currentGUIMemoryOffset = 0;
 
@@ -565,7 +566,7 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	uint32 numVertices = 0;
 	uint32 numTextVertices = 0;
 	
-	K15_InternalCountGUIContextVertices(guiContext, &numVertices, &numTextVertices);
+	K15_InternalCountGUIContextVertices(&guiContext, &numVertices, &numTextVertices);
 	
 	float* vertexBuffer		= (float*)alloca(numVertices * vertexFormatDesc.stride);
 	float* textVertexBuffer = (float*)alloca(numTextVertices * vertexFormatDesc.stride);
@@ -573,18 +574,18 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	uint32 vertexBufferSizeInFloats = 0;
 	uint32 textVertexBufferSizeInFloats = 0;
 	
-	K15_InternalFillGUIContextVertexBuffer(p_RenderBackEnd, guiContext, 
+	K15_InternalFillGUIContextVertexBuffer(p_RenderBackEnd, &guiContext, 
 		vertexBuffer, &vertexBufferSizeInFloats, 
 		textVertexBuffer, &textVertexBufferSizeInFloats);
 
 	uint32 actualNumberOfVertices		= (vertexBufferSizeInFloats*sizeof(float))/vertexFormatDesc.stride;
 	uint32 actualNumberOfTextVertices	= (textVertexBufferSizeInFloats*sizeof(float))/vertexFormatDesc.stride;
 
-	K15_RenderMaterialDesc* guiMaterial = guiContext->guiRenderMaterial;
+	K15_RenderMaterialDesc* guiMaterial = guiContext.guiRenderMaterial;
 	K15_RenderMaterialDesc* fontMaterial = &p_RenderBackEnd->resources.materials.defaultFontMaterial;
-	K15_RenderResourceHandle* guiTexture = guiContext->style.styleTexture;
+	K15_RenderResourceHandle* guiTexture = guiContext.style.styleTexture;
 
-	K15_RenderFontDesc* guiStyleFont = guiContext->style.styleFont;
+	K15_RenderFontDesc* guiStyleFont = guiContext.style.styleFont;
 
 	K15_RenderVertexData* textVertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, textVertexBuffer, actualNumberOfTextVertices, &vertexFormatDesc);
 	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexBuffer, actualNumberOfVertices, &vertexFormatDesc);
@@ -620,9 +621,6 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 
 	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, textVertexData);
 	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexData);
-
-	K15_FreeFromMemoryAllocator(renderAllocator, guiMemoryBuffer);
-	K15_FreeFromMemoryAllocator(renderAllocator, guiContext);
 
 	//K15_FreeFromMemoryAllocator(renderAllocator, vertexBuffer);
 }

@@ -12,10 +12,11 @@ intern void K15_InternalPushGUIButtonVertices(K15_RenderBackEnd* p_RenderBackEnd
 
 	K15_GUIContextStyle* guiStyle = &p_GUIContext->style;
 	K15_GUIButtonState guiButtonState = p_GUIButton->state;
-	
+	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
+
 	K15_RenderFontDesc* guiStyleFont = guiStyle->styleFont;
 
-	const char* text = p_GUIButton->text;
+	const char* text = (const char*)(guiMemory + p_GUIButton->textOffsetInBytes);
 	uint32 textLength = p_GUIButton->textLength;
 
 	float guiTextureWidth = 256.f;
@@ -141,8 +142,8 @@ intern void K15_InternalCountGUIContextVertices(K15_GUIContext* p_GUIContext,
 	uint32 numVertices = 0;
 	uint32 numTextVertices = 0;
 
-	uint32 guiMemorySize = p_GUIContext->guiMemoryCurrentSize;
-	byte* guiMemory = p_GUIContext->guiMemory;
+	uint32 guiMemorySize = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_BACK_BUFFER];
+	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
 
 	K15_RenderFontDesc* guiStyleFont = p_GUIContext->style.styleFont;
 
@@ -156,9 +157,9 @@ intern void K15_InternalCountGUIContextVertices(K15_GUIContext* p_GUIContext,
 		case K15_GUI_TYPE_BUTTON:
 			{
 				K15_GUIButton* guiButton = (K15_GUIButton*)(guiMemory + currentGUIMemoryOffset + sizeof(K15_GUIElementHeader));
-				
+				const char* text = (const char*)(guiMemory + guiButton->textOffsetInBytes);
 				numVertices += 54;
-				numTextVertices += K15_GetTextVertexCount(guiStyleFont, guiButton->text, guiButton->textLength);
+				numTextVertices += K15_GetTextVertexCount(guiStyleFont, text, guiButton->textLength);
 				break;
 			}
 
@@ -187,8 +188,8 @@ intern void K15_InternalFillGUIContextVertexBuffer(K15_RenderBackEnd* p_RenderBa
 	uint32 viewportWidth = p_RenderBackEnd->viewportWidth;
 	uint32 viewportHeight = p_RenderBackEnd->viewportHeight;
 
-	uint32 guiMemorySize = p_GUIContext->guiMemoryCurrentSize;
-	byte* guiMemory = p_GUIContext->guiMemory;
+	uint32 guiMemorySize = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_BACK_BUFFER];
+	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
 
 	K15_GUIContextStyle* guiStyle = &p_GUIContext->style;
 	K15_RenderFontDesc* guiStyleFont = guiStyle->styleFont;
