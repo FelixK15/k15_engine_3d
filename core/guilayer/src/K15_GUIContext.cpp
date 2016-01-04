@@ -130,6 +130,11 @@ intern bool8 K15_InternalCheckForDuplicateIdentifiers(K15_GUIContext* p_GUIConte
 		}
 
 		currentMemoryOffset += guiElementHeader->offset;
+
+		if (guiElementHeader->offset == 0)
+		{
+			break;
+		}
 	}
 
 	return foundDuplicate;
@@ -223,6 +228,89 @@ void K15_SetGUIContextMousePosition(K15_GUIContext* p_GUIContext, uint32 p_Mouse
 	p_GUIContext->mousePosPixelY = p_MouseY;
 }
 /*********************************************************************************/
+char* K15_ComboBox(K15_GUIContext* p_GUIContext, char** p_Elements, uint32 p_NumElements, const char* p_Identifier)
+{
+	assert(p_GUIContext);
+
+	uint32 lengthAllElements = 0;
+
+	for (uint32 elementIndex = 0;
+		elementIndex < p_NumElements;
+		++elementIndex)
+	{
+		lengthAllElements += (uint32)strlen(p_Elements[elementIndex]) + 1; //0 terminator
+	}
+
+	uint32 guiElementIdentifierHash = K15_GenerateStringHash(p_Identifier);
+	uint32 offset = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER];
+	uint32 elementOffsetInBytes = offset + sizeof(K15_GUIElementHeader) + sizeof(K15_GUIComboBox);
+	uint32 newOffset = elementOffsetInBytes + lengthAllElements;
+
+	K15_ASSERT_TEXT(newOffset <= p_GUIContext->guiMemoryMaxSize, "Out of GUI memory.");
+	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER] = newOffset;
+
+#ifdef K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
+	K15_ASSERT_TEXT(K15_InternalCheckForDuplicateIdentifiers(p_GUIContext, guiElementIdentifierHash) == K15_FALSE,
+		"Found duplicate for identifier '%s'. Please use a different identifier.", p_Identifier);
+#endif //K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
+
+	K15_GUIElementHeader* elementLastFrame = K15_InternalGetGUIElementLastFrame(p_GUIContext, 
+		guiElementIdentifierHash);
+
+	uint32 selectedElementIndex = 0;
+	bool8 expandedLastFrame = K15_FALSE;
+
+	if (elementLastFrame)
+	{
+		K15_GUIComboBox* comboBoxLastFrame = (K15_GUIComboBox*)(++elementLastFrame);
+		selectedElementIndex = comboBoxLastFrame->selectedIndex;
+		expandedLastFrame = comboBoxLastFrame->expanded;
+	}
+
+	byte* guiContextFrontBuffer = p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER];
+
+	K15_GUIElementHeader* comboBoxHeader = (K15_GUIElementHeader*)(guiContextFrontBuffer + offset);
+	K15_GUIComboBox* comboBox = (K15_GUIComboBox*)(guiContextFrontBuffer+ offset + sizeof(K15_GUIElementHeader));
+	K15_RenderFontDesc* guiFont = p_GUIContext->style.styleFont;
+
+	const char* selectedElementString = p_Elements[selectedElementIndex];
+	uint32 selectedElementStringLength = (uint32)strlen(selectedElementString);
+
+	float textWidth = 0.f;
+	float textHeight = 0.f;
+
+	uint32 expanderPixelWidth = p_GUIContext->style.guiComboBoxStyle.expanderPixelWidth;
+	uint32 expanderPixelHeight = p_GUIContext->style.guiComboBoxStyle.expanderPixelWidth;
+
+	K15_GetTextSizeInPixels(guiFont, &textWidth, &textHeight, selectedElementString, selectedElementStringLength);
+
+	comboBoxHeader->identifierHash = guiElementIdentifierHash;
+	comboBoxHeader->offset = newOffset;
+	comboBoxHeader->type = K15_GUI_TYPE_COMBO_BOX;
+	comboBoxHeader->pixelHeight = K15_MAX((uint32)textHeight, expanderPixelHeight);
+	comboBoxHeader->pixelWidth = (uint32)textWidth + expanderPixelWidth;
+	comboBoxHeader->posPixelX = 10;
+	comboBoxHeader->posPixelY = 10;
+
+	comboBox->elementsOffsetInBytes = elementOffsetInBytes;
+	comboBox->expanded = expandedLastFrame;
+	comboBox->numElements = p_NumElements;
+	comboBox->selectedIndex = selectedElementIndex;
+
+	//copy elements incl 0 terminator
+	for(uint32 elementIndex = 0;
+		elementIndex < p_NumElements;
+		++elementIndex)
+	{
+		uint32 elementLength = (uint32)strlen(p_Elements[elementIndex])+1;
+		memcpy(guiContextFrontBuffer + elementOffsetInBytes,
+			p_Elements[elementIndex], elementLength);
+		elementOffsetInBytes += elementLength;
+	}
+
+	return p_Elements[selectedElementIndex];
+}
+/*********************************************************************************/
 bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char* p_Identifier)
 {
 	assert(p_GUIContext);
@@ -232,6 +320,9 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char
 	uint32 textOffsetInBytes =  offset + sizeof(K15_GUIElementHeader) + sizeof(K15_GUIButton);
 	uint32 newOffset = textOffsetInBytes + captionLength;
 	uint32 guiElementIdentifierHash = K15_GenerateStringHash(p_Identifier);
+
+	K15_ASSERT_TEXT(newOffset <= p_GUIContext->guiMemoryMaxSize, "Out of GUI memory.");
+	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER] = newOffset;
 
 #ifdef K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
 	K15_ASSERT_TEXT(K15_InternalCheckForDuplicateIdentifiers(p_GUIContext, guiElementIdentifierHash) == K15_FALSE,
@@ -247,11 +338,6 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char
 		K15_GUIButton* buttonLastFrame = (K15_GUIButton*)(++buttonHeaderLastFrame);
 		pressedLastFrame = (buttonLastFrame->state == K15_GUI_BUTTON_STATE_PRESSED);
 	}
-
-
-	K15_ASSERT_TEXT(newOffset <= p_GUIContext->guiMemoryMaxSize, "Out of GUI memory.");
-
-	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER] = newOffset;
 
 	byte* guiContextFrontBuffer = p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER];
 
@@ -282,19 +368,17 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char
 		buttonHeader->posPixelY + buttonHeader->pixelHeight,
 		p_GUIContext->mousePosPixelX, p_GUIContext->mousePosPixelY);
 
-	if (!pressedLastFrame)
+	if (p_GUIContext->leftMouseDown && 
+		mouseInside)
 	{
-		if (p_GUIContext->leftMouseDown && 
-			mouseInside)
-		{
-			button->state = K15_GUI_BUTTON_STATE_PRESSED;
-		}
-		else if (mouseInside)
-		{
-			button->state = K15_GUI_BUTTON_STATE_HOVERED;
-		}
+		button->state = K15_GUI_BUTTON_STATE_PRESSED;
 	}
-	else
+	else if (mouseInside)
+	{
+		button->state = K15_GUI_BUTTON_STATE_HOVERED;
+	}
+
+	if (pressedLastFrame)
 	{
 		pressed = (!p_GUIContext->leftMouseDown && mouseInside);
 		

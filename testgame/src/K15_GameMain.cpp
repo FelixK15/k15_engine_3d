@@ -19,13 +19,11 @@
 
 #include <K15_RenderContext.h>
 
-
 #include <K15_Rectangle.h>
 #include <K15_Matrix4.h>
 
-
-
 #include <K15_System.h>
+#include <K15_String.h>
 
 #define K15_GAME_MEMORY_USAGE size_megabyte(20)
 
@@ -147,7 +145,7 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
  	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, 0.0f, 0.0f);
 
 	K15_Button(guiContext, "bla", "test_button");
-
+	K15_ComboBox(guiContext, K15_CreateStringArray(3, "bla1", "bla2", "bla3"), 3, "text_combobox");
 	K15_RenderCommandDraw2DGUI(gameRenderCommandQueue, guiContext);
 
 	K15_ResetGUIContextMemory(guiContext);

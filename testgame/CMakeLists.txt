@@ -10,6 +10,7 @@ include_directories(../core/guilayer/include/)
 include_directories(../core/memory/include/)
 include_directories(../core/resourceformats/include/)
 include_directories(../core/math/include/)
+include_directories(../core/string/include/)
 
 set(K15_TESTGAME_SRC 			"src/K15_GameMain.cpp")
 set(K15_TESTGAME_INCLUDE 		"")

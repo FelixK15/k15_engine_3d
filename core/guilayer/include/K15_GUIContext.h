@@ -9,7 +9,8 @@
 enum K15_GUIElementType
 {
 	K15_GUI_TYPE_INVALID = 0,
-	K15_GUI_TYPE_BUTTON
+	K15_GUI_TYPE_BUTTON,
+	K15_GUI_TYPE_COMBO_BOX
 };
 
 enum K15_GUIButtonState
@@ -34,6 +35,14 @@ struct K15_GUIButton
 	K15_GUIButtonState state;
 	uint32 textOffsetInBytes;
 	uint32 textLength;
+};
+
+struct K15_GUIComboBox
+{
+	bool8 expanded;
+	uint32 elementsOffsetInBytes;
+	uint32 numElements;
+	uint32 selectedIndex;
 };
 
 struct K15_GUIElementHeader
@@ -72,6 +81,18 @@ struct K15_GUIContextStyle
 		uint32 padding;
 
 	} guiButtonStyle;
+
+	struct 
+	{
+		uint32 marginLeft;
+		uint32 marginRight;
+		uint32 marginTop;
+		uint32 marginBottom;
+		uint32 expanderPosPixelX;
+		uint32 expanderPosPixelY;
+		uint32 expanderPixelWidth;
+		uint32 expanderPixelHeight;
+	} guiComboBoxStyle;
 };
 
 struct K15_GUICategory
@@ -121,5 +142,6 @@ void K15_SetGUIContextWindowSize(K15_GUIContext* p_GUIContext, uint32 p_WindowWi
 void K15_SetGUIContextMousePosition(K15_GUIContext* p_GUIContext, uint32 p_MouseX, uint32 p_MouseY);
 
 bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char* p_Identifier);
+char* K15_ComboBox(K15_GUIContext* p_GUIContext, char** p_Elements, uint32 p_NumElements, const char* p_Identifier);
 
 #endif //_K15_GUILayer_Context_h_
