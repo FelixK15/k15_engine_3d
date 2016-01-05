@@ -57,7 +57,6 @@ struct K15_GUIElementHeader
 	uint32 offset;
 };
 
-//TODO define K15_GUIContextStyle
 
 struct K15_GUIContextStyle
 {
@@ -92,6 +91,10 @@ struct K15_GUIContextStyle
 		uint32 expanderPosPixelY;
 		uint32 expanderPixelWidth;
 		uint32 expanderPixelHeight;
+		uint32 posPixelX;
+		uint32 posPixelY;
+		uint32 pixelWidth;
+		uint32 pixelHeight;
 	} guiComboBoxStyle;
 };
 

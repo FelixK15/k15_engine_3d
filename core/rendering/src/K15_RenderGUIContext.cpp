@@ -174,6 +174,9 @@ intern void K15_InternalPushGUIComboBoxVertices(K15_RenderBackEnd* p_RenderBackE
 		}
 	}
 
+	float guiTextureWidth = 256.f;
+	float guiTextureHeight = 128.f;
+
 	float marginPixelLeft	= (float)guiStyle->guiComboBoxStyle.marginLeft;
 	float marginPixelRight	= (float)guiStyle->guiComboBoxStyle.marginRight;
 	float marginPixelTop	= (float)guiStyle->guiComboBoxStyle.marginTop;
@@ -184,14 +187,83 @@ intern void K15_InternalPushGUIComboBoxVertices(K15_RenderBackEnd* p_RenderBackE
 	float elementPixelPosRight	= elementPixelPosLeft + (float)p_GUIElement->pixelWidth;
 	float elementPixelPosBottom	= elementPixelPosTop + (float)p_GUIElement->pixelHeight;
 
-	float elementInnerPixelLeft   = elementPixelPosLeft + marginPixelLeft;
-	float elementInnerPixelRight  = elementPixelPosRight - marginPixelRight;
-	float elementInnerPixelTop	  = elementPixelPosTop + marginPixelTop;
-	float elementInnerPixelBottom = elementPixelPosBottom - marginPixelBottom;
+	float elementInnerPixelLeft   = elementPixelPosLeft - marginPixelLeft;
+	float elementInnerPixelRight  = elementPixelPosRight + marginPixelRight;
+	float elementInnerPixelTop	  = elementPixelPosTop - marginPixelTop;
+	float elementInnerPixelBottom = elementPixelPosBottom + marginPixelBottom;
 
-	float elementInnerLeft = elementInnerPixelLeft / viewportWidth;
-	float elementInnerTop  = elementInnerPixelTop / viewportHeight;
+	float elementInnerLeft	= elementInnerPixelLeft / viewportWidth;
+	float elementInnerTop	= elementInnerPixelTop / viewportHeight;
 	
+	float elementInnerLeftNDC   = K15_CONVERT_TO_NDC_X(elementInnerPixelLeft / viewportWidth);
+	float elementInnerRightNDC  = K15_CONVERT_TO_NDC_X(elementInnerPixelRight / viewportWidth);
+	float elementInnerBottomNDC = K15_CONVERT_TO_NDC_Y(elementInnerPixelBottom / viewportHeight);
+	float elementInnerTopNDC	= K15_CONVERT_TO_NDC_Y(elementInnerPixelTop / viewportHeight);
+	
+	float elementOuterLeftNDC	= K15_CONVERT_TO_NDC_X(elementPixelPosLeft / viewportWidth);
+	float elementOuterRightNDC	= K15_CONVERT_TO_NDC_X(elementPixelPosRight / viewportWidth);
+	float elementOuterTopNDC	= K15_CONVERT_TO_NDC_Y(elementPixelPosTop / viewportHeight);
+	float elementOuterBottomNDC	= K15_CONVERT_TO_NDC_Y(elementPixelPosBottom / viewportHeight);
+
+	float uvExpanderLeft = guiStyle->guiComboBoxStyle.expanderPosPixelX / guiTextureWidth;
+	float uvExpanderTop = guiStyle->guiComboBoxStyle.expanderPosPixelY / guiTextureHeight;
+	float uvExpanderRight = uvExpanderLeft + 
+		(guiStyle->guiComboBoxStyle.expanderPixelWidth / guiTextureWidth);
+	float uvExpanderBottom = uvExpanderTop +
+		(guiStyle->guiComboBoxStyle.expanderPixelHeight / guiTextureHeight);
+
+	float expanderLeftNDC = elementOuterRightNDC;
+	float expanderTopNDC = elementOuterTopNDC;
+	float expanderBottomNDC = elementOuterBottomNDC;
+	float expanderRightNDC = K15_CONVERT_TO_NDC_X((elementPixelPosRight 
+		+ guiStyle->guiComboBoxStyle.expanderPixelWidth) / viewportWidth);
+
+	float uvLeft   = guiStyle->guiComboBoxStyle.posPixelX / guiTextureWidth;
+	float uvTop	   = guiStyle->guiComboBoxStyle.posPixelY / guiTextureHeight;
+	float uvRight  = (guiStyle->guiComboBoxStyle.posPixelX + guiStyle->guiComboBoxStyle.pixelWidth) / guiTextureWidth;
+	float uvBottom = (guiStyle->guiComboBoxStyle.posPixelY + guiStyle->guiComboBoxStyle.pixelHeight) / guiTextureHeight;
+
+	float uvInnerLeft	= uvLeft + (guiStyle->guiComboBoxStyle.marginLeft / guiTextureWidth);
+	float uvInnerRight	= uvRight - (guiStyle->guiComboBoxStyle.marginRight / guiTextureWidth);
+	float uvInnerTop	= uvTop + (guiStyle->guiComboBoxStyle.marginTop / guiTextureHeight);
+	float uvInnerBottom = uvBottom - (guiStyle->guiComboBoxStyle.marginBottom / guiTextureHeight);
+
+	//top border
+	/*********************************************************************************/
+	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
+		elementOuterLeftNDC, elementOuterRightNDC, elementOuterTopNDC, elementInnerTopNDC,
+		uvLeft, uvRight, uvTop, uvInnerTop);
+
+	//left border
+	/*********************************************************************************/
+	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
+		elementOuterLeftNDC, elementInnerLeftNDC, elementOuterTopNDC, elementOuterBottomNDC,
+		uvLeft, uvInnerLeft, uvTop, uvBottom);
+
+	//right border
+	/*********************************************************************************/
+	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
+		elementInnerRightNDC, elementOuterRightNDC, elementOuterTopNDC, elementOuterBottomNDC,
+		uvInnerRight, uvRight, uvTop, uvBottom);
+
+	//bottom border
+	/*********************************************************************************/
+	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
+		elementOuterLeftNDC, elementOuterRightNDC, elementInnerBottomNDC, elementOuterBottomNDC,
+		uvLeft, uvRight, uvInnerBottom, uvBottom);
+
+	//background
+	/*********************************************************************************/
+	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
+		elementInnerLeftNDC, elementInnerRightNDC, elementInnerTopNDC, elementInnerBottomNDC,
+		uvInnerLeft, uvInnerRight, uvInnerTop, uvInnerBottom);
+
+	//expander
+	/*********************************************************************************/
+	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
+		expanderLeftNDC, expanderRightNDC, expanderTopNDC, expanderBottomNDC,
+		uvExpanderLeft, uvExpanderRight, uvExpanderTop, uvExpanderBottom);
+
 	//text
 	/*********************************************************************************/
 	textVertexIndex = K15_InternalPush2DTextVertices(p_RenderBackEnd, guiStyleFont, p_TextVertexBuffer,

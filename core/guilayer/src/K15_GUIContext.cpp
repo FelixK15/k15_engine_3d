@@ -66,6 +66,22 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 		/*********************************************************************************/
 		defaultStyle.guiButtonStyle.padding = 5;
 	}
+
+	//combo box style
+	{
+		defaultStyle.guiComboBoxStyle.marginBottom = 3;
+		defaultStyle.guiComboBoxStyle.marginTop = 3;
+		defaultStyle.guiComboBoxStyle.marginLeft = 3;
+		defaultStyle.guiComboBoxStyle.marginRight = 3;
+		defaultStyle.guiComboBoxStyle.posPixelX = 30;
+		defaultStyle.guiComboBoxStyle.posPixelY = 0;
+		defaultStyle.guiComboBoxStyle.pixelWidth = 29;
+		defaultStyle.guiComboBoxStyle.pixelHeight = 20;
+		defaultStyle.guiComboBoxStyle.expanderPosPixelX = 60;
+		defaultStyle.guiComboBoxStyle.expanderPosPixelY = 0;
+		defaultStyle.guiComboBoxStyle.expanderPixelHeight = 14;
+		defaultStyle.guiComboBoxStyle.expanderPixelWidth = 7;
+	}
 	
 	return defaultStyle;
 }
@@ -83,7 +99,10 @@ intern void K15_InternalFlipMemoryBuffer(K15_GUIContext* p_GUIContext)
 	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_BACK_BUFFER] =
 		p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER];
 
+	uint32 frontBufferMemorySize = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER]; 
 	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER] = 0;
+	
+	memset(*frontBuffer, 0, frontBufferMemorySize);
 }
 /*********************************************************************************/
 intern K15_GUIElementHeader* K15_InternalGetGUIElementLastFrame(K15_GUIContext* p_GUIContext, uint32 p_IdentifierHash)
@@ -205,7 +224,6 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 void K15_ResetGUIContextMemory(K15_GUIContext* p_GUIContext)
 {
 	assert(p_GUIContext);
-
 	K15_InternalFlipMemoryBuffer(p_GUIContext);
 }
 /*********************************************************************************/
@@ -290,7 +308,7 @@ char* K15_ComboBox(K15_GUIContext* p_GUIContext, char** p_Elements, uint32 p_Num
 	comboBoxHeader->pixelHeight = K15_MAX((uint32)textHeight, expanderPixelHeight);
 	comboBoxHeader->pixelWidth = (uint32)textWidth + expanderPixelWidth;
 	comboBoxHeader->posPixelX = 10;
-	comboBoxHeader->posPixelY = 10;
+	comboBoxHeader->posPixelY = 100;
 
 	comboBox->elementsOffsetInBytes = elementOffsetInBytes;
 	comboBox->expanded = expandedLastFrame;
@@ -322,12 +340,13 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char
 	uint32 guiElementIdentifierHash = K15_GenerateStringHash(p_Identifier);
 
 	K15_ASSERT_TEXT(newOffset <= p_GUIContext->guiMemoryMaxSize, "Out of GUI memory.");
-	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER] = newOffset;
 
 #ifdef K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
 	K15_ASSERT_TEXT(K15_InternalCheckForDuplicateIdentifiers(p_GUIContext, guiElementIdentifierHash) == K15_FALSE,
 		"Found duplicate for identifier '%s'. Please use a different identifier.", p_Identifier);
 #endif //K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
+
+	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER] = newOffset;
 
 	bool8 pressed = K15_FALSE;
 	bool8 pressedLastFrame = K15_FALSE;
