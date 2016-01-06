@@ -146,9 +146,9 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 
 	K15_Button(guiContext, "bla", "test_button");
 	K15_ComboBox(guiContext, K15_CreateStringArray(3, "bla1", "bla2", "bla3"), 3, "text_combobox");
-	K15_RenderCommandDraw2DGUI(gameRenderCommandQueue, guiContext);
 
-	K15_ResetGUIContextMemory(guiContext);
+	K15_RenderCommandDraw2DGUI(gameRenderCommandQueue, guiContext);
+	K15_FlipGUIContextMemory(guiContext);
 
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameContext->resourceContext->commandQueue);
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameRenderCommandQueue);

@@ -622,6 +622,9 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, textVertexData);
 	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexData);
 
+	//signal gui context that we are finished so that it can flip the buffers again
+	K15_PostSemaphore(guiContext.memoryLock);
+
 	//K15_FreeFromMemoryAllocator(renderAllocator, vertexBuffer);
 }
 /*********************************************************************************/

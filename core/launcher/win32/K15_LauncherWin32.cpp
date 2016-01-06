@@ -24,7 +24,7 @@
 #ifndef K15_LOAD_GAME_LIB_DYNAMIC
 	K15_EXPORT_SYMBOL void K15_InitGame(K15_InitGameInputData, K15_InitGameOutputData*);
 	K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext*);
-	K15_EXPORT_SYMBOL void K15_QuitGame(void);
+	K15_EXPORT_SYMBOL void K15_QuitGame(K15_GameContext*);
 	K15_EXPORT_SYMBOL void K15_OnSystemEvent(K15_GameContext*, K15_SystemEvent*);
 	K15_EXPORT_SYMBOL void K15_OnWindowEvent(K15_GameContext*, K15_SystemEvent*);
 	K15_EXPORT_SYMBOL void K15_OnInputEvent(K15_GameContext*, K15_SystemEvent*);
@@ -128,8 +128,8 @@ int CALLBACK WinMain(
 	gameContext.gameMemory = K15_CreateMemoryBuffer(memoryBlock, requestedMemorySize);;
 	gameContext.logContexts = K15_GetLogContexts(&gameContext.logContextCount);
 	gameContext.configContext = &configFileContext;
-	gameContext.renderContext = renderContext;
-	gameContext.osContext = osContext;
+	gameContext.renderContext = renderContext;	gameContext.osContext = osContext;
+
 	gameContext.gameThreadSynchronizer = gameThreadSynchronizer;
 	gameContext.mainThreadSynchronizer = mainThreadSynchronizer;
 	gameContext.tickFnc = K15_TickGame;

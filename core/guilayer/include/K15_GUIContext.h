@@ -114,6 +114,8 @@ struct K15_GUIContext
 	K15_GUICategory categoryStack[K15_GUI_MAX_CATEGORIES];
 	K15_GUIContextStyle style;
 
+	K15_Semaphore* memoryLock;
+
 	byte* guiMemory[K15_GUI_MEMORY_BUFFER_COUNT];
 	
 	bool8 leftMouseDown;
@@ -137,7 +139,7 @@ struct K15_GUIContext
 K15_GUIContext* K15_CreateGUIContext(K15_ResourceContext* p_ResourceContext, K15_RenderCommandQueue* p_RenderCommandQueue);
 K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocator p_MemoryAllocator, K15_ResourceContext* p_ResourceContext, K15_RenderCommandQueue* p_RenderCommandQueue);
 
-void K15_ResetGUIContextMemory(K15_GUIContext* p_GUIContext);
+void K15_FlipGUIContextMemory(K15_GUIContext* p_GUIContext);
 
 void K15_SetGUIContextVirtualResolution(K15_GUIContext* p_GUIContext, uint32 p_VirtualWidth, uint32 p_VirtualHeight);
 

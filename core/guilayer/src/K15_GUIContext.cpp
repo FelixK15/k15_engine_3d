@@ -18,7 +18,7 @@
 
 #include "K15_Math.h"
 #include "K15_String.h"
-
+#include "K15_Thread.h"
 
 /*********************************************************************************/
 intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceContext* p_ResourceContext)
@@ -84,25 +84,6 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	}
 	
 	return defaultStyle;
-}
-/*********************************************************************************/
-intern void K15_InternalFlipMemoryBuffer(K15_GUIContext* p_GUIContext)
-{
-	byte* tempBuffer = 0;
-	byte** frontBuffer = &p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER];
-	byte** backBuffer = &p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
-
-	tempBuffer = *frontBuffer;
-	*frontBuffer = *backBuffer;
-	*backBuffer = tempBuffer;
-
-	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_BACK_BUFFER] =
-		p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER];
-
-	uint32 frontBufferMemorySize = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER]; 
-	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER] = 0;
-	
-	memset(*frontBuffer, 0, frontBufferMemorySize);
 }
 /*********************************************************************************/
 intern K15_GUIElementHeader* K15_InternalGetGUIElementLastFrame(K15_GUIContext* p_GUIContext, uint32 p_IdentifierHash)
@@ -208,6 +189,7 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	guiContext->virtualResolutionWidth = 0;
 	guiContext->leftMouseDown = K15_FALSE;
 	guiContext->rightMouseDown = K15_FALSE;
+	guiContext->memoryLock = K15_CreateSemaphoreWithInitialValue(1);
 
 	//create and assign default style
 	guiContext->style = K15_InternalCreateDefaultStyle(p_ResourceContext);
@@ -221,10 +203,28 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	return guiContext;
 }
 /*********************************************************************************/
-void K15_ResetGUIContextMemory(K15_GUIContext* p_GUIContext)
+void K15_FlipGUIContextMemory(K15_GUIContext* p_GUIContext)
 {
 	assert(p_GUIContext);
-	K15_InternalFlipMemoryBuffer(p_GUIContext);
+
+	//are we allowed to flip the buffers yet?
+	K15_WaitSemaphore(p_GUIContext->memoryLock);
+
+	byte* tempBuffer = 0;
+	byte** frontBuffer = &p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER];
+	byte** backBuffer = &p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
+
+	tempBuffer = *frontBuffer;
+	*frontBuffer = *backBuffer;
+	*backBuffer = tempBuffer;
+
+	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_BACK_BUFFER] =
+		p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER];
+
+	uint32 frontBufferMemorySize = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER];
+	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER] = 0;
+
+//	memset(p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER], 0, frontBufferMemorySize);
 }
 /*********************************************************************************/
 void K15_SetGUIContextWindowSize(K15_GUIContext* p_GUIContext, uint32 p_WindowWidth, uint32 p_WindowHeight)
@@ -265,12 +265,13 @@ char* K15_ComboBox(K15_GUIContext* p_GUIContext, char** p_Elements, uint32 p_Num
 	uint32 newOffset = elementOffsetInBytes + lengthAllElements;
 
 	K15_ASSERT_TEXT(newOffset <= p_GUIContext->guiMemoryMaxSize, "Out of GUI memory.");
-	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER] = newOffset;
 
 #ifdef K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
 	K15_ASSERT_TEXT(K15_InternalCheckForDuplicateIdentifiers(p_GUIContext, guiElementIdentifierHash) == K15_FALSE,
 		"Found duplicate for identifier '%s'. Please use a different identifier.", p_Identifier);
 #endif //K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
+
+	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER] = newOffset;
 
 	K15_GUIElementHeader* elementLastFrame = K15_InternalGetGUIElementLastFrame(p_GUIContext, 
 		guiElementIdentifierHash);
@@ -342,7 +343,7 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char
 	K15_ASSERT_TEXT(newOffset <= p_GUIContext->guiMemoryMaxSize, "Out of GUI memory.");
 
 #ifdef K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
-	K15_ASSERT_TEXT(K15_InternalCheckForDuplicateIdentifiers(p_GUIContext, guiElementIdentifierHash) == K15_FALSE,
+ 	K15_ASSERT_TEXT(K15_InternalCheckForDuplicateIdentifiers(p_GUIContext, guiElementIdentifierHash) == K15_FALSE,
 		"Found duplicate for identifier '%s'. Please use a different identifier.", p_Identifier);
 #endif //K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
 
