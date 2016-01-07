@@ -25,4 +25,7 @@ uint32 K15_GetNextPowerOfTwoSize(uint32 p_NonPowerOfTwoNumber);
 bool8 K15_Collision2DBoxPoint(float p_BoxLeft, float p_BoxTop, float p_BoxRight, float p_BoxBottom,
 							  float p_PointX, float p_PointY);
 
+K15_Vector3 K15_UnpackVector3(uint32 p_PackedVector);
+K15_Vector4 K15_UnpackVector4(uint32 p_PackedVector);
+
 #endif //_K15_Math_Math_h_

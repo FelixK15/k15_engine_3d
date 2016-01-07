@@ -111,6 +111,15 @@ K15_Vector3 operator*(real32 p_Scalar, K15_Vector3& p_Vector)
 	return p_Vector * p_Scalar;
 }
 /*********************************************************************************/
+K15_Vector3 operator/(K15_Vector3& p_Vector, real32 p_Scalar)
+{
+	p_Vector.x /= p_Scalar;
+	p_Vector.y /= p_Scalar;
+	p_Vector.z /= p_Scalar;
+
+	return p_Vector;
+}
+/*********************************************************************************/
 bool operator==(K15_Vector3& p_Vector1, K15_Vector3& p_Vector2)
 {
 	return (p_Vector1.x == p_Vector2.x) && (p_Vector1.y == p_Vector2.y) && (p_Vector1.z == p_Vector2.z);

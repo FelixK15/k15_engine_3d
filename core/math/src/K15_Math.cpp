@@ -206,4 +206,27 @@ bool8 K15_Collision2DBoxPoint(float p_BoxLeft, float p_BoxTop, float p_BoxRight,
 {
 	return p_PointX > p_BoxLeft && p_PointX < p_BoxRight && p_PointY > p_BoxTop && p_PointY < p_BoxBottom;
 }
+
+/*********************************************************************************/
+K15_Vector3 K15_UnpackVector3(uint32 p_PackedVector)
+{
+	K15_Vector3 vec = {};
+
+	vec.x = (float)(p_PackedVector >> 16);
+	vec.y = (float)(p_PackedVector >> 8);
+	vec.z = (float)(p_PackedVector >> 0);
+
+	return vec;
+}
+/*********************************************************************************/
+K15_Vector4 K15_UnpackVector4(uint32 p_PackedVector)
+{
+	K15_Vector4 vec = {};
+
+	vec.w = (float)(p_PackedVector >> 24);
+	vec.x = (float)(p_PackedVector >> 16);
+	vec.y = (float)(p_PackedVector >> 8);
+	vec.z = (float)(p_PackedVector >> 0);
+	return vec;
+}
 /*********************************************************************************/

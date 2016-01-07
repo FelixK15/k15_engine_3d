@@ -32,6 +32,7 @@ K15_Vector3 operator+(K15_Vector3& p_Vector1, K15_Vector3& p_Vector2);
 K15_Vector3 operator-(K15_Vector3& p_Vector1, K15_Vector3& p_Vector2);
 K15_Vector3 operator*(K15_Vector3& p_Vector, real32 p_Scalar);
 K15_Vector3 operator*(real32 p_Scalar, K15_Vector3& p_Vector);
+K15_Vector3 operator/(K15_Vector3& p_Vector, real32 p_Scalar);
 
 bool operator==(K15_Vector3& p_Vector1, K15_Vector3& p_Vector2);
 bool operator!=(K15_Vector3& p_Vector1, K15_Vector3& p_Vector2);

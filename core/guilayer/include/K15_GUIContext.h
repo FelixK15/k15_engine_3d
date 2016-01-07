@@ -60,42 +60,20 @@ struct K15_GUIElementHeader
 
 struct K15_GUIContextStyle
 {
-	K15_RenderResourceHandle* styleTexture;
 	K15_RenderFontDesc* styleFont;
 
-	struct 
+	struct  
 	{
-		struct 
-		{
-			uint32 marginLeft;
-			uint32 marginRight;
-			uint32 marginTop;
-			uint32 marginBottom;
-			uint32 posPixelX;
-			uint32 posPixelY;
-			uint32 pixelWidth;
-			uint32 pixelHeight;
-		} stateStyle[K15_GUI_BUTTON_STATE_COUNT];
-
-		uint32 padding;
-
+		uint32 textColor;
+		uint32 edgeColor;
+		uint32 edgePixelThickness;
+		bool8 roundEdges;
 	} guiButtonStyle;
 
-	struct 
+	struct
 	{
-		uint32 marginLeft;
-		uint32 marginRight;
-		uint32 marginTop;
-		uint32 marginBottom;
-		uint32 expanderPosPixelX;
-		uint32 expanderPosPixelY;
-		uint32 expanderPixelWidth;
-		uint32 expanderPixelHeight;
-		uint32 posPixelX;
-		uint32 posPixelY;
-		uint32 pixelWidth;
-		uint32 pixelHeight;
-	} guiComboBoxStyle;
+		uint32 buttonColor;
+	} guiColors;
 };
 
 struct K15_GUICategory

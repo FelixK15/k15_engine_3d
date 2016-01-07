@@ -560,7 +560,7 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 
 	K15_RenderVertexFormatDesc vertexFormatDesc = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 2, 
 		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
-		K15_ATTRIBUTE_SEMANTIC_TEXCOORD1, K15_TYPE_FLOAT_VECTOR2);
+		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR3);
 	
 	//count vertices
 	uint32 numVertices = 0;

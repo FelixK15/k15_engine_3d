@@ -1,137 +1,76 @@
 /*********************************************************************************/
+intern uint32 K15_InternalGetGUIButtonVertexCount(K15_GUIContextStyle* p_GUIStyle, K15_GUIElementHeader* p_GUIElement)
+{
+	bool8 roundEdges = p_GUIStyle->guiButtonStyle.roundEdges;
+	uint32 vertexCount = 6;
+	
+	if (roundEdges)
+	{
+		vertexCount = (K15_GUI_BUTTON_ROUND_EDGE_VERTICES * 4) + 8;
+	}
+
+	return vertexCount;
+}
+/*********************************************************************************/
+intern uint32 K15_InternalGetGUIControlVertexCount(K15_GUIContext* p_GUIContext, K15_GUIElementHeader* p_GUIElement)
+{
+	K15_GUIContextStyle* style = &p_GUIContext->style;
+	K15_GUIElementType guiElementType = p_GUIElement->type;
+	uint32 vertexCount = 0;
+
+	switch (guiElementType)
+	{
+		case K15_GUI_TYPE_BUTTON:
+		{
+			vertexCount += K15_InternalGetGUIButtonVertexCount(style, p_GUIElement);
+			break;
+		}
+	}
+
+	return vertexCount;
+}
+/*********************************************************************************/
 intern void K15_InternalPushGUIButtonVertices(K15_RenderBackEnd* p_RenderBackEnd, K15_GUIContext* p_GUIContext,
 												K15_GUIElementHeader* p_GUIElement, K15_GUIButton* p_GUIButton,
 												float* p_VertexBuffer, uint32* p_VertexBufferIndexOffset,
 												float* p_TextVertexBuffer, uint32* p_TextVertexBufferIndexOffset)
 {
-	uint32 vertexIndex = *p_VertexBufferIndexOffset;
-	uint32 textVertexIndex = *p_TextVertexBufferIndexOffset;
+	bool8 roundEdges = p_GUIContext->style.guiButtonStyle.roundEdges;
 
-	uint32 viewportWidth = p_RenderBackEnd->viewportWidth;
-	uint32 viewportHeight = p_RenderBackEnd->viewportHeight;
+	uint32 vertexBufferIndex = *p_VertexBufferIndexOffset;
 
-	K15_GUIContextStyle* guiStyle = &p_GUIContext->style;
-	K15_GUIButtonState guiButtonState = p_GUIButton->state;
-	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
+	uint32 pixelPosLeft = p_GUIElement->posPixelX;
+	uint32 pixelPosRight = p_GUIElement->posPixelX + p_GUIElement->pixelWidth;
+	uint32 pixelPosTop = p_GUIElement->posPixelY;
+	uint32 pixelPosBottom = p_GUIElement->posPixelY + p_GUIElement->pixelHeight;
 
-	K15_RenderFontDesc* guiStyleFont = guiStyle->styleFont;
+	uint32 thickness = p_GUIContext->style.guiButtonStyle.edgePixelThickness;
 
-	const char* text = (const char*)(guiMemory + p_GUIButton->textOffsetInBytes);
-	uint32 textLength = p_GUIButton->textLength;
+	uint32 edgePixelPosLeft = pixelPosLeft - thickness;
+	uint32 edgePixelPosRight = pixelPosRight + thickness;
+	uint32 edgePixelPosTop = pixelPosTop - thickness;
+	uint32 edgePixelPosBottom = pixelPosBottom + thickness;
 
-	float guiTextureWidth = 256.f;
-	float guiTextureHeight = 128.f;
+	if (roundEdges)
+	{
 
-	float buttonStylePixelPosX	 = guiStyle->guiButtonStyle.stateStyle[guiButtonState].posPixelX;
-	float buttonStylePixelPosY	 = guiStyle->guiButtonStyle.stateStyle[guiButtonState].posPixelY;
-	float buttonStylePixelWidth	 = guiStyle->guiButtonStyle.stateStyle[guiButtonState].pixelWidth;
-	float buttonStylePixelHeight = guiStyle->guiButtonStyle.stateStyle[guiButtonState].pixelHeight;
+	}
+	else
+	{
+		//edge
+		vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, 
+			p_VertexBuffer, vertexBufferIndex,
+			edgePixelPosLeft, edgePixelPosRight, edgePixelPosTop, edgePixelPosBottom,
+			0x808080, 0x808080, 0x808080, 0x808080);
 
-	float pixelPadding = guiStyle->guiButtonStyle.padding;
+		//element
+		vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, 
+			p_VertexBuffer, vertexBufferIndex,
+			pixelPosLeft, pixelPosRight, pixelPosTop, pixelPosBottom,
+			0xCECECE, 0xCECECE, 0xCECECE, 0xCECECE);
+	}
 
-	float elementPosPixelX	 = (float)p_GUIElement->posPixelX;
-	float elementPosPixelY	 = (float)p_GUIElement->posPixelY;
-	float elementPixelWidth  = (float)p_GUIElement->pixelWidth + pixelPadding*2;
-	float elementPixelHeight = (float)p_GUIElement->pixelHeight + pixelPadding*2;
-
-	float viewWidth	 = (float)viewportWidth;
-	float viewHeight = (float)viewportHeight;
-
-	float paddingHorizontal = pixelPadding / viewWidth;
-	float paddingVertical = pixelPadding / viewHeight;
-
-	float elementMarginLeft	  = (float)guiStyle->guiButtonStyle.stateStyle[guiButtonState].marginLeft;
-	float elementMarginRight  = (float)guiStyle->guiButtonStyle.stateStyle[guiButtonState].marginRight;
-	float elementMarginTop	  = (float)guiStyle->guiButtonStyle.stateStyle[guiButtonState].marginTop;
-	float elementMarginBottom = (float)guiStyle->guiButtonStyle.stateStyle[guiButtonState].marginBottom;
-
-	float elementInnerLeft = (elementPosPixelX + elementMarginLeft) / viewWidth;
-	float elementInnerTop  = (elementPosPixelY + elementMarginTop) / viewHeight;
-
-	float elementLeftNDC	= K15_CONVERT_TO_NDC_X(elementPosPixelX / viewWidth);
-	float elementTopNDC		= K15_CONVERT_TO_NDC_Y(elementPosPixelY / viewHeight);
-	float elementRightNDC	= K15_CONVERT_TO_NDC_X((elementPosPixelX + elementPixelWidth) / viewWidth);
-	float elementBottomNDC  = K15_CONVERT_TO_NDC_Y((elementPosPixelY + elementPixelHeight) / viewHeight);
-
-	float elementInnerLeftNDC	 = K15_CONVERT_TO_NDC_X(elementInnerLeft);
-	float elementInnerRightNDC	 = K15_CONVERT_TO_NDC_X((elementPosPixelX + elementPixelWidth - elementMarginRight) / viewWidth);
-	float elementInnerTopNDC	 = K15_CONVERT_TO_NDC_Y(elementInnerTop);
-	float elementInnerBottomNDC  = K15_CONVERT_TO_NDC_Y((elementPosPixelY + elementPixelHeight - elementMarginBottom) / viewHeight);
-
-	float uvBorderLeft	 = buttonStylePixelPosX / guiTextureWidth;
-	float uvBorderTop	 = buttonStylePixelPosY/ guiTextureHeight;
-	float uvBorderRight	 = (buttonStylePixelPosX + buttonStylePixelWidth) / guiTextureWidth;
-	float uvBorderBottom = (buttonStylePixelPosY + buttonStylePixelHeight) / guiTextureHeight;
-
-	float uvInnerLeft = (buttonStylePixelPosX + elementMarginLeft) / guiTextureWidth;
-	float uvInnerTop  = (buttonStylePixelPosY + elementMarginTop) / guiTextureHeight;
-	float uvInnerRight = (buttonStylePixelPosX + buttonStylePixelWidth - elementMarginRight) / guiTextureWidth;
-	float uvInnerBottom = (buttonStylePixelPosY + buttonStylePixelHeight - elementMarginBottom) / guiTextureHeight;
-
-	//			  Top Border
-	//	  B *-*-------------*-*    B
-	//	L o	| *--------------* | R o
-	//	e r	| |			     | | i r
-	//	f d	| |  Content	 | | g d
-	//	t e	| |			     | | h e
-	//	  r	| *--------------* | t r
-	//		*-*--------------*-* 
-	//		   Bottom Border
-
-	//left border  
-	/*********************************************************************************/
-	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex, 
-		elementLeftNDC, elementInnerLeftNDC, elementTopNDC, elementInnerTopNDC,
-		uvBorderLeft, uvInnerLeft, uvBorderTop, uvInnerTop);
-
-	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex, 
-		elementLeftNDC, elementInnerLeftNDC, elementInnerBottomNDC, elementBottomNDC,
-		uvBorderLeft, uvInnerLeft, uvInnerBottom, uvBorderBottom);
-
-	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex, 
-		elementLeftNDC, elementInnerLeftNDC, elementInnerTopNDC, elementInnerBottomNDC,
-		uvBorderLeft, uvInnerLeft, uvInnerTop, uvInnerBottom);
-
-	//right border
-	/*********************************************************************************/
-	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex, 
-		elementInnerRightNDC, elementRightNDC, elementInnerTopNDC, elementInnerBottomNDC,
-		uvInnerRight, uvBorderRight, uvInnerTop, uvInnerBottom);
-
-	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex, 
-		elementInnerRightNDC, elementRightNDC, elementInnerBottomNDC, elementBottomNDC,
-		uvInnerRight, uvBorderRight, uvInnerBottom, uvBorderBottom);
-
-	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex, 
-		elementInnerRightNDC, elementRightNDC, elementTopNDC, elementInnerTopNDC,
-		uvInnerRight, uvBorderRight, uvBorderTop, uvInnerTop);
-
-
-	//top border
-	/*********************************************************************************/
-	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex, 
-		elementInnerLeftNDC, elementInnerRightNDC, elementTopNDC, elementInnerTopNDC,
-		uvInnerLeft, uvInnerRight, uvBorderTop, uvInnerTop);
- 
- 	//bottom border
- 	/*********************************************************************************/
-	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex, 
-		elementInnerLeftNDC, elementInnerRightNDC, elementInnerBottomNDC, elementBottomNDC,
-		uvInnerLeft, uvInnerRight, uvInnerBottom, uvBorderBottom);
-
-	//background
-	/*********************************************************************************/
-	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
-		elementInnerLeftNDC, elementInnerRightNDC, elementInnerTopNDC, elementBottomNDC,
-		uvInnerLeft, uvInnerRight, uvInnerTop, uvInnerBottom);
-
-	//text
-	/*********************************************************************************/
-	textVertexIndex = K15_InternalPush2DTextVertices(p_RenderBackEnd, guiStyleFont, p_TextVertexBuffer,
-		textVertexIndex, elementInnerLeft + paddingHorizontal, elementInnerTop + paddingVertical, text, textLength);
-
-	*p_VertexBufferIndexOffset = vertexIndex;
-	*p_TextVertexBufferIndexOffset = textVertexIndex;
+	*p_VertexBufferIndexOffset = vertexBufferIndex;
 }
 /*********************************************************************************/
 intern void K15_InternalPushGUIComboBoxVertices(K15_RenderBackEnd* p_RenderBackEnd, K15_GUIContext* p_GUIContext,
@@ -139,138 +78,7 @@ intern void K15_InternalPushGUIComboBoxVertices(K15_RenderBackEnd* p_RenderBackE
 	float* p_VertexBuffer, uint32* p_VertexBufferIndexOffset,
 	float* p_TextVertexBuffer, uint32* p_TextVertexBufferIndexOffset)
 {
-	uint32 vertexIndex = *p_VertexBufferIndexOffset;
-	uint32 textVertexIndex = *p_TextVertexBufferIndexOffset;
 
-	uint32 viewportWidth = p_RenderBackEnd->viewportWidth;
-	uint32 viewportHeight = p_RenderBackEnd->viewportHeight;
-
-	K15_GUIContextStyle* guiStyle = &p_GUIContext->style;
-	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
-
-	K15_RenderFontDesc* guiStyleFont = guiStyle->styleFont;
-
-	bool8 expanded = p_GUIComboBox->expanded;
-
-	const char** elementStrings = (const char**)alloca(p_GUIComboBox->numElements * K15_PTR_SIZE);
-	const char* selectedElementString = 0;
-	uint32 selectedElementStringLength = 0;
-	uint32 selectedElementIndex = p_GUIComboBox->selectedIndex;
-	uint32 elementStringOffset = p_GUIComboBox->elementsOffsetInBytes;
-
-	for (uint32 elementIndex = 0;
-		elementIndex < p_GUIComboBox->numElements;
-		++elementIndex)
-	{
-		const char* elementString = (const char*)(guiMemory + elementStringOffset);
-		uint32 elementStringLength = (uint32)strlen(elementString);
-		elementStrings[elementIndex] = elementString;
-		elementStringOffset += elementStringLength + 1;
-
-		if (elementIndex == selectedElementIndex)
-		{
-			selectedElementString = elementString;
-			selectedElementStringLength = elementStringLength;
-		}
-	}
-
-	float guiTextureWidth = 256.f;
-	float guiTextureHeight = 128.f;
-
-	float marginPixelLeft	= (float)guiStyle->guiComboBoxStyle.marginLeft;
-	float marginPixelRight	= (float)guiStyle->guiComboBoxStyle.marginRight;
-	float marginPixelTop	= (float)guiStyle->guiComboBoxStyle.marginTop;
-	float marginPixelBottom = (float)guiStyle->guiComboBoxStyle.marginBottom;
-
-	float elementPixelPosLeft	= (float)p_GUIElement->posPixelX;
-	float elementPixelPosTop	= (float)p_GUIElement->posPixelY;
-	float elementPixelPosRight	= elementPixelPosLeft + (float)p_GUIElement->pixelWidth;
-	float elementPixelPosBottom	= elementPixelPosTop + (float)p_GUIElement->pixelHeight;
-
-	float elementInnerPixelLeft   = elementPixelPosLeft - marginPixelLeft;
-	float elementInnerPixelRight  = elementPixelPosRight + marginPixelRight;
-	float elementInnerPixelTop	  = elementPixelPosTop - marginPixelTop;
-	float elementInnerPixelBottom = elementPixelPosBottom + marginPixelBottom;
-
-	float elementInnerLeft	= elementInnerPixelLeft / viewportWidth;
-	float elementInnerTop	= elementInnerPixelTop / viewportHeight;
-	
-	float elementInnerLeftNDC   = K15_CONVERT_TO_NDC_X(elementInnerPixelLeft / viewportWidth);
-	float elementInnerRightNDC  = K15_CONVERT_TO_NDC_X(elementInnerPixelRight / viewportWidth);
-	float elementInnerBottomNDC = K15_CONVERT_TO_NDC_Y(elementInnerPixelBottom / viewportHeight);
-	float elementInnerTopNDC	= K15_CONVERT_TO_NDC_Y(elementInnerPixelTop / viewportHeight);
-	
-	float elementOuterLeftNDC	= K15_CONVERT_TO_NDC_X(elementPixelPosLeft / viewportWidth);
-	float elementOuterRightNDC	= K15_CONVERT_TO_NDC_X(elementPixelPosRight / viewportWidth);
-	float elementOuterTopNDC	= K15_CONVERT_TO_NDC_Y(elementPixelPosTop / viewportHeight);
-	float elementOuterBottomNDC	= K15_CONVERT_TO_NDC_Y(elementPixelPosBottom / viewportHeight);
-
-	float uvExpanderLeft = guiStyle->guiComboBoxStyle.expanderPosPixelX / guiTextureWidth;
-	float uvExpanderTop = guiStyle->guiComboBoxStyle.expanderPosPixelY / guiTextureHeight;
-	float uvExpanderRight = uvExpanderLeft + 
-		(guiStyle->guiComboBoxStyle.expanderPixelWidth / guiTextureWidth);
-	float uvExpanderBottom = uvExpanderTop +
-		(guiStyle->guiComboBoxStyle.expanderPixelHeight / guiTextureHeight);
-
-	float expanderLeftNDC = elementOuterRightNDC;
-	float expanderTopNDC = elementOuterTopNDC;
-	float expanderBottomNDC = elementOuterBottomNDC;
-	float expanderRightNDC = K15_CONVERT_TO_NDC_X((elementPixelPosRight 
-		+ guiStyle->guiComboBoxStyle.expanderPixelWidth) / viewportWidth);
-
-	float uvLeft   = guiStyle->guiComboBoxStyle.posPixelX / guiTextureWidth;
-	float uvTop	   = guiStyle->guiComboBoxStyle.posPixelY / guiTextureHeight;
-	float uvRight  = (guiStyle->guiComboBoxStyle.posPixelX + guiStyle->guiComboBoxStyle.pixelWidth) / guiTextureWidth;
-	float uvBottom = (guiStyle->guiComboBoxStyle.posPixelY + guiStyle->guiComboBoxStyle.pixelHeight) / guiTextureHeight;
-
-	float uvInnerLeft	= uvLeft + (guiStyle->guiComboBoxStyle.marginLeft / guiTextureWidth);
-	float uvInnerRight	= uvRight - (guiStyle->guiComboBoxStyle.marginRight / guiTextureWidth);
-	float uvInnerTop	= uvTop + (guiStyle->guiComboBoxStyle.marginTop / guiTextureHeight);
-	float uvInnerBottom = uvBottom - (guiStyle->guiComboBoxStyle.marginBottom / guiTextureHeight);
-
-	//top border
-	/*********************************************************************************/
-	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
-		elementOuterLeftNDC, elementOuterRightNDC, elementOuterTopNDC, elementInnerTopNDC,
-		uvLeft, uvRight, uvTop, uvInnerTop);
-
-	//left border
-	/*********************************************************************************/
-	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
-		elementOuterLeftNDC, elementInnerLeftNDC, elementOuterTopNDC, elementOuterBottomNDC,
-		uvLeft, uvInnerLeft, uvTop, uvBottom);
-
-	//right border
-	/*********************************************************************************/
-	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
-		elementInnerRightNDC, elementOuterRightNDC, elementOuterTopNDC, elementOuterBottomNDC,
-		uvInnerRight, uvRight, uvTop, uvBottom);
-
-	//bottom border
-	/*********************************************************************************/
-	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
-		elementOuterLeftNDC, elementOuterRightNDC, elementInnerBottomNDC, elementOuterBottomNDC,
-		uvLeft, uvRight, uvInnerBottom, uvBottom);
-
-	//background
-	/*********************************************************************************/
-	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
-		elementInnerLeftNDC, elementInnerRightNDC, elementInnerTopNDC, elementInnerBottomNDC,
-		uvInnerLeft, uvInnerRight, uvInnerTop, uvInnerBottom);
-
-	//expander
-	/*********************************************************************************/
-	vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
-		expanderLeftNDC, expanderRightNDC, expanderTopNDC, expanderBottomNDC,
-		uvExpanderLeft, uvExpanderRight, uvExpanderTop, uvExpanderBottom);
-
-	//text
-	/*********************************************************************************/
-	textVertexIndex = K15_InternalPush2DTextVertices(p_RenderBackEnd, guiStyleFont, p_TextVertexBuffer,
-		textVertexIndex, elementInnerLeft, elementInnerTop, selectedElementString, selectedElementStringLength);
-
-	*p_VertexBufferIndexOffset = vertexIndex;
-	*p_TextVertexBufferIndexOffset = textVertexIndex;
 }
 /*********************************************************************************/
 intern void K15_InternalCountGUIContextVertices(K15_GUIContext* p_GUIContext, 
@@ -297,7 +105,7 @@ intern void K15_InternalCountGUIContextVertices(K15_GUIContext* p_GUIContext,
 			{
 				K15_GUIButton* guiButton = (K15_GUIButton*)(guiMemory + currentGUIMemoryOffset + sizeof(K15_GUIElementHeader));
 				const char* text = (const char*)(guiMemory + guiButton->textOffsetInBytes);
-				numVertices += 54;
+				numVertices += K15_InternalGetGUIControlVertexCount(p_GUIContext, guiElement);
 				numTextVertices += K15_GetTextVertexCount(guiStyleFont, text, guiButton->textLength);
 				break;
 			}

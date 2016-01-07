@@ -25,63 +25,65 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 {
 	K15_GUIContextStyle defaultStyle = {};
 
-	K15_ResourceHandle styleTextureResource = K15_LoadResource(p_ResourceContext, K15_TEXTURE_RESOURCE_IDENTIFIER, "textures/gui_template.png", 0); 
 	K15_ResourceHandle styleFontResource = K15_LoadResource(p_ResourceContext, K15_FONT_RESOURCE_IDENTIFIER, "fonts/gui_font.ttf", 0); 
 
-	defaultStyle.styleTexture = K15_GetResourceRenderHandle(p_ResourceContext, styleTextureResource);
-	defaultStyle.styleFont = K15_GetResourceFontDesc(p_ResourceContext, styleFontResource);
+	defaultStyle.guiButtonStyle.edgePixelThickness = 1;
+	defaultStyle.guiButtonStyle.roundEdges = K15_FALSE;
 
-	//button style
-	{
-		//normal
-		/*********************************************************************************/
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].posPixelX = 0;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].posPixelY = 0;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].pixelWidth = 29;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].pixelHeight = 20;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].marginLeft = 3;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].marginTop = 3;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].marginBottom = 3;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].marginRight = 3;
-		//pressed
-		/*********************************************************************************/
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].posPixelX = 0;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].posPixelY = 21;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].pixelWidth = 29;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].pixelHeight = 20;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].marginLeft = 3;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].marginTop = 3;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].marginBottom = 3;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].marginRight = 3;
-		//hovered
-		/*********************************************************************************/
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].posPixelX = 0;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].posPixelY = 42;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].pixelWidth = 29;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].pixelHeight = 20;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].marginLeft = 4;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].marginTop = 4;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].marginBottom = 5;
-		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].marginRight = 5;
-		/*********************************************************************************/
-		defaultStyle.guiButtonStyle.padding = 5;
-	}
-
-	//combo box style
-	{
-		defaultStyle.guiComboBoxStyle.marginBottom = 3;
-		defaultStyle.guiComboBoxStyle.marginTop = 3;
-		defaultStyle.guiComboBoxStyle.marginLeft = 3;
-		defaultStyle.guiComboBoxStyle.marginRight = 3;
-		defaultStyle.guiComboBoxStyle.posPixelX = 30;
-		defaultStyle.guiComboBoxStyle.posPixelY = 0;
-		defaultStyle.guiComboBoxStyle.pixelWidth = 29;
-		defaultStyle.guiComboBoxStyle.pixelHeight = 20;
-		defaultStyle.guiComboBoxStyle.expanderPosPixelX = 60;
-		defaultStyle.guiComboBoxStyle.expanderPosPixelY = 0;
-		defaultStyle.guiComboBoxStyle.expanderPixelHeight = 14;
-		defaultStyle.guiComboBoxStyle.expanderPixelWidth = 7;
-	}
+// 	defaultStyle.styleTexture = K15_GetResourceRenderHandle(p_ResourceContext, styleTextureResource);
+// 	defaultStyle.styleFont = K15_GetResourceFontDesc(p_ResourceContext, styleFontResource);
+// 
+// 	//button style
+// 	{
+// 		//normal
+// 		/*********************************************************************************/
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].posPixelX = 0;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].posPixelY = 0;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].pixelWidth = 29;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].pixelHeight = 20;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].marginLeft = 3;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].marginTop = 3;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].marginBottom = 3;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].marginRight = 3;
+// 		//pressed
+// 		/*********************************************************************************/
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].posPixelX = 0;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].posPixelY = 21;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].pixelWidth = 29;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].pixelHeight = 20;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].marginLeft = 3;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].marginTop = 3;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].marginBottom = 3;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].marginRight = 3;
+// 		//hovered
+// 		/*********************************************************************************/
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].posPixelX = 0;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].posPixelY = 42;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].pixelWidth = 29;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].pixelHeight = 20;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].marginLeft = 4;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].marginTop = 4;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].marginBottom = 5;
+// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].marginRight = 5;
+// 		/*********************************************************************************/
+// 		defaultStyle.guiButtonStyle.padding = 5;
+// 	}
+// 
+// 	//combo box style
+// 	{
+// 		defaultStyle.guiComboBoxStyle.marginBottom = 3;
+// 		defaultStyle.guiComboBoxStyle.marginTop = 3;
+// 		defaultStyle.guiComboBoxStyle.marginLeft = 3;
+// 		defaultStyle.guiComboBoxStyle.marginRight = 3;
+// 		defaultStyle.guiComboBoxStyle.posPixelX = 30;
+// 		defaultStyle.guiComboBoxStyle.posPixelY = 0;
+// 		defaultStyle.guiComboBoxStyle.pixelWidth = 29;
+// 		defaultStyle.guiComboBoxStyle.pixelHeight = 20;
+// 		defaultStyle.guiComboBoxStyle.expanderPosPixelX = 60;
+// 		defaultStyle.guiComboBoxStyle.expanderPosPixelY = 0;
+// 		defaultStyle.guiComboBoxStyle.expanderPixelHeight = 14;
+// 		defaultStyle.guiComboBoxStyle.expanderPixelWidth = 7;
+// 	}
 	
 	return defaultStyle;
 }
@@ -298,8 +300,8 @@ char* K15_ComboBox(K15_GUIContext* p_GUIContext, char** p_Elements, uint32 p_Num
 	float textWidth = 0.f;
 	float textHeight = 0.f;
 
-	uint32 expanderPixelWidth = p_GUIContext->style.guiComboBoxStyle.expanderPixelWidth;
-	uint32 expanderPixelHeight = p_GUIContext->style.guiComboBoxStyle.expanderPixelWidth;
+	uint32 expanderPixelWidth = 0;// p_GUIContext->style.guiComboBoxStyle.expanderPixelWidth;
+	uint32 expanderPixelHeight = 0;// p_GUIContext->style.guiComboBoxStyle.expanderPixelWidth;
 
 	K15_GetTextSizeInPixels(guiFont, &textWidth, &textHeight, selectedElementString, selectedElementStringLength);
 
