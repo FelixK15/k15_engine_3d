@@ -1,0 +1,2 @@
+VertexShader=shader/stock/screenspace_colored.vert
+FragmentShader=shader/stock/default_color.frag
