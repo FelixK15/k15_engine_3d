@@ -52,6 +52,7 @@ struct K15_RenderResources
 	{
 		K15_RenderResourceHandle* screenspaceColoredVertexProgramHandle;
 		K15_RenderResourceHandle* screenspaceTexturedVertexProgramHandle;
+		K15_RenderResourceHandle* screenspaceTexturedColoredVertexProgramHandle;
 		K15_RenderResourceHandle* defaultTextureFragmentProgramHandle;
 		K15_RenderResourceHandle* defaultColorFragmentProgramHandle;
 		K15_RenderResourceHandle* defaultFontFragmentProgramHandle;

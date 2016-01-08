@@ -34,7 +34,7 @@ void K15_EndFrame(K15_FrameCounter* p_FrameCounter)
 
 	p_FrameCounter->deltaSamples[sampleIndex] = deltaTime;
 
-	for (int deltaIndex = 0;
+	for (uint32 deltaIndex = 0;
 		deltaIndex < numSamples;
 		++deltaIndex)
 	{

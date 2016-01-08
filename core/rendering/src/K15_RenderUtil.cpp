@@ -198,15 +198,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_R
 		}
 		
 		if (renderableCharacter)
-		{
-			//float topOffset	   = 
-			float leftPosNDC   = K15_CONVERT_TO_NDC_X(leftPos);
-			//float topPosNDC	   = K15_CONVERT_TO_NDC_Y(baseLine - advanceY - glyphHeight);
-			float rightPosNDC  = K15_CONVERT_TO_NDC_X(leftPos + glyphWidth);
-			//float bottomPosNDC = K15_CONVERT_TO_NDC_Y(baseLine - advanceY);
-			float topPosNDC = K15_CONVERT_TO_NDC_Y(baseLine - glyphHeight - advanceY + bottomOffset);
-			float bottomPosNDC = K15_CONVERT_TO_NDC_Y(baseLine - advanceY + bottomOffset);
-			
+		{			
 			vertexIndex = K15_InternalPush2DScreenspacePixelColoredTextureRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 				leftPos, leftPos + glyphWidth, baseLine - glyphHeight - advanceY + bottomOffset, baseLine - advanceY + bottomOffset,
 				glyphTexelLeft, glyphTexelRight, glyphTexelTop, glyphTexelBottom,
