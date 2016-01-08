@@ -2,9 +2,9 @@
 
 /*********************************************************************************/
 intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRectVertices(K15_RenderBackEnd* p_RenderBackEnd,
-	float* p_VertexBuffer, uint32 p_StartIndex, uint32 p_PixelPosLeft, uint32 p_PixelPosRight, 
-	uint32 p_PixelPosTop, uint32 p_PixelPosBottom, uint32 p_ColorLeftTop, uint32 p_ColorRightTop, 
-	uint32 p_ColorLeftBottom, uint32 p_ColorRightBottom)
+	float* p_VertexBuffer, uint32 p_StartIndex, 
+	int32 p_PixelPosLeft, int32 p_PixelPosRight, int32 p_PixelPosTop, int32 p_PixelPosBottom, 
+	uint32 p_ColorLeftTop, uint32 p_ColorRightTop, uint32 p_ColorLeftBottom, uint32 p_ColorRightBottom)
 {
 	float viewportHeight = p_RenderBackEnd->viewportHeight;
 	float viewportWidth = p_RenderBackEnd->viewportWidth;
@@ -62,65 +62,93 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRectVertices(K15_R
 /*********************************************************************************/
 
 /*********************************************************************************/
-intern inline uint32 K15_InternalPush2DScreenspaceRectVertices(K15_RenderBackEnd* p_RenderBackEnd, 
-													float* p_VertexBuffer, uint32 p_VertexBufferOffsetIndex, 
-													float p_PosLeft, float p_PosRight, float p_PosTop, float p_PosBottom,
-													float p_UCoordLeft, float p_UCoordRight, float p_VCoordTop, float p_VCoordBottom)
+intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextureRectVertices(K15_RenderBackEnd* p_RenderBackEnd, 
+													float* p_VertexBuffer, uint32 p_StartIndex, 
+													uint32 p_PixelPosLeft, uint32 p_PixelPosRight, uint32 p_PixelPosTop, uint32 p_PixelPosBottom,
+													float p_UCoordLeft, float p_UCoordRight, float p_VCoordTop, float p_VCoordBottom,
+													uint32 p_ColorLeftTop, uint32 p_ColorRightTop, uint32 p_ColorLeftBottom, uint32 p_ColorRightBottom)
 {
-	uint32 vertexIndex = p_VertexBufferOffsetIndex;
+	float viewportHeight = p_RenderBackEnd->viewportHeight;
+	float viewportWidth = p_RenderBackEnd->viewportWidth;
 
-	p_VertexBuffer[vertexIndex++] = p_PosLeft;
-	p_VertexBuffer[vertexIndex++] = p_PosTop;
+	float posLeftNDC = K15_CONVERT_TO_NDC_X((float)p_PixelPosLeft / viewportWidth);
+	float posRightNDC = K15_CONVERT_TO_NDC_X((float)p_PixelPosRight / viewportWidth);
+	float posTopNDC = K15_CONVERT_TO_NDC_Y((float)p_PixelPosTop / viewportHeight);
+	float posBottomNDC = K15_CONVERT_TO_NDC_Y((float)p_PixelPosBottom / viewportHeight);
+
+	K15_Vector3 unpackedLeftBottomColor = K15_UnpackVector3(p_ColorLeftBottom) / 255.f;
+	K15_Vector3 unpackedLeftTopColor = K15_UnpackVector3(p_ColorLeftTop) / 255.f;
+	K15_Vector3 unpackedRightBottomColor = K15_UnpackVector3(p_ColorRightBottom) / 255.f;
+	K15_Vector3 unpackedRightTopColor = K15_UnpackVector3(p_ColorRightTop) / 255.f;
+
+	uint32 vertexIndex = p_StartIndex;
+
+	p_VertexBuffer[vertexIndex++] = posLeftNDC;
+	p_VertexBuffer[vertexIndex++] = posTopNDC;
 	p_VertexBuffer[vertexIndex++] = p_UCoordLeft;
 	p_VertexBuffer[vertexIndex++] = p_VCoordTop;
-	
-	p_VertexBuffer[vertexIndex++] = p_PosLeft;
-	p_VertexBuffer[vertexIndex++] = p_PosBottom;
+	p_VertexBuffer[vertexIndex++] = unpackedLeftTopColor.x;
+	p_VertexBuffer[vertexIndex++] = unpackedLeftTopColor.y;
+	p_VertexBuffer[vertexIndex++] = unpackedLeftTopColor.z;
+
+	p_VertexBuffer[vertexIndex++] = posLeftNDC;
+	p_VertexBuffer[vertexIndex++] = posBottomNDC;
 	p_VertexBuffer[vertexIndex++] = p_UCoordLeft;
 	p_VertexBuffer[vertexIndex++] = p_VCoordBottom;
-	
-	p_VertexBuffer[vertexIndex++] = p_PosRight;
-	p_VertexBuffer[vertexIndex++] = p_PosTop;
+	p_VertexBuffer[vertexIndex++] = unpackedLeftBottomColor.x;
+	p_VertexBuffer[vertexIndex++] = unpackedLeftBottomColor.y;
+	p_VertexBuffer[vertexIndex++] = unpackedLeftBottomColor.z;
+
+	p_VertexBuffer[vertexIndex++] = posRightNDC;
+	p_VertexBuffer[vertexIndex++] = posTopNDC;
 	p_VertexBuffer[vertexIndex++] = p_UCoordRight;
 	p_VertexBuffer[vertexIndex++] = p_VCoordTop;
-	
-	p_VertexBuffer[vertexIndex++] = p_PosLeft;
-	p_VertexBuffer[vertexIndex++] = p_PosBottom;
+	p_VertexBuffer[vertexIndex++] = unpackedRightTopColor.x;
+	p_VertexBuffer[vertexIndex++] = unpackedRightTopColor.y;
+	p_VertexBuffer[vertexIndex++] = unpackedRightTopColor.z;
+
+	p_VertexBuffer[vertexIndex++] = posLeftNDC;
+	p_VertexBuffer[vertexIndex++] = posBottomNDC;
 	p_VertexBuffer[vertexIndex++] = p_UCoordLeft;
 	p_VertexBuffer[vertexIndex++] = p_VCoordBottom;
-	
-	p_VertexBuffer[vertexIndex++] = p_PosRight;
-	p_VertexBuffer[vertexIndex++] = p_PosBottom;
+	p_VertexBuffer[vertexIndex++] = unpackedLeftBottomColor.x;
+	p_VertexBuffer[vertexIndex++] = unpackedLeftBottomColor.y;
+	p_VertexBuffer[vertexIndex++] = unpackedLeftBottomColor.z;
+
+	p_VertexBuffer[vertexIndex++] = posRightNDC;
+	p_VertexBuffer[vertexIndex++] = posBottomNDC;
 	p_VertexBuffer[vertexIndex++] = p_UCoordRight;
 	p_VertexBuffer[vertexIndex++] = p_VCoordBottom;
-	
-	p_VertexBuffer[vertexIndex++] = p_PosRight;
-	p_VertexBuffer[vertexIndex++] = p_PosTop;
+	p_VertexBuffer[vertexIndex++] = unpackedRightBottomColor.x;
+	p_VertexBuffer[vertexIndex++] = unpackedRightBottomColor.y;
+	p_VertexBuffer[vertexIndex++] = unpackedRightBottomColor.z;
+
+	p_VertexBuffer[vertexIndex++] = posRightNDC;
+	p_VertexBuffer[vertexIndex++] = posTopNDC;
 	p_VertexBuffer[vertexIndex++] = p_UCoordRight;
 	p_VertexBuffer[vertexIndex++] = p_VCoordTop;
+	p_VertexBuffer[vertexIndex++] = unpackedRightTopColor.x;
+	p_VertexBuffer[vertexIndex++] = unpackedRightTopColor.y;
+	p_VertexBuffer[vertexIndex++] = unpackedRightTopColor.z;
 
 	return vertexIndex;
 }
 /*********************************************************************************/
-intern inline uint32 K15_InternalPush2DTextVertices(K15_RenderBackEnd* p_RenderBackEnd,
-													K15_RenderFontDesc* p_RenderFontDesc,
-													float* p_VertexBuffer, uint32 p_VertexBufferOffsetIndex,
-													float p_PosLeft, float p_PosTop, const char* p_Text,
-													uint32 p_TextLength)
+intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_RenderBackEnd* p_RenderBackEnd,
+	K15_RenderFontDesc* p_RenderFontDesc,
+	float* p_VertexBuffer, uint32 p_VertexBufferOffsetIndex,
+	uint32 p_PixelPosLeft, uint32 p_PixelPosTop, uint32 p_TextColor, const char* p_Text,
+	uint32 p_TextLength)
 {
 	uint32 vertexIndex = p_VertexBufferOffsetIndex;
 
-	float leftPos = p_PosLeft;
-	float topPos  = p_PosTop;
+	uint32 leftPos = p_PixelPosLeft;
+	uint32 topPos = p_PixelPosTop;
 	
 	float fontTextureWidth	 = p_RenderFontDesc->textureWidth;
 	float fontTextureHeight  = p_RenderFontDesc->textureHeight;
 
-	float viewportWidth  = p_RenderBackEnd->viewportWidth;
-	float viewportHeight = p_RenderBackEnd->viewportHeight;
-
 	float maxGlyphPixelHeight = p_RenderFontDesc->ascent - p_RenderFontDesc->descent;
-	float maxGlyphHeight = maxGlyphPixelHeight / viewportHeight;
 
 	for (uint32 textIndex = 0;
 		textIndex < p_TextLength;
@@ -142,7 +170,7 @@ intern inline uint32 K15_InternalPush2DTextVertices(K15_RenderBackEnd* p_RenderB
 			&advancePixelX, &advancePixelY, &bottomPixelOffset, 
 			&renderableCharacter);
 
-		float baseLine = topPos + (p_RenderFontDesc->ascent / viewportHeight);
+		float baseLine = topPos + (p_RenderFontDesc->ascent);
 
 		float glyphLeftPixelPos	  = glyphPixelX;
 		float glyphTopPixelPos	  = glyphPixelY;
@@ -154,18 +182,18 @@ intern inline uint32 K15_InternalPush2DTextVertices(K15_RenderBackEnd* p_RenderB
 		float glyphTexelRight  = glyphRightPixelPos / fontTextureWidth;
 		float glyphTexelBottom = glyphBottomPixelPos / fontTextureHeight;
 
-		float advanceX = advancePixelX / viewportWidth;
-		float advanceY = advancePixelY / viewportHeight;
+		float advanceX = advancePixelX;
+		float advanceY = advancePixelY;
 
-		float bottomOffset = bottomPixelOffset / viewportHeight;
+		float bottomOffset = bottomPixelOffset;
 
-		float glyphHeight = glyphPixelHeight / viewportHeight;
-		float glyphWidth  = glyphPixelWidth / viewportWidth;
+		float glyphHeight = glyphPixelHeight;
+		float glyphWidth  = glyphPixelWidth;
 
 		//new line - reset x and advance y
 		if (character == '\n')
 		{
-			leftPos = p_PosLeft;
+			leftPos = p_PixelPosLeft;
 			topPos -= advanceY;  
 		}
 		
@@ -178,9 +206,11 @@ intern inline uint32 K15_InternalPush2DTextVertices(K15_RenderBackEnd* p_RenderB
 			//float bottomPosNDC = K15_CONVERT_TO_NDC_Y(baseLine - advanceY);
 			float topPosNDC = K15_CONVERT_TO_NDC_Y(baseLine - glyphHeight - advanceY + bottomOffset);
 			float bottomPosNDC = K15_CONVERT_TO_NDC_Y(baseLine - advanceY + bottomOffset);
-			vertexIndex = K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
-				leftPosNDC, rightPosNDC, topPosNDC, bottomPosNDC,
-				glyphTexelLeft, glyphTexelRight, glyphTexelTop, glyphTexelBottom);
+			
+			vertexIndex = K15_InternalPush2DScreenspacePixelColoredTextureRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
+				leftPos, leftPos + glyphWidth, baseLine - glyphHeight - advanceY + bottomOffset, baseLine - advanceY + bottomOffset,
+				glyphTexelLeft, glyphTexelRight, glyphTexelTop, glyphTexelBottom,
+				p_TextColor, p_TextColor, p_TextColor, p_TextColor);
 		}
 
 		leftPos += advanceX;
@@ -210,9 +240,9 @@ intern void K15_InternalDrawDefault2DTexture(K15_RenderBackEnd* p_RenderBackEnd,
 
 	float* vertexMemory = (float*)K15_AllocateFromMemoryAllocator(renderAllocator, sizeVerticesInBytes);
 
-	K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, vertexMemory, 0, 
-		p_PosLeft, p_PosRight, p_PosTop, p_PosBottom, 
-		p_UCoordLeft, p_UCoordRight, p_VCoordTop, p_VCoordBottom);
+// 	K15_InternalPush2DScreenspaceRectVertices(p_RenderBackEnd, vertexMemory, 0, 
+// 		p_PosLeft, p_PosRight, p_PosTop, p_PosBottom, 
+// 		p_UCoordLeft, p_UCoordRight, p_VCoordTop, p_VCoordBottom);
 
 	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexMemory, numVertices, &vertexFormatDesc);
 	K15_RenderGeometryDesc renderGeometry = {};

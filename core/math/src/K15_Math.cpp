@@ -212,9 +212,9 @@ K15_Vector3 K15_UnpackVector3(uint32 p_PackedVector)
 {
 	K15_Vector3 vec = {};
 
-	vec.x = (float)(p_PackedVector >> 16);
-	vec.y = (float)(p_PackedVector >> 8);
-	vec.z = (float)(p_PackedVector >> 0);
+	vec.x = (float)(unsigned char)(p_PackedVector >> 16);
+	vec.y = (float)(unsigned char)(p_PackedVector >> 8);
+	vec.z = (float)(unsigned char)(p_PackedVector >> 0);
 
 	return vec;
 }
@@ -223,10 +223,11 @@ K15_Vector4 K15_UnpackVector4(uint32 p_PackedVector)
 {
 	K15_Vector4 vec = {};
 
-	vec.w = (float)(p_PackedVector >> 24);
-	vec.x = (float)(p_PackedVector >> 16);
-	vec.y = (float)(p_PackedVector >> 8);
-	vec.z = (float)(p_PackedVector >> 0);
+	vec.w = (float)(unsigned char)(p_PackedVector >> 24);
+	vec.x = (float)(unsigned char)(p_PackedVector >> 16);
+	vec.y = (float)(unsigned char)(p_PackedVector >> 8);
+	vec.z = (float)(unsigned char)(p_PackedVector >> 0);
+
 	return vec;
 }
 /*********************************************************************************/

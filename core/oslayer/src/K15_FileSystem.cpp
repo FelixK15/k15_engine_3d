@@ -247,15 +247,22 @@ char* K15_ConvertToSystemPathIntoBuffer(const char* p_FilePath, char* p_Buffer)
 	K15_ASSERT_TEXT(p_Buffer, "Buffer is NULL.");
 
 	char* convertedFilePath = p_Buffer;
+	bool8 lastCharWasPathDelimiter = K15_FALSE;
 
 	while(*p_FilePath)
 	{
-		if (*p_FilePath == '\\')
+		if (*p_FilePath == '\\' || *p_FilePath == '/')
 		{
-			*p_Buffer++ = '/';
+			if (!lastCharWasPathDelimiter)
+			{
+				*p_Buffer++ = '/';
+			}
+
+			lastCharWasPathDelimiter = K15_TRUE;
 		}
 		else
 		{
+			lastCharWasPathDelimiter = K15_FALSE;
 			*p_Buffer++ = *p_FilePath;
 		}
 		++p_FilePath;

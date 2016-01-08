@@ -62,18 +62,20 @@ struct K15_GUIContextStyle
 {
 	K15_RenderFontDesc* styleFont;
 
-	struct  
-	{
-		uint32 textColor;
-		uint32 edgeColor;
-		uint32 edgePixelThickness;
-		bool8 roundEdges;
-	} guiButtonStyle;
+	uint32 textColor;
+	uint32 disabledTextColor;
+	uint32 textBackgroundColor;
+	uint32 disabledTextBackgroundColor;
 
-	struct
-	{
-		uint32 buttonColor;
-	} guiColors;
+	//controls
+	uint32 controlUpperBackgroundColor;
+	uint32 controlLowerBackgroundColor;
+	uint32 disabledControlUpperBackgroundColor;
+	uint32 disabledControlLowerBackgroundColor;
+	uint32 hoveredControlLowerBackgroundColor;
+	uint32 hoveredControlUpperBackgroundColor;
+	uint32 controlLowerBorderColor;
+	uint32 controlUpperBorderColor;
 };
 
 struct K15_GUICategory

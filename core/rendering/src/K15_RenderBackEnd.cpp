@@ -190,8 +190,8 @@ intern void K15_InternalCreateDefault2DMaterial(K15_RenderBackEnd* p_RenderBackE
 	default2DMaterial.numMaterialPasses = 1;
 
 	default2DMaterial.materialPasses = (K15_RenderMaterialPassDesc*)K15_AllocateFromMemoryAllocator(p_Allocator, sizeof(K15_RenderMaterialPassDesc));
-	default2DMaterial.materialPasses[0].fragmentShaderHandle = p_RenderBackEnd->resources.shaders.defaultFragmentProgramHandle;
-	default2DMaterial.materialPasses[0].vertexShaderHandle = p_RenderBackEnd->resources.shaders.default2DVertexProgramHandle;
+	default2DMaterial.materialPasses[0].fragmentShaderHandle = p_RenderBackEnd->resources.shaders.defaultTextureFragmentProgramHandle;
+	default2DMaterial.materialPasses[0].vertexShaderHandle = p_RenderBackEnd->resources.shaders.screenspaceTexturedVertexProgramHandle;
 	K15_CreateRenderMaterialDataDescStretchBufferWithCustomAllocator(&default2DMaterial.materialPasses[0].materialData, *p_Allocator, 2);
 
 	//sampler
@@ -223,7 +223,7 @@ intern void K15_InternalCreateDefaultFontMaterial(K15_RenderBackEnd* p_RenderBac
 
 	defaultFontMaterial.materialPasses = (K15_RenderMaterialPassDesc*)K15_AllocateFromMemoryAllocator(p_Allocator, sizeof(K15_RenderMaterialPassDesc));
 	defaultFontMaterial.materialPasses[0].fragmentShaderHandle = p_RenderBackEnd->resources.shaders.defaultFontFragmentProgramHandle;
-	defaultFontMaterial.materialPasses[0].vertexShaderHandle = p_RenderBackEnd->resources.shaders.default2DVertexProgramHandle;
+	defaultFontMaterial.materialPasses[0].vertexShaderHandle = p_RenderBackEnd->resources.shaders.screenspaceTexturedVertexProgramHandle;
 	K15_CreateRenderMaterialDataDescStretchBufferWithCustomAllocator(&defaultFontMaterial.materialPasses[0].materialData, *p_Allocator, 2);
 
 	//sampler
@@ -250,15 +250,17 @@ intern void K15_InternalCreateDefaultFontMaterial(K15_RenderBackEnd* p_RenderBac
 /*********************************************************************************/
 intern void K15_InternalLoadBackEndStockShader(K15_RenderBackEnd* p_RenderBackEnd, K15_ResourceContext* p_ResourceContext, K15_CustomMemoryAllocator* p_Allocator)
 {
-	K15_ResourceHandle stock2DVertexShaderResourceHandle = K15_LoadResource(p_ResourceContext, K15_SHADER_RESOURCE_IDENTIFIER, "/shader/stock/default_2d.vert", 0);
-	K15_ResourceHandle stock3DVertexShaderResourceHandle = K15_LoadResource(p_ResourceContext, K15_SHADER_RESOURCE_IDENTIFIER, "/shader/stock/default_3d.vert", 0);
-	K15_ResourceHandle stockDefaultFragmentShaderResourceHandle = K15_LoadResource(p_ResourceContext, K15_SHADER_RESOURCE_IDENTIFIER, "/shader/stock/default.frag", 0);
-	K15_ResourceHandle stockFontFragmentShaderResourceHandle = K15_LoadResource(p_ResourceContext, K15_SHADER_RESOURCE_IDENTIFIER, "/shader/stock/font.frag", 0);
-
-	p_RenderBackEnd->resources.shaders.default2DVertexProgramHandle = K15_GetResourceRenderHandle(p_ResourceContext, stock2DVertexShaderResourceHandle);
-	p_RenderBackEnd->resources.shaders.default3DVertexProgramHandle = K15_GetResourceRenderHandle(p_ResourceContext, stock3DVertexShaderResourceHandle);
-	p_RenderBackEnd->resources.shaders.defaultFragmentProgramHandle = K15_GetResourceRenderHandle(p_ResourceContext, stockDefaultFragmentShaderResourceHandle);
-	p_RenderBackEnd->resources.shaders.defaultFontFragmentProgramHandle = K15_GetResourceRenderHandle(p_ResourceContext, stockFontFragmentShaderResourceHandle);
+	K15_ResourceHandle defaultColorFragmentProgramResourceHandle = K15_LoadResource(p_ResourceContext, K15_SHADER_RESOURCE_IDENTIFIER, "/shader/stock/default_color.frag", 0);
+	K15_ResourceHandle defaultTextureFragmentProgramResourceHandle = K15_LoadResource(p_ResourceContext, K15_SHADER_RESOURCE_IDENTIFIER, "/shader/stock/default_texture.frag", 0);
+	K15_ResourceHandle defaultFontFragmentProgramResourceHandle = K15_LoadResource(p_ResourceContext, K15_SHADER_RESOURCE_IDENTIFIER, "/shader/stock/default_font.frag", 0);
+	K15_ResourceHandle screenspaceColoredVertexProgramResourceHandle = K15_LoadResource(p_ResourceContext, K15_SHADER_RESOURCE_IDENTIFIER, "/shader/stock/screenspace_colored.vert", 0);
+	K15_ResourceHandle screenspaceTexturedVertexProgramResourceHandle = K15_LoadResource(p_ResourceContext, K15_SHADER_RESOURCE_IDENTIFIER, "/shader/stock/screenspace_textured.vert", 0);
+	
+	p_RenderBackEnd->resources.shaders.defaultColorFragmentProgramHandle = K15_GetResourceRenderHandle(p_ResourceContext, defaultColorFragmentProgramResourceHandle);
+	p_RenderBackEnd->resources.shaders.defaultTextureFragmentProgramHandle = K15_GetResourceRenderHandle(p_ResourceContext, defaultTextureFragmentProgramResourceHandle);
+	p_RenderBackEnd->resources.shaders.defaultFontFragmentProgramHandle = K15_GetResourceRenderHandle(p_ResourceContext, defaultFontFragmentProgramResourceHandle);
+	p_RenderBackEnd->resources.shaders.screenspaceColoredVertexProgramHandle = K15_GetResourceRenderHandle(p_ResourceContext, screenspaceColoredVertexProgramResourceHandle);
+	p_RenderBackEnd->resources.shaders.screenspaceTexturedVertexProgramHandle = K15_GetResourceRenderHandle(p_ResourceContext, screenspaceTexturedVertexProgramResourceHandle);
 
 	//default 2D material
 	K15_InternalCreateDefault2DMaterial(p_RenderBackEnd, p_Allocator);
@@ -514,7 +516,9 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 
 	float* vertexMemory = (float*)K15_AllocateFromMemoryAllocator(renderAllocator, sizeVerticesInBytes);
 
-	K15_InternalPush2DTextVertices(p_RenderBackEnd, &fontDesc, vertexMemory, 0, posX, posY, text, textLength);
+// 	K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderBackEnd, &fontDesc,
+// 		vertexMemory, 0, 
+	//K15_InternalPush2DTextVertices(p_RenderBackEnd, &fontDesc, vertexMemory, 0, posX, posY, text, textLength);
 
 	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexMemory, numVertices, &vertexFormatDesc);
 	K15_RenderGeometryDesc renderGeometry = {};
@@ -562,15 +566,26 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
 		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR3);
 	
+	K15_RenderVertexFormatDesc textVertexFormatDesc = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 2,
+		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
+		K15_ATTRIBUTE_SEMANTIC_TEXCOORD1, K15_TYPE_FLOAT_VECTOR2,
+		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR3);
+
 	//count vertices
 	uint32 numVertices = 0;
 	uint32 numTextVertices = 0;
 	
 	K15_InternalCountGUIContextVertices(&guiContext, &numVertices, &numTextVertices);
-	
-	float* vertexBuffer		= (float*)alloca(numVertices * vertexFormatDesc.stride);
-	float* textVertexBuffer = (float*)alloca(numTextVertices * vertexFormatDesc.stride);
 
+	//early out
+	if (numVertices == 0 && numTextVertices == 0)
+	{
+		goto free_resources;
+	}
+
+	float* vertexBuffer		= numVertices == 0 ? 0 : (float*)alloca(numVertices * vertexFormatDesc.stride);
+	float* textVertexBuffer = numTextVertices == 0 ? 0 : (float*)alloca(numTextVertices * textVertexFormatDesc.stride);
+	
 	uint32 vertexBufferSizeInFloats = 0;
 	uint32 textVertexBufferSizeInFloats = 0;
 	
@@ -583,14 +598,14 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 
 	K15_RenderMaterialDesc* guiMaterial = guiContext.guiRenderMaterial;
 	K15_RenderMaterialDesc* fontMaterial = &p_RenderBackEnd->resources.materials.defaultFontMaterial;
-	K15_RenderResourceHandle* guiTexture = guiContext.style.styleTexture;
+	//K15_RenderResourceHandle* guiTexture = guiContext.style.styleTexture;
 
 	K15_RenderFontDesc* guiStyleFont = guiContext.style.styleFont;
 
-	K15_RenderVertexData* textVertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, textVertexBuffer, actualNumberOfTextVertices, &vertexFormatDesc);
+	K15_RenderVertexData* textVertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, textVertexBuffer, actualNumberOfTextVertices, &textVertexFormatDesc);
 	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexBuffer, actualNumberOfVertices, &vertexFormatDesc);
 
-	K15_SetRenderMaterialRenderResourceDataByName(&guiMaterial->materialPasses[0], "tex", guiTexture);
+	//K15_SetRenderMaterialRenderResourceDataByName(&guiMaterial->materialPasses[0], "tex", guiTexture);
 
 	//render gui
 	{
@@ -622,6 +637,7 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, textVertexData);
 	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexData);
 
+free_resources:
 	//signal gui context that we are finished so that it can flip the buffers again
 	K15_PostSemaphore(guiContext.memoryLock);
 
@@ -728,15 +744,7 @@ intern result8 K15_InternalCreateShader(K15_RenderBackEnd* p_RenderBackEnd, K15_
 	if (result != K15_SUCCESS)
 	{
 		char* error = p_RenderBackEnd->renderContext->error;
-
-		if (programDesc.source == K15_RENDER_PROGRAM_SOURCE_FILE)
-		{
-			K15_LOG_ERROR_MESSAGE("Could not create shader '%s' ('%s')", programDesc.file, error);
-		}
-		else
-		{
-			K15_LOG_ERROR_MESSAGE("Could not create shader ('%s')", error);
-		}
+		K15_LOG_ERROR_MESSAGE("Could not create shader '%s' ('%s')", programDesc.name, error);
 	}
 
 	return result;

@@ -1,15 +1,7 @@
 /*********************************************************************************/
 intern uint32 K15_InternalGetGUIButtonVertexCount(K15_GUIContextStyle* p_GUIStyle, K15_GUIElementHeader* p_GUIElement)
 {
-	bool8 roundEdges = p_GUIStyle->guiButtonStyle.roundEdges;
-	uint32 vertexCount = 6;
-	
-	if (roundEdges)
-	{
-		vertexCount = (K15_GUI_BUTTON_ROUND_EDGE_VERTICES * 4) + 8;
-	}
-
-	return vertexCount;
+	return 12;
 }
 /*********************************************************************************/
 intern uint32 K15_InternalGetGUIControlVertexCount(K15_GUIContext* p_GUIContext, K15_GUIElementHeader* p_GUIElement)
@@ -35,41 +27,54 @@ intern void K15_InternalPushGUIButtonVertices(K15_RenderBackEnd* p_RenderBackEnd
 												float* p_VertexBuffer, uint32* p_VertexBufferIndexOffset,
 												float* p_TextVertexBuffer, uint32* p_TextVertexBufferIndexOffset)
 {
-	bool8 roundEdges = p_GUIContext->style.guiButtonStyle.roundEdges;
-
 	uint32 vertexBufferIndex = *p_VertexBufferIndexOffset;
+	uint32 textVertexBufferIndex = *p_TextVertexBufferIndexOffset;
 
 	uint32 pixelPosLeft = p_GUIElement->posPixelX;
 	uint32 pixelPosRight = p_GUIElement->posPixelX + p_GUIElement->pixelWidth;
 	uint32 pixelPosTop = p_GUIElement->posPixelY;
 	uint32 pixelPosBottom = p_GUIElement->posPixelY + p_GUIElement->pixelHeight;
 
-	uint32 thickness = p_GUIContext->style.guiButtonStyle.edgePixelThickness;
+	uint32 thickness = 1; //1 pixel of thickness border
 
-	uint32 edgePixelPosLeft = pixelPosLeft - thickness;
-	uint32 edgePixelPosRight = pixelPosRight + thickness;
-	uint32 edgePixelPosTop = pixelPosTop - thickness;
-	uint32 edgePixelPosBottom = pixelPosBottom + thickness;
+	uint32 controlUpperBackgroundColor = p_GUIContext->style.controlUpperBackgroundColor;
+	uint32 controlLowerBackgroundColor = p_GUIContext->style.controlLowerBackgroundColor;
+	uint32 textColor = p_GUIContext->style.textColor;
 
-	if (roundEdges)
-	{
+	uint32 borderUpperColor = p_GUIContext->style.controlUpperBorderColor;
+	uint32 borderLowerColor = p_GUIContext->style.controlLowerBorderColor;
 
-	}
-	else
-	{
-		//edge
-		vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, 
-			p_VertexBuffer, vertexBufferIndex,
-			edgePixelPosLeft, edgePixelPosRight, edgePixelPosTop, edgePixelPosBottom,
-			0x808080, 0x808080, 0x808080, 0x808080);
+	int32 edgePixelPosLeft = pixelPosLeft - thickness;
+	int32 edgePixelPosRight = pixelPosRight + thickness;
+	int32 edgePixelPosTop = pixelPosTop - thickness;
+	int32 edgePixelPosBottom = pixelPosBottom + thickness;
+	
+	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
 
-		//element
-		vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, 
-			p_VertexBuffer, vertexBufferIndex,
-			pixelPosLeft, pixelPosRight, pixelPosTop, pixelPosBottom,
-			0xCECECE, 0xCECECE, 0xCECECE, 0xCECECE);
-	}
+	uint32 textLength = p_GUIButton->textLength;
+	char* text = (char*)(guiMemory + p_GUIButton->textOffsetInBytes);
 
+	K15_RenderFontDesc* guiFont = p_GUIContext->style.styleFont;
+
+	//edge
+	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd,
+		p_VertexBuffer, vertexBufferIndex,
+		edgePixelPosLeft, edgePixelPosRight, edgePixelPosTop, edgePixelPosBottom,
+		borderUpperColor, borderUpperColor, borderLowerColor, borderLowerColor);
+
+	//element
+	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, 
+		p_VertexBuffer, vertexBufferIndex,
+		pixelPosLeft, pixelPosRight, pixelPosTop, pixelPosBottom,
+		controlUpperBackgroundColor, controlUpperBackgroundColor,
+		controlLowerBackgroundColor, controlLowerBackgroundColor);
+
+	//text
+	textVertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderBackEnd,
+		guiFont, p_TextVertexBuffer, textVertexBufferIndex,
+		pixelPosLeft, pixelPosTop, textColor, text, textLength);
+
+	*p_TextVertexBufferIndexOffset = textVertexBufferIndex;
 	*p_VertexBufferIndexOffset = vertexBufferIndex;
 }
 /*********************************************************************************/

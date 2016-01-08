@@ -1067,15 +1067,10 @@ bool8 K15_CompileMaterialResource(K15_ResourceCompilerContext* p_ResourceCompile
 		//pass data is optional
 		materialPassDataConfigRelativePath = K15_GetConfigValueAsString(p_MaterialConfig, materialDataPassNameBuffer);
 
-		if (!materialPassDataConfigRelativePath)
+		if (materialPassDataConfigRelativePath)
 		{
-			K15_SetResourceCompilerError(p_ResourceCompiler, K15_GenerateString("Could not find config value '%s' in resource config file '%s'.", 
-				(char*)malloc(512), materialDataPassNameBuffer, p_MaterialConfig->path));
-
-			goto free_resources;
+			materialPassDataConfigPath = K15_ConvertToAbsolutePath(materialPassDataConfigRelativePath);
 		}
-
-		materialPassDataConfigPath = K15_ConvertToAbsolutePath(materialPassDataConfigRelativePath);
 
 		//try to read material pass template
 		K15_ConfigFileContext materialPassTemplateConfig = {};

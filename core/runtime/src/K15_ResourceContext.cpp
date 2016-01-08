@@ -461,6 +461,7 @@ intern void K15_InternalLoadShaderResource(K15_ResourceContext* p_ResourceContex
 		programDesc.source = K15_RENDER_PROGRAM_SOURCE_CODE;
 		programDesc.nameHash = K15_GenerateStringHash(shaderName);
 		programDesc.type = programType;
+		programDesc.name = shaderName;
 
 		K15_RenderResourceHandle* shaderRenderHandle = 0;
 		
@@ -479,7 +480,6 @@ intern void K15_InternalLoadShaderResource(K15_ResourceContext* p_ResourceContex
 		p_ResourceCompilerOutput->compiledResourceDataSizeInBytes = K15_PTR_SIZE;
 	}
 
-	free(shaderName);
 	free(shaderExtensions);
 }
 /*********************************************************************************/
@@ -530,13 +530,26 @@ intern void K15_InternalLoadMaterialResource(K15_ResourceContext* p_ResourceCont
 		K15_MaterialPassDataFormat* materialPassData = &materialPassFormat->materialPassData;
 		K15_MaterialPassTemplateFormat* materialPassTemplate = &materialPassFormat->materialPassTemplate;
 
-		K15_CreateRenderMaterialDataDescStretchBuffer(&renderMaterialPass->materialData, materialPassData->numValues);
+		K15_CreateRenderMaterialDataDescStretchBuffer(&renderMaterialPass->materialData, materialPassData->numValues == 0 ? 8 : materialPassData->numValues);
+
 
 		//create shader from template
 // 		K15_Resource* vertexShaderResource = K15_LoadResource(p_ResourceContext, K15_SHADER_RESOURCE_IDENTIFIER, materialPassTemplate->vertexShaderPath, 0);
 // 		K15_Resource* fragmentShaderResource = K15_LoadResource(p_ResourceContext, K15_SHADER_RESOURCE_IDENTIFIER, materialPassTemplate->fragmentShaderPath, 0);
 		K15_ResourceHandle vsResourceHandle = K15_LoadResource(p_ResourceContext, K15_SHADER_RESOURCE_IDENTIFIER, materialPassTemplate->vertexShaderPath, 0);
 		K15_ResourceHandle fsResourceHandle = K15_LoadResource(p_ResourceContext, K15_SHADER_RESOURCE_IDENTIFIER, materialPassTemplate->fragmentShaderPath, 0);
+
+		K15_ASSERT_TEXT(vsResourceHandle != K15_INVALID_RESOURCE_HANDLE,
+			"vertex shader '%s' from material '%s' (pass %u) could not get loaded.",
+			materialPassTemplate->vertexShaderPath,
+			materialFormat.materialName,
+			passIndex);
+
+		K15_ASSERT_TEXT(fsResourceHandle != K15_INVALID_RESOURCE_HANDLE,
+			"fragment shader '%s' from material '%s' (pass %u) could not get loaded.",
+			materialPassTemplate->fragmentShaderPath,
+			materialFormat.materialName,
+			passIndex);
 
 		renderMaterialPass->vertexShaderHandle = K15_GetResourceRenderHandle(p_ResourceContext, vsResourceHandle);
 		renderMaterialPass->fragmentShaderHandle = K15_GetResourceRenderHandle(p_ResourceContext, fsResourceHandle);
@@ -804,7 +817,7 @@ K15_RenderMaterialDesc* K15_GetResourceRenderMaterialDesc(K15_ResourceContext* p
 	return renderMaterialDesc;
 }
 /*********************************************************************************/
-K15_RenderFontDesc* K15_GetResourceFontDesc(K15_ResourceContext* p_ResourceContext, K15_ResourceHandle p_ResourceHandle)
+K15_RenderFontDesc* K15_GetResourceRenderFontDesc(K15_ResourceContext* p_ResourceContext, K15_ResourceHandle p_ResourceHandle)
 {
 	K15_ResourceData* resourceData = K15_GetResourceData(p_ResourceContext, p_ResourceHandle);
 	K15_RenderFontDesc* renderFontDesc = 0;

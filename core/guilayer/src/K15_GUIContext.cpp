@@ -27,64 +27,13 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 
 	K15_ResourceHandle styleFontResource = K15_LoadResource(p_ResourceContext, K15_FONT_RESOURCE_IDENTIFIER, "fonts/gui_font.ttf", 0); 
 
-	defaultStyle.guiButtonStyle.edgePixelThickness = 1;
-	defaultStyle.guiButtonStyle.roundEdges = K15_FALSE;
+	defaultStyle.controlUpperBackgroundColor = 0x303030;
+	defaultStyle.controlLowerBackgroundColor = 0x505050;
+	defaultStyle.controlUpperBorderColor = 0x606060;
+	defaultStyle.controlLowerBorderColor = 0x101010;
+	defaultStyle.textColor = 0xFFFFFF;
+	defaultStyle.styleFont = K15_GetResourceRenderFontDesc(p_ResourceContext, styleFontResource);
 
-// 	defaultStyle.styleTexture = K15_GetResourceRenderHandle(p_ResourceContext, styleTextureResource);
-// 	defaultStyle.styleFont = K15_GetResourceFontDesc(p_ResourceContext, styleFontResource);
-// 
-// 	//button style
-// 	{
-// 		//normal
-// 		/*********************************************************************************/
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].posPixelX = 0;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].posPixelY = 0;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].pixelWidth = 29;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].pixelHeight = 20;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].marginLeft = 3;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].marginTop = 3;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].marginBottom = 3;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_NORMAL].marginRight = 3;
-// 		//pressed
-// 		/*********************************************************************************/
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].posPixelX = 0;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].posPixelY = 21;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].pixelWidth = 29;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].pixelHeight = 20;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].marginLeft = 3;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].marginTop = 3;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].marginBottom = 3;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_HOVERED].marginRight = 3;
-// 		//hovered
-// 		/*********************************************************************************/
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].posPixelX = 0;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].posPixelY = 42;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].pixelWidth = 29;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].pixelHeight = 20;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].marginLeft = 4;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].marginTop = 4;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].marginBottom = 5;
-// 		defaultStyle.guiButtonStyle.stateStyle[K15_GUI_BUTTON_STATE_PRESSED].marginRight = 5;
-// 		/*********************************************************************************/
-// 		defaultStyle.guiButtonStyle.padding = 5;
-// 	}
-// 
-// 	//combo box style
-// 	{
-// 		defaultStyle.guiComboBoxStyle.marginBottom = 3;
-// 		defaultStyle.guiComboBoxStyle.marginTop = 3;
-// 		defaultStyle.guiComboBoxStyle.marginLeft = 3;
-// 		defaultStyle.guiComboBoxStyle.marginRight = 3;
-// 		defaultStyle.guiComboBoxStyle.posPixelX = 30;
-// 		defaultStyle.guiComboBoxStyle.posPixelY = 0;
-// 		defaultStyle.guiComboBoxStyle.pixelWidth = 29;
-// 		defaultStyle.guiComboBoxStyle.pixelHeight = 20;
-// 		defaultStyle.guiComboBoxStyle.expanderPosPixelX = 60;
-// 		defaultStyle.guiComboBoxStyle.expanderPosPixelY = 0;
-// 		defaultStyle.guiComboBoxStyle.expanderPixelHeight = 14;
-// 		defaultStyle.guiComboBoxStyle.expanderPixelWidth = 7;
-// 	}
-	
 	return defaultStyle;
 }
 /*********************************************************************************/

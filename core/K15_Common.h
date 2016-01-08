@@ -40,6 +40,11 @@
 
 #ifdef _MSC_VER
 #	pragma warning(disable : 4996) //function is deprecated, use safe function
+#	pragma warning(disable : 4474) //too many arguments passed for format string (seems buggy in VS 2015)
+#	pragma warning(disable : 4312) //conversion from 'x' to 'y' of greater size - I know what I'm doing
+#	pragma warning(disable : 4311) //pointer truncation
+#	pragma warning(disable : 4302) //pointer truncation
+#	pragma warning(disable : 4838) //pointer truncation
 #endif //_MSC_VER
 
 #define K15_PTR_SIZE sizeof(void*)

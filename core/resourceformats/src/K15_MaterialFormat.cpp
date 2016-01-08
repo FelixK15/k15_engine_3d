@@ -21,6 +21,16 @@ intern uint8 K15_InternalLoadMaterialFormat(K15_DataAccessContext* p_DataAcessCo
 		return headerResult;
 	}
 
+	uint32 materialNameLength = 0;
+	//read material name length
+	K15_ReadData(p_DataAcessContext, sizeof(uint32), &materialNameLength);
+
+	p_MaterialFormat->materialName = (char*)malloc(materialNameLength + 1);
+	p_MaterialFormat->materialName[materialNameLength] = 0;
+
+	//read material name
+	K15_ReadData(p_DataAcessContext, materialNameLength, p_MaterialFormat->materialName);
+	
 	//read material name hash
 	K15_ReadData(p_DataAcessContext, sizeof(uint32), &p_MaterialFormat->materialNameHash);
 
@@ -125,6 +135,13 @@ intern uint8 K15_InternalSaveMaterialFormat(K15_DataAccessContext* p_DataAcessCo
 
 	//write resource header
 	K15_WriteData(p_DataAcessContext, sizeof(K15_HeaderFormat), &headerFormat);
+
+	//write material name length
+	uint32 materialNameLength = (uint32)strlen(p_MaterialFormat->materialName);
+	K15_WriteData(p_DataAcessContext, sizeof(uint32), &materialNameLength);
+
+	//write material name
+	K15_WriteData(p_DataAcessContext, materialNameLength, p_MaterialFormat->materialName);
 
 	//write material name hash
 	K15_WriteData(p_DataAcessContext, sizeof(uint32), &p_MaterialFormat->materialNameHash);
@@ -245,6 +262,7 @@ uint8 K15_SetMaterialFormatName(K15_MaterialFormat* p_MaterialFormat, const char
 	assert(p_Name);
 
 	p_MaterialFormat->materialNameHash = K15_CreateHash(p_Name);
+	p_MaterialFormat->materialName = K15_CopyString(p_Name);
 
 	return K15_SUCCESS;
 }

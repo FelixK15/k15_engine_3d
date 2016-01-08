@@ -81,7 +81,7 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 	sample1GameContext->resourceContext = resourceContext;
 	sample1GameContext->guiContext = guiContext;
 	sample1GameContext->gameRenderQueue = mainRenderQueue;
-	sample1GameContext->gameFont = K15_GetResourceFontDesc(resourceContext, gameFont);
+	sample1GameContext->gameFont = K15_GetResourceRenderFontDesc(resourceContext, gameFont);
 
 	K15_RenderCameraDesc cameraDesc = {};
 

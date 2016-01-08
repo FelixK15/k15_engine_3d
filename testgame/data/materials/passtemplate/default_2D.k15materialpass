@@ -1,2 +1,2 @@
-VertexShader=shader/stock/default_2d.vert
-FragmentShader=shader/stock/default_2d.frag
+VertexShader=shader/stock/screenspace_textured.vert
+FragmentShader=shader/stock/default_texture.frag

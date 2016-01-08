@@ -38,6 +38,19 @@ intern bool8 K15_InternalFindVertexFormatInCache(K15_RenderBackEnd* p_RenderBack
 
 	bool8 foundVertexCacheFormat = K15_FALSE;
 
+	int* semanticIDs = (int*)alloca(sizeof(int) * p_NumAttributes);
+	int* typeIDs = (int*)alloca(sizeof(int) * p_NumAttributes);
+
+	//extract ids from va_list
+	for (uint32 attributeIndex = 0;
+		attributeIndex < p_NumAttributes;
+		++attributeIndex)
+	{
+		semanticIDs[attributeIndex] = va_arg(p_VList, int);
+		typeIDs[attributeIndex] = va_arg(p_VList, int);
+	}
+
+	//search the cache
 	for (uint32 vertexFormatCacheIndex = 0;
 		vertexFormatCacheIndex < numVertexFormats;
 		++vertexFormatCacheIndex)
@@ -46,20 +59,24 @@ intern bool8 K15_InternalFindVertexFormatInCache(K15_RenderBackEnd* p_RenderBack
 
 		if (cachedVertexFormat->numAttributes == p_NumAttributes)
 		{
-			bool8 sameVertexFormat = K15_TRUE;
+			bool8 sameVertexFormat = K15_FALSE;
 
 			for (uint32 attributeIndex = 0;
 				attributeIndex < p_NumAttributes;
 				++attributeIndex)
 			{
-				int semanticID = va_arg(p_VList, int);
-				int typeID = va_arg(p_VList, int);
+				int semanticID = semanticIDs[attributeIndex];
+				int typeID = typeIDs[attributeIndex];
 
-				if (cachedVertexFormat->elements[attributeIndex].semanticID != semanticID ||
-					cachedVertexFormat->elements[attributeIndex].typeID != typeID)
+				if (cachedVertexFormat->elements[attributeIndex].semanticID == semanticID &&
+					cachedVertexFormat->elements[attributeIndex].typeID == typeID)
+				{
+					sameVertexFormat = K15_TRUE;
+				}
+				else
 				{
 					sameVertexFormat = K15_FALSE;
-					break;
+					continue;
 				}
 			}
 
@@ -87,6 +104,10 @@ intern void K15_InternalCreateVertexFormat(K15_RenderBackEnd* p_RenderBackEnd, K
 	p_VertexFormatDesc->elements = (K15_RenderVertexFormatElementDesc*)K15_AllocateFromMemoryAllocator(memoryAllocator, p_NumAttributes * sizeof(K15_RenderVertexFormatElementDesc));
 
 	uint32 offsetInBytes = 0;
+	char* vertexFormatHashString= (char*)alloca(128);
+	uint32 vertexFormatHashStringIndex = 0;
+
+	vertexFormatHashStringIndex += sprintf(vertexFormatHashString, "%d-", p_NumAttributes);
 
 	for (uint32 attributeIndex = 0;
 		attributeIndex < p_NumAttributes;
@@ -99,10 +120,14 @@ intern void K15_InternalCreateVertexFormat(K15_RenderBackEnd* p_RenderBackEnd, K
 		currentElement.offsetInBytes = offsetInBytes;
 		p_VertexFormatDesc->elements[p_VertexFormatDesc->numAttributes++] = currentElement;
 
+		//add semantic and type id to string (for unique hashing)
+		vertexFormatHashStringIndex+= sprintf(vertexFormatHashString + vertexFormatHashStringIndex, 
+			"%d-%d", semanticID, typeID);
+
 		offsetInBytes += K15_GetTypeSizeInBytesByTypeID(shaderProcessorContext, typeID);
 	}
 
-	p_VertexFormatDesc->hash = K15_GenerateDataHash((byte*)p_VertexFormatDesc->elements, sizeof(p_VertexFormatDesc->elements));
+	p_VertexFormatDesc->hash = K15_GenerateStringHash(vertexFormatHashString);
 	p_VertexFormatDesc->stride = K15_InternalCalculateVertexSizeInBytes(shaderProcessorContext, p_VertexFormatDesc);
 
 	p_RenderBackEnd->vertexFormatCache.vertexFormats[numCachedVertexFormats] = *p_VertexFormatDesc;

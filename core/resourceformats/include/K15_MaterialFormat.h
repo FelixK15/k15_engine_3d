@@ -47,6 +47,7 @@ struct K15_MaterialPassFormat
 
 struct K15_MaterialFormat
 {
+	char* materialName;
 	uint32 materialNameHash;
 
 	uint32 numMaterialPasses;

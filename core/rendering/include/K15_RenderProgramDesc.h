@@ -43,6 +43,7 @@ struct K15_RenderUniformUpdateDesc
 struct K15_RenderProgramDesc
 {
 	const char* file;
+	const char* name;
 	char* code;
 	K15_RenderProgramType type;
 	K15_RenderProgramSource source;

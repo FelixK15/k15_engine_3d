@@ -50,9 +50,10 @@ struct K15_RenderResources
 
 	struct 
 	{
-		K15_RenderResourceHandle* default2DVertexProgramHandle;
-		K15_RenderResourceHandle* default3DVertexProgramHandle;
-		K15_RenderResourceHandle* defaultFragmentProgramHandle;
+		K15_RenderResourceHandle* screenspaceColoredVertexProgramHandle;
+		K15_RenderResourceHandle* screenspaceTexturedVertexProgramHandle;
+		K15_RenderResourceHandle* defaultTextureFragmentProgramHandle;
+		K15_RenderResourceHandle* defaultColorFragmentProgramHandle;
 		K15_RenderResourceHandle* defaultFontFragmentProgramHandle;
 	} shaders;
 

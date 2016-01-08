@@ -1,5 +1,2 @@
-[Textures]
-tex=/textures/gui_template.png
-
 [Sampler]
 sampler=/sampler/linear_clamp_sampler
