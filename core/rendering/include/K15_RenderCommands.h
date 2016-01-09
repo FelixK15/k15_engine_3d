@@ -22,8 +22,8 @@ void K15_RenderCommandDraw2DGUI(K15_RenderCommandQueue* p_RenderCommandQueue,
 
 void K15_RenderCommandDraw2DText(K15_RenderCommandQueue* p_RenderCommandQueue, 
 								 K15_RenderFontDesc* p_FontDesc, 
-								 const char* p_Text, 
-								 float p_PosX, float p_PosY);
+								 const char* p_Text, const K15_Vector3& p_Color,
+								 int32 p_PixelPosX, int32 p_PixelPosY);
 
 void K15_RenderCommandCreateTextureFromTextureFormat(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle, K15_TextureFormat* p_TextureFormat);
 void K15_RenderCommandCreateSamplerFromSamplerFormat(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_SamplerHandle , K15_SamplerFormat* p_SamplerFormat);

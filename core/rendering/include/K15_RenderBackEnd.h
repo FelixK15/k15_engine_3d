@@ -58,6 +58,11 @@ struct K15_RenderResources
 		K15_RenderResourceHandle* defaultFontFragmentProgramHandle;
 	} shaders;
 
+	struct
+	{
+		K15_RenderVertexFormatDesc fontVertexFormat;
+	} vertexFormats;
+
 	struct 
 	{
 		K15_RenderResourceHandle linearClampSamplerHandle;

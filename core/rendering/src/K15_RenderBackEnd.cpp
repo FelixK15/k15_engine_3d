@@ -300,6 +300,16 @@ intern void K15_InternalLoadDefaultSampler(K15_RenderBackEnd* p_RenderBackEnd)
 	p_RenderBackEnd->renderInterface.createSamplerFromSamplerDesc(p_RenderBackEnd, &nearestClampDesc, &p_RenderBackEnd->resources.samplers.nearestClampSamplerHandle);
 }
 /*********************************************************************************/
+intern void K15_InternalLoadDefaultVertexFormats(K15_RenderBackEnd* p_RenderBackEnd)
+{
+	K15_RenderVertexFormatDesc fontVertexFormatDesc = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 3,
+		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
+		K15_ATTRIBUTE_SEMANTIC_TEXCOORD1, K15_TYPE_FLOAT_VECTOR2,
+		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR3);
+
+	p_RenderBackEnd->resources.vertexFormats.fontVertexFormat = fontVertexFormatDesc;
+}
+/*********************************************************************************/
 intern void K15_InitializeRenderResources(K15_RenderBackEnd* p_RenderBackEnd)
 {
 	K15_CustomMemoryAllocator* rendererAllocator = &p_RenderBackEnd->renderContext->memoryAllocator;
@@ -318,6 +328,7 @@ intern void K15_InitializeRenderResources(K15_RenderBackEnd* p_RenderBackEnd)
 	/*********************************************************************************/
 
 	K15_InternalLoadDefaultSampler(p_RenderBackEnd);
+	K15_InternalLoadDefaultVertexFormats(p_RenderBackEnd);
 
 	/*********************************************************************************/
 	p_RenderBackEnd->renderInterface.setBlendState(p_RenderBackEnd, &p_RenderBackEnd->defaultState.blendState);
@@ -468,14 +479,18 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 	K15_RenderFontDesc fontDesc = {};
 	char* text = 0;
 
-	float posX = 0.f;
-	float posY = 0.f;
+	int32 pixelPosX;
+	int32 pixelPosY;
 
 	uint32 localOffset = 0;
 	uint32 textLength = 0;
+	uint32 packedColor = 0;
 
 	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(K15_RenderFontDesc), &fontDesc);
 	localOffset += sizeof(K15_RenderFontDesc);
+
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(uint32), &packedColor);
+	localOffset += sizeof(uint32);
 
 	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(uint32), &textLength);
 	localOffset += sizeof(uint32);
@@ -487,11 +502,11 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 
 	text[textLength] = 0;
 
-	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(float), &posX);
-	localOffset += sizeof(float);
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(int32), &pixelPosX);
+	localOffset += sizeof(int32);
 
-	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(float), &posY);
-	localOffset += sizeof(float);
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(int32), &pixelPosY);
+	localOffset += sizeof(int32);
 
 #ifdef K15_TOLERATE_INVALID_GPU_HANDLES
 	//ignore non loaded textures
@@ -510,17 +525,14 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 	uint32 indexBufferIndex = 0;
 	uint16 index = 0;
 
-	K15_RenderVertexFormatDesc vertexFormatDesc = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 2, 
-		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
-		K15_ATTRIBUTE_SEMANTIC_TEXCOORD1, K15_TYPE_FLOAT_VECTOR2);
+	K15_RenderVertexFormatDesc vertexFormatDesc = p_RenderBackEnd->resources.vertexFormats.fontVertexFormat;
 
 	uint32 sizeVerticesInBytes = vertexFormatDesc.stride * numVertices;
 
 	float* vertexMemory = (float*)K15_AllocateFromMemoryAllocator(renderAllocator, sizeVerticesInBytes);
 
-// 	K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderBackEnd, &fontDesc,
-// 		vertexMemory, 0, 
-	//K15_InternalPush2DTextVertices(p_RenderBackEnd, &fontDesc, vertexMemory, 0, posX, posY, text, textLength);
+	K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderBackEnd, &fontDesc, vertexMemory, 0,
+		pixelPosX, pixelPosY, packedColor, text, textLength);
 
 	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexMemory, numVertices, &vertexFormatDesc);
 	K15_RenderGeometryDesc renderGeometry = {};
@@ -530,7 +542,7 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 	renderGeometry.worldMatrix = K15_GetIdentityMatrix4();
 	renderGeometry.material = fontMaterial;
 
-	//K15_InternalDrawGeometry(p_RenderBackEnd, &renderGeometry);
+	K15_InternalDrawGeometry(p_RenderBackEnd, &renderGeometry);
 
 	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexData);
 	K15_FreeFromMemoryAllocator(renderAllocator, vertexMemory);
@@ -576,7 +588,9 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	//count vertices
 	uint32 numVertices = 0;
 	uint32 numTextVertices = 0;
-	
+	float* vertexBuffer = 0;
+	float* textVertexBuffer = 0;
+
 	K15_InternalCountGUIContextVertices(&guiContext, &numVertices, &numTextVertices);
 
 	//early out
@@ -585,8 +599,8 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 		goto free_resources;
 	}
 
-	float* vertexBuffer		= numVertices == 0 ? 0 : (float*)alloca(numVertices * vertexFormatDesc.stride);
-	float* textVertexBuffer = numTextVertices == 0 ? 0 : (float*)alloca(numTextVertices * textVertexFormatDesc.stride);
+	vertexBuffer = numVertices == 0 ? 0 : (float*)malloc(numVertices * vertexFormatDesc.stride);
+	textVertexBuffer = numTextVertices == 0 ? 0 : (float*)malloc(numTextVertices * textVertexFormatDesc.stride);
 	
 	uint32 vertexBufferSizeInFloats = 0;
 	uint32 textVertexBufferSizeInFloats = 0;
@@ -598,7 +612,7 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	uint32 actualNumberOfVertices		= (vertexBufferSizeInFloats*sizeof(float))/vertexFormatDesc.stride;
 	uint32 actualNumberOfTextVertices	= (textVertexBufferSizeInFloats*sizeof(float))/textVertexFormatDesc.stride;
 
-	K15_ASSERT(actualNumberOfVertices <= numTextVertices && actualNumberOfTextVertices <= numTextVertices);
+	K15_ASSERT(actualNumberOfVertices <= numVertices && actualNumberOfTextVertices <= numTextVertices);
 
 	K15_RenderMaterialDesc* guiMaterial = guiContext.guiRenderMaterial;
 	K15_RenderMaterialDesc* fontMaterial = &p_RenderBackEnd->resources.materials.defaultFontMaterial;
@@ -641,7 +655,8 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 free_resources:
 	//signal gui context that we are finished so that it can flip the buffers again
 	K15_PostSemaphore(guiContext.memoryLock);
-
+	free(vertexBuffer);
+	free(textVertexBuffer);
 	//K15_FreeFromMemoryAllocator(renderAllocator, vertexBuffer);S
 }
 /*********************************************************************************/

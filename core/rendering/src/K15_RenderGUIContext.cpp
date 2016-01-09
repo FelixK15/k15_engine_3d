@@ -1,7 +1,9 @@
 /*********************************************************************************/
 intern uint32 K15_InternalGetGUIButtonVertexCount(K15_GUIContextStyle* p_GUIStyle, K15_GUIElementHeader* p_GUIElement)
 {
-	return 12;
+	//return 12;
+
+	return 492;
 }
 /*********************************************************************************/
 intern uint32 K15_InternalGetGUIControlVertexCount(K15_GUIContext* p_GUIContext, K15_GUIElementHeader* p_GUIElement)

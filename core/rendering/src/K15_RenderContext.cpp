@@ -145,7 +145,6 @@ K15_RenderContext* K15_CreateRenderContextWithCustomAllocator(K15_OSContext* p_O
 	}
 
 	K15_InitializeRenderResources(&renderContext->backEnd);
-
 	return renderContext;
 }
 /*********************************************************************************/

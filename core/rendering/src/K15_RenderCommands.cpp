@@ -77,7 +77,8 @@ void K15_RenderCommandDraw2DGUI(K15_RenderCommandQueue* p_RenderCommandQueue, K1
 	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));
 }
 /*********************************************************************************/
-void K15_RenderCommandDraw2DText(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderFontDesc* p_FontDesc, const char* p_Text, float p_PosX, float p_PosY)
+void K15_RenderCommandDraw2DText(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderFontDesc* p_FontDesc, 
+	const char* p_Text, const K15_Vector3& p_Color, int32 p_PixelPosX, int32 p_PixelPosY)
 {
 	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
 	K15_ASSERT_TEXT(p_FontDesc, "Font desc is NULL.");
@@ -86,12 +87,14 @@ void K15_RenderCommandDraw2DText(K15_RenderCommandQueue* p_RenderCommandQueue, K
 	result8 result = K15_InternalBeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_RENDER_2D_TEXT);
 
 	uint32 textLength = (uint32)strlen(p_Text);
+	uint32 packedColor = K15_PackVector3(p_Color);
 
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_RenderFontDesc), p_FontDesc));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(uint32), &packedColor));
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(uint32), &textLength));
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, textLength, (char*)p_Text));
-	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_PosX));
-	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(float), &p_PosY));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(int32), &p_PixelPosX));
+	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(int32), &p_PixelPosY));
 	K15_CHECK_RESULT(K15_EndRenderCommand(p_RenderCommandQueue));
 }
 /*********************************************************************************/
