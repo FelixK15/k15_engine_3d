@@ -1,9 +1,27 @@
 #include "K15_Vector3.h"
 
 /*********************************************************************************/
+enum K15_InternalRoundCornerFlags
+{
+	K15_LEFT_TOP_CORNER		= 0x01,
+	K15_RIGHT_TOP_CORNER	= 0x02,
+	K15_LEFT_BOTTOM_CORNER	= 0x04,
+	K15_RIGHT_BOTTOM_CORNER = 0x08,
+
+	K15_ONLY_TOP_CORNERS	= K15_LEFT_TOP_CORNER | K15_RIGHT_TOP_CORNER,
+K15_ONLY_BOTTOM_CORNERS = K15_LEFT_BOTTOM_CORNER | K15_RIGHT_BOTTOM_CORNER,
+K15_ALL_CORNERS = K15_ONLY_BOTTOM_CORNERS | K15_ONLY_TOP_CORNERS
+};
+/*********************************************************************************/
+
+
+
+/*********************************************************************************/
+
+/*********************************************************************************/
 intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRectVertices(K15_RenderBackEnd* p_RenderBackEnd,
-	float* p_VertexBuffer, uint32 p_StartIndex, 
-	int32 p_PixelPosLeft, int32 p_PixelPosRight, int32 p_PixelPosTop, int32 p_PixelPosBottom, 
+	float* p_VertexBuffer, uint32 p_StartIndex,
+	int32 p_PixelPosLeft, int32 p_PixelPosRight, int32 p_PixelPosTop, int32 p_PixelPosBottom,
 	uint32 p_ColorLeftTop, uint32 p_ColorRightTop, uint32 p_ColorLeftBottom, uint32 p_ColorRightBottom)
 {
 	float viewportHeight = p_RenderBackEnd->viewportHeight;
@@ -60,7 +78,81 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRectVertices(K15_R
 	return vertexIndex;
 }
 /*********************************************************************************/
+intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(K15_RenderBackEnd* p_RenderBackEnd,
+	float* p_VertexBuffer, uint32 p_StartIndex,
+	int32 p_PixelPosLeft, int32 p_PixelPosRight, int32 p_PixelPosTop, int32 p_PixelPosBottom,
+	uint32 p_ColorLeftTop, uint32 p_ColorRightTop, uint32 p_ColorLeftBottom, uint32 p_ColorRightBottom,
+	uint32 p_RoundCornerFlags, float p_EdgeRoundFactor)
+{
+	float roundFactor = K15_ClampReal(p_EdgeRoundFactor, 1.f, 0.f);
+	uint32 cornerPixelRadius = roundFactor * ((p_PixelPosBottom - p_PixelPosTop) / 2);
+	uint32 vertexIndex = p_StartIndex;
 
+	if (roundFactor == 0.f)
+	{
+		return K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, p_StartIndex,
+			p_PixelPosLeft, p_PixelPosRight, p_PixelPosTop, p_PixelPosBottom,
+			p_ColorLeftTop, p_ColorRightTop, p_ColorLeftBottom, p_ColorRightBottom);
+	}
+
+	K15_Vector2 cornerVertices[K15_GUI_BUTTON_ROUND_EDGE_VERTICES] = {};
+
+	float angle = K15_HALF_PI;
+	float angleStep = K15_HALF_PI / K15_GUI_BUTTON_ROUND_EDGE_VERTICES;
+
+	for (uint32 cornerVertexIndex = 0;
+	cornerVertexIndex < K15_GUI_BUTTON_ROUND_EDGE_VERTICES;
+		++cornerVertexIndex)
+	{
+		cornerVertices[cornerVertexIndex].x = K15_HighPrecisionCos(angle);
+		cornerVertices[cornerVertexIndex].y = K15_HighPrecisionSin(angle);
+
+		angle += angleStep;
+	}
+
+	if (roundFactor != 0.5f)
+	{
+		K15_Vector3 unpackedLeftTopColor	 = K15_UnpackVector3(p_ColorLeftTop);
+		K15_Vector3 unpackedLeftBottomColor  = K15_UnpackVector3(p_ColorLeftBottom);
+		K15_Vector3 unpackedRightTopColor	 = K15_UnpackVector3(p_ColorRightTop);
+		K15_Vector3 unpackedRightBottomColor = K15_UnpackVector3(p_ColorRightBottom);
+
+		K15_Vector3 colorLeftBelowCorner  = K15_Lerp(unpackedLeftTopColor, unpackedLeftBottomColor, roundFactor);
+		K15_Vector3 colorRightBelowCorner = K15_Lerp(unpackedRightTopColor, unpackedRightBottomColor, roundFactor);
+		K15_Vector3 colorLeftAboveCorner  = K15_Lerp(unpackedLeftBottomColor, unpackedLeftTopColor, roundFactor);
+		K15_Vector3 colorRightAboveCorner = K15_Lerp(unpackedRightBottomColor, unpackedRightTopColor, roundFactor);
+		
+		K15_Vector3 colorRightFromUpperCorner = K15_Lerp(unpackedLeftTopColor, unpackedRightTopColor, roundFactor);
+		K15_Vector3 colorLeftFromUpperCorner  = K15_Lerp(unpackedRightTopColor, unpackedLeftTopColor, roundFactor);
+		K15_Vector3 colorRightFromLowerCorner = K15_Lerp(unpackedLeftBottomColor, unpackedRightBottomColor, roundFactor);
+		K15_Vector3 colorLeftFromLowerCorner  = K15_Lerp(unpackedRightBottomColor, unpackedLeftBottomColor, roundFactor);
+
+		uint32 packedColorLeftBelowCorner  = K15_PackVector3(colorLeftBelowCorner);
+		uint32 packedColorRightBelowCorner = K15_PackVector3(colorRightBelowCorner);
+		uint32 packedColorLeftAboveCorner  = K15_PackVector3(colorLeftAboveCorner);
+		uint32 packedColorRightAboveCorner = K15_PackVector3(colorRightAboveCorner);
+		
+		uint32 packedColorRightFromUpperCorner = K15_PackVector3(colorRightFromUpperCorner);
+		uint32 packedColorLeftFromUpperCorner  = K15_PackVector3(colorLeftFromUpperCorner);
+		uint32 packedColorRightFromLowerCorner = K15_PackVector3(colorRightFromLowerCorner);
+		uint32 packedColorLeftFromLowerCorner  = K15_PackVector3(colorLeftFromLowerCorner);
+
+		//mid non rounded part (horizontal)
+		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
+			p_PixelPosLeft, p_PixelPosRight, 
+			p_PixelPosTop + cornerPixelRadius, p_PixelPosBottom - cornerPixelRadius,
+			packedColorLeftBelowCorner, packedColorRightBelowCorner, 
+			packedColorLeftAboveCorner, packedColorRightAboveCorner);
+
+		//mid non rounded part (vertical)
+		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
+			p_PixelPosLeft + cornerPixelRadius, p_PixelPosRight - cornerPixelRadius,
+			p_PixelPosTop, p_PixelPosBottom,
+			packedColorLeftFromUpperCorner, packedColorRightFromUpperCorner,
+			packedColorLeftFromLowerCorner, packedColorRightFromLowerCorner);
+	}
+	
+}
 /*********************************************************************************/
 intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextureRectVertices(K15_RenderBackEnd* p_RenderBackEnd, 
 													float* p_VertexBuffer, uint32 p_StartIndex, 

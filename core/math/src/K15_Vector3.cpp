@@ -130,3 +130,23 @@ bool operator!=(K15_Vector3& p_Vector1, K15_Vector3& p_Vector2)
 	return !((p_Vector1.x == p_Vector2.x) && (p_Vector1.y == p_Vector2.y) && (p_Vector1.z == p_Vector2.z));
 }
 /*********************************************************************************/
+K15_Vector3 K15_UnpackVector3(uint32 p_PackedVector)
+{
+	K15_Vector3 vec = {};
+
+	vec.x = (float)(unsigned char)(p_PackedVector >> 16);
+	vec.y = (float)(unsigned char)(p_PackedVector >> 8);
+	vec.z = (float)(unsigned char)(p_PackedVector >> 0);
+
+	return vec;
+}
+/*********************************************************************************/
+uint32 K15_PackVector3(const K15_Vector3& p_UnpackedVector)
+{
+	uint32 packedVector = ((((unsigned char)p_UnpackedVector.x) << 16) |
+						   (((unsigned char)p_UnpackedVector.y) << 8)  |
+						   (((unsigned char)p_UnpackedVector.z) << 0));
+
+	return packedVector;
+}
+/*********************************************************************************/

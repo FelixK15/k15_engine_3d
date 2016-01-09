@@ -27,6 +27,9 @@ K15_Vector4 K15_GetProjectedVector(K15_Vector4& p_Vector1, K15_Vector4& p_Vector
 K15_Vector4 K15_GetNormalizedVector(K15_Vector4& p_Vector);
 void K15_NormalizeVector(K15_Vector4& p_Vector);
 
+K15_Vector4 K15_UnpackVector4(uint32 p_PackedVector);
+uint32 K15_PackVector4(const K15_Vector4& p_UnpackedVector);
+
 K15_Vector4 operator+(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2);
 K15_Vector4 operator-(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2);
 K15_Vector4 operator*(K15_Vector4& p_Vector, real32 p_Scalar);
