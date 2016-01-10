@@ -11,11 +11,11 @@
 #include <cassert>
 #include <cstdlib>
 
-#define K15_EPSILON		1e-5
-#define K15_TWO_PI		6.28318531
-#define K15_PI			3.14159265
-#define K15_HALF_PI		1.57079632
-#define K15_QUATER_PI	0.78539816
+#define K15_EPSILON				1e-5
+#define K15_TWO_PI				6.28318531
+#define K15_PI					3.14159265
+#define K15_HALF_PI				1.57079632
+#define K15_QUATER_PI			0.78539816
 
 #define K15_MAX(a, b) (a) > (b) ? (a) : (b)
 #define K15_MIN(a, b) (a) < (b) ? (a) : (b)

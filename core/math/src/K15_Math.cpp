@@ -15,14 +15,133 @@ real32 K15_Lerp(real32 p_Start, real32 p_End, real32 p_Time)
 	return (1.0f - p_Time) * p_Start + p_Time * p_End;
 }
 /*********************************************************************************/
-K15_Vector2 K15_Lerp(K15_Vector2& p_Start, K15_Vector2& p_End, real32 p_Time)
+K15_Vector2 K15_Lerp(K15_Vector2 p_Start, K15_Vector2 p_End, real32 p_Time)
 {
 	return (1.0f - p_Time) * p_Start + p_Time * p_End;
 }
 /*********************************************************************************/
-K15_Vector3 K15_Lerp(K15_Vector3& p_Start, K15_Vector3& p_End, real32 p_Time)
+K15_Vector3 K15_Lerp(K15_Vector3 p_Start, K15_Vector3 p_End, real32 p_Time)
 {
 	return (1.0f - p_Time) * p_Start + p_Time * p_End;
+}
+/*********************************************************************************/
+K15_Vector3 K15_LerpColor(K15_Vector3 p_Start, K15_Vector3 p_End, real32 p_T)
+{
+// 	K15_Vector3 hsvStartColor = K15_ConvertToHSV(p_Start);
+// 	K15_Vector3 hsvEndColor = K15_ConvertToHSV(p_End);
+// 
+// 	K15_Vector3 lerpedHSVColor = K15_Lerp(hsvStartColor, hsvEndColor, p_T);
+// 
+// 	return K15_ConvertToRGB(lerpedHSVColor);
+
+	return K15_Lerp(p_Start, p_End, p_T);
+}
+/*********************************************************************************/
+K15_Vector3 K15_ConvertToHSV(const K15_Vector3& p_RGBColor)
+{
+	//http://stackoverflow.com/questions/3018313/algorithm-to-convert-rgb-to-hsv-and-hsv-to-rgb-in-range-0-255-for-both
+	K15_Vector3 hsv = {};
+	float minimum = 0.f, maximum = 0.f, delta = 0.f;
+
+	minimum = K15_MIN(p_RGBColor.x, p_RGBColor.y);
+	minimum = K15_MIN(minimum, p_RGBColor.z);
+
+	maximum = K15_MAX(p_RGBColor.x, p_RGBColor.y);
+	maximum = K15_MAX(maximum, p_RGBColor.z);
+
+	hsv.z = maximum;
+	delta = maximum - minimum;
+
+	if (delta < 0.00001f)
+	{
+		hsv.x = 0.f;
+		hsv.y = 0.f;
+	}
+
+	hsv.y = K15_SafeDivide(delta, maximum);
+
+	if (p_RGBColor.x >= maximum)
+	{
+		hsv.x = K15_SafeDivide(p_RGBColor.y - p_RGBColor.z, delta);
+	}
+	else if (p_RGBColor.y >= maximum)
+	{
+		hsv.x = 2.f + K15_SafeDivide(p_RGBColor.z - p_RGBColor.x, delta);
+	}
+	else
+	{
+		hsv.x = 4.f + K15_SafeDivide(p_RGBColor.x - p_RGBColor.y, delta);
+	}
+
+	hsv.x *= 60.f;
+
+	if (hsv.x < 0.f)
+	{
+		hsv.x += 360.f;
+	}
+
+	return hsv;
+}
+/*********************************************************************************/
+K15_Vector3 K15_ConvertToRGB(const K15_Vector3& p_HSVColor)
+{
+	//http://stackoverflow.com/questions/3018313/algorithm-to-convert-rgb-to-hsv-and-hsv-to-rgb-in-range-0-255-for-both
+	float hh, p, q, t, ff;
+	int32 i;
+	K15_Vector3	rgb;
+
+	if (p_HSVColor.y <= 0.f) 
+	{
+		rgb.x = p_HSVColor.z;
+		rgb.y = p_HSVColor.z;
+		rgb.z = p_HSVColor.z;
+		return rgb;
+	}
+
+	hh = p_HSVColor.x;
+	if (hh >= 360.f) hh = 0.f;
+	hh /= 60.f;
+	i = (int32)hh;
+	ff = hh - i;
+	p = p_HSVColor.z * (1.f - p_HSVColor.y);
+	q = p_HSVColor.z * (1.f - (p_HSVColor.y * ff));
+	t = p_HSVColor.z * (1.f - (p_HSVColor.y * (1.f - ff)));
+
+	switch (i) {
+	case 0:
+		rgb.x = p_HSVColor.z;
+		rgb.y = t;
+		rgb.z = p;
+		break;
+	case 1:
+		rgb.x = q;
+		rgb.y = p_HSVColor.z;
+		rgb.z = p;
+		break;
+	case 2:
+		rgb.x = p;
+		rgb.y = p_HSVColor.z;
+		rgb.z = t;
+		break;
+
+	case 3:
+		rgb.x = p;
+		rgb.y = q;
+		rgb.z = p_HSVColor.z;
+		break;
+	case 4:
+		rgb.x = t;
+		rgb.y = p;
+		rgb.z = p_HSVColor.z;
+		break;
+	case 5:
+	default:
+		rgb.x = p_HSVColor.z;
+		rgb.y = p;
+		rgb.z = q;
+		break;
+	}
+	return rgb;
 }
 /*********************************************************************************/
 real32 K15_Log2(real32 p_Number)

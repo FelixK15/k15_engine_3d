@@ -19,5 +19,5 @@ struct K15_RenderContext;
 #define K15_GUI_MEMORY_FRONT_BUFFER 0
 #define K15_GUI_MEMORY_BACK_BUFFER 1
 
-#define K15_GUI_2D_SQUARE_SAMPLES 40
+#define K15_GUI_2D_SQUARE_SAMPLES 10
 #endif //_K15_GUILayer_Prerequisites_h_
