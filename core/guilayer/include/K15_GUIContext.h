@@ -74,6 +74,8 @@ struct K15_GUIContextStyle
 	uint32 disabledControlLowerBackgroundColor;
 	uint32 hoveredControlLowerBackgroundColor;
 	uint32 hoveredControlUpperBackgroundColor;
+	uint32 interactedControlLowerBackgroundColor;
+	uint32 interactedControlUpperBackgroundColor;
 	uint32 controlLowerBorderColor;
 	uint32 controlUpperBorderColor;
 };

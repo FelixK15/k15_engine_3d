@@ -1,9 +1,7 @@
 /*********************************************************************************/
 intern uint32 K15_InternalGetGUIButtonVertexCount(K15_GUIContextStyle* p_GUIStyle, K15_GUIElementHeader* p_GUIElement)
 {
-	//return 12;
-
-	return 300;
+	return 12;
 }
 /*********************************************************************************/
 intern uint32 K15_InternalGetGUIControlVertexCount(K15_GUIContext* p_GUIContext, K15_GUIElementHeader* p_GUIElement)
@@ -40,10 +38,31 @@ intern void K15_InternalPushGUIButtonVertices(K15_RenderBackEnd* p_RenderBackEnd
 	uint32 pixelPosTop = p_GUIElement->posPixelY;
 	uint32 pixelPosBottom = p_GUIElement->posPixelY + p_GUIElement->pixelHeight + textOffsetY;
 
-	uint32 thickness = 1; //1 pixel of thickness border
+	uint32 thickness = 2; //1 pixel of thickness border
 
-	uint32 controlUpperBackgroundColor = 0xFF0000;//p_GUIContext->style.controlUpperBackgroundColor;
-	uint32 controlLowerBackgroundColor = 0x0000FF;//p_GUIContext->style.controlLowerBackgroundColor;
+	uint32 controlUpperBackgroundColor = 0;
+	uint32 controlLowerBackgroundColor = 0;
+
+	//text offset
+	int32 textPixelPosLeft = pixelPosLeft + textOffsetX / 2;
+	int32 textPixelPosTop = pixelPosTop + textOffsetY / 2;
+
+	if (p_GUIButton->state == K15_GUI_BUTTON_STATE_HOVERED)
+	{
+		controlUpperBackgroundColor = p_GUIContext->style.hoveredControlUpperBackgroundColor;
+		controlLowerBackgroundColor = p_GUIContext->style.hoveredControlLowerBackgroundColor;
+	}
+	else if (p_GUIButton->state == K15_GUI_BUTTON_STATE_NORMAL)
+	{
+		controlUpperBackgroundColor = p_GUIContext->style.controlUpperBackgroundColor;
+		controlLowerBackgroundColor = p_GUIContext->style.controlLowerBackgroundColor;
+	}
+	else if (p_GUIButton->state == K15_GUI_BUTTON_STATE_PRESSED)
+	{
+		controlUpperBackgroundColor = p_GUIContext->style.interactedControlLowerBackgroundColor;
+		controlLowerBackgroundColor = p_GUIContext->style.interactedControlUpperBackgroundColor;
+	}
+
 	uint32 textColor = p_GUIContext->style.textColor;
 
 	uint32 borderUpperColor = p_GUIContext->style.controlUpperBorderColor;
@@ -54,9 +73,7 @@ intern void K15_InternalPushGUIButtonVertices(K15_RenderBackEnd* p_RenderBackEnd
 	int32 edgePixelPosTop = pixelPosTop - thickness;
 	int32 edgePixelPosBottom = pixelPosBottom + thickness;
 
-	//text offset
-	int32 textPixelPosLeft = pixelPosLeft + textOffsetX/2;
-	int32 textPixelPosTop = pixelPosTop + textOffsetY/2;
+
 
 	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
 
@@ -66,32 +83,18 @@ intern void K15_InternalPushGUIButtonVertices(K15_RenderBackEnd* p_RenderBackEnd
 	K15_RenderFontDesc* guiFont = p_GUIContext->style.styleFont;
 
 	//edge
-// 	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd,
-// 		p_VertexBuffer, vertexBufferIndex,
-// 		edgePixelPosLeft, edgePixelPosRight, edgePixelPosTop, edgePixelPosBottom,
-// 		borderUpperColor, borderUpperColor, borderLowerColor, borderLowerColor);
-	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(p_RenderBackEnd,
+	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd,
 		p_VertexBuffer, vertexBufferIndex,
 		edgePixelPosLeft, edgePixelPosRight, edgePixelPosTop, edgePixelPosBottom,
-		borderUpperColor, borderUpperColor, borderLowerColor, borderLowerColor,
-		K15_ALL_CORNERS &~(K15_LEFT_TOP_CORNER | K15_RIGHT_BOTTOM_CORNER), 0.9f);
-
-
+		borderUpperColor, borderUpperColor, borderLowerColor, borderLowerColor);
 
 // 	element
-// 	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, 
-// 		p_VertexBuffer, vertexBufferIndex,
-// 		pixelPosLeft, pixelPosRight, pixelPosTop, pixelPosBottom,
-// 		controlUpperBackgroundColor, controlUpperBackgroundColor,
-// 		controlLowerBackgroundColor, controlLowerBackgroundColor);
- 
-	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(p_RenderBackEnd,
+	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, 
 		p_VertexBuffer, vertexBufferIndex,
 		pixelPosLeft, pixelPosRight, pixelPosTop, pixelPosBottom,
-		controlUpperBackgroundColor, controlUpperBackgroundColor, 
-		controlLowerBackgroundColor, controlLowerBackgroundColor,
-		K15_ALL_CORNERS &~ (K15_LEFT_TOP_CORNER | K15_RIGHT_BOTTOM_CORNER), 0.9f);
-
+		controlUpperBackgroundColor, controlUpperBackgroundColor,
+		controlLowerBackgroundColor, controlLowerBackgroundColor);
+ 
 	//text
 	textVertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderBackEnd,
 		guiFont, p_TextVertexBuffer, textVertexBufferIndex,

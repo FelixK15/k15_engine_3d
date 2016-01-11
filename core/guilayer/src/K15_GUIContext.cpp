@@ -31,6 +31,10 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	defaultStyle.controlLowerBackgroundColor = 0x505050;
 	defaultStyle.controlUpperBorderColor = 0x606060;
 	defaultStyle.controlLowerBorderColor = 0x101010;
+	defaultStyle.hoveredControlUpperBackgroundColor = 0x476e72;
+	defaultStyle.hoveredControlLowerBackgroundColor = 0x488085; 
+	defaultStyle.interactedControlLowerBackgroundColor = 0x476e72;
+	defaultStyle.interactedControlUpperBackgroundColor = 0x3a5357;
 	defaultStyle.textColor = 0xFFFFFF;
 	defaultStyle.styleFont = K15_GetResourceRenderFontDesc(p_ResourceContext, styleFontResource);
 
@@ -335,8 +339,8 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char
 	buttonHeader->identifierHash = K15_GenerateStringHash(p_Identifier);
 
 	bool8 mouseInside = K15_Collision2DBoxPoint(buttonHeader->posPixelX, buttonHeader->posPixelY, 
-		buttonHeader->posPixelX + buttonHeader->pixelWidth,
-		buttonHeader->posPixelY + buttonHeader->pixelHeight,
+		buttonHeader->posPixelX + buttonHeader->pixelWidth + 20,
+		buttonHeader->posPixelY + buttonHeader->pixelHeight + 10,
 		p_GUIContext->mousePosPixelX, p_GUIContext->mousePosPixelY);
 
 	if (p_GUIContext->leftMouseDown && 

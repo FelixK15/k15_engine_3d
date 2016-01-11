@@ -323,6 +323,6 @@ uint32 K15_GetNextPowerOfTwoSize(uint32 p_NonPowerOfTwoNumber)
 /*********************************************************************************/
 bool8 K15_Collision2DBoxPoint(float p_BoxLeft, float p_BoxTop, float p_BoxRight, float p_BoxBottom, float p_PointX, float p_PointY)
 {
-	return p_PointX > p_BoxLeft && p_PointX < p_BoxRight && p_PointY > p_BoxTop && p_PointY < p_BoxBottom;
+	return (p_PointX > p_BoxLeft && p_PointX < p_BoxRight && p_PointY > p_BoxTop && p_PointY < p_BoxBottom);
 }
 /*********************************************************************************/
