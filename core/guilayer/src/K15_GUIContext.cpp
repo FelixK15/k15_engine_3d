@@ -4,6 +4,7 @@
 
 #include "K15_OSContext.h"
 #include "K15_Window.h"
+#include "K15_SystemEvents.h"
 
 #include "K15_MaterialFormat.h"
 #include "K15_TextureFormat.h"
@@ -27,6 +28,8 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 
 	K15_ResourceHandle styleFontResource = K15_LoadResource(p_ResourceContext, K15_FONT_RESOURCE_IDENTIFIER, "fonts/gui_font.ttf", 0); 
 
+	defaultStyle.windowTitleHeight = 20;
+
 	defaultStyle.controlUpperBackgroundColor = 0x303030;
 	defaultStyle.controlLowerBackgroundColor = 0x505050;
 	defaultStyle.controlUpperBorderColor = 0x606060;
@@ -36,6 +39,13 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	defaultStyle.interactedControlLowerBackgroundColor = 0x476e72;
 	defaultStyle.interactedControlUpperBackgroundColor = 0x3a5357;
 	defaultStyle.textColor = 0xFFFFFF;
+	defaultStyle.windowTitleTextColor = 0xEEEEEE;
+	defaultStyle.windowTitleBarLowerColor = 0x4580FF;
+	defaultStyle.windowTitleBarUpperColor = 0x4544FF;
+	defaultStyle.windowUpperBackgroundColor = 0x303030;
+	defaultStyle.windowLowerBackgroundColor = 0x505050;
+	defaultStyle.windowBorderUpperColor = 0x050545;
+	defaultStyle.windowBorderLowerColor = 0x000000;
 	defaultStyle.styleFont = K15_GetResourceRenderFontDesc(p_ResourceContext, styleFontResource);
 
 	return defaultStyle;
@@ -140,8 +150,7 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	guiContext->windowWidth = windowWidth;
 	guiContext->mousePosPixelX = 0;
 	guiContext->mousePosPixelY = 0;
-	guiContext->virtualResolutionHeight = 0;
-	guiContext->virtualResolutionWidth = 0;
+	guiContext->currentWindow = 0;
 	guiContext->leftMouseDown = K15_FALSE;
 	guiContext->rightMouseDown = K15_FALSE;
 	guiContext->memoryLock = K15_CreateSemaphoreWithInitialValue(1);
@@ -180,6 +189,42 @@ void K15_FlipGUIContextMemory(K15_GUIContext* p_GUIContext)
 	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER] = 0;
 
 //	memset(p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER], 0, frontBufferMemorySize);
+}
+/*********************************************************************************/
+void K15_HandleGUIInputEvent(K15_GUIContext* p_GUIContext, K15_SystemEvent* p_SystemEvent)
+{
+	if (p_SystemEvent->event == K15_MOUSE_MOVED)
+	{
+		uint32 posX = p_SystemEvent->params.position.x;
+		uint32 posY = p_SystemEvent->params.position.y;
+
+		K15_SetGUIContextMousePosition(p_GUIContext, posX, posY);
+	}
+	else if (p_SystemEvent->event == K15_MOUSE_BUTTON_PRESSED ||
+		p_SystemEvent->event == K15_MOUSE_BUTTON_RELEASED)
+	{
+		bool8 leftMouse = p_SystemEvent->params.mouseButton == K15_LEFT_MOUSE_BUTTON;
+		bool8 rightMouse = p_SystemEvent->params.mouseButton == K15_RIGHT_MOUSE_BUTTON;
+		bool8 pressed = p_SystemEvent->event == K15_MOUSE_BUTTON_PRESSED;
+
+		p_GUIContext->leftMouseDown = pressed && leftMouse;
+		p_GUIContext->rightMouseDown = pressed && rightMouse;
+	}
+	else if (p_SystemEvent->event == K15_TEXT_INPUT)
+	{
+		char character = p_SystemEvent->params.utf8Char;
+	}
+}
+/*********************************************************************************/
+void K15_HandleGUIWindowEvent(K15_GUIContext* p_GUIContext, K15_SystemEvent* p_SystemEvent)
+{
+	if (p_SystemEvent->event == K15_WINDOW_RESIZED)
+	{
+		uint32 width = p_SystemEvent->params.size.width;
+		uint32 height = p_SystemEvent->params.size.height;
+
+		K15_SetGUIContextWindowSize(p_GUIContext, width, height);
+	}
 }
 /*********************************************************************************/
 void K15_SetGUIContextWindowSize(K15_GUIContext* p_GUIContext, uint32 p_WindowWidth, uint32 p_WindowHeight)
@@ -285,12 +330,23 @@ char* K15_ComboBox(K15_GUIContext* p_GUIContext, char** p_Elements, uint32 p_Num
 	return p_Elements[selectedElementIndex];
 }
 /*********************************************************************************/
-bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Captions, uint32* p_WindowWidth, uint32* p_WindowHeight, const char* p_Identifier)
+bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption, 
+	int32* p_LeftPixelPos, int32* p_TopPixelPos, 
+	uint32* p_WindowWidth, uint32* p_WindowHeight, const char* p_Identifier)
 {
+	K15_ASSERT(p_GUIContext);
+	K15_ASSERT(p_Caption);
+	K15_ASSERT(p_LeftPixelPos);
+	K15_ASSERT(p_TopPixelPos);
+	K15_ASSERT(p_WindowWidth);
+	K15_ASSERT(p_WindowHeight);
+	K15_ASSERT(p_Identifier);
+
 	uint32 guiElementIdentifierHash = K15_GenerateStringHash(p_Identifier);
 	uint32 offset = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER];
-	uint32 elementOffsetInBytes = offset + sizeof(K15_GUIElementHeader) + sizeof(K15_GUIComboBox);
-	uint32 newOffset = elementOffsetInBytes + lengthAllElements; 
+	uint32 titleLength = (uint32)strlen(p_Caption);
+	uint32 textOffset = offset + sizeof(K15_GUIWindow) + sizeof(K15_GUIElementHeader);
+	uint32 newOffset = textOffset + titleLength;
 
 	K15_ASSERT_TEXT(newOffset <= p_GUIContext->guiMemoryMaxSize, "Out of GUI memory.");
 
@@ -304,11 +360,103 @@ bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Captions, uint
 	K15_GUIElementHeader* elementLastFrame = K15_InternalGetGUIElementLastFrame(p_GUIContext,
 		guiElementIdentifierHash);
 
+	K15_GUIWindowState lastWindowState = K15_GUI_WINDOW_STATE_NORMAL;
+	K15_GUIWindowState currentWindowState = K15_GUI_WINDOW_STATE_NORMAL;
+
+	if (elementLastFrame)
+	{
+		K15_GUIWindow* windowLastFrame = (K15_GUIWindow*)(elementLastFrame + 1);
+		*p_WindowHeight = windowLastFrame->windowPixelHeight;
+		*p_WindowWidth = windowLastFrame->windowPixelWidth;
+		*p_LeftPixelPos = elementLastFrame->posPixelX;
+		*p_TopPixelPos = elementLastFrame->posPixelY;
+
+		lastWindowState = windowLastFrame->state;
+	}
+
+	K15_GUIContextStyle* style = &p_GUIContext->style;
+	K15_RenderFontDesc* guiFont = style->styleFont;
+	uint32 windowTitleHeight = style->windowTitleHeight;
+
+	float windowTextPixelWidth = 0.f;
+	K15_GetTextSizeInPixels(guiFont, &windowTextPixelWidth, 0, p_Caption, titleLength);
+
+	byte* guiContextFrontBuffer = p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER];
+	K15_GUIElementHeader* windowElementHeader = (K15_GUIElementHeader*)(guiContextFrontBuffer + offset);
+	K15_GUIWindow* window = (K15_GUIWindow*)
+		(guiContextFrontBuffer + offset + sizeof(K15_GUIElementHeader));
+
+	*p_WindowWidth = K15_MAX(*p_WindowWidth, windowTextPixelWidth);
+
+	//check mouse drag
+	uint32 mousePixelPosX = p_GUIContext->mousePosPixelX;
+	uint32 mousePixelPosY = p_GUIContext->mousePosPixelY;
+
+	bool8 mouseInside = K15_Collision2DBoxPoint(*p_LeftPixelPos, *p_TopPixelPos,
+		*p_LeftPixelPos + *p_WindowWidth, *p_TopPixelPos + windowTitleHeight,
+		mousePixelPosX, mousePixelPosY);
+
+	bool8 leftMouseDown = p_GUIContext->leftMouseDown;
+
+	if (leftMouseDown &&
+		mouseInside &&
+		lastWindowState != K15_GUI_WINDOW_STATE_DRAGGED)
+	{
+		currentWindowState = K15_GUI_WINDOW_STATE_DRAGGED;
+		window->dragPixelOffsetX = mousePixelPosX - *p_LeftPixelPos;
+		window->dragPixelOffsetY = mousePixelPosY - *p_TopPixelPos;
+	}
+	else if (leftMouseDown &&
+		lastWindowState == K15_GUI_WINDOW_STATE_DRAGGED)
+	{
+		*p_LeftPixelPos = p_GUIContext->mousePosPixelX - window->dragPixelOffsetX;
+		*p_TopPixelPos = p_GUIContext->mousePosPixelY - window->dragPixelOffsetY;
+	}
+	else if (!leftMouseDown &&
+		lastWindowState == K15_GUI_WINDOW_STATE_DRAGGED)
+	{
+		currentWindowState = K15_GUI_WINDOW_STATE_NORMAL;
+	}
+
+	windowElementHeader->identifierHash = guiElementIdentifierHash;
+	windowElementHeader->offset = newOffset;
+	windowElementHeader->pixelWidth = *p_WindowWidth;
+	windowElementHeader->pixelHeight = windowTitleHeight;
+	windowElementHeader->posPixelX = *p_LeftPixelPos;
+	windowElementHeader->posPixelY = *p_TopPixelPos;
+	windowElementHeader->type = K15_GUI_TYPE_WINDOW;
+
+	window->state = currentWindowState;
+	window->titleLength = titleLength;
+	window->titleOffsetInBytes = textOffset;
+	window->windowPixelHeight = *p_WindowHeight;
+	window->windowPixelWidth = *p_WindowWidth;
+
+	if (currentWindowState == K15_GUI_WINDOW_STATE_NORMAL)
+	{
+		K15_ASSERT_TEXT(!p_GUIContext->currentWindow,
+			"There's already a window being currently created. "
+			"Finish the window creation with K15_EndWindow() first, "
+			"before starting a new window with K15_BeginWindow()");
+
+		p_GUIContext->currentWindow = window;
+	}
+
+	//copy text to gui memory buffer
+	memcpy(guiContextFrontBuffer + textOffset, p_Caption, titleLength);
+
+	return currentWindowState == K15_GUI_WINDOW_STATE_NORMAL;
 }
 /*********************************************************************************/
 void K15_EndWindow(K15_GUIContext* p_GUIContext)
 {
+	K15_ASSERT(p_GUIContext);
 
+	K15_ASSERT_TEXT(p_GUIContext->currentWindow,
+		"There's currently no window being created. "
+		"Call K15_BeginWindow() to create a new window.");
+
+	p_GUIContext->currentWindow = 0;
 }
 /*********************************************************************************/
 bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char* p_Identifier)
@@ -389,7 +537,7 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char
 		}
 	}
 
-	//copy text incl 0 terminator
+	//copy text to gui memory buffer
 	memcpy(guiContextFrontBuffer + textOffsetInBytes, p_Caption, captionLength);
 
 	return pressed;

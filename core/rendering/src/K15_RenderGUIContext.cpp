@@ -1,9 +1,4 @@
 /*********************************************************************************/
-intern uint32 K15_InternalGetGUIButtonVertexCount(K15_GUIContextStyle* p_GUIStyle, K15_GUIElementHeader* p_GUIElement)
-{
-	return 500;
-}
-/*********************************************************************************/
 intern uint32 K15_InternalGetGUIControlVertexCount(K15_GUIContext* p_GUIContext, K15_GUIElementHeader* p_GUIElement)
 {
 	K15_GUIContextStyle* style = &p_GUIContext->style;
@@ -14,7 +9,13 @@ intern uint32 K15_InternalGetGUIControlVertexCount(K15_GUIContext* p_GUIContext,
 	{
 		case K15_GUI_TYPE_BUTTON:
 		{
-			vertexCount += K15_InternalGetGUIButtonVertexCount(style, p_GUIElement);
+			vertexCount += 12;
+			break;
+		}
+
+		case K15_GUI_TYPE_WINDOW:
+		{
+			vertexCount += 204;
 			break;
 		}
 	}
@@ -107,7 +108,88 @@ intern void K15_InternalPushGUIComboBoxVertices(K15_RenderBackEnd* p_RenderBackE
 	float* p_VertexBuffer, uint32* p_VertexBufferIndexOffset,
 	float* p_TextVertexBuffer, uint32* p_TextVertexBufferIndexOffset)
 {
+	
+}
+/*********************************************************************************/
+intern void K15_InternalPushGUIWindowVertices(K15_RenderBackEnd* p_RenderBackEnd, K15_GUIContext* p_GUIContext,
+	K15_GUIElementHeader* p_GUIElement, K15_GUIWindow* p_GUIWindow,
+	float* p_VertexBuffer, uint32* p_VertexBufferIndexOffset,
+	float* p_TextVertexBuffer, uint32* p_TextVertexBufferIndexOffset)
+{
+	uint32 vertexBufferIndex = *p_VertexBufferIndexOffset;
+	uint32 textVertexBufferIndex = *p_TextVertexBufferIndexOffset;
 
+	int32 pixelPosLeft = p_GUIElement->posPixelX;
+	int32 pixelPosRight = p_GUIElement->posPixelX + p_GUIElement->pixelWidth;
+	int32 pixelPosTop = p_GUIElement->posPixelY;
+	int32 pixelPosBottom = p_GUIElement->posPixelY + p_GUIElement->pixelHeight;
+	int32 windowPixelWidth = p_GUIWindow->windowPixelWidth;
+	int32 windowPixelHeight = p_GUIWindow->windowPixelHeight;
+
+	uint32 pixelPosCenterHorizontal = p_GUIElement->pixelWidth / 2;
+	uint32 pixelPosCenterVertical = p_GUIElement->pixelHeight / 2;
+
+	K15_GUIContextStyle* style = &p_GUIContext->style;
+	K15_RenderFontDesc* guiFont = style->styleFont;
+
+	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
+
+	char* text = (char*)(guiMemory + p_GUIWindow->titleOffsetInBytes);
+	float textPixelWidth = 0.f;
+	float textPixelHeight = 0.f;
+
+	K15_GetTextSizeInPixels(guiFont, &textPixelWidth, &textPixelHeight, text, p_GUIWindow->titleLength);
+
+	int32 textPixelPosLeft = pixelPosCenterHorizontal - (uint32)(textPixelWidth*0.5f) + pixelPosLeft;
+	int32 textPixelPosTop = pixelPosCenterVertical - (uint32)(textPixelHeight*0.5f) + pixelPosTop;
+
+	uint32 windowTitleUpperColor = style->windowTitleBarUpperColor;
+	uint32 windowTitleLowerColor = style->windowTitleBarLowerColor;
+	uint32 windowBorderUpperColor = style->windowBorderUpperColor;
+	uint32 windowBorderLowerColor = style->windowBorderLowerColor;
+	uint32 windowUpperBackgroundColor = style->windowUpperBackgroundColor;
+	uint32 windowLowerBackgroundColor = style->windowLowerBackgroundColor;
+	uint32 windowTitleTextColor = style->windowTitleTextColor;
+
+	//border title
+	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(p_RenderBackEnd, p_VertexBuffer,
+		vertexBufferIndex,
+		pixelPosLeft-1, pixelPosRight+1, pixelPosTop-1, pixelPosBottom+1,
+		windowBorderUpperColor, windowBorderUpperColor,
+		windowBorderUpperColor, windowBorderUpperColor,
+		K15_LEFT_TOP_CORNER | K15_RIGHT_TOP_CORNER,
+		0.5f);
+
+	//border window
+	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer,
+		vertexBufferIndex,
+		pixelPosLeft-1, pixelPosRight+1, pixelPosBottom-1, pixelPosBottom + windowPixelHeight+1,
+		windowBorderLowerColor, windowBorderLowerColor,
+		windowBorderLowerColor, windowBorderLowerColor);
+
+	//title
+	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(p_RenderBackEnd, p_VertexBuffer, 
+		vertexBufferIndex,
+		pixelPosLeft, pixelPosRight, pixelPosTop, pixelPosBottom,
+		windowTitleUpperColor, windowTitleUpperColor,
+		windowTitleLowerColor, windowTitleLowerColor,
+		K15_LEFT_TOP_CORNER | K15_RIGHT_TOP_CORNER,
+		0.5f);
+
+	//window
+	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer,
+		vertexBufferIndex,
+		pixelPosLeft, pixelPosRight, pixelPosBottom, pixelPosBottom + windowPixelHeight,
+		windowUpperBackgroundColor, windowUpperBackgroundColor,
+		windowLowerBackgroundColor, windowLowerBackgroundColor);
+
+	//title text
+	textVertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderBackEnd, guiFont, 
+		p_TextVertexBuffer, textVertexBufferIndex, 
+		textPixelPosLeft, textPixelPosTop, windowTitleTextColor, text, p_GUIWindow->titleLength);
+
+	*p_VertexBufferIndexOffset = vertexBufferIndex;
+	*p_TextVertexBufferIndexOffset = textVertexBufferIndex;
 }
 /*********************************************************************************/
 intern void K15_InternalCountGUIContextVertices(K15_GUIContext* p_GUIContext, 
@@ -139,26 +221,13 @@ intern void K15_InternalCountGUIContextVertices(K15_GUIContext* p_GUIContext,
 				break;
 			}
 
-		case K15_GUI_TYPE_COMBO_BOX:
+		case K15_GUI_TYPE_WINDOW:
 			{
-				K15_GUIComboBox* guiComboBox = (K15_GUIComboBox*)(guiMemory + currentGUIMemoryOffset + sizeof(K15_GUIElementHeader));
-				uint32 numElements = guiComboBox->numElements;
-				uint32 elementStringOffset = guiComboBox->elementsOffsetInBytes;
-
-				numVertices += 54 + (54 * guiComboBox->numElements);
-
-				for (uint32 elementIndex = 0;
-					elementIndex < numElements;
-					++elementIndex)
-				{
-					const char* elementString = (const char*)(guiMemory + elementStringOffset);
-					uint32 elementStringLength = (uint32)strlen(elementString);
-
-					elementStringOffset += elementStringLength+1;
-					numTextVertices += K15_GetTextVertexCount(guiStyleFont, elementString, elementStringLength);
-				}
-
-				break;	
+				K15_GUIWindow* guiWindow = (K15_GUIWindow*)(guiMemory + currentGUIMemoryOffset + sizeof(K15_GUIElementHeader));
+				const char* title = (const char*)(guiMemory + guiWindow->titleOffsetInBytes);
+				numVertices += K15_InternalGetGUIControlVertexCount(p_GUIContext, guiElement);
+				numTextVertices += K15_GetTextVertexCount(guiStyleFont, title, guiWindow->titleLength);
+				break;
 			}
 
 		default:
@@ -218,6 +287,16 @@ intern void K15_InternalFillGUIContextVertexBuffer(K15_RenderBackEnd* p_RenderBa
 
 				K15_InternalPushGUIComboBoxVertices(p_RenderBackEnd, p_GUIContext,
 					guiElement, guiComboBox, p_VertexBuffer, &vertexIndex,
+					p_TextVertexBuffer, &textVertexIndex);
+				break;
+			}
+
+		case K15_GUI_TYPE_WINDOW:
+			{
+				K15_GUIWindow* guiWindow = (K15_GUIWindow*)(guiMemory + currentGUIMemoryOffset + sizeof(K15_GUIElementHeader));
+
+				K15_InternalPushGUIWindowVertices(p_RenderBackEnd, p_GUIContext,
+					guiElement, guiWindow, p_VertexBuffer, &vertexIndex,
 					p_TextVertexBuffer, &textVertexIndex);
 				break;
 			}

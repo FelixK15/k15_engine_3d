@@ -127,7 +127,7 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 {
 	//Global 'initialized' variable is used to check if we need to set
 	//global contexts like OSContext or Logging. If the game library
-	//gets dynamically reloaded, the global contexts get reset.
+	//gets dynamically reloaded, the global contexts get reseted.
 	if (g_Initialized == K15_FALSE)
 	{
 		//Set game context and distribute memory from the engine
@@ -146,9 +146,17 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 
 	static uint32 testWindowPixelWidth = 400;
 	static uint32 testWindowPixelHeight = 400;
-	K15_BeginWindow(guiContext, "TestWindow", &testWindowPixelWidth, &testWindowPixelHeight, "test_window");
-	K15_Button(guiContext, "bla", "test_button");
-//	K15_ComboBox(guiContext, K15_CreateStringArray(3, "bla1", "bla2", "bla3"), 3, "text_combobox");
+	static int32 windowLeftPixelPos = 20;
+	static int32 windowTopPixelPos = 80;
+
+	if (K15_BeginWindow(guiContext, "TestWindow", 
+		&windowLeftPixelPos, &windowTopPixelPos,
+		&testWindowPixelWidth, &testWindowPixelHeight, 
+		"test_window"))
+	{
+		//K15_Button(guiContext, "bla", "test_button");
+		K15_EndWindow(guiContext);
+	}
 
 	K15_RenderCommandDraw2DGUI(gameRenderCommandQueue, guiContext);
 	K15_FlipGUIContextMemory(guiContext);
@@ -164,29 +172,8 @@ K15_EXPORT_SYMBOL void K15_OnInputEvent(K15_GameContext* p_GameContext, K15_Syst
 		return;
 	}
 
-	if (p_SystemEvent->event == K15_MOUSE_MOVED)
-	{
-		uint32 posX = p_SystemEvent->params.position.x;
-		uint32 posY = p_SystemEvent->params.position.y;
-
-		K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->userData;
-		K15_SetGUIContextMousePosition(gameContext->guiContext, posX, posY);
-	}
-	else if (p_SystemEvent->event == K15_MOUSE_BUTTON_PRESSED ||
-			p_SystemEvent->event == K15_MOUSE_BUTTON_RELEASED)
-	{
-		bool8 leftMouse = p_SystemEvent->params.mouseButton == K15_LEFT_MOUSE_BUTTON;
-		bool8 rightMouse = p_SystemEvent->params.mouseButton == K15_RIGHT_MOUSE_BUTTON;
-		bool8 pressed = p_SystemEvent->event == K15_MOUSE_BUTTON_PRESSED;
-
-		K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->userData;
-		gameContext->guiContext->leftMouseDown = pressed && leftMouse;
-		gameContext->guiContext->rightMouseDown = pressed && rightMouse;
-	}
-	else if (p_SystemEvent->event == K15_TEXT_INPUT)
-	{
-		char character = p_SystemEvent->params.utf8Char;
-	}
+	K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->userData;
+	K15_HandleGUIInputEvent(gameContext->guiContext, p_SystemEvent);
 }
 /*********************************************************************************/
 K15_EXPORT_SYMBOL void K15_OnSystemEvent(K15_GameContext* p_GameContext, K15_SystemEvent* p_SystemEvent)
@@ -195,7 +182,6 @@ K15_EXPORT_SYMBOL void K15_OnSystemEvent(K15_GameContext* p_GameContext, K15_Sys
 	{
 		return;
 	}
-
 }
 /*********************************************************************************/
 K15_EXPORT_SYMBOL void K15_OnWindowEvent(K15_GameContext* p_GameContext, K15_SystemEvent* p_SystemEvent)
@@ -205,13 +191,15 @@ K15_EXPORT_SYMBOL void K15_OnWindowEvent(K15_GameContext* p_GameContext, K15_Sys
 		return;
 	}
 
+	K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->userData;
+	K15_HandleGUIWindowEvent(gameContext->guiContext, p_SystemEvent);
+
 	if (p_SystemEvent->event == K15_WINDOW_RESIZED)
 	{
 		uint32 width = p_SystemEvent->params.size.width;
 		uint32 height = p_SystemEvent->params.size.height;
 
 		K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->userData;
-		K15_SetGUIContextWindowSize(gameContext->guiContext, width, height);
 		K15_RenderCommandWindowResized(gameContext->gameRenderQueue, width, height);
 	}
 }
