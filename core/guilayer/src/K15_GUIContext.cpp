@@ -285,6 +285,32 @@ char* K15_ComboBox(K15_GUIContext* p_GUIContext, char** p_Elements, uint32 p_Num
 	return p_Elements[selectedElementIndex];
 }
 /*********************************************************************************/
+bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Captions, uint32* p_WindowWidth, uint32* p_WindowHeight, const char* p_Identifier)
+{
+	uint32 guiElementIdentifierHash = K15_GenerateStringHash(p_Identifier);
+	uint32 offset = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER];
+	uint32 elementOffsetInBytes = offset + sizeof(K15_GUIElementHeader) + sizeof(K15_GUIComboBox);
+	uint32 newOffset = elementOffsetInBytes + lengthAllElements; 
+
+	K15_ASSERT_TEXT(newOffset <= p_GUIContext->guiMemoryMaxSize, "Out of GUI memory.");
+
+#ifdef K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
+	K15_ASSERT_TEXT(K15_InternalCheckForDuplicateIdentifiers(p_GUIContext, guiElementIdentifierHash) == K15_FALSE,
+		"Found duplicate for identifier '%s'. Please use a different identifier.", p_Identifier);
+#endif //K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
+
+	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER] = newOffset;
+
+	K15_GUIElementHeader* elementLastFrame = K15_InternalGetGUIElementLastFrame(p_GUIContext,
+		guiElementIdentifierHash);
+
+}
+/*********************************************************************************/
+void K15_EndWindow(K15_GUIContext* p_GUIContext)
+{
+
+}
+/*********************************************************************************/
 bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char* p_Identifier)
 {
 	assert(p_GUIContext);

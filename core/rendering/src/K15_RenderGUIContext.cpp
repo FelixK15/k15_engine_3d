@@ -1,7 +1,7 @@
 /*********************************************************************************/
 intern uint32 K15_InternalGetGUIButtonVertexCount(K15_GUIContextStyle* p_GUIStyle, K15_GUIElementHeader* p_GUIElement)
 {
-	return 12;
+	return 500;
 }
 /*********************************************************************************/
 intern uint32 K15_InternalGetGUIControlVertexCount(K15_GUIContext* p_GUIContext, K15_GUIElementHeader* p_GUIElement)
@@ -72,8 +72,6 @@ intern void K15_InternalPushGUIButtonVertices(K15_RenderBackEnd* p_RenderBackEnd
 	int32 edgePixelPosRight = pixelPosRight + thickness;
 	int32 edgePixelPosTop = pixelPosTop - thickness;
 	int32 edgePixelPosBottom = pixelPosBottom + thickness;
-
-
 
 	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
 

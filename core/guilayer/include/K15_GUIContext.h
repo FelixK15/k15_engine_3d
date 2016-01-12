@@ -23,6 +23,12 @@ enum K15_GUIButtonState
 	K15_GUI_BUTTON_STATE_COUNT
 };
 
+enum K15_GUIWindowState
+{
+	K15_GUI_WINDOW_STATE_NORMAL = 0,
+	K15_GUI_WINDOW_STATE_HIDDEN
+};
+
 enum K15_GUICategoryLayout
 {
 	K15_GUI_LAYOUT_HORIZONTAL = 0,
@@ -43,6 +49,12 @@ struct K15_GUIComboBox
 	uint32 elementsOffsetInBytes;
 	uint32 numElements;
 	uint32 selectedIndex;
+};
+
+struct K15_GUIWindowTitle
+{
+	K15_GUIWindowState state;
+	char* title;
 };
 
 struct K15_GUIElementHeader
@@ -123,12 +135,11 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 
 void K15_FlipGUIContextMemory(K15_GUIContext* p_GUIContext);
 
-void K15_SetGUIContextVirtualResolution(K15_GUIContext* p_GUIContext, uint32 p_VirtualWidth, uint32 p_VirtualHeight);
-
 void K15_SetGUIContextWindowSize(K15_GUIContext* p_GUIContext, uint32 p_WindowWidth, uint32 p_WindowHeight);
 void K15_SetGUIContextMousePosition(K15_GUIContext* p_GUIContext, uint32 p_MouseX, uint32 p_MouseY);
 
 bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char* p_Identifier);
 char* K15_ComboBox(K15_GUIContext* p_GUIContext, char** p_Elements, uint32 p_NumElements, const char* p_Identifier);
-
+bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption, uint32* p_WindowWidth, uint32* p_WindowHeight, const char* p_Identifier);
+void K15_EndWindow(K15_GUIContext* p_GUIContext);
 #endif //_K15_GUILayer_Context_h_

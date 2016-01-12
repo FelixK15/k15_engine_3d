@@ -144,6 +144,9 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
  	sprintf(text, "FPS: %.1f\nms: %.3f", p_GameContext->frameCounter.FPS, p_GameContext->frameCounter.avgDeltaTime);
  	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, K15_CreateVector(1.0f, 0.25f, 0.25f), 0.0f, 0.0f);
 
+	static uint32 testWindowPixelWidth = 400;
+	static uint32 testWindowPixelHeight = 400;
+	K15_BeginWindow(guiContext, "TestWindow", &testWindowPixelWidth, &testWindowPixelHeight, "test_window");
 	K15_Button(guiContext, "bla", "test_button");
 //	K15_ComboBox(guiContext, K15_CreateStringArray(3, "bla1", "bla2", "bla3"), 3, "text_combobox");
 
