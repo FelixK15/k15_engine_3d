@@ -149,12 +149,25 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	static int32 windowLeftPixelPos = 20;
 	static int32 windowTopPixelPos = 80;
 
+	static uint32 window2PixelWidth = 150;
+	static uint32 window2PixelHeight = 80;
+	static int32 window2LeftPixelPos = 500;
+	static int32 window2TopPixelPos = 200;
+
 	if (K15_BeginWindow(guiContext, "TestWindow", 
 		&windowLeftPixelPos, &windowTopPixelPos,
 		&testWindowPixelWidth, &testWindowPixelHeight, 
 		"test_window"))
 	{
-		//K15_Button(guiContext, "bla", "test_button");
+		K15_Button(guiContext, "bla", "test_button");
+		K15_EndWindow(guiContext);
+	}
+
+	if (K15_BeginWindow(guiContext, "TestWindow2",
+		&window2LeftPixelPos, &window2TopPixelPos,
+		&window2PixelWidth, &window2PixelHeight,
+		"test_window2"))
+	{
 		K15_EndWindow(guiContext);
 	}
 

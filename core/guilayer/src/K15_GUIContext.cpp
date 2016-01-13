@@ -363,6 +363,14 @@ bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption,
 	K15_GUIWindowState lastWindowState = K15_GUI_WINDOW_STATE_NORMAL;
 	K15_GUIWindowState currentWindowState = K15_GUI_WINDOW_STATE_NORMAL;
 
+	byte* guiContextFrontBuffer = p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER];
+	K15_GUIElementHeader* windowElementHeader = (K15_GUIElementHeader*)(guiContextFrontBuffer + offset);
+	K15_GUIWindow* window = (K15_GUIWindow*)
+		(guiContextFrontBuffer + offset + sizeof(K15_GUIElementHeader));
+
+	int32 dragPixelOffsetX = 0;
+	int32 dragPixelOffsetY = 0;
+
 	if (elementLastFrame)
 	{
 		K15_GUIWindow* windowLastFrame = (K15_GUIWindow*)(elementLastFrame + 1);
@@ -371,7 +379,11 @@ bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption,
 		*p_LeftPixelPos = elementLastFrame->posPixelX;
 		*p_TopPixelPos = elementLastFrame->posPixelY;
 
+		dragPixelOffsetX = windowLastFrame->dragPixelOffsetX;
+		dragPixelOffsetY = windowLastFrame->dragPixelOffsetY;
+
 		lastWindowState = windowLastFrame->state;
+		currentWindowState = lastWindowState;
 	}
 
 	K15_GUIContextStyle* style = &p_GUIContext->style;
@@ -380,11 +392,6 @@ bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption,
 
 	float windowTextPixelWidth = 0.f;
 	K15_GetTextSizeInPixels(guiFont, &windowTextPixelWidth, 0, p_Caption, titleLength);
-
-	byte* guiContextFrontBuffer = p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER];
-	K15_GUIElementHeader* windowElementHeader = (K15_GUIElementHeader*)(guiContextFrontBuffer + offset);
-	K15_GUIWindow* window = (K15_GUIWindow*)
-		(guiContextFrontBuffer + offset + sizeof(K15_GUIElementHeader));
 
 	*p_WindowWidth = K15_MAX(*p_WindowWidth, windowTextPixelWidth);
 
@@ -403,19 +410,21 @@ bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption,
 		lastWindowState != K15_GUI_WINDOW_STATE_DRAGGED)
 	{
 		currentWindowState = K15_GUI_WINDOW_STATE_DRAGGED;
-		window->dragPixelOffsetX = mousePixelPosX - *p_LeftPixelPos;
-		window->dragPixelOffsetY = mousePixelPosY - *p_TopPixelPos;
+		dragPixelOffsetX = mousePixelPosX - *p_LeftPixelPos;
+		dragPixelOffsetY = mousePixelPosY - *p_TopPixelPos;
 	}
 	else if (leftMouseDown &&
 		lastWindowState == K15_GUI_WINDOW_STATE_DRAGGED)
 	{
-		*p_LeftPixelPos = p_GUIContext->mousePosPixelX - window->dragPixelOffsetX;
-		*p_TopPixelPos = p_GUIContext->mousePosPixelY - window->dragPixelOffsetY;
+		*p_LeftPixelPos = p_GUIContext->mousePosPixelX - dragPixelOffsetX;
+		*p_TopPixelPos = p_GUIContext->mousePosPixelY - dragPixelOffsetY;
 	}
 	else if (!leftMouseDown &&
 		lastWindowState == K15_GUI_WINDOW_STATE_DRAGGED)
 	{
 		currentWindowState = K15_GUI_WINDOW_STATE_NORMAL;
+		dragPixelOffsetX = 0;
+		dragPixelOffsetY = 0;
 	}
 
 	windowElementHeader->identifierHash = guiElementIdentifierHash;
@@ -431,6 +440,8 @@ bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption,
 	window->titleOffsetInBytes = textOffset;
 	window->windowPixelHeight = *p_WindowHeight;
 	window->windowPixelWidth = *p_WindowWidth;
+	window->dragPixelOffsetX = dragPixelOffsetX;
+	window->dragPixelOffsetY = dragPixelOffsetY;
 
 	if (currentWindowState == K15_GUI_WINDOW_STATE_NORMAL)
 	{

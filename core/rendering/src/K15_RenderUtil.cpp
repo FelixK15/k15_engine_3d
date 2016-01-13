@@ -150,7 +150,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelCircularColoredSquareVert
 		p_PixelPosX, p_PixelPosY, p_PixelRadius, unpackedCenterColor, unpackedEdgeColor);
 }
 /*********************************************************************************/
-intern inline uint32 K15_InternalPush2DScreenspacePixelColoredSquareVertices(K15_RenderBackEnd* p_RenderBackEnd,
+intern inline uint32 K15_InternalPush2DScreenspacePixelColoredSphereVertices(K15_RenderBackEnd* p_RenderBackEnd,
 	float* p_VertexBuffer, uint32 p_StartIndex,
 	int32 p_PixelPosX, int32 p_PixelPosY, uint32 p_PixelRadius,
 	const K15_Vector3& p_CenterColor,
@@ -234,7 +234,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredSquareVertices(K15
 	return vertexIndex;
 }
 /*********************************************************************************/
-intern inline uint32 K15_InternalPush2DScreenspacePixelColoredSquareVertices(K15_RenderBackEnd* p_RenderBackEnd,
+intern inline uint32 K15_InternalPush2DScreenspacePixelColoredSphereVertices(K15_RenderBackEnd* p_RenderBackEnd,
 	float* p_VertexBuffer, uint32 p_StartIndex,
 	int32 p_PixelPosX, int32 p_PixelPosY, uint32 p_PixelRadius,
 	uint32 p_CenterColor, uint32 p_LeftColor, uint32 p_RightColor, uint32 p_TopColor, uint32 p_BottomColor)
@@ -245,7 +245,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredSquareVertices(K15
 	K15_Vector3 unpackedBottomColor = K15_UnpackVector3(p_BottomColor);
 	K15_Vector3 unpackedCenterColor = K15_UnpackVector3(p_CenterColor);
 
-	return K15_InternalPush2DScreenspacePixelColoredSquareVertices(p_RenderBackEnd, p_VertexBuffer, p_StartIndex,
+	return K15_InternalPush2DScreenspacePixelColoredSphereVertices(p_RenderBackEnd, p_VertexBuffer, p_StartIndex,
 		p_PixelPosX, p_PixelPosY, p_PixelRadius, unpackedCenterColor,
 		unpackedLeftColor, unpackedRightColor, 
 		unpackedTopColor, unpackedBottomColor);
@@ -407,7 +407,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 		K15_Vector3 rightColor = K15_LerpColor(innerLeftTopInterpolatedColor,
 			innerRightTopInterpolatedColor, heightLerpFactor);
 
-		vertexIndex = K15_InternalPush2DScreenspacePixelColoredSquareVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
+		vertexIndex = K15_InternalPush2DScreenspacePixelColoredSphereVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			pixelPosLeft, pixelPosTop, cornerPixelRadius,
 			colorLeftTop,
 			outerLeftTopInterpolatedColor,
@@ -425,7 +425,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 		K15_Vector3 leftColor = K15_LerpColor(innerRightTopInterpolatedColor,
 			innerLeftTopInterpolatedColor, heightLerpFactor);
 
-		vertexIndex = K15_InternalPush2DScreenspacePixelColoredSquareVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
+		vertexIndex = K15_InternalPush2DScreenspacePixelColoredSphereVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			pixelPosRight, pixelPosTop, cornerPixelRadius,
 			colorRightTop,
 			leftColor,
@@ -443,7 +443,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 		K15_Vector3 rightColor = K15_LerpColor(innerLeftBottomInterpolatedColor,
 			innerRightBottomInterpolatedColor, heightLerpFactor);
 
-		vertexIndex = K15_InternalPush2DScreenspacePixelColoredSquareVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
+		vertexIndex = K15_InternalPush2DScreenspacePixelColoredSphereVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			pixelPosLeft, pixelPosBottom, cornerPixelRadius,
 			colorLeftBottom,
 			outerLeftBottomInterpolatedColor,
@@ -461,7 +461,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 		K15_Vector3 leftColor = K15_LerpColor(innerRightBottomInterpolatedColor,
 			innerLeftBottomInterpolatedColor, heightLerpFactor);
 
-		vertexIndex = K15_InternalPush2DScreenspacePixelColoredSquareVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
+		vertexIndex = K15_InternalPush2DScreenspacePixelColoredSphereVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			pixelPosRight, pixelPosBottom, cornerPixelRadius,
 			colorRightBottom,
 			leftColor,
@@ -579,7 +579,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 /*********************************************************************************/
 intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextureRectVertices(K15_RenderBackEnd* p_RenderBackEnd,
 	float* p_VertexBuffer, uint32 p_StartIndex,
-	uint32 p_PixelPosLeft, uint32 p_PixelPosRight, uint32 p_PixelPosTop, uint32 p_PixelPosBottom,
+	int32 p_PixelPosLeft, int32 p_PixelPosRight, int32 p_PixelPosTop, int32 p_PixelPosBottom,
 	float p_UCoordLeft, float p_UCoordRight, float p_VCoordTop, float p_VCoordBottom,
 	const K15_Vector3& p_ColorLeftTop, const K15_Vector3& p_ColorRightTop,
 	const K15_Vector3& p_ColorLeftBottom, const K15_Vector3& p_ColorRightBottom)
@@ -666,13 +666,13 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextureRectVertice
 intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_RenderBackEnd* p_RenderBackEnd,
 	K15_RenderFontDesc* p_RenderFontDesc,
 	float* p_VertexBuffer, uint32 p_VertexBufferOffsetIndex,
-	uint32 p_PixelPosLeft, uint32 p_PixelPosTop, const K15_Vector3& p_TextColor, const char* p_Text,
+	int32 p_PixelPosLeft, int32 p_PixelPosTop, const K15_Vector3& p_TextColor, const char* p_Text,
 	uint32 p_TextLength)
 {
 	uint32 vertexIndex = p_VertexBufferOffsetIndex;
 
-	uint32 leftPos = p_PixelPosLeft;
-	uint32 topPos = p_PixelPosTop;
+	int32 leftPos = p_PixelPosLeft;
+	int32 topPos = p_PixelPosTop;
 	
 	float fontTextureWidth	 = p_RenderFontDesc->textureWidth;
 	float fontTextureHeight  = p_RenderFontDesc->textureHeight;
@@ -743,7 +743,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_R
 intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_RenderBackEnd* p_RenderBackEnd,
 	K15_RenderFontDesc* p_RenderFontDesc,
 	float* p_VertexBuffer, uint32 p_VertexBufferOffsetIndex,
-	uint32 p_PixelPosLeft, uint32 p_PixelPosTop, uint32 p_TextColor, const char* p_Text,
+	int32 p_PixelPosLeft, int32 p_PixelPosTop, uint32 p_TextColor, const char* p_Text,
 	uint32 p_TextLength)
 {
 	K15_Vector3 unpackedTextColor = K15_UnpackVector3(p_TextColor);
