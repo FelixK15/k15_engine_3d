@@ -56,6 +56,108 @@ struct K15_ResourceFileChangedInfo
 
 
 /*********************************************************************************/
+intern inline void K15_InternalGetIncludeFileName(const char* p_IncludeLine, char* p_Buffer)
+{
+	const char* start = strchr(p_IncludeLine, '\"') + 1;
+	const char* end = strrchr(p_IncludeLine, '\"');
+
+	ptrdiff_t startSize = (ptrdiff_t)start;
+	ptrdiff_t endSize = (ptrdiff_t)end;
+
+	ptrdiff_t includeFileNameSize = endSize - startSize;
+	ptrdiff_t startIndex = startSize - (ptrdiff_t)p_IncludeLine;
+
+	memcpy(p_Buffer, p_IncludeLine + startIndex, includeFileNameSize);
+
+	p_Buffer[includeFileNameSize] = 0;
+}
+/*********************************************************************************/
+intern char* K15_InternalProcessShaderCode(const char* p_ShaderCode, const char* p_ShaderPath, uint32 p_ShaderCodeLength)
+{
+	char* shaderPath = K15_GetPathWithoutFileName(p_ShaderPath);
+	uint32 shaderPathLength = (uint32)strlen(shaderPath);
+	uint32 shaderCodeLength = p_ShaderCodeLength;
+
+	char* preprocessedCode = (char*)malloc(size_kilobyte(32));
+	char* includeFileNameBuffer = (char*)alloca(256);
+	char* tempCurrentLine = (char*)alloca(256);
+	const char* currentLine = p_ShaderCode;
+	uint32 lineCount = 0;
+	uint32 preprocessedCodeIndex = 0; //position where in the preprocessed code we currently are
+
+	while (currentLine)
+	{
+		lineCount += 1;
+
+		const char* nextLine = strchr(currentLine, '\n');
+		uint32 lineLength = nextLine ? (nextLine - currentLine) : (uint32)strlen(currentLine);
+		uint32 lineIndex = nextLine ? (uint32)(nextLine - p_ShaderCode) : p_ShaderCodeLength;
+
+		if (lineIndex >= p_ShaderCodeLength)
+		{
+			break;
+		}
+
+		memcpy(tempCurrentLine, currentLine, lineLength);
+		tempCurrentLine[lineLength] = 0;
+
+		if (lineLength > 2
+			&& (tempCurrentLine[0] == '/'
+				&& tempCurrentLine[1] == '/'))
+		{
+			//skip comments
+			currentLine = nextLine ? (nextLine + 1) : 0;
+			preprocessedCodeIndex += lineLength;
+			continue;
+		}
+
+
+		if (strstr(tempCurrentLine, "#include") != 0)
+		{
+			//include found
+			memcpy(includeFileNameBuffer, shaderPath, shaderPathLength);
+			K15_InternalGetIncludeFileName(tempCurrentLine, includeFileNameBuffer + shaderPathLength);
+
+			if (K15_FileExists(includeFileNameBuffer) != K15_TRUE)
+			{
+				//TODO: ERROR
+			}
+			else
+			{
+				//replace with content from file
+				uint32 fileSize = 0;
+				char* includeFileContent = (char*)K15_GetWholeFileContentWithFileSize(includeFileNameBuffer, &fileSize);
+				includeFileContent[fileSize] = 0;
+
+				char* preprocessedIncludeFileContent = K15_InternalProcessShaderCode(includeFileContent, includeFileNameBuffer, fileSize);
+
+				//after the content got preprocessed, we don't need the un-preprocessed code anymore.
+				free(includeFileContent);
+
+				memcpy(preprocessedCode + preprocessedCodeIndex, preprocessedIncludeFileContent, fileSize);
+				preprocessedCodeIndex += fileSize;
+
+				//after the preprocessed content got added to the current file content, 
+				//the preprocessed content is not needed anymore
+				free(preprocessedIncludeFileContent);
+			}
+		}
+		else
+		{
+			//add unmodified line
+			memcpy(preprocessedCode + preprocessedCodeIndex, currentLine, lineLength);
+			preprocessedCodeIndex += lineLength;
+		}
+
+		currentLine = nextLine ? (nextLine + 1) : 0;
+		preprocessedCode[preprocessedCodeIndex++] = '\n';
+	}
+
+	preprocessedCode[preprocessedCodeIndex] = 0;
+
+	return preprocessedCode;
+}
+/*********************************************************************************/
 intern bool8 K15_InternalResourceIsOutdated(const char* p_CompiledResourcePath, const char* p_MetaResourcePath)
 {
 	uint64 lastWriteAccessTime = 0;
@@ -454,8 +556,14 @@ intern void K15_InternalLoadShaderResource(K15_ResourceContext* p_ResourceContex
 	
 	if (result == K15_TRUE)
 	{
-		char* shaderCode = K15_CopyString((char*)p_ResourceFileData->fileContent, 
-			p_ResourceFileData->fileContentSizeInBytes);
+		char* shaderPath = (char*)alloca(256);
+		const char* resourceArchivePath = p_ResourceContext->resourceArchive.resourcePath;
+		const char* resourceFilePath = p_ResourceFileData->path;
+		
+		K15_ConcatStringsIntoBuffer(resourceArchivePath, resourceFilePath, shaderPath);
+
+		char* shaderCode = K15_InternalProcessShaderCode((const char*)p_ResourceFileData->fileContent, 
+			shaderPath, p_ResourceFileData->fileContentSizeInBytes);
 
 		programDesc.code = shaderCode;
 		programDesc.source = K15_RENDER_PROGRAM_SOURCE_CODE;

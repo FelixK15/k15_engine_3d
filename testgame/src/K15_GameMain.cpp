@@ -163,13 +163,13 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 		K15_EndWindow(guiContext);
 	}
 
-	if (K15_BeginWindow(guiContext, "TestWindow2",
-		&window2LeftPixelPos, &window2TopPixelPos,
-		&window2PixelWidth, &window2PixelHeight,
-		"test_window2"))
-	{
-		K15_EndWindow(guiContext);
-	}
+// 	if (K15_BeginWindow(guiContext, "TestWindow2",
+// 		&window2LeftPixelPos, &window2TopPixelPos,
+// 		&window2PixelWidth, &window2PixelHeight,
+// 		"test_window2"))
+// 	{
+// 		K15_EndWindow(guiContext);
+// 	}
 
 	K15_RenderCommandDraw2DGUI(gameRenderCommandQueue, guiContext);
 	K15_FlipGUIContextMemory(guiContext);

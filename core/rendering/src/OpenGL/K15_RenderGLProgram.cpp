@@ -233,22 +233,6 @@ intern K15_GLUniform* K15_InternalGLGetProgramUniformByNameHash(K15_GLProgram* p
 	return uniform;
 }
 /*********************************************************************************/
-intern void K15_InternalGLGetIncludeFileName(const char* p_IncludeLine, char* p_IncludeFileBuffer)
-{
-	const char* start = strchr(p_IncludeLine, '\"') + 1;
-	const char* end = strrchr(p_IncludeLine, '\"');
-
-	ptrdiff_t startSize = (ptrdiff_t)start;
-	ptrdiff_t endSize = (ptrdiff_t)end;
-
-	ptrdiff_t includeFileNameSize = endSize - startSize;
-	ptrdiff_t startIndex = startSize - (ptrdiff_t)p_IncludeLine;
-
-	memcpy(p_IncludeFileBuffer, p_IncludeLine + startIndex, includeFileNameSize);
-
-	p_IncludeFileBuffer[includeFileNameSize] = 0;
-}
-/*********************************************************************************/
 intern uint32 K15_InternalTypeSizeDivisor(uint32 p_TypeID)
 {
 	uint32 divisor = 1;
@@ -280,85 +264,6 @@ intern uint32 K15_InternalTypeSizeDivisor(uint32 p_TypeID)
 	}
 
 	return divisor;
-}
-/*********************************************************************************/
-intern char* K15_InternalGLPreprocessProgramCode(K15_CustomMemoryAllocator* p_MemoryAllocator, const char* p_FilePath, const char* p_ProgramCode)
-{
-	char* path = K15_GetPathWithoutFileName(p_FilePath);
-	char* preprocessedCode = (char*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, K15_RENDER_GL_MAX_SHADER_CODE_SIZE);
-	size_t preprocessedCodeIndex = 0; //position where in the preprocessed code we currently are
-
-	const char* currentLine = p_ProgramCode;
-	uint32 lineCount = 0;
-
-	while (currentLine)
-	{
-		lineCount += 1;
-
-		const char* nextLine = strchr(currentLine, '\n');
-		size_t lineLength = nextLine ? (nextLine-currentLine) : strlen(currentLine);
-		char* tempCurrentLine = (char*)alloca(lineLength + 1);
-		memcpy(tempCurrentLine, currentLine, lineLength);
-		tempCurrentLine[lineLength] = 0;
-
-		if (lineLength > 2
-			&& (tempCurrentLine[0] == '/' 
-			&& tempCurrentLine[1] == '/'))
-		{
-			//skip comments
-			continue;
-		}
-
-
-		if (strstr(tempCurrentLine, "#include") != 0)
-		{
-			//include found
-			char* includeFileNameBuffer = (char*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, K15_RENDER_GL_MAX_INCLUDE_FILE_SIZE);
-			size_t pathLength = strlen(path);
-			memcpy(includeFileNameBuffer, path, pathLength);
-			K15_InternalGLGetIncludeFileName(tempCurrentLine, includeFileNameBuffer + pathLength);
-			
-			if (K15_FileExists(includeFileNameBuffer) != K15_SUCCESS)
-			{
-				//TODO: ERROR
-			}
-			else
-			{
-				//replace with content from file
-				uint32 fileSize = 0;
-				char* includeFileContent = (char*)K15_GetWholeFileContentWithFileSize(includeFileNameBuffer, &fileSize);
-				includeFileContent[fileSize] = 0;
-
-				char* preprocessedIncludeFileContent = K15_InternalGLPreprocessProgramCode(p_MemoryAllocator, includeFileNameBuffer, includeFileContent);
-
-				//after the content got preprocessed, we don't need the un-preprocessed code anymore.
-				free(includeFileContent);
-
-				size_t fileContentSize = K15_GetFileSize(includeFileNameBuffer);
-
-				memcpy(preprocessedCode + preprocessedCodeIndex, preprocessedIncludeFileContent, fileContentSize);
-				preprocessedCodeIndex += fileContentSize;
-
-				//after the preprocessed content got added to the current file content, the preprocessed content is not needed anymore
-				K15_FreeFromMemoryAllocator(p_MemoryAllocator, preprocessedIncludeFileContent);
-			}
-
-			K15_FreeFromMemoryAllocator(p_MemoryAllocator, includeFileNameBuffer);
-		}
-		else
-		{
-			//add unmodified line
-			memcpy(preprocessedCode + preprocessedCodeIndex, currentLine, lineLength);
-			preprocessedCodeIndex += lineLength;
-		}
-
-		currentLine = nextLine ? (nextLine + 1) : 0;
-		preprocessedCode[preprocessedCodeIndex++] = '\n';
-	}
-
-	preprocessedCode[preprocessedCodeIndex] = 0;
-
-	return preprocessedCode;
 }
 /*********************************************************************************/
 intern void K15_InternGLReflectProgram(K15_RenderContext* p_RenderContext, K15_GLProgram* p_Program, K15_RenderProgramDesc* p_RenderProgramDesc)
@@ -708,16 +613,15 @@ result8 K15_GLCreateProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderProgra
 	}
 
 	char* glslWrapperCode = 0;
-	char* parsedProgramCode = K15_InternalGLPreprocessProgramCode(memoryAllocator, programFilePath, programCode);
 	const char* mainFunctionIdentifier = K15_GetMainFunctionIdentifierForProgramType(renderProgramType);
 
-	uint32 parserProgramCodeLength = (uint32)strlen(parsedProgramCode);
+	uint32 parserProgramCodeLength = (uint32)strlen(programCode);
 	
 	char* compiledProgramCode = (char*)K15_AllocateFromMemoryAllocator(memoryAllocator, parserProgramCodeLength);
 
 	K15_ShaderInformation shaderInformation = {};
 	K15_ProcessShaderCode(p_RenderBackEnd->shaderProcessorContext, &shaderInformation, mainFunctionIdentifier,
-		parsedProgramCode, parserProgramCodeLength,
+		programCode, parserProgramCodeLength,
 		compiledProgramCode, parserProgramCodeLength);
 
 	//check if the shader is valid
@@ -866,7 +770,6 @@ result8 K15_GLCreateProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderProgra
 	}
 	
 	//after the shader got compiled, delete the program code
-	K15_FreeFromMemoryAllocator(memoryAllocator, parsedProgramCode); 
 	K15_FreeFromMemoryAllocator(memoryAllocator, compiledProgramCode); 
 	K15_FreeFromMemoryAllocator(memoryAllocator, glslWrapperCode);
 

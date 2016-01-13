@@ -1,0 +1,12 @@
+float3 K15_GammaToLinear(float3 p_GammaColor)
+{
+	float factor = 1.f/2.2f;
+	return pow(p_GammaColor, float3(factor, factor, factor));
+}
+
+float3 K15_LinearToGamma(float3 p_LinearColor)
+{
+	float factor = 2.2f;
+	return pow(p_LinearColor, float3(factor, factor, factor));
+}
+
