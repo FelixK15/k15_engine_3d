@@ -168,8 +168,10 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredSphereVertices(K15
 	float centerNDCPosX = K15_CONVERT_TO_NDC_X(p_PixelPosX / viewportWidth);
 	float centerNDCPosY = K15_CONVERT_TO_NDC_Y(p_PixelPosY / viewportHeight);
 
-	float lastPixelPosX = p_PixelPosX + p_PixelRadius;
+	float lastPixelPosX = p_PixelPosX;
 	float lastPixelPosY = p_PixelPosY;
+
+	lastPixelPosX += p_PixelRadius;
 
 	K15_Vector3 leftColor = p_LeftColor;
 	K15_Vector3 rightColor = p_RightColor;
@@ -542,7 +544,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 
 	if ((p_RoundCornerFlags & K15_RIGHT_BOTTOM_CORNER) == 0)
 	{
-		colorRightBottom = innerRightBottomInterpolatedColor;
+		//colorRightBottom = innerRightBottomInterpolatedColor;
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			p_PixelPosRight - cornerPixelRadius, p_PixelPosRight,
 			p_PixelPosBottom - cornerPixelRadius, p_PixelPosBottom,

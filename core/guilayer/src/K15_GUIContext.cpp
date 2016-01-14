@@ -443,7 +443,9 @@ bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption,
 	window->dragPixelOffsetX = dragPixelOffsetX;
 	window->dragPixelOffsetY = dragPixelOffsetY;
 
-	if (currentWindowState == K15_GUI_WINDOW_STATE_NORMAL)
+	bool8 windowActive = currentWindowState != K15_GUI_WINDOW_STATE_HIDDEN;
+
+	if (windowActive)
 	{
 		K15_ASSERT_TEXT(!p_GUIContext->currentWindow,
 			"There's already a window being currently created. "
@@ -456,7 +458,7 @@ bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption,
 	//copy text to gui memory buffer
 	memcpy(guiContextFrontBuffer + textOffset, p_Caption, titleLength);
 
-	return currentWindowState == K15_GUI_WINDOW_STATE_NORMAL;
+	return windowActive;
 }
 /*********************************************************************************/
 void K15_EndWindow(K15_GUIContext* p_GUIContext)
