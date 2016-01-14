@@ -1,5 +1,8 @@
+#include "shaderlib.sfx"
+
 float4 ShadeFragment(in float3 color : COLOR1)
 {
-	return float4(color, 1.0f);
+	float3 gammaColor = K15_LinearToGamma(color);
+	return float4(gammaColor, 1.0f);
 }
 
