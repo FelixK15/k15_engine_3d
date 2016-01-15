@@ -337,7 +337,6 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 {
 	float roundFactor = K15_ClampReal(p_EdgeRoundFactor, 1.f, 0.f);
 	uint32 cornerPixelRadius = roundFactor * ((p_PixelPosBottom - p_PixelPosTop) / 2);
-	float lerpFactor = (float)cornerPixelRadius / (float)(p_PixelPosBottom - p_PixelPosTop);
 	uint32 vertexIndex = p_StartIndex;
 
 	if (roundFactor == 0.f ||
@@ -353,203 +352,156 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 	int32 pixelPosTop = p_PixelPosTop;
 	int32 pixelPosBottom = p_PixelPosBottom;
 
+	float width = (float)(pixelPosRight - pixelPosLeft);
+	float height = (float)(pixelPosBottom - pixelPosTop);
+	
+	float widthLerpFactor = (float)cornerPixelRadius / width;
+	float heightLerpFactor = (float)cornerPixelRadius / height;
+
+	K15_Vector3 black = K15_CreateVector(0.f, 0.f, 0.f);
+
 	K15_Vector3 colorLeftTop = p_ColorLeftTop;
 	K15_Vector3 colorRightTop = p_ColorRightTop;
 	K15_Vector3 colorLeftBottom = p_ColorLeftBottom;
 	K15_Vector3 colorRightBottom = p_ColorRightBottom;
 
-	K15_Vector3 outerLeftTopInterpolatedColor = K15_LerpColor(colorLeftTop, colorLeftBottom, lerpFactor);
-	K15_Vector3 outerLeftBottomInterpolatedColor = K15_LerpColor(colorLeftBottom, colorLeftTop, lerpFactor);
-	K15_Vector3 outerRightTopInterpolatedColor = K15_LerpColor(colorRightTop, colorRightBottom, lerpFactor);
-	K15_Vector3 outerRightBottomInterpolatedColor = K15_LerpColor(colorRightBottom, colorRightTop, lerpFactor);
+	K15_Vector3 lerpColorLeftTopLeftBottom = K15_LerpColor(colorLeftTop, colorLeftBottom, heightLerpFactor);
+	K15_Vector3 lerpColorLeftBottomLeftTop = K15_LerpColor(colorLeftBottom, colorLeftTop, heightLerpFactor);
+	K15_Vector3 lerpColorRightTopRightBottom = K15_LerpColor(colorRightTop, colorRightBottom, heightLerpFactor);
+	K15_Vector3 lerpColorRightBottomRightTop = K15_LerpColor(colorRightBottom, colorRightTop, heightLerpFactor);
 
-	K15_Vector3 innerLeftTopInterpolatedColor = K15_LerpColor(outerLeftTopInterpolatedColor, outerRightTopInterpolatedColor, lerpFactor);
-	K15_Vector3 innerLeftBottomInterpolatedColor = K15_LerpColor(outerLeftBottomInterpolatedColor, outerRightBottomInterpolatedColor, lerpFactor);
-	K15_Vector3 innerRightTopInterpolatedColor = K15_LerpColor(outerRightTopInterpolatedColor, outerLeftTopInterpolatedColor, lerpFactor);
-	K15_Vector3 innerRightBottomInterpolatedColor = K15_LerpColor(outerRightBottomInterpolatedColor, outerLeftBottomInterpolatedColor, lerpFactor);
+	K15_Vector3 lerpColorLeftTopRightTop= K15_LerpColor(colorLeftTop, colorRightTop, widthLerpFactor);
+	K15_Vector3 lerpColorRightTopLeftTop = K15_LerpColor(colorRightTop, colorLeftTop, widthLerpFactor);
+	K15_Vector3 lerpColorLeftBottomRightBottom = K15_LerpColor(colorLeftBottom, colorRightBottom, widthLerpFactor);
+	K15_Vector3 lerpColorRightBottomLeftBottom = K15_LerpColor(colorRightBottom, colorLeftBottom, widthLerpFactor);
 
-	K15_Vector3 outerLeftTopInnerInterpolatedColor = K15_LerpColor(colorLeftTop, colorRightTop, lerpFactor);
-	K15_Vector3 outerRightTopInnerInterpolatedColor = K15_LerpColor(colorRightTop, colorLeftTop, lerpFactor);
-	K15_Vector3 outerLeftBottomInnerInterpolatedColor = K15_LerpColor(colorLeftBottom, colorRightBottom, lerpFactor);
-	K15_Vector3 outerRightBottomInnerInterpolatedColor = K15_LerpColor(colorRightBottom, colorLeftBottom, lerpFactor);
-
-	float widthLerpFactor = (float)cornerPixelRadius / (float)(pixelPosBottom - pixelPosTop);
-	float heightLerpFactor = (float)cornerPixelRadius / (float)(pixelPosRight - pixelPosLeft);
-
-	if ((p_RoundCornerFlags & K15_LEFT_TOP_CORNER) ||
-		(p_RoundCornerFlags & K15_LEFT_BOTTOM_CORNER))
-	{
-		pixelPosLeft += cornerPixelRadius;
-	}
-
-	if ((p_RoundCornerFlags & K15_RIGHT_TOP_CORNER) ||
-		(p_RoundCornerFlags & K15_RIGHT_BOTTOM_CORNER))
-	{
-		pixelPosRight -= cornerPixelRadius;
-	}
-
-	if ((p_RoundCornerFlags & K15_RIGHT_TOP_CORNER) ||
-		(p_RoundCornerFlags & K15_LEFT_TOP_CORNER))
-	{
-		pixelPosTop += cornerPixelRadius;
-	}
-
-	if ((p_RoundCornerFlags & K15_RIGHT_BOTTOM_CORNER) ||
-		(p_RoundCornerFlags & K15_LEFT_BOTTOM_CORNER))
-	{
-		pixelPosBottom -= cornerPixelRadius;
-	}
+	pixelPosRight -= cornerPixelRadius;
+	pixelPosTop += cornerPixelRadius;
+	pixelPosLeft += cornerPixelRadius;
+	pixelPosBottom -= cornerPixelRadius;
 
 	if (p_RoundCornerFlags & K15_LEFT_TOP_CORNER)
 	{
-		colorLeftTop = innerLeftTopInterpolatedColor;
-
-		K15_Vector3 bottomColor = K15_LerpColor(innerLeftTopInterpolatedColor,
-			innerLeftBottomInterpolatedColor, widthLerpFactor);
-		K15_Vector3 rightColor = K15_LerpColor(innerLeftTopInterpolatedColor,
-			innerRightTopInterpolatedColor, heightLerpFactor);
+		colorLeftTop = lerpColorLeftTopLeftBottom;
 
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredSphereVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			pixelPosLeft, pixelPosTop, cornerPixelRadius,
 			colorLeftTop,
-			outerLeftTopInterpolatedColor,
-			rightColor,
-			outerLeftTopInnerInterpolatedColor,
-			bottomColor);
+			lerpColorLeftTopLeftBottom,
+			black,
+			lerpColorLeftTopRightTop,
+			black);
 	}
 
 	if (p_RoundCornerFlags & K15_RIGHT_TOP_CORNER)
 	{
-		colorRightTop = innerRightTopInterpolatedColor;
-
-		K15_Vector3 bottomColor = K15_LerpColor(innerRightTopInterpolatedColor,
-			innerRightBottomInterpolatedColor, widthLerpFactor);
-		K15_Vector3 leftColor = K15_LerpColor(innerRightTopInterpolatedColor,
-			innerLeftTopInterpolatedColor, heightLerpFactor);
+		colorRightTop = lerpColorRightTopRightBottom;
 
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredSphereVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			pixelPosRight, pixelPosTop, cornerPixelRadius,
 			colorRightTop,
-			leftColor,
-			outerRightTopInterpolatedColor,
-			outerRightTopInnerInterpolatedColor,
-			bottomColor);
+			black,
+			lerpColorRightTopRightBottom,
+			lerpColorRightTopLeftTop,
+			black);
 	}
-
+ 
 	if (p_RoundCornerFlags & K15_LEFT_BOTTOM_CORNER)
 	{
-		colorLeftBottom = innerLeftBottomInterpolatedColor;
-
-		K15_Vector3 topColor = K15_LerpColor(innerLeftBottomInterpolatedColor,
-			innerLeftTopInterpolatedColor, widthLerpFactor);
-		K15_Vector3 rightColor = K15_LerpColor(innerLeftBottomInterpolatedColor,
-			innerRightBottomInterpolatedColor, heightLerpFactor);
+		colorLeftBottom = lerpColorLeftBottomLeftTop;
 
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredSphereVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			pixelPosLeft, pixelPosBottom, cornerPixelRadius,
 			colorLeftBottom,
-			outerLeftBottomInterpolatedColor,
-			rightColor,
-			topColor,
-			outerLeftBottomInnerInterpolatedColor);
+			lerpColorLeftBottomLeftTop,
+			black,
+			black ,
+			lerpColorLeftBottomRightBottom);
 	}
 
 	if (p_RoundCornerFlags & K15_RIGHT_BOTTOM_CORNER)
 	{
-		colorRightBottom = innerRightBottomInterpolatedColor;
-
-		K15_Vector3 topColor = K15_LerpColor(innerRightBottomInterpolatedColor,
-			innerRightTopInterpolatedColor, widthLerpFactor);
-		K15_Vector3 leftColor = K15_LerpColor(innerRightBottomInterpolatedColor,
-			innerLeftBottomInterpolatedColor, heightLerpFactor);
+		colorRightBottom = lerpColorRightBottomRightTop;
 
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredSphereVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			pixelPosRight, pixelPosBottom, cornerPixelRadius,
 			colorRightBottom,
-			leftColor,
-			outerRightBottomInterpolatedColor,
-			topColor,
-			outerRightBottomInnerInterpolatedColor);
+			black ,
+			lerpColorRightBottomRightTop,
+			black,
+			lerpColorRightBottomLeftBottom);
 	}
 
-	//left border
-	if ((p_RoundCornerFlags & K15_LEFT_TOP_CORNER) ||
-		(p_RoundCornerFlags & K15_LEFT_BOTTOM_CORNER))
+ 	//left border
 	{
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			p_PixelPosLeft, pixelPosLeft, pixelPosTop, pixelPosBottom,
-			outerLeftTopInterpolatedColor, innerLeftTopInterpolatedColor,
-			outerLeftBottomInterpolatedColor, innerLeftBottomInterpolatedColor);
+			lerpColorLeftTopLeftBottom, lerpColorLeftTopLeftBottom,
+			lerpColorLeftBottomLeftTop, lerpColorLeftBottomLeftTop);
 	}
-
+ 
 	//right border
-	if ((p_RoundCornerFlags & K15_RIGHT_TOP_CORNER) ||
-		(p_RoundCornerFlags & K15_RIGHT_BOTTOM_CORNER))
 	{
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			pixelPosRight, p_PixelPosRight, pixelPosTop, pixelPosBottom,
-			outerRightTopInterpolatedColor, innerRightTopInterpolatedColor,
-			outerRightBottomInterpolatedColor, innerRightBottomInterpolatedColor);
+			lerpColorRightTopRightBottom, lerpColorRightTopRightBottom,
+			lerpColorRightBottomRightTop, lerpColorRightBottomRightTop);
 	}
-
-	//top border
-	if ((p_RoundCornerFlags & K15_LEFT_TOP_CORNER) ||
-		(p_RoundCornerFlags & K15_RIGHT_TOP_CORNER))
+ 
+ 	//top border
 	{
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			pixelPosLeft, pixelPosRight, p_PixelPosTop, pixelPosTop,
-			outerLeftTopInnerInterpolatedColor, outerRightTopInnerInterpolatedColor,
-			innerLeftTopInterpolatedColor, innerRightTopInterpolatedColor);
+			lerpColorLeftTopRightTop, lerpColorRightTopLeftTop,
+			lerpColorLeftTopLeftBottom, lerpColorRightTopRightBottom);
 	}
 
 	//bottom border
-	if ((p_RoundCornerFlags & K15_LEFT_BOTTOM_CORNER) ||
-		(p_RoundCornerFlags & K15_RIGHT_BOTTOM_CORNER))
 	{
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			pixelPosLeft, pixelPosRight, pixelPosBottom, p_PixelPosBottom,
-			outerLeftBottomInterpolatedColor, outerRightBottomInterpolatedColor,
-			outerLeftBottomInnerInterpolatedColor, outerRightBottomInnerInterpolatedColor);
+			lerpColorLeftBottomLeftTop, lerpColorRightBottomRightTop,
+			lerpColorLeftBottomRightBottom, lerpColorRightBottomLeftBottom);
 	}
 
 	if ((p_RoundCornerFlags & K15_RIGHT_TOP_CORNER) == 0)
 	{
-		colorRightTop = innerRightTopInterpolatedColor;
+		colorRightTop = lerpColorRightTopRightBottom;
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			p_PixelPosRight - cornerPixelRadius, p_PixelPosRight,
 			p_PixelPosTop, p_PixelPosTop + cornerPixelRadius,
-			outerRightTopInnerInterpolatedColor, p_ColorRightTop,
-			innerRightTopInterpolatedColor, outerRightTopInterpolatedColor);
+			lerpColorRightTopLeftTop, p_ColorRightTop,
+			lerpColorRightTopRightBottom, lerpColorRightTopRightBottom);
 	}
 
 	if ((p_RoundCornerFlags & K15_LEFT_TOP_CORNER) == 0)
 	{
-		colorLeftTop = innerLeftTopInterpolatedColor;
+		colorLeftTop = lerpColorLeftTopLeftBottom;
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			p_PixelPosLeft, p_PixelPosLeft + cornerPixelRadius,
 			p_PixelPosTop, p_PixelPosTop + cornerPixelRadius,
-			p_ColorLeftTop, outerLeftTopInnerInterpolatedColor,
-			outerLeftTopInterpolatedColor, innerLeftTopInterpolatedColor);
+			p_ColorLeftTop, lerpColorLeftTopRightTop,
+			lerpColorLeftTopLeftBottom, lerpColorLeftTopLeftBottom);
 	}
-
+ 
 	if ((p_RoundCornerFlags & K15_LEFT_BOTTOM_CORNER) == 0)
 	{
-		colorLeftBottom = innerLeftBottomInterpolatedColor;
+		colorLeftBottom = lerpColorLeftBottomLeftTop;
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			p_PixelPosLeft, p_PixelPosLeft + cornerPixelRadius,
 			p_PixelPosBottom - cornerPixelRadius, p_PixelPosBottom,
-			outerLeftBottomInterpolatedColor, innerLeftBottomInterpolatedColor,
-			p_ColorLeftBottom, outerLeftBottomInnerInterpolatedColor);
+			lerpColorLeftBottomLeftTop, lerpColorLeftBottomLeftTop,
+			p_ColorLeftBottom, lerpColorLeftBottomRightBottom);
 	}
 
 	if ((p_RoundCornerFlags & K15_RIGHT_BOTTOM_CORNER) == 0)
 	{
-		//colorRightBottom = innerRightBottomInterpolatedColor;
+		colorRightBottom = lerpColorRightBottomRightTop;
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			p_PixelPosRight - cornerPixelRadius, p_PixelPosRight,
 			p_PixelPosBottom - cornerPixelRadius, p_PixelPosBottom,
-			innerRightBottomInterpolatedColor, outerRightBottomInterpolatedColor,
-			outerRightBottomInnerInterpolatedColor, p_ColorRightBottom);
+			lerpColorRightBottomRightTop, lerpColorRightBottomRightTop,
+			lerpColorRightBottomLeftBottom, p_ColorRightBottom);
 	}
 
 	//mid non rounded part

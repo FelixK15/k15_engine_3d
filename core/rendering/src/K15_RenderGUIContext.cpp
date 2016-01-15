@@ -15,7 +15,7 @@ intern uint32 K15_InternalGetGUIControlVertexCount(K15_GUIContext* p_GUIContext,
 
 		case K15_GUI_TYPE_WINDOW:
 		{
-			vertexCount += 204;
+			vertexCount += 228;
 			break;
 		}
 	}
@@ -151,10 +151,13 @@ intern void K15_InternalPushGUIWindowVertices(K15_RenderBackEnd* p_RenderBackEnd
 	uint32 windowLowerBackgroundColor = style->windowLowerBackgroundColor;
 	uint32 windowTitleTextColor = style->windowTitleTextColor;
 
+	uint32 borderPixelThickness = 2;
+
 	//border title
 	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(p_RenderBackEnd, p_VertexBuffer,
 		vertexBufferIndex,
-		pixelPosLeft-1, pixelPosRight+1, pixelPosTop-1, pixelPosBottom+1,
+		pixelPosLeft - borderPixelThickness, pixelPosRight + borderPixelThickness, 
+		pixelPosTop - borderPixelThickness, pixelPosBottom + borderPixelThickness,
 		windowBorderUpperColor, windowBorderUpperColor,
 		windowBorderUpperColor, windowBorderUpperColor,
 		K15_LEFT_TOP_CORNER | K15_RIGHT_TOP_CORNER,
@@ -163,7 +166,8 @@ intern void K15_InternalPushGUIWindowVertices(K15_RenderBackEnd* p_RenderBackEnd
 	//border window
 	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer,
 		vertexBufferIndex,
-		pixelPosLeft-1, pixelPosRight+1, pixelPosBottom-1, pixelPosBottom + windowPixelHeight+1,
+		pixelPosLeft - borderPixelThickness, pixelPosRight + borderPixelThickness, 
+		pixelPosBottom - borderPixelThickness, pixelPosBottom + windowPixelHeight + borderPixelThickness,
 		windowBorderLowerColor, windowBorderLowerColor,
 		windowBorderLowerColor, windowBorderLowerColor);
 
@@ -171,10 +175,8 @@ intern void K15_InternalPushGUIWindowVertices(K15_RenderBackEnd* p_RenderBackEnd
 	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(p_RenderBackEnd, p_VertexBuffer, 
 		vertexBufferIndex,
 		pixelPosLeft, pixelPosRight, pixelPosTop, pixelPosBottom,
-		//windowTitleUpperColor, windowTitleUpperColor,
-		//windowTitleLowerColor, windowTitleLowerColor,
-		0xFFFFFF, 0xFFFFFF,
-		0x000000, 0x000000,
+		windowTitleUpperColor, windowTitleUpperColor,
+		windowTitleLowerColor, windowTitleLowerColor,
 		K15_LEFT_TOP_CORNER | K15_RIGHT_TOP_CORNER,
 		0.5f);
 
