@@ -375,6 +375,22 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 	K15_Vector3 lerpColorLeftBottomRightBottom = K15_LerpColor(colorLeftBottom, colorRightBottom, widthLerpFactor);
 	K15_Vector3 lerpColorRightBottomLeftBottom = K15_LerpColor(colorRightBottom, colorLeftBottom, widthLerpFactor);
 
+	K15_Vector3 lerpColorLeftTopRightTopLeftTopLeftBottom = K15_LerpColor(lerpColorLeftTopRightTop,
+		lerpColorLeftTopLeftBottom,
+		0.5f);
+
+	K15_Vector3 lerpColorRightTopLeftTopRightTopRightBottom = K15_LerpColor(lerpColorRightTopLeftTop,
+		lerpColorRightTopRightBottom,
+		0.5f);
+
+	K15_Vector3 lerpColorLeftBottomLeftTopLeftBottomRightBottom = K15_LerpColor(lerpColorLeftBottomLeftTop ,
+		lerpColorLeftBottomRightBottom,
+		0.5f);
+
+	K15_Vector3 lerpColorRightBottomRightTopRightBottomLeftBottom = K15_LerpColor(lerpColorRightBottomRightTop,
+		lerpColorRightBottomLeftBottom,
+		0.5f);
+
 	pixelPosRight -= cornerPixelRadius;
 	pixelPosTop += cornerPixelRadius;
 	pixelPosLeft += cornerPixelRadius;
@@ -436,16 +452,16 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 	{
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			p_PixelPosLeft, pixelPosLeft, pixelPosTop, pixelPosBottom,
-			lerpColorLeftTopLeftBottom, lerpColorLeftTopLeftBottom,
-			lerpColorLeftBottomLeftTop, lerpColorLeftBottomLeftTop);
+			lerpColorLeftTopLeftBottom, lerpColorLeftTopRightTopLeftTopLeftBottom,
+			lerpColorLeftBottomLeftTop, lerpColorLeftBottomLeftTopLeftBottomRightBottom);
 	}
  
 	//right border
 	{
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			pixelPosRight, p_PixelPosRight, pixelPosTop, pixelPosBottom,
-			lerpColorRightTopRightBottom, lerpColorRightTopRightBottom,
-			lerpColorRightBottomRightTop, lerpColorRightBottomRightTop);
+			lerpColorRightTopLeftTopRightTopRightBottom, lerpColorRightTopRightBottom,
+			lerpColorRightBottomRightTopRightBottomLeftBottom, lerpColorRightBottomRightTop);
 	}
  
  	//top border
@@ -453,54 +469,54 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			pixelPosLeft, pixelPosRight, p_PixelPosTop, pixelPosTop,
 			lerpColorLeftTopRightTop, lerpColorRightTopLeftTop,
-			lerpColorLeftTopLeftBottom, lerpColorRightTopRightBottom);
+			lerpColorLeftTopRightTopLeftTopLeftBottom, lerpColorRightTopLeftTopRightTopRightBottom);
 	}
 
 	//bottom border
 	{
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			pixelPosLeft, pixelPosRight, pixelPosBottom, p_PixelPosBottom,
-			lerpColorLeftBottomLeftTop, lerpColorRightBottomRightTop,
+			lerpColorLeftBottomLeftTopLeftBottomRightBottom, lerpColorRightBottomRightTopRightBottomLeftBottom,
 			lerpColorLeftBottomRightBottom, lerpColorRightBottomLeftBottom);
 	}
 
 	if ((p_RoundCornerFlags & K15_RIGHT_TOP_CORNER) == 0)
 	{
-		colorRightTop = lerpColorRightTopRightBottom;
+		colorRightTop = lerpColorRightTopLeftTopRightTopRightBottom;
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			p_PixelPosRight - cornerPixelRadius, p_PixelPosRight,
 			p_PixelPosTop, p_PixelPosTop + cornerPixelRadius,
 			lerpColorRightTopLeftTop, p_ColorRightTop,
-			lerpColorRightTopRightBottom, lerpColorRightTopRightBottom);
+			lerpColorRightTopLeftTopRightTopRightBottom, lerpColorRightTopRightBottom);
 	}
 
 	if ((p_RoundCornerFlags & K15_LEFT_TOP_CORNER) == 0)
 	{
-		colorLeftTop = lerpColorLeftTopLeftBottom;
+		colorLeftTop = lerpColorLeftTopRightTopLeftTopLeftBottom;
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			p_PixelPosLeft, p_PixelPosLeft + cornerPixelRadius,
 			p_PixelPosTop, p_PixelPosTop + cornerPixelRadius,
 			p_ColorLeftTop, lerpColorLeftTopRightTop,
-			lerpColorLeftTopLeftBottom, lerpColorLeftTopLeftBottom);
+			lerpColorLeftTopLeftBottom, lerpColorLeftTopRightTopLeftTopLeftBottom);
 	}
  
 	if ((p_RoundCornerFlags & K15_LEFT_BOTTOM_CORNER) == 0)
 	{
-		colorLeftBottom = lerpColorLeftBottomLeftTop;
+		colorLeftBottom = lerpColorLeftBottomLeftTopLeftBottomRightBottom;
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			p_PixelPosLeft, p_PixelPosLeft + cornerPixelRadius,
 			p_PixelPosBottom - cornerPixelRadius, p_PixelPosBottom,
-			lerpColorLeftBottomLeftTop, lerpColorLeftBottomLeftTop,
+			lerpColorLeftBottomLeftTop, lerpColorLeftBottomLeftTopLeftBottomRightBottom,
 			p_ColorLeftBottom, lerpColorLeftBottomRightBottom);
 	}
 
 	if ((p_RoundCornerFlags & K15_RIGHT_BOTTOM_CORNER) == 0)
 	{
-		colorRightBottom = lerpColorRightBottomRightTop;
+		colorRightBottom = lerpColorRightBottomRightTopRightBottomLeftBottom;
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			p_PixelPosRight - cornerPixelRadius, p_PixelPosRight,
 			p_PixelPosBottom - cornerPixelRadius, p_PixelPosBottom,
-			lerpColorRightBottomRightTop, lerpColorRightBottomRightTop,
+			lerpColorRightBottomRightTopRightBottomLeftBottom, lerpColorRightBottomRightTop,
 			lerpColorRightBottomLeftBottom, p_ColorRightBottom);
 	}
 
