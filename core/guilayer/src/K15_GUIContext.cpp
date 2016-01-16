@@ -70,6 +70,11 @@ intern K15_GUIElementHeader* K15_InternalGetGUIElementLastFrame(K15_GUIContext* 
 		}
 
 		currentMemoryOffset += guiElementHeader->offset;
+
+		if (guiElementHeader->offset == 0)
+		{
+			break;
+		}
 	}
 
 	return elementLastFrame;

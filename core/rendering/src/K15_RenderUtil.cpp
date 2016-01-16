@@ -379,6 +379,8 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 		lerpColorLeftTopLeftBottom,
 		0.5f);
 
+//	K15_Vector3 lerpColorLeftTopRightTopLeftTopLeftBottom = lerpColorLeftTopRightTop + lerpColorLeftTopRightTop;
+
 	K15_Vector3 lerpColorRightTopLeftTopRightTopRightBottom = K15_LerpColor(lerpColorRightTopLeftTop,
 		lerpColorRightTopRightBottom,
 		0.5f);
@@ -398,7 +400,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 
 	if (p_RoundCornerFlags & K15_LEFT_TOP_CORNER)
 	{
-		colorLeftTop = lerpColorLeftTopLeftBottom;
+		colorLeftTop = lerpColorLeftTopRightTopLeftTopLeftBottom;
 
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredSphereVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			pixelPosLeft, pixelPosTop, cornerPixelRadius,
@@ -411,7 +413,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 
 	if (p_RoundCornerFlags & K15_RIGHT_TOP_CORNER)
 	{
-		colorRightTop = lerpColorRightTopRightBottom;
+		colorRightTop = lerpColorRightTopLeftTopRightTopRightBottom;
 
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredSphereVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			pixelPosRight, pixelPosTop, cornerPixelRadius,
@@ -424,7 +426,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
  
 	if (p_RoundCornerFlags & K15_LEFT_BOTTOM_CORNER)
 	{
-		colorLeftBottom = lerpColorLeftBottomLeftTop;
+		colorLeftBottom = lerpColorLeftBottomLeftTopLeftBottomRightBottom;
 
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredSphereVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			pixelPosLeft, pixelPosBottom, cornerPixelRadius,
@@ -437,7 +439,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 
 	if (p_RoundCornerFlags & K15_RIGHT_BOTTOM_CORNER)
 	{
-		colorRightBottom = lerpColorRightBottomRightTop;
+		colorRightBottom = lerpColorRightBottomRightTopRightBottomLeftBottom;
 
 		vertexIndex = K15_InternalPush2DScreenspacePixelColoredSphereVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 			pixelPosRight, pixelPosBottom, cornerPixelRadius,

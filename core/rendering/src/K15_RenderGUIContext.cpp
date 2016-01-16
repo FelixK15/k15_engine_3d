@@ -175,10 +175,8 @@ intern void K15_InternalPushGUIWindowVertices(K15_RenderBackEnd* p_RenderBackEnd
 	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(p_RenderBackEnd, p_VertexBuffer, 
 		vertexBufferIndex,
 		pixelPosLeft, pixelPosRight, pixelPosTop, pixelPosBottom,
-		0xFF0000, 0x00FF00,
-		0x0000FF, 0xFFFF00,
-// 		windowTitleUpperColor, windowTitleUpperColor,
-// 		windowTitleLowerColor, windowTitleLowerColor,
+		windowTitleUpperColor, windowTitleUpperColor,
+		windowTitleLowerColor, windowTitleLowerColor,
 		K15_LEFT_TOP_CORNER | K15_RIGHT_TOP_CORNER,
 		0.5f);
 

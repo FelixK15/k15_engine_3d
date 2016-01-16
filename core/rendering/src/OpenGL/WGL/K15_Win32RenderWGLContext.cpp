@@ -218,9 +218,9 @@ uint8 K15_Win32CreateGLContext(K15_CustomMemoryAllocator* p_MemoryAllocator, K15
 #endif //K15_DEBUG
 
 #ifdef K15_OPENGL_FORCE_ES_2_0_CONTEXT
-	/*contextFlags |= WGL_CONTEXT_ES2_PROFILE_BIT_EXT;
+	contextFlags |= WGL_CONTEXT_ES2_PROFILE_BIT_EXT;
 	majorVersion = 2;
-	minorVersion = 0;*/
+	minorVersion = 0;
 #elif defined K15_OPENGL_FORCE_ES_3_0_CONTEXT
 	contextFlags |= WGL_CONTEXT_ES3_PROFILE_BIT_EXT;
 	majorVersion = 3;
