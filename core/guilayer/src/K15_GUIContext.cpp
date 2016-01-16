@@ -69,12 +69,7 @@ intern K15_GUIElementHeader* K15_InternalGetGUIElementLastFrame(K15_GUIContext* 
 			break;
 		}
 
-		currentMemoryOffset += guiElementHeader->offset;
-
-		if (guiElementHeader->offset == 0)
-		{
-			break;
-		}
+		currentMemoryOffset = guiElementHeader->offset;
 	}
 
 	return elementLastFrame;
@@ -99,12 +94,7 @@ intern bool8 K15_InternalCheckForDuplicateIdentifiers(K15_GUIContext* p_GUIConte
 			break;
 		}
 
-		currentMemoryOffset += guiElementHeader->offset;
-
-		if (guiElementHeader->offset == 0)
-		{
-			break;
-		}
+		currentMemoryOffset = guiElementHeader->offset;
 	}
 
 	return foundDuplicate;

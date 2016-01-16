@@ -241,7 +241,7 @@ intern void K15_InternalCountGUIContextVertices(K15_GUIContext* p_GUIContext,
 			}
 		}
 
-		currentGUIMemoryOffset += guiElement->offset;
+		currentGUIMemoryOffset = guiElement->offset;
 	}
 
 	*p_GeometryVertices = numVertices;
@@ -312,7 +312,7 @@ intern void K15_InternalFillGUIContextVertexBuffer(K15_RenderBackEnd* p_RenderBa
 			}
 		}
 
-		currentGUIMemoryOffset += guiElement->offset;
+		currentGUIMemoryOffset = guiElement->offset;
 	}
 
 	*p_VertexBufferFloatCount = vertexIndex;
