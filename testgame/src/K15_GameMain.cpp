@@ -157,8 +157,9 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	if (K15_BeginWindow(guiContext, "TestWindow", 
 		&windowLeftPixelPos, &windowTopPixelPos,
 		&testWindowPixelWidth, &testWindowPixelHeight, 
-		"test_window"))
+		K15_GUI_LAYOUT_VERTICAL, "test_window"))
 	{
+		K15_Label(guiContext, "Test Label:", "test_label");
 		K15_Button(guiContext, "bla", "test_button");
 		K15_EndWindow(guiContext);
 	}
@@ -166,7 +167,7 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	if (K15_BeginWindow(guiContext, "TestWindow2",
 		&window2LeftPixelPos, &window2TopPixelPos,
 		&window2PixelWidth, &window2PixelHeight,
-		"test_window2"))
+		K15_GUI_LAYOUT_VERTICAL, "test_window2"))
 	{
 		K15_EndWindow(guiContext);
 	}

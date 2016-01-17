@@ -31,22 +31,25 @@ intern void K15_InternalPushGUIButtonVertices(K15_RenderBackEnd* p_RenderBackEnd
 	uint32 vertexBufferIndex = *p_VertexBufferIndexOffset;
 	uint32 textVertexBufferIndex = *p_TextVertexBufferIndexOffset;
 
-	uint32 textOffsetX = 20;
-	uint32 textOffsetY = 10;
-
 	uint32 pixelPosLeft = p_GUIElement->posPixelX;
-	uint32 pixelPosRight = p_GUIElement->posPixelX + p_GUIElement->pixelWidth + textOffsetX;
+	uint32 pixelPosRight = p_GUIElement->posPixelX + p_GUIElement->pixelWidth;
 	uint32 pixelPosTop = p_GUIElement->posPixelY;
-	uint32 pixelPosBottom = p_GUIElement->posPixelY + p_GUIElement->pixelHeight + textOffsetY;
+	uint32 pixelPosBottom = p_GUIElement->posPixelY + p_GUIElement->pixelHeight;
 
 	uint32 thickness = 2; //1 pixel of thickness border
 
 	uint32 controlUpperBackgroundColor = 0;
 	uint32 controlLowerBackgroundColor = 0;
 
+	uint32 textPixelWidth = p_GUIButton->textPixelWidth;
+	uint32 textPixelHeight = p_GUIButton->textPixelHeight;
+
+	uint32 textOffsetX = p_GUIElement->pixelWidth / 2 - textPixelWidth / 2;
+	uint32 textOffsetY = p_GUIElement->pixelHeight / 2 - textPixelHeight / 2;
+
 	//text offset
-	int32 textPixelPosLeft = pixelPosLeft + textOffsetX / 2;
-	int32 textPixelPosTop = pixelPosTop + textOffsetY / 2;
+	int32 textPixelPosLeft = pixelPosLeft + textOffsetX;
+	int32 textPixelPosTop = pixelPosTop + textOffsetY;
 
 	if (p_GUIButton->state == K15_GUI_BUTTON_STATE_HOVERED)
 	{
@@ -67,12 +70,7 @@ intern void K15_InternalPushGUIButtonVertices(K15_RenderBackEnd* p_RenderBackEnd
 	uint32 textColor = p_GUIContext->style.textColor;
 
 	uint32 borderUpperColor = p_GUIContext->style.controlUpperBorderColor;
-	uint32 borderLowerColor = p_GUIContext->style.controlLowerBorderColor;
-	
-	int32 edgePixelPosLeft = pixelPosLeft - thickness;
-	int32 edgePixelPosRight = pixelPosRight + thickness;
-	int32 edgePixelPosTop = pixelPosTop - thickness;
-	int32 edgePixelPosBottom = pixelPosBottom + thickness;
+	uint32 borderLowerColor = p_GUIContext->style.controlLowerBorderColor;	
 
 	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
 
@@ -84,13 +82,13 @@ intern void K15_InternalPushGUIButtonVertices(K15_RenderBackEnd* p_RenderBackEnd
 	//edge
 	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd,
 		p_VertexBuffer, vertexBufferIndex,
-		edgePixelPosLeft, edgePixelPosRight, edgePixelPosTop, edgePixelPosBottom,
+		pixelPosLeft, pixelPosRight, pixelPosTop, pixelPosBottom,
 		borderUpperColor, borderUpperColor, borderLowerColor, borderLowerColor);
 
 // 	element
 	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, 
 		p_VertexBuffer, vertexBufferIndex,
-		pixelPosLeft, pixelPosRight, pixelPosTop, pixelPosBottom,
+		pixelPosLeft + thickness, pixelPosRight - thickness, pixelPosTop + thickness, pixelPosBottom - thickness,
 		controlUpperBackgroundColor, controlUpperBackgroundColor,
 		controlLowerBackgroundColor, controlLowerBackgroundColor);
  
@@ -196,6 +194,36 @@ intern void K15_InternalPushGUIWindowVertices(K15_RenderBackEnd* p_RenderBackEnd
 	*p_TextVertexBufferIndexOffset = textVertexBufferIndex;
 }
 /*********************************************************************************/
+intern void K15_InternalPushGUILabelVertices(K15_RenderBackEnd* p_RenderBackEnd, K15_GUIContext* p_GUIContext,
+	K15_GUIElementHeader* p_GUIElement, K15_GUILabel* p_GUILabel,
+	float* p_VertexBuffer, uint32* p_VertexBufferIndexOffset,
+	float* p_TextVertexBuffer, uint32* p_TextVertexBufferIndexOffset)
+{
+	uint32 textVertexBufferIndex = *p_TextVertexBufferIndexOffset;
+
+	int32 pixelPosLeft = p_GUIElement->posPixelX;
+	int32 pixelPosRight = p_GUIElement->posPixelX + p_GUIElement->pixelWidth;
+	int32 pixelPosTop = p_GUIElement->posPixelY;
+	int32 pixelPosBottom = p_GUIElement->posPixelY + p_GUIElement->pixelHeight;
+
+	uint32 textPixelHeight = p_GUILabel->textPixelHeight;
+	uint32 textOffsetY = p_GUIElement->pixelHeight / 2 - textPixelHeight / 2;
+	
+	pixelPosTop += textOffsetY;
+
+	K15_GUIContextStyle* style = &p_GUIContext->style;
+	K15_RenderFontDesc* guiFont = style->styleFont;
+	uint32 textLabelColor = style->textLabelColor;
+
+	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
+	char* text = (char*)(guiMemory + p_GUILabel->textOffsetInBytes);
+
+	textVertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderBackEnd, guiFont, p_TextVertexBuffer, textVertexBufferIndex,
+		pixelPosLeft, pixelPosTop, textLabelColor, text, p_GUILabel->textLength);
+
+	*p_TextVertexBufferIndexOffset = textVertexBufferIndex;
+}
+/*********************************************************************************/
 intern void K15_InternalCountGUIContextVertices(K15_GUIContext* p_GUIContext, 
 												uint32* p_GeometryVertices, 
 												uint32* p_TextVertices)
@@ -213,12 +241,13 @@ intern void K15_InternalCountGUIContextVertices(K15_GUIContext* p_GUIContext,
 	{
 		K15_GUIElementHeader* guiElement = (K15_GUIElementHeader*)(guiMemory + currentGUIMemoryOffset);
 		K15_GUIElementType guiElementType = guiElement->type;
+		byte* guiElementMemory = (guiMemory + currentGUIMemoryOffset + sizeof(K15_GUIElementHeader));
 
 		switch(guiElementType)
 		{
 		case K15_GUI_TYPE_BUTTON:
 			{
-				K15_GUIButton* guiButton = (K15_GUIButton*)(guiMemory + currentGUIMemoryOffset + sizeof(K15_GUIElementHeader));
+				K15_GUIButton* guiButton = (K15_GUIButton*)guiElementMemory;
 				const char* text = (const char*)(guiMemory + guiButton->textOffsetInBytes);
 				numVertices += K15_InternalGetGUIControlVertexCount(p_GUIContext, guiElement);
 				numTextVertices += K15_GetTextVertexCount(guiStyleFont, text, guiButton->textLength);
@@ -227,10 +256,18 @@ intern void K15_InternalCountGUIContextVertices(K15_GUIContext* p_GUIContext,
 
 		case K15_GUI_TYPE_WINDOW:
 			{
-				K15_GUIWindow* guiWindow = (K15_GUIWindow*)(guiMemory + currentGUIMemoryOffset + sizeof(K15_GUIElementHeader));
+				K15_GUIWindow* guiWindow = (K15_GUIWindow*)guiElementMemory;
 				const char* title = (const char*)(guiMemory + guiWindow->titleOffsetInBytes);
 				numVertices += K15_InternalGetGUIControlVertexCount(p_GUIContext, guiElement);
 				numTextVertices += K15_GetTextVertexCount(guiStyleFont, title, guiWindow->titleLength);
+				break;
+			}
+
+		case K15_GUI_TYPE_LABEL:
+			{
+				K15_GUILabel* guiLabel = (K15_GUILabel*)guiElementMemory;
+				const char* text = (const char*)(guiMemory + guiLabel->textOffsetInBytes);
+				numTextVertices += K15_GetTextVertexCount(guiStyleFont, text, guiLabel->textLength);
 				break;
 			}
 
@@ -272,12 +309,13 @@ intern void K15_InternalFillGUIContextVertexBuffer(K15_RenderBackEnd* p_RenderBa
 	{
 		K15_GUIElementHeader* guiElement = (K15_GUIElementHeader*)(guiMemory + currentGUIMemoryOffset);
 		K15_GUIElementType guiElementType = guiElement->type;
+		byte* guiElementMemory = (guiMemory + currentGUIMemoryOffset + sizeof(K15_GUIElementHeader));
 
 		switch(guiElementType) 
 		{
 		case K15_GUI_TYPE_BUTTON:
 			{
-				K15_GUIButton* guiButton = (K15_GUIButton*)(guiMemory + currentGUIMemoryOffset + sizeof(K15_GUIElementHeader));
+				K15_GUIButton* guiButton = (K15_GUIButton*)guiElementMemory;
 				
 				K15_InternalPushGUIButtonVertices(p_RenderBackEnd, p_GUIContext, 
 					guiElement, guiButton, p_VertexBuffer, &vertexIndex,
@@ -287,7 +325,7 @@ intern void K15_InternalFillGUIContextVertexBuffer(K15_RenderBackEnd* p_RenderBa
 
 		case K15_GUI_TYPE_COMBO_BOX:
 			{
-				K15_GUIComboBox* guiComboBox = (K15_GUIComboBox*)(guiMemory + currentGUIMemoryOffset + sizeof(K15_GUIElementHeader));
+				K15_GUIComboBox* guiComboBox = (K15_GUIComboBox*)guiElementMemory;
 
 				K15_InternalPushGUIComboBoxVertices(p_RenderBackEnd, p_GUIContext,
 					guiElement, guiComboBox, p_VertexBuffer, &vertexIndex,
@@ -297,10 +335,20 @@ intern void K15_InternalFillGUIContextVertexBuffer(K15_RenderBackEnd* p_RenderBa
 
 		case K15_GUI_TYPE_WINDOW:
 			{
-				K15_GUIWindow* guiWindow = (K15_GUIWindow*)(guiMemory + currentGUIMemoryOffset + sizeof(K15_GUIElementHeader));
+				K15_GUIWindow* guiWindow = (K15_GUIWindow*)guiElementMemory;
 
 				K15_InternalPushGUIWindowVertices(p_RenderBackEnd, p_GUIContext,
 					guiElement, guiWindow, p_VertexBuffer, &vertexIndex,
+					p_TextVertexBuffer, &textVertexIndex);
+				break;
+			}
+
+		case K15_GUI_TYPE_LABEL:
+			{
+				K15_GUILabel* guiLabel = (K15_GUILabel*)guiElementMemory;
+
+				K15_InternalPushGUILabelVertices(p_RenderBackEnd, p_GUIContext,
+					guiElement, guiLabel, p_VertexBuffer, &vertexIndex,
 					p_TextVertexBuffer, &textVertexIndex);
 				break;
 			}

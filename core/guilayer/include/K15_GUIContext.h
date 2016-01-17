@@ -13,6 +13,7 @@ enum K15_GUIElementType
 	K15_GUI_TYPE_INVALID = 0,
 	K15_GUI_TYPE_BUTTON,
 	K15_GUI_TYPE_COMBO_BOX,
+	K15_GUI_TYPE_LABEL,
 	K15_GUI_TYPE_WINDOW
 };
 
@@ -33,11 +34,10 @@ enum K15_GUIWindowState
 	K15_GUI_WINDOW_STATE_DRAGGED
 };
 
-enum K15_GUICategoryLayout
+enum K15_GUILayout
 {
 	K15_GUI_LAYOUT_HORIZONTAL = 0,
-	K15_GUI_LAYOUT_VERTICAL,
-	K15_GUI_LAYOUT_GRID
+	K15_GUI_LAYOUT_VERTICAL
 };
 
 struct K15_GUIButton
@@ -45,6 +45,16 @@ struct K15_GUIButton
 	K15_GUIButtonState state;
 	uint32 textOffsetInBytes;
 	uint32 textLength;
+	uint32 textPixelWidth;
+	uint32 textPixelHeight;
+};
+
+struct K15_GUILabel
+{
+	uint32 textLength;
+	uint32 textOffsetInBytes;
+	uint32 textPixelWidth;
+	uint32 textPixelHeight;
 };
 
 struct K15_GUIComboBox
@@ -78,7 +88,6 @@ struct K15_GUIElementHeader
 	uint32 offset;
 };
 
-
 struct K15_GUIContextStyle
 {
 	K15_RenderFontDesc* styleFont;
@@ -102,6 +111,8 @@ struct K15_GUIContextStyle
 	uint32 interactedControlUpperBackgroundColor;
 	uint32 controlLowerBorderColor;
 	uint32 controlUpperBorderColor;
+	
+	uint32 textLabelColor;
 
 	uint32 windowUpperBackgroundColor;
 	uint32 windowLowerBackgroundColor;
@@ -112,11 +123,15 @@ struct K15_GUIContextStyle
 	uint32 windowTitleTextColor;
 };
 
-struct K15_GUICategory
+struct K15_GUILayoutCategory
 {
-	uint32 posPixelX;
-	uint32 posPixelY;
-	K15_GUICategoryLayout layout;
+	int32 posPixelX;
+	int32 posPixelY;
+	uint32 pixelWidth;
+	uint32 pixelHeight;
+	uint32 pixelOffsetX;
+	uint32 pixelOffsetY;
+	K15_GUILayout layout;
 };
 
 struct K15_GUIContext
@@ -126,7 +141,7 @@ struct K15_GUIContext
 	K15_RenderMaterialDesc* guiRenderMaterial;
 	K15_GUIWindow* currentWindow;
 
-	K15_GUICategory categoryStack[K15_GUI_MAX_CATEGORIES];
+	K15_GUILayoutCategory layoutCategoryStack[K15_GUI_MAX_CATEGORIES];
 	K15_GUIContextStyle style;
 
 	K15_Semaphore* memoryLock;
@@ -136,7 +151,7 @@ struct K15_GUIContext
 	bool8 leftMouseDown;
 	bool8 rightMouseDown;
 
-	uint32 categoryIndex;
+	uint32 layoutCategoryIndex;
 
 	uint32 guiMemoryMaxSize;
 	uint32 guiMemoryCurrentSize[K15_GUI_MEMORY_BUFFER_COUNT];
@@ -159,10 +174,16 @@ void K15_HandleGUIWindowEvent(K15_GUIContext* p_GUIContext, K15_SystemEvent* p_S
 void K15_SetGUIContextWindowSize(K15_GUIContext* p_GUIContext, uint32 p_WindowWidth, uint32 p_WindowHeight);
 void K15_SetGUIContextMousePosition(K15_GUIContext* p_GUIContext, uint32 p_MouseX, uint32 p_MouseY);
 
-bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char* p_Identifier);
 char* K15_ComboBox(K15_GUIContext* p_GUIContext, char** p_Elements, uint32 p_NumElements, const char* p_Identifier);
 bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption, int32* p_LeftPixelPos, int32* p_TopPixelPos, 
-	uint32* p_WindowWidth, uint32* p_WindowHeight, const char* p_Identifier);
-
+	uint32* p_WindowWidth, uint32* p_WindowHeight, K15_GUILayout p_Layout, const char* p_Identifier);
 void K15_EndWindow(K15_GUIContext* p_GUIContext);
+bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char* p_Identifier);
+void K15_Label(K15_GUIContext* p_GUIContext, const char* p_LabelText, const char* p_Identifier);
+
+void K15_PushLayoutCategory(K15_GUIContext* p_GUIContext, K15_GUILayout p_Layout,
+	int32 p_LeftPixelPos, int32 p_TopPixelPos, uint32 p_PixelWidth, uint32 p_PixelHeight);
+
+void K15_PopLayoutCategory(K15_GUIContext* p_GUIContext);
+
 #endif //_K15_GUILayer_Context_h_

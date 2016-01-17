@@ -101,6 +101,56 @@ intern bool8 K15_InternalCheckForDuplicateIdentifiers(K15_GUIContext* p_GUIConte
 }
 #endif //K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
 /*********************************************************************************/
+intern void K15_InternalGetAlignedGUIDimension_R(K15_GUIContext* p_GUIContext, uint32 p_StackIndex,
+	int32* p_LeftPixelPos, int32* p_TopPixelPos, uint32* p_PixelWidth, uint32* p_PixelHeight)
+{
+	K15_GUILayoutCategory* category = &p_GUIContext->layoutCategoryStack[p_StackIndex];
+	K15_GUILayout layout = category->layout;
+
+	uint32 pixelOffsetX = category->pixelOffsetX;
+	uint32 pixelOffsetY = category->pixelOffsetY;
+
+	switch (layout)
+	{
+		case K15_GUI_LAYOUT_VERTICAL:
+		{
+			*p_LeftPixelPos = category->posPixelX + pixelOffsetX;
+			*p_TopPixelPos = category->posPixelY + pixelOffsetY;
+			*p_PixelWidth = category->pixelWidth;
+			pixelOffsetY += *p_PixelHeight;
+
+			break;
+		}
+
+		case K15_GUI_LAYOUT_HORIZONTAL:
+		{
+			*p_LeftPixelPos = category->posPixelX + pixelOffsetX;
+			*p_TopPixelPos = category->posPixelY + pixelOffsetY;
+			*p_PixelHeight = category->pixelHeight;
+			pixelOffsetX += *p_PixelWidth;
+
+			break;
+		}
+	}
+
+	category->pixelOffsetX = pixelOffsetX;
+	category->pixelOffsetY = pixelOffsetY;
+
+	if (p_StackIndex != 0)
+	{
+		K15_InternalGetAlignedGUIDimension_R(p_GUIContext, p_StackIndex - 1, 
+			p_LeftPixelPos, p_TopPixelPos, p_PixelWidth, p_PixelHeight);
+	}
+}
+/*********************************************************************************/
+intern void K15_InternalGetAlignedGUIDimension(K15_GUIContext* p_GUIContext,
+	int32* p_LeftPixelPos, int32* p_TopPixelPos, uint32* p_PixelWidth, uint32* p_PixelHeight)
+{
+	uint32 categoryIndex = p_GUIContext->layoutCategoryIndex;
+	K15_InternalGetAlignedGUIDimension_R(p_GUIContext, categoryIndex, 
+		p_LeftPixelPos, p_TopPixelPos, p_PixelWidth, p_PixelHeight);
+}
+/*********************************************************************************/
 
 
 
@@ -131,7 +181,7 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 
 	byte* guiMemory = (byte*)K15_AllocateFromMemoryAllocator(&p_MemoryAllocator, actualGUIMemorySize);
 	memset(guiMemory, 0, actualGUIMemorySize);
-
+	
 	K15_ASSERT_TEXT(guiMemory, "Could not acquire gui memory (%dkb) from allocator '%s'",
 		actualGUIMemorySize / 1024, p_MemoryAllocator.name);
 
@@ -146,6 +196,7 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	guiContext->mousePosPixelX = 0;
 	guiContext->mousePosPixelY = 0;
 	guiContext->currentWindow = 0;
+	guiContext->layoutCategoryIndex = 0;
 	guiContext->leftMouseDown = K15_FALSE;
 	guiContext->rightMouseDown = K15_FALSE;
 	guiContext->memoryLock = K15_CreateSemaphoreWithInitialValue(1);
@@ -327,7 +378,8 @@ char* K15_ComboBox(K15_GUIContext* p_GUIContext, char** p_Elements, uint32 p_Num
 /*********************************************************************************/
 bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption, 
 	int32* p_LeftPixelPos, int32* p_TopPixelPos, 
-	uint32* p_WindowWidth, uint32* p_WindowHeight, const char* p_Identifier)
+	uint32* p_WindowWidth, uint32* p_WindowHeight, 
+	K15_GUILayout p_Layout, const char* p_Identifier)
 {
 	K15_ASSERT(p_GUIContext);
 	K15_ASSERT(p_Caption);
@@ -448,6 +500,9 @@ bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption,
 			"before starting a new window with K15_BeginWindow()");
 
 		p_GUIContext->currentWindow = window;
+
+		K15_PushLayoutCategory(p_GUIContext, p_Layout, *p_LeftPixelPos, *p_TopPixelPos + windowTitleHeight,
+			*p_WindowWidth, *p_WindowHeight);
 	}
 
 	//copy text to gui memory buffer
@@ -463,6 +518,8 @@ void K15_EndWindow(K15_GUIContext* p_GUIContext)
 	K15_ASSERT_TEXT(p_GUIContext->currentWindow,
 		"There's currently no window being created. "
 		"Call K15_BeginWindow() to create a new window.");
+
+	K15_PopLayoutCategory(p_GUIContext);
 
 	p_GUIContext->currentWindow = 0;
 }
@@ -511,18 +568,23 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char
 	button->state = K15_GUI_BUTTON_STATE_NORMAL;
 	button->textLength = captionLength;
 	button->textOffsetInBytes = textOffsetInBytes;
+	button->textPixelWidth = textWidth;
+	button->textPixelHeight = textHeight;
 
 	buttonHeader->type = K15_GUI_TYPE_BUTTON;
 	buttonHeader->posPixelX = 0;
-	buttonHeader->posPixelY = 400;
+	buttonHeader->posPixelY = 0;
 	buttonHeader->pixelWidth = textWidth;
-	buttonHeader->pixelHeight = textHeight;
+	buttonHeader->pixelHeight = textHeight + 5;
 	buttonHeader->offset = newOffset;
 	buttonHeader->identifierHash = K15_GenerateStringHash(p_Identifier);
 
+	K15_InternalGetAlignedGUIDimension(p_GUIContext, &buttonHeader->posPixelX, &buttonHeader->posPixelY,
+		&buttonHeader->pixelWidth, &buttonHeader->pixelHeight);
+
 	bool8 mouseInside = K15_Collision2DBoxPoint(buttonHeader->posPixelX, buttonHeader->posPixelY, 
-		buttonHeader->posPixelX + buttonHeader->pixelWidth + 20,
-		buttonHeader->posPixelY + buttonHeader->pixelHeight + 10,
+		buttonHeader->posPixelX + buttonHeader->pixelWidth,
+		buttonHeader->posPixelY + buttonHeader->pixelHeight,
 		p_GUIContext->mousePosPixelX, p_GUIContext->mousePosPixelY);
 
 	if (p_GUIContext->leftMouseDown && 
@@ -549,5 +611,89 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char
 	memcpy(guiContextFrontBuffer + textOffsetInBytes, p_Caption, captionLength);
 
 	return pressed;
+}
+/*********************************************************************************/
+void K15_Label(K15_GUIContext* p_GUIContext, const char* p_LabelText, const char* p_Identifier)
+{
+	assert(p_GUIContext);
+	assert(p_LabelText);
+	assert(p_Identifier);
+
+	uint32 textLength = (uint32)strlen(p_LabelText);
+	uint32 offset = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER];
+	uint32 textOffsetInBytes = offset + sizeof(K15_GUIElementHeader) + sizeof(K15_GUILabel);
+	uint32 newOffset = textOffsetInBytes + textLength;
+	uint32 guiElementIdentifierHash = K15_GenerateStringHash(p_Identifier);
+
+	K15_ASSERT_TEXT(newOffset <= p_GUIContext->guiMemoryMaxSize, "Out of GUI memory.");
+
+#ifdef K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
+	K15_ASSERT_TEXT(K15_InternalCheckForDuplicateIdentifiers(p_GUIContext, guiElementIdentifierHash) == K15_FALSE,
+		"Found duplicate for identifier '%s'. Please use a different identifier.", p_Identifier);
+#endif //K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
+
+	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER] = newOffset;
+
+	byte* guiContextFrontBuffer = p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER];
+
+	K15_GUIElementHeader* labelHeader = (K15_GUIElementHeader*)(guiContextFrontBuffer + offset);
+	K15_GUILabel* label = (K15_GUILabel*)(guiContextFrontBuffer + offset + sizeof(K15_GUIElementHeader));
+
+	K15_RenderFontDesc* guiFont = p_GUIContext->style.styleFont;
+
+	float textWidth = 0.f;
+	float textHeight = 0.f;
+
+	K15_GetTextSizeInPixels(guiFont, &textWidth, &textHeight, p_LabelText, textLength);
+
+	labelHeader->identifierHash = guiElementIdentifierHash;
+	labelHeader->offset = newOffset;
+	labelHeader->type = K15_GUI_TYPE_LABEL;
+	labelHeader->pixelHeight = textHeight;
+	labelHeader->pixelWidth = textWidth;
+	labelHeader->posPixelX = 0;
+	labelHeader->posPixelY = 0;
+
+	label->textLength = textLength;
+	label->textOffsetInBytes = textOffsetInBytes;
+	label->textPixelHeight = textHeight;
+	label->textPixelWidth = textWidth;
+
+	K15_InternalGetAlignedGUIDimension(p_GUIContext, &labelHeader->posPixelX, &labelHeader->posPixelY,
+		&labelHeader->pixelWidth, &labelHeader->pixelHeight);
+
+	//copy text to gui memory buffer
+	memcpy(guiContextFrontBuffer + textOffsetInBytes, p_LabelText, textLength);
+}
+/*********************************************************************************/
+void K15_PushLayoutCategory(K15_GUIContext* p_GUIContext, K15_GUILayout p_Layout,
+	int32 p_LeftPixelPos, int32 p_TopPixelPos, uint32 p_PixelWidth, uint32 p_PixelHeight)
+{
+	K15_ASSERT(p_GUIContext);
+
+	uint32 categoryIndex = p_GUIContext->layoutCategoryIndex;
+	
+	K15_ASSERT(categoryIndex != K15_GUI_MAX_CATEGORIES);
+
+	K15_GUILayoutCategory* category = &p_GUIContext->layoutCategoryStack[categoryIndex];
+	category->layout = p_Layout;
+	category->posPixelX = p_LeftPixelPos;
+	category->posPixelY = p_TopPixelPos;
+	category->pixelWidth = p_PixelWidth;
+	category->pixelHeight = p_PixelHeight;
+	category->pixelOffsetX = 0;
+	category->pixelOffsetY = 0;
+
+	p_GUIContext->layoutCategoryIndex = categoryIndex + 1;
+}
+/*********************************************************************************/
+void K15_PopLayoutCategory(K15_GUIContext* p_GUIContext)
+{
+	K15_ASSERT(p_GUIContext);
+	uint32 categoryIndex = p_GUIContext->layoutCategoryIndex;
+
+	K15_ASSERT(categoryIndex != 0);
+
+	p_GUIContext->layoutCategoryIndex = categoryIndex - 1;
 }
 /*********************************************************************************/
