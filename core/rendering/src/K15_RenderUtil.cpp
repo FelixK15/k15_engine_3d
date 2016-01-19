@@ -379,8 +379,6 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 		lerpColorLeftTopLeftBottom,
 		0.5f);
 
-//	K15_Vector3 lerpColorLeftTopRightTopLeftTopLeftBottom = lerpColorLeftTopRightTop + lerpColorLeftTopRightTop;
-
 	K15_Vector3 lerpColorRightTopLeftTopRightTopRightBottom = K15_LerpColor(lerpColorRightTopLeftTop,
 		lerpColorRightTopRightBottom,
 		0.5f);
@@ -547,6 +545,79 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 		unpackedColorLeftTop, unpackedColorRightTop,
 		unpackedColorLeftBottom, unpackedColorRightBottom,
 		p_RoundCornerFlags, p_EdgeRoundFactor);
+}
+/*********************************************************************************/
+intern inline uint32 K15_InternalPush2DScreenspacePixelColoredLineVertices(K15_RenderBackEnd* p_RenderBackEnd,
+	float* p_VertexBuffer, uint32 p_StartIndex,
+	int32 p_PixelStartPosLeft, int32 p_PixelStartPosTop, int32 p_PixelEndPosLeft, int32 p_PixelEndPosTop,
+	uint32 p_LinePixelWidth, const K15_Vector3& p_StartColor, K15_Vector3& p_EndColor)
+{
+	uint32 vertexIndex = p_StartIndex;
+
+	float viewportHeight = p_RenderBackEnd->viewportHeight;
+	float viewportWidth = p_RenderBackEnd->viewportWidth;
+
+	float halfLinePixelWidth = (float)p_LinePixelWidth / 2.f;
+
+	K15_Vector2 pixelStartPos = K15_CreateVector(p_PixelStartPosLeft, p_PixelStartPosTop);
+	K15_Vector2 pixelEndPos = K15_CreateVector(p_PixelEndPosLeft, p_PixelEndPosTop);
+
+	K15_Vector2 pixelDirection = pixelEndPos - pixelStartPos;
+	K15_NormalizeVector(pixelDirection);
+
+	K15_Vector2 perpendicularPixelDirection = K15_CreateVector(pixelDirection.y, pixelDirection.x) * halfLinePixelWidth;
+
+	K15_Vector2 pixelUpperStartPos = pixelStartPos + perpendicularPixelDirection;
+	K15_Vector2 pixelUpperEndPos = pixelEndPos + perpendicularPixelDirection;
+	K15_Vector2 pixelLowerStartPos = pixelStartPos - perpendicularPixelDirection;
+	K15_Vector2 pixelLowerEndPos = pixelEndPos - perpendicularPixelDirection;
+
+	float upperStartPosXNDC = K15_CONVERT_TO_NDC_X(pixelUpperStartPos.x / viewportWidth);
+	float upperStartPosYNDC = K15_CONVERT_TO_NDC_Y(pixelUpperStartPos.y / viewportHeight);
+	float lowerStartPosXNDC = K15_CONVERT_TO_NDC_X(pixelLowerStartPos.x / viewportWidth);
+	float lowerStartPosYNDC = K15_CONVERT_TO_NDC_Y(pixelLowerStartPos.y / viewportHeight);
+	float upperEndPosXNDC = K15_CONVERT_TO_NDC_X(pixelUpperEndPos.x / viewportWidth);
+	float upperEndPosYNDC = K15_CONVERT_TO_NDC_Y(pixelUpperEndPos.y / viewportHeight);
+	float lowerEndPosXNDC = K15_CONVERT_TO_NDC_X(pixelLowerEndPos.x / viewportWidth);
+	float lowerEndPosYNDC = K15_CONVERT_TO_NDC_Y(pixelLowerEndPos.y / viewportHeight);
+
+	p_VertexBuffer[vertexIndex++] = upperStartPosXNDC;
+	p_VertexBuffer[vertexIndex++] = upperStartPosYNDC;
+	p_VertexBuffer[vertexIndex++] = p_StartColor.x;
+	p_VertexBuffer[vertexIndex++] = p_StartColor.y;
+	p_VertexBuffer[vertexIndex++] = p_StartColor.z;
+
+	p_VertexBuffer[vertexIndex++] = lowerStartPosXNDC;
+	p_VertexBuffer[vertexIndex++] = lowerStartPosYNDC;
+	p_VertexBuffer[vertexIndex++] = p_StartColor.x;
+	p_VertexBuffer[vertexIndex++] = p_StartColor.y;
+	p_VertexBuffer[vertexIndex++] = p_StartColor.z;
+
+	p_VertexBuffer[vertexIndex++] = upperEndPosXNDC;
+	p_VertexBuffer[vertexIndex++] = upperEndPosYNDC;
+	p_VertexBuffer[vertexIndex++] = p_EndColor.x;
+	p_VertexBuffer[vertexIndex++] = p_EndColor.y;
+	p_VertexBuffer[vertexIndex++] = p_EndColor.z;
+
+	p_VertexBuffer[vertexIndex++] = upperEndPosXNDC;
+	p_VertexBuffer[vertexIndex++] = upperEndPosYNDC;
+	p_VertexBuffer[vertexIndex++] = p_EndColor.x;
+	p_VertexBuffer[vertexIndex++] = p_EndColor.y;
+	p_VertexBuffer[vertexIndex++] = p_EndColor.z;
+
+	p_VertexBuffer[vertexIndex++] = lowerEndPosXNDC;
+	p_VertexBuffer[vertexIndex++] = lowerEndPosYNDC;
+	p_VertexBuffer[vertexIndex++] = p_EndColor.x;
+	p_VertexBuffer[vertexIndex++] = p_EndColor.y;
+	p_VertexBuffer[vertexIndex++] = p_EndColor.z;
+
+	p_VertexBuffer[vertexIndex++] = lowerStartPosXNDC;
+	p_VertexBuffer[vertexIndex++] = lowerStartPosYNDC;
+	p_VertexBuffer[vertexIndex++] = p_StartColor.x;
+	p_VertexBuffer[vertexIndex++] = p_StartColor.y;
+	p_VertexBuffer[vertexIndex++] = p_StartColor.z;
+
+	return vertexIndex;
 }
 /*********************************************************************************/
 intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextureRectVertices(K15_RenderBackEnd* p_RenderBackEnd,

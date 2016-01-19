@@ -14,6 +14,7 @@ enum K15_GUIElementType
 	K15_GUI_TYPE_BUTTON,
 	K15_GUI_TYPE_COMBO_BOX,
 	K15_GUI_TYPE_LABEL,
+	K15_GUI_TYPE_FLOAT_SLIDER,
 	K15_GUI_TYPE_WINDOW
 };
 
@@ -65,6 +66,20 @@ struct K15_GUIComboBox
 	uint32 selectedIndex;
 };
 
+struct K15_GUIFloatSlider
+{
+	float value;
+	float minValue;
+	float maxValue;
+
+	uint32 minValueTextOffsetInBytes;
+	uint32 maxValueTextOffsetInBytes;
+	uint32 curValueTextOffsetInBytes;
+	uint32 minValueTextLength;
+	uint32 maxValueTextLenght;
+	uint32 curValueTextLength;
+};
+
 struct K15_GUIWindow
 {
 	K15_GUIWindowState state;
@@ -98,8 +113,9 @@ struct K15_GUIContextStyle
 	uint32 disabledTextBackgroundColor;
 
 	//sizing
-	uint32 windowTitleHeight;
-	
+	uint32 windowTitlePixelHeight;
+	uint32 sliderPixelHeight;
+	uint32 sliderPixelWidth;
 	//controls
 	uint32 controlUpperBackgroundColor;
 	uint32 controlLowerBackgroundColor;
@@ -152,7 +168,8 @@ struct K15_GUIContext
 	bool8 rightMouseDown;
 
 	uint32 layoutCategoryIndex;
-
+	uint32 activeElementIdentifier;
+	uint32 hoveredElementIdentifier;
 	uint32 guiMemoryMaxSize;
 	uint32 guiMemoryCurrentSize[K15_GUI_MEMORY_BUFFER_COUNT];
 
@@ -180,7 +197,7 @@ bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption, int32
 void K15_EndWindow(K15_GUIContext* p_GUIContext);
 bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char* p_Identifier);
 void K15_Label(K15_GUIContext* p_GUIContext, const char* p_LabelText, const char* p_Identifier);
-
+float K15_FloatSlider(K15_GUIContext* p_GUIContext, float* p_Value, float p_MinValue, float p_MaxValue, const char* p_Identifier);
 void K15_PushLayoutCategory(K15_GUIContext* p_GUIContext, K15_GUILayout p_Layout,
 	int32 p_LeftPixelPos, int32 p_TopPixelPos, uint32 p_PixelWidth, uint32 p_PixelHeight);
 
