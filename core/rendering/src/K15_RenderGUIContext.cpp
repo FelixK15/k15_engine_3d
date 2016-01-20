@@ -238,6 +238,8 @@ intern void K15_InternalPushGUIFloatSliderVertices(K15_RenderBackEnd* p_RenderBa
 	uint32 textVertexIndex = *p_TextVertexBufferIndexOffset;
 
 	K15_GUIContextStyle* style = &p_GUIContext->style;
+	K15_RenderFontDesc* guiFont = style->styleFont;
+	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
 
 	int32 pixelPosLeft = p_GUIElement->posPixelX;
 	int32 pixelPosTop = p_GUIElement->posPixelY;
@@ -249,13 +251,63 @@ intern void K15_InternalPushGUIFloatSliderVertices(K15_RenderBackEnd* p_RenderBa
 	uint32 pixelThickness = 2;
 	uint32 pixelLineThickness = 2;
 
-	int32 sliderPixelOffsetLeft = ((float)p_GUIElement->pixelWidth * valuePercent) - (style->sliderPixelWidth / 2);
-	int32 sliderPixelOffsetTop = style->sliderPixelHeight / 2;
+	uint32 upperBackgroundColor = style->controlUpperBackgroundColor;
+	uint32 lowerBackgroundColor = style->controlLowerBackgroundColor;
 
+	if (p_GUIContext->hoveredElementIdentifier == p_GUIElement->identifierHash)
+	{
+		upperBackgroundColor = style->hoveredControlUpperBackgroundColor;
+		lowerBackgroundColor = style->hoveredControlLowerBackgroundColor;
+	}
+
+	if (p_GUIContext->activeElementIdentifier == p_GUIElement->identifierHash)
+	{
+		upperBackgroundColor = style->interactedControlUpperBackgroundColor;
+		lowerBackgroundColor = style->hoveredControlLowerBackgroundColor;
+	}
+
+	uint32 sliderPixelOffsetLeft = (p_GUISlider->sliderPixelPosLeft + style->sliderPixelWidth / 2) - pixelPosLeft;
+
+	float textPixelWidth = 0.f;
+	float textPixelHeight = 0.f;
+	
+	char* maxValueText = (char*)(guiMemory + p_GUISlider->maxValueTextOffsetInBytes);
+	char* minValueText = (char*)(guiMemory + p_GUISlider->minValueTextOffsetInBytes);
+	char* curValueText = (char*)(guiMemory + p_GUISlider->curValueTextOffsetInBytes);
+
+	K15_GetTextSizeInPixels(guiFont, &textPixelWidth, &textPixelHeight, curValueText, p_GUISlider->curValueTextLength);
+
+	int32 curValueLeftPixelPos = sliderPixelOffsetLeft > (pixelPosRight - pixelPosLeft) / 2 ?
+		pixelPosLeft + sliderPixelOffsetLeft - textPixelWidth - style->sliderPixelWidth / 2:
+		pixelPosLeft + sliderPixelOffsetLeft + style->sliderPixelWidth / 2;
+
+	if (p_GUIContext->activeElementIdentifier == p_GUIElement->identifierHash)
+	{
+		//cur value text (left or right)
+		textVertexIndex = K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderBackEnd, guiFont,
+			p_TextVertexBuffer, textVertexIndex, curValueLeftPixelPos, pixelPosBottom - textPixelHeight,
+			0x000000, curValueText, p_GUISlider->curValueTextLength);
+	}
+
+	K15_GetTextSizeInPixels(guiFont, &textPixelWidth, &textPixelHeight, maxValueText, p_GUISlider->maxValueTextLenght);
+	
+	//max value text (right)
+	textVertexIndex = K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderBackEnd, guiFont,
+		p_TextVertexBuffer, textVertexIndex, pixelPosRight - textPixelWidth, pixelPosTop,
+		0x000000, maxValueText, p_GUISlider->maxValueTextLenght);
+
+	K15_GetTextSizeInPixels(guiFont, &textPixelWidth, &textPixelHeight, minValueText, p_GUISlider->minValueTextLength);
+
+	//min value text (left)
+	textVertexIndex = K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderBackEnd, guiFont,
+		p_TextVertexBuffer, textVertexIndex, pixelPosLeft, pixelPosTop,
+		0x000000, minValueText, p_GUISlider->minValueTextLength);
+
+	//mid line 
 	vertexIndex = K15_InternalPush2DScreenspacePixelColoredLineVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 		pixelPosLeft, pixelPosTop + p_GUIElement->pixelHeight / 2,
 		pixelPosRight, pixelPosTop + p_GUIElement->pixelHeight / 2,
-		pixelLineThickness, K15_CreateVector(0.f, 0.f, 0.f), K15_CreateVector(0.f, 0.f, 0.f));
+		pixelLineThickness, 0x000000, 0x000000);
 
 	//border (slider)
 	vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
@@ -268,8 +320,8 @@ intern void K15_InternalPushGUIFloatSliderVertices(K15_RenderBackEnd* p_RenderBa
 	vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 		p_GUISlider->sliderPixelPosLeft + pixelThickness, p_GUISlider->sliderPixelPosRight - pixelThickness,
 		p_GUISlider->sliderPixelPosTop + pixelThickness, p_GUISlider->sliderPixelPosBottom - pixelThickness,
-		style->controlUpperBackgroundColor, style->controlUpperBackgroundColor,
-		style->controlLowerBackgroundColor, style->controlLowerBackgroundColor);
+		upperBackgroundColor, upperBackgroundColor,
+		lowerBackgroundColor, lowerBackgroundColor);
 
 	*p_VertexBufferIndexOffset = vertexIndex;
 	*p_TextVertexBufferIndexOffset = textVertexIndex;

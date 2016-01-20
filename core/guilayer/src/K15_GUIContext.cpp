@@ -30,8 +30,8 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 		K15_LoadResource(p_ResourceContext, K15_FONT_RESOURCE_IDENTIFIER, "fonts/gui_font.ttf", 0); 
 
 	defaultStyle.windowTitlePixelHeight = 20;
-	defaultStyle.sliderPixelHeight = 20;
-	defaultStyle.sliderPixelWidth = 8;
+	defaultStyle.sliderPixelHeight = 18;
+	defaultStyle.sliderPixelWidth = 10;
 
 	defaultStyle.windowContentPixelPadding = 5;
 
@@ -40,9 +40,9 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	defaultStyle.controlUpperBorderColor = 0x606060;
 	defaultStyle.controlLowerBorderColor = 0x101010;
 	defaultStyle.hoveredControlUpperBackgroundColor = 0x476e72;
-	defaultStyle.hoveredControlLowerBackgroundColor = 0x488085; 
+	defaultStyle.hoveredControlLowerBackgroundColor = 0x3a5357;
 	defaultStyle.interactedControlLowerBackgroundColor = 0x476e72;
-	defaultStyle.interactedControlUpperBackgroundColor = 0x3a5357;
+	defaultStyle.interactedControlUpperBackgroundColor = 0x488085;
 	defaultStyle.textColor = 0xFFFFFF;
 	defaultStyle.windowTitleTextColor = 0xEEEEEE;
 	defaultStyle.windowTitleBarLowerColor = 0x4580FF;
@@ -811,18 +811,16 @@ float K15_FloatSlider(K15_GUIContext* p_GUIContext, float p_Value, float p_MinVa
 
 	uint32 curValueTextLength = sprintf(buffer, "%.2f", currentValue);
 	K15_GetTextSizeInPixels(guiFont, &curValueTextPixelWidth, &textHeight, buffer, curValueTextLength);
-	totalTextPixelWidth += curValueTextPixelWidth;
 	memcpy(guiContextFrontBuffer + textOffset + minValueTextLength + maxValueTextLength, buffer, curValueTextLength);
 
 	sliderHeader->identifierHash = guiElementIdentifierHash;
 	sliderHeader->offset = newOffset;
 	sliderHeader->type = K15_GUI_TYPE_FLOAT_SLIDER;
 	sliderHeader->pixelHeight = textHeight + style->sliderPixelHeight;
-	sliderHeader->pixelWidth = minValueTextPixelWidth + maxValueTextPixelWidth + curValueTextPixelWidth;
+	sliderHeader->pixelWidth = totalTextPixelWidth;
 
 	K15_InternalGetAlignedGUIDimension(p_GUIContext, &sliderHeader->posPixelX, &sliderHeader->posPixelY, 
 		&sliderHeader->pixelWidth, &sliderHeader->pixelHeight);
-
 
 	uint32 sliderLinePixelWidth = style->sliderLinePixelWidth;
 	uint32 sliderPixelWidth = style->sliderPixelWidth;
@@ -873,7 +871,7 @@ float K15_FloatSlider(K15_GUIContext* p_GUIContext, float p_Value, float p_MinVa
 
 		slider->mousePosPixelX = p_GUIContext->mousePosPixelX;
 
-		offsetX = K15_CLAMP(offsetX, 0, sliderHeader->pixelWidth);
+		offsetX = K15_CLAMP(offsetX, sliderHeader->pixelWidth, 0);
 		currentValue = (float)offsetX / (float)sliderHeader->pixelWidth;
 	}
 
@@ -881,8 +879,8 @@ float K15_FloatSlider(K15_GUIContext* p_GUIContext, float p_Value, float p_MinVa
 	slider->minValue = minValue;
 	slider->value = currentValue;
 	slider->minValueTextOffsetInBytes = textOffset;
-	slider->maxValueTextOffsetInBytes = textOffset + maxFloatTextLength;
-	slider->curValueTextOffsetInBytes = textOffset + maxFloatTextLength * 2;
+	slider->maxValueTextOffsetInBytes = textOffset + minValueTextLength;
+	slider->curValueTextOffsetInBytes = textOffset + minValueTextLength + maxValueTextLength;
 	slider->minValueTextLength = minValueTextLength;
 	slider->maxValueTextLenght = maxValueTextLength;
 	slider->curValueTextLength = curValueTextLength;

@@ -550,7 +550,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 intern inline uint32 K15_InternalPush2DScreenspacePixelColoredLineVertices(K15_RenderBackEnd* p_RenderBackEnd,
 	float* p_VertexBuffer, uint32 p_StartIndex,
 	int32 p_PixelStartPosLeft, int32 p_PixelStartPosTop, int32 p_PixelEndPosLeft, int32 p_PixelEndPosTop,
-	uint32 p_LinePixelWidth, const K15_Vector3& p_StartColor, K15_Vector3& p_EndColor)
+	uint32 p_LinePixelWidth, const K15_Vector3& p_StartColor, const K15_Vector3& p_EndColor)
 {
 	uint32 vertexIndex = p_StartIndex;
 
@@ -618,6 +618,19 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredLineVertices(K15_R
 	p_VertexBuffer[vertexIndex++] = p_StartColor.z;
 
 	return vertexIndex;
+}
+/*********************************************************************************/
+intern inline uint32 K15_InternalPush2DScreenspacePixelColoredLineVertices(K15_RenderBackEnd* p_RenderBackEnd,
+	float* p_VertexBuffer, uint32 p_StartIndex,
+	int32 p_PixelStartPosLeft, int32 p_PixelStartPosTop, int32 p_PixelEndPosLeft, int32 p_PixelEndPosTop,
+	uint32 p_LinePixelWidth, uint32 p_StartColor, uint32 p_EndColor)
+{
+	K15_Vector3 startColorUnpacked = K15_UnpackVector3(p_StartColor);
+	K15_Vector3 endColorUnpacked = K15_UnpackVector3(p_EndColor);
+
+	return K15_InternalPush2DScreenspacePixelColoredLineVertices(p_RenderBackEnd, p_VertexBuffer, p_StartIndex, 
+		p_PixelStartPosLeft, p_PixelStartPosTop, p_PixelEndPosLeft, p_PixelEndPosTop, 
+		p_LinePixelWidth, startColorUnpacked, endColorUnpacked);
 }
 /*********************************************************************************/
 intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextureRectVertices(K15_RenderBackEnd* p_RenderBackEnd,
