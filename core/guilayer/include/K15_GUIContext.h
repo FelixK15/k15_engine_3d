@@ -72,6 +72,10 @@ struct K15_GUIFloatSlider
 	float minValue;
 	float maxValue;
 
+	uint32 sliderPixelPosLeft;
+	uint32 sliderPixelPosRight;
+	uint32 sliderPixelPosTop;
+	uint32 sliderPixelPosBottom;
 	uint32 minValueTextOffsetInBytes;
 	uint32 maxValueTextOffsetInBytes;
 	uint32 curValueTextOffsetInBytes;
@@ -116,6 +120,11 @@ struct K15_GUIContextStyle
 	uint32 windowTitlePixelHeight;
 	uint32 sliderPixelHeight;
 	uint32 sliderPixelWidth;
+	uint32 sliderLinePixelWidth;
+
+	//padding
+	uint32 windowContentPixelPadding;
+
 	//controls
 	uint32 controlUpperBackgroundColor;
 	uint32 controlLowerBackgroundColor;

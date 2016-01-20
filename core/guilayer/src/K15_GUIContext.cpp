@@ -33,6 +33,8 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	defaultStyle.sliderPixelHeight = 20;
 	defaultStyle.sliderPixelWidth = 8;
 
+	defaultStyle.windowContentPixelPadding = 5;
+
 	defaultStyle.controlUpperBackgroundColor = 0x303030;
 	defaultStyle.controlLowerBackgroundColor = 0x505050;
 	defaultStyle.controlUpperBorderColor = 0x606060;
@@ -113,24 +115,29 @@ intern void K15_InternalGetAlignedGUIDimension_R(K15_GUIContext* p_GUIContext, u
 	uint32 pixelOffsetX = category->pixelOffsetX;
 	uint32 pixelOffsetY = category->pixelOffsetY;
 
+	uint32 leftPixelPos = p_LeftPixelPos ? *p_LeftPixelPos : 0;
+	uint32 topPixelPos = p_TopPixelPos ? *p_TopPixelPos : 0;
+	uint32 pixelWidth = p_PixelWidth ? *p_PixelWidth : 0;
+	uint32 pixelHeight = p_PixelHeight ? *p_PixelHeight : 0;
+
 	switch (layout)
 	{
 		case K15_GUI_LAYOUT_VERTICAL:
 		{
-			*p_LeftPixelPos = category->posPixelX + pixelOffsetX;
-			*p_TopPixelPos = category->posPixelY + pixelOffsetY;
-			*p_PixelWidth = category->pixelWidth;
-			pixelOffsetY += *p_PixelHeight;
+			leftPixelPos = category->posPixelX + pixelOffsetX;
+			topPixelPos = category->posPixelY + pixelOffsetY;
+			pixelWidth = category->pixelWidth;
+			pixelOffsetY += pixelHeight;
 
 			break;
 		}
 
 		case K15_GUI_LAYOUT_HORIZONTAL:
 		{
-			*p_LeftPixelPos = category->posPixelX + pixelOffsetX;
-			*p_TopPixelPos = category->posPixelY + pixelOffsetY;
-			*p_PixelHeight = category->pixelHeight;
-			pixelOffsetX += *p_PixelWidth;
+			leftPixelPos = category->posPixelX + pixelOffsetX;
+			topPixelPos = category->posPixelY + pixelOffsetY;
+			pixelHeight = category->pixelHeight;
+			pixelOffsetX += pixelWidth;
 
 			break;
 		}
@@ -138,6 +145,26 @@ intern void K15_InternalGetAlignedGUIDimension_R(K15_GUIContext* p_GUIContext, u
 
 	category->pixelOffsetX = pixelOffsetX;
 	category->pixelOffsetY = pixelOffsetY;
+
+	if (p_LeftPixelPos)
+	{
+		*p_LeftPixelPos = leftPixelPos;
+	}
+
+	if (p_TopPixelPos)
+	{
+		*p_TopPixelPos = topPixelPos;
+	}
+
+	if (p_PixelWidth)
+	{
+		*p_PixelWidth = pixelWidth;
+	}
+
+	if (p_PixelHeight)
+	{
+		*p_PixelHeight = pixelHeight;
+	}
 
 	if (p_StackIndex != 0)
 	{
@@ -523,10 +550,14 @@ bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption,
 			"Finish the window creation with K15_EndWindow() first, "
 			"before starting a new window with K15_BeginWindow()");
 
+		uint32 pixelPadding = p_GUIContext->style.windowContentPixelPadding;
+
 		p_GUIContext->currentWindow = window;
 
-		K15_PushLayoutCategory(p_GUIContext, p_Layout, *p_LeftPixelPos, *p_TopPixelPos + windowTitleHeight,
-			*p_WindowWidth, *p_WindowHeight);
+		K15_PushLayoutCategory(p_GUIContext, p_Layout, *p_LeftPixelPos + pixelPadding, 
+			*p_TopPixelPos + windowTitleHeight + pixelPadding,
+			*p_WindowWidth - pixelPadding * 2,
+			*p_WindowHeight - pixelPadding * 2);
 	}
 
 	//copy text to gui memory buffer
@@ -795,6 +826,17 @@ float K15_FloatSlider(K15_GUIContext* p_GUIContext, float* p_Value, float p_MinV
 	K15_InternalGetAlignedGUIDimension(p_GUIContext, &sliderHeader->posPixelX, &sliderHeader->posPixelY, 
 		&sliderHeader->pixelWidth, &sliderHeader->pixelHeight);
 
+	uint32 sliderLinePixelWidth = style->sliderLinePixelWidth;
+	uint32 sliderPixelWidth = style->sliderPixelWidth;
+	uint32 sliderPixelHeight = style->sliderPixelHeight;
+	uint32 sliderPixelOffsetX = (float)sliderHeader->pixelWidth * currentValue;
+	uint32 sliderPixelOffsetY = (float)sliderHeader->posPixelY + sliderHeader->pixelHeight / 2 - sliderLinePixelWidth / 2;
+	
+	uint32 sliderPixelLeftPos = sliderHeader->posPixelX + sliderPixelOffsetX - sliderPixelWidth / 2;
+	uint32 sliderPixelRightPos = sliderHeader->posPixelX + sliderPixelOffsetX + sliderPixelWidth / 2;
+	uint32 sliderPixelTopPos = sliderHeader->posPixelY + sliderPixelOffsetY - sliderPixelHeight / 2;
+	uint32 sliderPixelBottomPos = sliderHeader->posPixelY + sliderPixelOffsetY + sliderPixelHeight / 2;
+
 	slider->maxValue = maxValue;
 	slider->minValue = minValue;
 	slider->value = currentValue;
@@ -804,7 +846,9 @@ float K15_FloatSlider(K15_GUIContext* p_GUIContext, float* p_Value, float p_MinV
 	slider->minValueTextLength = minValueTextLength;
 	slider->maxValueTextLenght = maxValueTextLength;
 	slider->curValueTextLength = curValueTextLength;
-
+	slider->sliderPixelPosLeft = sliderPixelLeftPos;
+	slider->sliderPixelPosRight = sliderPixelRightPos;
+	slider->sliderPixelPosTop =
 
 	return currentValue;
 }
