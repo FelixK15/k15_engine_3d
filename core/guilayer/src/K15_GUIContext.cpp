@@ -744,19 +744,18 @@ void K15_Label(K15_GUIContext* p_GUIContext, const char* p_LabelText, const char
 	memcpy(guiContextFrontBuffer + textOffsetInBytes, p_LabelText, textLength);
 }
 /*********************************************************************************/
-float K15_FloatSlider(K15_GUIContext* p_GUIContext, float* p_Value, float p_MinValue, float p_MaxValue, 
+float K15_FloatSlider(K15_GUIContext* p_GUIContext, float p_Value, float p_MinValue, float p_MaxValue, 
 	const char* p_Identifier)
 {
 	K15_ASSERT(p_GUIContext);
-	K15_ASSERT(p_Value);
 	
 	float minValue = p_MinValue;
 	float maxValue = p_MaxValue;
 
-	minValue = K15_MIN(p_MinValue, p_MinValue);
+	minValue = K15_MIN(p_MinValue, p_MaxValue);
 	maxValue = K15_MAX(p_MinValue, p_MaxValue);
 
-	*p_Value = K15_ClampReal(*p_Value, maxValue, minValue);
+	float currentValue = K15_CLAMP(p_Value, maxValue, minValue);
 
 	K15_GUIContextStyle* style = &p_GUIContext->style;
 
@@ -778,15 +777,13 @@ float K15_FloatSlider(K15_GUIContext* p_GUIContext, float* p_Value, float p_MinV
 
 	byte* guiContextFrontBuffer = p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER];
 
-	K15_GUIElementHeader* sliderLastFrameHeader = K15_InternalGetGUIElementLastFrame(p_GUIContext, maxFloatTextLength);
+	K15_GUIElementHeader* sliderLastFrameHeader = K15_InternalGetGUIElementLastFrame(p_GUIContext, guiElementIdentifierHash);
 
 	if (sliderLastFrameHeader)
 	{
 		K15_GUIFloatSlider* sliderLastFrame = (K15_GUIFloatSlider*)(sliderLastFrameHeader + 1);
-		*p_Value = sliderLastFrame->value;
+		currentValue = sliderLastFrame->value;
 	}
-
-	float currentValue = *p_Value;
 
 	K15_GUIElementHeader* sliderHeader = (K15_GUIElementHeader*)(guiContextFrontBuffer + offset);
 	K15_GUIFloatSlider* slider = (K15_GUIFloatSlider*)(guiContextFrontBuffer + offset + sizeof(K15_GUIElementHeader));
@@ -826,16 +823,59 @@ float K15_FloatSlider(K15_GUIContext* p_GUIContext, float* p_Value, float p_MinV
 	K15_InternalGetAlignedGUIDimension(p_GUIContext, &sliderHeader->posPixelX, &sliderHeader->posPixelY, 
 		&sliderHeader->pixelWidth, &sliderHeader->pixelHeight);
 
+
 	uint32 sliderLinePixelWidth = style->sliderLinePixelWidth;
 	uint32 sliderPixelWidth = style->sliderPixelWidth;
 	uint32 sliderPixelHeight = style->sliderPixelHeight;
 	uint32 sliderPixelOffsetX = (float)sliderHeader->pixelWidth * currentValue;
-	uint32 sliderPixelOffsetY = (float)sliderHeader->posPixelY + sliderHeader->pixelHeight / 2 - sliderLinePixelWidth / 2;
+	uint32 sliderPixelOffsetY = sliderHeader->pixelHeight / 2 - sliderLinePixelWidth / 2;
 	
 	uint32 sliderPixelLeftPos = sliderHeader->posPixelX + sliderPixelOffsetX - sliderPixelWidth / 2;
 	uint32 sliderPixelRightPos = sliderHeader->posPixelX + sliderPixelOffsetX + sliderPixelWidth / 2;
 	uint32 sliderPixelTopPos = sliderHeader->posPixelY + sliderPixelOffsetY - sliderPixelHeight / 2;
 	uint32 sliderPixelBottomPos = sliderHeader->posPixelY + sliderPixelOffsetY + sliderPixelHeight / 2;
+
+	bool8 mouseInside = K15_Collision2DBoxPoint(sliderPixelLeftPos, sliderPixelTopPos,
+		sliderPixelRightPos, sliderPixelBottomPos,
+		p_GUIContext->mousePosPixelX, p_GUIContext->mousePosPixelY);
+
+	if (mouseInside &&
+		p_GUIContext->hoveredElementIdentifier == 0)
+	{
+		p_GUIContext->hoveredElementIdentifier = guiElementIdentifierHash;
+	}
+	else if (!mouseInside &&
+		p_GUIContext->hoveredElementIdentifier == guiElementIdentifierHash)
+	{
+		p_GUIContext->hoveredElementIdentifier = 0;
+	}
+
+	if (p_GUIContext->activeElementIdentifier == 0 &&
+		p_GUIContext->leftMouseDown &&
+		mouseInside)
+	{
+		p_GUIContext->activeElementIdentifier = guiElementIdentifierHash;
+		slider->mousePosPixelX = p_GUIContext->mousePosPixelX;
+	}
+	else if (!p_GUIContext->leftMouseDown &&
+		p_GUIContext->activeElementIdentifier == guiElementIdentifierHash)
+	{
+		p_GUIContext->activeElementIdentifier = 0;
+	}
+
+	if (p_GUIContext->activeElementIdentifier == guiElementIdentifierHash)
+	{
+		uint32 offsetX = 0;
+		if (slider->mousePosPixelX >= sliderHeader->posPixelX)
+		{
+			offsetX = (slider->mousePosPixelX - sliderHeader->posPixelX);
+		}
+
+		slider->mousePosPixelX = p_GUIContext->mousePosPixelX;
+
+		offsetX = K15_CLAMP(offsetX, 0, sliderHeader->pixelWidth);
+		currentValue = (float)offsetX / (float)sliderHeader->pixelWidth;
+	}
 
 	slider->maxValue = maxValue;
 	slider->minValue = minValue;
@@ -848,7 +888,8 @@ float K15_FloatSlider(K15_GUIContext* p_GUIContext, float* p_Value, float p_MinV
 	slider->curValueTextLength = curValueTextLength;
 	slider->sliderPixelPosLeft = sliderPixelLeftPos;
 	slider->sliderPixelPosRight = sliderPixelRightPos;
-	slider->sliderPixelPosTop =
+	slider->sliderPixelPosTop = sliderPixelTopPos;
+	slider->sliderPixelPosBottom = sliderPixelBottomPos;
 
 	return currentValue;
 }

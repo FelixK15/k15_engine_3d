@@ -19,6 +19,7 @@
 
 #define K15_MAX(a, b) (a) > (b) ? (a) : (b)
 #define K15_MIN(a, b) (a) < (b) ? (a) : (b)
+#define K15_CLAMP(v, mi, ma) ((v) > (ma)) ? (ma) : ((v) < (mi)) ? (mi) : (v)
 
 typedef float real32;
 

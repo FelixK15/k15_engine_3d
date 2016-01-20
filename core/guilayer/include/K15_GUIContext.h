@@ -72,6 +72,7 @@ struct K15_GUIFloatSlider
 	float minValue;
 	float maxValue;
 
+	uint32 mousePosPixelX;
 	uint32 sliderPixelPosLeft;
 	uint32 sliderPixelPosRight;
 	uint32 sliderPixelPosTop;
@@ -206,7 +207,7 @@ bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption, int32
 void K15_EndWindow(K15_GUIContext* p_GUIContext);
 bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char* p_Identifier);
 void K15_Label(K15_GUIContext* p_GUIContext, const char* p_LabelText, const char* p_Identifier);
-float K15_FloatSlider(K15_GUIContext* p_GUIContext, float* p_Value, float p_MinValue, float p_MaxValue, const char* p_Identifier);
+float K15_FloatSlider(K15_GUIContext* p_GUIContext, float p_Value, float p_MinValue, float p_MaxValue, const char* p_Identifier);
 void K15_PushLayoutCategory(K15_GUIContext* p_GUIContext, K15_GUILayout p_Layout,
 	int32 p_LeftPixelPos, int32 p_TopPixelPos, uint32 p_PixelWidth, uint32 p_PixelHeight);
 

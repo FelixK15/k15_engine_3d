@@ -33,7 +33,7 @@ intern inline K15_Vector3 K15_InternalCalculateCircularColor(float p_Angle, cons
 	//1st quadrant?
 	if (angle >= 0.f && angle <= K15_HALF_PI)
 	{
-		l = K15_ClampReal(angle / K15_HALF_PI, 1.f, 0.f);
+		l = K15_CLAMP(angle / K15_HALF_PI, 1.f, 0.f);
 		horizontalColor = K15_LerpColor(p_CenterColor, p_RightColor, c);
 		verticalColor = K15_LerpColor(p_CenterColor, p_TopColor, s);
 		color = K15_LerpColor(horizontalColor, verticalColor, l);
@@ -41,7 +41,7 @@ intern inline K15_Vector3 K15_InternalCalculateCircularColor(float p_Angle, cons
 	//2nd quadrant?
 	else if (angle >= K15_HALF_PI && angle <= K15_PI)
 	{
-		l = K15_ClampReal((angle - K15_HALF_PI) / K15_HALF_PI, 1.f, 0.f);
+		l = K15_CLAMP((angle - K15_HALF_PI) / K15_HALF_PI, 1.f, 0.f);
 
 		c *= -1.f;
 		horizontalColor = K15_LerpColor(p_CenterColor, p_LeftColor, c);
@@ -51,7 +51,7 @@ intern inline K15_Vector3 K15_InternalCalculateCircularColor(float p_Angle, cons
 	//3rd quadrant?
 	else if (angle >= K15_PI && angle <= (K15_PI + K15_HALF_PI))
 	{
-		l = K15_ClampReal((angle - K15_PI) / K15_HALF_PI, 1.f, 0.f);
+		l = K15_CLAMP((angle - K15_PI) / K15_HALF_PI, 1.f, 0.f);
 
 		c *= -1.f;
 		s *= -1.f;
@@ -62,7 +62,7 @@ intern inline K15_Vector3 K15_InternalCalculateCircularColor(float p_Angle, cons
 	//4th quadrant?
 	else if (angle >= (K15_PI + K15_HALF_PI) && angle <= K15_TWO_PI)
 	{
-		l = K15_ClampReal((angle - (K15_PI + K15_HALF_PI)) / K15_HALF_PI, 1.f, 0.f);
+		l = K15_CLAMP((angle - (K15_PI + K15_HALF_PI)) / K15_HALF_PI, 1.f, 0.f);
 
 		s *= -1.f;
 		horizontalColor = K15_LerpColor(p_CenterColor, p_RightColor, c);
@@ -335,7 +335,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(
 	const K15_Vector3& p_ColorLeftBottom, const K15_Vector3& p_ColorRightBottom,
 	uint32 p_RoundCornerFlags, float p_EdgeRoundFactor)
 {
-	float roundFactor = K15_ClampReal(p_EdgeRoundFactor, 1.f, 0.f);
+	float roundFactor = K15_CLAMP(p_EdgeRoundFactor, 1.f, 0.f);
 	uint32 cornerPixelRadius = roundFactor * ((p_PixelPosBottom - p_PixelPosTop) / 2);
 	uint32 vertexIndex = p_StartIndex;
 

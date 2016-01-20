@@ -149,20 +149,6 @@ real32 K15_Log2(real32 p_Number)
 	return (real32)(floor(log10(p_Number) / log10(2.0)));
 }
 /*********************************************************************************/
-real32 K15_ClampReal(real32 p_Value, real32 p_Max, real32 p_Min)
-{
-	if (p_Value > p_Max)
-	{
-		return p_Max;
-	}
-	else if(p_Value < p_Min)
-	{
-		return p_Min;
-	}
-	
-	return p_Value;
-}
-/*********************************************************************************/
 real32 K15_SafeDivide(real32 p_Number, real32 p_Divisor)
 {
 	if (p_Divisor == 0.0)

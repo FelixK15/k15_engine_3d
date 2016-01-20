@@ -252,11 +252,6 @@ intern void K15_InternalPushGUIFloatSliderVertices(K15_RenderBackEnd* p_RenderBa
 	int32 sliderPixelOffsetLeft = ((float)p_GUIElement->pixelWidth * valuePercent) - (style->sliderPixelWidth / 2);
 	int32 sliderPixelOffsetTop = style->sliderPixelHeight / 2;
 
-	int32 sliderPixelPosLeft = pixelPosLeft + sliderPixelOffsetLeft + pixelThickness;
-	int32 sliderPixelPosTop = pixelPosTop + sliderPixelOffsetTop + pixelThickness - (pixelLineThickness/2);
-	int32 sliderPixelPosRight = sliderPixelPosLeft + style->sliderPixelWidth - pixelThickness;
-	int32 sliderPixelPosBottom = sliderPixelPosTop + style->sliderPixelHeight - pixelThickness;
-
 	vertexIndex = K15_InternalPush2DScreenspacePixelColoredLineVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 		pixelPosLeft, pixelPosTop + p_GUIElement->pixelHeight / 2,
 		pixelPosRight, pixelPosTop + p_GUIElement->pixelHeight / 2,
@@ -264,15 +259,15 @@ intern void K15_InternalPushGUIFloatSliderVertices(K15_RenderBackEnd* p_RenderBa
 
 	//border (slider)
 	vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
-		sliderPixelPosLeft - pixelThickness, sliderPixelPosRight + pixelThickness,
-		sliderPixelPosTop - pixelThickness, sliderPixelPosBottom + pixelThickness,
+		p_GUISlider->sliderPixelPosLeft, p_GUISlider->sliderPixelPosRight,
+		p_GUISlider->sliderPixelPosTop, p_GUISlider->sliderPixelPosBottom,
 		style->controlUpperBorderColor, style->controlUpperBorderColor,
 		style->controlLowerBorderColor, style->controlLowerBorderColor);
 
 	//element (slider)
 	vertexIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
-		sliderPixelPosLeft, sliderPixelPosRight,
-		sliderPixelPosTop, sliderPixelPosBottom,
+		p_GUISlider->sliderPixelPosLeft + pixelThickness, p_GUISlider->sliderPixelPosRight - pixelThickness,
+		p_GUISlider->sliderPixelPosTop + pixelThickness, p_GUISlider->sliderPixelPosBottom - pixelThickness,
 		style->controlUpperBackgroundColor, style->controlUpperBackgroundColor,
 		style->controlLowerBackgroundColor, style->controlLowerBackgroundColor);
 
