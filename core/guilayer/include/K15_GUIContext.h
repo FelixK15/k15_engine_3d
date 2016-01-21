@@ -72,7 +72,7 @@ struct K15_GUIFloatSlider
 	float minValue;
 	float maxValue;
 
-	uint32 mousePosPixelX;
+	int32 mousePosPixelX;
 	uint32 sliderPixelPosLeft;
 	uint32 sliderPixelPosRight;
 	uint32 sliderPixelPosTop;
@@ -149,14 +149,27 @@ struct K15_GUIContextStyle
 	uint32 windowTitleTextColor;
 };
 
+struct K15_GUIVerticalLayoutParameter
+{
+	uint32 minElementHeight;
+};
+
+struct K15_GUIHorizontalLayoutParameter
+{
+	uint32 minElementWidth;
+};
+
 struct K15_GUILayoutCategory
 {
-	int32 posPixelX;
-	int32 posPixelY;
+	byte param[128];
+	uint32 sizeParamInBytes;
 	uint32 pixelWidth;
 	uint32 pixelHeight;
 	uint32 pixelOffsetX;
 	uint32 pixelOffsetY;
+	uint32 elementPixelPadding;
+	int32 posPixelX;
+	int32 posPixelY;
 	K15_GUILayout layout;
 };
 
@@ -208,8 +221,10 @@ void K15_EndWindow(K15_GUIContext* p_GUIContext);
 bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char* p_Identifier);
 void K15_Label(K15_GUIContext* p_GUIContext, const char* p_LabelText, const char* p_Identifier);
 float K15_FloatSlider(K15_GUIContext* p_GUIContext, float p_Value, float p_MinValue, float p_MaxValue, const char* p_Identifier);
-void K15_PushLayoutCategory(K15_GUIContext* p_GUIContext, K15_GUILayout p_Layout,
-	int32 p_LeftPixelPos, int32 p_TopPixelPos, uint32 p_PixelWidth, uint32 p_PixelHeight);
+void K15_PushVerticalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding,
+	uint32 p_MinElementPixelHeight, int32 p_LeftPixelPos, int32 p_TopPixelPos, uint32 p_PixelWidth, uint32 p_PixelHeight);
+void K15_PushHorizontalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, 
+	uint32 p_MinElementPixelWidth, int32 p_LeftPixelPos, int32 p_TopPixelPos, uint32 p_PixelWidth, uint32 p_PixelHeight);
 
 void K15_PopLayoutCategory(K15_GUIContext* p_GUIContext);
 
