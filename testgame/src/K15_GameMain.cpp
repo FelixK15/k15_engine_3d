@@ -164,6 +164,10 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 		K15_Label(guiContext, "Test Label:", "test_label");
 		K15_Button(guiContext, "bla", "test_button");
 		testFloat = K15_FloatSlider(guiContext, testFloat, 0.f, 1.f, "test_slider");
+		K15_PushHorizontalLayout(guiContext, 0, 50);
+		K15_Label(guiContext, "Bla:", "bla");
+		testFloat = K15_FloatSlider(guiContext, testFloat, -20.f, 20.f, "test_slider2");
+		K15_PopLayoutCategory(guiContext);
 		K15_EndWindow(guiContext);
 	}
 

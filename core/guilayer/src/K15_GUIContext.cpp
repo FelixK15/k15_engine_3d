@@ -169,11 +169,11 @@ intern void K15_InternalGetAlignedGUIDimension_R(K15_GUIContext* p_GUIContext, u
 		*p_PixelHeight = pixelHeight;
 	}
 
-	if (p_StackIndex != 0)
-	{
-		K15_InternalGetAlignedGUIDimension_R(p_GUIContext, p_StackIndex - 1, 
-			p_LeftPixelPos, p_TopPixelPos, p_PixelWidth, p_PixelHeight);
-	}
+// 	if (p_StackIndex != 0)
+// 	{
+// 		K15_InternalGetAlignedGUIDimension_R(p_GUIContext, p_StackIndex - 1, 
+// 			p_LeftPixelPos, p_TopPixelPos, p_PixelWidth, p_PixelHeight);
+// 	}
 }
 /*********************************************************************************/
 intern void K15_InternalGetAlignedGUIDimension(K15_GUIContext* p_GUIContext,
@@ -210,6 +210,38 @@ intern K15_GUILayoutCategory* K15_InternalPushLayoutCategory(K15_GUIContext* p_G
 	p_GUIContext->layoutCategoryIndex = categoryIndex + 1;
 
 	return category;
+}
+/*********************************************************************************/
+intern void K15_InternalPushVerticalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, uint32 p_MinElementPixelHeight,
+	int32 p_LeftPixelPos, int32 p_TopPixelPos, uint32 p_PixelWidth, uint32 p_PixelHeight)
+{
+	//K15_InternalGetAlignedGUIDimension(p_GUIContext, &p_LeftPixelPos, &p_TopPixelPos, &p_PixelWidth, &p_PixelHeight);
+
+	K15_GUILayoutCategory* verticalLayout = K15_InternalPushLayoutCategory(p_GUIContext,
+		K15_GUI_LAYOUT_VERTICAL, p_ElementPadding,
+		p_LeftPixelPos, p_TopPixelPos, p_PixelWidth, p_PixelHeight);
+
+	byte* paramBuffer = verticalLayout->param;
+
+	K15_GUIVerticalLayoutParameter* verticalLayoutParam = (K15_GUIVerticalLayoutParameter*)paramBuffer;
+
+	verticalLayoutParam->minElementHeight = p_MinElementPixelHeight;
+}
+/*********************************************************************************/
+intern void K15_InternalPushHorizontalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, uint32 p_MinElementPixelWidth,
+	int32 p_LeftPixelPos, int32 p_TopPixelPos, uint32 p_PixelWidth, uint32 p_PixelHeight)
+{
+	//K15_InternalGetAlignedGUIDimension(p_GUIContext, &p_LeftPixelPos, &p_TopPixelPos, &p_PixelWidth, &p_PixelHeight);
+
+	K15_GUILayoutCategory* horizontalLayout = K15_InternalPushLayoutCategory(p_GUIContext,
+		K15_GUI_LAYOUT_HORIZONTAL, p_ElementPadding,
+		p_LeftPixelPos, p_TopPixelPos, p_PixelWidth, p_PixelHeight);
+
+	byte* paramBuffer = horizontalLayout->param;
+
+	K15_GUIHorizontalLayoutParameter* horizontalLayoutParam = (K15_GUIHorizontalLayoutParameter*)paramBuffer;
+
+	horizontalLayoutParam->minElementWidth = p_MinElementPixelWidth;
 }
 /*********************************************************************************/
 
@@ -585,7 +617,7 @@ bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption,
 
 		p_GUIContext->currentWindow = window;
 
-		K15_PushVerticalLayout(p_GUIContext, 5, 10, *p_LeftPixelPos, 
+		K15_InternalPushVerticalLayout(p_GUIContext, 5, 10, *p_LeftPixelPos, 
 			*p_TopPixelPos + windowTitleHeight + pixelPadding,
 			*p_WindowWidth - pixelPadding * 2,
 			*p_WindowHeight - pixelPadding * 2);
@@ -923,36 +955,30 @@ float K15_FloatSlider(K15_GUIContext* p_GUIContext, float p_Value, float p_MinVa
 	return currentValue;
 }
 /*********************************************************************************/
-void K15_PushVerticalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, uint32 p_MinElementPixelHeight, 
-	int32 p_LeftPixelPos, int32 p_TopPixelPos, uint32 p_PixelWidth, uint32 p_PixelHeight)
+void K15_PushVerticalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, uint32 p_MinElementPixelHeight)
 {
-	K15_InternalGetAlignedGUIDimension(p_GUIContext, &p_LeftPixelPos, &p_TopPixelPos, &p_PixelWidth, &p_PixelHeight);
+	int32 leftPixelPos = 0;
+	int32 topPixelPos = 0;
+	uint32 pixelWidth = 0;
+	uint32 pixelHeight = p_MinElementPixelHeight;
 
-	K15_GUILayoutCategory* verticalLayout = K15_InternalPushLayoutCategory(p_GUIContext, 
-		K15_GUI_LAYOUT_VERTICAL, p_ElementPadding,
-		p_LeftPixelPos, p_TopPixelPos, p_PixelWidth, p_PixelHeight);
+	K15_InternalGetAlignedGUIDimension(p_GUIContext, &leftPixelPos, &topPixelPos, &pixelWidth, &pixelHeight);
 
-	byte* paramBuffer = verticalLayout->param;
-
-	K15_GUIVerticalLayoutParameter* verticalLayoutParam = (K15_GUIVerticalLayoutParameter*)paramBuffer;
-
-	verticalLayoutParam->minElementHeight = p_MinElementPixelHeight;
+	K15_InternalPushVerticalLayout(p_GUIContext, p_ElementPadding, p_MinElementPixelHeight,
+		leftPixelPos, topPixelPos, pixelWidth, pixelHeight);
 }
 /*********************************************************************************/
-void K15_PushHorizontalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, uint32 p_MinElementPixelWidth, 
-	int32 p_LeftPixelPos, int32 p_TopPixelPos, uint32 p_PixelWidth, uint32 p_PixelHeight)
+void K15_PushHorizontalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, uint32 p_MinElementPixelWidth)
 {
-	K15_InternalGetAlignedGUIDimension(p_GUIContext, &p_LeftPixelPos, &p_TopPixelPos, &p_PixelWidth, &p_PixelHeight);
+	int32 leftPixelPos = 0;
+	int32 topPixelPos = 0;
+	uint32 pixelWidth = p_MinElementPixelWidth;
+	uint32 pixelHeight = 0;
 
-	K15_GUILayoutCategory* horizontalLayout = K15_InternalPushLayoutCategory(p_GUIContext,
-		K15_GUI_LAYOUT_HORIZONTAL, p_ElementPadding,
-		p_LeftPixelPos, p_TopPixelPos, p_PixelWidth, p_PixelHeight);
+	K15_InternalGetAlignedGUIDimension(p_GUIContext, &leftPixelPos, &topPixelPos, &pixelWidth, &pixelHeight);
 
-	byte* paramBuffer = horizontalLayout->param;
-
-	K15_GUIHorizontalLayoutParameter* horizontalLayoutParam = (K15_GUIHorizontalLayoutParameter*)paramBuffer;
-
-	horizontalLayoutParam->minElementWidth = p_MinElementPixelWidth;
+	K15_InternalPushHorizontalLayout(p_GUIContext, p_ElementPadding, p_MinElementPixelWidth,
+		leftPixelPos, topPixelPos, pixelWidth, pixelHeight);
 }
 /*********************************************************************************/
 void K15_PopLayoutCategory(K15_GUIContext* p_GUIContext)

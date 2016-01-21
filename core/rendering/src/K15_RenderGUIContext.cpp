@@ -266,7 +266,7 @@ intern void K15_InternalPushGUIFloatSliderVertices(K15_RenderBackEnd* p_RenderBa
 		lowerBackgroundColor = style->hoveredControlLowerBackgroundColor;
 	}
 
-	uint32 sliderPixelOffsetLeft = (p_GUISlider->sliderPixelPosLeft + style->sliderPixelWidth / 2) - pixelPosLeft;
+	int32 sliderPixelOffsetLeft = (p_GUISlider->sliderPixelPosLeft + style->sliderPixelWidth / 2) - pixelPosLeft;
 
 	float textPixelWidth = 0.f;
 	float textPixelHeight = 0.f;
