@@ -77,12 +77,6 @@ struct K15_GUIFloatSlider
 	uint32 sliderPixelPosRight;
 	uint32 sliderPixelPosTop;
 	uint32 sliderPixelPosBottom;
-	uint32 minValueTextOffsetInBytes;
-	uint32 maxValueTextOffsetInBytes;
-	uint32 curValueTextOffsetInBytes;
-	uint32 minValueTextLength;
-	uint32 maxValueTextLenght;
-	uint32 curValueTextLength;
 };
 
 struct K15_GUIWindow
@@ -106,6 +100,9 @@ struct K15_GUIElementHeader
 	uint32 pixelHeight;
 	uint32 identifierHash;
 	uint32 offset;
+
+	bool8 hovered;
+	bool8 activated;
 };
 
 struct K15_GUIContextStyle
@@ -168,6 +165,8 @@ struct K15_GUILayoutCategory
 	uint32 pixelOffsetX;
 	uint32 pixelOffsetY;
 	uint32 elementPixelPadding;
+	uint32 elementCount;
+	uint32 guiBufferOffsetInBytes;
 	int32 posPixelX;
 	int32 posPixelY;
 	K15_GUILayout layout;

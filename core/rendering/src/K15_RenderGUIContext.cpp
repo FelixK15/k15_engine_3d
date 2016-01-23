@@ -268,41 +268,6 @@ intern void K15_InternalPushGUIFloatSliderVertices(K15_RenderBackEnd* p_RenderBa
 
 	int32 sliderPixelOffsetLeft = (p_GUISlider->sliderPixelPosLeft + style->sliderPixelWidth / 2) - pixelPosLeft;
 
-	float textPixelWidth = 0.f;
-	float textPixelHeight = 0.f;
-	
-	char* maxValueText = (char*)(guiMemory + p_GUISlider->maxValueTextOffsetInBytes);
-	char* minValueText = (char*)(guiMemory + p_GUISlider->minValueTextOffsetInBytes);
-	char* curValueText = (char*)(guiMemory + p_GUISlider->curValueTextOffsetInBytes);
-
-	K15_GetTextSizeInPixels(guiFont, &textPixelWidth, &textPixelHeight, curValueText, p_GUISlider->curValueTextLength);
-
-	int32 curValueLeftPixelPos = sliderPixelOffsetLeft > (pixelPosRight - pixelPosLeft) / 2 ?
-		pixelPosLeft + sliderPixelOffsetLeft - textPixelWidth - style->sliderPixelWidth / 2:
-		pixelPosLeft + sliderPixelOffsetLeft + style->sliderPixelWidth / 2;
-
-	if (p_GUIContext->activeElementIdentifier == p_GUIElement->identifierHash)
-	{
-		//cur value text (left or right)
-		textVertexIndex = K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderBackEnd, guiFont,
-			p_TextVertexBuffer, textVertexIndex, curValueLeftPixelPos, pixelPosBottom - textPixelHeight,
-			0x000000, curValueText, p_GUISlider->curValueTextLength);
-	}
-
-	K15_GetTextSizeInPixels(guiFont, &textPixelWidth, &textPixelHeight, maxValueText, p_GUISlider->maxValueTextLenght);
-	
-	//max value text (right)
-	textVertexIndex = K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderBackEnd, guiFont,
-		p_TextVertexBuffer, textVertexIndex, pixelPosRight - textPixelWidth, pixelPosTop,
-		0x000000, maxValueText, p_GUISlider->maxValueTextLenght);
-
-	K15_GetTextSizeInPixels(guiFont, &textPixelWidth, &textPixelHeight, minValueText, p_GUISlider->minValueTextLength);
-
-	//min value text (left)
-	textVertexIndex = K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderBackEnd, guiFont,
-		p_TextVertexBuffer, textVertexIndex, pixelPosLeft, pixelPosTop,
-		0x000000, minValueText, p_GUISlider->minValueTextLength);
-
 	//mid line 
 	vertexIndex = K15_InternalPush2DScreenspacePixelColoredLineVertices(p_RenderBackEnd, p_VertexBuffer, vertexIndex,
 		pixelPosLeft, pixelPosTop + p_GUIElement->pixelHeight / 2,
@@ -376,15 +341,7 @@ intern void K15_InternalCountGUIContextVertices(K15_GUIContext* p_GUIContext,
 
 		case K15_GUI_TYPE_FLOAT_SLIDER:
 			{
-				K15_GUIFloatSlider* guiSlider = (K15_GUIFloatSlider*)guiElementMemory;
-				const char* minValueText = (const char*)guiMemory + guiSlider->minValueTextOffsetInBytes;
-				const char* maxValueText = (const char*)guiMemory + guiSlider->maxValueTextOffsetInBytes;
-				const char* curValueText = (const char*)guiMemory + guiSlider->curValueTextOffsetInBytes;
-
 				numVertices += K15_InternalGetGUIControlVertexCount(p_GUIContext, guiElement);
-				numTextVertices += K15_GetTextVertexCount(guiStyleFont, minValueText, guiSlider->minValueTextLength);
-				numTextVertices += K15_GetTextVertexCount(guiStyleFont, maxValueText, guiSlider->maxValueTextLenght);
-				numTextVertices += K15_GetTextVertexCount(guiStyleFont, curValueText, guiSlider->curValueTextLength);
 				break;
 			}
 		default:
