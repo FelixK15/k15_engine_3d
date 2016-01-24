@@ -32,8 +32,9 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	defaultStyle.windowTitlePixelHeight = 20;
 	defaultStyle.sliderPixelHeight = 18;
 	defaultStyle.sliderPixelWidth = 10;
-
+	defaultStyle.sliderLinePixelWidth = 150;
 	defaultStyle.windowContentPixelPadding = 5;
+	defaultStyle.buttonContentPixelPadding = 3;
 
 	defaultStyle.controlUpperBackgroundColor = 0x303030;
 	defaultStyle.controlLowerBackgroundColor = 0x505050;
@@ -56,54 +57,66 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	return defaultStyle;
 }
 /*********************************************************************************/
+struct K15_InternalGetGUIElementLastFrameInfo
+{
+	K15_GUIElementHeader* element;
+	K15_GUIElementHeader* elementLastFrame;
+};
+/*********************************************************************************/
+intern void K15_InternalGetGUIElementLastFrameHelper(K15_GUIContext* p_GUIContext,
+	K15_GUIElementHeader* p_GUIElementHeader, void* p_UserData)
+{
+	K15_InternalGetGUIElementLastFrameInfo* info = 
+		(K15_InternalGetGUIElementLastFrameInfo*)p_UserData;;
+
+	if (info->elementLastFrame)
+	{
+		return;
+	}
+
+	uint32 elementIdentifierHash = p_GUIElementHeader->identifierHash;
+
+	if (elementIdentifierHash == info->element->identifierHash)
+	{
+		info->elementLastFrame = p_GUIElementHeader;
+	}
+}
+/*********************************************************************************/
 intern K15_GUIElementHeader* K15_InternalGetGUIElementLastFrame(K15_GUIContext* p_GUIContext, 
 	K15_GUIElementHeader* p_GUIElementHeader)
 {
-	K15_GUIElementHeader* elementLastFrame = 0;
+	K15_InternalGetGUIElementLastFrameInfo info = {};
+	info.element = p_GUIElementHeader;
 
-	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
-	uint32 guiMemorySize = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_BACK_BUFFER];
-	uint32 currentMemoryOffset = 0;
-	uint32 guiElementIdentifier = p_GUIElementHeader->identifierHash;
-	while (currentMemoryOffset < guiMemorySize)
-	{
-		K15_GUIElementHeader* guiElementHeader = (K15_GUIElementHeader*)(guiMemory + currentMemoryOffset);
+	K15_IterateGUIElementsHelper(p_GUIContext, K15_InternalGetGUIElementLastFrameHelper, 
+		(void*)&info, K15_GUI_MEMORY_BACK_BUFFER);
 
-		if (guiElementIdentifier == guiElementHeader->identifierHash)
-		{
-			elementLastFrame = guiElementHeader;
-			break;
-		}
-
-		currentMemoryOffset = guiElementHeader->offset;
-	}
-
-	return elementLastFrame;
+	return info.elementLastFrame;
 }
 /*********************************************************************************/
 #ifdef K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
-intern bool8 K15_InternalCheckForDuplicateIdentifiers(K15_GUIContext* p_GUIContext, uint32 p_IdentifierHash)
+/*********************************************************************************/
+struct K15_InternalGUIDuplicateIdentifierInfo
 {
-	bool8 foundDuplicate = K15_FALSE;
+	uint32 identifierHash;
+	bool8 foundDuplicate;
+};
+/*********************************************************************************/
+intern void K15_InternalCheckForDuplicateIdentifiers(K15_GUIContext* p_GUIContext, 
+	K15_GUIElementHeader* p_GUIElementHeader, void* p_IdentifierInfo)
+{
+	K15_InternalGUIDuplicateIdentifierInfo* duplicateIdentifierInfo =
+		(K15_InternalGUIDuplicateIdentifierInfo*)p_IdentifierInfo;
 
-	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER];
-	uint32 guiMemorySize = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER];
-	uint32 currentMemoryOffset = 0;
-
-	while (currentMemoryOffset < guiMemorySize)
+	if (duplicateIdentifierInfo->foundDuplicate)
 	{
-		K15_GUIElementHeader* guiElementHeader = (K15_GUIElementHeader*)(guiMemory + currentMemoryOffset);
-
-		if (p_IdentifierHash == guiElementHeader->identifierHash)
-		{
-			foundDuplicate = K15_TRUE;
-			break;
-		}
-
-		currentMemoryOffset = guiElementHeader->offset;
+		return;
 	}
 
-	return foundDuplicate;
+	uint32 elementIdentifier = duplicateIdentifierInfo->identifierHash;
+	bool8 foundDuplicate = p_GUIElementHeader->identifierHash == elementIdentifier;
+
+	duplicateIdentifierInfo->foundDuplicate = foundDuplicate;
 }
 #endif //K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
 /*********************************************************************************/
@@ -198,22 +211,43 @@ intern K15_GUILayoutCategory* K15_InternalPushLayoutCategory(K15_GUIContext* p_G
 	category->guiBufferOffsetInBytes = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER];
 
 	p_GUIContext->layoutCategoryIndex = categoryIndex + 1;
+	p_GUIContext->maxLayoutCategoryIndex = 
+		K15_MAX(p_GUIContext->maxLayoutCategoryIndex, p_GUIContext->layoutCategoryIndex);
 
 	return category;
 }
 /*********************************************************************************/
+intern K15_GUILayoutCategory* K15_InternalGetTopGUILayout(K15_GUIContext* p_GUIContext)
+{
+	K15_GUILayoutCategory* topLayout = 0;
+
+	if (p_GUIContext->layoutCategoryIndex > 0)
+	{
+		uint32 topLayoutIndex = p_GUIContext->layoutCategoryIndex - 1;
+		topLayout = &p_GUIContext->layoutCategoryStack[topLayoutIndex];
+	}
+
+	return topLayout;
+}
+/*********************************************************************************/
 intern K15_GUIElementHeader* K15_InternalAddGUIElement(K15_GUIContext* p_GUIContext,
-	K15_GUIElementType p_GUIElementType, uint32 p_ElementSizeInBytes,
-	const char* p_Identifier, void** p_ElementPointer)
+	K15_GUIElementType p_GUIElementType, uint32 p_ElementSizeInBytes, 
+	const char* p_Identifier, void** p_ElementPointer,
+	uint32 p_MinPixelWidth = UINT_MAX, uint32 p_MinPixelHeight = UINT_MAX)
 {
 	uint32 offset = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER];
-	uint32 newOffset = sizeof(K15_GUIElementHeader) + p_ElementSizeInBytes;
+	uint32 newOffset = offset + sizeof(K15_GUIElementHeader) + p_ElementSizeInBytes;
 	uint32 guiElementIdentifierHash = K15_GenerateStringHash(p_Identifier);
 
 	K15_ASSERT_TEXT(newOffset <= p_GUIContext->guiMemoryMaxSize, "Out of GUI memory.");
 
 #ifdef K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
-	K15_ASSERT_TEXT(K15_InternalCheckForDuplicateIdentifiers(p_GUIContext, guiElementIdentifierHash) == K15_FALSE,
+	K15_InternalGUIDuplicateIdentifierInfo identifierInfo = {};
+	identifierInfo.identifierHash = guiElementIdentifierHash;
+	K15_IterateGUIElementsHelper(p_GUIContext, K15_InternalCheckForDuplicateIdentifiers, 
+		(void*)&identifierInfo, K15_GUI_MEMORY_FRONT_BUFFER);
+
+	K15_ASSERT_TEXT(!identifierInfo.foundDuplicate, 
 		"Found duplicate for identifier '%s'. Please use a different identifier.", p_Identifier);
 #endif //K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
 
@@ -221,8 +255,25 @@ intern K15_GUIElementHeader* K15_InternalAddGUIElement(K15_GUIContext* p_GUICont
 
 	byte* guiContextFrontBuffer = p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER];
 
+	K15_GUILayoutCategory* topLayout = K15_InternalGetTopGUILayout(p_GUIContext);
+
+	if (topLayout)
+	{
+		++topLayout->elementCount;
+	}
+
 	K15_GUIElementHeader* elementHeader = (K15_GUIElementHeader*)(guiContextFrontBuffer + offset);
 	*p_ElementPointer = (guiContextFrontBuffer + offset + sizeof(K15_GUIElementHeader));
+
+	if (p_MinPixelWidth != UINT_MAX)
+	{
+		elementHeader->pixelWidth = p_MinPixelWidth;
+	}
+
+	if (p_MinPixelHeight != UINT_MAX)
+	{
+		elementHeader->pixelHeight = p_MinPixelHeight;
+	}
 
 	K15_InternalGetAlignedGUIDimension(p_GUIContext, &elementHeader->posPixelX, &elementHeader->posPixelY,
 		&elementHeader->pixelWidth, &elementHeader->pixelHeight);
@@ -233,37 +284,39 @@ intern K15_GUIElementHeader* K15_InternalAddGUIElement(K15_GUIContext* p_GUICont
 		elementHeader->posPixelY + elementHeader->pixelHeight,
 		p_GUIContext->mousePosPixelX, p_GUIContext->mousePosPixelY);
 
-	if (p_GUIContext->hoveredElementIdentifier == 0 ||
-		p_GUIContext->hoveredElementIdentifier == guiElementIdentifierHash &&
-		mouseInside)
-	{
-		p_GUIContext->hoveredElementIdentifier = guiElementIdentifierHash;
-		hoveredElement = K15_TRUE;
-	}
-	else if (p_GUIContext->hoveredElementIdentifier == guiElementIdentifierHash &&
+	if (p_GUIContext->hoveredElementIdentifier == guiElementIdentifierHash &&
 		!mouseInside)
 	{
 		p_GUIContext->hoveredElementIdentifier = 0;
 	}
+	else if (p_GUIContext->hoveredElementIdentifier == guiElementIdentifierHash ||
+		(p_GUIContext->hoveredElementIdentifier == 0 &&
+		mouseInside))
+	{
+		p_GUIContext->hoveredElementIdentifier = guiElementIdentifierHash;
+		hoveredElement = K15_TRUE;
+	}
 
 	bool8 activatedElement = K15_FALSE;
 
-	if (p_GUIContext->activeElementIdentifier == 0 ||
-		p_GUIContext->activeElementIdentifier == guiElementIdentifierHash &&
-		hoveredElement &&
-		p_GUIContext->leftMouseDown)
+	if (p_GUIContext->activeElementIdentifier == guiElementIdentifierHash &&
+		!p_GUIContext->leftMouseDown)
+	{
+		p_GUIContext->activeElementIdentifier = 0;
+	}
+	else if (p_GUIContext->activeElementIdentifier == guiElementIdentifierHash  ||
+		(p_GUIContext->activeElementIdentifier == 0 &&
+		p_GUIContext->leftMouseDown &&
+		mouseInside))
 	{
 		p_GUIContext->activeElementIdentifier = guiElementIdentifierHash;
 		activatedElement = K15_TRUE;
 	}
-	else if (p_GUIContext->activeElementIdentifier == guiElementIdentifierHash)
-	{
-		p_GUIContext->activeElementIdentifier = 0;
-	}
 
 	elementHeader->hovered = hoveredElement;
-	elementHeader->activated = hoveredElement;
-	elementHeader->offset = newOffset;
+	elementHeader->activated = activatedElement;
+	elementHeader->offset = offset;
+	elementHeader->elementSizeInBytes = p_ElementSizeInBytes + sizeof(K15_GUIElementHeader);
 	elementHeader->type = p_GUIElementType;
 	elementHeader->identifierHash = guiElementIdentifierHash;
 
@@ -349,6 +402,7 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	guiContext->memoryLock = K15_CreateSemaphoreWithInitialValue(1);
 	guiContext->activeElementIdentifier = 0;
 	guiContext->hoveredElementIdentifier = 0;
+	guiContext->maxLayoutCategoryIndex = 0;
 
 	//create and assign default style
 	guiContext->style = K15_InternalCreateDefaultStyle(p_ResourceContext);
@@ -364,7 +418,7 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 /*********************************************************************************/
 void K15_FlipGUIContextMemory(K15_GUIContext* p_GUIContext)
 {
-	assert(p_GUIContext);
+	K15_ASSERT(p_GUIContext);
 
 	//are we allowed to flip the buffers yet?
 	K15_WaitSemaphore(p_GUIContext->memoryLock);
@@ -383,7 +437,76 @@ void K15_FlipGUIContextMemory(K15_GUIContext* p_GUIContext)
 	uint32 frontBufferMemorySize = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER];
 	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER] = 0;
 
-//	memset(p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER], 0, frontBufferMemorySize);
+	p_GUIContext->maxLayoutCategoryIndex = 0;
+}
+/*********************************************************************************/
+void K15_PrepareGUIContextForRendering(K15_GUIContext* p_GUIContext)
+{
+	K15_ASSERT(p_GUIContext);
+
+	uint32 maxLayoutCategoryIndex = p_GUIContext->maxLayoutCategoryIndex;
+	uint32 guiMemoryOffsetInBytes = 0;
+	uint32 numElementsPerLayout = 0;
+	uint32 layoutPixelWidth = 0;
+	uint32 layoutPixelHeight = 0;
+	uint32 elementPixelWidth = 0;
+	uint32 elementPixelHeight = 0;
+	uint32 elementPixelPosLeft = 0;
+	uint32 elementPixelPosTop = 0;
+
+	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER];
+
+	for (uint32 layoutCategoryIndex = 0;
+		layoutCategoryIndex < maxLayoutCategoryIndex;
+		++layoutCategoryIndex)
+	{
+		K15_GUILayoutCategory* layout = &p_GUIContext->layoutCategoryStack[layoutCategoryIndex];
+		K15_GUILayout layoutType = layout->layout;
+
+		guiMemoryOffsetInBytes = layout->guiBufferOffsetInBytes;
+		numElementsPerLayout = layout->elementCount;
+
+		if (numElementsPerLayout == 0)
+		{
+			continue;
+		}
+
+		layoutPixelWidth = layout->pixelWidth;
+		layoutPixelHeight = layout->pixelHeight;
+
+		elementPixelHeight = layoutPixelHeight / numElementsPerLayout;
+		elementPixelWidth = layoutPixelWidth / numElementsPerLayout;
+		elementPixelPosLeft = layout->posPixelX;
+		elementPixelPosTop = layout->posPixelX;
+
+		for (uint32 elementIndex = 0;
+			elementIndex < numElementsPerLayout;
+			++elementIndex)
+		{
+			K15_GUIElementHeader* elementHeader = (K15_GUIElementHeader*)(guiMemory + guiMemoryOffsetInBytes);
+			guiMemoryOffsetInBytes = elementHeader->offset;
+
+			elementHeader->posPixelX = elementPixelPosLeft;
+			elementHeader->posPixelY = elementPixelPosTop;
+
+			switch (layoutType)
+			{
+			case K15_GUI_LAYOUT_HORIZONTAL:
+				elementHeader->pixelWidth = elementPixelWidth;
+				elementPixelPosLeft += elementPixelWidth;
+				break;
+
+			case K15_GUI_LAYOUT_VERTICAL:
+				elementHeader->pixelHeight = elementPixelHeight;
+				elementPixelPosTop += elementPixelHeight;
+				break;
+
+			default:
+				K15_ASSERT_TEXT(false, "Invalid gui layout '%s'", layoutType);
+				break;
+			}
+		}
+	}
 }
 /*********************************************************************************/
 void K15_HandleGUIInputEvent(K15_GUIContext* p_GUIContext, K15_SystemEvent* p_SystemEvent)
@@ -424,7 +547,7 @@ void K15_HandleGUIWindowEvent(K15_GUIContext* p_GUIContext, K15_SystemEvent* p_S
 /*********************************************************************************/
 void K15_SetGUIContextWindowSize(K15_GUIContext* p_GUIContext, uint32 p_WindowWidth, uint32 p_WindowHeight)
 {
-	assert(p_GUIContext);
+	K15_ASSERT(p_GUIContext);
 
 	uint32 oldWindowWidth = p_GUIContext->windowWidth;
 	uint32 oldWindowHeight = p_GUIContext->windowHeight;
@@ -435,7 +558,7 @@ void K15_SetGUIContextWindowSize(K15_GUIContext* p_GUIContext, uint32 p_WindowWi
 /*********************************************************************************/
 void K15_SetGUIContextMousePosition(K15_GUIContext* p_GUIContext, uint32 p_MouseX, uint32 p_MouseY)
 {
-	assert(p_GUIContext);
+	K15_ASSERT(p_GUIContext);
 
 	p_GUIContext->mousePosPixelX = p_MouseX;
 	p_GUIContext->mousePosPixelY = p_MouseY;
@@ -444,7 +567,7 @@ void K15_SetGUIContextMousePosition(K15_GUIContext* p_GUIContext, uint32 p_Mouse
 char* K15_ComboBox(K15_GUIContext* p_GUIContext, char** p_Elements, uint32 p_NumElements, const char* p_Identifier)
 {
 #if 0
-	assert(p_GUIContext);
+	K15_ASSERT(p_GUIContext);
 
 	uint32 lengthAllElements = 0;
 
@@ -577,6 +700,7 @@ bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption,
 	K15_GUIContextStyle* style = &p_GUIContext->style;
 	K15_RenderFontDesc* guiFont = style->styleFont;
 	uint32 windowTitleHeight = style->windowTitlePixelHeight;
+	uint32 textOffsetInBytes = windowElementHeader->offset + sizeof(K15_GUIWindow) + sizeof(K15_GUIElementHeader);
 
 	float windowTextPixelWidth = 0.f;
 	K15_GetTextSizeInPixels(guiFont, &windowTextPixelWidth, 0, p_Caption, titleLength);
@@ -618,7 +742,7 @@ bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption,
 
 	windowElement->state = currentWindowState;
 	windowElement->titleLength = titleLength;
-	windowElement->titleOffsetInBytes = windowElementHeader->offset - titleLength;
+	windowElement->titleOffsetInBytes = textOffsetInBytes;
 	windowElement->windowPixelHeight = *p_WindowHeight;
 	windowElement->windowPixelWidth = *p_WindowWidth;
 	windowElement->dragPixelOffsetX = dragPixelOffsetX;
@@ -640,11 +764,11 @@ bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption,
 		K15_InternalPushVerticalLayout(p_GUIContext, 5, 10, *p_LeftPixelPos + pixelPadding, 
 			*p_TopPixelPos + windowTitleHeight + pixelPadding,
 			*p_WindowWidth - pixelPadding * 2,
-			*p_WindowHeight - pixelPadding * 2);
+			*p_WindowHeight - pixelPadding * 3);
 	}
 
 	//copy text to gui memory buffer
-	memcpy(guiContextFrontBuffer + windowElementHeader->offset - titleLength, p_Caption, titleLength);
+	memcpy(guiContextFrontBuffer + textOffsetInBytes, p_Caption, titleLength);
 
 	return windowActive;
 }
@@ -665,16 +789,27 @@ void K15_EndWindow(K15_GUIContext* p_GUIContext)
 /*********************************************************************************/
 bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char* p_Identifier)
 {
-	assert(p_GUIContext);
+	K15_ASSERT(p_GUIContext);
 
 	uint32 captionLength = (uint32)strlen(p_Caption);
 	uint32 elementSizeInBytes = sizeof(K15_GUIButton) + captionLength;
 	K15_GUIButton* button = 0;
 
-	K15_GUIElementHeader* buttonElementHeader = K15_InternalAddGUIElement(p_GUIContext, 
-		K15_GUI_TYPE_BUTTON, elementSizeInBytes, p_Identifier, (void**)&button);
+	K15_RenderFontDesc* guiFont = p_GUIContext->style.styleFont;
 
-	uint32 textOffsetInBytes =  buttonElementHeader->offset + sizeof(K15_GUIButton);
+	float textWidth = 0.f;
+	float textHeight = 0.f;
+
+	K15_GetTextSizeInPixels(guiFont, &textWidth, &textHeight, p_Caption, captionLength);
+
+	uint32 minElementPixelWidth = textWidth + p_GUIContext->style.buttonContentPixelPadding * 2;
+	uint32 minElementPixelHeigt = textHeight + p_GUIContext->style.buttonContentPixelPadding * 2;
+
+	K15_GUIElementHeader* buttonElementHeader = K15_InternalAddGUIElement(p_GUIContext, 
+		K15_GUI_TYPE_BUTTON, elementSizeInBytes, p_Identifier, (void**)&button, 
+		minElementPixelWidth, minElementPixelHeigt);
+
+	uint32 textOffsetInBytes =  buttonElementHeader->offset + sizeof(K15_GUIElementHeader) + sizeof(K15_GUIButton);
 	K15_GUIElementHeader* buttonHeaderLastFrame = K15_InternalGetGUIElementLastFrame(p_GUIContext, 
 		buttonElementHeader);
 
@@ -687,13 +822,6 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char
 		pressedLastFrame = buttonHeaderLastFrame->activated;
 		hoveredLastFrame = buttonHeaderLastFrame->hovered;
 	}
-
-	K15_RenderFontDesc* guiFont = p_GUIContext->style.styleFont;
-
-	float textWidth = 0.f;
-	float textHeight = 0.f;
-
-	K15_GetTextSizeInPixels(guiFont, &textWidth, &textHeight, p_Caption, captionLength);
 
 	button->state = hoveredLastFrame ? K15_GUI_BUTTON_STATE_HOVERED : K15_GUI_BUTTON_STATE_NORMAL;
 	button->textLength = captionLength;
@@ -742,63 +870,39 @@ bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char
 /*********************************************************************************/
 void K15_Label(K15_GUIContext* p_GUIContext, const char* p_LabelText, const char* p_Identifier)
 {
-#if 0
-	assert(p_GUIContext);
-	assert(p_LabelText);
-	assert(p_Identifier);
+	K15_ASSERT(p_GUIContext);
+	K15_ASSERT(p_LabelText);
+	K15_ASSERT(p_Identifier);
 
 	uint32 textLength = (uint32)strlen(p_LabelText);
-	uint32 offset = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER];
-	uint32 textOffsetInBytes = offset + sizeof(K15_GUIElementHeader) + sizeof(K15_GUILabel);
-	uint32 newOffset = textOffsetInBytes + textLength;
-	uint32 guiElementIdentifierHash = K15_GenerateStringHash(p_Identifier);
-
-	K15_ASSERT_TEXT(newOffset <= p_GUIContext->guiMemoryMaxSize, "Out of GUI memory.");
-
-#ifdef K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
-	K15_ASSERT_TEXT(K15_InternalCheckForDuplicateIdentifiers(p_GUIContext, guiElementIdentifierHash) == K15_FALSE,
-		"Found duplicate for identifier '%s'. Please use a different identifier.", p_Identifier);
-#endif //K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
-
-	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER] = newOffset;
-
-	byte* guiContextFrontBuffer = p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER];
-
-	K15_GUIElementHeader* labelHeader = (K15_GUIElementHeader*)(guiContextFrontBuffer + offset);
-	K15_GUILabel* label = (K15_GUILabel*)(guiContextFrontBuffer + offset + sizeof(K15_GUIElementHeader));
+	uint32 elementSizeInBytes = sizeof(K15_GUILabel) + textLength;
 
 	K15_RenderFontDesc* guiFont = p_GUIContext->style.styleFont;
-
 	float textWidth = 0.f;
 	float textHeight = 0.f;
 
 	K15_GetTextSizeInPixels(guiFont, &textWidth, &textHeight, p_LabelText, textLength);
 
-	labelHeader->identifierHash = guiElementIdentifierHash;
-	labelHeader->offset = newOffset;
-	labelHeader->type = K15_GUI_TYPE_LABEL;
-	labelHeader->pixelHeight = textHeight;
-	labelHeader->pixelWidth = textWidth;
-	labelHeader->posPixelX = 0;
-	labelHeader->posPixelY = 0;
+	K15_GUILabel* label = 0;
+	K15_GUIElementHeader* labelHeader = K15_InternalAddGUIElement(p_GUIContext, K15_GUI_TYPE_LABEL, elementSizeInBytes,
+		p_Identifier, (void**)&label, textWidth, textHeight);
+
+	byte* guiContextFrontBuffer = p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER];
+
+	uint32 textOffsetInBytes = labelHeader->offset + sizeof(K15_GUIElementHeader) + sizeof(K15_GUILabel);
 
 	label->textLength = textLength;
 	label->textOffsetInBytes = textOffsetInBytes;
 	label->textPixelHeight = textHeight;
 	label->textPixelWidth = textWidth;
 
-	K15_InternalGetAlignedGUIDimension(p_GUIContext, &labelHeader->posPixelX, &labelHeader->posPixelY,
-		&labelHeader->pixelWidth, &labelHeader->pixelHeight);
-
 	//copy text to gui memory buffer
 	memcpy(guiContextFrontBuffer + textOffsetInBytes, p_LabelText, textLength);
-#endif
 }
 /*********************************************************************************/
 float K15_FloatSlider(K15_GUIContext* p_GUIContext, float p_Value, float p_MinValue, float p_MaxValue, 
 	const char* p_Identifier)
 {
-#if 0
 	K15_ASSERT(p_GUIContext);
 	
 	float minValue = p_MinValue;
@@ -811,42 +915,20 @@ float K15_FloatSlider(K15_GUIContext* p_GUIContext, float p_Value, float p_MinVa
 
 	K15_GUIContextStyle* style = &p_GUIContext->style;
 
+	uint32 elementSizeInBytes = sizeof(K15_GUIFloatSlider);
+	K15_GUIFloatSlider* slider = 0;
+	K15_GUIElementHeader* sliderHeader = K15_InternalAddGUIElement(p_GUIContext, K15_GUI_TYPE_FLOAT_SLIDER,
+		elementSizeInBytes, p_Identifier, (void**)&slider, style->sliderLinePixelWidth, style->sliderPixelHeight);
+
+
 	uint32 maxFloatTextLength = 20;
-
-	uint32 offset = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER];
-	uint32 newOffset = offset + sizeof(K15_GUIElementHeader) + sizeof(K15_GUIFloatSlider);
-	uint32 guiElementIdentifierHash = K15_GenerateStringHash(p_Identifier);
-
-	K15_ASSERT_TEXT(newOffset <= p_GUIContext->guiMemoryMaxSize, "Out of GUI memory.");
-
-#ifdef K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
-	K15_ASSERT_TEXT(K15_InternalCheckForDuplicateIdentifiers(p_GUIContext, guiElementIdentifierHash) == K15_FALSE,
-		"Found duplicate for identifier '%s'. Please use a different identifier.", p_Identifier);
-#endif //K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
-
-	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER] = newOffset;
-
-	byte* guiContextFrontBuffer = p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER];
-
-	K15_GUIElementHeader* sliderLastFrameHeader = K15_InternalGetGUIElementLastFrame(p_GUIContext, guiElementIdentifierHash);
+	K15_GUIElementHeader* sliderLastFrameHeader = K15_InternalGetGUIElementLastFrame(p_GUIContext, sliderHeader);
 
 	if (sliderLastFrameHeader)
 	{
 		K15_GUIFloatSlider* sliderLastFrame = (K15_GUIFloatSlider*)(sliderLastFrameHeader + 1);
 		currentValue = sliderLastFrame->value;
 	}
-
-	K15_GUIElementHeader* sliderHeader = (K15_GUIElementHeader*)(guiContextFrontBuffer + offset);
-	K15_GUIFloatSlider* slider = (K15_GUIFloatSlider*)(guiContextFrontBuffer + offset + sizeof(K15_GUIElementHeader));
-
-	sliderHeader->identifierHash = guiElementIdentifierHash;
-	sliderHeader->offset = newOffset;
-	sliderHeader->type = K15_GUI_TYPE_FLOAT_SLIDER;
-	sliderHeader->pixelHeight = style->sliderPixelHeight;
-	sliderHeader->pixelWidth = 0;
-
-	K15_InternalGetAlignedGUIDimension(p_GUIContext, &sliderHeader->posPixelX, &sliderHeader->posPixelY, 
-		&sliderHeader->pixelWidth, &sliderHeader->pixelHeight);
 
 	uint32 sliderLinePixelWidth = style->sliderLinePixelWidth;
 	uint32 sliderPixelWidth = style->sliderPixelWidth;
@@ -859,35 +941,14 @@ float K15_FloatSlider(K15_GUIContext* p_GUIContext, float p_Value, float p_MinVa
 	uint32 sliderPixelTopPos = sliderHeader->posPixelY + sliderPixelOffsetY - sliderPixelHeight / 2;
 	uint32 sliderPixelBottomPos = sliderHeader->posPixelY + sliderPixelOffsetY + sliderPixelHeight / 2;
 
-	bool8 mouseInside = K15_Collision2DBoxPoint(sliderPixelLeftPos, sliderPixelTopPos,
-		sliderPixelRightPos, sliderPixelBottomPos,
-		p_GUIContext->mousePosPixelX, p_GUIContext->mousePosPixelY);
-
-	if (mouseInside &&
-		p_GUIContext->hoveredElementIdentifier == 0)
+	if (sliderLastFrameHeader &&
+		!sliderLastFrameHeader->activated &&
+		sliderHeader->activated)
 	{
-		p_GUIContext->hoveredElementIdentifier = guiElementIdentifierHash;
-	}
-	else if (!mouseInside &&
-		p_GUIContext->hoveredElementIdentifier == guiElementIdentifierHash)
-	{
-		p_GUIContext->hoveredElementIdentifier = 0;
-	}
-
-	if (p_GUIContext->activeElementIdentifier == 0 &&
-		p_GUIContext->leftMouseDown &&
-		mouseInside)
-	{
-		p_GUIContext->activeElementIdentifier = guiElementIdentifierHash;
 		slider->mousePosPixelX = p_GUIContext->mousePosPixelX;
 	}
-	else if (!p_GUIContext->leftMouseDown &&
-		p_GUIContext->activeElementIdentifier == guiElementIdentifierHash)
-	{
-		p_GUIContext->activeElementIdentifier = 0;
-	}
 
-	if (p_GUIContext->activeElementIdentifier == guiElementIdentifierHash)
+	if (sliderHeader->activated)
 	{
 		uint32 offsetX = 0;
 		if (slider->mousePosPixelX >= sliderHeader->posPixelX)
@@ -910,9 +971,6 @@ float K15_FloatSlider(K15_GUIContext* p_GUIContext, float p_Value, float p_MinVa
 	slider->sliderPixelPosBottom = sliderPixelBottomPos;
 
 	return currentValue;
-#endif
-
-	return 0.f;
 }
 /*********************************************************************************/
 void K15_PushVerticalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, uint32 p_MinElementPixelHeight)
@@ -922,7 +980,8 @@ void K15_PushVerticalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPaddin
 	uint32 pixelWidth = 0;
 	uint32 pixelHeight = p_MinElementPixelHeight;
 
-	K15_InternalGetAlignedGUIDimension(p_GUIContext, &leftPixelPos, &topPixelPos, &pixelWidth, &pixelHeight);
+	K15_InternalGetAlignedGUIDimension(p_GUIContext, &leftPixelPos, &topPixelPos, 
+		&pixelWidth, &pixelHeight);
 
 	K15_InternalPushVerticalLayout(p_GUIContext, p_ElementPadding, p_MinElementPixelHeight,
 		leftPixelPos, topPixelPos, pixelWidth, pixelHeight);
@@ -949,5 +1008,21 @@ void K15_PopLayoutCategory(K15_GUIContext* p_GUIContext)
 	K15_ASSERT(categoryIndex != 0);
 
 	p_GUIContext->layoutCategoryIndex = categoryIndex - 1;
+}
+/*********************************************************************************/
+void K15_IterateGUIElementsHelper(K15_GUIContext* p_GUIContext, K15_GUIIterator p_GUIIterator, void* p_UserData,
+	uint32 p_BufferIndex)
+{
+	uint32 currentGUIMemoryOffset = 0;
+	uint32 guiMemorySize = p_GUIContext->guiMemoryCurrentSize[p_BufferIndex];
+	byte* guiMemory = p_GUIContext->guiMemory[p_BufferIndex];
+
+	while (currentGUIMemoryOffset < guiMemorySize)
+	{
+		K15_GUIElementHeader* guiElement = (K15_GUIElementHeader*)(guiMemory + currentGUIMemoryOffset);
+		p_GUIIterator(p_GUIContext, guiElement, p_UserData);
+
+		currentGUIMemoryOffset = guiElement->offset + guiElement->elementSizeInBytes;
+	}
 }
 /*********************************************************************************/

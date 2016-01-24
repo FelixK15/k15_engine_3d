@@ -254,13 +254,13 @@ intern void K15_InternalPushGUIFloatSliderVertices(K15_RenderBackEnd* p_RenderBa
 	uint32 upperBackgroundColor = style->controlUpperBackgroundColor;
 	uint32 lowerBackgroundColor = style->controlLowerBackgroundColor;
 
-	if (p_GUIContext->hoveredElementIdentifier == p_GUIElement->identifierHash)
+	if (p_GUIElement->hovered)
 	{
 		upperBackgroundColor = style->hoveredControlUpperBackgroundColor;
 		lowerBackgroundColor = style->hoveredControlLowerBackgroundColor;
 	}
 
-	if (p_GUIContext->activeElementIdentifier == p_GUIElement->identifierHash)
+	if (p_GUIElement->activated)
 	{
 		upperBackgroundColor = style->interactedControlUpperBackgroundColor;
 		lowerBackgroundColor = style->hoveredControlLowerBackgroundColor;
@@ -292,161 +292,166 @@ intern void K15_InternalPushGUIFloatSliderVertices(K15_RenderBackEnd* p_RenderBa
 	*p_TextVertexBufferIndexOffset = textVertexIndex;
 }
 /*********************************************************************************/
-intern void K15_InternalCountGUIContextVertices(K15_GUIContext* p_GUIContext, 
-												uint32* p_GeometryVertices, 
-												uint32* p_TextVertices)
+intern void K15_InternalCountGUIElementVertices(K15_GUIContext* p_GUIContext, K15_GUIElementHeader* p_GUIElementHeader, 
+	void* p_VertexCounter)
 {
-	uint32 currentGUIMemoryOffset = 0;
-	uint32 numVertices = 0;
-	uint32 numTextVertices = 0;
-
+	uint32* vertexCount = (uint32*)p_VertexCounter;
 	uint32 guiMemorySize = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_BACK_BUFFER];
 	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
 
 	K15_RenderFontDesc* guiStyleFont = p_GUIContext->style.styleFont;
+	K15_GUIElementType guiElementType = p_GUIElementHeader->type;
+	byte* guiElementMemory = (byte*)(p_GUIElementHeader + 1);
 
-	while (currentGUIMemoryOffset < guiMemorySize)
+	switch (guiElementType)
 	{
-		K15_GUIElementHeader* guiElement = (K15_GUIElementHeader*)(guiMemory + currentGUIMemoryOffset);
-		K15_GUIElementType guiElementType = guiElement->type;
-		byte* guiElementMemory = (guiMemory + currentGUIMemoryOffset + sizeof(K15_GUIElementHeader));
-
-		switch(guiElementType)
-		{
 		case K15_GUI_TYPE_BUTTON:
-			{
-				K15_GUIButton* guiButton = (K15_GUIButton*)guiElementMemory;
-				const char* text = (const char*)(guiMemory + guiButton->textOffsetInBytes);
-				numVertices += K15_InternalGetGUIControlVertexCount(p_GUIContext, guiElement);
-				numTextVertices += K15_GetTextVertexCount(guiStyleFont, text, guiButton->textLength);
-				break;
-			}
-
-		case K15_GUI_TYPE_WINDOW:
-			{
-				K15_GUIWindow* guiWindow = (K15_GUIWindow*)guiElementMemory;
-				const char* title = (const char*)(guiMemory + guiWindow->titleOffsetInBytes);
-				numVertices += K15_InternalGetGUIControlVertexCount(p_GUIContext, guiElement);
-				numTextVertices += K15_GetTextVertexCount(guiStyleFont, title, guiWindow->titleLength);
-				break;
-			}
-
-		case K15_GUI_TYPE_LABEL:
-			{
-				K15_GUILabel* guiLabel = (K15_GUILabel*)guiElementMemory;
-				const char* text = (const char*)(guiMemory + guiLabel->textOffsetInBytes);
-				numTextVertices += K15_GetTextVertexCount(guiStyleFont, text, guiLabel->textLength);
-				break;
-			}
-
-		case K15_GUI_TYPE_FLOAT_SLIDER:
-			{
-				numVertices += K15_InternalGetGUIControlVertexCount(p_GUIContext, guiElement);
-				break;
-			}
-		default:
-			{
-				K15_ASSERT_TEXT(false, "Missing gui type vertex count '%d'", guiElementType);
-				break;
-			}
+		{
+			K15_GUIButton* guiButton = (K15_GUIButton*)guiElementMemory;
+			const char* text = (const char*)(guiMemory + guiButton->textOffsetInBytes);
+			vertexCount[0] += K15_InternalGetGUIControlVertexCount(p_GUIContext, p_GUIElementHeader);
+			vertexCount[1] += K15_GetTextVertexCount(guiStyleFont, text, guiButton->textLength);
+			break;
 		}
 
-		currentGUIMemoryOffset = guiElement->offset;
-	}
+		case K15_GUI_TYPE_WINDOW:
+		{
+			K15_GUIWindow* guiWindow = (K15_GUIWindow*)guiElementMemory;
+			const char* title = (const char*)(guiMemory + guiWindow->titleOffsetInBytes);
+			vertexCount[0] += K15_InternalGetGUIControlVertexCount(p_GUIContext, p_GUIElementHeader);
+			vertexCount[1] += K15_GetTextVertexCount(guiStyleFont, title, guiWindow->titleLength);
+			break;
+		}
 
-	*p_GeometryVertices = numVertices;
-	*p_TextVertices = numTextVertices;
+		case K15_GUI_TYPE_LABEL:
+		{
+			K15_GUILabel* guiLabel = (K15_GUILabel*)guiElementMemory;
+			const char* text = (const char*)(guiMemory + guiLabel->textOffsetInBytes);
+			vertexCount[1] += K15_GetTextVertexCount(guiStyleFont, text, guiLabel->textLength);
+			break;
+		}
+
+		case K15_GUI_TYPE_FLOAT_SLIDER:
+		{
+			vertexCount[0] += K15_InternalGetGUIControlVertexCount(p_GUIContext, p_GUIElementHeader);
+			break;
+		}
+		default:
+		{
+			K15_ASSERT_TEXT(false, "Missing gui type vertex count '%d'", guiElementType);
+			break;
+		}
+	}
+}
+/*********************************************************************************/
+intern void K15_InternalCountGUIContextVertices(K15_GUIContext* p_GUIContext, 
+												uint32* p_GeometryVertices, 
+												uint32* p_TextVertices)
+{
+	uint32 vertexCount[2] = {};
+
+	K15_IterateGUIElementsHelper(p_GUIContext, K15_InternalCountGUIElementVertices, 
+		(void*)&vertexCount, K15_GUI_MEMORY_BACK_BUFFER);
+
+	*p_GeometryVertices = vertexCount[0];
+	*p_TextVertices = vertexCount[1];
+}
+/*********************************************************************************/
+struct K15_InternalGUIRenderInformation
+{
+	K15_RenderBackEnd* renderBackEnd;
+	float* vertexBuffer;
+	float* textVertexBuffer;
+	uint32 vertexIndex;
+	uint32 textVertexIndex;
+};
+
+intern void K15_InternalFillGUIElementVertexBuffer(K15_GUIContext* p_GUIContext, K15_GUIElementHeader* p_GUIElementHeader,
+	void* p_UserData)
+{
+	K15_GUIElementType guiElementType = p_GUIElementHeader->type;
+	byte* guiElementMemory = (byte*)(p_GUIElementHeader + 1);
+
+	K15_InternalGUIRenderInformation* renderInformation = (K15_InternalGUIRenderInformation*)p_UserData;
+	K15_RenderBackEnd* renderBackEnd = renderInformation->renderBackEnd;
+	float* vertexBuffer = renderInformation->vertexBuffer;
+	float* textVertexBuffer = renderInformation->textVertexBuffer;
+	uint32* vertexIndex = &renderInformation->vertexIndex;
+	uint32* textVertexIndex = &renderInformation->textVertexIndex;
+
+	switch (guiElementType)
+	{
+		case K15_GUI_TYPE_BUTTON:
+		{
+			K15_GUIButton* guiButton = (K15_GUIButton*)guiElementMemory;
+
+			K15_InternalPushGUIButtonVertices(renderBackEnd, p_GUIContext,
+				p_GUIElementHeader, guiButton, vertexBuffer, vertexIndex,
+				textVertexBuffer, textVertexIndex);
+			break;
+		}
+
+		case K15_GUI_TYPE_COMBO_BOX:
+		{
+			K15_GUIComboBox* guiComboBox = (K15_GUIComboBox*)guiElementMemory;
+
+			K15_InternalPushGUIComboBoxVertices(renderBackEnd, p_GUIContext,
+				p_GUIElementHeader, guiComboBox, vertexBuffer, vertexIndex,
+				textVertexBuffer, textVertexIndex);
+			break;
+		}
+
+		case K15_GUI_TYPE_WINDOW:
+		{
+			K15_GUIWindow* guiWindow = (K15_GUIWindow*)guiElementMemory;
+
+			K15_InternalPushGUIWindowVertices(renderBackEnd, p_GUIContext,
+				p_GUIElementHeader, guiWindow, vertexBuffer, vertexIndex,
+				textVertexBuffer, textVertexIndex);
+			break;
+		}
+
+		case K15_GUI_TYPE_LABEL:
+		{
+			K15_GUILabel* guiLabel = (K15_GUILabel*)guiElementMemory;
+
+			K15_InternalPushGUILabelVertices(renderBackEnd, p_GUIContext,
+				p_GUIElementHeader, guiLabel, vertexBuffer, vertexIndex,
+				textVertexBuffer, textVertexIndex);
+			break;
+		}
+
+		case K15_GUI_TYPE_FLOAT_SLIDER:
+		{
+			K15_GUIFloatSlider* guiSlider = (K15_GUIFloatSlider*)guiElementMemory;
+
+			K15_InternalPushGUIFloatSliderVertices(renderBackEnd, p_GUIContext,
+				p_GUIElementHeader, guiSlider, vertexBuffer, vertexIndex,
+				textVertexBuffer, textVertexIndex);
+			break;
+		}
+
+		default:
+		{
+			K15_ASSERT_TEXT(false, "Missing gui type vertex information '%d'", guiElementType);
+			break;
+		}
+	}
 }
 /*********************************************************************************/
 intern void K15_InternalFillGUIContextVertexBuffer(K15_RenderBackEnd* p_RenderBackEnd, K15_GUIContext* p_GUIContext, 
 													float* p_VertexBuffer, uint32 *p_VertexBufferFloatCount, 
 													float* p_TextVertexBuffer, uint32 *p_TextVertexBufferFloatCount)
 {
-	uint32 currentGUIMemoryOffset = 0;
-	uint32 vertexIndex = 0;
-	uint32 textVertexIndex = 0;
+	K15_InternalGUIRenderInformation renderInformation = {};
+	renderInformation.renderBackEnd = p_RenderBackEnd;
+	renderInformation.vertexBuffer = p_VertexBuffer;
+	renderInformation.textVertexBuffer = p_TextVertexBuffer;
+	
+	K15_IterateGUIElementsHelper(p_GUIContext, K15_InternalFillGUIElementVertexBuffer, 
+		(void*)&renderInformation, K15_GUI_MEMORY_BACK_BUFFER);
 
-	uint32 viewportWidth = p_RenderBackEnd->viewportWidth;
-	uint32 viewportHeight = p_RenderBackEnd->viewportHeight;
-
-	uint32 guiMemorySize = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_BACK_BUFFER];
-	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
-
-	K15_GUIContextStyle* guiStyle = &p_GUIContext->style;
-	K15_RenderFontDesc* guiStyleFont = guiStyle->styleFont;
-
-	uint32 guiTextureWidth = 256;
-	uint32 guiTextureHeight = 128;
-
-	while (currentGUIMemoryOffset < guiMemorySize)
-	{
-		K15_GUIElementHeader* guiElement = (K15_GUIElementHeader*)(guiMemory + currentGUIMemoryOffset);
-		K15_GUIElementType guiElementType = guiElement->type;
-		byte* guiElementMemory = (guiMemory + currentGUIMemoryOffset + sizeof(K15_GUIElementHeader));
-
-		switch(guiElementType) 
-		{
-		case K15_GUI_TYPE_BUTTON:
-			{
-				K15_GUIButton* guiButton = (K15_GUIButton*)guiElementMemory;
-				
-				K15_InternalPushGUIButtonVertices(p_RenderBackEnd, p_GUIContext, 
-					guiElement, guiButton, p_VertexBuffer, &vertexIndex,
-					p_TextVertexBuffer, &textVertexIndex);
-				break;
-			}
-
-		case K15_GUI_TYPE_COMBO_BOX:
-			{
-				K15_GUIComboBox* guiComboBox = (K15_GUIComboBox*)guiElementMemory;
-
-				K15_InternalPushGUIComboBoxVertices(p_RenderBackEnd, p_GUIContext,
-					guiElement, guiComboBox, p_VertexBuffer, &vertexIndex,
-					p_TextVertexBuffer, &textVertexIndex);
-				break;
-			}
-
-		case K15_GUI_TYPE_WINDOW:
-			{
-				K15_GUIWindow* guiWindow = (K15_GUIWindow*)guiElementMemory;
-
-				K15_InternalPushGUIWindowVertices(p_RenderBackEnd, p_GUIContext,
-					guiElement, guiWindow, p_VertexBuffer, &vertexIndex,
-					p_TextVertexBuffer, &textVertexIndex);
-				break;
-			}
-
-		case K15_GUI_TYPE_LABEL:
-			{
-				K15_GUILabel* guiLabel = (K15_GUILabel*)guiElementMemory;
-
-				K15_InternalPushGUILabelVertices(p_RenderBackEnd, p_GUIContext,
-					guiElement, guiLabel, p_VertexBuffer, &vertexIndex,
-					p_TextVertexBuffer, &textVertexIndex);
-				break;
-			}
-
-		case K15_GUI_TYPE_FLOAT_SLIDER:
-			{
-				K15_GUIFloatSlider* guiSlider = (K15_GUIFloatSlider*)guiElementMemory;
-
-				K15_InternalPushGUIFloatSliderVertices(p_RenderBackEnd, p_GUIContext,
-					guiElement, guiSlider, p_VertexBuffer, &vertexIndex,
-					p_TextVertexBuffer, &textVertexIndex);
-				break;
-			}
-
-		default:
-			{
-				K15_ASSERT_TEXT(false, "Missing gui type vertex information '%d'", guiElementType);
-				break;
-			}
-		}
-
-		currentGUIMemoryOffset = guiElement->offset;
-	}
-
-	*p_VertexBufferFloatCount = vertexIndex;
-	*p_TextVertexBufferFloatCount = textVertexIndex;
+	*p_VertexBufferFloatCount = renderInformation.vertexIndex;
+	*p_TextVertexBufferFloatCount = renderInformation.textVertexIndex;
 }
 /*********************************************************************************/

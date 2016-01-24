@@ -2,11 +2,15 @@
 #define _K15_GUILayer_Context_h_
 
 struct K15_SystemEvent;
+struct K15_GUIElementHeader;
+struct K15_GUIContext;
 
 #include "K15_GUIContextPrerequisites.h"
 #include "K15_CustomMemoryAllocator.h"
 
 #include <K15_RenderMaterialDesc.h>
+
+typedef void(*K15_GUIIterator)(K15_GUIContext*, K15_GUIElementHeader*, void*);
 
 enum K15_GUIElementType
 {
@@ -100,7 +104,7 @@ struct K15_GUIElementHeader
 	uint32 pixelHeight;
 	uint32 identifierHash;
 	uint32 offset;
-
+	uint32 elementSizeInBytes;
 	bool8 hovered;
 	bool8 activated;
 };
@@ -122,6 +126,7 @@ struct K15_GUIContextStyle
 
 	//padding
 	uint32 windowContentPixelPadding;
+	uint32 buttonContentPixelPadding;
 
 	//controls
 	uint32 controlUpperBackgroundColor;
@@ -190,6 +195,7 @@ struct K15_GUIContext
 	bool8 rightMouseDown;
 
 	uint32 layoutCategoryIndex;
+	uint32 maxLayoutCategoryIndex; //reset per draw
 	uint32 activeElementIdentifier;
 	uint32 hoveredElementIdentifier;
 	uint32 guiMemoryMaxSize;
@@ -206,6 +212,7 @@ K15_GUIContext* K15_CreateGUIContext(K15_ResourceContext* p_ResourceContext, K15
 K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocator p_MemoryAllocator, K15_ResourceContext* p_ResourceContext, K15_RenderCommandQueue* p_RenderCommandQueue);
 
 void K15_FlipGUIContextMemory(K15_GUIContext* p_GUIContext);
+void K15_PrepareGUIContextForRendering(K15_GUIContext* p_GUIContext);
 
 void K15_HandleGUIInputEvent(K15_GUIContext* p_GUIContext, K15_SystemEvent* p_SystemEvent);
 void K15_HandleGUIWindowEvent(K15_GUIContext* p_GUIContext, K15_SystemEvent* p_SystemEvent);
@@ -224,5 +231,8 @@ void K15_PushVerticalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPaddin
 void K15_PushHorizontalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, uint32 p_MinElementPixelWidth);
 
 void K15_PopLayoutCategory(K15_GUIContext* p_GUIContext);
+
+void K15_IterateGUIElementsHelper(K15_GUIContext* p_GUIContext, K15_GUIIterator p_GUIIterator, 
+	void* p_UserData, uint32 p_BufferIndex);
 
 #endif //_K15_GUILayer_Context_h_

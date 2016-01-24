@@ -163,24 +163,25 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	{
 		K15_Label(guiContext, "Test Label:", "test_label");
 		K15_Button(guiContext, "bla", "test_button");
-		testFloat = K15_FloatSlider(guiContext, testFloat, 0.f, 1.f, "test_slider");
+		K15_Button(guiContext, "bla", "test_button2");
+		//testFloat = K15_FloatSlider(guiContext, testFloat, 0.f, 1.f, "test_slider");
 		K15_PushHorizontalLayout(guiContext, 5, 50);
 		K15_Label(guiContext, "Bla:", "bla");
 		testFloat = K15_FloatSlider(guiContext, testFloat, -20.f, 20.f, "test_slider2");
+		//testFloat = K15_FloatSlider(guiContext, testFloat, -20.f, 20.f, "test_slider3");
 		K15_PopLayoutCategory(guiContext);
 		K15_EndWindow(guiContext);
 	}
 
-	if (K15_BeginWindow(guiContext, "TestWindow2",
-		&window2LeftPixelPos, &window2TopPixelPos,
-		&window2PixelWidth, &window2PixelHeight,
-		K15_GUI_LAYOUT_VERTICAL, "test_window2"))
-	{
-		K15_EndWindow(guiContext);
-	}
+// 	if (K15_BeginWindow(guiContext, "TestWindow2",
+// 		&window2LeftPixelPos, &window2TopPixelPos,
+// 		&window2PixelWidth, &window2PixelHeight,
+// 		K15_GUI_LAYOUT_VERTICAL, "test_window2"))
+// 	{
+// 		K15_EndWindow(guiContext);
+// 	}
 
 	K15_RenderCommandDraw2DGUI(gameRenderCommandQueue, guiContext);
-	K15_FlipGUIContextMemory(guiContext);
 
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameContext->resourceContext->commandQueue);
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameRenderCommandQueue);
