@@ -39,7 +39,7 @@ enum K15_GUIWindowState
 	K15_GUI_WINDOW_STATE_DRAGGED
 };
 
-enum K15_GUILayout
+enum K15_GUILayoutType
 {
 	K15_GUI_LAYOUT_HORIZONTAL = 0,
 	K15_GUI_LAYOUT_VERTICAL
@@ -161,20 +161,17 @@ struct K15_GUIHorizontalLayoutParameter
 	uint32 minElementWidth;
 };
 
-struct K15_GUILayoutCategory
+struct K15_GUILayout
 {
-	byte param[128];
-	uint32 sizeParamInBytes;
+	uint32 pixelPosX;
+	uint32 pixelPosY;
 	uint32 pixelWidth;
 	uint32 pixelHeight;
 	uint32 pixelOffsetX;
 	uint32 pixelOffsetY;
-	uint32 elementPixelPadding;
 	uint32 elementCount;
-	uint32 guiBufferOffsetInBytes;
-	int32 posPixelX;
-	int32 posPixelY;
-	K15_GUILayout layout;
+	uint32 elementPixelPadding;
+	K15_GUILayoutType type;
 };
 
 struct K15_GUIContext
@@ -184,7 +181,7 @@ struct K15_GUIContext
 	K15_RenderMaterialDesc* guiRenderMaterial;
 	K15_GUIWindow* currentWindow;
 
-	K15_GUILayoutCategory layoutCategoryStack[K15_GUI_MAX_CATEGORIES];
+	K15_GUILayout layoutStack[K15_GUI_MAX_LAYOUTS];
 	K15_GUIContextStyle style;
 
 	K15_Semaphore* memoryLock;
@@ -194,8 +191,7 @@ struct K15_GUIContext
 	bool8 leftMouseDown;
 	bool8 rightMouseDown;
 
-	uint32 layoutCategoryIndex;
-	uint32 maxLayoutCategoryIndex; //reset per draw
+	uint32 layoutIndex;
 	uint32 activeElementIdentifier;
 	uint32 hoveredElementIdentifier;
 	uint32 guiMemoryMaxSize;
@@ -212,7 +208,6 @@ K15_GUIContext* K15_CreateGUIContext(K15_ResourceContext* p_ResourceContext, K15
 K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocator p_MemoryAllocator, K15_ResourceContext* p_ResourceContext, K15_RenderCommandQueue* p_RenderCommandQueue);
 
 void K15_FlipGUIContextMemory(K15_GUIContext* p_GUIContext);
-void K15_PrepareGUIContextForRendering(K15_GUIContext* p_GUIContext);
 
 void K15_HandleGUIInputEvent(K15_GUIContext* p_GUIContext, K15_SystemEvent* p_SystemEvent);
 void K15_HandleGUIWindowEvent(K15_GUIContext* p_GUIContext, K15_SystemEvent* p_SystemEvent);
@@ -222,15 +217,15 @@ void K15_SetGUIContextMousePosition(K15_GUIContext* p_GUIContext, uint32 p_Mouse
 
 char* K15_ComboBox(K15_GUIContext* p_GUIContext, char** p_Elements, uint32 p_NumElements, const char* p_Identifier);
 bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption, int32* p_LeftPixelPos, int32* p_TopPixelPos, 
-	uint32* p_WindowWidth, uint32* p_WindowHeight, K15_GUILayout p_Layout, const char* p_Identifier);
+	uint32* p_WindowWidth, uint32* p_WindowHeight, K15_GUILayoutType p_LayoutType, const char* p_Identifier);
 void K15_EndWindow(K15_GUIContext* p_GUIContext);
 bool8 K15_Button(K15_GUIContext* p_GUIContext, const char* p_Caption, const char* p_Identifier);
 void K15_Label(K15_GUIContext* p_GUIContext, const char* p_LabelText, const char* p_Identifier);
 float K15_FloatSlider(K15_GUIContext* p_GUIContext, float p_Value, float p_MinValue, float p_MaxValue, const char* p_Identifier);
-void K15_PushVerticalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, uint32 p_MinElementPixelHeight);
-void K15_PushHorizontalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, uint32 p_MinElementPixelWidth);
+void K15_PushVerticalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, uint32 p_PixelHeight);
+void K15_PushHorizontalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, uint32 p_PixelWidth);
 
-void K15_PopLayoutCategory(K15_GUIContext* p_GUIContext);
+void K15_PopLayout(K15_GUIContext* p_GUIContext);
 
 void K15_IterateGUIElementsHelper(K15_GUIContext* p_GUIContext, K15_GUIIterator p_GUIIterator, 
 	void* p_UserData, uint32 p_BufferIndex);

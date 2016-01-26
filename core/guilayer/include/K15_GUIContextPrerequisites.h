@@ -14,7 +14,7 @@ struct K15_RenderCommandQueue;
 struct K15_RenderContext;
 
 #define K15_GUI_CONTEXT_MEMORY_SIZE size_kilobyte(100)
-#define K15_GUI_MAX_CATEGORIES 20
+#define K15_GUI_MAX_LAYOUTS 20
 #define K15_GUI_MEMORY_BUFFER_COUNT 2
 #define K15_GUI_MEMORY_FRONT_BUFFER 0
 #define K15_GUI_MEMORY_BACK_BUFFER 1

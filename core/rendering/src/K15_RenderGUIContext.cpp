@@ -246,8 +246,6 @@ intern void K15_InternalPushGUIFloatSliderVertices(K15_RenderBackEnd* p_RenderBa
 	int32 pixelPosRight = p_GUIElement->posPixelX + p_GUIElement->pixelWidth;
 	int32 pixelPosBottom = p_GUIElement->posPixelY + p_GUIElement->pixelHeight;
 
-	float valuePercent = p_GUISlider->value / (p_GUISlider->maxValue - p_GUISlider->minValue);
-	
 	uint32 pixelThickness = 2;
 	uint32 pixelLineThickness = 2;
 

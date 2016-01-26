@@ -8,6 +8,8 @@
 #include <K15_FileWatch.h>
 #include <K15_System.h>
 
+#include <K15_BlockAllocator.h>
+
 #include <K15_FrameCounter.h>
 
 #include <K15_FileSystem.h>
@@ -43,9 +45,9 @@ intern void K15_InternalOnGameLibraryReload(void* p_UserData)
 	K15_ReloadDynamicLibrary(gameLibrary);
 
 	gameContext->tickFnc = (K15_TickGameFnc)K15_GetProcAddress(gameLibrary, "K15_TickGame");
-	gameContext->onSystemEventFnc = (K15_TickGameFnc)K15_GetProcAddress(gameLibrary, "K15_OnSystemEvent");
-	gameContext->onWindowEventFnc = (K15_TickGameFnc)K15_GetProcAddress(gameLibrary, "K15_OnWindowEvent");
-	gameContext->onInputEventFnc = (K15_TickGameFnc)K15_GetProcAddress(gameLibrary, "K15_OnInputEvent");
+	gameContext->onSystemEventFnc = (K15_OnSystemEventFnc)K15_GetProcAddress(gameLibrary, "K15_OnSystemEvent");
+	gameContext->onWindowEventFnc = (K15_OnWindowEventFnc)K15_GetProcAddress(gameLibrary, "K15_OnWindowEvent");
+	gameContext->onInputEventFnc = (K15_OnInputEventFnc)K15_GetProcAddress(gameLibrary, "K15_OnInputEvent");
 
 	K15_UnlockMutex(gameLibrarySynchronizer);
 }
@@ -125,7 +127,7 @@ int CALLBACK WinMain(
 #endif //K15_USE_DETERMINISTIC_GAME_MEM_ADDRESS
 
 	gameContext.asyncContext = K15_CreateAsyncContext(osContext);
-	gameContext.gameMemory = K15_CreateMemoryBuffer(memoryBlock, requestedMemorySize);;
+	gameContext.gameMemory = K15_CreateMemoryBuffer(memoryBlock, requestedMemorySize);
 	gameContext.logContexts = K15_GetLogContexts(&gameContext.logContextCount);
 	gameContext.configContext = &configFileContext;
 	gameContext.renderContext = renderContext;	gameContext.osContext = osContext;

@@ -563,17 +563,6 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 		sizeof(K15_GUIContext), &guiContext);
 	localOffset += sizeof(K15_GUIContext);
 
-// 	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(uint32), &guiMemorySize);
-// 	localOffset += sizeof(uint32);
-// 
-// 	guiMemoryBuffer = (byte*)K15_AllocateFromMemoryAllocator(renderAllocator, guiMemorySize);
-// 
-// 	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, guiMemorySize, guiMemoryBuffer);
-// 	localOffset += guiMemorySize;
-//
-// 	guiContext->guiMemory = guiMemoryBuffer;
-// 	guiContext->guiMemoryCurrentSize = guiMemorySize; 
-
 	uint32 currentGUIMemoryOffset = 0;
 
 	K15_RenderVertexFormatDesc vertexFormatDesc = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 2, 

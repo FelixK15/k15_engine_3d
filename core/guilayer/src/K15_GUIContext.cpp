@@ -21,6 +21,7 @@
 #include "K15_String.h"
 #include "K15_Thread.h"
 
+
 /*********************************************************************************/
 intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceContext* p_ResourceContext)
 {
@@ -120,33 +121,69 @@ intern void K15_InternalCheckForDuplicateIdentifiers(K15_GUIContext* p_GUIContex
 }
 #endif //K15_GUI_CONTEXT_CHECK_FOR_DUPLICATE_IDENTIFIERS
 /*********************************************************************************/
+intern K15_GUILayout* K15_InternalPushLayoutCategory(K15_GUIContext* p_GUIContext, K15_GUILayoutType p_LayoutType,
+	uint32 p_ElementPixelPadding, int32 p_LeftPixelPos, int32 p_TopPixelPos, uint32 p_PixelWidth, uint32 p_PixelHeight)
+{
+	K15_ASSERT(p_GUIContext);
+
+	uint32 layoutIndex = p_GUIContext->layoutIndex;
+
+	K15_ASSERT(layoutIndex != K15_GUI_MAX_LAYOUTS);
+
+	K15_GUILayout* layout = &p_GUIContext->layoutStack[layoutIndex];
+	layout->type = p_LayoutType;
+	layout->pixelPosX = p_LeftPixelPos;
+	layout->pixelPosY = p_TopPixelPos;
+	layout->pixelWidth = p_PixelWidth;
+	layout->pixelHeight = p_PixelHeight;
+	layout->pixelOffsetX = 0;
+	layout->pixelOffsetY = 0;
+	layout->elementPixelPadding = p_ElementPixelPadding;
+	layout->elementCount = 0;
+
+	p_GUIContext->layoutIndex = layoutIndex + 1;
+
+	return layout;
+}
+/*********************************************************************************/
+intern K15_GUILayout* K15_InternalGetTopGUILayout(K15_GUIContext* p_GUIContext)
+{
+	K15_GUILayout* topLayout = 0;
+
+	if (p_GUIContext->layoutIndex > 0)
+	{
+		uint32 topLayoutIndex = p_GUIContext->layoutIndex - 1;
+		topLayout = &p_GUIContext->layoutStack[topLayoutIndex];
+	}
+
+	return topLayout;
+}
+/*********************************************************************************/
 intern void K15_InternalGetAlignedGUIDimension(K15_GUIContext* p_GUIContext,
 	int32* p_LeftPixelPos, int32* p_TopPixelPos, uint32* p_PixelWidth, uint32* p_PixelHeight)
 {
-	uint32 categoryIndex = p_GUIContext->layoutCategoryIndex;
+	K15_GUILayout* topLayout = K15_InternalGetTopGUILayout(p_GUIContext);
 
-	if (categoryIndex != 0)
+	if (topLayout)
 	{
-		K15_GUILayoutCategory* category = &p_GUIContext->layoutCategoryStack[categoryIndex - 1];
-		K15_GUILayout layout = category->layout;
+		K15_GUILayoutType topLayoutType = topLayout->type;
 
-		uint32 pixelOffsetX = category->pixelOffsetX;
-		uint32 pixelOffsetY = category->pixelOffsetY;
-		uint32 elementPixelPadding = category->elementPixelPadding;
+		uint32 pixelOffsetX = topLayout->pixelOffsetX;
+		uint32 pixelOffsetY = topLayout->pixelOffsetY;
+		uint32 elementPixelPadding = topLayout->elementPixelPadding;
 
 		uint32 leftPixelPos = p_LeftPixelPos ? *p_LeftPixelPos : 0;
 		uint32 topPixelPos = p_TopPixelPos ? *p_TopPixelPos : 0;
 		uint32 pixelWidth = p_PixelWidth ? *p_PixelWidth : 0;
 		uint32 pixelHeight = p_PixelHeight ? *p_PixelHeight : 0;
 
-		switch (layout)
+		switch (topLayoutType)
 		{
 		case K15_GUI_LAYOUT_VERTICAL:
 		{
-			K15_GUIVerticalLayoutParameter* param = (K15_GUIVerticalLayoutParameter*)category->param;
-			leftPixelPos = category->posPixelX + pixelOffsetX;
-			topPixelPos = category->posPixelY + pixelOffsetY + elementPixelPadding;
-			pixelWidth = K15_CLAMP(category->pixelWidth, UINT_MAX, param->minElementHeight);
+			leftPixelPos = topLayout->pixelPosX + pixelOffsetX;
+			topPixelPos = topLayout->pixelPosY + pixelOffsetY + elementPixelPadding;
+			pixelWidth = topLayout->pixelWidth;
 			pixelOffsetY += pixelHeight + elementPixelPadding * 2;
 
 			break;
@@ -154,18 +191,17 @@ intern void K15_InternalGetAlignedGUIDimension(K15_GUIContext* p_GUIContext,
 
 		case K15_GUI_LAYOUT_HORIZONTAL:
 		{
-			K15_GUIHorizontalLayoutParameter* param = (K15_GUIHorizontalLayoutParameter*)category->param;
-			leftPixelPos = category->posPixelX + pixelOffsetX + elementPixelPadding;
-			topPixelPos = category->posPixelY + pixelOffsetY;
-			pixelHeight = K15_CLAMP(category->pixelHeight, UINT_MAX, param->minElementWidth);
+			leftPixelPos = topLayout->pixelPosX + pixelOffsetX + elementPixelPadding;
+			topPixelPos = topLayout->pixelPosY + pixelOffsetY;
+			pixelHeight = topLayout->pixelHeight;
 			pixelOffsetX += pixelWidth + elementPixelPadding * 2;
 
 			break;
 		}
 		}
 
-		category->pixelOffsetX = pixelOffsetX;
-		category->pixelOffsetY = pixelOffsetY;
+		topLayout->pixelOffsetX = pixelOffsetX;
+		topLayout->pixelOffsetY = pixelOffsetY;
 
 		if (p_LeftPixelPos)
 		{
@@ -187,47 +223,6 @@ intern void K15_InternalGetAlignedGUIDimension(K15_GUIContext* p_GUIContext,
 			*p_PixelHeight = pixelHeight;
 		}
 	}
-}
-/*********************************************************************************/
-intern K15_GUILayoutCategory* K15_InternalPushLayoutCategory(K15_GUIContext* p_GUIContext, K15_GUILayout p_Layout,
-	uint32 p_ElementPixelPadding, int32 p_LeftPixelPos, int32 p_TopPixelPos, uint32 p_PixelWidth, uint32 p_PixelHeight)
-{
-	K15_ASSERT(p_GUIContext);
-
-	uint32 categoryIndex = p_GUIContext->layoutCategoryIndex;
-
-	K15_ASSERT(categoryIndex != K15_GUI_MAX_CATEGORIES);
-
-	K15_GUILayoutCategory* category = &p_GUIContext->layoutCategoryStack[categoryIndex];
-	category->layout = p_Layout;
-	category->posPixelX = p_LeftPixelPos;
-	category->posPixelY = p_TopPixelPos;
-	category->pixelWidth = p_PixelWidth;
-	category->pixelHeight = p_PixelHeight;
-	category->pixelOffsetX = 0;
-	category->pixelOffsetY = 0;
-	category->elementPixelPadding = p_ElementPixelPadding;
-	category->elementCount = 0;
-	category->guiBufferOffsetInBytes = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER];
-
-	p_GUIContext->layoutCategoryIndex = categoryIndex + 1;
-	p_GUIContext->maxLayoutCategoryIndex = 
-		K15_MAX(p_GUIContext->maxLayoutCategoryIndex, p_GUIContext->layoutCategoryIndex);
-
-	return category;
-}
-/*********************************************************************************/
-intern K15_GUILayoutCategory* K15_InternalGetTopGUILayout(K15_GUIContext* p_GUIContext)
-{
-	K15_GUILayoutCategory* topLayout = 0;
-
-	if (p_GUIContext->layoutCategoryIndex > 0)
-	{
-		uint32 topLayoutIndex = p_GUIContext->layoutCategoryIndex - 1;
-		topLayout = &p_GUIContext->layoutCategoryStack[topLayoutIndex];
-	}
-
-	return topLayout;
 }
 /*********************************************************************************/
 intern K15_GUIElementHeader* K15_InternalAddGUIElement(K15_GUIContext* p_GUIContext,
@@ -255,7 +250,7 @@ intern K15_GUIElementHeader* K15_InternalAddGUIElement(K15_GUIContext* p_GUICont
 
 	byte* guiContextFrontBuffer = p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER];
 
-	K15_GUILayoutCategory* topLayout = K15_InternalGetTopGUILayout(p_GUIContext);
+	K15_GUILayout* topLayout = K15_InternalGetTopGUILayout(p_GUIContext);
 
 	if (topLayout)
 	{
@@ -323,32 +318,20 @@ intern K15_GUIElementHeader* K15_InternalAddGUIElement(K15_GUIContext* p_GUICont
 	return elementHeader;
 }
 /*********************************************************************************/
-intern void K15_InternalPushVerticalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, uint32 p_MinElementPixelHeight,
+intern void K15_InternalPushVerticalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding,
 	int32 p_LeftPixelPos, int32 p_TopPixelPos, uint32 p_PixelWidth, uint32 p_PixelHeight)
 {
-	K15_GUILayoutCategory* verticalLayout = K15_InternalPushLayoutCategory(p_GUIContext,
+	K15_GUILayout* verticalLayout = K15_InternalPushLayoutCategory(p_GUIContext,
 		K15_GUI_LAYOUT_VERTICAL, p_ElementPadding,
 		p_LeftPixelPos, p_TopPixelPos, p_PixelWidth, p_PixelHeight);
-
-	byte* paramBuffer = verticalLayout->param;
-
-	K15_GUIVerticalLayoutParameter* verticalLayoutParam = (K15_GUIVerticalLayoutParameter*)paramBuffer;
-
-	verticalLayoutParam->minElementHeight = p_MinElementPixelHeight;
 }
 /*********************************************************************************/
-intern void K15_InternalPushHorizontalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, uint32 p_MinElementPixelWidth,
+intern void K15_InternalPushHorizontalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding,
 	int32 p_LeftPixelPos, int32 p_TopPixelPos, uint32 p_PixelWidth, uint32 p_PixelHeight)
 {
-	K15_GUILayoutCategory* horizontalLayout = K15_InternalPushLayoutCategory(p_GUIContext,
+	K15_GUILayout* horizontalLayout = K15_InternalPushLayoutCategory(p_GUIContext,
 		K15_GUI_LAYOUT_HORIZONTAL, p_ElementPadding,
 		p_LeftPixelPos, p_TopPixelPos, p_PixelWidth, p_PixelHeight);
-
-	byte* paramBuffer = horizontalLayout->param;
-
-	K15_GUIHorizontalLayoutParameter* horizontalLayoutParam = (K15_GUIHorizontalLayoutParameter*)paramBuffer;
-
-	horizontalLayoutParam->minElementWidth = p_MinElementPixelWidth;
 }
 /*********************************************************************************/
 
@@ -396,13 +379,12 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	guiContext->mousePosPixelX = 0;
 	guiContext->mousePosPixelY = 0;
 	guiContext->currentWindow = 0;
-	guiContext->layoutCategoryIndex = 0;
+	guiContext->layoutIndex = 0;
 	guiContext->leftMouseDown = K15_FALSE;
 	guiContext->rightMouseDown = K15_FALSE;
 	guiContext->memoryLock = K15_CreateSemaphoreWithInitialValue(1);
 	guiContext->activeElementIdentifier = 0;
 	guiContext->hoveredElementIdentifier = 0;
-	guiContext->maxLayoutCategoryIndex = 0;
 
 	//create and assign default style
 	guiContext->style = K15_InternalCreateDefaultStyle(p_ResourceContext);
@@ -436,77 +418,6 @@ void K15_FlipGUIContextMemory(K15_GUIContext* p_GUIContext)
 
 	uint32 frontBufferMemorySize = p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER];
 	p_GUIContext->guiMemoryCurrentSize[K15_GUI_MEMORY_FRONT_BUFFER] = 0;
-
-	p_GUIContext->maxLayoutCategoryIndex = 0;
-}
-/*********************************************************************************/
-void K15_PrepareGUIContextForRendering(K15_GUIContext* p_GUIContext)
-{
-	K15_ASSERT(p_GUIContext);
-
-	uint32 maxLayoutCategoryIndex = p_GUIContext->maxLayoutCategoryIndex;
-	uint32 guiMemoryOffsetInBytes = 0;
-	uint32 numElementsPerLayout = 0;
-	uint32 layoutPixelWidth = 0;
-	uint32 layoutPixelHeight = 0;
-	uint32 elementPixelWidth = 0;
-	uint32 elementPixelHeight = 0;
-	uint32 elementPixelPosLeft = 0;
-	uint32 elementPixelPosTop = 0;
-
-	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_FRONT_BUFFER];
-
-	for (uint32 layoutCategoryIndex = 0;
-		layoutCategoryIndex < maxLayoutCategoryIndex;
-		++layoutCategoryIndex)
-	{
-		K15_GUILayoutCategory* layout = &p_GUIContext->layoutCategoryStack[layoutCategoryIndex];
-		K15_GUILayout layoutType = layout->layout;
-
-		guiMemoryOffsetInBytes = layout->guiBufferOffsetInBytes;
-		numElementsPerLayout = layout->elementCount;
-
-		if (numElementsPerLayout == 0)
-		{
-			continue;
-		}
-
-		layoutPixelWidth = layout->pixelWidth;
-		layoutPixelHeight = layout->pixelHeight;
-
-		elementPixelHeight = layoutPixelHeight / numElementsPerLayout;
-		elementPixelWidth = layoutPixelWidth / numElementsPerLayout;
-		elementPixelPosLeft = layout->posPixelX;
-		elementPixelPosTop = layout->posPixelX;
-
-		for (uint32 elementIndex = 0;
-			elementIndex < numElementsPerLayout;
-			++elementIndex)
-		{
-			K15_GUIElementHeader* elementHeader = (K15_GUIElementHeader*)(guiMemory + guiMemoryOffsetInBytes);
-			guiMemoryOffsetInBytes = elementHeader->offset;
-
-			elementHeader->posPixelX = elementPixelPosLeft;
-			elementHeader->posPixelY = elementPixelPosTop;
-
-			switch (layoutType)
-			{
-			case K15_GUI_LAYOUT_HORIZONTAL:
-				elementHeader->pixelWidth = elementPixelWidth;
-				elementPixelPosLeft += elementPixelWidth;
-				break;
-
-			case K15_GUI_LAYOUT_VERTICAL:
-				elementHeader->pixelHeight = elementPixelHeight;
-				elementPixelPosTop += elementPixelHeight;
-				break;
-
-			default:
-				K15_ASSERT_TEXT(false, "Invalid gui layout '%s'", layoutType);
-				break;
-			}
-		}
-	}
 }
 /*********************************************************************************/
 void K15_HandleGUIInputEvent(K15_GUIContext* p_GUIContext, K15_SystemEvent* p_SystemEvent)
@@ -655,7 +566,7 @@ char* K15_ComboBox(K15_GUIContext* p_GUIContext, char** p_Elements, uint32 p_Num
 bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption, 
 	int32* p_LeftPixelPos, int32* p_TopPixelPos, 
 	uint32* p_WindowWidth, uint32* p_WindowHeight, 
-	K15_GUILayout p_Layout, const char* p_Identifier)
+	K15_GUILayoutType p_LayoutType, const char* p_Identifier)
 {
 	K15_ASSERT(p_GUIContext);
 	K15_ASSERT(p_Caption);
@@ -761,7 +672,7 @@ bool8 K15_BeginWindow(K15_GUIContext* p_GUIContext, const char* p_Caption,
 
 		p_GUIContext->currentWindow = windowElement;
 
-		K15_InternalPushVerticalLayout(p_GUIContext, 5, 10, *p_LeftPixelPos + pixelPadding, 
+		K15_InternalPushVerticalLayout(p_GUIContext, 2, *p_LeftPixelPos + pixelPadding, 
 			*p_TopPixelPos + windowTitleHeight + pixelPadding,
 			*p_WindowWidth - pixelPadding * 2,
 			*p_WindowHeight - pixelPadding * 3);
@@ -781,7 +692,7 @@ void K15_EndWindow(K15_GUIContext* p_GUIContext)
 		"There's currently no window being created. "
 		"Call K15_BeginWindow() to create a new window.");
 
-	K15_PopLayoutCategory(p_GUIContext);
+	K15_PopLayout(p_GUIContext);
 
 	p_GUIContext->currentWindow = 0;
 }
@@ -917,29 +828,26 @@ float K15_FloatSlider(K15_GUIContext* p_GUIContext, float p_Value, float p_MinVa
 
 	uint32 elementSizeInBytes = sizeof(K15_GUIFloatSlider);
 	K15_GUIFloatSlider* slider = 0;
-	K15_GUIElementHeader* sliderHeader = K15_InternalAddGUIElement(p_GUIContext, K15_GUI_TYPE_FLOAT_SLIDER,
-		elementSizeInBytes, p_Identifier, (void**)&slider, style->sliderLinePixelWidth, style->sliderPixelHeight);
+	K15_GUIElementHeader* sliderHeader = K15_InternalAddGUIElement(p_GUIContext, 
+		K15_GUI_TYPE_FLOAT_SLIDER, elementSizeInBytes, p_Identifier, (void**)&slider,
+		style->sliderLinePixelWidth, style->sliderPixelHeight);
 
-
-	uint32 maxFloatTextLength = 20;
 	K15_GUIElementHeader* sliderLastFrameHeader = K15_InternalGetGUIElementLastFrame(p_GUIContext, sliderHeader);
 
-	if (sliderLastFrameHeader)
-	{
-		K15_GUIFloatSlider* sliderLastFrame = (K15_GUIFloatSlider*)(sliderLastFrameHeader + 1);
-		currentValue = sliderLastFrame->value;
-	}
+	float sliderRange = (maxValue - minValue);
+	float valuePercent = (currentValue - minValue) / sliderRange;
 
 	uint32 sliderLinePixelWidth = style->sliderLinePixelWidth;
 	uint32 sliderPixelWidth = style->sliderPixelWidth;
 	uint32 sliderPixelHeight = style->sliderPixelHeight;
-	uint32 sliderPixelOffsetX = (float)sliderHeader->pixelWidth * currentValue;
-	uint32 sliderPixelOffsetY = sliderHeader->pixelHeight / 2 - sliderLinePixelWidth / 2;
+	uint32 sliderPixelOffsetX = (float)sliderHeader->pixelWidth * valuePercent;
+	uint32 sliderPixelOffsetY = sliderHeader->pixelHeight / 2;
 	
-	uint32 sliderPixelLeftPos = sliderHeader->posPixelX + sliderPixelOffsetX - sliderPixelWidth / 2;
-	uint32 sliderPixelRightPos = sliderHeader->posPixelX + sliderPixelOffsetX + sliderPixelWidth / 2;
+	uint32 sliderPixelLeftPos = sliderHeader->posPixelX +
+		((float)sliderHeader->pixelWidth * valuePercent) - sliderPixelWidth / 2;
+	uint32 sliderPixelRightPos = sliderPixelLeftPos + sliderPixelWidth;
 	uint32 sliderPixelTopPos = sliderHeader->posPixelY + sliderPixelOffsetY - sliderPixelHeight / 2;
-	uint32 sliderPixelBottomPos = sliderHeader->posPixelY + sliderPixelOffsetY + sliderPixelHeight / 2;
+	uint32 sliderPixelBottomPos = sliderPixelTopPos + sliderPixelHeight;
 
 	if (sliderLastFrameHeader &&
 		!sliderLastFrameHeader->activated &&
@@ -959,7 +867,9 @@ float K15_FloatSlider(K15_GUIContext* p_GUIContext, float p_Value, float p_MinVa
 		slider->mousePosPixelX = p_GUIContext->mousePosPixelX;
 
 		offsetX = K15_CLAMP(offsetX, sliderHeader->pixelWidth, 0);
-		currentValue = (float)offsetX / (float)sliderHeader->pixelWidth;
+
+		valuePercent = (float)offsetX / (float)sliderHeader->pixelWidth;
+		currentValue = K15_Lerp(minValue, maxValue, valuePercent);
 	}
 
 	slider->maxValue = maxValue;
@@ -973,41 +883,41 @@ float K15_FloatSlider(K15_GUIContext* p_GUIContext, float p_Value, float p_MinVa
 	return currentValue;
 }
 /*********************************************************************************/
-void K15_PushVerticalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, uint32 p_MinElementPixelHeight)
+void K15_PushVerticalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, uint32 p_PixelWidth)
 {
 	int32 leftPixelPos = 0;
 	int32 topPixelPos = 0;
-	uint32 pixelWidth = 0;
-	uint32 pixelHeight = p_MinElementPixelHeight;
+	uint32 pixelWidth = p_PixelWidth;
+	uint32 pixelHeight = 0;
 
 	K15_InternalGetAlignedGUIDimension(p_GUIContext, &leftPixelPos, &topPixelPos, 
 		&pixelWidth, &pixelHeight);
 
-	K15_InternalPushVerticalLayout(p_GUIContext, p_ElementPadding, p_MinElementPixelHeight,
+	K15_InternalPushVerticalLayout(p_GUIContext, p_ElementPadding,
 		leftPixelPos, topPixelPos, pixelWidth, pixelHeight);
 }
 /*********************************************************************************/
-void K15_PushHorizontalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, uint32 p_MinElementPixelWidth)
+void K15_PushHorizontalLayout(K15_GUIContext* p_GUIContext, uint32 p_ElementPadding, uint32 p_PixelHeight)
 {
 	int32 leftPixelPos = 0;
 	int32 topPixelPos = 0;
-	uint32 pixelWidth = p_MinElementPixelWidth;
-	uint32 pixelHeight = 0;
+	uint32 pixelWidth = 0;
+	uint32 pixelHeight = p_PixelHeight;
 
 	K15_InternalGetAlignedGUIDimension(p_GUIContext, &leftPixelPos, &topPixelPos, &pixelWidth, &pixelHeight);
 
-	K15_InternalPushHorizontalLayout(p_GUIContext, p_ElementPadding, p_MinElementPixelWidth,
+	K15_InternalPushHorizontalLayout(p_GUIContext, p_ElementPadding,
 		leftPixelPos, topPixelPos, pixelWidth, pixelHeight);
 }
 /*********************************************************************************/
-void K15_PopLayoutCategory(K15_GUIContext* p_GUIContext)
+void K15_PopLayout(K15_GUIContext* p_GUIContext)
 {
 	K15_ASSERT(p_GUIContext);
-	uint32 categoryIndex = p_GUIContext->layoutCategoryIndex;
+	uint32 layoutIndex = p_GUIContext->layoutIndex;
 
-	K15_ASSERT(categoryIndex != 0);
+	K15_ASSERT(layoutIndex != 0);
 
-	p_GUIContext->layoutCategoryIndex = categoryIndex - 1;
+	p_GUIContext->layoutIndex = layoutIndex - 1;
 }
 /*********************************************************************************/
 void K15_IterateGUIElementsHelper(K15_GUIContext* p_GUIContext, K15_GUIIterator p_GUIIterator, void* p_UserData,

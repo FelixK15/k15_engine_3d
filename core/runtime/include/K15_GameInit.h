@@ -58,6 +58,11 @@ struct K15_GameContext
 	K15_DynamicLibrary* gameLibrary;
 	K15_Mutex* gameLibrarySynchronizer;
 #endif //K15_LOAD_GAME_LIB_DYNAMIC
+
+#ifdef K15_LOAD_RENDER_LIB_DYNAMIC
+	K15_DynamicLibrary* renderLibrary;
+	K15_Mutex* renderLibrarySynchonizer;
+#endif //K15_LOAD_RENDER_LIB_DYNAMIC
 };
 /*********************************************************************************/
 

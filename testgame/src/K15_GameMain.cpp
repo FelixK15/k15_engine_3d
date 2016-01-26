@@ -154,7 +154,7 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	static int32 window2LeftPixelPos = 500;
 	static int32 window2TopPixelPos = 200;
 
-	static float testFloat = 0.5f;
+	static float testFloat = 5.5f;
 
 	if (K15_BeginWindow(guiContext, "TestWindow", 
 		&windowLeftPixelPos, &windowTopPixelPos,
@@ -164,22 +164,22 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 		K15_Label(guiContext, "Test Label:", "test_label");
 		K15_Button(guiContext, "bla", "test_button");
 		K15_Button(guiContext, "bla", "test_button2");
-		//testFloat = K15_FloatSlider(guiContext, testFloat, 0.f, 1.f, "test_slider");
-		K15_PushHorizontalLayout(guiContext, 5, 50);
+		K15_PushHorizontalLayout(guiContext, 5, 30);
 		K15_Label(guiContext, "Bla:", "bla");
 		testFloat = K15_FloatSlider(guiContext, testFloat, -20.f, 20.f, "test_slider2");
-		//testFloat = K15_FloatSlider(guiContext, testFloat, -20.f, 20.f, "test_slider3");
-		K15_PopLayoutCategory(guiContext);
+		testFloat = K15_FloatSlider(guiContext, testFloat, -20.f, 20.f, "test_slider3");
+		K15_PopLayout(guiContext);
 		K15_EndWindow(guiContext);
 	}
 
-// 	if (K15_BeginWindow(guiContext, "TestWindow2",
-// 		&window2LeftPixelPos, &window2TopPixelPos,
-// 		&window2PixelWidth, &window2PixelHeight,
-// 		K15_GUI_LAYOUT_VERTICAL, "test_window2"))
-// 	{
-// 		K15_EndWindow(guiContext);
-// 	}
+	if (K15_BeginWindow(guiContext, "TestWindow2",
+		&window2LeftPixelPos, &window2TopPixelPos,
+		&window2PixelWidth, &window2PixelHeight,
+		K15_GUI_LAYOUT_VERTICAL, "test_window2"))
+	{
+		K15_Button(guiContext, "bla", "test_button3");
+		K15_EndWindow(guiContext);
+	}
 
 	K15_RenderCommandDraw2DGUI(gameRenderCommandQueue, guiContext);
 
