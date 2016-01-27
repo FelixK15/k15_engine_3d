@@ -13,58 +13,53 @@
 #include <win32/K15_OSContextWin32.h>
 
 /*********************************************************************************/
-intern inline uint8 K15_Win32InternalCreateAndBindDummyContext(HGLRC* p_Context, HWND* p_WindowHandle, HDC* p_DeviceContext)
+intern inline uint8 K15_Win32InternalCreateAndBindDummyContext(K15_OSContext* p_OSContext, HGLRC* p_Context,  HDC* p_DeviceContext)
 {
 	HGLRC context = 0;
 	int pixelFormatIndex = 0;
 
-	//create dummy window
-	HWND windowHandle = CreateWindowExA(0, "K15_Win32WindowClass", "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	K15_Win32Window* window = (K15_Win32Window*)p_OSContext->window.window->userData;
+	HDC dc = GetDC(window->hwnd);
+	dc = CreateCompatibleDC(dc);
 
-	if (windowHandle)
+	if (dc)
 	{
-		HDC dc = GetDC(windowHandle);
-
-		if (dc)
+		//dummy pixel format
+		PIXELFORMATDESCRIPTOR px =
 		{
-			//dummy pixel format
-			PIXELFORMATDESCRIPTOR px =
-			{
-				sizeof(PIXELFORMATDESCRIPTOR),
-				1,
-				PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER, //flags
-				PFD_TYPE_RGBA,												//framebuffer type
-				32,															//colordepth
-				0, 0, 0, 0, 0, 0,
-				0,
-				0,
-				0,
-				0, 0, 0, 0,
-				24,															//depth buffer
-				8,															//stencil buffer
-				0,															//aux buffers
-				PFD_MAIN_PLANE,
-				0,										
-				0, 0, 0
-			};
+			sizeof(PIXELFORMATDESCRIPTOR),
+			1,
+			PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER, //flags
+			PFD_TYPE_RGBA,												//framebuffer type
+			32,															//colordepth
+			0, 0, 0, 0, 0, 0,
+			0,
+			0,
+			0,
+			0, 0, 0, 0,
+			24,															//depth buffer
+			8,															//stencil buffer
+			0,															//aux buffers
+			PFD_MAIN_PLANE,
+			0,										
+			0, 0, 0
+		};
 
-			if((pixelFormatIndex = ChoosePixelFormat(dc, &px)) == 0)
-			{
-				return K15_OS_ERROR_SYSTEM;
-			}
-
-			if (!SetPixelFormat(dc, pixelFormatIndex, &px))
-			{
-				return K15_OS_ERROR_SYSTEM;
-			}
-
-			context = kwglCreateContext(dc);
-			kwglMakeCurrent(dc, context);
-
-			*p_Context = context;
-			*p_WindowHandle = windowHandle;
-			*p_DeviceContext = dc;
+		if((pixelFormatIndex = ChoosePixelFormat(dc, &px)) == 0)
+		{
+			return K15_OS_ERROR_SYSTEM;
 		}
+
+		if (!SetPixelFormat(dc, pixelFormatIndex, &px))
+		{
+			return K15_OS_ERROR_SYSTEM;
+		}
+
+		context = kwglCreateContext(dc);
+		kwglMakeCurrent(dc, context);
+
+		*p_Context = context;
+		*p_DeviceContext = dc;
 	}
 
 	return context != 0 ? K15_SUCCESS : K15_OS_ERROR_SYSTEM;
@@ -155,11 +150,10 @@ uint8 K15_Win32CreateGLContext(K15_CustomMemoryAllocator* p_MemoryAllocator, K15
 	K15_Win32InternalGetWGLFunctionPointer(openglModule);
 
 	HGLRC tempContext = 0;
-	HWND tempWindowHandle = 0;
 	HDC tempDeviceContext = 0;
 
 	//Create a new dummy window, create a dummy pixel format and create a dummy opengl context
- 	uint8 result = K15_Win32InternalCreateAndBindDummyContext(&tempContext, &tempWindowHandle, &tempDeviceContext);
+ 	uint8 result = K15_Win32InternalCreateAndBindDummyContext(p_OSContext, &tempContext, &tempDeviceContext);
 
 	if (result != K15_SUCCESS)
 	{
@@ -258,7 +252,6 @@ uint8 K15_Win32CreateGLContext(K15_CustomMemoryAllocator* p_MemoryAllocator, K15
 		//delete temp context, window and device context
 		K15_OPENGL_CALL(kwglDeleteContext(tempContext));
 		DeleteDC(tempDeviceContext);
-		DestroyWindow(tempWindowHandle);
 	}
 	else
 	{

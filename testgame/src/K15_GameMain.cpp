@@ -144,42 +144,23 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
  	sprintf(text, "FPS: %.1f\nms: %.3f", p_GameContext->frameCounter.FPS, p_GameContext->frameCounter.avgDeltaTime);
  	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, K15_CreateVector(1.0f, 0.25f, 0.25f), 0.0f, 0.0f);
 
-	static uint32 testWindowPixelWidth = 400;
-	static uint32 testWindowPixelHeight = 400;
-	static int32 windowLeftPixelPos = 20;
-	static int32 windowTopPixelPos = 80;
 
-	static uint32 window2PixelWidth = 150;
-	static uint32 window2PixelHeight = 80;
-	static int32 window2LeftPixelPos = 500;
-	static int32 window2TopPixelPos = 200;
+	K15_GUIBeginDockingArea(guiContext, 0, 0, viewportWidth, viewportHeight, "docking_area");
 
-	static float testFloat = 5.5f;
-
-	if (K15_BeginWindow(guiContext, "TestWindow", 
-		&windowLeftPixelPos, &windowTopPixelPos,
-		&testWindowPixelWidth, &testWindowPixelHeight, 
-		K15_GUI_LAYOUT_VERTICAL, "test_window"))
+	if (K15_GUIBeginWindow(guiContext, 0, 0, 400, 400, "window_1"))
 	{
-		K15_Label(guiContext, "Test Label:", "test_label");
-		K15_Button(guiContext, "bla", "test_button");
-		K15_Button(guiContext, "bla", "test_button2");
-		K15_PushHorizontalLayout(guiContext, 5, 30);
-		K15_Label(guiContext, "Bla:", "bla");
-		testFloat = K15_FloatSlider(guiContext, testFloat, -20.f, 20.f, "test_slider2");
-		testFloat = K15_FloatSlider(guiContext, testFloat, -20.f, 20.f, "test_slider3");
-		K15_PopLayout(guiContext);
-		K15_EndWindow(guiContext);
+		K15_GUIButton(guiContext, "test button", "button_1");
+		K15_GUIButton(guiContext, "test button2", "button_2");
+		
+		K15_GUIPushHorizontalLayout(guiContext, "vertical_layout1");
+		K15_GUIButton(guiContext, "test button3", "button_3");
+		K15_GUIButton(guiContext, "test button4", "button_4");
+		K15_GUIPopLayout(guiContext);
+
+		K15_GUIEndWindow(guiContext);
 	}
 
-	if (K15_BeginWindow(guiContext, "TestWindow2",
-		&window2LeftPixelPos, &window2TopPixelPos,
-		&window2PixelWidth, &window2PixelHeight,
-		K15_GUI_LAYOUT_VERTICAL, "test_window2"))
-	{
-		K15_Button(guiContext, "bla", "test_button3");
-		K15_EndWindow(guiContext);
-	}
+	K15_GUIEndDockingArea(guiContext);
 
 	K15_RenderCommandDraw2DGUI(gameRenderCommandQueue, guiContext);
 
