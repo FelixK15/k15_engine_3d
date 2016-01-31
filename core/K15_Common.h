@@ -59,9 +59,6 @@
 
 #define intern static
 
-#define K15_Search bsearch
-#define K15_Sort qsort
-
 #define K15_TRUE 1
 #define K15_FALSE 0
 
@@ -139,6 +136,8 @@ typedef uint8 bool8;
 typedef uint8 byte;
 typedef uint8 result8;
 typedef float real32;
+
+#define K15_PTR_DIFF(s, e) ((size_t)(e) - (size_t)(s))
 
 #ifndef K15_EXPORT_SYMBOL
 #	define K15_EXPORT_SYMBOL

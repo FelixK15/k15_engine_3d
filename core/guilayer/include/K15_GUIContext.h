@@ -52,8 +52,24 @@ struct K15_GUIContextStyle
 
 struct K15_GUIContext
 {
+	byte* memoryBuffer;
 	K15_CustomMemoryAllocator memoryAllocator;
+	K15_GUIContextStyle style;
+	K15_GUILayout layoutStack[K15_GUI_MAX_LAYOUTS];
+	uint32 numLayouts;
+	uint32 memoryMaxSizeInBytes;
+	uint32 memoryCurrentSizeInBytes;
+	uint32 retainedDataOffsetInBytes;
+	uint32 retainedDataSizeInBytes;
 };
+
+//how this should work:
+// - Call gui logic (K15_GUIButton, K15_GUIBeginWindow, K15_GUIPushHorizontalLayout etc.)
+// - Store elements internally in the gui context (just rects?) <-- headache
+// - iterate over elements (layouting)
+// - iterate over elements (input)
+// - iterate over elements (rendering)
+// - Call gui logic (next frame - retrieve results from last frame. Mainly results of the input)
 
 K15_GUIContext* K15_CreateGUIContext(K15_ResourceContext* p_ResourceContext, K15_RenderCommandQueue* p_RenderCommandQueue);
 K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocator p_MemoryAllocator, K15_ResourceContext* p_ResourceContext, K15_RenderCommandQueue* p_RenderCommandQueue);
@@ -70,6 +86,7 @@ bool8 K15_GUIButton(K15_GUIContext* p_GUIContext, const char* p_ButtonText, cons
 bool8 K15_GUIButtonEX(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier, K15_GUIButtonStyle* p_GUIButtonStyle);
 
 void K15_GUIPushVerticalLayout(K15_GUIContext* p_GUIContext);
+void K15_GUIPushHorizontalLayout(K15_GUIContext* p_GUIContext);
 
 void K15_GUIEndWindow(K15_GUIContext* p_GUIContext);
 

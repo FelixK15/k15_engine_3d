@@ -144,15 +144,14 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
  	sprintf(text, "FPS: %.1f\nms: %.3f", p_GameContext->frameCounter.FPS, p_GameContext->frameCounter.avgDeltaTime);
  	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, K15_CreateVector(1.0f, 0.25f, 0.25f), 0.0f, 0.0f);
 
-
-	K15_GUIBeginDockingArea(guiContext, 0, 0, viewportWidth, viewportHeight, "docking_area");
+	K15_GUIBeginDockingArea(guiContext, 0, 0, viewportWidth, viewportHeight);
 
 	if (K15_GUIBeginWindow(guiContext, 0, 0, 400, 400, "window_1"))
 	{
 		K15_GUIButton(guiContext, "test button", "button_1");
 		K15_GUIButton(guiContext, "test button2", "button_2");
 		
-		K15_GUIPushHorizontalLayout(guiContext, "vertical_layout1");
+		K15_GUIPushHorizontalLayout(guiContext);
 		K15_GUIButton(guiContext, "test button3", "button_3");
 		K15_GUIButton(guiContext, "test button4", "button_4");
 		K15_GUIPopLayout(guiContext);
