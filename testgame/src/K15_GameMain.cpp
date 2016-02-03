@@ -159,15 +159,16 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 		K15_GUIButton(guiContext, "test button", "button_1");
 		K15_GUIButton(guiContext, "test button2", "button_2");
 		
-		K15_GUIPushHorizontalLayout(guiContext);
+		//K15_GUIPushHorizontalLayout(guiContext);
 		K15_GUIButton(guiContext, "test button3", "button_3");
 		K15_GUIButton(guiContext, "test button4", "button_4");
-		K15_GUIPopLayout(guiContext);
+		//K15_GUIPopLayout(guiContext);
 
 		K15_GUIEndWindow(guiContext);
 	}
 
 	K15_GUIEndDockingArea(guiContext);
+	K15_GUIFinishGUIFrame(guiContext);
 
 	K15_RenderCommandDraw2DGUI(gameRenderCommandQueue, guiContext);
 
@@ -183,32 +184,55 @@ K15_EXPORT_SYMBOL void K15_OnInputEvent(K15_GameContext* p_GameContext, K15_Syst
 	}
 
 	K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->userData;
-	
+	K15_GUIMouseInput mouseInput = {};
+
 	if (p_SystemEvent->event == K15_MOUSE_BUTTON_PRESSED ||
 		p_SystemEvent->event == K15_MOUSE_BUTTON_RELEASED)
 	{
-		K15_GUIMouseInputType inputType = K15_GUI_LEFT_MOUSE_CLICK;
-
-		if (p_SystemEvent->event == K15_MOUSE_BUTTON_PRESSED)
+		mouseInput.type = p_SystemEvent->event == K15_MOUSE_BUTTON_PRESSED ? 
+			K15_GUI_MOUSE_BUTTON_PRESSED:
+			K15_GUI_MOUSE_BUTTON_RELEASED;
+	
+		if (p_SystemEvent->params.mouseButton == K15_LEFT_MOUSE_BUTTON)
 		{
-			if (p_SystemEvent->params.mouseButton == K15_LEFT_MOUSE_BUTTON)
-			{
-				inputType = K15_GUI_LEFT_MOUSE_CLICK;
-			}
-			else if (p_SystemEvent->params.mouseButton == K15_RIGHT_MOUSE_BUTTON)
-			{
-				inputType = K15_GUI_RIGHT_MOUSE_CLICK;
-			}
-			else if (p_SystemEvent->params.mouseButton == K15_MIDDLE_MOUSE_BUTTON)
-			{
-				inputType = K15_GUI_MIDDLE_MOUSE_CLICK;
-			}
+			mouseInput.mouseButton = K15_GUI_MOUSE_BUTTON_LEFT;
 		}
-		else if (p_SystemEvent->event == K15_MOUSE_BUTTON_RELEASED)
+		else if (p_SystemEvent->params.mouseButton == K15_RIGHT_MOUSE_BUTTON)
 		{
-
+			mouseInput.mouseButton = K15_GUI_MOUSE_BUTTON_RELEASED;
+		}
+		else if (p_SystemEvent->params.mouseButton == K15_MIDDLE_MOUSE_BUTTON)
+		{
+			mouseInput.mouseButton = K15_GUI_MOUSE_BUTTON_MIDDLE;
+		}
+		else if (p_SystemEvent->params.mouseButton == K15_SPECIAL1_MOUSE_BUTTON)
+		{
+			mouseInput.mouseButton = K15_GUI_MOUSE_BUTTON_SPECIAL1;
+		}
+		else if (p_SystemEvent->params.mouseButton == K15_SPECIAL2_MOUSE_BUTTON)
+		{
+			mouseInput.mouseButton = K15_GUI_MOUSE_BUTTON_SPECIAL2;
 		}
 	}
+	else if (p_SystemEvent->event == K15_MOUSE_WHEEL_MOVED)
+	{
+		if (p_SystemEvent->params.wheelDelta > 0)
+		{
+			mouseInput.type = K15_GUI_MOUSE_WHEEL_UP;
+		}
+		else
+		{
+			mouseInput.type = K15_GUI_MOUSE_WHEEL_DOWN;
+		}
+	}
+	else if (p_SystemEvent->event == K15_MOUSE_MOVED)
+	{
+		mouseInput.mousePosX = p_SystemEvent->params.position.x;
+		mouseInput.mousePosY = p_SystemEvent->params.position.y;
+		mouseInput.type = K15_GUI_MOUSE_MOVED;
+	}
+
+	K15_GUIAddMouseInput(&gameContext->guiContext->input, &mouseInput);
 }
 /*********************************************************************************/
 K15_EXPORT_SYMBOL void K15_OnSystemEvent(K15_GameContext* p_GameContext, K15_SystemEvent* p_SystemEvent)

@@ -223,7 +223,7 @@ intern inline void K15_Win32MouseWheelInputReceived(HWND hWnd, UINT uMsg, WPARAM
 
 	win32Event.eventFlags = K15_INPUT_EVENT_FLAG;
 	win32Event.params.wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA;
-	win32Event.event = K15_WHEEL_MOVED;
+	win32Event.event = K15_MOUSE_WHEEL_MOVED;
 
 	K15_AddSystemEventToQueue(&win32Event);
 }
