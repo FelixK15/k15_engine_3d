@@ -65,8 +65,6 @@ void K15_RenderCommandDraw2DGUI(K15_RenderCommandQueue* p_RenderCommandQueue, K1
 	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
 	K15_ASSERT_TEXT(p_GUIContext, "GUI Context is NULL.");
 
-	K15_FlipGUIContextMemory(p_GUIContext);
-
 	result8 result = K15_InternalBeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_RENDER_2D_GUI);
 
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_GUIContext), p_GUIContext));

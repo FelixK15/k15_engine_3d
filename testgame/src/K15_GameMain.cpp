@@ -140,13 +140,21 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	K15_GUIContext* guiContext = gameContext->guiContext;
 	K15_RenderFontDesc* gameFont = gameContext->gameFont;
 
+	uint32 viewportWidth = p_GameContext->renderContext->backEnd.viewportWidth;
+	uint32 viewportHeight = p_GameContext->renderContext->backEnd.viewportHeight;
+
+	static uint32 windowWidth = 400;
+	static uint32 windowHeight = 400;
+	static int32 windowPosX = 20;
+	static int32 windowPosY = 20;
+
  	char* text = (char*)alloca(128);
  	sprintf(text, "FPS: %.1f\nms: %.3f", p_GameContext->frameCounter.FPS, p_GameContext->frameCounter.avgDeltaTime);
  	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, K15_CreateVector(1.0f, 0.25f, 0.25f), 0.0f, 0.0f);
 
-	K15_GUIBeginDockingArea(guiContext, 0, 0, viewportWidth, viewportHeight);
+	K15_GUIBeginDockingArea(guiContext, 0, 0, viewportWidth, viewportHeight, K15_GUI_LEFT_DOCKING_AREA);
 
-	if (K15_GUIBeginWindow(guiContext, 0, 0, 400, 400, "window_1"))
+	if (K15_GUIBeginWindow(guiContext, &windowPosX, &windowPosY, &windowWidth, &windowHeight, "window_1"))
 	{
 		K15_GUIButton(guiContext, "test button", "button_1");
 		K15_GUIButton(guiContext, "test button2", "button_2");
@@ -175,7 +183,32 @@ K15_EXPORT_SYMBOL void K15_OnInputEvent(K15_GameContext* p_GameContext, K15_Syst
 	}
 
 	K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->userData;
-	K15_HandleGUIInputEvent(gameContext->guiContext, p_SystemEvent);
+	
+	if (p_SystemEvent->event == K15_MOUSE_BUTTON_PRESSED ||
+		p_SystemEvent->event == K15_MOUSE_BUTTON_RELEASED)
+	{
+		K15_GUIMouseInputType inputType = K15_GUI_LEFT_MOUSE_CLICK;
+
+		if (p_SystemEvent->event == K15_MOUSE_BUTTON_PRESSED)
+		{
+			if (p_SystemEvent->params.mouseButton == K15_LEFT_MOUSE_BUTTON)
+			{
+				inputType = K15_GUI_LEFT_MOUSE_CLICK;
+			}
+			else if (p_SystemEvent->params.mouseButton == K15_RIGHT_MOUSE_BUTTON)
+			{
+				inputType = K15_GUI_RIGHT_MOUSE_CLICK;
+			}
+			else if (p_SystemEvent->params.mouseButton == K15_MIDDLE_MOUSE_BUTTON)
+			{
+				inputType = K15_GUI_MIDDLE_MOUSE_CLICK;
+			}
+		}
+		else if (p_SystemEvent->event == K15_MOUSE_BUTTON_RELEASED)
+		{
+
+		}
+	}
 }
 /*********************************************************************************/
 K15_EXPORT_SYMBOL void K15_OnSystemEvent(K15_GameContext* p_GameContext, K15_SystemEvent* p_SystemEvent)
@@ -194,7 +227,7 @@ K15_EXPORT_SYMBOL void K15_OnWindowEvent(K15_GameContext* p_GameContext, K15_Sys
 	}
 
 	K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->userData;
-	K15_HandleGUIWindowEvent(gameContext->guiContext, p_SystemEvent);
+//	K15_HandleGUIWindowEvent(gameContext->guiContext, p_SystemEvent);
 
 	if (p_SystemEvent->event == K15_WINDOW_RESIZED)
 	{

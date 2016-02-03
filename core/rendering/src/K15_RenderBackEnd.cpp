@@ -580,7 +580,7 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	float* vertexBuffer = 0;
 	float* textVertexBuffer = 0;
 
-	K15_InternalCountGUIContextVertices(&guiContext, &numVertices, &numTextVertices);
+//	K15_InternalCountGUIContextVertices(&guiContext, &numVertices, &numTextVertices);
 
 	//early out
 	if (numVertices == 0 && numTextVertices == 0)
@@ -594,19 +594,19 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	uint32 vertexBufferSizeInFloats = 0;
 	uint32 textVertexBufferSizeInFloats = 0;
 	
-	K15_InternalFillGUIContextVertexBuffer(p_RenderBackEnd, &guiContext, 
-		vertexBuffer, &vertexBufferSizeInFloats, 
-		textVertexBuffer, &textVertexBufferSizeInFloats);
+// 	K15_InternalFillGUIContextVertexBuffer(p_RenderBackEnd, &guiContext, 
+// 		vertexBuffer, &vertexBufferSizeInFloats, 
+// 		textVertexBuffer, &textVertexBufferSizeInFloats);
 
 	uint32 actualNumberOfVertices		= (vertexBufferSizeInFloats*sizeof(float))/vertexFormatDesc.stride;
 	uint32 actualNumberOfTextVertices	= (textVertexBufferSizeInFloats*sizeof(float))/textVertexFormatDesc.stride;
 
 	K15_ASSERT(actualNumberOfVertices <= numVertices && actualNumberOfTextVertices <= numTextVertices);
 
-	K15_RenderMaterialDesc* guiMaterial = guiContext.guiRenderMaterial;
-	K15_RenderMaterialDesc* fontMaterial = &p_RenderBackEnd->resources.materials.defaultFontMaterial;
-
-	K15_RenderFontDesc* guiStyleFont = guiContext.style.styleFont;
+// 	K15_RenderMaterialDesc* guiMaterial = guiContext.guiRenderMaterial;
+// 	K15_RenderMaterialDesc* fontMaterial = &p_RenderBackEnd->resources.materials.defaultFontMaterial;
+// 
+// 	K15_RenderFontDesc* guiStyleFont = guiContext.style.styleFont;
 
 	K15_RenderVertexData* textVertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, textVertexBuffer, actualNumberOfTextVertices, &textVertexFormatDesc);
 	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexBuffer, actualNumberOfVertices, &vertexFormatDesc);
@@ -618,12 +618,12 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 		renderGeometry.vertexData = vertexData;
 		renderGeometry.topology = K15_RENDER_TOPOLOGY_TRIANGLES;
 		renderGeometry.worldMatrix = K15_GetIdentityMatrix4();
-		renderGeometry.material = guiMaterial;
+//		renderGeometry.material = guiMaterial;
 
 		K15_InternalDrawGeometry(p_RenderBackEnd, &renderGeometry);
 	}
 	
-	K15_SetRenderMaterialRenderResourceDataByName(&fontMaterial->materialPasses[0], "tex", guiStyleFont->textureHandle);
+	//K15_SetRenderMaterialRenderResourceDataByName(&fontMaterial->materialPasses[0], "tex", guiStyleFont->textureHandle);
 
 	//render gui text
 	{
@@ -633,7 +633,7 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 		textGeometry.vertexData = textVertexData;
 		textGeometry.topology = K15_RENDER_TOPOLOGY_TRIANGLES;
 		textGeometry.worldMatrix = K15_GetIdentityMatrix4();
-		textGeometry.material = fontMaterial;
+	//	textGeometry.material = fontMaterial;
 
 		K15_InternalDrawGeometry(p_RenderBackEnd, &textGeometry);
 	}
@@ -643,7 +643,7 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 
 free_resources:
 	//signal gui context that we are finished so that it can flip the buffers again
-	K15_PostSemaphore(guiContext.memoryLock);
+	//K15_PostSemaphore(guiContext.memoryLock);
 	free(vertexBuffer);
 	free(textVertexBuffer);
 	//K15_FreeFromMemoryAllocator(renderAllocator, vertexBuffer);S

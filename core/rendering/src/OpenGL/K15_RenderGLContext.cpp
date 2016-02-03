@@ -412,7 +412,7 @@ intern void K15_GLGetExtensionStrings(K15_GLRenderContext* p_GLRenderContext, K1
 	}
 
 	//sort extensions so we can do a binary search on them
-	K15_Sort(p_GLRenderContext->extensions.names, p_GLRenderContext->extensions.count, sizeof(char*), K15_CmpStringsSort);
+	qsort(p_GLRenderContext->extensions.names, p_GLRenderContext->extensions.count, sizeof(char*), K15_CmpStringsSort);
 }
 /*********************************************************************************/
 intern void* K15_GLGetExtensionFunction(const char* p_ExtensionFunctionName, char* p_BoardAbbreveration)
