@@ -114,90 +114,84 @@
 // 	
 // }
 /*********************************************************************************/
-// intern void K15_InternalPushGUIWindowVertices(K15_RenderBackEnd* p_RenderBackEnd, K15_GUIContext* p_GUIContext,
-// 	K15_GUIElementHeader* p_GUIElement, K15_GUIWindow* p_GUIWindow,
-// 	float* p_VertexBuffer, uint32* p_VertexBufferIndexOffset,
-// 	float* p_TextVertexBuffer, uint32* p_TextVertexBufferIndexOffset)
-// {
-// 	uint32 vertexBufferIndex = *p_VertexBufferIndexOffset;
-// 	uint32 textVertexBufferIndex = *p_TextVertexBufferIndexOffset;
-// 
-// 	int32 pixelPosLeft = p_GUIElement->posPixelX;
-// 	int32 pixelPosRight = p_GUIElement->posPixelX + p_GUIElement->pixelWidth;
-// 	int32 pixelPosTop = p_GUIElement->posPixelY;
-// 	int32 pixelPosBottom = p_GUIElement->posPixelY + p_GUIElement->pixelHeight;
-// 	int32 windowPixelWidth = p_GUIWindow->windowPixelWidth;
-// 	int32 windowPixelHeight = p_GUIWindow->windowPixelHeight;
-// 
-// 	uint32 pixelPosCenterHorizontal = p_GUIElement->pixelWidth / 2;
-// 	uint32 pixelPosCenterVertical = p_GUIElement->pixelHeight / 2;
-// 
-// 	K15_GUIContextStyle* style = &p_GUIContext->style;
-// 	K15_RenderFontDesc* guiFont = style->styleFont;
-// 
-// 	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
-// 
-// 	char* text = (char*)(guiMemory + p_GUIWindow->titleOffsetInBytes);
-// 	float textPixelWidth = 0.f;
-// 	float textPixelHeight = 0.f;
-// 
-// 	K15_GetTextSizeInPixels(guiFont, &textPixelWidth, &textPixelHeight, text, p_GUIWindow->titleLength);
-// 
-// 	int32 textPixelPosLeft = pixelPosCenterHorizontal - (uint32)(textPixelWidth*0.5f) + pixelPosLeft;
-// 	int32 textPixelPosTop = pixelPosCenterVertical - (uint32)(textPixelHeight*0.5f) + pixelPosTop;
-// 
-// 	uint32 windowTitleUpperColor = style->windowTitleBarUpperColor;
-// 	uint32 windowTitleLowerColor = style->windowTitleBarLowerColor;
-// 	uint32 windowBorderUpperColor = style->windowBorderUpperColor;
-// 	uint32 windowBorderLowerColor = style->windowBorderLowerColor;
-// 	uint32 windowUpperBackgroundColor = style->windowUpperBackgroundColor;
-// 	uint32 windowLowerBackgroundColor = style->windowLowerBackgroundColor;
-// 	uint32 windowTitleTextColor = style->windowTitleTextColor;
-// 
-// 	uint32 borderPixelThickness = 2;
-// 
-// 	//border title
-// 	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(p_RenderBackEnd, p_VertexBuffer,
-// 		vertexBufferIndex,
-// 		pixelPosLeft - borderPixelThickness, pixelPosRight + borderPixelThickness, 
-// 		pixelPosTop - borderPixelThickness, pixelPosBottom + borderPixelThickness,
-// 		windowBorderUpperColor, windowBorderUpperColor,
-// 		windowBorderUpperColor, windowBorderUpperColor,
-// 		K15_LEFT_TOP_CORNER | K15_RIGHT_TOP_CORNER,
-// 		0.5f);
-// 
-// 	//border window
-// 	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer,
-// 		vertexBufferIndex,
-// 		pixelPosLeft - borderPixelThickness, pixelPosRight + borderPixelThickness, 
-// 		pixelPosBottom - borderPixelThickness, pixelPosBottom + windowPixelHeight + borderPixelThickness,
-// 		windowBorderLowerColor, windowBorderLowerColor,
-// 		windowBorderLowerColor, windowBorderLowerColor);
-// 
-// 	//title
-// 	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(p_RenderBackEnd, p_VertexBuffer, 
-// 		vertexBufferIndex,
-// 		pixelPosLeft, pixelPosRight, pixelPosTop, pixelPosBottom,
-// 		windowTitleUpperColor, windowTitleUpperColor,
-// 		windowTitleLowerColor, windowTitleLowerColor,
-// 		K15_LEFT_TOP_CORNER | K15_RIGHT_TOP_CORNER,
-// 		0.5f);
-// 
-// 	//window
-// 	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer,
-// 		vertexBufferIndex,
-// 		pixelPosLeft, pixelPosRight, pixelPosBottom, pixelPosBottom + windowPixelHeight,
-// 		windowUpperBackgroundColor, windowUpperBackgroundColor,
-// 		windowLowerBackgroundColor, windowLowerBackgroundColor);
-// 
-// 	//title text
-// 	textVertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderBackEnd, guiFont, 
-// 		p_TextVertexBuffer, textVertexBufferIndex, 
-// 		textPixelPosLeft, textPixelPosTop, windowTitleTextColor, text, p_GUIWindow->titleLength);
-// 
-// 	*p_VertexBufferIndexOffset = vertexBufferIndex;
-// 	*p_TextVertexBufferIndexOffset = textVertexBufferIndex;
-// }
+intern void K15_InternalPushGUIWindowVertices(K15_GUIElement* p_GUIElement, K15_GUIDrawInformation* p_DrawInfo)
+{
+	int32 pixelPosLeft = p_GUIElement->rect.pixelPosLeft;
+	int32 pixelPosRight = p_GUIElement->rect.pixelPosRight;
+	int32 pixelPosTop = p_GUIElement->rect.pixelPosTop;
+	int32 pixelPosBottom = p_GUIElement->rect.pixelPosBottom;
+	int32 windowPixelWidth = p_GUIWindow->windowPixelWidth;
+	int32 windowPixelHeight = p_GUIWindow->windowPixelHeight;
+
+	uint32 pixelPosCenterHorizontal = p_GUIElement->pixelWidth / 2;
+	uint32 pixelPosCenterVertical = p_GUIElement->pixelHeight / 2;
+
+	K15_GUIContextStyle* style = &p_GUIContext->style;
+	K15_RenderFontDesc* guiFont = style->styleFont;
+
+	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
+
+	char* text = (char*)(guiMemory + p_GUIWindow->titleOffsetInBytes);
+	float textPixelWidth = 0.f;
+	float textPixelHeight = 0.f;
+
+	K15_GetTextSizeInPixels(guiFont, &textPixelWidth, &textPixelHeight, text, p_GUIWindow->titleLength);
+
+	int32 textPixelPosLeft = pixelPosCenterHorizontal - (uint32)(textPixelWidth*0.5f) + pixelPosLeft;
+	int32 textPixelPosTop = pixelPosCenterVertical - (uint32)(textPixelHeight*0.5f) + pixelPosTop;
+
+	uint32 windowTitleUpperColor = style->windowTitleBarUpperColor;
+	uint32 windowTitleLowerColor = style->windowTitleBarLowerColor;
+	uint32 windowBorderUpperColor = style->windowBorderUpperColor;
+	uint32 windowBorderLowerColor = style->windowBorderLowerColor;
+	uint32 windowUpperBackgroundColor = style->windowUpperBackgroundColor;
+	uint32 windowLowerBackgroundColor = style->windowLowerBackgroundColor;
+	uint32 windowTitleTextColor = style->windowTitleTextColor;
+
+	uint32 borderPixelThickness = 2;
+
+	//border title
+	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(p_RenderBackEnd, p_VertexBuffer,
+		vertexBufferIndex,
+		pixelPosLeft - borderPixelThickness, pixelPosRight + borderPixelThickness, 
+		pixelPosTop - borderPixelThickness, pixelPosBottom + borderPixelThickness,
+		windowBorderUpperColor, windowBorderUpperColor,
+		windowBorderUpperColor, windowBorderUpperColor,
+		K15_LEFT_TOP_CORNER | K15_RIGHT_TOP_CORNER,
+		0.5f);
+
+	//border window
+	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer,
+		vertexBufferIndex,
+		pixelPosLeft - borderPixelThickness, pixelPosRight + borderPixelThickness, 
+		pixelPosBottom - borderPixelThickness, pixelPosBottom + windowPixelHeight + borderPixelThickness,
+		windowBorderLowerColor, windowBorderLowerColor,
+		windowBorderLowerColor, windowBorderLowerColor);
+
+	//title
+	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(p_RenderBackEnd, p_VertexBuffer, 
+		vertexBufferIndex,
+		pixelPosLeft, pixelPosRight, pixelPosTop, pixelPosBottom,
+		windowTitleUpperColor, windowTitleUpperColor,
+		windowTitleLowerColor, windowTitleLowerColor,
+		K15_LEFT_TOP_CORNER | K15_RIGHT_TOP_CORNER,
+		0.5f);
+
+	//window
+	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, p_VertexBuffer,
+		vertexBufferIndex,
+		pixelPosLeft, pixelPosRight, pixelPosBottom, pixelPosBottom + windowPixelHeight,
+		windowUpperBackgroundColor, windowUpperBackgroundColor,
+		windowLowerBackgroundColor, windowLowerBackgroundColor);
+
+	//title text
+	textVertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderBackEnd, guiFont, 
+		p_TextVertexBuffer, textVertexBufferIndex, 
+		textPixelPosLeft, textPixelPosTop, windowTitleTextColor, text, p_GUIWindow->titleLength);
+
+	*p_VertexBufferIndexOffset = vertexBufferIndex;
+	*p_TextVertexBufferIndexOffset = textVertexBufferIndex;
+}
 /*********************************************************************************/
 // intern void K15_InternalPushGUILabelVertices(K15_RenderBackEnd* p_RenderBackEnd, K15_GUIContext* p_GUIContext,
 // 	K15_GUIElementHeader* p_GUIElement, K15_GUILabel* p_GUILabel,
