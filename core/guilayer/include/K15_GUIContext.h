@@ -65,6 +65,8 @@ struct K15_GUIWindowStyle
 	uint32 borderLowerColor;
 	uint32 upperBackgroundColor;
 	uint32 lowerBackgroundColor;
+	uint32 upperTitleBackgroundColor;
+	uint32 lowerTitleBackgroundColor;
 	uint32 titleTextColor;
 	uint16 titlePixelPadding;
 	uint16 borderPixelThickness;
@@ -87,6 +89,13 @@ struct K15_GUIContextStyle
 {
 	K15_GUIWindowStyle windowStyle;
 	K15_GUIButtonStyle buttonStyle;
+};
+/*********************************************************************************/
+struct K15_GUIWindowData
+{
+	K15_GUIWindowStyle* style;
+	char* title;
+	uint32 textLength;
 };
 /*********************************************************************************/
 struct K15_GUILayout
@@ -202,13 +211,16 @@ struct K15_GUIContext
 K15_GUIContext* K15_CreateGUIContext(K15_ResourceContext* p_ResourceContext, K15_RenderCommandQueue* p_RenderCommandQueue);
 K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocator p_MemoryAllocator, K15_ResourceContext* p_ResourceContext, K15_RenderCommandQueue* p_RenderCommandQueue);
 
+byte* K15_GUIGetGUIElementMemory(K15_GUIElement* p_GUIElement);
+
 void K15_GUIBeginDockingArea(K15_GUIContext* p_GUIContext, int32 p_PosX, int32 p_PosY,
 	uint32 p_Width, uint32 p_Height, uint32 p_AllowedDockingAreasMask);
 
 bool8 K15_GUIBeginWindow(K15_GUIContext* p_GUIContext, int32* p_PosX, int32* p_PosY,
-	uint32* p_Width, uint32* p_Height, const char* p_Identifier);
+	uint32* p_Width, uint32* p_Height, const char* p_Title, const char* p_Identifier);
 bool8 K15_GUIBeginWindowEX(K15_GUIContext* p_GUIContext, int32* p_PosX, int32* p_PosY,
-	uint32* p_Width, uint32* p_Height, const char* p_Identifier, K15_GUIWindowStyle* p_GUIWindowStyle);
+	uint32* p_Width, uint32* p_Height, const char* p_Title, const char* p_Identifier, 
+	K15_GUIWindowStyle* p_GUIWindowStyle);
 
 bool8 K15_GUIButton(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier);
 bool8 K15_GUIButtonEX(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier, K15_GUIButtonStyle* p_GUIButtonStyle);

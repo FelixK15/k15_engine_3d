@@ -154,7 +154,7 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 
 	K15_GUIBeginDockingArea(guiContext, 0, 0, viewportWidth, viewportHeight, K15_GUI_LEFT_DOCKING_AREA);
 
-	if (K15_GUIBeginWindow(guiContext, &windowPosX, &windowPosY, &windowWidth, &windowHeight, "window_1"))
+	if (K15_GUIBeginWindow(guiContext, &windowPosX, &windowPosY, &windowWidth, &windowHeight, "Test Window", "window_1"))
 	{
 		K15_GUIButton(guiContext, "test button", "button_1");
 		K15_GUIButton(guiContext, "test button2", "button_2");

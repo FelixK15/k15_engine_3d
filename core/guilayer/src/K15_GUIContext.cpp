@@ -36,6 +36,7 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	defaultStyle.buttonStyle.upperBackgroundColor = 0x303030;
 	defaultStyle.buttonStyle.textColor = 0x000000;
 	defaultStyle.buttonStyle.borderPixelThickness = 2;
+	defaultStyle.buttonStyle.textPixelPadding = 2;
 	defaultStyle.buttonStyle.font = K15_GetResourceRenderFontDesc(p_ResourceContext, styleFontResource);
 	
 	defaultStyle.windowStyle.borderLowerColor = 0x000000;
@@ -44,6 +45,7 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	defaultStyle.windowStyle.upperBackgroundColor = 0x101010;
 	defaultStyle.windowStyle.titleTextColor = 0xEEEEEE;
 	defaultStyle.windowStyle.borderPixelThickness = 2;
+	defaultStyle.windowStyle.titlePixelPadding = 2;
 	defaultStyle.windowStyle.font = K15_GetResourceRenderFontDesc(p_ResourceContext, styleFontResource);
 	
 	return defaultStyle;
@@ -327,6 +329,7 @@ intern K15_GUIElement* K15_InternalAddGUIElement(K15_GUIContext* p_GUIContext, K
 	element->identifierHash = identifierHash;
 	element->type = p_GUIElementType;
 	element->offsetInBytes = p_GUIContext->memoryCurrentSizeInBytes;
+	element->sizeInBytes = sizeof(K15_GUIElement);
 	
 	p_GUIContext->memoryCurrentSizeInBytes += sizeof(K15_GUIElement);
 
@@ -405,6 +408,7 @@ intern byte* K15_InternalAddGUIElementMemory(K15_GUIContext* p_GUIContext, K15_G
 
 	byte* elementMemory = p_GUIContext->memoryBuffer + offsetInBytes;
 
+	p_GUIElement->sizeInBytes += p_SizeMemoryInBytes;
 	p_GUIContext->memoryCurrentSizeInBytes += p_SizeMemoryInBytes;
 
 	return elementMemory;
@@ -476,6 +480,11 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	return guiContext;
 }
 /*********************************************************************************/
+byte* K15_GUIGetGUIElementMemory(K15_GUIElement* p_GUIElement)
+{
+	return (byte*)(p_GUIElement + 1);
+}
+/*********************************************************************************/
 void K15_GUIBeginDockingArea(K15_GUIContext* p_GUIContext, int32 p_PosX, int32 p_PosY,
 	uint32 p_Width, uint32 p_Height, uint32 p_AllowedDockingAreasMask)
 {
@@ -483,29 +492,36 @@ void K15_GUIBeginDockingArea(K15_GUIContext* p_GUIContext, int32 p_PosX, int32 p
 }
 /*********************************************************************************/
 bool8 K15_GUIBeginWindow(K15_GUIContext* p_GUIContext, int32* p_PosX, int32* p_PosY,
-	uint32* p_Width, uint32* p_Height, const char* p_Identifier)
+	uint32* p_Width, uint32* p_Height, const char* p_Title, const char* p_Identifier)
 {
 	K15_GUIContextStyle* style = &p_GUIContext->style;
-	return K15_GUIBeginWindowEX(p_GUIContext, p_PosX, p_PosY, p_Width, p_Height, p_Identifier, &style->windowStyle);
+	return K15_GUIBeginWindowEX(p_GUIContext, p_PosX, p_PosY, p_Width, p_Height, p_Title, 
+		p_Identifier, &style->windowStyle);
 }
 /*********************************************************************************/
 bool8 K15_GUIBeginWindowEX(K15_GUIContext* p_GUIContext, int32* p_PosX, int32* p_PosY,
-	uint32* p_Width, uint32* p_Height, const char* p_Identifier,
+	uint32* p_Width, uint32* p_Height, const char* p_Identifier, const char* p_Title,
 	K15_GUIWindowStyle* p_GUIWindowStyle)
 {
 	K15_GUIElement* windowElement = K15_InternalAddGUIElement(p_GUIContext, K15_GUI_WINDOW,
 		p_PosX, p_PosY, p_Width, p_Height, p_Identifier);
 
-	uint32 sizeElementMemoryInBytes = sizeof(K15_GUIWindowStyle);
+	uint32 titleLength = (uint32)strlen(p_Title);
+
+	char* titleMemory = (char*)K15_InternalAddGUIElementMemory(p_GUIContext, windowElement, titleLength);
+	memcpy(titleMemory, p_Title, titleLength);
+
+	K15_GUIWindowData windowData = {};
+	windowData.style = p_GUIWindowStyle;
+	windowData.textLength = titleLength;
+	windowData.title = titleMemory;
+
+	uint32 sizeElementMemoryInBytes = sizeof(K15_GUIWindowData);
 	byte* windowElementMemory = K15_InternalAddGUIElementMemory(p_GUIContext, windowElement, sizeElementMemoryInBytes);
-	memcpy(windowElementMemory, p_GUIWindowStyle, sizeof(K15_GUIWindowStyle));
+	memcpy(windowElementMemory, &windowData, sizeof(K15_GUIWindowData));
 
-	//Don't add the window to a layout (except docking layouts...But that will have to wait)
-	K15_GUIRectangle* windowElementRect = &windowElement->rect;
-	windowElementRect->pixelPosTop += p_GUIWindowStyle->titlePixelPadding;
-	windowElementRect->pixelPosBottom += p_GUIWindowStyle->titlePixelPadding;
-
-	K15_InternalGUIPushLayout(p_GUIContext, windowElementRect, K15_GUI_VERTICAL_LAYOUT);
+	//Add layout for this window
+	K15_InternalGUIPushLayout(p_GUIContext, &windowElement->rect, K15_GUI_VERTICAL_LAYOUT);
 
 	return K15_TRUE;
 }
@@ -613,7 +629,7 @@ void K15_GUIIterateElements(K15_GUIContext* p_GUIContext, K15_GUIIteratorFnc p_F
 		K15_GUIElement* element = (K15_GUIElement*)(p_GUIContext->memoryBuffer + offsetInBytes);
 		p_Function(p_GUIContext, element, p_UserData);
 
-		offsetInBytes = element->offsetInBytes;
+		offsetInBytes += element->sizeInBytes;
 	}
 }
 /*********************************************************************************/

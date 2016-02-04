@@ -68,7 +68,7 @@ intern void K15_InternalPushGUIElementVertices(K15_GUIContext* p_GUIContext, K15
 	switch (type)
 	{
 	case K15_GUI_WINDOW:
-		K15_InternalGUIPushWindowVertices(p_GUIElement, drawInfo);
+		K15_InternalPushGUIWindowVertices(p_GUIElement, drawInfo);
 		break;
 	}
 }
@@ -572,7 +572,7 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 
 	float* vertexMemory = (float*)K15_AllocateFromMemoryAllocator(renderAllocator, sizeVerticesInBytes);
 
-	K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderBackEnd, &fontDesc, vertexMemory, 0,
+	K15_InternalPush2DScreenspacePixelColoredTextVertices(&fontDesc, vertexMemory, 0,
 		pixelPosX, pixelPosY, packedColor, text, textLength);
 
 	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexMemory, numVertices, &vertexFormatDesc);
