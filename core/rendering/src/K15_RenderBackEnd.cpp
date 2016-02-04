@@ -20,6 +20,18 @@
 
 #include "K15_ErrorCodes.h"
 
+/*********************************************************************************/
+struct K15_GUIDrawInformation
+{
+	uint32 numVerticesP3C3;
+	uint32 numVerticesP3T2C3;
+	uint32 numFloatsVertexBufferP3C3;
+	uint32 numFloatsVertexBufferP3T2C3;
+	float* vertexBufferP3C3;
+	float* vertexBufferP3T2C3;
+};
+/*********************************************************************************/
+
 #include "generated/K15_RenderMaterialDataDescStretchBuffer.cpp"
 
 #include "K15_RenderFormats.cpp"
@@ -31,6 +43,35 @@
 
 #include "K15_ShaderCompiler.h"
 
+
+/*********************************************************************************/
+intern void K15_InternalCountGUIElementVertices(K15_GUIContext* p_GUIContext, K15_GUIElement* p_GUIElement,
+	void* p_UserData)
+{
+	K15_GUIElementType type = p_GUIElement->type;
+	K15_GUIDrawInformation* drawInfo = (K15_GUIDrawInformation*)p_UserData;
+
+	switch (type)
+	{
+	case K15_GUI_WINDOW:
+		drawInfo->numVerticesP3C3 += K15_GUI_2D_SQUARE_SAMPLES * 2 + 42;
+		break;
+	}
+}
+/*********************************************************************************/
+intern void K15_InternalPushGUIElementVertices(K15_GUIContext* p_GUIContext, K15_GUIElement* p_GUIElement, 
+	void* p_UserData)
+{
+	K15_GUIElementType type = p_GUIElement->type;
+	K15_GUIDrawInformation* drawInfo = (K15_GUIDrawInformation*)p_UserData;
+
+	switch (type)
+	{
+	case K15_GUI_WINDOW:
+		K15_InternalGUIPushWindowVertices(p_GUIElement, drawInfo);
+		break;
+	}
+}
 /*********************************************************************************/
 intern int K15_InternalCompareKerning(const void* p_Key, const void* p_Element)
 {
@@ -565,57 +606,61 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 
 	uint32 currentGUIMemoryOffset = 0;
 
-	K15_RenderVertexFormatDesc vertexFormatDesc = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 2, 
-		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
+	K15_RenderVertexFormatDesc vertexFormatP3C3 = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 2, 
+		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR3,
 		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR3);
 	
-	K15_RenderVertexFormatDesc textVertexFormatDesc = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 3,
-		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
+	K15_RenderVertexFormatDesc vertexFormatP3T2C3 = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 3,
+		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR3,
 		K15_ATTRIBUTE_SEMANTIC_TEXCOORD1, K15_TYPE_FLOAT_VECTOR2,
 		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR3);
 
 	//count vertices
-	uint32 numVertices = 0;
-	uint32 numTextVertices = 0;
-	float* vertexBuffer = 0;
-	float* textVertexBuffer = 0;
-
-//	K15_InternalCountGUIContextVertices(&guiContext, &numVertices, &numTextVertices);
+	K15_GUIDrawInformation guiDrawInfo = {};
+	K15_GUIIterateElements(&guiContext, K15_InternalCountGUIElementVertices, &guiDrawInfo);
 
 	//early out
-	if (numVertices == 0 && numTextVertices == 0)
+	if (guiDrawInfo.numVerticesP3C3 == 0 && guiDrawInfo.numVerticesP3T2C3 == 0)
 	{
 		goto free_resources;
 	}
 
-	vertexBuffer = numVertices == 0 ? 0 : (float*)malloc(numVertices * vertexFormatDesc.stride);
-	textVertexBuffer = numTextVertices == 0 ? 0 : (float*)malloc(numTextVertices * textVertexFormatDesc.stride);
-	
-	uint32 vertexBufferSizeInFloats = 0;
-	uint32 textVertexBufferSizeInFloats = 0;
-	
+	guiDrawInfo.vertexBufferP3C3 = guiDrawInfo.numVerticesP3C3 == 0 ? 0 :
+		(float*)malloc(guiDrawInfo.numVerticesP3C3 * vertexFormatP3C3.stride);
+
+	guiDrawInfo.vertexBufferP3T2C3 = guiDrawInfo.numVerticesP3T2C3 == 0 ? 0 :
+		(float*)malloc(guiDrawInfo.numVerticesP3T2C3 * vertexFormatP3T2C3.stride);
+
+	//fill vertex buffer
+	K15_GUIIterateElements(&guiContext, K15_InternalPushGUIElementVertices, &guiDrawInfo);
+
 // 	K15_InternalFillGUIContextVertexBuffer(p_RenderBackEnd, &guiContext, 
 // 		vertexBuffer, &vertexBufferSizeInFloats, 
 // 		textVertexBuffer, &textVertexBufferSizeInFloats);
 
-	uint32 actualNumberOfVertices		= (vertexBufferSizeInFloats*sizeof(float))/vertexFormatDesc.stride;
-	uint32 actualNumberOfTextVertices	= (textVertexBufferSizeInFloats*sizeof(float))/textVertexFormatDesc.stride;
+	uint32 actualNumberOfVerticesP3C3 = 
+		(guiDrawInfo.numFloatsVertexBufferP3C3 * sizeof(float)) / vertexFormatP3C3.stride;
+	uint32 actualNumberOfVerticesP3T2C3	= 
+		(guiDrawInfo.numFloatsVertexBufferP3T2C3 * sizeof(float)) / vertexFormatP3T2C3.stride;
 
-	K15_ASSERT(actualNumberOfVertices <= numVertices && actualNumberOfTextVertices <= numTextVertices);
+	K15_ASSERT(actualNumberOfVerticesP3C3 <= guiDrawInfo.numVerticesP3C3 && 
+		actualNumberOfVerticesP3T2C3 <= guiDrawInfo.numVerticesP3T2C3);
 
 // 	K15_RenderMaterialDesc* guiMaterial = guiContext.guiRenderMaterial;
 // 	K15_RenderMaterialDesc* fontMaterial = &p_RenderBackEnd->resources.materials.defaultFontMaterial;
 // 
 // 	K15_RenderFontDesc* guiStyleFont = guiContext.style.styleFont;
 
-	K15_RenderVertexData* textVertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, textVertexBuffer, actualNumberOfTextVertices, &textVertexFormatDesc);
-	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexBuffer, actualNumberOfVertices, &vertexFormatDesc);
+	K15_RenderVertexData* vertexDataP3C3 = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, 
+		guiDrawInfo.vertexBufferP3C3, actualNumberOfVerticesP3C3, &vertexFormatP3C3);
+	K15_RenderVertexData* vertexDataP3T2C3 = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, 
+		guiDrawInfo.vertexBufferP3T2C3, actualNumberOfVerticesP3T2C3, &vertexFormatP3T2C3);
 
 	//render gui
 	{
 		K15_RenderGeometryDesc renderGeometry = {};
 
-		renderGeometry.vertexData = vertexData;
+		renderGeometry.vertexData = vertexDataP3C3;
 		renderGeometry.topology = K15_RENDER_TOPOLOGY_TRIANGLES;
 		renderGeometry.worldMatrix = K15_GetIdentityMatrix4();
 //		renderGeometry.material = guiMaterial;
@@ -630,7 +675,7 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 
 		K15_RenderGeometryDesc textGeometry = {};
 
-		textGeometry.vertexData = textVertexData;
+		textGeometry.vertexData = vertexDataP3T2C3;
 		textGeometry.topology = K15_RENDER_TOPOLOGY_TRIANGLES;
 		textGeometry.worldMatrix = K15_GetIdentityMatrix4();
 	//	textGeometry.material = fontMaterial;
@@ -638,14 +683,14 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 		K15_InternalDrawGeometry(p_RenderBackEnd, &textGeometry);
 	}
 
-	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, textVertexData);
-	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexData);
+	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexDataP3T2C3);
+	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexDataP3C3);
 
 free_resources:
 	//signal gui context that we are finished so that it can flip the buffers again
 	//K15_PostSemaphore(guiContext.memoryLock);
-	free(vertexBuffer);
-	free(textVertexBuffer);
+	free(guiDrawInfo.vertexBufferP3C3);
+	free(guiDrawInfo.vertexBufferP3T2C3);
 	//K15_FreeFromMemoryAllocator(renderAllocator, vertexBuffer);S
 }
 /*********************************************************************************/
