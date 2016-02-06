@@ -45,6 +45,7 @@ struct K15_RenderResources
 	struct 
 	{
 		K15_RenderMaterialDesc defaultFontMaterial;
+		K15_RenderMaterialDesc defaultGUIMaterial;
 		K15_RenderMaterialDesc default2DMaterial;
 	} materials;
 

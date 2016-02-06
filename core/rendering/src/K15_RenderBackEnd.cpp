@@ -9,7 +9,7 @@
 
 #include "K15_Rectangle.h"
 #include "K15_Vector2.h"
-
+#include "K15_Matrix3.h"
 #include "K15_GUIContext.h"
 
 #include "K15_RenderCommandBuffer.h"
@@ -289,6 +289,19 @@ intern void K15_InternalCreateDefaultFontMaterial(K15_RenderBackEnd* p_RenderBac
 	p_RenderBackEnd->resources.materials.defaultFontMaterial = defaultFontMaterial;
 }
 /*********************************************************************************/
+intern void K15_InternalCreateDefaultGUIMaterial(K15_RenderBackEnd* p_RenderBackEnd, K15_CustomMemoryAllocator* p_Allocator)
+{
+	K15_RenderMaterialDesc defaultGUIMaterial = {};
+	defaultGUIMaterial.numMaterialPasses = 1;
+	
+	defaultGUIMaterial.materialPasses = (K15_RenderMaterialPassDesc*)K15_AllocateFromMemoryAllocator(p_Allocator, sizeof(K15_RenderMaterialPassDesc));
+	defaultGUIMaterial.materialPasses[0].fragmentShaderHandle = p_RenderBackEnd->resources.shaders.defaultColorFragmentProgramHandle;
+	defaultGUIMaterial.materialPasses[1].vertexShaderHandle = p_RenderBackEnd->resources.shaders.screenspaceColoredVertexProgramHandle;
+	K15_CreateRenderMaterialDataDescStretchBufferWithCustomAllocator(&defaultGUIMaterial.materialPasses[0].materialData, *p_Allocator, 8);
+
+	p_RenderBackEnd->resources.materials.defaultGUIMaterial = defaultGUIMaterial;
+}
+/*********************************************************************************/
 intern void K15_InternalLoadBackEndStockShader(K15_RenderBackEnd* p_RenderBackEnd, K15_ResourceContext* p_ResourceContext, K15_CustomMemoryAllocator* p_Allocator)
 {
 	K15_ResourceHandle defaultColorFragmentProgramResourceHandle = K15_LoadResource(p_ResourceContext, K15_SHADER_RESOURCE_IDENTIFIER, "/shader/stock/default_color.frag", 0);
@@ -310,6 +323,9 @@ intern void K15_InternalLoadBackEndStockShader(K15_RenderBackEnd* p_RenderBackEn
 
 	//default font material
 	K15_InternalCreateDefaultFontMaterial(p_RenderBackEnd, p_Allocator);
+
+	//default gui material
+	K15_InternalCreateDefaultGUIMaterial(p_RenderBackEnd, p_Allocator);
 }
 /*********************************************************************************/
 intern void K15_InternalLoadDefaultSampler(K15_RenderBackEnd* p_RenderBackEnd)
@@ -399,6 +415,14 @@ intern result8 K15_InternalWindowResized(K15_RenderBackEnd* p_RenderBackEnd, K15
 	p_RenderBackEnd->viewportHeight = (float)height;
 	p_RenderBackEnd->viewportWidth = (float)width;
 	p_RenderBackEnd->viewportAspectRatio = p_RenderBackEnd->viewportWidth / p_RenderBackEnd->viewportHeight;
+
+	K15_Matrix4 guiProj = {2/width,		  0.f, 0.f, -1.f,
+								0.f, 2/height, 0.f, -1.f,
+								0.f,	  0.f, 1.f,  0.f,
+								0.f,	  0.f, 0.f,  1.f};
+
+	K15_UpdateUniformCacheEntry(&p_RenderBackEnd->uniformCache, 
+		K15_UNIFORM_SEMANTIC_GUI_PROJECTION_MATRIX, (byte*)&guiProj);
 
 	return p_RenderBackEnd->renderInterface.resizeViewport(p_RenderBackEnd, width, height);
 }
@@ -607,11 +631,11 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	uint32 currentGUIMemoryOffset = 0;
 
 	K15_RenderVertexFormatDesc vertexFormatP3C3 = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 2, 
-		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR3,
+		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
 		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR3);
 	
 	K15_RenderVertexFormatDesc vertexFormatP3T2C3 = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 3,
-		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR3,
+		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
 		K15_ATTRIBUTE_SEMANTIC_TEXCOORD1, K15_TYPE_FLOAT_VECTOR2,
 		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR3);
 
@@ -634,10 +658,6 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	//fill vertex buffer
 	K15_GUIIterateElements(&guiContext, K15_InternalPushGUIElementVertices, &guiDrawInfo);
 
-// 	K15_InternalFillGUIContextVertexBuffer(p_RenderBackEnd, &guiContext, 
-// 		vertexBuffer, &vertexBufferSizeInFloats, 
-// 		textVertexBuffer, &textVertexBufferSizeInFloats);
-
 	uint32 actualNumberOfVerticesP3C3 = 
 		(guiDrawInfo.numFloatsVertexBufferP3C3 * sizeof(float)) / vertexFormatP3C3.stride;
 	uint32 actualNumberOfVerticesP3T2C3	= 
@@ -646,10 +666,10 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	K15_ASSERT(actualNumberOfVerticesP3C3 <= guiDrawInfo.numVerticesP3C3 && 
 		actualNumberOfVerticesP3T2C3 <= guiDrawInfo.numVerticesP3T2C3);
 
-// 	K15_RenderMaterialDesc* guiMaterial = guiContext.guiRenderMaterial;
-// 	K15_RenderMaterialDesc* fontMaterial = &p_RenderBackEnd->resources.materials.defaultFontMaterial;
-// 
-// 	K15_RenderFontDesc* guiStyleFont = guiContext.style.styleFont;
+	K15_RenderMaterialDesc* guiMaterial = &p_RenderBackEnd->resources.materials.defaultGUIMaterial;
+	K15_RenderMaterialDesc* fontMaterial = &p_RenderBackEnd->resources.materials.defaultFontMaterial;
+
+	K15_RenderFontDesc* guiStyleFont = guiContext.style.windowStyle.font;
 
 	K15_RenderVertexData* vertexDataP3C3 = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, 
 		guiDrawInfo.vertexBufferP3C3, actualNumberOfVerticesP3C3, &vertexFormatP3C3);
@@ -663,12 +683,12 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 		renderGeometry.vertexData = vertexDataP3C3;
 		renderGeometry.topology = K15_RENDER_TOPOLOGY_TRIANGLES;
 		renderGeometry.worldMatrix = K15_GetIdentityMatrix4();
-//		renderGeometry.material = guiMaterial;
+		renderGeometry.material = guiMaterial;
 
 		K15_InternalDrawGeometry(p_RenderBackEnd, &renderGeometry);
 	}
 	
-	//K15_SetRenderMaterialRenderResourceDataByName(&fontMaterial->materialPasses[0], "tex", guiStyleFont->textureHandle);
+	K15_SetRenderMaterialRenderResourceDataByName(&fontMaterial->materialPasses[0], "tex", guiStyleFont->textureHandle);
 
 	//render gui text
 	{
@@ -678,7 +698,7 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 		textGeometry.vertexData = vertexDataP3T2C3;
 		textGeometry.topology = K15_RENDER_TOPOLOGY_TRIANGLES;
 		textGeometry.worldMatrix = K15_GetIdentityMatrix4();
-	//	textGeometry.material = fontMaterial;
+		textGeometry.material = fontMaterial;
 
 		K15_InternalDrawGeometry(p_RenderBackEnd, &textGeometry);
 	}

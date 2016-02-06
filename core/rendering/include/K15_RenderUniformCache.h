@@ -23,8 +23,7 @@ struct K15_RenderUniformCache
 	uint32 numUniforms;
 };
 
-void K15_InitializeRenderUniformCache(K15_CustomMemoryAllocator* p_RenderAllocator, 
-									  K15_RenderUniformCache* p_RenderUniformCache);
+void K15_InitializeRenderUniformCache(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderUniformCache* p_UniformCache);
 
 void K15_UpdateUniformCacheEntry(K15_RenderUniformCache* p_RenderUniformCache, 
 								 K15_ShaderUniformSemantics p_SemanticID, 

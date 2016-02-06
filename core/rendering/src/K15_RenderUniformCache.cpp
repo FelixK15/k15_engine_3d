@@ -59,6 +59,13 @@ intern void K15_InternalAddRenderUniformCacheEntries(K15_RenderUniformCache* p_U
 		K15_UNIFORM_GROUP_PER_OBJECT,
 		K15_TYPE_FLOAT_MATRIX4);
 
+	p_UniformCache->cachedUniforms[K15_UNIFORM_SEMANTIC_GUI_PROJECTION_MATRIX] =
+		K15_InternCreateRenderUniformCacheEntry(p_RenderAllocator, p_ShaderProcessor,
+		K15_SEMANTIC_GUI_PROJECTION_MATRIX_VARIABLE_NAME,
+		K15_UNIFORM_SEMANTIC_GUI_PROJECTION_MATRIX,
+		K15_UNIFORM_GROUP_PER_OBJECT,
+		K15_TYPE_FLOAT_MATRIX4);
+
 	p_UniformCache->cachedUniforms[K15_UNIFORM_SEMANTIC_TEX1_DIMENSION] = 
 		K15_InternCreateRenderUniformCacheEntry(p_RenderAllocator, p_ShaderProcessor,
 		K15_SEMANTIC_TEX1_DIMENSION_NAME,
