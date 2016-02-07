@@ -83,8 +83,6 @@ int CALLBACK WinMain(
 
 	K15_Window* window = K15_CreateWindow(0, 0);
 	K15_OSContext* osContext = K15_GetOSLayerContext();
-
-	K15_SetWindowDimension(window, 1024, 768);
 	
 	K15_RenderContext* renderContext = K15_CreateRenderContext(osContext);
 

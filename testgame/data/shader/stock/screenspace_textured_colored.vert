@@ -5,7 +5,7 @@ float4 TransformVertex(in float2 pos : POSITION,
 		       out float2 out_uv : TEXCOORD1,
 		       out float3 out_color : COLOR1)
 {
-	float4 p = float4(pos, 0.f, 1.0f);
+	float4 p = float4(pos, 1.f, 1.0f);
 	float4 transformedPos = gui_proj * p;
 	out_uv = uv;
 	out_color = color;

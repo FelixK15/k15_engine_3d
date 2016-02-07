@@ -106,36 +106,40 @@ uint8 K15_Win32CreateWindow(K15_OSContext* p_OSContext, K15_Window* p_Window, ui
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
-uint8 K15_Win32SetWindowDimension(K15_OSContext* p_OSContext, K15_Window* p_Window, uint32 p_Height, uint32 p_Width)
+uint8 K15_Win32SetWindowDimension(K15_OSContext* p_OSContext, K15_Window* p_Window, uint32 p_Width, uint32 p_Height)
 {
 	K15_Win32Window* win32WindowData = (K15_Win32Window*)p_Window->userData;
 	HWND hwnd = win32WindowData->hwnd;
 
-	DISPLAY_DEVICE displayDevice;
-	displayDevice.cb = sizeof(DISPLAY_DEVICE);
+	SetWindowPos(hwnd, 0, 0, 0, p_Width, p_Height, SWP_NOMOVE | SWP_ASYNCWINDOWPOS);
 
-	if (EnumDisplayDevices(0, p_Window->monitorIndex, &displayDevice, 0) == 0)
-	{
-		return K15_OS_ERROR_MONITOR_NOT_FOUND;
-	}
+// 
+// 	DISPLAY_DEVICE displayDevice;
+// 	displayDevice.cb = sizeof(DISPLAY_DEVICE);
+// 
+// 	if (EnumDisplayDevices(0, p_Window->monitorIndex, &displayDevice, 0) == 0)
+// 	{
+// 		return K15_OS_ERROR_MONITOR_NOT_FOUND;
+// 	}
+// 
+// 	DEVMODE deviceSettings;
+// 	if (EnumDisplaySettings(displayDevice.DeviceName, ENUM_CURRENT_SETTINGS, &deviceSettings) == 0)
+// 	{
+// 		return K15_OS_ERROR_SYSTEM;
+// 	}
+// 
+// 	deviceSettings.dmPelsWidth = p_Width;
+// 	deviceSettings.dmPelsHeight = p_Height;
+// 	deviceSettings.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
+// 	
+// 	//CDS_RESET = always change settings
+// 	if (ChangeDisplaySettings(&deviceSettings, CDS_TEST) != DISP_CHANGE_SUCCESSFUL)
+// 	{
+// 		return K15_OS_ERROR_RESOLUTION_NOT_SUPPORTED;
+// 	}
+// 
+// 	ChangeDisplaySettings(&deviceSettings, CDS_RESET);
 
-	DEVMODE deviceSettings;
-	if (EnumDisplaySettings(displayDevice.DeviceName, ENUM_CURRENT_SETTINGS, &deviceSettings) == 0)
-	{
-		return K15_OS_ERROR_SYSTEM;
-	}
-
-	deviceSettings.dmPelsWidth = p_Width;
-	deviceSettings.dmPelsHeight = p_Height;
-	deviceSettings.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
-	
-	//CDS_RESET = always change settings
-	if (ChangeDisplaySettings(&deviceSettings, CDS_TEST) != DISP_CHANGE_SUCCESSFUL)
-	{
-		return K15_OS_ERROR_RESOLUTION_NOT_SUPPORTED;
-	}
-
-	ChangeDisplaySettings(&deviceSettings, CDS_RESET);
 
 	return K15_SUCCESS;
 }

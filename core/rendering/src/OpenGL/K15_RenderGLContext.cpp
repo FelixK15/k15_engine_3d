@@ -770,7 +770,6 @@ result8 K15_GLCreateRenderContext(K15_CustomMemoryAllocator* p_MemoryAllocator, 
 		return result;
 	}
 
-	//6h initialize extensions (if necessary)
 	K15_InternalInitializeExtensions(glContext);
 
 	//5th get interface function poiunter based on available extensions
@@ -789,6 +788,10 @@ result8 K15_GLCreateRenderContext(K15_CustomMemoryAllocator* p_MemoryAllocator, 
 	glContext->textureManager.maxTextureSlots = p_RenderBackEnd->features.maxTextureUnits;
 	glContext->textureManager.textureSlots = (K15_GLTextureSlot*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, sizeof(K15_GLTextureSlot) * p_RenderBackEnd->features.maxTextureUnits);
 	memset(glContext->textureManager.textureSlots, 0, sizeof(K15_GLTextureSlot) * p_RenderBackEnd->features.maxTextureUnits);
+
+	//set viewport dimension
+	K15_GLResizeViewport(p_RenderBackEnd, p_RenderBackEnd->viewportWidth, p_RenderBackEnd->viewportHeight);
+
 	return K15_SUCCESS;
 }
 /*********************************************************************************/

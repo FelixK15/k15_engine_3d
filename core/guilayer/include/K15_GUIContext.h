@@ -183,6 +183,7 @@ struct K15_GUIContextInput
 /*********************************************************************************/
 struct K15_GUIContext
 {
+	K15_Semaphore* memoryLock;
 	byte* memoryBuffer;
 	K15_CustomMemoryAllocator memoryAllocator;
 	K15_GUIContextStyle style;
@@ -236,6 +237,8 @@ void K15_GUIEndDockingArea(K15_GUIContext* p_GUIContext);
 void K15_GUIFinishGUIFrame(K15_GUIContext* p_GUIContext);
 
 void K15_GUIIterateElements(K15_GUIContext* p_GUIContext, K15_GUIIteratorFnc p_Function, void* p_UserData);
+void K15_GUIIterateRetainedElements(K15_GUIContext* p_GUIContext, K15_GUIIteratorFnc p_Function, void* p_UserData);
+
 void K15_GUIAddMouseInput(K15_GUIContextInput* p_GUIContextInput, K15_GUIMouseInput* p_MouseInput);
 void K15_GUIAddKeyboardInput(K15_GUIContextInput* p_GUIContextInput, K15_GUIKeyboardInput* p_KeyboardInput);
 

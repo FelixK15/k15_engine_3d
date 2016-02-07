@@ -33,13 +33,13 @@ K15_Window* K15_CreateWindow(uint32 p_Flags, uint8 p_MonitorIndex)
 	return window;
 }
 /*********************************************************************************/
-uint8 K15_SetWindowDimension(K15_Window* p_Window, uint32 p_Height, uint32 p_Width)
+uint8 K15_SetWindowDimension(K15_Window* p_Window, uint32 p_Width, uint32 p_Height)
 {
 	assert(p_Window);
 
 	K15_OSContext* OSContext = K15_GetOSLayerContext();
 
-	uint8 result = OSContext->window.setWindowDimension(OSContext, p_Window, p_Height, p_Width);
+	uint8 result = OSContext->window.setWindowDimension(OSContext, p_Window, p_Width, p_Height);
 
 	if (result == K15_SUCCESS)
 	{

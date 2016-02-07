@@ -395,7 +395,11 @@ intern void K15_InitializeRenderResources(K15_RenderBackEnd* p_RenderBackEnd)
 	/*********************************************************************************/
 }
 /*********************************************************************************/
+intern result8 K15_InternalWindowResized2(K15_RenderBackEnd* p_RenderBackEnd, float p_Width, float p_Height)
+{
 
+}
+/*********************************************************************************/
 
 
 //RENDER COMMANDS
@@ -415,14 +419,6 @@ intern result8 K15_InternalWindowResized(K15_RenderBackEnd* p_RenderBackEnd, K15
 	p_RenderBackEnd->viewportHeight = (float)height;
 	p_RenderBackEnd->viewportWidth = (float)width;
 	p_RenderBackEnd->viewportAspectRatio = p_RenderBackEnd->viewportWidth / p_RenderBackEnd->viewportHeight;
-
-	K15_Matrix4 guiProj = {2/width,		  0.f, 0.f, -1.f,
-								0.f, 2/height, 0.f, -1.f,
-								0.f,	  0.f, 1.f,  0.f,
-								0.f,	  0.f, 0.f,  1.f};
-
-	K15_UpdateUniformCacheEntry(&p_RenderBackEnd->uniformCache, 
-		K15_UNIFORM_SEMANTIC_GUI_PROJECTION_MATRIX, (byte*)&guiProj);
 
 	return p_RenderBackEnd->renderInterface.resizeViewport(p_RenderBackEnd, width, height);
 }
@@ -641,7 +637,7 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 
 	//count vertices
 	K15_GUIDrawInformation guiDrawInfo = {};
-	K15_GUIIterateElements(&guiContext, K15_InternalCountGUIElementVertices, &guiDrawInfo);
+	K15_GUIIterateRetainedElements(&guiContext, K15_InternalCountGUIElementVertices, &guiDrawInfo);
 
 	//early out
 	if (guiDrawInfo.numVerticesP3C3 == 0 && guiDrawInfo.numVerticesP3T2C3 == 0)
@@ -656,7 +652,10 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 		(float*)malloc(guiDrawInfo.numVerticesP3T2C3 * vertexFormatP3T2C3.stride);
 
 	//fill vertex buffer
-	K15_GUIIterateElements(&guiContext, K15_InternalPushGUIElementVertices, &guiDrawInfo);
+	K15_GUIIterateRetainedElements(&guiContext, K15_InternalPushGUIElementVertices, &guiDrawInfo);
+
+	//signal semaphore so the retained memory can be used again
+	K15_PostSemaphore(guiContext.memoryLock);
 
 	uint32 actualNumberOfVerticesP3C3 = 
 		(guiDrawInfo.numFloatsVertexBufferP3C3 * sizeof(float)) / vertexFormatP3C3.stride;

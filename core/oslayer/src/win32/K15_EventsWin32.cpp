@@ -135,7 +135,7 @@ intern inline void K15_Win32WindowResized(HWND hWnd, UINT uMsg, WPARAM wParam, L
 		WORD newWidth = (WORD)(lParam);
 		WORD newHeight = (WORD)(lParam >> 16);
 
-		K15_SetWindowDimension(window, newHeight, newWidth);
+		//K15_SetWindowDimension(window, newHeight, newWidth);
 
 		win32Event.event = K15_WINDOW_RESIZED;
 		win32Event.eventFlags = K15_WINDOW_EVENT_FLAG;

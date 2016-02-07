@@ -1,5 +1,7 @@
 #include <K15_Prerequisites.h>
 #include <K15_GameInit.h>
+#include <K15_ConfigFile.h>
+#include <K15_Window.h>
 
 #include <K15_OSContext.h>
 #include <K15_Logging.h>
@@ -95,6 +97,11 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 	p_GameContext->userData = sample1GameContext;
 
 	K15_LoadStockShader(p_GameContext->renderContext, resourceContext);
+
+	int32 windowWidth = 0;
+	int32 windowHeight = 0;
+	K15_GetConfigValueAsResolution(p_GameContext->configContext, "resolution", &windowWidth, &windowHeight, 800, 600);
+	K15_SetWindowDimension(p_GameContext->osContext->window.window, windowWidth, windowHeight);
 
 	//TODO
 	//K15_RenderCommandCreateCamera(renderBuffer, &sample1GameContext->camera, &cameraDesc);
