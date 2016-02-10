@@ -170,3 +170,9 @@ void K15_ResetDirtyUniformFlags(K15_RenderUniformCache* p_RenderUniformCache)
 	memset(p_RenderUniformCache->dirtyUniformSemantics, K15_FALSE, K15_UNIFORM_SEMANTIC_COUNT);
 }
 /*********************************************************************************/
+void K15_MarkAllUniformsDirty(K15_RenderUniformCache* p_RenderUniformCache)
+{
+	K15_ASSERT(p_RenderUniformCache);
+	memset(p_RenderUniformCache->dirtyUniformSemantics, K15_TRUE, K15_UNIFORM_SEMANTIC_COUNT);
+}
+/*********************************************************************************/

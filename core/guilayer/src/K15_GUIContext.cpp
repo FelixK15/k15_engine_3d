@@ -43,6 +43,8 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	defaultStyle.windowStyle.borderUpperColor = 0x050545;
 	defaultStyle.windowStyle.lowerBackgroundColor = 0x808080;
 	defaultStyle.windowStyle.upperBackgroundColor = 0x101010;
+	defaultStyle.windowStyle.upperTitleBackgroundColor = 0x000;
+	defaultStyle.windowStyle.lowerTitleBackgroundColor = 0x000;
 	defaultStyle.windowStyle.titleTextColor = 0xEEEEEE;
 	defaultStyle.windowStyle.borderPixelThickness = 2;
 	defaultStyle.windowStyle.titlePixelPadding = 2;
@@ -81,8 +83,7 @@ intern void K15_InternalGUIAddGUIRectToTopLayout(K15_GUIContext* p_GUIContext, K
 intern byte* K15_InternalGUIGetRetainedDataBuffer(K15_GUIContext* p_GUIContext)
 {
 	return p_GUIContext->memoryBuffer +
-		p_GUIContext->retainedDataOffsetInBytes +
-		p_GUIContext->retainedDataSizeInBytes;
+		p_GUIContext->retainedDataOffsetInBytes;
 }
 /*********************************************************************************/
 intern K15_GUIElement* K15_InternalGUIGetGUIElementFromRetainedDataBuffer(K15_GUIContext* p_GUIContext,
@@ -132,7 +133,7 @@ intern void K15_InternalGUIPickGUIElementWithMouse(K15_GUIContext* p_GUIContext,
 		return;
 	}
 
-	bool8 pickedElement = K15_Collision2DBoxPoint(p_GUIElement->rect.pixelPosBottom, p_GUIElement->rect.pixelPosTop,
+	bool8 pickedElement = K15_Collision2DBoxPoint(p_GUIElement->rect.pixelPosLeft, p_GUIElement->rect.pixelPosTop,
 		p_GUIElement->rect.pixelPosRight, p_GUIElement->rect.pixelPosBottom,
 		mousePickQuery->mousePosX, mousePickQuery->mousePosY);
 
@@ -203,6 +204,7 @@ intern void K15_InternalSetFocusedElement(K15_GUIContext* p_GUIContext, K15_GUIE
 		if (p_Element->flagMask & K15_GUI_ELEMENT_MOUSE_DOWN)
 		{
 			p_Element->flagMask |= K15_GUI_ELEMENT_CLICKED;
+			p_Element->flagMask &= ~K15_GUI_ELEMENT_MOUSE_DOWN;
 		}
 	}
 
@@ -340,14 +342,6 @@ intern K15_GUIElement* K15_InternalAddGUIElement(K15_GUIContext* p_GUIContext, K
 	{
 		element->rect = retainedElement->rect;
 		element->flagMask = retainedElement->flagMask;
-// 		
-// 		byte* retainedDataBuffer = K15_InternalGUIGetRetainedDataBuffer(p_GUIContext);
-// 		K15_ASSERT(K15_PTR_DIFF(p_GUIContext->memoryBuffer, retainedDataBuffer) <= K15_GUI_CONTEXT_MEMORY_SIZE);
-// 		retainedElement = (K15_GUIElement*)(retainedDataBuffer + p_GUIContext->retainedDataSizeInBytes);
-// 		retainedElement->offsetInBytes = p_GUIContext->retainedDataSizeInBytes;
-// 		retainedElement->sizeInBytes = sizeof(K15_GUIElement);
-// 
-// 		p_GUIContext->retainedDataSizeInBytes += sizeof(K15_GUIElement);
 	}
 	else
 	{
@@ -507,18 +501,36 @@ bool8 K15_GUIBeginWindowEX(K15_GUIContext* p_GUIContext, int32* p_PosX, int32* p
 	K15_GUIElement* windowElement = K15_InternalAddGUIElement(p_GUIContext, K15_GUI_WINDOW,
 		p_PosX, p_PosY, p_Width, p_Height, p_Identifier);
 
-	uint32 titleLength = (uint32)strlen(p_Title);
+	//clicked?
+	if (windowElement->flagMask & K15_GUI_ELEMENT_CLICKED)
+	{
+		//remove the click flag
+		windowElement->flagMask &= ~K15_GUI_ELEMENT_CLICKED;
+		K15_LOG_DEBUG_MESSAGE("CLICK!");
+	}
 
+	if (windowElement->flagMask & K15_GUI_ELEMENT_FOCUSED)
+	{
+		K15_LOG_DEBUG_MESSAGE("FOCUSED!");
+	}
+
+	if (windowElement->flagMask & K15_GUI_ELEMENT_MOUSE_DOWN)
+	{
+		K15_LOG_DEBUG_MESSAGE("MOUSE DOWN!");
+	}
+
+	uint32 titleLength = (uint32)strlen(p_Title);
+	uint32 sizeElementMemoryInBytes = sizeof(K15_GUIWindowData);
+
+	byte* windowElementMemory = K15_InternalAddGUIElementMemory(p_GUIContext, windowElement, sizeElementMemoryInBytes);
 	char* titleMemory = (char*)K15_InternalAddGUIElementMemory(p_GUIContext, windowElement, titleLength);
-	memcpy(titleMemory, p_Title, titleLength);
 
 	K15_GUIWindowData windowData = {};
 	windowData.style = p_GUIWindowStyle;
 	windowData.textLength = titleLength;
 	windowData.title = titleMemory;
 
-	uint32 sizeElementMemoryInBytes = sizeof(K15_GUIWindowData);
-	byte* windowElementMemory = K15_InternalAddGUIElementMemory(p_GUIContext, windowElement, sizeElementMemoryInBytes);
+	memcpy(titleMemory, p_Title, titleLength);
 	memcpy(windowElementMemory, &windowData, sizeof(K15_GUIWindowData));
 
 	//Add layout for this window

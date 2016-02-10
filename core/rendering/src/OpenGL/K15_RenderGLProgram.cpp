@@ -809,6 +809,45 @@ result8 K15_GLDeleteProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResour
 	return result;
 }
 /*********************************************************************************/
+void K15_GLUpdateProgramUniforms(K15_GLProgram* p_GLProgram, K15_RenderUniformCache* p_UniformCache)
+{
+	for (uint32 uniformIndex = 0;
+		uniformIndex < K15_UNIFORM_SEMANTIC_COUNT;
+		++uniformIndex)
+	{
+		if (p_UniformCache->dirtyUniformSemantics[uniformIndex] == K15_TRUE)
+		{
+			K15_RenderUniformCacheEntry* cachedUniform = &p_UniformCache->cachedUniforms[uniformIndex];
+			uint32 chachedUniformNameHash = cachedUniform->nameHash;
+			uint32 programUniformCount = p_GLProgram->uniformCount;
+
+			for (uint32 programUniformIndex = 0;
+			programUniformIndex < programUniformCount;
+				++programUniformIndex)
+			{
+				K15_GLUniform* glUniform = &p_GLProgram->uniforms[programUniformIndex];
+				uint32 glUniformNameHash = glUniform->nameHash;
+				uint32 typeID = glUniform->typeID;
+
+				if (glUniformNameHash == chachedUniformNameHash)
+				{
+					K15_InternalGLUpdateUniformFnc updateUniform = K15_InternalGLConvertToUpdateUniformFnc(typeID);
+					K15_RenderUniformUpdateDesc updateUniformDesc = {};
+
+					updateUniformDesc.typeID = typeID;
+					updateUniformDesc.nameHash = glUniformNameHash;
+					updateUniformDesc.sizeInBytes = cachedUniform->sizeInBytes;
+					updateUniformDesc.data.rawData = cachedUniform->data;
+					updateUniformDesc.flags = 0;
+
+					updateUniform(p_GLProgram, glUniform->registerIndex, &updateUniformDesc);
+					break;
+				}
+			}
+		}
+	}
+}
+/*********************************************************************************/
 result8 K15_GLBindProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResourceHandle* p_RenderProgramHandle)
 {
 	result8 result = K15_SUCCESS;
@@ -827,9 +866,12 @@ result8 K15_GLBindProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResource
 	GLuint glProgramHandle = glProgram->glProgramHandle;
 	GLbitfield glProgramTypeBit = K15_GLConvertProgramTypeBit(glProgramType);
 
-	K15_OPENGL_CALL(kglUseProgramStages(glProgramPipelineHandle, glProgramTypeBit ,glProgramHandle));
+	K15_OPENGL_CALL(kglUseProgramStages(glProgramPipelineHandle, glProgramTypeBit, glProgramHandle));
 
 	glContext->glBoundObjects.boundPrograms[programType] = glProgram;
+
+	K15_MarkAllUniformsDirty(&p_RenderBackEnd->uniformCache);
+	K15_GLUpdateProgramUniforms(glProgram, &p_RenderBackEnd->uniformCache);
 
 	return result;
 }
@@ -841,51 +883,17 @@ result8 K15_GLUpdateDirtyUniforms(K15_RenderBackEnd* p_RenderBackEnd)
 	K15_ShaderProcessorContext* shaderProcessorContext = p_RenderBackEnd->shaderProcessorContext;
 
 	K15_RenderUniformCache* uniformCache = &p_RenderBackEnd->uniformCache;
-	
-	for (uint32 uniformIndex = 0;
-		uniformIndex < K15_UNIFORM_SEMANTIC_COUNT;
-		++uniformIndex)
+
+	//iterate over bound shaders and update dirty uniforms
+	for (uint32 gpuProgramIndex = 0;
+	gpuProgramIndex < K15_RENDER_PROGRAM_TYPE_COUNT;
+		++gpuProgramIndex)
 	{
-		if (uniformCache->dirtyUniformSemantics[uniformIndex] == K15_TRUE)
+		K15_GLProgram* boundProgram = glContext->glBoundObjects.boundPrograms[gpuProgramIndex];
+		
+		if (boundProgram)
 		{
-			K15_RenderUniformCacheEntry* cachedUniform = &uniformCache->cachedUniforms[uniformIndex];
-			uint32 chachedUniformNameHash = cachedUniform->nameHash;
-			
-			for (uint32 gpuProgramIndex = 0;
-				gpuProgramIndex < K15_RENDER_PROGRAM_TYPE_COUNT;
-				++gpuProgramIndex)
-			{
-				K15_GLProgram* boundProgram = glContext->glBoundObjects.boundPrograms[gpuProgramIndex];
-
-				if (boundProgram)
-				{
-					uint32 programUniformCount = boundProgram->uniformCount;
-
-					for (uint32 programUniformIndex = 0;
-						programUniformIndex < programUniformCount;
-						++programUniformIndex)
-					{
-						K15_GLUniform* glUniform = &boundProgram->uniforms[programUniformIndex];
-						uint32 glUniformNameHash = glUniform->nameHash;
-						uint32 typeID = glUniform->typeID;
-
-						if (glUniformNameHash == chachedUniformNameHash)
-						{
-							K15_InternalGLUpdateUniformFnc updateUniform = K15_InternalGLConvertToUpdateUniformFnc(typeID);
-							K15_RenderUniformUpdateDesc updateUniformDesc = {};
-
-							updateUniformDesc.typeID = typeID;
-							updateUniformDesc.nameHash = glUniformNameHash;
-							updateUniformDesc.sizeInBytes = cachedUniform->sizeInBytes;
-							updateUniformDesc.data.rawData = cachedUniform->data;
-							updateUniformDesc.flags = 0;
-
-							updateUniform(boundProgram, glUniform->registerIndex, &updateUniformDesc);
-							break;
-						}
-					}
-				}
-			}
+			K15_GLUpdateProgramUniforms(boundProgram, uniformCache);
 		}
 	}
 

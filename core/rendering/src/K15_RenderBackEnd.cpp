@@ -50,11 +50,14 @@ intern void K15_InternalCountGUIElementVertices(K15_GUIContext* p_GUIContext, K1
 {
 	K15_GUIElementType type = p_GUIElement->type;
 	K15_GUIDrawInformation* drawInfo = (K15_GUIDrawInformation*)p_UserData;
-
+	
 	switch (type)
 	{
 	case K15_GUI_WINDOW:
-		drawInfo->numVerticesP3C3 += K15_GUI_2D_SQUARE_SAMPLES * 2 + 42;
+		K15_GUIWindowData* windowData = (K15_GUIWindowData*)K15_GUIGetGUIElementMemory(p_GUIElement);
+		K15_RenderFontDesc* font = windowData->style->font;
+		drawInfo->numVerticesP3C3 += 802;
+		drawInfo->numVerticesP3T2C3 += K15_GetTextVertexCount(font, windowData->title, windowData->textLength);
 		break;
 	}
 }
@@ -296,7 +299,7 @@ intern void K15_InternalCreateDefaultGUIMaterial(K15_RenderBackEnd* p_RenderBack
 	
 	defaultGUIMaterial.materialPasses = (K15_RenderMaterialPassDesc*)K15_AllocateFromMemoryAllocator(p_Allocator, sizeof(K15_RenderMaterialPassDesc));
 	defaultGUIMaterial.materialPasses[0].fragmentShaderHandle = p_RenderBackEnd->resources.shaders.defaultColorFragmentProgramHandle;
-	defaultGUIMaterial.materialPasses[1].vertexShaderHandle = p_RenderBackEnd->resources.shaders.screenspaceColoredVertexProgramHandle;
+	defaultGUIMaterial.materialPasses[0].vertexShaderHandle = p_RenderBackEnd->resources.shaders.screenspaceColoredVertexProgramHandle;
 	K15_CreateRenderMaterialDataDescStretchBufferWithCustomAllocator(&defaultGUIMaterial.materialPasses[0].materialData, *p_Allocator, 8);
 
 	p_RenderBackEnd->resources.materials.defaultGUIMaterial = defaultGUIMaterial;
@@ -670,13 +673,12 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 
 	K15_RenderFontDesc* guiStyleFont = guiContext.style.windowStyle.font;
 
-	K15_RenderVertexData* vertexDataP3C3 = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, 
-		guiDrawInfo.vertexBufferP3C3, actualNumberOfVerticesP3C3, &vertexFormatP3C3);
-	K15_RenderVertexData* vertexDataP3T2C3 = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, 
-		guiDrawInfo.vertexBufferP3T2C3, actualNumberOfVerticesP3T2C3, &vertexFormatP3T2C3);
-
 	//render gui
+	if (guiDrawInfo.numFloatsVertexBufferP3C3 > 0)
 	{
+		K15_RenderVertexData* vertexDataP3C3 = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd,
+			guiDrawInfo.vertexBufferP3C3, actualNumberOfVerticesP3C3, &vertexFormatP3C3);
+
 		K15_RenderGeometryDesc renderGeometry = {};
 
 		renderGeometry.vertexData = vertexDataP3C3;
@@ -685,12 +687,16 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 		renderGeometry.material = guiMaterial;
 
 		K15_InternalDrawGeometry(p_RenderBackEnd, &renderGeometry);
+		p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexDataP3C3);
 	}
 	
 	K15_SetRenderMaterialRenderResourceDataByName(&fontMaterial->materialPasses[0], "tex", guiStyleFont->textureHandle);
 
 	//render gui text
+	if (guiDrawInfo.numVerticesP3T2C3 > 0)
 	{
+		K15_RenderVertexData* vertexDataP3T2C3 = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd,
+			guiDrawInfo.vertexBufferP3T2C3, actualNumberOfVerticesP3T2C3, &vertexFormatP3T2C3);
 
 		K15_RenderGeometryDesc textGeometry = {};
 
@@ -700,10 +706,9 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 		textGeometry.material = fontMaterial;
 
 		K15_InternalDrawGeometry(p_RenderBackEnd, &textGeometry);
+		p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexDataP3T2C3);
 	}
 
-	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexDataP3T2C3);
-	p_RenderBackEnd->renderInterface.freeVertexData(p_RenderBackEnd, vertexDataP3C3);
 
 free_resources:
 	//signal gui context that we are finished so that it can flip the buffers again

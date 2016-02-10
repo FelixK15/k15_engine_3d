@@ -23,5 +23,5 @@ struct K15_RenderContext;
 #define K15_GUI_MAX_BUFFERED_MOUSE_INPUTS 100
 #define K15_GUI_MAX_BUFFERED_KEYBOARD_INPUTS 100
 
-#define K15_GUI_2D_SQUARE_SAMPLES 10
+#define K15_GUI_2D_SQUARE_SAMPLES 20
 #endif //_K15_GUILayer_Prerequisites_h_

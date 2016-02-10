@@ -30,6 +30,7 @@ void K15_UpdateUniformCacheEntry(K15_RenderUniformCache* p_RenderUniformCache,
 								 byte* p_Data); //size is implied by the uniform type
 
 void K15_ResetDirtyUniformFlags(K15_RenderUniformCache* p_RenderUniformCache);
+void K15_MarkAllUniformsDirty(K15_RenderUniformCache* p_RenderUniformCache);
 
 //void K15_SetAutoUniformGroupAsDirty(K15_RenderUniformCache* p_RenderUniformCache, uint32 p_SemanticGroupID);
 #endif //_K15_Rendering_RenderUniformCache_h_
