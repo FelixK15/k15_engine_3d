@@ -54,11 +54,22 @@ intern void K15_InternalCountGUIElementVertices(K15_GUIContext* p_GUIContext, K1
 	switch (type)
 	{
 	case K15_GUI_WINDOW:
-		K15_GUIWindowData* windowData = (K15_GUIWindowData*)K15_GUIGetGUIElementMemory(p_GUIElement);
-		K15_RenderFontDesc* font = windowData->style->font;
-		drawInfo->numVerticesP3C3 += 802;
-		drawInfo->numVerticesP3T2C3 += K15_GetTextVertexCount(font, windowData->title, windowData->textLength);
-		break;
+		{
+			K15_GUIWindowData* windowData = (K15_GUIWindowData*)K15_GUIGetGUIElementMemory(p_GUIElement);
+			K15_RenderFontDesc* font = windowData->style->font;
+			drawInfo->numVerticesP3C3 += 802;
+			drawInfo->numVerticesP3T2C3 += K15_GetTextVertexCount(font, windowData->title, windowData->textLength);
+			break;
+		}
+
+	case K15_GUI_BUTTON:
+		{
+			K15_GUIButtonData* buttonData = (K15_GUIButtonData*)K15_GUIGetGUIElementMemory(p_GUIElement);
+			K15_RenderFontDesc* font = buttonData->style->font;
+			drawInfo->numVerticesP3C3 += 12;
+			drawInfo->numVerticesP3T2C3 += K15_GetTextVertexCount(font, buttonData->text, buttonData->textLength);
+			break;
+		}
 	}
 }
 /*********************************************************************************/
@@ -72,6 +83,10 @@ intern void K15_InternalPushGUIElementVertices(K15_GUIContext* p_GUIContext, K15
 	{
 	case K15_GUI_WINDOW:
 		K15_InternalPushGUIWindowVertices(p_GUIElement, drawInfo);
+		break;
+
+	case K15_GUI_BUTTON:
+		K15_InternalPushGUIButtonVertices(p_GUIElement, drawInfo);
 		break;
 	}
 }

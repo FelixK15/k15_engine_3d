@@ -28,83 +28,64 @@
 // 	return vertexCount;
 // }
 /*********************************************************************************/
-// intern void K15_InternalPushGUIButtonVertices(K15_RenderBackEnd* p_RenderBackEnd, K15_GUIContext* p_GUIContext,
-// 												K15_GUIElementHeader* p_GUIElement, K15_GUIButton* p_GUIButton,
-// 												float* p_VertexBuffer, uint32* p_VertexBufferIndexOffset,
-// 												float* p_TextVertexBuffer, uint32* p_TextVertexBufferIndexOffset)
-// {
-// 	uint32 vertexBufferIndex = *p_VertexBufferIndexOffset;
-// 	uint32 textVertexBufferIndex = *p_TextVertexBufferIndexOffset;
-// 
-// 	uint32 pixelPosLeft = p_GUIElement->posPixelX;
-// 	uint32 pixelPosRight = p_GUIElement->posPixelX + p_GUIElement->pixelWidth;
-// 	uint32 pixelPosTop = p_GUIElement->posPixelY;
-// 	uint32 pixelPosBottom = p_GUIElement->posPixelY + p_GUIElement->pixelHeight;
-// 
-// 	uint32 thickness = 2; //1 pixel of thickness border
-// 
-// 	uint32 controlUpperBackgroundColor = 0;
-// 	uint32 controlLowerBackgroundColor = 0;
-// 
-// 	uint32 textPixelWidth = p_GUIButton->textPixelWidth;
-// 	uint32 textPixelHeight = p_GUIButton->textPixelHeight;
-// 
-// 	uint32 textOffsetX = p_GUIElement->pixelWidth / 2 - textPixelWidth / 2;
-// 	uint32 textOffsetY = p_GUIElement->pixelHeight / 2 - textPixelHeight / 2;
-// 
-// 	//text offset
-// 	int32 textPixelPosLeft = pixelPosLeft + textOffsetX;
-// 	int32 textPixelPosTop = pixelPosTop + textOffsetY;
-// 
-// 	if (p_GUIButton->state == K15_GUI_BUTTON_STATE_HOVERED)
-// 	{
-// 		controlUpperBackgroundColor = p_GUIContext->style.hoveredControlUpperBackgroundColor;
-// 		controlLowerBackgroundColor = p_GUIContext->style.hoveredControlLowerBackgroundColor;
-// 	}
-// 	else if (p_GUIButton->state == K15_GUI_BUTTON_STATE_NORMAL)
-// 	{
-// 		controlUpperBackgroundColor = p_GUIContext->style.controlUpperBackgroundColor;
-// 		controlLowerBackgroundColor = p_GUIContext->style.controlLowerBackgroundColor;
-// 	}
-// 	else if (p_GUIButton->state == K15_GUI_BUTTON_STATE_PRESSED)
-// 	{
-// 		controlUpperBackgroundColor = p_GUIContext->style.interactedControlLowerBackgroundColor;
-// 		controlLowerBackgroundColor = p_GUIContext->style.interactedControlUpperBackgroundColor;
-// 	}
-// 
-// 	uint32 textColor = p_GUIContext->style.textColor;
-// 
-// 	uint32 borderUpperColor = p_GUIContext->style.controlUpperBorderColor;
-// 	uint32 borderLowerColor = p_GUIContext->style.controlLowerBorderColor;	
-// 
-// 	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
-// 
-// 	uint32 textLength = p_GUIButton->textLength;
-// 	char* text = (char*)(guiMemory + p_GUIButton->textOffsetInBytes);
-// 
-// 	K15_RenderFontDesc* guiFont = p_GUIContext->style.styleFont;
-// 
-// 	//edge
-// 	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd,
-// 		p_VertexBuffer, vertexBufferIndex,
-// 		pixelPosLeft, pixelPosRight, pixelPosTop, pixelPosBottom,
-// 		borderUpperColor, borderUpperColor, borderLowerColor, borderLowerColor);
-// 
-// // 	element
-// 	vertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredRectVertices(p_RenderBackEnd, 
-// 		p_VertexBuffer, vertexBufferIndex,
-// 		pixelPosLeft + thickness, pixelPosRight - thickness, pixelPosTop + thickness, pixelPosBottom - thickness,
-// 		controlUpperBackgroundColor, controlUpperBackgroundColor,
-// 		controlLowerBackgroundColor, controlLowerBackgroundColor);
-//  
-// 	//text
-// 	textVertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderBackEnd,
-// 		guiFont, p_TextVertexBuffer, textVertexBufferIndex,
-// 		textPixelPosLeft, textPixelPosTop, textColor, text, textLength);
-// 
-// 	*p_TextVertexBufferIndexOffset = textVertexBufferIndex;
-// 	*p_VertexBufferIndexOffset = vertexBufferIndex;
-// }
+intern void K15_InternalPushGUIButtonVertices(K15_GUIElement* p_GUIElement, K15_GUIDrawInformation* p_DrawInfo)
+{
+	uint32 P3C3Index = p_DrawInfo->numFloatsVertexBufferP3C3;
+	uint32 P3T2C3Index = p_DrawInfo->numFloatsVertexBufferP3T2C3;
+
+	float* P2C3Buffer = p_DrawInfo->vertexBufferP3C3;
+	float* P3T2C3Buffer = p_DrawInfo->vertexBufferP3T2C3;
+
+	K15_GUIButtonData* buttonData = (K15_GUIButtonData*)K15_GUIGetGUIElementMemory(p_GUIElement);
+	K15_GUIButtonStyle* style = buttonData->style;
+	K15_RenderFontDesc* font = style->font;
+	uint32 textLength = buttonData->textLength;
+
+	char* text = buttonData->text;
+	float textHeight = 0.f;
+	float textWidth = 0.f;
+
+	K15_GetTextSizeInPixels(font, &textWidth, &textHeight, text, textLength);
+
+	uint32 borderUpperColor = style->borderUpperColor;
+	uint32 borderLowerColor = style->borderLowerColor;
+	uint32 backgroundUpperColor = style->upperBackgroundColor;
+	uint32 backgroundLowerColor = style->lowerBackgroundColor;
+	uint32 textColor = style->textColor;
+
+
+	uint32 posLeft = p_GUIElement->rect.pixelPosLeft;
+	uint32 posTop = p_GUIElement->rect.pixelPosTop;
+	uint32 posRight = p_GUIElement->rect.pixelPosRight;
+	uint32 posBottom = p_GUIElement->rect.pixelPosBottom;
+	uint32 elementWidth = (posRight - posLeft);
+	uint32 elementHeight = (posBottom - posTop);
+	uint32 textPosLeft = posLeft + (elementWidth / 2) - (textWidth / 2);
+	uint32 textPosTop = posTop + (elementHeight / 2) - (textHeight / 2);
+
+	uint32 borderPixelThickness = style->borderPixelThickness;
+
+	//border
+	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRectVertices(P2C3Buffer, P3C3Index,
+		posLeft, posRight, posTop, posBottom,
+		borderUpperColor, borderUpperColor,
+		borderLowerColor, borderLowerColor);
+
+	//element
+	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRectVertices(P2C3Buffer, P3C3Index,
+		posLeft + borderPixelThickness, posRight - borderPixelThickness, 
+		posTop + borderPixelThickness, posBottom - borderPixelThickness,
+		backgroundUpperColor, backgroundUpperColor,
+		backgroundLowerColor, backgroundLowerColor);
+ 
+	//text
+	P3T2C3Index = K15_InternalPush2DScreenspacePixelColoredTextVertices(font,
+		P3T2C3Buffer, P3T2C3Index, textPosLeft, textPosTop,
+		textColor, text, textLength);
+
+	p_DrawInfo->numFloatsVertexBufferP3C3 = P3C3Index;
+	p_DrawInfo->numFloatsVertexBufferP3T2C3 = P3T2C3Index;
+}
 /*********************************************************************************/
 // intern void K15_InternalPushGUIComboBoxVertices(K15_RenderBackEnd* p_RenderBackEnd, K15_GUIContext* p_GUIContext,
 // 	K15_GUIElementHeader* p_GUIElement, K15_GUIComboBox* p_GUIComboBox,

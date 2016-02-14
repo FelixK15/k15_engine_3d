@@ -53,6 +53,43 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	return defaultStyle;
 }
 /*********************************************************************************/
+intern K15_GUIElement* K15_InternalGUISearchElementByIdentifier(K15_GUIContext* p_GUIContext, uint32 p_IdentifierHash,
+	uint32 p_BufferOffsetInBytes, uint32 p_BufferSizeInBytes)
+{
+	K15_GUIElement* element = 0;
+	byte* dataBuffer = p_GUIContext->memoryBuffer + p_BufferOffsetInBytes;
+	uint32 offsetInBytes = 0;
+
+	while (offsetInBytes < p_BufferSizeInBytes)
+	{
+		K15_GUIElement* currentElement = (K15_GUIElement*)(dataBuffer + offsetInBytes);
+
+		if (currentElement->identifierHash == p_IdentifierHash)
+		{
+			element = currentElement;
+			break;
+		}
+		offsetInBytes += currentElement->sizeInBytes;
+	}
+
+	return element;
+}
+/*********************************************************************************/
+intern K15_GUIElement* K15_InternalGUIGetRetainedElement(K15_GUIContext* p_GUIContext, uint32 p_IdentifierHash)
+{
+	uint32 retainedDataBufferOffset = p_GUIContext->retainedDataOffsetInBytes;
+	uint32 retainedDataBufferSize = p_GUIContext->retainedDataSizeInBytes;
+	return K15_InternalGUISearchElementByIdentifier(p_GUIContext, p_IdentifierHash,
+		retainedDataBufferOffset, retainedDataBufferSize);
+}
+/*********************************************************************************/
+intern K15_GUIElement* K15_InternalGUIGetElement(K15_GUIContext* p_GUIContext, uint32 p_IdentifierHash)
+{
+	uint32 dataSizeInBytes = p_GUIContext->memoryCurrentSizeInBytes;
+	return K15_InternalGUISearchElementByIdentifier(p_GUIContext, p_IdentifierHash,
+		0, dataSizeInBytes);
+}
+/*********************************************************************************/
 intern K15_GUILayout* K15_InternalGUIGetTopLayout(K15_GUIContext* p_GUIContext)
 {
 	K15_GUILayout* topLayout = 0;
@@ -104,7 +141,7 @@ intern K15_GUIElement* K15_InternalGUIGetGUIElementFromRetainedDataBuffer(K15_GU
 			break;
 		}
 
-		offset += sizeof(K15_GUIElement);
+		offset += currentElement->sizeInBytes;
 	}
 
 	return retainedElement;
@@ -128,11 +165,6 @@ intern void K15_InternalGUIPickGUIElementWithMouse(K15_GUIContext* p_GUIContext,
 {
 	K15_GUIMousePickQuery* mousePickQuery = (K15_GUIMousePickQuery*)p_UserData;
 
-	if (mousePickQuery->pickedElement)
-	{
-		return;
-	}
-
 	bool8 pickedElement = K15_Collision2DBoxPoint(p_GUIElement->rect.pixelPosLeft, p_GUIElement->rect.pixelPosTop,
 		p_GUIElement->rect.pixelPosRight, p_GUIElement->rect.pixelPosBottom,
 		mousePickQuery->mousePosX, mousePickQuery->mousePosY);
@@ -148,7 +180,7 @@ intern void K15_InternalGUISetHoveredElement(K15_GUIContext* p_GUIContext, K15_G
 	uint32 prevHoveredElementIdHash = p_GUIContext->hoveredElementIdHash;
 
 	K15_GUIElement* prevHoveredElement =
-		K15_InternalGUIGetGUIElementFromRetainedDataBuffer(p_GUIContext, prevHoveredElementIdHash);
+		K15_InternalGUIGetElement(p_GUIContext, prevHoveredElementIdHash);
 
 	if (prevHoveredElement)
 	{
@@ -167,7 +199,7 @@ intern void K15_InternalGUISetMouseDownElement(K15_GUIContext* p_GUIContext, K15
 	uint32 prevMouseDownElementIdHash = p_GUIContext->mouseDownElementIdHash;
 
 	K15_GUIElement* prevMouseDownElement =
-		K15_InternalGUIGetGUIElementFromRetainedDataBuffer(p_GUIContext, prevMouseDownElementIdHash);
+		K15_InternalGUIGetElement(p_GUIContext, prevMouseDownElementIdHash);
 
 	if (prevMouseDownElement)
 	{
@@ -184,11 +216,10 @@ intern void K15_InternalGUISetMouseDownElement(K15_GUIContext* p_GUIContext, K15
 intern void K15_InternalSetFocusedElement(K15_GUIContext* p_GUIContext, K15_GUIElement* p_Element)
 {
 	uint32 prevFocusedElementIdHash = p_GUIContext->focusedElementIdHash;
-	uint32 mouseDownElementIdHash = p_GUIContext->mouseDownElementIdHash;
-	p_GUIContext->mouseDownElementIdHash = 0;
+	p_GUIContext->focusedElementIdHash = 0;
 
 	K15_GUIElement* prevFocusedDownElement =
-		K15_InternalGUIGetGUIElementFromRetainedDataBuffer(p_GUIContext, prevFocusedElementIdHash);
+		K15_InternalGUIGetElement(p_GUIContext, prevFocusedElementIdHash);
 
 	if (prevFocusedDownElement)
 	{
@@ -203,17 +234,11 @@ intern void K15_InternalSetFocusedElement(K15_GUIContext* p_GUIContext, K15_GUIE
 		//set element to clicked when it was also the element that has the last mouse down state
 		if (p_Element->flagMask & K15_GUI_ELEMENT_MOUSE_DOWN)
 		{
+			p_GUIContext->clickedElementIdHash = p_Element->identifierHash;
 			p_Element->flagMask |= K15_GUI_ELEMENT_CLICKED;
 			p_Element->flagMask &= ~K15_GUI_ELEMENT_MOUSE_DOWN;
 		}
 	}
-
-	//get element with mouse down flag
-	K15_GUIElement* mouseDownElement =
-		K15_InternalGUIGetGUIElementFromRetainedDataBuffer(p_GUIContext, mouseDownElementIdHash);
-
-	K15_ASSERT(mouseDownElement);
-	mouseDownElement->flagMask &= ~K15_GUI_ELEMENT_MOUSE_DOWN;
 }
 /*********************************************************************************/
 intern void K15_InternalGUIHandleMouseMoved(K15_GUIContext* p_GUIContext, uint16 p_MousePosX, uint16 p_MousePosY)
@@ -257,8 +282,21 @@ intern void K15_InternalGUIHandleMouseWheel(K15_GUIContext* p_GUIContext, K15_GU
 intern void K15_InternalGUIHandleInput(K15_GUIContext* p_GUIContext)
 {
 	K15_GUIContextInput* input = &p_GUIContext->input;
-	uint16 mousePosX = input->mousePosX;
-	uint16 mousePosY = input->mousePosY;
+	uint16 oldMousePosX = input->mousePosX;
+	uint16 oldMousePosY = input->mousePosY;
+	uint16 newMousePosX = input->mousePosX;
+	uint16 newMousePosY = input->mousePosY;
+
+	//reset clicked element
+	K15_GUIElement* clickedElement = K15_InternalGUIGetElement(p_GUIContext, p_GUIContext->clickedElementIdHash);
+
+	if (clickedElement)
+	{
+		clickedElement->flagMask &= ~K15_GUI_ELEMENT_CLICKED;
+	}
+
+	p_GUIContext->clickedElementIdHash = 0;
+
 
 	for (uint32 mouseInputIndex = 0;
 	mouseInputIndex < input->numBufferedMouseInputs;
@@ -268,52 +306,79 @@ intern void K15_InternalGUIHandleInput(K15_GUIContext* p_GUIContext)
 
 		if (mouseInput->type == K15_GUI_MOUSE_MOVED)
 		{
-			mousePosX = mouseInput->mousePosX;
-			mousePosY = mouseInput->mousePosY;
-			K15_InternalGUIHandleMouseMoved(p_GUIContext, mousePosX, mousePosY);
+			newMousePosX = mouseInput->mousePosX;
+			newMousePosY = mouseInput->mousePosY;
+			K15_InternalGUIHandleMouseMoved(p_GUIContext, newMousePosX, newMousePosY);
 		}
 		else if (mouseInput->type == K15_GUI_MOUSE_BUTTON_PRESSED)
 		{
-			K15_InternalGUIHandleMousePressed(p_GUIContext, mouseInput, mousePosX, mousePosY);
+			K15_InternalGUIHandleMousePressed(p_GUIContext, mouseInput, newMousePosX, newMousePosY);
 		}
 		else if (mouseInput->type == K15_GUI_MOUSE_BUTTON_RELEASED)
 		{
-			K15_InternalGUIHandleMouseReleased(p_GUIContext, mouseInput, mousePosX, mousePosY);
+			K15_InternalGUIHandleMouseReleased(p_GUIContext, mouseInput, newMousePosX, newMousePosY);
 		}
 		else if (mouseInput->type == K15_GUI_MOUSE_WHEEL_DOWN ||
 			mouseInput->type == K15_GUI_MOUSE_WHEEL_UP)
 		{
-			K15_InternalGUIHandleMouseWheel(p_GUIContext, mouseInput, mousePosX, mousePosY);
+			K15_InternalGUIHandleMouseWheel(p_GUIContext, mouseInput, newMousePosX, newMousePosY);
 		}
 	}
 
-	input->mousePosX = mousePosX;
-	input->mousePosY = mousePosY;
+	input->mouseDeltaX = newMousePosX - oldMousePosX;
+	input->mouseDeltaY = newMousePosY - oldMousePosY;
+	input->mousePosX = newMousePosX;
+	input->mousePosY = newMousePosY;
 
 	input->numBufferedMouseInputs = 0;
 }
 /*********************************************************************************/
-intern K15_GUIElement* K15_InternalGUIGetRetainedElement(K15_GUIContext* p_GUIContext, uint32 p_IdentifierHash)
+intern void K15_InternalSetGUIRectCoordinates(K15_GUIRectangle* p_GUIRectangle,
+	int32* p_PosLeft, int32* p_PosTop, uint32* p_Width, uint32* p_Height)
 {
-	K15_GUIElement* retainedElement = 0;
-	byte* guiRetainedData = K15_InternalGUIGetRetainedDataBuffer(p_GUIContext);
-	uint32 guiRetainedDataSizeInBytes = p_GUIContext->retainedDataSizeInBytes;
-	uint32 guiRetainedDataOffsetInBytes = p_GUIContext->retainedDataOffsetInBytes;
-	uint32 offsetInBytes = 0;
-
-	while (offsetInBytes < (guiRetainedDataSizeInBytes + guiRetainedDataOffsetInBytes))
+	if (p_PosLeft)
 	{
-		K15_GUIElement* currentElement = (K15_GUIElement*)(guiRetainedData + offsetInBytes);
-
-		if (currentElement->identifierHash == p_IdentifierHash)
-		{
-			retainedElement = currentElement;
-			break;
-		}
-		offsetInBytes = guiRetainedDataOffsetInBytes + currentElement->offsetInBytes;
+		p_GUIRectangle->pixelPosLeft = *p_PosLeft;
 	}
 
-	return retainedElement;
+	if (p_PosTop)
+	{
+		p_GUIRectangle->pixelPosTop = *p_PosTop;
+	}
+
+	if (p_Width)
+	{
+		p_GUIRectangle->pixelPosRight = p_GUIRectangle->pixelPosLeft + *p_Width;
+	}
+
+	if (p_Height)
+	{
+		p_GUIRectangle->pixelPosBottom = p_GUIRectangle->pixelPosTop + *p_Height;
+	}
+}
+/*********************************************************************************/
+intern void K15_InternalRetrieveGUIRectCoordinates(K15_GUIRectangle* p_GUIRectangle,
+	int32* p_PosLeft, int32* p_PosTop, uint32* p_Width, uint32* p_Height)
+{
+	if (p_PosLeft)
+	{
+		*p_PosLeft = p_GUIRectangle->pixelPosLeft;
+	}
+
+	if (p_PosTop)
+	{
+		*p_PosTop = p_GUIRectangle->pixelPosTop;
+	}
+
+	if (p_Width)
+	{
+		*p_Width = (p_GUIRectangle->pixelPosRight - p_GUIRectangle->pixelPosLeft);
+	}
+
+	if (p_Height)
+	{
+		*p_Height = (p_GUIRectangle->pixelPosBottom - p_GUIRectangle->pixelPosTop);
+	}
 }
 /*********************************************************************************/
 intern K15_GUIElement* K15_InternalAddGUIElement(K15_GUIContext* p_GUIContext, K15_GUIElementType p_GUIElementType,
@@ -333,6 +398,11 @@ intern K15_GUIElement* K15_InternalAddGUIElement(K15_GUIContext* p_GUIContext, K
 	element->offsetInBytes = p_GUIContext->memoryCurrentSizeInBytes;
 	element->sizeInBytes = sizeof(K15_GUIElement);
 	
+	if (p_GUIContext->layoutIndex > 0)
+	{
+		element->flagMask |= K15_GUI_ELEMENT_LAYOUTED;
+	}
+
 	p_GUIContext->memoryCurrentSizeInBytes += sizeof(K15_GUIElement);
 
 	//try to retrieve the retained informations from the gui element
@@ -340,54 +410,23 @@ intern K15_GUIElement* K15_InternalAddGUIElement(K15_GUIContext* p_GUIContext, K
 
 	if (retainedElement)
 	{
-		element->rect = retainedElement->rect;
+		if (retainedElement->flagMask & K15_GUI_ELEMENT_LAYOUTED)
+		{
+			element->rect = retainedElement->rect;
+			K15_InternalRetrieveGUIRectCoordinates(&element->rect, p_PosLeft, p_PosTop, p_Width, p_Height);
+		}
+		else
+		{
+			K15_InternalSetGUIRectCoordinates(&element->rect, p_PosLeft, p_PosTop, p_Width, p_Height);
+		}
 		element->flagMask = retainedElement->flagMask;
 	}
 	else
 	{
 		element->flagMask = 0;
-		if (p_PosLeft && p_Width)
-		{
-			element->rect.pixelPosLeft = *p_PosLeft;
-		}
-
-		if (p_PosTop)
-		{
-			element->rect.pixelPosTop = *p_PosTop;
-		}
-
-		if (p_Width)
-		{
-			element->rect.pixelPosRight = element->rect.pixelPosLeft + *p_Width;
-		}
-
-		if (p_Height)
-		{
-			element->rect.pixelPosBottom = element->rect.pixelPosTop + *p_Height;
-		}
+		K15_InternalSetGUIRectCoordinates(&element->rect, p_PosLeft, p_PosTop, p_Width, p_Height);
 	}
-
 	K15_InternalGUIAddGUIRectToTopLayout(p_GUIContext, &element->rect);
-
-	if (p_PosLeft)
-	{
-		*p_PosLeft = element->rect.pixelPosLeft;
-	}
-
-	if (p_PosTop)
-	{
-		*p_PosTop = element->rect.pixelPosTop;
-	}
-
-	if (p_Width)
-	{
-		*p_Width = (element->rect.pixelPosRight - element->rect.pixelPosLeft);
-	}
-
-	if (p_Height)
-	{
-		*p_Height = (element->rect.pixelPosBottom - element->rect.pixelPosTop);
-	}
 
 	return element;
 }
@@ -417,6 +456,7 @@ intern void K15_InternalGUIPushLayout(K15_GUIContext* p_GUIContext, K15_GUIRecta
 
 	K15_GUILayout* layout = p_GUIContext->layoutStack + layoutIndex;
 	layout->layoutRectangle = *p_LayoutArea;
+	layout->type = p_LayoutType;
 	layout->numElements = 0;
 }
 /*********************************************************************************/
@@ -463,6 +503,7 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	guiContext->memoryCurrentSizeInBytes = 0;
 	guiContext->focusedElementIdHash = 0;
 	guiContext->hoveredElementIdHash = 0;
+	guiContext->clickedElementIdHash = 0;
 	guiContext->mouseDownElementIdHash = 0;
 	guiContext->layoutIndex = 0;
 	guiContext->numLayouts = 0;
@@ -501,22 +542,10 @@ bool8 K15_GUIBeginWindowEX(K15_GUIContext* p_GUIContext, int32* p_PosX, int32* p
 	K15_GUIElement* windowElement = K15_InternalAddGUIElement(p_GUIContext, K15_GUI_WINDOW,
 		p_PosX, p_PosY, p_Width, p_Height, p_Identifier);
 
-	//clicked?
-	if (windowElement->flagMask & K15_GUI_ELEMENT_CLICKED)
-	{
-		//remove the click flag
-		windowElement->flagMask &= ~K15_GUI_ELEMENT_CLICKED;
-		K15_LOG_DEBUG_MESSAGE("CLICK!");
-	}
-
-	if (windowElement->flagMask & K15_GUI_ELEMENT_FOCUSED)
-	{
-		K15_LOG_DEBUG_MESSAGE("FOCUSED!");
-	}
-
 	if (windowElement->flagMask & K15_GUI_ELEMENT_MOUSE_DOWN)
 	{
-		K15_LOG_DEBUG_MESSAGE("MOUSE DOWN!");
+		*p_PosX += p_GUIContext->input.mouseDeltaX;
+		*p_PosY += p_GUIContext->input.mouseDeltaY;
 	}
 
 	uint32 titleLength = (uint32)strlen(p_Title);
@@ -529,12 +558,17 @@ bool8 K15_GUIBeginWindowEX(K15_GUIContext* p_GUIContext, int32* p_PosX, int32* p
 	windowData.style = p_GUIWindowStyle;
 	windowData.textLength = titleLength;
 	windowData.title = titleMemory;
+	windowData.contentRect = windowElement->rect;
+	windowData.contentRect.pixelPosBottom -= p_GUIWindowStyle->borderPixelThickness;
+	windowData.contentRect.pixelPosRight -= p_GUIWindowStyle->borderPixelThickness;
+	windowData.contentRect.pixelPosLeft += p_GUIWindowStyle->borderPixelThickness;
+	windowData.contentRect.pixelPosTop += p_GUIWindowStyle->borderPixelThickness + 20;
 
 	memcpy(titleMemory, p_Title, titleLength);
 	memcpy(windowElementMemory, &windowData, sizeof(K15_GUIWindowData));
 
 	//Add layout for this window
-	K15_InternalGUIPushLayout(p_GUIContext, &windowElement->rect, K15_GUI_VERTICAL_LAYOUT);
+	K15_InternalGUIPushLayout(p_GUIContext, &windowData.contentRect, K15_GUI_HORIZONTAL_LAYOUT);
 
 	return K15_TRUE;
 }
@@ -548,7 +582,26 @@ bool8 K15_GUIButton(K15_GUIContext* p_GUIContext, const char* p_ButtonText, cons
 bool8 K15_GUIButtonEX(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier,
 	K15_GUIButtonStyle* p_GUIButtonStyle)
 {
-	return K15_FALSE;
+	K15_GUIElement* buttonElement = K15_InternalAddGUIElement(p_GUIContext, K15_GUI_BUTTON,
+		0, 0, 0, 0, p_Identifier);
+
+	bool8 active = buttonElement->flagMask & K15_GUI_ELEMENT_CLICKED;
+
+	uint32 textLength = (uint32)strlen(p_ButtonText);
+	uint32 sizeButtonDataInBytes = sizeof(K15_GUIButtonData) + textLength;
+
+	byte* buttonElementMemory = (byte*)K15_InternalAddGUIElementMemory(p_GUIContext, buttonElement, sizeButtonDataInBytes);
+	char* textMemory = (char*)K15_InternalAddGUIElementMemory(p_GUIContext, buttonElement, textLength);
+
+	K15_GUIButtonData buttonData = {};
+	buttonData.style = p_GUIButtonStyle;
+	buttonData.textLength = textLength;
+	buttonData.text = textMemory;
+
+	memcpy(buttonElementMemory, &buttonData, sizeof(K15_GUIButtonData));
+	memcpy(textMemory, p_ButtonText, textLength);
+
+	return active;
 }
 /*********************************************************************************/
 void K15_GUIPushVerticalLayout(K15_GUIContext* p_GUIContext)
@@ -606,11 +659,13 @@ intern void K15_InternalGUIAlignElements(K15_GUILayout* p_Layouts, uint16 p_NumL
 			case K15_GUI_VERTICAL_LAYOUT:
 				rect->pixelPosRight = rect->pixelPosLeft + layoutWidth;
 				rect->pixelPosBottom = rect->pixelPosTop + 20;
+				offsetY += 20;
 				break;
 
 			case K15_GUI_HORIZONTAL_LAYOUT:
 				rect->pixelPosRight = rect->pixelPosLeft + (layoutWidth / numElements);
 				rect->pixelPosBottom = rect->pixelPosTop + 20;
+				offsetX += (layoutWidth / numElements);
 				break;
 			}
 		}

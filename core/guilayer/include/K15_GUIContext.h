@@ -25,7 +25,8 @@ enum K15_GUIElementFlags
 	K15_GUI_ELEMENT_HOVERED = 0x001,
 	K15_GUI_ELEMENT_FOCUSED = 0x002,
 	K15_GUI_ELEMENT_MOUSE_DOWN = 0x004,
-	K15_GUI_ELEMENT_CLICKED = 0x008
+	K15_GUI_ELEMENT_CLICKED = 0x008,
+	K15_GUI_ELEMENT_LAYOUTED = 0x010,
 };
 /*********************************************************************************/
 enum K15_GUILayoutType
@@ -94,7 +95,16 @@ struct K15_GUIContextStyle
 struct K15_GUIWindowData
 {
 	K15_GUIWindowStyle* style;
+	K15_GUIRectangle contentRect;
 	char* title;
+	uint32 textLength;
+	bool8 expanded;
+};
+/*********************************************************************************/
+struct K15_GUIButtonData
+{
+	K15_GUIButtonStyle* style;
+	char* text;
 	uint32 textLength;
 };
 /*********************************************************************************/
@@ -175,6 +185,8 @@ struct K15_GUIContextInput
 {
 	uint16 mousePosX;
 	uint16 mousePosY;
+	int16 mouseDeltaX;
+	int16 mouseDeltaY;
 	uint16 numBufferedMouseInputs;
 	uint16 numBufferedKeyboardInputs;
 	K15_GUIMouseInput bufferedMouseInput[K15_GUI_MAX_BUFFERED_MOUSE_INPUTS];
@@ -190,6 +202,7 @@ struct K15_GUIContext
 	K15_GUIContextInput input;
 	K15_GUILayout layoutStack[K15_GUI_MAX_LAYOUTS];
 	uint32 focusedElementIdHash;
+	uint32 clickedElementIdHash;
 	uint32 hoveredElementIdHash;
 	uint32 mouseDownElementIdHash;
 	uint16 layoutIndex;

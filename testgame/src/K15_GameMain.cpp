@@ -159,22 +159,29 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
  	sprintf(text, "FPS: %.1f\nms: %.3f", p_GameContext->frameCounter.FPS, p_GameContext->frameCounter.avgDeltaTime);
  	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, K15_CreateVector(1.0f, 0.25f, 0.25f), 0.0f, 0.0f);
 
-	K15_GUIBeginDockingArea(guiContext, 0, 0, viewportWidth, viewportHeight, K15_GUI_LEFT_DOCKING_AREA);
+	//K15_GUIBeginDockingArea(guiContext, 0, 0, viewportWidth, viewportHeight, K15_GUI_LEFT_DOCKING_AREA);
 
 	if (K15_GUIBeginWindow(guiContext, &windowPosX, &windowPosY, &windowWidth, &windowHeight, "Test Window", "window_1"))
 	{
-		K15_GUIButton(guiContext, "test button", "button_1");
-		K15_GUIButton(guiContext, "test button2", "button_2");
+		if (K15_GUIButton(guiContext, "test button", "button_1"))
+		{
+			K15_LOG_DEBUG_MESSAGE("Test1");
+		}
 		
-		//K15_GUIPushHorizontalLayout(guiContext);
-		K15_GUIButton(guiContext, "test button3", "button_3");
-		K15_GUIButton(guiContext, "test button4", "button_4");
-		//K15_GUIPopLayout(guiContext);
+		if (K15_GUIButton(guiContext, "test button2", "button_2"))
+		{
+			K15_LOG_DEBUG_MESSAGE("Test2");
+		}
+ 		
+// 		K15_GUIPushHorizontalLayout(guiContext);
+// 		K15_GUIButton(guiContext, "test button3", "button_3");
+// 		K15_GUIButton(guiContext, "test button4", "button_4");
+// 		K15_GUIPopLayout(guiContext);
 
 		K15_GUIEndWindow(guiContext);
 	}
 
-	K15_GUIEndDockingArea(guiContext);
+	//K15_GUIEndDockingArea(guiContext);
 	K15_GUIFinishGUIFrame(guiContext);
 
 	K15_RenderCommandDraw2DGUI(gameRenderCommandQueue, guiContext);
