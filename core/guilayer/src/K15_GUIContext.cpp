@@ -30,6 +30,7 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	K15_ResourceHandle styleFontResource = 
 		K15_LoadResource(p_ResourceContext, K15_FONT_RESOURCE_IDENTIFIER, "fonts/gui_font.ttf", 0); 
 
+	//Button Style
 	defaultStyle.buttonStyle.borderLowerColor = 0x101010;
 	defaultStyle.buttonStyle.borderUpperColor = 0x606060;
 	defaultStyle.buttonStyle.lowerBackgroundColor = 0x505050;
@@ -39,6 +40,7 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	defaultStyle.buttonStyle.textPixelPadding = 2;
 	defaultStyle.buttonStyle.font = K15_GetResourceRenderFontDesc(p_ResourceContext, styleFontResource);
 	
+	//Window Style
 	defaultStyle.windowStyle.borderLowerColor = 0x000000;
 	defaultStyle.windowStyle.borderUpperColor = 0x050545;
 	defaultStyle.windowStyle.lowerBackgroundColor = 0x808080;
@@ -50,6 +52,10 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	defaultStyle.windowStyle.titlePixelPadding = 2;
 	defaultStyle.windowStyle.font = K15_GetResourceRenderFontDesc(p_ResourceContext, styleFontResource);
 	
+	//Label Style
+	defaultStyle.labelStyle.textColor = 0x000000;
+	defaultStyle.labelStyle.font = K15_GetResourceRenderFontDesc(p_ResourceContext, styleFontResource);
+
 	return defaultStyle;
 }
 /*********************************************************************************/
@@ -381,7 +387,7 @@ intern void K15_InternalRetrieveGUIRectCoordinates(K15_GUIRectangle* p_GUIRectan
 	}
 }
 /*********************************************************************************/
-intern K15_GUIElement* K15_InternalAddGUIElement(K15_GUIContext* p_GUIContext, K15_GUIElementType p_GUIElementType,
+intern K15_GUIElement* K15_InternalAddUnalignedGUIElement(K15_GUIContext* p_GUIContext, K15_GUIElementType p_GUIElementType,
 	int32* p_PosLeft, int32* p_PosTop, uint32* p_Width, uint32* p_Height, const char* p_Identifier)
 {
 	K15_ASSERT(p_GUIContext->memoryCurrentSizeInBytes <= p_GUIContext->memoryMaxSizeInBytes);
@@ -429,6 +435,12 @@ intern K15_GUIElement* K15_InternalAddGUIElement(K15_GUIContext* p_GUIContext, K
 	K15_InternalGUIAddGUIRectToTopLayout(p_GUIContext, &element->rect);
 
 	return element;
+}
+/*********************************************************************************/
+intern K15_GUIElement* K15_InternalAddAlignedGUIElement(K15_GUIContext* p_GUIContext, K15_GUIElementType p_GUIElementType,
+	const char* p_Identifier)
+{
+	return K15_InternalAddUnalignedGUIElement(p_GUIContext, p_GUIElementType, 0, 0, 0, 0, p_Identifier);
 }
 /*********************************************************************************/
 intern byte* K15_InternalAddGUIElementMemory(K15_GUIContext* p_GUIContext, K15_GUIElement* p_GUIElement,
@@ -539,7 +551,7 @@ bool8 K15_GUIBeginWindowEX(K15_GUIContext* p_GUIContext, int32* p_PosX, int32* p
 	uint32* p_Width, uint32* p_Height, const char* p_Identifier, const char* p_Title,
 	K15_GUIWindowStyle* p_GUIWindowStyle)
 {
-	K15_GUIElement* windowElement = K15_InternalAddGUIElement(p_GUIContext, K15_GUI_WINDOW,
+	K15_GUIElement* windowElement = K15_InternalAddUnalignedGUIElement(p_GUIContext, K15_GUI_WINDOW,
 		p_PosX, p_PosY, p_Width, p_Height, p_Identifier);
 
 	if (windowElement->flagMask & K15_GUI_ELEMENT_MOUSE_DOWN)
@@ -582,13 +594,12 @@ bool8 K15_GUIButton(K15_GUIContext* p_GUIContext, const char* p_ButtonText, cons
 bool8 K15_GUIButtonEX(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier,
 	K15_GUIButtonStyle* p_GUIButtonStyle)
 {
-	K15_GUIElement* buttonElement = K15_InternalAddGUIElement(p_GUIContext, K15_GUI_BUTTON,
-		0, 0, 0, 0, p_Identifier);
+	K15_GUIElement* buttonElement = K15_InternalAddAlignedGUIElement(p_GUIContext, K15_GUI_BUTTON, p_Identifier);
 
 	bool8 active = buttonElement->flagMask & K15_GUI_ELEMENT_CLICKED;
 
 	uint32 textLength = (uint32)strlen(p_ButtonText);
-	uint32 sizeButtonDataInBytes = sizeof(K15_GUIButtonData) + textLength;
+	uint32 sizeButtonDataInBytes = sizeof(K15_GUIButtonData);
 
 	byte* buttonElementMemory = (byte*)K15_InternalAddGUIElementMemory(p_GUIContext, buttonElement, sizeButtonDataInBytes);
 	char* textMemory = (char*)K15_InternalAddGUIElementMemory(p_GUIContext, buttonElement, textLength);
@@ -602,6 +613,30 @@ bool8 K15_GUIButtonEX(K15_GUIContext* p_GUIContext, const char* p_ButtonText, co
 	memcpy(textMemory, p_ButtonText, textLength);
 
 	return active;
+}
+/*********************************************************************************/
+void K15_GUILabel(K15_GUIContext* p_GUIContext, const char* p_LabelText, const char* p_Identifier)
+{
+	K15_GUILabelEX(p_GUIContext, p_LabelText, p_Identifier, &p_GUIContext->style.labelStyle);
+}
+/*********************************************************************************/
+void K15_GUILabelEX(K15_GUIContext* p_GUIContext, const char* p_LabelText, const char* p_Identifier, 
+	K15_GUILabelStyle* p_GUILabelStyle)
+{
+	K15_GUIElement* labelElement = K15_InternalAddAlignedGUIElement(p_GUIContext, K15_GUI_LABEL, p_Identifier);
+
+	uint32 textLength = (uint32)strlen(p_LabelText);
+	
+	byte* labelElementMemory = (byte*)K15_InternalAddGUIElementMemory(p_GUIContext, labelElement, sizeof(K15_GUILabelData));
+	char* textMemory = (char*)K15_InternalAddGUIElementMemory(p_GUIContext, labelElement, textLength);
+
+	K15_GUILabelData labelData = {};
+	labelData.style = p_GUILabelStyle;
+	labelData.textLength = textLength;
+	labelData.text = textMemory;
+
+	memcpy(labelElementMemory, &labelData, sizeof(K15_GUILabelData));
+	memcpy(textMemory, p_LabelText, textLength);
 }
 /*********************************************************************************/
 void K15_GUIPushVerticalLayout(K15_GUIContext* p_GUIContext)

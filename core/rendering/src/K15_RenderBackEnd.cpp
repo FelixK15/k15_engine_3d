@@ -70,6 +70,14 @@ intern void K15_InternalCountGUIElementVertices(K15_GUIContext* p_GUIContext, K1
 			drawInfo->numVerticesP3T2C3 += K15_GetTextVertexCount(font, buttonData->text, buttonData->textLength);
 			break;
 		}
+
+	case K15_GUI_LABEL:
+		{
+			K15_GUILabelData* labelData = (K15_GUILabelData*)K15_GUIGetGUIElementMemory(p_GUIElement);
+			K15_RenderFontDesc* font = labelData->style->font;
+			drawInfo->numVerticesP3T2C3 += K15_GetTextVertexCount(font, labelData->text, labelData->textLength);
+			break;
+		}
 	}
 }
 /*********************************************************************************/
@@ -87,6 +95,10 @@ intern void K15_InternalPushGUIElementVertices(K15_GUIContext* p_GUIContext, K15
 
 	case K15_GUI_BUTTON:
 		K15_InternalPushGUIButtonVertices(p_GUIElement, drawInfo);
+		break;
+
+	case K15_GUI_LABEL:
+		K15_InternalPushGUILabelVertices(p_GUIElement, drawInfo);
 		break;
 	}
 }

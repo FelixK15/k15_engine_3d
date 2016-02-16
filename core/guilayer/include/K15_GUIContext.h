@@ -39,7 +39,8 @@ enum K15_GUIElementType
 {
 	K15_GUI_BUTTON = 0,
 	K15_GUI_SLIDER,
-	K15_GUI_WINDOW
+	K15_GUI_WINDOW,
+	K15_GUI_LABEL
 }; 
 /*********************************************************************************/
 struct K15_GUIRectangle
@@ -86,10 +87,17 @@ struct K15_GUIButtonStyle
 	K15_RenderFontDesc* font;
 };
 /*********************************************************************************/
+struct K15_GUILabelStyle
+{
+	uint32 textColor;
+	K15_RenderFontDesc* font;
+};
+/*********************************************************************************/
 struct K15_GUIContextStyle
 {
 	K15_GUIWindowStyle windowStyle;
 	K15_GUIButtonStyle buttonStyle;
+	K15_GUILabelStyle labelStyle;
 };
 /*********************************************************************************/
 struct K15_GUIWindowData
@@ -104,6 +112,13 @@ struct K15_GUIWindowData
 struct K15_GUIButtonData
 {
 	K15_GUIButtonStyle* style;
+	char* text;
+	uint32 textLength;
+};
+/*********************************************************************************/
+struct K15_GUILabelData
+{
+	K15_GUILabelStyle* style;
 	char* text;
 	uint32 textLength;
 };
@@ -238,6 +253,9 @@ bool8 K15_GUIBeginWindowEX(K15_GUIContext* p_GUIContext, int32* p_PosX, int32* p
 
 bool8 K15_GUIButton(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier);
 bool8 K15_GUIButtonEX(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier, K15_GUIButtonStyle* p_GUIButtonStyle);
+
+void K15_GUILabel(K15_GUIContext* p_GUIContext, const char* p_LabelText, const char* p_Identifier);
+void K15_GUILabelEX(K15_GUIContext* p_GUIContext, const char* p_LabelText, const char* p_Identifier, K15_GUILabelStyle* p_GUILabelStyle);
 
 void K15_GUIPushVerticalLayout(K15_GUIContext* p_GUIContext);
 void K15_GUIPushHorizontalLayout(K15_GUIContext* p_GUIContext);

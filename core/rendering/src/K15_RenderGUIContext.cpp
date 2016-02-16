@@ -175,35 +175,38 @@ intern void K15_InternalPushGUIWindowVertices(K15_GUIElement* p_GUIElement, K15_
 	p_DrawInfo->numFloatsVertexBufferP3T2C3 = P3T2C3Index;
 }
 /*********************************************************************************/
-// intern void K15_InternalPushGUILabelVertices(K15_RenderBackEnd* p_RenderBackEnd, K15_GUIContext* p_GUIContext,
-// 	K15_GUIElementHeader* p_GUIElement, K15_GUILabel* p_GUILabel,
-// 	float* p_VertexBuffer, uint32* p_VertexBufferIndexOffset,
-// 	float* p_TextVertexBuffer, uint32* p_TextVertexBufferIndexOffset)
-// {
-// 	uint32 textVertexBufferIndex = *p_TextVertexBufferIndexOffset;
-// 
-// 	int32 pixelPosLeft = p_GUIElement->posPixelX;
-// 	int32 pixelPosRight = p_GUIElement->posPixelX + p_GUIElement->pixelWidth;
-// 	int32 pixelPosTop = p_GUIElement->posPixelY;
-// 	int32 pixelPosBottom = p_GUIElement->posPixelY + p_GUIElement->pixelHeight;
-// 
-// 	uint32 textPixelHeight = p_GUILabel->textPixelHeight;
-// 	uint32 textOffsetY = p_GUIElement->pixelHeight / 2 - textPixelHeight / 2;
-// 	
-// 	pixelPosTop += textOffsetY;
-// 
-// 	K15_GUIContextStyle* style = &p_GUIContext->style;
-// 	K15_RenderFontDesc* guiFont = style->styleFont;
-// 	uint32 textLabelColor = style->textLabelColor;
-// 
-// 	byte* guiMemory = p_GUIContext->guiMemory[K15_GUI_MEMORY_BACK_BUFFER];
-// 	char* text = (char*)(guiMemory + p_GUILabel->textOffsetInBytes);
-// 
-// 	textVertexBufferIndex = K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderBackEnd, guiFont, p_TextVertexBuffer, textVertexBufferIndex,
-// 		pixelPosLeft, pixelPosTop, textLabelColor, text, p_GUILabel->textLength);
-// 
-// 	*p_TextVertexBufferIndexOffset = textVertexBufferIndex;
-// }
+intern void K15_InternalPushGUILabelVertices(K15_GUIElement* p_GUIElement, K15_GUIDrawInformation* p_DrawInfo)
+{
+	uint32 P3C3Index = p_DrawInfo->numFloatsVertexBufferP3C3;
+	uint32 P3T2C3Index = p_DrawInfo->numFloatsVertexBufferP3T2C3;
+
+	float* P2C3Buffer = p_DrawInfo->vertexBufferP3C3;
+	float* P3T2C3Buffer = p_DrawInfo->vertexBufferP3T2C3;
+
+	int32 pixelPosLeft = p_GUIElement->rect.pixelPosLeft;
+	int32 pixelPosRight = p_GUIElement->rect.pixelPosRight;
+	int32 pixelPosTop = p_GUIElement->rect.pixelPosTop;
+	int32 pixelPosBottom = p_GUIElement->rect.pixelPosBottom;
+
+	uint32 pixelHeight = (pixelPosBottom - pixelPosTop);
+
+	K15_GUILabelData* labelData = (K15_GUILabelData*)K15_GUIGetGUIElementMemory(p_GUIElement);
+
+	float textHeight = 0.f;
+	float textWidth = 0.f;
+	K15_GetTextSizeInPixels(labelData->style->font, &textWidth, &textHeight, labelData->text, labelData->textLength);
+
+	uint32 textOffsetY = pixelHeight / 2 - textHeight / 2;
+	
+	pixelPosTop += textOffsetY;
+
+	P3T2C3Index = K15_InternalPush2DScreenspacePixelColoredTextVertices(labelData->style->font,
+		P3T2C3Buffer, P3T2C3Index, pixelPosLeft, pixelPosTop + textOffsetY,
+		labelData->style->textColor, labelData->text, labelData->textLength);
+
+	p_DrawInfo->numFloatsVertexBufferP3C3 = P3C3Index;
+	p_DrawInfo->numFloatsVertexBufferP3T2C3 = P3T2C3Index;
+}
 /*********************************************************************************/
 // intern void K15_InternalPushGUIFloatSliderVertices(K15_RenderBackEnd* p_RenderBackEnd, K15_GUIContext* p_GUIContext,
 // 	K15_GUIElementHeader* p_GUIElement, K15_GUIFloatSlider* p_GUISlider,

@@ -163,16 +163,12 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 
 	if (K15_GUIBeginWindow(guiContext, &windowPosX, &windowPosY, &windowWidth, &windowHeight, "Test Window", "window_1"))
 	{
+		K15_GUILabel(guiContext, "Press button for test:", "label_1");
 		if (K15_GUIButton(guiContext, "test button", "button_1"))
 		{
 			K15_LOG_DEBUG_MESSAGE("Test1");
 		}
 		
-		if (K15_GUIButton(guiContext, "test button2", "button_2"))
-		{
-			K15_LOG_DEBUG_MESSAGE("Test2");
-		}
- 		
 // 		K15_GUIPushHorizontalLayout(guiContext);
 // 		K15_GUIButton(guiContext, "test button3", "button_3");
 // 		K15_GUIButton(guiContext, "test button4", "button_4");
