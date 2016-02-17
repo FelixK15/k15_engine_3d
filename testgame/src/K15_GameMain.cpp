@@ -155,6 +155,19 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	static int32 windowPosX = 20;
 	static int32 windowPosY = 20;
 
+	static bool8 swap = K15_FALSE;
+
+	if (swap)
+	{
+		windowWidth += 3;
+		swap = windowWidth > 800 ? K15_FALSE : K15_TRUE;
+	}
+	else
+	{
+		windowWidth -= 3;
+		swap = windowWidth < 400 ? K15_TRUE : K15_FALSE;
+	}
+
  	char* text = (char*)alloca(128);
  	sprintf(text, "FPS: %.1f\nms: %.3f", p_GameContext->frameCounter.FPS, p_GameContext->frameCounter.avgDeltaTime);
  	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, K15_CreateVector(1.0f, 0.25f, 0.25f), 0.0f, 0.0f);
@@ -164,6 +177,9 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	if (K15_GUIBeginWindow(guiContext, &windowPosX, &windowPosY, &windowWidth, &windowHeight, "Test Window", "window_1"))
 	{
 		K15_GUILabel(guiContext, "Press button for test:", "label_1");
+		K15_GUILabel(guiContext, "Press button for test:", "label_2");
+		K15_GUILabel(guiContext, "Press button for test:", "label_3");
+		K15_GUILabel(guiContext, "Press button for test:", "label_4");
 		if (K15_GUIButton(guiContext, "test button", "button_1"))
 		{
 			K15_LOG_DEBUG_MESSAGE("Test1");

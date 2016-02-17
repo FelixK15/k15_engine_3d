@@ -672,50 +672,51 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextureRectVertice
 }
 /*********************************************************************************/
 intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_RenderFontDesc* p_RenderFontDesc,
-	float* p_VertexBuffer, uint32 p_VertexBufferOffsetIndex, int32 p_PixelPosLeft, int32 p_PixelPosTop, 
-	const K15_Vector3& p_TextColor, const char* p_Text, uint32 p_TextLength)
+	float* p_VertexBuffer, uint32 p_VertexBufferOffsetIndex, int32 p_PixelPosLeft, int32 p_PixelPosTop,
+	int32 p_PixelPosRight, int32 p_PixelPosBottom, const K15_Vector3& p_TextColor, const char* p_Text, 
+	uint32 p_TextLength)
 {
 	uint32 vertexIndex = p_VertexBufferOffsetIndex;
 
 	int32 leftPos = p_PixelPosLeft;
 	int32 topPos = p_PixelPosTop;
-	
-	float fontTextureWidth	 = p_RenderFontDesc->textureWidth;
-	float fontTextureHeight  = p_RenderFontDesc->textureHeight;
+
+	float fontTextureWidth = p_RenderFontDesc->textureWidth;
+	float fontTextureHeight = p_RenderFontDesc->textureHeight;
 
 	float maxGlyphPixelHeight = p_RenderFontDesc->ascent - p_RenderFontDesc->descent;
 
 	for (uint32 textIndex = 0;
-		textIndex < p_TextLength;
+	textIndex < p_TextLength;
 		++textIndex)
 	{
 		const char character = p_Text[textIndex];
 
-		float glyphPixelX		= 0.f;
-		float glyphPixelY		= 0.f;
-		float glyphPixelWidth	= 0.f;
-		float glyphPixelHeight	= 0.f;
-		float advancePixelX		= 0.f;
-		float advancePixelY		= 0.f;
-		float bottomPixelOffset	= 0.f;
+		float glyphPixelX = 0.f;
+		float glyphPixelY = 0.f;
+		float glyphPixelWidth = 0.f;
+		float glyphPixelHeight = 0.f;
+		float advancePixelX = 0.f;
+		float advancePixelY = 0.f;
+		float bottomPixelOffset = 0.f;
 		bool8 renderableCharacter = K15_FALSE;
 
-		K15_GetFontCharacterInfo(p_RenderFontDesc, p_Text, p_TextLength, textIndex, 
+		K15_GetFontCharacterInfo(p_RenderFontDesc, p_Text, p_TextLength, textIndex,
 			&glyphPixelX, &glyphPixelY, &glyphPixelWidth, &glyphPixelHeight,
-			&advancePixelX, &advancePixelY, &bottomPixelOffset, 
+			&advancePixelX, &advancePixelY, &bottomPixelOffset,
 			&renderableCharacter);
 
 		float baseLine = topPos + (p_RenderFontDesc->ascent);
 
-		float glyphLeftPixelPos	  = glyphPixelX;
-		float glyphTopPixelPos	  = glyphPixelY;
-		float glyphRightPixelPos  = glyphPixelX + glyphPixelWidth;
+		float glyphLeftPixelPos = glyphPixelX;
+		float glyphTopPixelPos = glyphPixelY;
+		float glyphRightPixelPos = glyphPixelX + glyphPixelWidth;
 		float glyphBottomPixelPos = glyphPixelY + glyphPixelHeight;
 
-		float glyphTexelLeft   = glyphLeftPixelPos / fontTextureWidth;
-		float glyphTexelTop    = glyphTopPixelPos / fontTextureHeight;
-		float glyphTexelRight  = glyphRightPixelPos / fontTextureWidth;
-		float glyphTexelBottom = glyphBottomPixelPos / fontTextureHeight;
+		float glyphTexelLeft = glyphLeftPixelPos;
+		float glyphTexelTop = glyphTopPixelPos;
+		float glyphTexelWidth = (glyphRightPixelPos - glyphLeftPixelPos);
+		float glyphTexelHeight = (glyphBottomPixelPos - glyphTopPixelPos);
 
 		float advanceX = advancePixelX;
 		float advanceY = advancePixelY;
@@ -723,21 +724,41 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_R
 		float bottomOffset = bottomPixelOffset;
 
 		float glyphHeight = glyphPixelHeight;
-		float glyphWidth  = glyphPixelWidth;
+		float glyphWidth = glyphPixelWidth;
+
+		//clip if necessary
+		if (glyphWidth + leftPos > p_PixelPosRight)
+		{
+			float clippedGlyphWidth = p_PixelPosRight - (leftPos + glyphWidth);
+			float clippedPercentage = K15_SafeDivide(clippedGlyphWidth, glyphWidth);
+			glyphTexelWidth *= clippedPercentage;
+			glyphWidth = clippedGlyphWidth;
+		}
+
+		if (glyphHeight + topPos > p_PixelPosBottom)
+		{
+			float clippedGlyphHeight = p_PixelPosBottom - (topPos + glyphHeight);
+			float clippedPercentage = K15_SafeDivide(clippedGlyphHeight, glyphHeight);
+			glyphTexelHeight *= clippedPercentage;
+			glyphHeight = clippedGlyphHeight;
+		}
+
+		renderableCharacter = glyphHeight > 0.f && glyphWidth > 0.f;
 
 		//new line - reset x and advance y
 		if (character == '\n')
 		{
 			leftPos = p_PixelPosLeft;
-			topPos -= advanceY;  
+			topPos -= advanceY;
 		}
-		
+
 		if (renderableCharacter)
-		{			
+		{
 			vertexIndex = K15_InternalPush2DScreenspacePixelColoredTextureRectVertices(p_VertexBuffer, vertexIndex,
-				leftPos, leftPos + glyphWidth, baseLine - glyphHeight - advanceY + bottomOffset, 
+				leftPos, leftPos + glyphWidth, baseLine - glyphHeight - advanceY + bottomOffset,
 				baseLine - advanceY + bottomOffset,
-				glyphTexelLeft, glyphTexelRight, glyphTexelTop, glyphTexelBottom,
+				glyphTexelLeft, glyphTexelLeft + glyphTexelWidth, 
+				glyphTexelTop, glyphTexelTop + glyphTexelHeight,
 				p_TextColor, p_TextColor, p_TextColor, p_TextColor);
 		}
 
@@ -745,6 +766,31 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_R
 	}
 
 	return vertexIndex;
+}
+/*********************************************************************************/
+intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_RenderFontDesc* p_RenderFontDesc,
+	float* p_VertexBuffer, uint32 p_VertexBufferOffsetIndex, int32 p_PixelPosLeft, int32 p_PixelPosTop,
+	int32 p_PixelPosRight, int32 p_PixelPosBottom, uint32 p_TextColor, const char* p_Text, uint32 p_TextLength)
+{
+	K15_Vector3 textColor = K15_UnpackVector3(p_TextColor);
+
+	return K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderFontDesc, p_VertexBuffer,
+		p_VertexBufferOffsetIndex, p_PixelPosLeft, p_PixelPosTop, p_PixelPosRight, p_PixelPosBottom,
+		textColor, p_Text, p_TextLength);
+}
+/*********************************************************************************/
+intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_RenderFontDesc* p_RenderFontDesc,
+	float* p_VertexBuffer, uint32 p_VertexBufferOffsetIndex, int32 p_PixelPosLeft, int32 p_PixelPosTop, 
+	const K15_Vector3& p_TextColor, const char* p_Text, uint32 p_TextLength)
+{
+	float textWidth = 0.f;
+	float textHeight = 0.f;
+
+	K15_GetTextSizeInPixels(p_RenderFontDesc, &textWidth, &textHeight, p_Text, p_TextLength);
+
+	return K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderFontDesc, p_VertexBuffer,
+		p_VertexBufferOffsetIndex, p_PixelPosLeft, p_PixelPosTop, p_PixelPosLeft + textWidth,
+		p_PixelPosTop + textHeight, p_TextColor, p_Text, p_TextLength);
 }
 /*********************************************************************************/
 intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_RenderFontDesc* p_RenderFontDesc,

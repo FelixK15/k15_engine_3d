@@ -149,14 +149,14 @@ real32 K15_Log2(real32 p_Number)
 	return (real32)(floor(log10(p_Number) / log10(2.0)));
 }
 /*********************************************************************************/
-real32 K15_SafeDivide(real32 p_Number, real32 p_Divisor)
+real32 K15_SafeDivide(real32 p_Dividend, real32 p_Divisor)
 {
-	if (p_Divisor == 0.0)
+	if (p_Divisor < K15_EPSILON)
 	{
 		p_Divisor = 1.0;
 	}
 
-	return p_Number / p_Divisor;
+	return p_Dividend / p_Divisor;
 }
 /*********************************************************************************/
 real32 K15_FastSqrt(real32 p_Number)
