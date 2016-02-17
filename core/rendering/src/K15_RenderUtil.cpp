@@ -713,10 +713,10 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_R
 		float glyphRightPixelPos = glyphPixelX + glyphPixelWidth;
 		float glyphBottomPixelPos = glyphPixelY + glyphPixelHeight;
 
-		float glyphTexelLeft = glyphLeftPixelPos;
-		float glyphTexelTop = glyphTopPixelPos;
-		float glyphTexelWidth = (glyphRightPixelPos - glyphLeftPixelPos);
-		float glyphTexelHeight = (glyphBottomPixelPos - glyphTopPixelPos);
+		float glyphTexelLeft = glyphLeftPixelPos / fontTextureWidth;
+		float glyphTexelTop = glyphTopPixelPos / fontTextureWidth;
+		float glyphTexelWidth = (glyphRightPixelPos - glyphLeftPixelPos) / fontTextureWidth;
+		float glyphTexelHeight = (glyphBottomPixelPos - glyphTopPixelPos) / fontTextureHeight;
 
 		float advanceX = advancePixelX;
 		float advanceY = advancePixelY;
@@ -726,21 +726,24 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_R
 		float glyphHeight = glyphPixelHeight;
 		float glyphWidth = glyphPixelWidth;
 
+		float glyphTopPos = baseLine - glyphHeight - advanceY + bottomOffset;
+		//float glyphBottomPos = baseLine - advanceY + bottomOffset;
+
 		//clip if necessary
 		if (glyphWidth + leftPos > p_PixelPosRight)
 		{
-			float clippedGlyphWidth = p_PixelPosRight - (leftPos + glyphWidth);
-			float clippedPercentage = K15_SafeDivide(clippedGlyphWidth, glyphWidth);
-			glyphTexelWidth *= clippedPercentage;
-			glyphWidth = clippedGlyphWidth;
+			float clippedWidth = (leftPos + glyphWidth) - p_PixelPosRight;
+			float clipPercent = K15_SafeDivide(clippedWidth, glyphWidth);
+			glyphTexelWidth *= (1.f - clipPercent);
+			glyphWidth -= clippedWidth;
 		}
 
 		if (glyphHeight + topPos > p_PixelPosBottom)
 		{
-			float clippedGlyphHeight = p_PixelPosBottom - (topPos + glyphHeight);
-			float clippedPercentage = K15_SafeDivide(clippedGlyphHeight, glyphHeight);
-			glyphTexelHeight *= clippedPercentage;
-			glyphHeight = clippedGlyphHeight;
+			float clippedHeight = (topPos + glyphHeight) - p_PixelPosBottom;
+			float clipPercent = K15_SafeDivide(clippedHeight, glyphHeight);
+			glyphTexelHeight *= (1.f - clipPercent);
+			glyphHeight -= clippedHeight;
 		}
 
 		renderableCharacter = glyphHeight > 0.f && glyphWidth > 0.f;
@@ -755,8 +758,8 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_R
 		if (renderableCharacter)
 		{
 			vertexIndex = K15_InternalPush2DScreenspacePixelColoredTextureRectVertices(p_VertexBuffer, vertexIndex,
-				leftPos, leftPos + glyphWidth, baseLine - glyphHeight - advanceY + bottomOffset,
-				baseLine - advanceY + bottomOffset,
+				leftPos, leftPos + glyphWidth, glyphTopPos,
+				glyphTopPos + glyphHeight,
 				glyphTexelLeft, glyphTexelLeft + glyphTexelWidth, 
 				glyphTexelTop, glyphTexelTop + glyphTexelHeight,
 				p_TextColor, p_TextColor, p_TextColor, p_TextColor);

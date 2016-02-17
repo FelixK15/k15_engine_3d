@@ -698,9 +698,10 @@ intern void K15_InternalGUIAlignElements(K15_GUILayout* p_Layouts, uint16 p_NumL
 				break;
 
 			case K15_GUI_HORIZONTAL_LAYOUT:
-				rect->pixelPosRight = rect->pixelPosLeft + (layoutWidth / numElements);
+				uint32 elementWidth = (layoutWidth / numElements);
+				rect->pixelPosRight = rect->pixelPosLeft + elementWidth;
 				rect->pixelPosBottom = rect->pixelPosTop + 20;
-				offsetX += (layoutWidth / numElements);
+				offsetX += elementWidth;
 				break;
 			}
 		}

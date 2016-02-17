@@ -570,8 +570,7 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 	K15_RenderFontDesc fontDesc = {};
 	char* text = 0;
 
-	int32 pixelPosX;
-	int32 pixelPosY;
+	K15_Rectangle textRect = {};
 
 	uint32 localOffset = 0;
 	uint32 textLength = 0;
@@ -593,11 +592,9 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 
 	text[textLength] = 0;
 
-	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(int32), &pixelPosX);
-	localOffset += sizeof(int32);
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(K15_Rectangle), &textRect);
+	localOffset += sizeof(K15_Rectangle);
 
-	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, sizeof(int32), &pixelPosY);
-	localOffset += sizeof(int32);
 
 #ifdef K15_TOLERATE_INVALID_GPU_HANDLES
 	//ignore non loaded textures
@@ -622,8 +619,17 @@ intern void K15_InternalRender2DText(K15_RenderBackEnd* p_RenderBackEnd, K15_Ren
 
 	float* vertexMemory = (float*)K15_AllocateFromMemoryAllocator(renderAllocator, sizeVerticesInBytes);
 
-	K15_InternalPush2DScreenspacePixelColoredTextVertices(&fontDesc, vertexMemory, 0,
-		pixelPosX, pixelPosY, packedColor, text, textLength);
+	if (textRect.rightPos == FLT_MAX || textRect.bottomPos == FLT_MAX)
+	{
+		K15_InternalPush2DScreenspacePixelColoredTextVertices(&fontDesc, vertexMemory, 0,
+			textRect.leftPos, textRect.topPos, packedColor, text, textLength);
+	}
+	else
+	{
+		K15_InternalPush2DScreenspacePixelColoredTextVertices(&fontDesc, vertexMemory, 0,
+			textRect.leftPos, textRect.topPos, textRect.rightPos, textRect.bottomPos,
+			packedColor, text, textLength);
+	}
 
 	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd, vertexMemory, numVertices, &vertexFormatDesc);
 	K15_RenderGeometryDesc renderGeometry = {};

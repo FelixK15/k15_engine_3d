@@ -20,10 +20,15 @@ void K15_RenderCommandDraw2DTextureEX(K15_RenderCommandQueue* p_RenderCommandQue
 void K15_RenderCommandDraw2DGUI(K15_RenderCommandQueue* p_RenderCommandQueue,
 								K15_GUIContext* p_GUIContext);
 
-void K15_RenderCommandDraw2DText(K15_RenderCommandQueue* p_RenderCommandQueue, 
-								 K15_RenderFontDesc* p_FontDesc, 
-								 const char* p_Text, const K15_Vector3& p_Color,
-								 int32 p_PixelPosX, int32 p_PixelPosY);
+void K15_RenderCommandDraw2DText(K15_RenderCommandQueue* p_RenderCommandQueue,
+	K15_RenderFontDesc* p_FontDesc,
+	const char* p_Text, K15_Vector3 p_Color,
+	K15_Vector2 p_Position);
+
+void K15_RenderCommandDrawClipped2DText(K15_RenderCommandQueue* p_RenderCommandQueue, 
+										K15_RenderFontDesc* p_FontDesc, 
+										const char* p_Text, K15_Vector3 p_Color,
+										K15_Rectangle p_Rect);
 
 void K15_RenderCommandCreateTextureFromTextureFormat(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle, K15_TextureFormat* p_TextureFormat);
 void K15_RenderCommandCreateSamplerFromSamplerFormat(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_SamplerHandle , K15_SamplerFormat* p_SamplerFormat);

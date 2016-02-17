@@ -154,23 +154,24 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	static uint32 windowHeight = 400;
 	static int32 windowPosX = 20;
 	static int32 windowPosY = 20;
-
+	static float bla = 0.f;
 	static bool8 swap = K15_FALSE;
 
 	if (swap)
 	{
-		windowWidth += 3;
+		windowWidth += 1;
 		swap = windowWidth > 800 ? K15_FALSE : K15_TRUE;
 	}
 	else
 	{
-		windowWidth -= 3;
+		windowWidth -= 1;
 		swap = windowWidth < 400 ? K15_TRUE : K15_FALSE;
 	}
 
  	char* text = (char*)alloca(128);
  	sprintf(text, "FPS: %.1f\nms: %.3f", p_GameContext->frameCounter.FPS, p_GameContext->frameCounter.avgDeltaTime);
- 	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, K15_CreateVector(1.0f, 0.25f, 0.25f), 0.0f, 0.0f);
+	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, K15_CreateVector(1.0f, 0.25f, 0.25f),
+		K15_CreateVector(0.f, 0.f));
 
 	//K15_GUIBeginDockingArea(guiContext, 0, 0, viewportWidth, viewportHeight, K15_GUI_LEFT_DOCKING_AREA);
 

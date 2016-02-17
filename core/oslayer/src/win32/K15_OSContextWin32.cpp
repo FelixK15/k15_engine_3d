@@ -111,15 +111,8 @@ intern inline uint8 K15_InternalTryLoadDirectSound(K15_Win32Context* p_Win32Cont
 intern void K15_InternalAllocateDebugConsole()
 {
 	AllocConsole();
-	void* stdHandle;
-	int handleConsole;
-	FILE* fp;
-
-	stdHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-	handleConsole = _open_osfhandle((intptr_t)stdHandle, 0x4000); //_O_TEXT
-	fp = _fdopen(handleConsole, "w");
-	*stdout = *fp;
-	setvbuf( stdout, NULL, _IONBF, 0 );
+	AttachConsole(ATTACH_PARENT_PROCESS);
+	freopen("CONOUT$", "w", stdout);
 }
 /*********************************************************************************/
 intern void K15_InternalGetSystemInfo(K15_OSContext* p_OSContext)
