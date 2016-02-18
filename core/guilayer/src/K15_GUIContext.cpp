@@ -571,10 +571,7 @@ bool8 K15_GUIBeginWindowEX(K15_GUIContext* p_GUIContext, int32* p_PosX, int32* p
 	windowData.textLength = titleLength;
 	windowData.title = titleMemory;
 	windowData.contentRect = windowElement->rect;
-	windowData.contentRect.pixelPosBottom -= p_GUIWindowStyle->borderPixelThickness;
-	windowData.contentRect.pixelPosRight -= p_GUIWindowStyle->borderPixelThickness;
-	windowData.contentRect.pixelPosLeft += p_GUIWindowStyle->borderPixelThickness;
-	windowData.contentRect.pixelPosTop += p_GUIWindowStyle->borderPixelThickness + 20;
+	windowData.contentRect.pixelPosTop += 20;
 
 	memcpy(titleMemory, p_Title, titleLength);
 	memcpy(windowElementMemory, &windowData, sizeof(K15_GUIWindowData));

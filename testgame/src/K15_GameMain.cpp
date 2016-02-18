@@ -36,6 +36,8 @@ struct K15_Sample1GameContext
 	K15_GUIContext* guiContext;
 	K15_RenderFontDesc* gameFont;
 	K15_RenderCameraDesc camera;
+
+	bool8 pressed;
 };
 
 intern uint8 g_Initialized = K15_FALSE;
@@ -84,6 +86,7 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 	sample1GameContext->guiContext = guiContext;
 	sample1GameContext->gameRenderQueue = mainRenderQueue;
 	sample1GameContext->gameFont = K15_GetResourceRenderFontDesc(resourceContext, gameFont);
+	sample1GameContext->pressed = K15_FALSE;
 
 	K15_RenderCameraDesc cameraDesc = {};
 
@@ -157,15 +160,18 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	static float bla = 0.f;
 	static bool8 swap = K15_FALSE;
 
-	if (swap)
+	if (gameContext->pressed)
 	{
-		windowWidth += 1;
-		swap = windowWidth > 800 ? K15_FALSE : K15_TRUE;
-	}
-	else
-	{
-		windowWidth -= 1;
-		swap = windowWidth < 400 ? K15_TRUE : K15_FALSE;
+		if (swap)
+		{
+			windowWidth += 1;
+			swap = windowWidth > 800 ? K15_FALSE : K15_TRUE;
+		}
+		else
+		{
+			windowWidth -= 1;
+			swap = windowWidth < 50 ? K15_TRUE : K15_FALSE;
+		}
 	}
 
  	char* text = (char*)alloca(128);
@@ -177,15 +183,16 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 
 	if (K15_GUIBeginWindow(guiContext, &windowPosX, &windowPosY, &windowWidth, &windowHeight, "Test Window", "window_1"))
 	{
-		K15_GUILabel(guiContext, "Press button for test:", "label_1");
-		K15_GUILabel(guiContext, "Press button for test:", "label_2");
-		K15_GUILabel(guiContext, "Press button for test:", "label_3");
-		K15_GUILabel(guiContext, "Press button for test:", "label_4");
-		if (K15_GUIButton(guiContext, "test button", "button_1"))
-		{
-			K15_LOG_DEBUG_MESSAGE("Test1");
-		}
-		
+// 		K15_GUILabel(guiContext, "Press button for test:", "label_1");
+// 		K15_GUILabel(guiContext, "Press button for test:", "label_2");
+// 		K15_GUILabel(guiContext, "Press button for test:", "label_3");
+// 		K15_GUILabel(guiContext, "Press button for test:", "label_4");
+		K15_GUIButton(guiContext, "test button", "button_1");
+ 		K15_GUIButton(guiContext, "test button", "button_2");
+		K15_GUIButton(guiContext, "test button", "button_3");
+		K15_GUIButton(guiContext, "test button", "button_4");
+		K15_GUIButton(guiContext, "test button", "button_5");
+		K15_GUIButton(guiContext, "test button", "button_6");
 // 		K15_GUIPushHorizontalLayout(guiContext);
 // 		K15_GUIButton(guiContext, "test button3", "button_3");
 // 		K15_GUIButton(guiContext, "test button4", "button_4");
@@ -257,6 +264,14 @@ K15_EXPORT_SYMBOL void K15_OnInputEvent(K15_GameContext* p_GameContext, K15_Syst
 		mouseInput.mousePosX = p_SystemEvent->params.position.x;
 		mouseInput.mousePosY = p_SystemEvent->params.position.y;
 		mouseInput.type = K15_GUI_MOUSE_MOVED;
+	}
+	else if (p_SystemEvent->event == K15_KEY_PRESSED)
+	{
+		gameContext->pressed = K15_TRUE;
+	}
+	else if (p_SystemEvent->event == K15_KEY_RELEASED)
+	{
+		gameContext->pressed = K15_FALSE;
 	}
 
 	K15_GUIAddMouseInput(&gameContext->guiContext->input, &mouseInput);

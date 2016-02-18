@@ -47,40 +47,45 @@ intern void K15_InternalPushGUIButtonVertices(K15_GUIElement* p_GUIElement, K15_
 
 	K15_GetTextSizeInPixels(font, &textWidth, &textHeight, text, textLength);
 
+	uint32 borderPixelThickness = style->borderPixelThickness;
+
 	uint32 borderUpperColor = style->borderUpperColor;
 	uint32 borderLowerColor = style->borderLowerColor;
 	uint32 backgroundUpperColor = style->upperBackgroundColor;
 	uint32 backgroundLowerColor = style->lowerBackgroundColor;
 	uint32 textColor = style->textColor;
 
+	int32 posLeft = p_GUIElement->rect.pixelPosLeft + borderPixelThickness;
+	int32 posTop = p_GUIElement->rect.pixelPosTop + borderPixelThickness;
+	int32 posRight = p_GUIElement->rect.pixelPosRight - borderPixelThickness;
+	int32 posBottom = p_GUIElement->rect.pixelPosBottom - borderPixelThickness;
 
-	uint32 posLeft = p_GUIElement->rect.pixelPosLeft;
-	uint32 posTop = p_GUIElement->rect.pixelPosTop;
-	uint32 posRight = p_GUIElement->rect.pixelPosRight;
-	uint32 posBottom = p_GUIElement->rect.pixelPosBottom;
-	uint32 elementWidth = (posRight - posLeft);
-	uint32 elementHeight = (posBottom - posTop);
+	uint32 elementWidth = (posRight - posLeft) - borderPixelThickness * 2;
+	uint32 elementHeight = (posBottom - posTop) - borderPixelThickness * 2;
 
-	uint32 elementCenterX = posLeft + (elementWidth / 2);
-	uint32 elementCenterY = posTop + (elementHeight / 2);
+	int32 elementCenterX = posLeft + (elementWidth / 2);
+	int32 elementCenterY = posTop + (elementHeight / 2);
 
-	int32 textPosLeft = elementCenterX - (textWidth / 2);
-	int32 textPosTop = elementCenterY - (textHeight / 2);
-	int32 textPosRight = elementCenterX + (textWidth / 2);
-	int32 textPosBottom = elementCenterY + (textHeight / 2);
+	int32 textPosLeft = elementCenterX - textWidth / 2;
+	int32 textPosRight = elementCenterX + textWidth / 2;
+	int32 textPosTop = elementCenterY - textHeight / 2;
+	int32 textPosBottom = elementCenterY + textHeight / 2;
 
-	uint32 borderPixelThickness = style->borderPixelThickness;
+	textPosLeft = textPosLeft < posLeft ? posLeft : textPosLeft;
+	textPosRight = textPosRight > posRight ? posRight : textPosRight;
+	textPosTop = textPosTop < posTop ? posTop : textPosTop;
+	textPosBottom = textPosBottom > posBottom ? posBottom : textPosBottom;
 
 	//border
 	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRectVertices(P2C3Buffer, P3C3Index,
-		posLeft, posRight, posTop, posBottom,
+		p_GUIElement->rect.pixelPosLeft, p_GUIElement->rect.pixelPosRight, 
+		p_GUIElement->rect.pixelPosTop, p_GUIElement->rect.pixelPosBottom,
 		borderUpperColor, borderUpperColor,
 		borderLowerColor, borderLowerColor);
 
 	//element
 	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRectVertices(P2C3Buffer, P3C3Index,
-		posLeft + borderPixelThickness, posRight - borderPixelThickness, 
-		posTop + borderPixelThickness, posBottom - borderPixelThickness,
+		posLeft, posRight, posTop, posBottom,
 		backgroundUpperColor, backgroundUpperColor,
 		backgroundLowerColor, backgroundLowerColor);
  

@@ -2,6 +2,9 @@
 #include "K15_Logging.h"
 #include "K15_String.h"
 
+#include <stdio.h>
+#include <malloc.h>
+
 #ifdef K15_OS_WINDOWS
 	#include "windows.h"
 	#include "win32/K15_HelperWin32.h"
