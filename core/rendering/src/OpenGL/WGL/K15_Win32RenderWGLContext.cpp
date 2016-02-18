@@ -257,7 +257,7 @@ uint8 K15_Win32CreateGLContext(K15_CustomMemoryAllocator* p_MemoryAllocator, K15
 	{
 		//delete temp context, window and device context
 		K15_OPENGL_CALL(kwglDeleteContext(tempContext));
-		DeleteDC(tempDeviceContext);
+		ReleaseDC(tempWindowHandle, tempDeviceContext);
 		DestroyWindow(tempWindowHandle);
 	}
 	else
