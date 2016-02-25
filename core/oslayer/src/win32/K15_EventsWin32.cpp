@@ -440,6 +440,10 @@ LRESULT CALLBACK K15_Win32WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 		messageHandled = K15_TRUE;
 		break;
 
+	case WM_CANCELMODE:
+		messageHandled = K15_TRUE;
+		break;
+
 	case WM_CHAR:
 	case WM_UNICHAR:
 		K15_Win32TextInputReceived(hWnd, uMsg, wParam, lParam);

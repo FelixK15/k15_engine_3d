@@ -9,10 +9,10 @@ struct K15_FrameCounter
 	float FPS;
 	float avgDeltaTime;
 	uint32 deltaSamples[K15_MAX_DELTA_TIME_SAMPLES];
-	uint32 deltaTime;
 	uint32 startFrameTime;
 	uint32 endFrameTime;
 	uint32 numSamples;
+	uint32 deltaTimeInMs;
 };
 
 K15_FrameCounter K15_CreateFrameCounter();

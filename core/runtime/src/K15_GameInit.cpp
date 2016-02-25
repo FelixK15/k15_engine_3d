@@ -1,13 +1,25 @@
 #include "K15_GameInit.h"
 
+#include <K15_ConfigFile.h>
 #include <K15_DynamicLibrary.h>
 #include <K15_SystemEvents.h>
+#include <K15_System.h>
 #include <K15_Thread.h>
 
 ///*********************************************************************************/
 uint8 K15_GameThreadMain(void* p_Parameter)
 {
 	K15_GameContext* gameContext = (K15_GameContext*)p_Parameter;
+
+	uint32 fps = (uint32)K15_GetConfigValueAsInt(gameContext->configContext, "FPS", 60);
+
+	if (fps == 0)
+	{
+		fps = 60;
+	}
+
+	uint32 avgMsPerFrame = 1000 / fps;
+
 	//K15_MemoryBuffer memory = gameContext->gameMemory;
 	K15_Semaphore* mainThreadSynchronizer = gameContext->mainThreadSynchronizer;
 	K15_Semaphore* gameThreadSynchronizer = gameContext->gameThreadSynchronizer;
@@ -17,6 +29,7 @@ uint8 K15_GameThreadMain(void* p_Parameter)
 #endif //K15_LOAD_GAME_LIB_DYNAMIC
 
 	gameContext->frameCounter = K15_CreateFrameCounter();
+	gameContext->frameCounter.deltaTimeInMs = avgMsPerFrame;
 
 	K15_TickGameFnc K15_TickGame = gameContext->tickFnc;
 	K15_OnInputEventFnc K15_OnInputEvent = gameContext->onInputEventFnc;
@@ -68,10 +81,18 @@ uint8 K15_GameThreadMain(void* p_Parameter)
 		K15_UnlockMutex(gameLibrarySynchronizer);
 #endif //K15_LOAD_GAME_LIB_DYNAMIC
 
-		K15_PostSemaphore(gameThreadSynchronizer);
-		K15_WaitSemaphore(mainThreadSynchronizer);
+		uint32 deltaTimeInMs = K15_GetElapsedMilliseconds() - gameContext->frameCounter.startFrameTime;
+		
+		if (deltaTimeInMs < avgMsPerFrame)
+		{
+			K15_SleepThreadForMilliseconds(avgMsPerFrame - deltaTimeInMs);
+			gameContext->frameCounter.deltaTimeInMs = deltaTimeInMs;
+		}
 
 		K15_EndFrame(&gameContext->frameCounter);
+
+		K15_PostSemaphore(gameThreadSynchronizer);
+		K15_WaitSemaphore(mainThreadSynchronizer);
 	}
 
 	//increment semaphore on exit. Some systems close the thread deferred :(

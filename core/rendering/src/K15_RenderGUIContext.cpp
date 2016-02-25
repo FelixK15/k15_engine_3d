@@ -76,23 +76,26 @@ intern void K15_InternalPushGUIButtonVertices(K15_GUIElement* p_GUIElement, K15_
 	textPosTop = textPosTop < posTop ? posTop : textPosTop;
 	textPosBottom = textPosBottom > posBottom ? posBottom : textPosBottom;
 
-	//border
-	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRectVertices(P2C3Buffer, P3C3Index,
-		p_GUIElement->rect.pixelPosLeft, p_GUIElement->rect.pixelPosRight, 
-		p_GUIElement->rect.pixelPosTop, p_GUIElement->rect.pixelPosBottom,
-		borderUpperColor, borderUpperColor,
-		borderLowerColor, borderLowerColor);
+	P3C3Index = K15_InternalPush2DScreenspacePixelColoredLineVertices(P2C3Buffer, P3C3Index,
+					0, 0, 500, 500, 10, 0xFF00FF, 0x00FF00);
 
-	//element
-	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRectVertices(P2C3Buffer, P3C3Index,
-		posLeft, posRight, posTop, posBottom,
-		backgroundUpperColor, backgroundUpperColor,
-		backgroundLowerColor, backgroundLowerColor);
- 
-	//text
-	P3T2C3Index = K15_InternalPush2DScreenspacePixelColoredTextVertices(font,
-		P3T2C3Buffer, P3T2C3Index, textPosLeft, textPosTop, textPosRight, textPosBottom,
-		textColor, text, textLength);
+	//border
+// 	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRectVertices(P2C3Buffer, P3C3Index,
+// 		p_GUIElement->rect.pixelPosLeft, p_GUIElement->rect.pixelPosRight, 
+// 		p_GUIElement->rect.pixelPosTop, p_GUIElement->rect.pixelPosBottom,
+// 		borderUpperColor, borderUpperColor,
+// 		borderLowerColor, borderLowerColor);
+// 
+// 	//element
+// 	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRectVertices(P2C3Buffer, P3C3Index,
+// 		posLeft, posRight, posTop, posBottom,
+// 		backgroundUpperColor, backgroundUpperColor,
+// 		backgroundLowerColor, backgroundLowerColor);
+//  
+// 	//text
+// 	P3T2C3Index = K15_InternalPush2DScreenspacePixelColoredTextVertices(font,
+// 		P3T2C3Buffer, P3T2C3Index, textPosLeft, textPosTop, textPosRight, textPosBottom,
+// 		textColor, text, textLength);
 
 	p_DrawInfo->numFloatsVertexBufferP3C3 = P3C3Index;
 	p_DrawInfo->numFloatsVertexBufferP3T2C3 = P3T2C3Index;
@@ -149,40 +152,44 @@ intern void K15_InternalPushGUIWindowVertices(K15_GUIElement* p_GUIElement, K15_
 	K15_Vector3 borderLerpTopLowerColor = K15_Lerp(borderTopColor, borderLowerColor, 
 		(float)(titlePixelPosBottom - pixelPosTop) / (float)(pixelPosBottom - pixelPosTop));
 
+
+	P3C3Index = K15_InternalPush2DScreenspacePixelColoredLineVertices(P2C3Buffer, P3C3Index,
+		0, 0, 500, 500, 30, 0xFF00FF, 0x00FF00);
+
 	//border title
-	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(P2C3Buffer, P3C3Index,
-		pixelPosLeft - borderPixelThickness, pixelPosRight + borderPixelThickness, 
-		pixelPosTop - borderPixelThickness, titlePixelPosBottom,
-		borderTopColor, borderTopColor,
-		borderLerpTopLowerColor, borderLerpTopLowerColor,
-		K15_LEFT_TOP_CORNER | K15_RIGHT_TOP_CORNER,
-		0.5f);
-
-	//border window
-	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRectVertices(P2C3Buffer, P3C3Index,
-		pixelPosLeft - borderPixelThickness, pixelPosRight + borderPixelThickness, 
-		titlePixelPosBottom, pixelPosBottom + borderPixelThickness,
-		borderLerpTopLowerColor, borderLerpTopLowerColor,
-		borderLowerColor, borderLowerColor);
-
-	//title
-	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(P2C3Buffer, P3C3Index,
-		pixelPosLeft, pixelPosRight, pixelPosTop, titlePixelPosBottom,
-		windowTitleUpperColor, windowTitleUpperColor,
-		windowTitleLowerColor, windowTitleLowerColor,
-		K15_LEFT_TOP_CORNER | K15_RIGHT_TOP_CORNER,
-		0.5f);
-
-	//window
-	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRectVertices(P2C3Buffer, P3C3Index,
-		pixelPosLeft, pixelPosRight, titlePixelPosBottom, pixelPosBottom,
-		windowUpperBackgroundColor, windowUpperBackgroundColor,
-		windowLowerBackgroundColor, windowLowerBackgroundColor);
-
-	//title text
-	P3T2C3Index = K15_InternalPush2DScreenspacePixelColoredTextVertices(windowStyle->font,
-		P3T2C3Buffer, P3T2C3Index, textPixelPosLeft, textPixelPosTop, 
-		textPixelPosRight, textPixelPosBottom, windowTitleTextColor, title, windowData->textLength);
+// 	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(P2C3Buffer, P3C3Index,
+// 		pixelPosLeft - borderPixelThickness, pixelPosRight + borderPixelThickness, 
+// 		pixelPosTop - borderPixelThickness, titlePixelPosBottom,
+// 		borderTopColor, borderTopColor,
+// 		borderLerpTopLowerColor, borderLerpTopLowerColor,
+// 		K15_LEFT_TOP_CORNER | K15_RIGHT_TOP_CORNER,
+// 		0.5f);
+// 
+// 	//border window
+// 	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRectVertices(P2C3Buffer, P3C3Index,
+// 		pixelPosLeft - borderPixelThickness, pixelPosRight + borderPixelThickness, 
+// 		titlePixelPosBottom, pixelPosBottom + borderPixelThickness,
+// 		borderLerpTopLowerColor, borderLerpTopLowerColor,
+// 		borderLowerColor, borderLowerColor);
+// 
+// 	//title
+// 	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRoundRectVertices(P2C3Buffer, P3C3Index,
+// 		pixelPosLeft, pixelPosRight, pixelPosTop, titlePixelPosBottom,
+// 		windowTitleUpperColor, windowTitleUpperColor,
+// 		windowTitleLowerColor, windowTitleLowerColor,
+// 		K15_LEFT_TOP_CORNER | K15_RIGHT_TOP_CORNER,
+// 		0.5f);
+// 
+// 	//window
+// 	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRectVertices(P2C3Buffer, P3C3Index,
+// 		pixelPosLeft, pixelPosRight, titlePixelPosBottom, pixelPosBottom,
+// 		windowUpperBackgroundColor, windowUpperBackgroundColor,
+// 		windowLowerBackgroundColor, windowLowerBackgroundColor);
+// 
+// 	//title text
+// 	P3T2C3Index = K15_InternalPush2DScreenspacePixelColoredTextVertices(windowStyle->font,
+// 		P3T2C3Buffer, P3T2C3Index, textPixelPosLeft, textPixelPosTop, 
+// 		textPixelPosRight, textPixelPosBottom, windowTitleTextColor, title, windowData->textLength);
 
 	p_DrawInfo->numFloatsVertexBufferP3C3 = P3C3Index;
 	p_DrawInfo->numFloatsVertexBufferP3T2C3 = P3T2C3Index;

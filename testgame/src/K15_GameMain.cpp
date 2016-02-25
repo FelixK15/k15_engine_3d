@@ -187,12 +187,12 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 // 		K15_GUILabel(guiContext, "Press button for test:", "label_2");
 // 		K15_GUILabel(guiContext, "Press button for test:", "label_3");
 // 		K15_GUILabel(guiContext, "Press button for test:", "label_4");
-		K15_GUIButton(guiContext, "test button", "button_1");
- 		K15_GUIButton(guiContext, "test button", "button_2");
-		K15_GUIButton(guiContext, "test button", "button_3");
-		K15_GUIButton(guiContext, "test button", "button_4");
-		K15_GUIButton(guiContext, "test button", "button_5");
-		K15_GUIButton(guiContext, "test button", "button_6");
+// 		K15_GUIButton(guiContext, "test button", "button_1");
+//  		K15_GUIButton(guiContext, "test button", "button_2");
+// 		K15_GUIButton(guiContext, "test button", "button_3");
+// 		K15_GUIButton(guiContext, "test button", "button_4");
+// 		K15_GUIButton(guiContext, "test button", "button_5");
+// 		K15_GUIButton(guiContext, "test button", "button_6");
 // 		K15_GUIPushHorizontalLayout(guiContext);
 // 		K15_GUIButton(guiContext, "test button3", "button_3");
 // 		K15_GUIButton(guiContext, "test button4", "button_4");

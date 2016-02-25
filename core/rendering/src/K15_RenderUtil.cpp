@@ -535,7 +535,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredLineVertices(float
 	K15_Vector2 pixelDirection = pixelEndPos - pixelStartPos;
 	K15_NormalizeVector(pixelDirection);
 
-	K15_Vector2 perpendicularPixelDirection = K15_CreateVector(pixelDirection.y, pixelDirection.x) * halfLinePixelWidth;
+	K15_Vector2 perpendicularPixelDirection = K15_CreateVector(pixelDirection.y * -1.f, pixelDirection.x) * halfLinePixelWidth;
 
 	K15_Vector2 pixelUpperStartPos = pixelStartPos + perpendicularPixelDirection;
 	K15_Vector2 pixelUpperEndPos = pixelEndPos + perpendicularPixelDirection;
@@ -588,6 +588,9 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredLineVertices(float
 {
 	K15_Vector3 startColorUnpacked = K15_UnpackVector3(p_StartColor);
 	K15_Vector3 endColorUnpacked = K15_UnpackVector3(p_EndColor);
+
+	startColorUnpacked = startColorUnpacked / 255.f;
+	endColorUnpacked = endColorUnpacked / 255.f;
 
 	return K15_InternalPush2DScreenspacePixelColoredLineVertices(p_VertexBuffer, p_StartIndex, 
 		p_PixelStartPosLeft, p_PixelStartPosTop, p_PixelEndPosLeft, p_PixelEndPosTop, 
