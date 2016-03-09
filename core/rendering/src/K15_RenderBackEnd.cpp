@@ -20,18 +20,6 @@
 
 #include "K15_ErrorCodes.h"
 
-/*********************************************************************************/
-struct K15_GUIDrawInformation
-{
-	uint32 numVerticesP3C3;
-	uint32 numVerticesP3T2C3;
-	uint32 numFloatsVertexBufferP3C3;
-	uint32 numFloatsVertexBufferP3T2C3;
-	float* vertexBufferP3C3;
-	float* vertexBufferP3T2C3;
-};
-/*********************************************************************************/
-
 #include "generated/K15_RenderMaterialDataDescStretchBuffer.cpp"
 
 #include "K15_RenderFormats.cpp"
@@ -43,65 +31,6 @@ struct K15_GUIDrawInformation
 
 #include "K15_ShaderCompiler.h"
 
-
-/*********************************************************************************/
-intern void K15_InternalCountGUIElementVertices(K15_GUIContext* p_GUIContext, K15_GUIElement* p_GUIElement,
-	void* p_UserData)
-{
-	K15_GUIElementType type = p_GUIElement->type;
-	K15_GUIDrawInformation* drawInfo = (K15_GUIDrawInformation*)p_UserData;
-	
-	switch (type)
-	{
-	case K15_GUI_WINDOW:
-		{
-			K15_GUIWindowData* windowData = (K15_GUIWindowData*)K15_GUIGetGUIElementMemory(p_GUIElement);
-			K15_RenderFontDesc* font = windowData->style->font;
-			drawInfo->numVerticesP3C3 += 802;
-			drawInfo->numVerticesP3T2C3 += K15_GetTextVertexCount(font, windowData->title, windowData->textLength);
-			break;
-		}
-
-	case K15_GUI_BUTTON:
-		{
-			K15_GUIButtonData* buttonData = (K15_GUIButtonData*)K15_GUIGetGUIElementMemory(p_GUIElement);
-			K15_RenderFontDesc* font = buttonData->style->font;
-			drawInfo->numVerticesP3C3 += 12;
-			drawInfo->numVerticesP3T2C3 += K15_GetTextVertexCount(font, buttonData->text, buttonData->textLength);
-			break;
-		}
-
-	case K15_GUI_LABEL:
-		{
-			K15_GUILabelData* labelData = (K15_GUILabelData*)K15_GUIGetGUIElementMemory(p_GUIElement);
-			K15_RenderFontDesc* font = labelData->style->font;
-			drawInfo->numVerticesP3T2C3 += K15_GetTextVertexCount(font, labelData->text, labelData->textLength);
-			break;
-		}
-	}
-}
-/*********************************************************************************/
-intern void K15_InternalPushGUIElementVertices(K15_GUIContext* p_GUIContext, K15_GUIElement* p_GUIElement, 
-	void* p_UserData)
-{
-	K15_GUIElementType type = p_GUIElement->type;
-	K15_GUIDrawInformation* drawInfo = (K15_GUIDrawInformation*)p_UserData;
-
-	switch (type)
-	{
-	case K15_GUI_WINDOW:
-		K15_InternalPushGUIWindowVertices(p_GUIElement, drawInfo);
-		break;
-
-	case K15_GUI_BUTTON:
-		K15_InternalPushGUIButtonVertices(p_GUIElement, drawInfo);
-		break;
-
-	case K15_GUI_LABEL:
-		K15_InternalPushGUILabelVertices(p_GUIElement, drawInfo);
-		break;
-	}
-}
 /*********************************************************************************/
 intern int K15_InternalCompareKerning(const void* p_Key, const void* p_Element)
 {

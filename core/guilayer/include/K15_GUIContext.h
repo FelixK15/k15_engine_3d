@@ -151,10 +151,17 @@ enum K15_GUIMouseButtonType : uint16
 /*********************************************************************************/
 enum K15_GUIKeyboardModifierType
 {
-	K15_GUI_CTRL_MODIFIER = 0,
-	K15_GUI_L_ALT_MODIFIER,
-	K15_GIU_R_ALT_MODIFIER,
-	K15_GUI_SHIFT_MODIFIER
+	K15_GUI_CTRL_MODIFIER  = 0x01,
+	K15_GUI_L_ALT_MODIFIER = 0x02,
+	K15_GIU_R_ALT_MODIFIER = 0x04,
+	K15_GUI_SHIFT_MODIFIER = 0x08
+};
+/*********************************************************************************/
+enum K15_GUIKeyboardInputType
+{
+	K15_GUI_KEY_PRESSED = 0,
+	K15_GUI_KEY_RELEASED,
+	K15_GUI_TEXT_INPUT
 };
 /*********************************************************************************/
 enum K15_GUIKeyboardKeyType
@@ -168,6 +175,25 @@ enum K15_GUIKeyboardKeyType
 	K15_GUI_KEY_HOME,
 	K15_GUI_KEY_END,
 	K15_GUI_KEY_INS,
+	K15_GUI_KEY_ESC,
+
+	K15_GUI_KEY_F1,
+	K15_GUI_KEY_F2,
+	K15_GUI_KEY_F3,
+	K15_GUI_KEY_F4,
+	K15_GUI_KEY_F5,
+	K15_GUI_KEY_F6,
+	K15_GUI_KEY_F7,
+	K15_GUI_KEY_F8,
+	K15_GUI_KEY_F9,
+	K15_GUI_KEY_F10,
+	K15_GUI_KEY_F11,
+	K15_GUI_KEY_F12,
+
+	K15_GUI_KEY_LEFT,
+	K15_GUI_KEY_RIGHT,
+	K15_GUI_KEY_UP,
+	K15_GUI_KEY_DOWN,
 
 	//all other keys.
 	K15_GUI_KEY_NORMAL
@@ -191,7 +217,13 @@ struct K15_GUIMouseInput
 /*********************************************************************************/
 struct K15_GUIKeyboardInput
 {
-	uint32 charUTF32;
+	struct 
+	{
+		uint16 key;
+		uint16 modifierMask;
+	} keyInput;
+
+	K15_GUIKeyboardInputType type;
 	K15_GUIKeyboardKeyType keyType;
 	K15_GUIKeyboardModifierType modifier;
 };
@@ -226,6 +258,7 @@ struct K15_GUIContext
 	uint32 memoryCurrentSizeInBytes;
 	uint32 retainedDataOffsetInBytes;
 	uint32 retainedDataSizeInBytes;
+	bool8 debugModeActive;
 };
 /*********************************************************************************/
 

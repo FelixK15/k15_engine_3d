@@ -36,8 +36,6 @@ struct K15_Sample1GameContext
 	K15_GUIContext* guiContext;
 	K15_RenderFontDesc* gameFont;
 	K15_RenderCameraDesc camera;
-
-	bool8 pressed;
 };
 
 intern uint8 g_Initialized = K15_FALSE;
@@ -86,7 +84,6 @@ intern inline void K15_InternalSetGameContext(K15_GameContext* p_GameContext)
 	sample1GameContext->guiContext = guiContext;
 	sample1GameContext->gameRenderQueue = mainRenderQueue;
 	sample1GameContext->gameFont = K15_GetResourceRenderFontDesc(resourceContext, gameFont);
-	sample1GameContext->pressed = K15_FALSE;
 
 	K15_RenderCameraDesc cameraDesc = {};
 
@@ -160,7 +157,7 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	static float bla = 0.f;
 	static bool8 swap = K15_FALSE;
 
-	if (gameContext->pressed)
+	if (guiContext->debugModeActive)
 	{
 		if (swap)
 		{
@@ -183,12 +180,9 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 
 	if (K15_GUIBeginWindow(guiContext, &windowPosX, &windowPosY, &windowWidth, &windowHeight, "Test Window", "window_1"))
 	{
-// 		K15_GUILabel(guiContext, "Press button for test:", "label_1");
-// 		K15_GUILabel(guiContext, "Press button for test:", "label_2");
-// 		K15_GUILabel(guiContext, "Press button for test:", "label_3");
-// 		K15_GUILabel(guiContext, "Press button for test:", "label_4");
-// 		K15_GUIButton(guiContext, "test button", "button_1");
-//  		K15_GUIButton(guiContext, "test button", "button_2");
+		K15_GUILabel(guiContext, "Press button for test:", "label_1");
+		K15_GUIButton(guiContext, "test button", "button_1");
+ 		K15_GUIButton(guiContext, "test button", "button_2");
 // 		K15_GUIButton(guiContext, "test button", "button_3");
 // 		K15_GUIButton(guiContext, "test button", "button_4");
 // 		K15_GUIButton(guiContext, "test button", "button_5");
@@ -210,23 +204,17 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameRenderCommandQueue);
 }
 /*********************************************************************************/
-K15_EXPORT_SYMBOL void K15_OnInputEvent(K15_GameContext* p_GameContext, K15_SystemEvent* p_SystemEvent)
+void K15_OnMouseInputEvent(K15_Sample1GameContext* p_GameContext, K15_SystemEvent* p_SystemEvent)
 {
-	if (!g_Initialized)
-	{
-		return;
-	}
-
-	K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->userData;
 	K15_GUIMouseInput mouseInput = {};
 
 	if (p_SystemEvent->event == K15_MOUSE_BUTTON_PRESSED ||
 		p_SystemEvent->event == K15_MOUSE_BUTTON_RELEASED)
 	{
-		mouseInput.type = p_SystemEvent->event == K15_MOUSE_BUTTON_PRESSED ? 
-			K15_GUI_MOUSE_BUTTON_PRESSED:
+		mouseInput.type = p_SystemEvent->event == K15_MOUSE_BUTTON_PRESSED ?
+			K15_GUI_MOUSE_BUTTON_PRESSED :
 			K15_GUI_MOUSE_BUTTON_RELEASED;
-	
+
 		if (p_SystemEvent->params.mouseButton == K15_LEFT_MOUSE_BUTTON)
 		{
 			mouseInput.mouseButton = K15_GUI_MOUSE_BUTTON_LEFT;
@@ -265,16 +253,107 @@ K15_EXPORT_SYMBOL void K15_OnInputEvent(K15_GameContext* p_GameContext, K15_Syst
 		mouseInput.mousePosY = p_SystemEvent->params.position.y;
 		mouseInput.type = K15_GUI_MOUSE_MOVED;
 	}
-	else if (p_SystemEvent->event == K15_KEY_PRESSED)
-	{
-		gameContext->pressed = K15_TRUE;
-	}
+
+	K15_GUIAddMouseInput(&p_GameContext->guiContext->input, &mouseInput);
+}
+/*********************************************************************************/
+void K15_OnKeyboardInputEvent(K15_Sample1GameContext* p_GameContext, K15_SystemEvent* p_SystemEvent)
+{
+	K15_GUIKeyboardInput keyboardInput = {};
+
+	if (p_SystemEvent->event == K15_KEY_PRESSED)
+		keyboardInput.type = K15_GUI_KEY_PRESSED;
 	else if (p_SystemEvent->event == K15_KEY_RELEASED)
+		keyboardInput.type = K15_GUI_KEY_RELEASED;
+	else if (p_SystemEvent->event == K15_TEXT_INPUT)
+		keyboardInput.type = K15_GUI_TEXT_INPUT;
+
+	//Doesn't really matter if we get the modifier mask from the keyInput or textInput since it's a union
+	keyboardInput.keyInput.modifierMask = p_SystemEvent->params.keyInput.modifierMask;
+
+	if (K15_IS_TEXT_KEY(p_SystemEvent->params.keyInput.key))
 	{
-		gameContext->pressed = K15_FALSE;
+		keyboardInput.keyType = K15_GUI_KEY_NORMAL;
+		keyboardInput.keyInput.key = p_SystemEvent->params.textInput.utf16Char;
+	}
+	else if (p_SystemEvent->params.keyInput.key == K15_ESCAPE_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_ESC;
+	else if (p_SystemEvent->params.keyInput.key == K15_RETURN_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_RETURN;
+	else if (p_SystemEvent->params.keyInput.key == K15_BACKSPACE_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_BACK;
+	else if (p_SystemEvent->params.keyInput.key == K15_TAB_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_TAB;
+	else if (p_SystemEvent->params.keyInput.key == K15_DEL_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_DEL;
+	else if (p_SystemEvent->params.keyInput.key == K15_PGDOWN_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_PGDWN;
+	else if (p_SystemEvent->params.keyInput.key == K15_PGUP_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_PGUP;
+	else if (p_SystemEvent->params.keyInput.key == K15_HOME_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_HOME;
+	else if (p_SystemEvent->params.keyInput.key == K15_END_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_END;
+	else if (p_SystemEvent->params.keyInput.key == K15_INSERT_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_INS;
+	else if (p_SystemEvent->params.keyInput.key == K15_F1_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_F1;
+	else if (p_SystemEvent->params.keyInput.key == K15_F2_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_F2;
+	else if (p_SystemEvent->params.keyInput.key == K15_F3_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_F3;
+	else if (p_SystemEvent->params.keyInput.key == K15_F4_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_F4;
+	else if (p_SystemEvent->params.keyInput.key == K15_F5_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_F5;
+	else if (p_SystemEvent->params.keyInput.key == K15_F6_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_F6;
+	else if (p_SystemEvent->params.keyInput.key == K15_F7_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_F7;
+	else if (p_SystemEvent->params.keyInput.key == K15_F8_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_F8;
+	else if (p_SystemEvent->params.keyInput.key == K15_F9_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_F9;
+	else if (p_SystemEvent->params.keyInput.key == K15_F10_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_F10;
+	else if (p_SystemEvent->params.keyInput.key == K15_F11_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_F11;
+	else if (p_SystemEvent->params.keyInput.key == K15_F12_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_F12;
+	else if (p_SystemEvent->params.keyInput.key == K15_LEFT_ARROW_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_LEFT;
+	else if (p_SystemEvent->params.keyInput.key == K15_RIGHT_ARROW_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_RIGHT;
+	else if (p_SystemEvent->params.keyInput.key == K15_UP_ARROW_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_UP;
+	else if (p_SystemEvent->params.keyInput.key == K15_DOWN_ARROW_KEY)
+		keyboardInput.keyType = K15_GUI_KEY_DOWN;
+
+	K15_GUIAddKeyboardInput(&p_GameContext->guiContext->input, &keyboardInput);
+}
+/*********************************************************************************/
+K15_EXPORT_SYMBOL void K15_OnInputEvent(K15_GameContext* p_GameContext, K15_SystemEvent* p_SystemEvent)
+{
+	if (!g_Initialized)
+	{
+		return;
 	}
 
-	K15_GUIAddMouseInput(&gameContext->guiContext->input, &mouseInput);
+	K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->userData;
+
+	if (p_SystemEvent->event == K15_MOUSE_BUTTON_PRESSED ||
+		p_SystemEvent->event == K15_MOUSE_BUTTON_RELEASED ||
+		p_SystemEvent->event == K15_MOUSE_WHEEL_MOVED ||
+		p_SystemEvent->event == K15_MOUSE_MOVED)
+	{
+		K15_OnMouseInputEvent(gameContext, p_SystemEvent);
+	}
+	else if (p_SystemEvent->event == K15_KEY_PRESSED ||
+		p_SystemEvent->event == K15_KEY_RELEASED ||
+		p_SystemEvent->event == K15_TEXT_INPUT)
+	{
+		K15_OnKeyboardInputEvent(gameContext, p_SystemEvent);
+	}
 }
 /*********************************************************************************/
 K15_EXPORT_SYMBOL void K15_OnSystemEvent(K15_GameContext* p_GameContext, K15_SystemEvent* p_SystemEvent)

@@ -14,7 +14,6 @@ struct K15_SystemEvent		// 96 Bits
 	union 
 	{
 		uint32 windowHandle;
-		uint32 key;
 		uint32 mouseButton;
 		uint32 controllerButton; //high order:controller ID | low order: button ID
 		uint32 wheelDelta;
@@ -22,17 +21,25 @@ struct K15_SystemEvent		// 96 Bits
 		float batteryPercentage;
 		float triggerValue;
 		float thumbValue;
-		union 
+
+		struct
 		{
-			uint8 utf8Char;
+			uint16 key;
+			uint16 modifierMask;
+		} keyInput;
+
+		struct
+		{
 			uint16 utf16Char;
-			uint32 utf32Char;
-		};
+			uint16 modifierMask;
+		} textInput;
+
 		struct 
 		{
 			int16 x;
 			int16 y;
 		} position;
+
 		struct  
 		{
 			uint16 width;

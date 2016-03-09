@@ -46,6 +46,97 @@ intern inline uint32 K15_Win32ConvertMouseButton(WPARAM wParam)
 	return mouseButton;
 }
 /*********************************************************************************/
+intern inline uint16 K15_Win32GetKeyModifier(LPARAM lParam)
+{
+	uint16 modifierMask = 0;
+
+	modifierMask |= (GetKeyState(VK_LSHIFT) & 0x8000) ? (K15_SHIFT_MODIFIER | K15_LEFT_SHIFT_MODIFIER) : 0;
+	modifierMask |= (GetKeyState(VK_RSHIFT) & 0x8000) ? (K15_SHIFT_MODIFIER | K15_RIGHT_SHIFT_MODIFIER) : 0;
+	modifierMask |= (GetKeyState(VK_LMENU) & 0x8000) ? (K15_ALT_MODIFIER | K15_LEFT_ALT_MODIFIER) : 0;
+	modifierMask |= (GetKeyState(VK_RMENU) & 0x8000) ? (K15_ALT_MODIFIER | K15_RIGHT_ALT_MODIFIER) : 0;
+	modifierMask |= (GetKeyState(VK_LCONTROL) & 0x8000) ? (K15_CTRL_MODIFIER | K15_LEFT_CTRL_MODIFIER) : 0;
+	modifierMask |= (GetKeyState(VK_RCONTROL) & 0x8000) ? (K15_CTRL_MODIFIER | K15_RIGHT_CTRL_MODIFIER) : 0;
+
+	return modifierMask;
+}
+/*********************************************************************************/
+intern inline uint16 K15_Win32ConvertKeyCode(WPARAM wParam)
+{
+	uint16 key = (uint16)wParam;
+
+	if (key == VK_ESCAPE)
+		key = K15_ESCAPE_KEY;
+	else if (key == VK_TAB)
+		key = K15_TAB_KEY;
+	else if (key == VK_CAPITAL)
+		key = K15_CAPS_LOCK_KEY;
+	else if (key == VK_LSHIFT)
+		key = K15_LSHIFT_KEY;
+	else if (key == VK_LCONTROL)
+		key = K15_LCTRL_KEY;
+	else if (key == VK_LMENU)
+		key = K15_LALT_KEY;
+	else if (key == VK_SPACE)
+		key = K15_SPACE_KEY;
+	else if (key == VK_RETURN)
+		key = K15_RETURN_KEY;
+	else if (key == VK_BACK)
+		key = K15_BACKSPACE_KEY;
+	else if (key == VK_INSERT)
+		key = K15_INSERT_KEY;
+	else if (key == VK_DELETE)
+		key = K15_DEL_KEY;
+	else if (key == VK_HOME)
+		key = K15_HOME_KEY;
+	else if (key == VK_END)
+		key = K15_END_KEY;
+	else if (key == VK_PRIOR)
+		key = K15_PGUP_KEY;
+	else if (key == VK_NEXT)
+		key = K15_PGDOWN_KEY;
+	else if (key == VK_LEFT)
+		key = K15_LEFT_ARROW_KEY;
+	else if (key == VK_RIGHT)
+		key = K15_RIGHT_ARROW_KEY;
+	else if (key == VK_UP)
+		key = K15_UP_ARROW_KEY;
+	else if (key == VK_DOWN)
+		key = K15_DOWN_ARROW_KEY;
+	else if (key == VK_F1)
+		key = K15_F1_KEY;
+	else if (key == VK_F2)
+		key = K15_F2_KEY;
+	else if (key == VK_F3)
+		key = K15_F3_KEY;
+	else if (key == VK_F4)
+		key = K15_F4_KEY;
+	else if (key == VK_F5)
+		key = K15_F5_KEY;
+	else if (key == VK_F6)
+		key = K15_F6_KEY;
+	else if (key == VK_F7)
+		key = K15_F7_KEY;
+	else if (key == VK_F8)
+		key = K15_F8_KEY;
+	else if (key == VK_F9)
+		key = K15_F9_KEY;
+	else if (key == VK_F10)
+		key = K15_F10_KEY;
+	else if (key == VK_F11)
+		key = K15_F11_KEY;
+	else if (key == VK_F12)
+		key = K15_F12_KEY;
+	else if (key == VK_RSHIFT)
+		key = K15_RSHIFT_KEY;
+	else if (key == VK_RCONTROL)
+		key = K15_RCTRL_KEY;
+	else if (key == VK_RMENU)
+		key = K15_RALT_KEY;
+		
+
+	return key;
+}
+/*********************************************************************************/
 intern inline void K15_Win32WindowCreated(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	DWORD connectedController = 0;
@@ -173,7 +264,8 @@ intern inline void K15_Win32KeyInputReceived(HWND hWnd, UINT uMsg, WPARAM wParam
 	}
 
 	win32Event.eventFlags |= K15_INPUT_EVENT_FLAG;
-	win32Event.params.key = (uint32)wParam;//K15_Win32ConvertKeyCode(wParam);
+	win32Event.params.keyInput.key = K15_Win32ConvertKeyCode(wParam);
+	win32Event.params.keyInput.modifierMask = K15_Win32GetKeyModifier(lParam);
 
 	if (win32Event.event > 0)
 	{
@@ -326,18 +418,22 @@ intern void K15_Win32PumpControllerEvents(K15_Win32Context* p_Win32Context, K15_
 	}
 }
 /*********************************************************************************/
-intern void K15_Win32TextInputReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+intern bool8 K15_Win32TextInputReceived(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	if (wParam == UNICODE_NOCHAR)
+	//returns whether the message was handled or not
+	if (wParam == UNICODE_NOCHAR && uMsg == WM_UNICHAR)
 	{
-		return;
+		return K15_FALSE;
 	}
 
 	K15_SystemEvent textInputEvent = {};
 	textInputEvent.event = K15_TEXT_INPUT;
 	textInputEvent.eventFlags = K15_INPUT_EVENT_FLAG;
-	textInputEvent.params.utf32Char = (uint32)wParam;
+	textInputEvent.params.textInput.utf16Char = (uint32)wParam;
+	textInputEvent.params.textInput.modifierMask = K15_Win32GetKeyModifier(lParam);
 	K15_AddSystemEventToQueue(&textInputEvent);
+
+	return K15_TRUE;
 }
 /*********************************************************************************/
 intern void K15_Win32CheckSystemPowerStatus(K15_Win32Context* p_Win32Context)
@@ -446,8 +542,7 @@ LRESULT CALLBACK K15_Win32WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 	case WM_CHAR:
 	case WM_UNICHAR:
-		K15_Win32TextInputReceived(hWnd, uMsg, wParam, lParam);
-		messageHandled = (wParam == UNICODE_NOCHAR);
+		messageHandled = K15_Win32TextInputReceived(hWnd, uMsg, wParam, lParam);
 		break;
 	}
 

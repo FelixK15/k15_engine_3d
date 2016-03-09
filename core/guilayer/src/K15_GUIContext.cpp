@@ -285,30 +285,18 @@ intern void K15_InternalGUIHandleMouseWheel(K15_GUIContext* p_GUIContext, K15_GU
 
 }
 /*********************************************************************************/
-intern void K15_InternalGUIHandleInput(K15_GUIContext* p_GUIContext)
+intern void K15_InternalGUIHandleMouseInput(K15_GUIContext* p_GUIContext, K15_GUIContextInput* p_Input)
 {
-	K15_GUIContextInput* input = &p_GUIContext->input;
-	uint16 oldMousePosX = input->mousePosX;
-	uint16 oldMousePosY = input->mousePosY;
-	uint16 newMousePosX = input->mousePosX;
-	uint16 newMousePosY = input->mousePosY;
-
-	//reset clicked element
-	K15_GUIElement* clickedElement = K15_InternalGUIGetElement(p_GUIContext, p_GUIContext->clickedElementIdHash);
-
-	if (clickedElement)
-	{
-		clickedElement->flagMask &= ~K15_GUI_ELEMENT_CLICKED;
-	}
-
-	p_GUIContext->clickedElementIdHash = 0;
-
+	uint16 oldMousePosX = p_Input->mousePosX;
+	uint16 oldMousePosY = p_Input->mousePosY;
+	uint16 newMousePosX = p_Input->mousePosX;
+	uint16 newMousePosY = p_Input->mousePosY;
 
 	for (uint32 mouseInputIndex = 0;
-	mouseInputIndex < input->numBufferedMouseInputs;
+		mouseInputIndex < p_Input->numBufferedMouseInputs;
 		++mouseInputIndex)
 	{
-		K15_GUIMouseInput* mouseInput = (input->bufferedMouseInput + mouseInputIndex);
+		K15_GUIMouseInput* mouseInput = (p_Input->bufferedMouseInput + mouseInputIndex);
 
 		if (mouseInput->type == K15_GUI_MOUSE_MOVED)
 		{
@@ -331,12 +319,49 @@ intern void K15_InternalGUIHandleInput(K15_GUIContext* p_GUIContext)
 		}
 	}
 
-	input->mouseDeltaX = newMousePosX - oldMousePosX;
-	input->mouseDeltaY = newMousePosY - oldMousePosY;
-	input->mousePosX = newMousePosX;
-	input->mousePosY = newMousePosY;
+	p_Input->mouseDeltaX = newMousePosX - oldMousePosX;
+	p_Input->mouseDeltaY = newMousePosY - oldMousePosY;
+	p_Input->mousePosX = newMousePosX;
+	p_Input->mousePosY = newMousePosY;
 
-	input->numBufferedMouseInputs = 0;
+	p_Input->numBufferedMouseInputs = 0;
+}
+/*********************************************************************************/
+intern void K15_InternalGUIHandleKeyboardInput(K15_GUIContext* p_GUIContext, K15_GUIContextInput* p_Input)
+{
+	for (uint32 inputIndex = 0;
+		inputIndex < p_Input->numBufferedKeyboardInputs;
+		++inputIndex)
+	{
+		K15_GUIKeyboardInput* keyboardInput = p_Input->bufferedKeyboardInput + inputIndex;
+
+		if (keyboardInput->keyType == K15_GUI_KEY_F1 &&
+			keyboardInput->type == K15_GUI_KEY_PRESSED)
+		{
+			//Toggle debug mode
+			p_GUIContext->debugModeActive = !p_GUIContext->debugModeActive;
+		}
+	}
+
+	p_Input->numBufferedKeyboardInputs = 0;
+}
+/*********************************************************************************/
+intern void K15_InternalGUIHandleInput(K15_GUIContext* p_GUIContext)
+{
+	K15_GUIContextInput* input = &p_GUIContext->input;
+
+	//reset clicked element
+	K15_GUIElement* clickedElement = K15_InternalGUIGetElement(p_GUIContext, p_GUIContext->clickedElementIdHash);
+
+	if (clickedElement)
+	{
+		clickedElement->flagMask &= ~K15_GUI_ELEMENT_CLICKED;
+	}
+
+	p_GUIContext->clickedElementIdHash = 0;
+
+	K15_InternalGUIHandleMouseInput(p_GUIContext, input);
+	K15_InternalGUIHandleKeyboardInput(p_GUIContext, input);
 }
 /*********************************************************************************/
 intern void K15_InternalSetGUIRectCoordinates(K15_GUIRectangle* p_GUIRectangle,
@@ -525,6 +550,7 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	guiContext->style = K15_InternalCreateDefaultStyle(p_ResourceContext);
 	guiContext->input.numBufferedKeyboardInputs = 0;
 	guiContext->input.numBufferedMouseInputs = 0;
+	guiContext->debugModeActive = K15_FALSE;
 	return guiContext;
 }
 /*********************************************************************************/
