@@ -591,6 +591,12 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 
 	uint32 currentGUIMemoryOffset = 0;
 
+	K15_Matrix4 orthoProj = K15_CreateOrthographicProjectionMatrix(p_RenderBackEnd->viewportWidth, p_RenderBackEnd->viewportHeight);
+	K15_UpdateUniformCacheEntry(&p_RenderBackEnd->uniformCache, K15_UNIFORM_SEMANTIC_PROJECTION_MATRIX,
+		(byte*)&orthoProj);
+
+	/*K15_GetTransformedVector(K15_CreateVector(400, 400, 1), orthoProj);*/
+
 	K15_RenderVertexFormatDesc vertexFormatP3C3 = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 2, 
 		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
 		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR3);
@@ -929,9 +935,59 @@ void K15_BeginFrame(K15_RenderBackEnd* p_RenderBackEnd)
 	p_RenderBackEnd->renderInterface.clearScreen(p_RenderBackEnd);
 }
 /*********************************************************************************/
+intern inline void K15_InternalDraw2DDebugGeometry(K15_RenderBackEnd* p_RenderBackEnd, 
+	K15_RenderMaterialDesc* p_Material, K15_RenderVertexFormatDesc* p_VertexFormat,
+	float* p_VertexBuffer, uint32 p_NumVertices)
+{
+	K15_Matrix4 orthoProj = K15_CreateOrthographicProjectionMatrix(p_RenderBackEnd->viewportWidth,
+		p_RenderBackEnd->viewportHeight);
+
+	K15_UpdateUniformCacheEntry(&p_RenderBackEnd->uniformCache,
+		K15_UNIFORM_SEMANTIC_PROJECTION_MATRIX, (byte*)&orthoProj);
+
+	K15_RenderVertexData* vertexData = p_RenderBackEnd->renderInterface.updateVertexData(p_RenderBackEnd,
+		p_VertexBuffer, p_NumVertices, p_VertexFormat);
+
+	K15_RenderGeometryDesc renderGeometry = {};
+	renderGeometry.vertexData = vertexData;
+	renderGeometry.worldMatrix = K15_GetIdentityMatrix4();
+	renderGeometry.topology = K15_RENDER_TOPOLOGY_TRIANGLES;
+	renderGeometry.material = p_Material;
+
+	p_RenderBackEnd->renderInterface.drawGeometry(p_RenderBackEnd, &renderGeometry);
+
+	free(vertexData);
+}
+/*********************************************************************************/
+intern inline void K15_InternalDrawDebugGeometry(K15_RenderBackEnd* p_RenderBackEnd)
+{
+	K15_RenderContext* renderContext = p_RenderBackEnd->renderContext;
+	K15_DebugRenderContext* debugRenderContext = renderContext->debugRenderContext;
+
+	if (debugRenderContext->num3DFloats > 0)
+	{
+		//K15_InternalDraw3DDebugGeometry();
+		debugRenderContext->num3DFloats = 0;
+	}
+
+	if (debugRenderContext->num2DFloats> 0)
+	{
+		uint32 numVertices = debugRenderContext->num2DFloats * sizeof(float)
+			/ debugRenderContext->debug2DVertexFormat.stride;
+
+		K15_InternalDraw2DDebugGeometry(p_RenderBackEnd, debugRenderContext->debugMaterial,
+			&debugRenderContext->debug2DVertexFormat, debugRenderContext->debug2DVertexBuffer,
+			numVertices);
+
+		debugRenderContext->num2DFloats = 0;
+	}
+}
+/*********************************************************************************/
 void K15_EndFrame(K15_RenderBackEnd * p_RenderBackEnd)
 {
 	K15_ASSERT_TEXT(p_RenderBackEnd, "Render Back End is NULL.");
+
+	K15_InternalDrawDebugGeometry(p_RenderBackEnd);
 
 	p_RenderBackEnd->renderInterface.swapFrameBuffer(p_RenderBackEnd);
 }

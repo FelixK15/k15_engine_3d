@@ -17,10 +17,10 @@ intern uint32 K15_InternalAddPerObjectUniformEntries(K15_SemanticTable* p_Semant
 	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_MODEL_MATRIX_SEMANTIC_NAME;
 
 	//gui projection
-	p_SemanticTable->entries[p_Counter].semanticID = K15_UNIFORM_SEMANTIC_GUI_PROJECTION_MATRIX;
+	p_SemanticTable->entries[p_Counter].semanticID = K15_UNIFORM_SEMANTIC_PROJECTION_MATRIX;
 	p_SemanticTable->entries[p_Counter].semanticGroupID = K15_UNIFORM_GROUP_PER_OBJECT;
-	p_SemanticTable->entries[p_Counter].variableName = K15_SEMANTIC_GUI_PROJECTION_MATRIX_VARIABLE_NAME;
-	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_GUI_PROJECTION_MATRIX_SEMANTIC_NAME;
+	p_SemanticTable->entries[p_Counter].variableName = K15_SEMANTIC_PROJECTION_MATRIX_VARIABLE_NAME;
+	p_SemanticTable->entries[p_Counter++].semanticName = K15_SEMANTIC_PROJECTION_MATRIX_SEMANTIC_NAME;
 
 	return p_Counter;
 }

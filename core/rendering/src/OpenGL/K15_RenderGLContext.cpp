@@ -159,6 +159,7 @@ intern inline void K15_InternalGetExtensionBoard(char* p_Extension, char* p_Buff
 intern void K15_InternalGLMatchInputLayoutWithVertexFormat(K15_ShaderProcessorContext* p_ShaderProcessorContext, 
 	K15_RenderVertexFormatDesc* p_VertexFormat, K15_GLInputLayout* p_InputLayout)
 {
+#ifdef K15_ENABLE_RENDER_PIPELINE_EVALUATION
 	for (uint32 vertexElementIndex = 0;
 	vertexElementIndex < p_VertexFormat->numAttributes;
 		++vertexElementIndex)
@@ -185,10 +186,12 @@ intern void K15_InternalGLMatchInputLayoutWithVertexFormat(K15_ShaderProcessorCo
 			K15_GetSemanticName(p_ShaderProcessorContext, vertexElement->semanticID),
 			K15_GetTypeName(p_ShaderProcessorContext, vertexElement->typeID));
 	}
+#endif //K15_ENABLE_RENDER_PIPELINE_EVALUATION
 }
 /*********************************************************************************/
 intern void K15_InternalGLEvaluatePipeline(K15_RenderBackEnd* p_RenderBackEnd, K15_GLRenderContext* p_GLContext)
 {
+#ifdef K15_ENABLE_RENDER_PIPELINE_EVALUATION
 	K15_GLProgram* glBoundVertexShader = p_GLContext->glBoundObjects.boundPrograms[K15_RENDER_PROGRAM_TYPE_VERTEX];
 	K15_RenderVertexFormatDesc* vertexFormat = 0;
 	uint32 vertexFormatHash = p_GLContext->glBoundObjects.boundVertexFormatHash;
@@ -203,6 +206,7 @@ intern void K15_InternalGLEvaluatePipeline(K15_RenderBackEnd* p_RenderBackEnd, K
 		K15_InternalGLMatchInputLayoutWithVertexFormat(p_RenderBackEnd->shaderProcessorContext, 
 			vertexFormat, &glBoundVertexShader->inputLayout);
 	}
+#endif //K15_ENABLE_RENDER_PIPELINE_EVALUATION
 }
 /*********************************************************************************/
 

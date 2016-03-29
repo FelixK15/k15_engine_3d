@@ -1,7 +1,7 @@
 float4 TransformVertex(in float2 pos : POSITION,
 		       in float2 uv : TEXCOORD1,
 		       in float3 color : COLOR1,
-		       in float4x4 gui_proj : GUIPROJECTIONMATRIX,
+		       in float4x4 gui_proj : PROJECTIONMATRIX,
 		       out float2 out_uv : TEXCOORD1,
 		       out float3 out_color : COLOR1)
 {

@@ -25,6 +25,7 @@ inline result8 K15_GLDrawGeometry(K15_RenderBackEnd* p_RenderBackEnd, K15_Render
 		K15_RenderMaterialPassDesc* materialPass = &material->materialPasses[materialPassIndex];
 		K15_GLBindMaterialPass(p_RenderBackEnd, materialPass);
 		K15_GLBindVertexFormat(p_RenderBackEnd, p_RenderGeometry->vertexData->vertexFormat);
+		K15_InternalGLEvaluatePipeline(p_RenderBackEnd, glContext);
 		K15_OPENGL_CALL(kglDrawArrays(glTopology, startIndex, numVertices));
 	}
 

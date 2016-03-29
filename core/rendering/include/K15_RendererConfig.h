@@ -14,6 +14,11 @@
 //would have an invalid handle for one frame. Shouldn't occur in the final product)
 #define K15_TOLERATE_INVALID_GPU_HANDLES
 
+#define K15_ENABLE_DEBUG_RENDERING
+
+//comment to disable render pipeline checks
+#define K15_ENABLE_RENDER_PIPELINE_EVALUATION
+
 #define K15_MAX_MIP_MAPS 20
 
 #endif //_K15_Render_Config_h_

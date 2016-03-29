@@ -38,6 +38,74 @@ intern result8 K15_InternalCreateSpecificRenderContext(K15_CustomMemoryAllocator
 	return K15_SUCCESS;
 }
 /*********************************************************************************/
+intern void K15_InternalCreateDebugRenderContext(K15_RenderContext* p_RenderContext, K15_RenderBackEnd* p_RenderBackEnd,
+	K15_DebugRenderContext** p_DebugRenderContextPtr, K15_CustomMemoryAllocator* p_MemoryAllocator)
+{
+#ifdef K15_ENABLE_DEBUG_RENDERING
+	uint32 numDebug2DVertices = 1000;
+	uint32 numDebug3DVertices = 4000;
+
+	*p_DebugRenderContextPtr = (K15_DebugRenderContext*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator, 
+		sizeof(K15_DebugRenderContext));
+
+	(*p_DebugRenderContextPtr)->debug2DVertexFormat = K15_CreateRenderVertexFormatDesc(p_RenderContext, 2,
+		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
+		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR3);
+
+	(*p_DebugRenderContextPtr)->debug3DVertexFormat = K15_CreateRenderVertexFormatDesc(p_RenderContext, 2,
+		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR3,
+		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR3);
+
+	uint32 size2DDebugVertexInBytes = (*p_DebugRenderContextPtr)->debug2DVertexFormat.stride;
+	uint32 size3DDebugVertexInBytes = (*p_DebugRenderContextPtr)->debug3DVertexFormat.stride;
+
+	(*p_DebugRenderContextPtr)->capacity2DFloats = size2DDebugVertexInBytes * numDebug2DVertices / sizeof(float);
+	(*p_DebugRenderContextPtr)->capacity3DFloats = size3DDebugVertexInBytes * numDebug3DVertices / sizeof(float);
+	(*p_DebugRenderContextPtr)->num2DFloats = 0;
+	(*p_DebugRenderContextPtr)->num3DFloats = 0;
+	(*p_DebugRenderContextPtr)->debug2DVertexBuffer = (float*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator,
+		size2DDebugVertexInBytes * numDebug2DVertices);
+	(*p_DebugRenderContextPtr)->debug3DVertexBuffer = (float*)K15_AllocateFromMemoryAllocator(p_MemoryAllocator,
+		size3DDebugVertexInBytes * numDebug3DVertices);
+
+	(*p_DebugRenderContextPtr)->debugMaterial = &p_RenderBackEnd->resources.materials.defaultGUIMaterial;
+#endif //K15_ENABLE_DEBUG_RENDERING
+}
+/*********************************************************************************/
+
+
+
+//Debug Rendering
+/*********************************************************************************/
+void K15_DebugRender2DRect(K15_RenderContext* p_RenderContext, uint32 p_PixelPosLeft, 
+	uint32 p_PixelPosRight, uint32 p_PixelPosTop, uint32 p_PixelPosBottom, 
+	uint32 p_Red, uint32 p_Green, uint32 p_Blue)
+{
+#ifdef K15_ENABLE_DEBUG_RENDERING
+	K15_DebugRenderContext* debugRenderContext = p_RenderContext->debugRenderContext;
+
+	uint32 vertexSizeInBytes = debugRenderContext->debug2DVertexFormat.stride;
+	uint32 index = debugRenderContext->num2DFloats;
+	float* buffer = debugRenderContext->debug2DVertexBuffer;
+
+	p_Red = K15_CLAMP(p_Red, 255, 0);
+	p_Green = K15_CLAMP(p_Green, 255, 0);
+	p_Blue = K15_CLAMP(p_Blue, 255, 0);
+
+	uint32 packedColor = K15_PackVector3(K15_CreateVector(p_Red, p_Green, p_Blue));
+
+	index = K15_InternalPush2DScreenspacePixelColoredRectVertices(buffer, index, p_PixelPosLeft, p_PixelPosRight,
+		p_PixelPosTop, p_PixelPosBottom, packedColor, packedColor, packedColor, packedColor);
+
+	debugRenderContext->num2DFloats = index;
+#endif //K15_ENABLE_DEBUG_RENDERING
+}
+/*********************************************************************************/
+
+
+
+
+/*********************************************************************************/
 void K15_SwapDispatchedRenderCommandQueueBuffers(K15_RenderContext* p_RenderContext)
 {
 	//lock mutex so another thread can't dispatch command queues while this thread is swapping
@@ -145,6 +213,9 @@ K15_RenderContext* K15_CreateRenderContextWithCustomAllocator(K15_OSContext* p_O
 	}
 
 	K15_InitializeRenderResources(&renderContext->backEnd);
+	K15_InternalCreateDebugRenderContext(renderContext, &renderContext->backEnd, 
+		&renderContext->debugRenderContext, &p_CustomMemoryAllocator);
+
 	return renderContext;
 }
 /*********************************************************************************/

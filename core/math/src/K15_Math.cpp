@@ -8,7 +8,18 @@
 #include "K15_Matrix4.cpp"
 #include "K15_Quaternion.cpp"
 
+/*********************************************************************************/
+K15_Matrix4 K15_CreateOrthographicProjectionMatrix(float p_Width, float p_Height)
+{
+	K15_Matrix4 ortho = {};
 
+	ortho.m[0][0] =  2.0f * (1.0f / p_Width);	ortho.m[0][1] =  0.0f;						ortho.m[0][2] = 0.0f; ortho.m[0][3] = 0.0f;
+	ortho.m[1][0] =  0.0f;						ortho.m[1][1] = -2.0f * (1.0f / p_Height);	ortho.m[1][2] = 0.0f; ortho.m[1][3] = 0.0f;
+	ortho.m[2][0] = -1.0f;						ortho.m[2][1] =  1.0f;						ortho.m[2][2] = 1.0f; ortho.m[2][3] = 0.0f;
+	ortho.m[3][0] =  0.0f;						ortho.m[3][1] =  0.0f;						ortho.m[3][2] = 0.0f; ortho.m[3][3] = 1.0f;
+
+	return ortho;
+}
 /*********************************************************************************/
 real32 K15_Lerp(real32 p_Start, real32 p_End, real32 p_Time)
 {
