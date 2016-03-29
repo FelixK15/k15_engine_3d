@@ -159,6 +159,27 @@ K15_RenderVertexFormatDesc K15_CreateRenderVertexFormatDesc(K15_RenderContext* p
 	return desc;
 }
 /*********************************************************************************/
+K15_RenderVertexFormatDesc* K15_GetCachedRenderVertexFormatDesc(K15_RenderVertexFormatCache* p_VertexFormatCache, 
+	uint32 p_VertexFormatHash)
+{
+	K15_RenderVertexFormatDesc* vertexFormat = 0;
+
+	for (uint32 vertexFormatIndex = 0;
+		vertexFormatIndex < p_VertexFormatCache->numVertexFormats;
+		++vertexFormatIndex)
+	{
+		K15_RenderVertexFormatDesc* desc = p_VertexFormatCache->vertexFormats + vertexFormatIndex;
+
+		if (desc->hash == p_VertexFormatHash)
+		{
+			vertexFormat = desc;
+			break;
+		}
+	}
+
+	return vertexFormat;
+}
+/*********************************************************************************/
 void K15_FreeRenderVertexFormatDesc(K15_RenderContext* p_RenderContext, K15_RenderVertexFormatDesc* p_RenderFormatDesc)
 {
 	K15_ASSERT_TEXT(p_RenderContext, "Render Context is NULL.");

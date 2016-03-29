@@ -5,6 +5,8 @@
 
 #define K15_MAX_RENDER_VERTEX_FORMAT_ATTRIBUTES 10
 
+struct K15_RenderVertexFormatCache;
+
 struct K15_RenderVertexFormatElementDesc
 {
 	int typeID;
@@ -22,7 +24,13 @@ struct K15_RenderVertexFormatDesc
 	K15_RenderVertexFormatElementDesc* elements;
 };
 
-K15_RenderVertexFormatDesc K15_CreateRenderVertexFormatDesc(K15_RenderContext* p_RenderContext, uint32 p_NumAttributes, ...);
-void K15_FreeRenderVertexFormatDesc(K15_RenderContext* p_RenderContext, K15_RenderVertexFormatDesc* p_RenderFormatDesc);
+K15_RenderVertexFormatDesc K15_CreateRenderVertexFormatDesc(K15_RenderContext* p_RenderContext, 
+	uint32 p_NumAttributes, ...);
+
+K15_RenderVertexFormatDesc* K15_GetCachedRenderVertexFormatDesc(K15_RenderVertexFormatCache* p_VertexFormatCache,
+	uint32 p_VertexFormatHash);
+
+void K15_FreeRenderVertexFormatDesc(K15_RenderContext* p_RenderContext, 
+	K15_RenderVertexFormatDesc* p_RenderFormatDesc);
 
 #endif //_K15_Rendering_RenderVertexFormat_h_

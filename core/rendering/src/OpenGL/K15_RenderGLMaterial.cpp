@@ -27,6 +27,8 @@ result8 K15_GLBindMaterialPass(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderMat
 		result = K15_GLUpdateProgramDataUniforms(p_RenderBackEnd, fragmentProgram, p_MaterialPassDesc);
 	}
 
+	K15_InternalGLEvaluatePipeline;
+
 	return result;
 }
 /*********************************************************************************/

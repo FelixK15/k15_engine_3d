@@ -121,6 +121,7 @@ struct K15_GLInputLayoutElement
 	GLint glRegisterIndex;
 	GLenum glType;
 	const GLvoid* offset;
+	const char* glName;
 };
 /*********************************************************************************/
 struct K15_GLInputLayout

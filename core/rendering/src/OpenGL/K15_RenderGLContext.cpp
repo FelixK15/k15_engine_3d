@@ -156,6 +156,57 @@ intern inline void K15_InternalGetExtensionBoard(char* p_Extension, char* p_Buff
 	K15_CopyStringIntoBuffer(board, p_Buffer, 3);
 }
 /*********************************************************************************/
+intern void K15_InternalGLMatchInputLayoutWithVertexFormat(K15_ShaderProcessorContext* p_ShaderProcessorContext, 
+	K15_RenderVertexFormatDesc* p_VertexFormat, K15_GLInputLayout* p_InputLayout)
+{
+	for (uint32 vertexElementIndex = 0;
+	vertexElementIndex < p_VertexFormat->numAttributes;
+		++vertexElementIndex)
+	{
+		K15_RenderVertexFormatElementDesc* vertexElement = p_VertexFormat->elements + vertexElementIndex;
+		bool inputElementMatch = false;
+
+		for (uint32 inputIndex = 0;
+		inputIndex < p_InputLayout->numInputElements;
+			++inputIndex)
+		{
+			K15_GLInputLayoutElement* inputElement = p_InputLayout->inputElements + inputIndex;
+
+			if (inputElement->semanticID == vertexElement->semanticID &&
+				inputElement->typeID == vertexElement->typeID)
+			{
+				inputElementMatch = true;
+				break;
+			}
+		}
+
+		K15_ASSERT_TEXT(inputElementMatch, "Could not match vertex shader input layout with vertex format. "
+			"(First mismatch: Vertex Element Index '%d' | Semantic: '%s' | Type: '%s')", vertexElementIndex, 
+			K15_GetSemanticName(p_ShaderProcessorContext, vertexElement->semanticID),
+			K15_GetTypeName(p_ShaderProcessorContext, vertexElement->typeID));
+	}
+}
+/*********************************************************************************/
+intern void K15_InternalGLEvaluatePipeline(K15_RenderBackEnd* p_RenderBackEnd, K15_GLRenderContext* p_GLContext)
+{
+	K15_GLProgram* glBoundVertexShader = p_GLContext->glBoundObjects.boundPrograms[K15_RENDER_PROGRAM_TYPE_VERTEX];
+	K15_RenderVertexFormatDesc* vertexFormat = 0;
+	uint32 vertexFormatHash = p_GLContext->glBoundObjects.boundVertexFormatHash;
+
+	if (vertexFormatHash != 0)
+	{
+		vertexFormat = K15_GetCachedRenderVertexFormatDesc(&p_RenderBackEnd->vertexFormatCache, vertexFormatHash);
+	}
+
+	if (vertexFormat && glBoundVertexShader)
+	{
+		K15_InternalGLMatchInputLayoutWithVertexFormat(p_RenderBackEnd->shaderProcessorContext, 
+			vertexFormat, &glBoundVertexShader->inputLayout);
+	}
+}
+/*********************************************************************************/
+
+
 
 #include "OpenGL/K15_RenderGLConversion.cpp"
 #include "OpenGL/K15_RenderGLBuffer.cpp"

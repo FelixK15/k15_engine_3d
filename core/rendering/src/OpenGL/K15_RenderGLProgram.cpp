@@ -371,7 +371,7 @@ intern void K15_InternGLReflectProgram(K15_RenderContext* p_RenderContext, K15_G
 			p_Program->inputLayout.inputElements[activeAttributeIndex].offset = (GLvoid*)offset;
 			p_Program->inputLayout.inputElements[activeAttributeIndex].typeID = typeID;
 			p_Program->inputLayout.inputElements[activeAttributeIndex].semanticID = semanticID;
-
+			p_Program->inputLayout.inputElements[activeAttributeIndex].glName = K15_CopyString(nameBuffer);
 			offset += attributeSizeInBytes;
 		}
 	}
@@ -854,7 +854,8 @@ result8 K15_GLBindProgram(K15_RenderBackEnd* p_RenderBackEnd, K15_RenderResource
 	K15_GLRenderContext* glContext = (K15_GLRenderContext*)p_RenderBackEnd->specificRenderPlatform;
 
 	GLuint glProgramPipelineHandle = glContext->extensions.separate_shader_objects.programPipelineHandle;
-	K15_GLProgram* glProgram = (K15_GLProgram*)K15_InternalGetGLObjectData(glContext, *p_RenderProgramHandle, K15_GL_TYPE_PROGRAM);
+	K15_GLProgram* glProgram = (K15_GLProgram*)K15_InternalGetGLObjectData(glContext, 
+		*p_RenderProgramHandle, K15_GL_TYPE_PROGRAM);
 	GLenum glProgramType = glProgram->glProgramType;
 
 	K15_RenderProgramType programType = K15_ConvertGLProgramType(glProgramType);
