@@ -50,11 +50,11 @@ intern void K15_InternalCreateDebugRenderContext(K15_RenderContext* p_RenderCont
 
 	(*p_DebugRenderContextPtr)->debug2DVertexFormat = K15_CreateRenderVertexFormatDesc(p_RenderContext, 2,
 		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
-		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR3);
+		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR4);
 
 	(*p_DebugRenderContextPtr)->debug3DVertexFormat = K15_CreateRenderVertexFormatDesc(p_RenderContext, 2,
 		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR3,
-		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR3);
+		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR4);
 
 	uint32 size2DDebugVertexInBytes = (*p_DebugRenderContextPtr)->debug2DVertexFormat.stride;
 	uint32 size3DDebugVertexInBytes = (*p_DebugRenderContextPtr)->debug3DVertexFormat.stride;
@@ -79,7 +79,7 @@ intern void K15_InternalCreateDebugRenderContext(K15_RenderContext* p_RenderCont
 /*********************************************************************************/
 void K15_DebugRender2DRect(K15_RenderContext* p_RenderContext, uint32 p_PixelPosLeft, 
 	uint32 p_PixelPosRight, uint32 p_PixelPosTop, uint32 p_PixelPosBottom, 
-	uint32 p_Red, uint32 p_Green, uint32 p_Blue)
+	uint32 p_Red, uint32 p_Green, uint32 p_Blue, uint32 p_Alpha)
 {
 #ifdef K15_ENABLE_DEBUG_RENDERING
 	K15_DebugRenderContext* debugRenderContext = p_RenderContext->debugRenderContext;
@@ -91,8 +91,9 @@ void K15_DebugRender2DRect(K15_RenderContext* p_RenderContext, uint32 p_PixelPos
 	p_Red = K15_CLAMP(p_Red, 255, 0);
 	p_Green = K15_CLAMP(p_Green, 255, 0);
 	p_Blue = K15_CLAMP(p_Blue, 255, 0);
+	p_Alpha = K15_CLAMP(p_Alpha , 255, 0);
 
-	uint32 packedColor = K15_PackVector3(K15_CreateVector(p_Red, p_Green, p_Blue));
+	uint32 packedColor = K15_PackVector4(K15_CreateVector(p_Red, p_Green, p_Blue, p_Alpha));
 
 	index = K15_InternalPush2DScreenspacePixelColoredRectVertices(buffer, index, p_PixelPosLeft, p_PixelPosRight,
 		p_PixelPosTop, p_PixelPosBottom, packedColor, packedColor, packedColor, packedColor);

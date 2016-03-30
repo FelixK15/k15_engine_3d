@@ -23,7 +23,7 @@
 
 #include <K15_Rectangle.h>
 #include <K15_Matrix4.h>
-
+#include <K15_Vector4.h>
 #include <K15_System.h>
 #include <K15_String.h>
 
@@ -173,10 +173,8 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 
  	char* text = (char*)alloca(128);
  	sprintf(text, "FPS: %.1f\nms: %.3f", p_GameContext->frameCounter.FPS, p_GameContext->frameCounter.avgDeltaTime);
-	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, K15_CreateVector(1.0f, 0.25f, 0.25f),
+	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, K15_CreateVector(1.0f, 0.25f, 0.25f, 1.0f),
 		K15_CreateVector(0.f, 0.f));
-
-	K15_DebugRender2DRect(p_GameContext->renderContext, 20, 40, 20, 40, 128, 255, 128);
 
 	//K15_GUIBeginDockingArea(guiContext, 0, 0, viewportWidth, viewportHeight, K15_GUI_LEFT_DOCKING_AREA);
 

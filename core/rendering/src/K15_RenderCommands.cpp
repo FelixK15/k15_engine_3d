@@ -11,6 +11,8 @@
 #include "K15_FontFormat.h"
 #include "K15_GUIContext.h"
 
+#include "K15_Vector3.h"
+
 /*********************************************************************************/
 intern result8 K15_InternalBeginRenderCommand(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderCommandType p_RenderCommand)
 {
@@ -72,14 +74,14 @@ void K15_RenderCommandDraw2DGUI(K15_RenderCommandQueue* p_RenderCommandQueue, K1
 }
 /*********************************************************************************/
 void K15_RenderCommandDraw2DText(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderFontDesc* p_FontDesc, 
-	const char* p_Text, K15_Vector3 p_Color, K15_Vector2 p_Position)
+	const char* p_Text, K15_Vector4 p_Color, K15_Vector2 p_Position)
 {
 	K15_RenderCommandDrawClipped2DText(p_RenderCommandQueue, p_FontDesc, p_Text, p_Color,
 		K15_CreateRectangle(p_Position.x, p_Position.y, FLT_MAX, FLT_MAX));
 }
 /*********************************************************************************/
 void K15_RenderCommandDrawClipped2DText(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderFontDesc* p_FontDesc,
-	const char* p_Text, K15_Vector3 p_Color, K15_Rectangle p_Rectangle)
+	const char* p_Text, K15_Vector4 p_Color, K15_Rectangle p_Rectangle)
 {
 	K15_ASSERT_TEXT(p_RenderCommandQueue, "Render Command Queue is NULL.");
 	K15_ASSERT_TEXT(p_FontDesc, "Font desc is NULL.");
@@ -88,7 +90,7 @@ void K15_RenderCommandDrawClipped2DText(K15_RenderCommandQueue* p_RenderCommandQ
 	result8 result = K15_InternalBeginRenderCommand(p_RenderCommandQueue, K15_RENDER_COMMAND_RENDER_2D_TEXT);
 
 	uint32 textLength = (uint32)strlen(p_Text);
-	uint32 packedColor = K15_PackVector3(p_Color);
+	uint32 packedColor = K15_PackVector4(p_Color);
 
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(K15_RenderFontDesc), p_FontDesc));
 	K15_CHECK_RESULT(K15_AddRenderCommandParameter(p_RenderCommandQueue, sizeof(uint32), &packedColor));

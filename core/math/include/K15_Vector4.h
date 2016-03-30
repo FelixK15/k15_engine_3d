@@ -22,6 +22,7 @@ struct K15_Vector4
 real32 K15_GetVectorDotProduct(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2);
 real32 K15_GetVectorLength(K15_Vector4& p_Vector);
 real32 K15_GetVectorSquaredLength(K15_Vector4& p_Vector);
+K15_Vector4 K15_CreateVector(real32 p_ComponentX, real32 p_ComponentY, real32 p_ComponentZ, real32 p_ComponentW);
 K15_Vector4 K15_GetCrossProduct(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2);
 K15_Vector4 K15_GetProjectedVector(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2);
 K15_Vector4 K15_GetNormalizedVector(K15_Vector4& p_Vector);
@@ -34,6 +35,7 @@ K15_Vector4 operator+(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2);
 K15_Vector4 operator-(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2);
 K15_Vector4 operator*(K15_Vector4& p_Vector, real32 p_Scalar);
 K15_Vector4 operator*(real32 p_Scalar, K15_Vector4& p_Vector);
+K15_Vector4 operator/(K15_Vector4& p_Vector, real32 p_Scalar);
 
 bool operator==(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2);
 bool operator!=(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2);

@@ -49,7 +49,7 @@ struct K15_RenderContext
 
 //Debug Rendering
 void K15_DebugRender2DRect(K15_RenderContext* p_RenderContext, uint32 p_PixelPosLeft, uint32 p_PixelPosRight,
-	uint32 p_PixelPosTop, uint32 p_PixelPosBottom, uint32 p_Red, uint32 p_Green, uint32 p_Blue);
+	uint32 p_PixelPosTop, uint32 p_PixelPosBottom, uint32 p_Red, uint32 p_Green, uint32 p_Blue, uint32 p_Alpha);
 
 void K15_SetRenderContextError(K15_RenderContext* p_RenderContext, const char* p_ErrorMessage, uint32 p_ErrorMessageLength = 0);
 

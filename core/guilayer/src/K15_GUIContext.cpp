@@ -31,29 +31,29 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 		K15_LoadResource(p_ResourceContext, K15_FONT_RESOURCE_IDENTIFIER, "fonts/gui_font.ttf", 0); 
 
 	//Button Style
-	defaultStyle.buttonStyle.borderLowerColor = 0x101010;
-	defaultStyle.buttonStyle.borderUpperColor = 0x606060;
-	defaultStyle.buttonStyle.lowerBackgroundColor = 0x505050;
-	defaultStyle.buttonStyle.upperBackgroundColor = 0x303030;
-	defaultStyle.buttonStyle.textColor = 0x000000;
+	defaultStyle.buttonStyle.borderLowerColor = 0xFF101010;
+	defaultStyle.buttonStyle.borderUpperColor = 0xFF606060;
+	defaultStyle.buttonStyle.lowerBackgroundColor = 0xFF505050;
+	defaultStyle.buttonStyle.upperBackgroundColor = 0xFF303030;
+	defaultStyle.buttonStyle.textColor = 0xFF000000;
 	defaultStyle.buttonStyle.borderPixelThickness = 2;
 	defaultStyle.buttonStyle.textPixelPadding = 2;
 	defaultStyle.buttonStyle.font = K15_GetResourceRenderFontDesc(p_ResourceContext, styleFontResource);
 	
 	//Window Style
-	defaultStyle.windowStyle.borderLowerColor = 0x000000;
-	defaultStyle.windowStyle.borderUpperColor = 0x050545;
-	defaultStyle.windowStyle.lowerBackgroundColor = 0x808080;
-	defaultStyle.windowStyle.upperBackgroundColor = 0x101010;
-	defaultStyle.windowStyle.upperTitleBackgroundColor = 0x000;
-	defaultStyle.windowStyle.lowerTitleBackgroundColor = 0x000;
-	defaultStyle.windowStyle.titleTextColor = 0xEEEEEE;
+	defaultStyle.windowStyle.borderLowerColor = 0xFF000000;
+	defaultStyle.windowStyle.borderUpperColor = 0xFF050545;
+	defaultStyle.windowStyle.lowerBackgroundColor = 0xFF808080;
+	defaultStyle.windowStyle.upperBackgroundColor = 0xFF101010;
+	defaultStyle.windowStyle.upperTitleBackgroundColor = 0xFF000000;
+	defaultStyle.windowStyle.lowerTitleBackgroundColor = 0xFF000000;
+	defaultStyle.windowStyle.titleTextColor = 0xFFEEEEEE;
 	defaultStyle.windowStyle.borderPixelThickness = 2;
 	defaultStyle.windowStyle.titlePixelPadding = 2;
 	defaultStyle.windowStyle.font = K15_GetResourceRenderFontDesc(p_ResourceContext, styleFontResource);
 	
 	//Label Style
-	defaultStyle.labelStyle.textColor = 0x000000;
+	defaultStyle.labelStyle.textColor = 0xFF000000;
 	defaultStyle.labelStyle.font = K15_GetResourceRenderFontDesc(p_ResourceContext, styleFontResource);
 
 	return defaultStyle;

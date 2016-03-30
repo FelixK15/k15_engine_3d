@@ -17,6 +17,12 @@ real32 K15_GetVectorSquaredLength(K15_Vector4& p_Vector)
 	return p_Vector.x * p_Vector.x + p_Vector.y * p_Vector.y + p_Vector.z * p_Vector.z + p_Vector.w * p_Vector.w;
 }
 /*********************************************************************************/
+K15_Vector4 K15_CreateVector(real32 p_ComponentX, real32 p_ComponentY, real32 p_ComponentZ, real32 p_ComponentW)
+{
+	K15_Vector4 vec = { p_ComponentX, p_ComponentY, p_ComponentZ, p_ComponentW };
+	return vec;
+}
+/*********************************************************************************/
 K15_Vector4 K15_GetCrossProduct(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2)
 {
 	K15_Vector4 crossProduct = {};
@@ -66,7 +72,7 @@ K15_Vector4 operator+(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2)
 	vectorSum.x = p_Vector1.x + p_Vector2.x;
 	vectorSum.y = p_Vector1.y + p_Vector2.y;
 	vectorSum.z = p_Vector1.z + p_Vector2.z;
-	vectorSum.z = p_Vector1.w + p_Vector2.w;
+	vectorSum.w = p_Vector1.w + p_Vector2.w;
 
 	return vectorSum;
 }
@@ -78,7 +84,7 @@ K15_Vector4 operator-(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2)
 	vectorDifference.x = p_Vector1.x - p_Vector2.x;
 	vectorDifference.y = p_Vector1.y - p_Vector2.y;
 	vectorDifference.z = p_Vector1.z - p_Vector2.z;
-	vectorDifference.z = p_Vector1.w - p_Vector2.w;
+	vectorDifference.w = p_Vector1.w - p_Vector2.w;
 
 	return vectorDifference;
 }
@@ -90,7 +96,7 @@ K15_Vector4 operator*(K15_Vector4& p_Vector, real32 p_Scalar)
 	scaledVector.x = p_Vector.x * p_Scalar;
 	scaledVector.y = p_Vector.y * p_Scalar;
 	scaledVector.z = p_Vector.z * p_Scalar;
-	scaledVector.z = p_Vector.w * p_Scalar;
+	scaledVector.w = p_Vector.w * p_Scalar;
 
 	return scaledVector;
 }
@@ -98,6 +104,18 @@ K15_Vector4 operator*(K15_Vector4& p_Vector, real32 p_Scalar)
 K15_Vector4 operator*(real32 p_Scalar, K15_Vector4& p_Vector)
 {
 	return p_Vector * p_Scalar;
+}
+/*********************************************************************************/
+K15_Vector4 operator/(K15_Vector4& p_Vector, real32 p_Scalar)
+{
+	K15_Vector4 scaledVector = {};
+
+	scaledVector.x = p_Vector.x / p_Scalar;
+	scaledVector.y = p_Vector.y / p_Scalar;
+	scaledVector.z = p_Vector.z / p_Scalar;
+	scaledVector.w = p_Vector.w / p_Scalar;
+
+	return scaledVector;
 }
 /*********************************************************************************/
 bool operator==(K15_Vector4& p_Vector1, K15_Vector4& p_Vector2)

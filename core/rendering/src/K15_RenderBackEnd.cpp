@@ -321,7 +321,7 @@ intern void K15_InternalLoadDefaultVertexFormats(K15_RenderBackEnd* p_RenderBack
 	K15_RenderVertexFormatDesc fontVertexFormatDesc = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 3,
 		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
 		K15_ATTRIBUTE_SEMANTIC_TEXCOORD1, K15_TYPE_FLOAT_VECTOR2,
-		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR3);
+		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR4);
 
 	p_RenderBackEnd->resources.vertexFormats.fontVertexFormat = fontVertexFormatDesc;
 }
@@ -599,15 +599,16 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 
 	K15_RenderVertexFormatDesc vertexFormatP3C3 = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 2, 
 		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
-		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR3);
+		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR4);
 	
 	K15_RenderVertexFormatDesc vertexFormatP3T2C3 = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 3,
 		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
 		K15_ATTRIBUTE_SEMANTIC_TEXCOORD1, K15_TYPE_FLOAT_VECTOR2,
-		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR3);
+		K15_ATTRIBUTE_SEMANTIC_COLOR1, K15_TYPE_FLOAT_VECTOR4);
 
 	//count vertices
 	K15_GUIDrawInformation guiDrawInfo = {};
+	guiDrawInfo.renderContext = p_RenderBackEnd->renderContext;
 	K15_GUIIterateRetainedElements(&guiContext, K15_InternalCountGUIElementVertices, &guiDrawInfo);
 
 	//early out

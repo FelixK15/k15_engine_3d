@@ -8,7 +8,7 @@ K15_Matrix4 K15_CreateOrthographicProjectionMatrix(float p_Width, float p_Height
 real32 K15_Lerp(real32 p_Start, real32 p_End, real32 p_Time);
 K15_Vector2 K15_Lerp(K15_Vector2 p_Start, K15_Vector2 p_End, real32 p_T);
 K15_Vector3 K15_Lerp(K15_Vector3 p_Start, K15_Vector3 p_End, real32 p_T);
-K15_Vector3 K15_LerpColor(K15_Vector3 p_Start, K15_Vector3 p_End, real32 p_T);
+K15_Vector4 K15_Lerp(K15_Vector4 p_Start, K15_Vector4 p_End, real32 p_T);
 
 K15_Vector3 K15_ConvertToHSV(const K15_Vector3& p_RGBColor);
 K15_Vector3 K15_ConvertToRGB(const K15_Vector3& p_HSVColor);

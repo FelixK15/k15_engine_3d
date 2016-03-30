@@ -30,6 +30,7 @@
 /*********************************************************************************/
 struct K15_GUIDrawInformation
 {
+	K15_RenderContext* renderContext;
 	uint32 numVerticesP3C3;
 	uint32 numVerticesP3T2C3;
 	uint32 numFloatsVertexBufferP3C3;
@@ -187,9 +188,9 @@ intern void K15_InternalPushGUIWindowVertices(K15_GUIElement* p_GUIElement, K15_
 	float* P2C3Buffer = p_DrawInfo->vertexBufferP3C3;
 	float* P3T2C3Buffer = p_DrawInfo->vertexBufferP3T2C3;
 
-	K15_Vector3 borderTopColor = K15_UnpackVector3(windowStyle->borderUpperColor);
-	K15_Vector3 borderLowerColor = K15_UnpackVector3(windowStyle->borderLowerColor);
-	K15_Vector3 borderLerpTopLowerColor = K15_Lerp(borderTopColor, borderLowerColor, 
+	K15_Vector4 borderTopColor = K15_UnpackVector4(windowStyle->borderUpperColor);
+	K15_Vector4 borderLowerColor = K15_UnpackVector4(windowStyle->borderLowerColor);
+	K15_Vector4 borderLerpTopLowerColor = K15_Lerp(borderTopColor, borderLowerColor, 
 		(float)(titlePixelPosBottom - pixelPosTop) / (float)(pixelPosBottom - pixelPosTop));
 
 
@@ -285,6 +286,14 @@ intern void K15_InternalPushGUIElementVertices(K15_GUIContext* p_GUIContext, K15
 	case K15_GUI_LABEL:
 		K15_InternalPushGUILabelVertices(p_GUIElement, drawInfo);
 		break;
+	}
+
+	if (p_GUIContext->debugModeActive &&
+		p_GUIElement->flagMask & K15_GUI_ELEMENT_HOVERED)
+	{
+		K15_DebugRender2DRect(drawInfo->renderContext, p_GUIElement->rect.pixelPosLeft,
+			p_GUIElement->rect.pixelPosRight, p_GUIElement->rect.pixelPosTop,
+			p_GUIElement->rect.pixelPosBottom, 255, 0, 0, 170);
 	}
 }
 /*********************************************************************************/

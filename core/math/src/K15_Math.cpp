@@ -35,17 +35,11 @@ K15_Vector3 K15_Lerp(K15_Vector3 p_Start, K15_Vector3 p_End, real32 p_Time)
 {
 	return (1.0f - p_Time) * p_Start + p_Time * p_End;
 }
-/*********************************************************************************/
-K15_Vector3 K15_LerpColor(K15_Vector3 p_Start, K15_Vector3 p_End, real32 p_T)
-{
-// 	K15_Vector3 hsvStartColor = K15_ConvertToHSV(p_Start);
-// 	K15_Vector3 hsvEndColor = K15_ConvertToHSV(p_End);
-// 
-// 	K15_Vector3 lerpedHSVColor = K15_Lerp(hsvStartColor, hsvEndColor, p_T);
-// 
-// 	return K15_ConvertToRGB(lerpedHSVColor);
 
-	return K15_Lerp(p_Start, p_End, p_T);
+/*********************************************************************************/
+K15_Vector4 K15_Lerp(K15_Vector4 p_Start, K15_Vector4 p_End, real32 p_Time)
+{
+	return (1.0f - p_Time) * p_Start + p_Time * p_End;
 }
 /*********************************************************************************/
 K15_Vector3 K15_ConvertToHSV(const K15_Vector3& p_RGBColor)

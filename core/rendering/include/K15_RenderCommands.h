@@ -22,12 +22,12 @@ void K15_RenderCommandDraw2DGUI(K15_RenderCommandQueue* p_RenderCommandQueue,
 
 void K15_RenderCommandDraw2DText(K15_RenderCommandQueue* p_RenderCommandQueue,
 	K15_RenderFontDesc* p_FontDesc,
-	const char* p_Text, K15_Vector3 p_Color,
+	const char* p_Text, K15_Vector4 p_Color,
 	K15_Vector2 p_Position);
 
 void K15_RenderCommandDrawClipped2DText(K15_RenderCommandQueue* p_RenderCommandQueue, 
 										K15_RenderFontDesc* p_FontDesc, 
-										const char* p_Text, K15_Vector3 p_Color,
+										const char* p_Text, K15_Vector4 p_Color,
 										K15_Rectangle p_Rect);
 
 void K15_RenderCommandCreateTextureFromTextureFormat(K15_RenderCommandQueue* p_RenderCommandQueue, K15_RenderResourceHandle* p_TextureHandle, K15_TextureFormat* p_TextureFormat);
