@@ -169,8 +169,8 @@ intern void K15_InternalPushGUIWindowVertices(K15_GUIElement* p_GUIElement, K15_
 
 	int32 textPixelPosLeft = pixelPosLeft + windowStyle->titlePixelPadding;
 	int32 textPixelPosTop = pixelPosTop + windowStyle->titlePixelPadding;
-	int32 textPixelPosRight = textPixelPosLeft + textPixelWidth;
-	int32 textPixelPosBottom = textPixelPosTop + textPixelHeight;
+	int32 textPixelPosRight = textPixelPosLeft + (pixelPosRight - pixelPosLeft);
+	int32 textPixelPosBottom = textPixelPosTop + (pixelPosBottom - pixelPosTop);
 
 	uint32 windowUpperBackgroundColor = windowStyle->upperBackgroundColor;
 	uint32 windowLowerBackgroundColor = windowStyle->lowerBackgroundColor;

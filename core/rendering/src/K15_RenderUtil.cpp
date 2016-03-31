@@ -714,7 +714,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_R
 	float maxGlyphPixelHeight = p_RenderFontDesc->ascent - p_RenderFontDesc->descent;
 
 	for (uint32 textIndex = 0;
-	textIndex < p_TextLength;
+		textIndex < p_TextLength;
 		++textIndex)
 	{
 		const char character = p_Text[textIndex];

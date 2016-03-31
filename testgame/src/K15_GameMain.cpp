@@ -167,7 +167,7 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 		else
 		{
 			windowWidth -= 1;
-			swap = windowWidth < 50 ? K15_TRUE : K15_FALSE;
+			swap = windowWidth < 10 ? K15_TRUE : K15_FALSE;
 		}
 	}
 
@@ -176,13 +176,11 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, K15_CreateVector(1.0f, 0.25f, 0.25f, 1.0f),
 		K15_CreateVector(0.f, 0.f));
 
-	//K15_GUIBeginDockingArea(guiContext, 0, 0, viewportWidth, viewportHeight, K15_GUI_LEFT_DOCKING_AREA);
+	K15_GUIBeginDockingArea(guiContext, 0, 0, viewportWidth, viewportHeight, K15_GUI_LEFT_DOCKING_AREA);
 
 	if (K15_GUIBeginWindow(guiContext, &windowPosX, &windowPosY, &windowWidth, &windowHeight, "Test Window", "window_1"))
 	{
-		K15_GUILabel(guiContext, "Press button for test:", "label_1");
-		K15_GUIButton(guiContext, "test button", "button_1");
- 		K15_GUIButton(guiContext, "test button", "button_2");
+//		K15_GUIButton(guiContext, "test button", "button_0");
 // 		K15_GUIButton(guiContext, "test button", "button_3");
 // 		K15_GUIButton(guiContext, "test button", "button_4");
 // 		K15_GUIButton(guiContext, "test button", "button_5");
@@ -195,7 +193,7 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 		K15_GUIEndWindow(guiContext);
 	}
 
-	//K15_GUIEndDockingArea(guiContext);
+	K15_GUIEndDockingArea(guiContext);
 	K15_GUIFinishGUIFrame(guiContext);
 
 	K15_RenderCommandDraw2DGUI(gameRenderCommandQueue, guiContext);

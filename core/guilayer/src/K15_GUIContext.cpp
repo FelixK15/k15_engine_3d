@@ -562,7 +562,7 @@ byte* K15_GUIGetGUIElementMemory(K15_GUIElement* p_GUIElement)
 void K15_GUIBeginDockingArea(K15_GUIContext* p_GUIContext, int32 p_PosX, int32 p_PosY,
 	uint32 p_Width, uint32 p_Height, uint32 p_AllowedDockingAreasMask)
 {
-
+	
 }
 /*********************************************************************************/
 bool8 K15_GUIBeginWindow(K15_GUIContext* p_GUIContext, int32* p_PosX, int32* p_PosY,
@@ -704,8 +704,15 @@ intern void K15_InternalGUIAlignElements(K15_GUILayout* p_Layouts, uint16 p_NumL
 		uint16 offsetX = 0;
 		uint16 offsetY = 0;
 
+		if (numElements == 0)
+		{
+			continue;
+		}
+
+		uint32 elementWidth = (layoutWidth / numElements);
+
 		for (uint16 elementIndex = 0;
-		elementIndex < numElements;
+			elementIndex < numElements;
 			++elementIndex)
 		{
 			K15_GUIRectangle* rect = layout->elementRectangles[elementIndex];
@@ -721,10 +728,10 @@ intern void K15_InternalGUIAlignElements(K15_GUILayout* p_Layouts, uint16 p_NumL
 				break;
 
 			case K15_GUI_HORIZONTAL_LAYOUT:
-				uint32 elementWidth = (layoutWidth / numElements);
 				rect->pixelPosRight = rect->pixelPosLeft + elementWidth;
 				rect->pixelPosBottom = rect->pixelPosTop + 20;
 				offsetX += elementWidth;
+ 
 				break;
 			}
 		}
