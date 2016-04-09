@@ -70,6 +70,21 @@ intern void K15_InternalCountGUIElementVertices(K15_GUIContext* p_GUIContext, K1
 		break;
 	}
 
+	case K15_GUI_MENU:
+	{
+		K15_GUIMenuData* menuData = (K15_GUIMenuData*)K15_GUIGetGUIElementMemory(p_GUIElement);
+		K15_RenderFontDesc* font = menuData->menuStyle->font;
+		drawInfo->numVerticesP3C3 += 6;
+		drawInfo->numVerticesP3T2C3 += K15_GetTextVertexCount(font, menuData->title, menuData->textLength);
+		break;
+	}
+
+	case K15_GUI_TOOLBAR:
+	{
+		drawInfo->numVerticesP3C3 += 6;
+		break;
+	}
+
 	case K15_GUI_LABEL:
 	{
 		K15_GUILabelData* labelData = (K15_GUILabelData*)K15_GUIGetGUIElementMemory(p_GUIElement);
@@ -267,6 +282,86 @@ intern void K15_InternalPushGUILabelVertices(K15_GUIElement* p_GUIElement, K15_G
 	p_DrawInfo->numFloatsVertexBufferP3T2C3 = P3T2C3Index;
 }
 /*********************************************************************************/
+intern void K15_InternalPushGUIMenuVertices(K15_GUIElement* p_GUIElement, K15_GUIDrawInformation* p_DrawInfo)
+{
+	K15_GUIMenuData* menuData= (K15_GUIMenuData*)K15_GUIGetGUIElementMemory(p_GUIElement);
+	K15_GUIMenuStyle* menuStyle = menuData->menuStyle;
+	K15_RenderFontDesc* font = menuData->menuStyle->font;
+	const char* text = menuData->title;
+	uint32 textLength = menuData->textLength;
+
+	uint32 pixelPadding = menuStyle->pixelPadding;
+
+	uint32 pixelPosTop = p_GUIElement->rect.pixelPosTop;
+	uint32 pixelPosLeft = p_GUIElement->rect.pixelPosLeft;
+	uint32 pixelPosRight = p_GUIElement->rect.pixelPosRight;
+	uint32 pixelPosBottom = p_GUIElement->rect.pixelPosBottom;
+
+	uint32 textPixelPosTop = pixelPosTop + pixelPadding;
+	uint32 textPixelPosBottom = pixelPosBottom - pixelPadding;
+	uint32 textPixelPosLeft = pixelPosLeft + pixelPadding;
+	uint32 textPixelPosRight = pixelPosRight - pixelPadding;
+
+	uint32 P3C3Index = p_DrawInfo->numFloatsVertexBufferP3C3;
+	uint32 P3T2C3Index = p_DrawInfo->numFloatsVertexBufferP3T2C3;
+
+	float* P2C3Buffer = p_DrawInfo->vertexBufferP3C3;
+	float* P3T2C3Buffer = p_DrawInfo->vertexBufferP3T2C3;
+
+	uint32 textColor		= menuStyle->textColor;
+	uint32 lowerLeftColor	= menuStyle->lowerBackgroundColor;
+	uint32 lowerRightColor	= menuStyle->lowerBackgroundColor;
+	uint32 upperLeftColor	= menuStyle->upperBackgroundColor;
+	uint32 upperRightColor	= menuStyle->upperBackgroundColor;
+
+	if (p_GUIElement->flagMask & K15_GUI_ELEMENT_HOVERED)
+	{
+		lowerLeftColor  = menuStyle->lowerHighlightedBackgroundColor;
+		lowerRightColor = menuStyle->lowerHighlightedBackgroundColor;
+		upperLeftColor  = menuStyle->upperHighlightedBackgroundColor;
+		upperRightColor = menuStyle->upperHighlightedBackgroundColor;
+	}
+	else if (p_GUIElement->flagMask & K15_GUI_ELEMENT_CLICKED)
+	{
+		lowerLeftColor = menuStyle->lowerActiveBackgroundColor;
+		lowerRightColor = menuStyle->lowerActiveBackgroundColor;
+		upperLeftColor = menuStyle->upperActiveBackgroundColor;
+		upperRightColor = menuStyle->upperActiveBackgroundColor;
+	}
+
+	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRectVertices(P2C3Buffer, P3C3Index,
+		pixelPosLeft, pixelPosRight, pixelPosTop, pixelPosBottom,
+		upperLeftColor, upperRightColor, lowerLeftColor, lowerRightColor);
+
+	P3T2C3Index = K15_InternalPush2DScreenspacePixelColoredTextVertices(font, P3T2C3Buffer, P3T2C3Index,
+		textPixelPosLeft, textPixelPosTop, textPixelPosRight, textPixelPosBottom, textColor,
+		text, textLength);
+	
+	p_DrawInfo->numFloatsVertexBufferP3C3 = P3C3Index;
+	p_DrawInfo->numFloatsVertexBufferP3T2C3 = P3T2C3Index;
+}
+/*********************************************************************************/
+intern void K15_InternalPushGUIToolBarVertices(K15_GUIElement* p_GUIElement, K15_GUIDrawInformation* p_DrawInfo)
+{
+	uint32 P3C3Index = p_DrawInfo->numFloatsVertexBufferP3C3;
+	float* P2C3Buffer = p_DrawInfo->vertexBufferP3C3;
+	
+	K15_GUIToolBarData* toolBarData = (K15_GUIToolBarData*)K15_GUIGetGUIElementMemory(p_GUIElement);
+	uint32 upperColor = toolBarData->toolBarStyle->upperBackgroundColor;
+	uint32 lowerColor = toolBarData->toolBarStyle->lowerBackgroundColor;
+
+	uint32 pixelPosLeft = p_GUIElement->rect.pixelPosLeft;
+	uint32 pixelPosRight = p_GUIElement->rect.pixelPosRight;
+	uint32 pixelPosTop = p_GUIElement->rect.pixelPosTop;
+	uint32 pixelPosBottom = p_GUIElement->rect.pixelPosBottom;
+
+	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRectVertices(P2C3Buffer, P3C3Index,
+		pixelPosLeft, pixelPosRight, pixelPosTop, pixelPosBottom,
+		upperColor, upperColor, lowerColor, lowerColor);
+
+	p_DrawInfo->numFloatsVertexBufferP3C3 = P3C3Index;
+}
+/*********************************************************************************/
 intern void K15_InternalPushGUIElementVertices(K15_GUIContext* p_GUIContext, K15_GUIElement* p_GUIElement,
 	void* p_UserData)
 {
@@ -285,6 +380,14 @@ intern void K15_InternalPushGUIElementVertices(K15_GUIContext* p_GUIContext, K15
 
 	case K15_GUI_LABEL:
 		K15_InternalPushGUILabelVertices(p_GUIElement, drawInfo);
+		break;
+
+	case K15_GUI_MENU:
+		K15_InternalPushGUIMenuVertices(p_GUIElement, drawInfo);
+		break;
+
+	case K15_GUI_TOOLBAR:
+		K15_InternalPushGUIToolBarVertices(p_GUIElement, drawInfo);
 		break;
 	}
 

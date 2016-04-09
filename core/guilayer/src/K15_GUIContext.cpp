@@ -56,6 +56,21 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	defaultStyle.labelStyle.textColor = 0xFF000000;
 	defaultStyle.labelStyle.font = K15_GetResourceRenderFontDesc(p_ResourceContext, styleFontResource);
 
+	//Toolbar Style
+	defaultStyle.toolBarStyle.upperBackgroundColor = 0xFF101010;
+	defaultStyle.toolBarStyle.lowerBackgroundColor = 0xFF808080;
+
+	//Menu Style
+	defaultStyle.menuStyle.font = K15_GetResourceRenderFontDesc(p_ResourceContext, styleFontResource);
+	defaultStyle.menuStyle.lowerBackgroundColor = 0xFF808080;
+	defaultStyle.menuStyle.upperBackgroundColor = 0xFF101010;
+	defaultStyle.menuStyle.lowerActiveBackgroundColor = 0xFFC0C0C0;
+	defaultStyle.menuStyle.upperActiveBackgroundColor = 0xFF606060;
+	defaultStyle.menuStyle.lowerHighlightedBackgroundColor = 0xFFA0A0A0;
+	defaultStyle.menuStyle.upperHighlightedBackgroundColor = 0xFF404040;
+	defaultStyle.menuStyle.textColor = 0XFF000000;
+	defaultStyle.menuStyle.pixelPadding = 2;
+
 	return defaultStyle;
 }
 /*********************************************************************************/
@@ -285,18 +300,18 @@ intern void K15_InternalGUIHandleMouseWheel(K15_GUIContext* p_GUIContext, K15_GU
 
 }
 /*********************************************************************************/
-intern void K15_InternalGUIHandleMouseInput(K15_GUIContext* p_GUIContext, K15_GUIContextInput* p_Input)
+intern void K15_InternalGUIHandleMouseInput(K15_GUIContext* p_GUIContext, K15_GUIContextEvents* p_Events)
 {
-	uint16 oldMousePosX = p_Input->mousePosX;
-	uint16 oldMousePosY = p_Input->mousePosY;
-	uint16 newMousePosX = p_Input->mousePosX;
-	uint16 newMousePosY = p_Input->mousePosY;
+	uint16 oldMousePosX = p_Events->mousePosX;
+	uint16 oldMousePosY = p_Events->mousePosY;
+	uint16 newMousePosX = p_Events->mousePosX;
+	uint16 newMousePosY = p_Events->mousePosY;
 
-	for (uint32 mouseInputIndex = 0;
-		mouseInputIndex < p_Input->numBufferedMouseInputs;
-		++mouseInputIndex)
+	for (uint32 eventIndex = 0;
+		eventIndex < p_Events->numBufferedMouseInputs;
+		++eventIndex)
 	{
-		K15_GUIMouseInput* mouseInput = (p_Input->bufferedMouseInput + mouseInputIndex);
+		K15_GUIMouseInput* mouseInput = (p_Events->bufferedMouseInput + eventIndex);
 
 		if (mouseInput->type == K15_GUI_MOUSE_MOVED)
 		{
@@ -319,21 +334,21 @@ intern void K15_InternalGUIHandleMouseInput(K15_GUIContext* p_GUIContext, K15_GU
 		}
 	}
 
-	p_Input->mouseDeltaX = newMousePosX - oldMousePosX;
-	p_Input->mouseDeltaY = newMousePosY - oldMousePosY;
-	p_Input->mousePosX = newMousePosX;
-	p_Input->mousePosY = newMousePosY;
-
-	p_Input->numBufferedMouseInputs = 0;
+	p_Events->mouseDeltaX = newMousePosX - oldMousePosX;
+	p_Events->mouseDeltaY = newMousePosY - oldMousePosY;
+	p_Events->mousePosX = newMousePosX;
+	p_Events->mousePosY = newMousePosY;
+	
+	p_Events->numBufferedMouseInputs = 0;
 }
 /*********************************************************************************/
-intern void K15_InternalGUIHandleKeyboardInput(K15_GUIContext* p_GUIContext, K15_GUIContextInput* p_Input)
+intern void K15_InternalGUIHandleKeyboardInput(K15_GUIContext* p_GUIContext, K15_GUIContextEvents* p_Events)
 {
-	for (uint32 inputIndex = 0;
-		inputIndex < p_Input->numBufferedKeyboardInputs;
-		++inputIndex)
+	for (uint32 eventIndex = 0;
+		eventIndex < p_Events->numBufferedKeyboardInputs;
+		++eventIndex)
 	{
-		K15_GUIKeyboardInput* keyboardInput = p_Input->bufferedKeyboardInput + inputIndex;
+		K15_GUIKeyboardInput* keyboardInput = p_Events->bufferedKeyboardInput + eventIndex;
 
 		if (keyboardInput->keyType == K15_GUI_KEY_F1 &&
 			keyboardInput->type == K15_GUI_KEY_PRESSED)
@@ -343,12 +358,33 @@ intern void K15_InternalGUIHandleKeyboardInput(K15_GUIContext* p_GUIContext, K15
 		}
 	}
 
-	p_Input->numBufferedKeyboardInputs = 0;
+	p_Events->numBufferedKeyboardInputs = 0;
+}
+/*********************************************************************************/
+intern void K15_InternalGUIHandleSystemEvents(K15_GUIContext* p_GUIContext, K15_GUIContextEvents* p_Events)
+{
+	for (uint32 eventIndex = 0;
+		eventIndex < p_Events->numBufferedSystemEvents;
+		++eventIndex)
+	{
+		K15_GUISystemEvent* systemEvent = p_Events->bufferedSystemEvents + eventIndex;
+
+		if (systemEvent->type == K15_GUI_WINDOW_RESIZED)
+		{
+			uint16 newWidth = systemEvent->params.size.width;
+			uint16 newHeight = systemEvent->params.size.height;
+
+			p_GUIContext->windowHeight = newHeight;
+			p_GUIContext->windowWidth = newWidth;
+		}
+	}
+
+	p_Events->numBufferedSystemEvents = 0;
 }
 /*********************************************************************************/
 intern void K15_InternalGUIHandleInput(K15_GUIContext* p_GUIContext)
 {
-	K15_GUIContextInput* input = &p_GUIContext->input;
+	K15_GUIContextEvents* events = &p_GUIContext->events;
 
 	//reset clicked element
 	K15_GUIElement* clickedElement = K15_InternalGUIGetElement(p_GUIContext, p_GUIContext->clickedElementIdHash);
@@ -360,12 +396,13 @@ intern void K15_InternalGUIHandleInput(K15_GUIContext* p_GUIContext)
 
 	p_GUIContext->clickedElementIdHash = 0;
 
-	K15_InternalGUIHandleMouseInput(p_GUIContext, input);
-	K15_InternalGUIHandleKeyboardInput(p_GUIContext, input);
+	K15_InternalGUIHandleSystemEvents(p_GUIContext, events);
+	K15_InternalGUIHandleMouseInput(p_GUIContext, events);
+	K15_InternalGUIHandleKeyboardInput(p_GUIContext, events);
 }
 /*********************************************************************************/
 intern void K15_InternalSetGUIRectCoordinates(K15_GUIRectangle* p_GUIRectangle,
-	int32* p_PosLeft, int32* p_PosTop, uint32* p_Width, uint32* p_Height)
+	int16* p_PosLeft, int16* p_PosTop, uint16* p_Width, uint16* p_Height)
 {
 	if (p_PosLeft)
 	{
@@ -389,7 +426,7 @@ intern void K15_InternalSetGUIRectCoordinates(K15_GUIRectangle* p_GUIRectangle,
 }
 /*********************************************************************************/
 intern void K15_InternalRetrieveGUIRectCoordinates(K15_GUIRectangle* p_GUIRectangle,
-	int32* p_PosLeft, int32* p_PosTop, uint32* p_Width, uint32* p_Height)
+	int16* p_PosLeft, int16* p_PosTop, uint16* p_Width, uint16* p_Height)
 {
 	if (p_PosLeft)
 	{
@@ -413,7 +450,9 @@ intern void K15_InternalRetrieveGUIRectCoordinates(K15_GUIRectangle* p_GUIRectan
 }
 /*********************************************************************************/
 intern K15_GUIElement* K15_InternalAddUnalignedGUIElement(K15_GUIContext* p_GUIContext, K15_GUIElementType p_GUIElementType,
-	int32* p_PosLeft, int32* p_PosTop, uint32* p_Width, uint32* p_Height, const char* p_Identifier)
+	int16* p_PosLeft, int16* p_PosTop, uint16* p_Width, uint16* p_Height, 
+	uint16 p_MinWidth, uint16 p_MaxWidth, uint16 p_MinHeight, uint16 p_MaxHeight, 
+	const char* p_Identifier)
 {
 	K15_ASSERT(p_GUIContext->memoryCurrentSizeInBytes <= p_GUIContext->memoryMaxSizeInBytes);
 	//so what do we need to do here?
@@ -457,15 +496,23 @@ intern K15_GUIElement* K15_InternalAddUnalignedGUIElement(K15_GUIContext* p_GUIC
 		element->flagMask = 0;
 		K15_InternalSetGUIRectCoordinates(&element->rect, p_PosLeft, p_PosTop, p_Width, p_Height);
 	}
+
+	element->rect.minWidth = p_MinWidth;
+	element->rect.maxWidth = p_MaxWidth;
+	element->rect.minHeight = p_MinHeight;
+	element->rect.maxHeight = p_MaxHeight;
+
 	K15_InternalGUIAddGUIRectToTopLayout(p_GUIContext, &element->rect);
 
 	return element;
 }
 /*********************************************************************************/
-intern K15_GUIElement* K15_InternalAddAlignedGUIElement(K15_GUIContext* p_GUIContext, K15_GUIElementType p_GUIElementType,
-	const char* p_Identifier)
+intern K15_GUIElement* K15_InternalAddAlignedGUIElement(K15_GUIContext* p_GUIContext, 
+	K15_GUIElementType p_GUIElementType, uint16 p_MinWidth, uint16 p_MaxWidth, 
+	uint16 p_MinHeight, uint16 p_MaxHeight, const char* p_Identifier)
 {
-	return K15_InternalAddUnalignedGUIElement(p_GUIContext, p_GUIElementType, 0, 0, 0, 0, p_Identifier);
+	return K15_InternalAddUnalignedGUIElement(p_GUIContext, p_GUIElementType, 0, 0, 0, 0, 
+		p_MinWidth, p_MaxWidth, p_MinHeight, p_MaxHeight, p_Identifier);
 }
 /*********************************************************************************/
 intern byte* K15_InternalAddGUIElementMemory(K15_GUIContext* p_GUIContext, K15_GUIElement* p_GUIElement,
@@ -508,7 +555,8 @@ K15_GUIContext* K15_CreateGUIContext(K15_ResourceContext* p_ResourceContext, K15
 	return K15_CreateGUIContextWithCustomAllocator(K15_CreateDefaultMemoryAllocator(), p_ResourceContext, p_RenderCommandQueue);
 }
 /*********************************************************************************/
-K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocator p_MemoryAllocator, K15_ResourceContext* p_ResourceContext, K15_RenderCommandQueue* p_RenderCommandQueue)
+K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocator p_MemoryAllocator, 
+	K15_ResourceContext* p_ResourceContext, K15_RenderCommandQueue* p_RenderCommandQueue)
 {
 	K15_OSContext* osContext = K15_GetOSLayerContext();
 	K15_GUIContext* guiContext = (K15_GUIContext*)K15_AllocateFromMemoryAllocator(&p_MemoryAllocator, 
@@ -548,9 +596,12 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	guiContext->retainedDataOffsetInBytes = guiMemoryBufferSize;
 	guiContext->memoryMaxSizeInBytes = guiMemoryBufferSize;
 	guiContext->style = K15_InternalCreateDefaultStyle(p_ResourceContext);
-	guiContext->input.numBufferedKeyboardInputs = 0;
-	guiContext->input.numBufferedMouseInputs = 0;
+	guiContext->events.numBufferedKeyboardInputs = 0;
+	guiContext->events.numBufferedMouseInputs = 0;
 	guiContext->debugModeActive = K15_FALSE;
+	guiContext->windowHeight = windowHeight;
+	guiContext->windowWidth = windowWidth;
+
 	return guiContext;
 }
 /*********************************************************************************/
@@ -565,6 +616,33 @@ void K15_GUIBeginDockingArea(K15_GUIContext* p_GUIContext, int32 p_PosX, int32 p
 	
 }
 /*********************************************************************************/
+void K15_GUIBeginToolBar(K15_GUIContext* p_GUIContext, uint16 p_HeightInPixels, const char* p_Identifier)
+{
+	K15_GUIBeginToolBarEX(p_GUIContext, p_HeightInPixels, p_Identifier, &p_GUIContext->style.toolBarStyle);
+}
+/*********************************************************************************/
+void K15_GUIBeginToolBarEX(K15_GUIContext* p_GUIContext, uint16 p_HeightInPixels, const char* p_Identifier, K15_GUIToolBarStyle* p_ToolBarStyle)
+{
+	uint16 width = p_GUIContext->windowWidth;
+	uint16 height = p_HeightInPixels;
+
+	int16 posLeft = 0;
+	int16 posTop = 0;
+	uint16 posRight = width;
+	uint16 posBottom = height;
+	
+	K15_GUIElement* guiElement = K15_InternalAddUnalignedGUIElement(p_GUIContext, K15_GUI_TOOLBAR,
+		&posLeft, &posTop, &posRight, &posBottom, 0, width, 0, height, p_Identifier);
+
+	K15_GUIToolBarData toolBarData = {};
+	toolBarData.toolBarStyle = p_ToolBarStyle;
+
+	void* toolBarDataBuffer = K15_InternalAddGUIElementMemory(p_GUIContext, guiElement, sizeof(K15_GUIToolBarData));
+	memcpy(toolBarDataBuffer, &toolBarDataBuffer, sizeof(K15_GUIToolBarData));
+
+	K15_InternalGUIPushLayout(p_GUIContext, &guiElement->rect, K15_GUI_HORIZONTAL_LAYOUT);
+}
+/*********************************************************************************/
 bool8 K15_GUIBeginWindow(K15_GUIContext* p_GUIContext, int32* p_PosX, int32* p_PosY,
 	uint32* p_Width, uint32* p_Height, const char* p_Title, const char* p_Identifier)
 {
@@ -574,20 +652,21 @@ bool8 K15_GUIBeginWindow(K15_GUIContext* p_GUIContext, int32* p_PosX, int32* p_P
 }
 /*********************************************************************************/
 bool8 K15_GUIBeginWindowEX(K15_GUIContext* p_GUIContext, int32* p_PosX, int32* p_PosY,
-	uint32* p_Width, uint32* p_Height, const char* p_Identifier, const char* p_Title,
+	uint32* p_Width, uint32* p_Height, const char* p_Title, const char* p_Identifier,
 	K15_GUIWindowStyle* p_GUIWindowStyle)
 {
+
 	K15_GUIElement* windowElement = K15_InternalAddUnalignedGUIElement(p_GUIContext, K15_GUI_WINDOW,
-		p_PosX, p_PosY, p_Width, p_Height, p_Identifier);
+		p_PosX, p_PosY, p_Width, p_Height, 0, 0,p_Identifier);
 
 	if (windowElement->flagMask & K15_GUI_ELEMENT_MOUSE_DOWN)
 	{
-		*p_PosX += p_GUIContext->input.mouseDeltaX;
-		*p_PosY += p_GUIContext->input.mouseDeltaY;
+		*p_PosX += p_GUIContext->events.mouseDeltaX;
+		*p_PosY += p_GUIContext->events.mouseDeltaY;
 	}
 
-	uint32 titleLength = (uint32)strlen(p_Title);
 	uint32 sizeElementMemoryInBytes = sizeof(K15_GUIWindowData);
+	uint32 titleLength = (uint32)strlen(p_Title);
 
 	byte* windowElementMemory = K15_InternalAddGUIElementMemory(p_GUIContext, windowElement, sizeElementMemoryInBytes);
 	char* titleMemory = (char*)K15_InternalAddGUIElementMemory(p_GUIContext, windowElement, titleLength);
@@ -606,6 +685,37 @@ bool8 K15_GUIBeginWindowEX(K15_GUIContext* p_GUIContext, int32* p_PosX, int32* p
 	K15_InternalGUIPushLayout(p_GUIContext, &windowData.contentRect, K15_GUI_HORIZONTAL_LAYOUT);
 
 	return K15_TRUE;
+}
+/*********************************************************************************/
+bool8 K15_GUIBeginMenu(K15_GUIContext* p_GUIContext, const char* p_MenuText, const char* p_Identifier)
+{
+	return K15_GUIBeginMenuEX(p_GUIContext, p_MenuText, p_Identifier, &p_GUIContext->style.menuStyle);
+}
+/*********************************************************************************/
+bool8 K15_GUIBeginMenuEX(K15_GUIContext* p_GUIContext, const char* p_MenuText, const char* p_Identifier, 
+	K15_GUIMenuStyle* p_MenuStyle)
+{
+	K15_GUIElement* menuElement = K15_InternalAddAlignedGUIElement(p_GUIContext, K15_GUI_MENU, p_Identifier);
+	bool8 active = menuElement->flagMask & K15_GUI_ELEMENT_CLICKED;
+
+	uint32 textLength = (uint32)strlen(p_MenuText);
+	uint32 sizeMenuDataInBytes = sizeof(K15_GUIMenuData);
+
+	byte* menuElementMemory = (byte*)K15_InternalAddGUIElementMemory(p_GUIContext, menuElement, sizeMenuDataInBytes);
+	char* textMemory = (char*)K15_InternalAddGUIElementMemory(p_GUIContext, menuElement, textLength);
+
+	bool8 expanded = menuElement->flagMask & K15_GUI_ELEMENT_CLICKED;
+
+	K15_GUIMenuData menuData = {};
+	menuData.menuStyle = p_MenuStyle;
+	menuData.textLength = textLength;
+	menuData.title = textMemory;
+	menuData.expanded = expanded;
+
+	memcpy(menuElementMemory, &menuData, sizeof(K15_GUIMenuData));
+	memcpy(textMemory, p_MenuText, textLength);
+
+	return expanded;
 }
 /*********************************************************************************/
 bool8 K15_GUIButton(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier)
@@ -678,6 +788,10 @@ void K15_GUIPopLayout(K15_GUIContext* p_GUIContext)
 	p_GUIContext->layoutIndex--;
 }
 /*********************************************************************************/
+void K15_GUIEndMenu(K15_GUIContext* p_GUIContext)
+{
+}
+/*********************************************************************************/
 void K15_GUIEndWindow(K15_GUIContext* p_GUIContext)
 {
 	K15_GUIPopLayout(p_GUIContext);
@@ -685,7 +799,12 @@ void K15_GUIEndWindow(K15_GUIContext* p_GUIContext)
 /*********************************************************************************/
 void K15_GUIEndDockingArea(K15_GUIContext* p_GUIContext)
 {
-
+	
+}
+/*********************************************************************************/
+void K15_GUIEndToolBar(K15_GUIContext* p_GUIContext)
+{
+	K15_GUIPopLayout(p_GUIContext);
 }
 /*********************************************************************************/
 intern void K15_InternalGUIAlignElements(K15_GUILayout* p_Layouts, uint16 p_NumLayouts)
@@ -708,30 +827,35 @@ intern void K15_InternalGUIAlignElements(K15_GUILayout* p_Layouts, uint16 p_NumL
 		{
 			continue;
 		}
-
-		uint32 elementWidth = (layoutWidth / numElements);
-
+		
 		for (uint16 elementIndex = 0;
 			elementIndex < numElements;
 			++elementIndex)
 		{
+			uint16 elementWidth = (layoutWidth / (numElements - elementIndex));
+			uint16 elementHeight = (layoutHeight / (numElements - elementIndex));
+
 			K15_GUIRectangle* rect = layout->elementRectangles[elementIndex];
 			rect->pixelPosLeft = layoutPosX + offsetX;
 			rect->pixelPosTop = layoutPosY + offsetY;
+
+			elementWidth = K15_CLAMP(elementWidth, rect->maxWidth, rect->minWidth);
+			elementHeight = K15_CLAMP(elementHeight, rect->maxHeight, rect->minHeight);
 
 			switch (type)
 			{
 			case K15_GUI_VERTICAL_LAYOUT:
 				rect->pixelPosRight = rect->pixelPosLeft + layoutWidth;
 				rect->pixelPosBottom = rect->pixelPosTop + 20;
-				offsetY += 20;
+				offsetY += elementHeight;
+				layoutHeight -= elementHeight;
 				break;
 
 			case K15_GUI_HORIZONTAL_LAYOUT:
 				rect->pixelPosRight = rect->pixelPosLeft + elementWidth;
 				rect->pixelPosBottom = rect->pixelPosTop + 20;
 				offsetX += elementWidth;
- 
+				layoutWidth -= elementWidth;
 				break;
 			}
 		}
@@ -785,25 +909,36 @@ void K15_GUIIterateRetainedElements(K15_GUIContext* p_GUIContext, K15_GUIIterato
 		p_Function, p_UserData);
 }
 /*********************************************************************************/
-void K15_GUIAddMouseInput(K15_GUIContextInput* p_GUIContextInput, K15_GUIMouseInput* p_MouseInput)
+void K15_GUIAddMouseInput(K15_GUIContextEvents* p_GUIContextEvents, K15_GUIMouseInput* p_MouseInput)
 {
-	K15_ASSERT(p_GUIContextInput);
+	K15_ASSERT(p_GUIContextEvents);
 	K15_ASSERT(p_MouseInput);
 
-	uint32 mouseInputIndex = p_GUIContextInput->numBufferedMouseInputs++;
+	uint32 mouseInputIndex = p_GUIContextEvents->numBufferedMouseInputs++;
 	K15_ASSERT(mouseInputIndex != K15_GUI_MAX_BUFFERED_MOUSE_INPUTS);
 
-	p_GUIContextInput->bufferedMouseInput[mouseInputIndex] = *p_MouseInput;
+	p_GUIContextEvents->bufferedMouseInput[mouseInputIndex] = *p_MouseInput;
 }
 /*********************************************************************************/
-void K15_GUIAddKeyboardInput(K15_GUIContextInput* p_GUIContextInput, K15_GUIKeyboardInput* p_KeyboardInput)
+void K15_GUIAddKeyboardInput(K15_GUIContextEvents* p_GUIContextEvents, K15_GUIKeyboardInput* p_KeyboardInput)
 {
-	K15_ASSERT(p_GUIContextInput);
+	K15_ASSERT(p_GUIContextEvents);
 	K15_ASSERT(p_KeyboardInput);
 
-	uint32 keyInputIndex = p_GUIContextInput->numBufferedKeyboardInputs++;
+	uint32 keyInputIndex = p_GUIContextEvents->numBufferedKeyboardInputs++;
 	K15_ASSERT(keyInputIndex != K15_GUI_MAX_BUFFERED_KEYBOARD_INPUTS);
 
-	p_GUIContextInput->bufferedKeyboardInput[keyInputIndex] = *p_KeyboardInput;
+	p_GUIContextEvents->bufferedKeyboardInput[keyInputIndex] = *p_KeyboardInput;
+}
+/*********************************************************************************/
+void K15_GUIAddSystemEvent(K15_GUIContextEvents* p_GUIContextEvents, K15_GUISystemEvent* p_SystemEvent)
+{
+	K15_ASSERT(p_GUIContextEvents);
+	K15_ASSERT(p_SystemEvent);
+
+	uint32 systemEventIndex = p_GUIContextEvents->numBufferedSystemEvents++;
+	K15_ASSERT(systemEventIndex != K15_GUI_MAX_BUFFERED_SYSTEM_EVENTS);
+
+	p_GUIContextEvents->bufferedSystemEvents[systemEventIndex] = *p_SystemEvent;
 }
 /*********************************************************************************/

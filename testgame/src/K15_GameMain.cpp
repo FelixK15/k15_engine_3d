@@ -176,9 +176,16 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, K15_CreateVector(1.0f, 0.25f, 0.25f, 1.0f),
 		K15_CreateVector(0.f, 0.f));
 
+	K15_GUIBeginToolBar(guiContext, "default_toolbar");
+	if (K15_GUIBeginMenu(guiContext, "File", "file_1"))
+	{
+		K15_GUIEndMenu(guiContext);
+	}
+	K15_GUIEndToolBar(guiContext);
+
 	K15_GUIBeginDockingArea(guiContext, 0, 0, viewportWidth, viewportHeight, K15_GUI_LEFT_DOCKING_AREA);
 
-	if (K15_GUIBeginWindow(guiContext, &windowPosX, &windowPosY, &windowWidth, &windowHeight, "Test Window", "window_1"))
+	//if (K15_GUIBeginWindow(guiContext, &windowPosX, &windowPosY, &windowWidth, &windowHeight, "Test Window", "window_1"))
 	{
 //		K15_GUIButton(guiContext, "test button", "button_0");
 // 		K15_GUIButton(guiContext, "test button", "button_3");
@@ -190,7 +197,7 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 // 		K15_GUIButton(guiContext, "test button4", "button_4");
 // 		K15_GUIPopLayout(guiContext);
 
-		K15_GUIEndWindow(guiContext);
+		//K15_GUIEndWindow(guiContext);
 	}
 
 	K15_GUIEndDockingArea(guiContext);
@@ -252,7 +259,7 @@ void K15_OnMouseInputEvent(K15_Sample1GameContext* p_GameContext, K15_SystemEven
 		mouseInput.type = K15_GUI_MOUSE_MOVED;
 	}
 
-	K15_GUIAddMouseInput(&p_GameContext->guiContext->input, &mouseInput);
+	K15_GUIAddMouseInput(&p_GameContext->guiContext->events, &mouseInput);
 }
 /*********************************************************************************/
 void K15_OnKeyboardInputEvent(K15_Sample1GameContext* p_GameContext, K15_SystemEvent* p_SystemEvent)
@@ -327,7 +334,7 @@ void K15_OnKeyboardInputEvent(K15_Sample1GameContext* p_GameContext, K15_SystemE
 	else if (p_SystemEvent->params.keyInput.key == K15_DOWN_ARROW_KEY)
 		keyboardInput.keyType = K15_GUI_KEY_DOWN;
 
-	K15_GUIAddKeyboardInput(&p_GameContext->guiContext->input, &keyboardInput);
+	K15_GUIAddKeyboardInput(&p_GameContext->guiContext->events, &keyboardInput);
 }
 /*********************************************************************************/
 K15_EXPORT_SYMBOL void K15_OnInputEvent(K15_GameContext* p_GameContext, K15_SystemEvent* p_SystemEvent)
@@ -374,10 +381,17 @@ K15_EXPORT_SYMBOL void K15_OnWindowEvent(K15_GameContext* p_GameContext, K15_Sys
 
 	if (p_SystemEvent->event == K15_WINDOW_RESIZED)
 	{
+		K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->userData;
+
 		uint32 width = p_SystemEvent->params.size.width;
 		uint32 height = p_SystemEvent->params.size.height;
 
-		K15_Sample1GameContext* gameContext = (K15_Sample1GameContext*)p_GameContext->userData;
+		K15_GUISystemEvent systemEvent = {};
+		systemEvent.type = K15_GUI_WINDOW_RESIZED;
+		systemEvent.params.size.width = width;
+		systemEvent.params.size.height = height;
+		
+		K15_GUIAddSystemEvent(&gameContext->guiContext->events, &systemEvent);
 		K15_RenderCommandWindowResized(gameContext->gameRenderQueue, width, height);
 	}
 }
