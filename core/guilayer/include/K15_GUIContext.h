@@ -26,12 +26,13 @@ enum K15_GUIElementFlags
 	K15_GUI_ELEMENT_FOCUSED = 0x002,
 	K15_GUI_ELEMENT_MOUSE_DOWN = 0x004,
 	K15_GUI_ELEMENT_CLICKED = 0x008,
-	K15_GUI_ELEMENT_LAYOUTED = 0x010,
+	K15_GUI_ELEMENT_LAYOUTED = 0x010
 };
 /*********************************************************************************/
 enum K15_GUILayoutType
 {
 	K15_GUI_VERTICAL_LAYOUT = 0,
+	K15_GUI_VERTICAL_LAYOUT_LOOSELY_FIT,
 	K15_GUI_HORIZONTAL_LAYOUT,
 	K15_GUI_HORIZONTAL_LAYOUT_LOOSELY_FIT
 };
@@ -316,6 +317,7 @@ struct K15_GUIContext
 	uint16 windowHeight;
 	uint32 focusedElementIdHash;
 	uint32 clickedElementIdHash;
+	uint32 activatedElementIdHash;
 	uint32 hoveredElementIdHash;
 	uint32 mouseDownElementIdHash;
 	uint32 memoryMaxSizeInBytes;

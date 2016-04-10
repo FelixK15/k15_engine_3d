@@ -177,10 +177,22 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 		K15_CreateVector(0.f, 0.f));
 
 	K15_GUIBeginToolBar(guiContext, "default_toolbar");
+
 	if (K15_GUIBeginMenu(guiContext, "File", "file_1"))
+	{
+		if (K15_GUIButton(guiContext, "Test", "test_1"))
+		{
+			exit(0);
+		}
+		K15_GUIButton(guiContext, "Test2", "test_2");
+		K15_GUIEndMenu(guiContext);
+	}
+
+	if (K15_GUIBeginMenu(guiContext, "File2", "file_2"))
 	{
 		K15_GUIEndMenu(guiContext);
 	}
+
 	K15_GUIEndToolBar(guiContext);
 
 	K15_GUIBeginDockingArea(guiContext, 0, 0, viewportWidth, viewportHeight, K15_GUI_LEFT_DOCKING_AREA);

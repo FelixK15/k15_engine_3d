@@ -214,9 +214,13 @@ intern void K15_InternalGUISetHoveredElement(K15_GUIContext* p_GUIContext, K15_G
 intern void K15_InternalGUISetMouseDownElement(K15_GUIContext* p_GUIContext, K15_GUIElement* p_Element)
 {
 	uint32 prevMouseDownElementIdHash = p_GUIContext->mouseDownElementIdHash;
+	uint32 prevActiveElementIdHash = p_GUIContext->activatedElementIdHash;
 
 	K15_GUIElement* prevMouseDownElement =
 		K15_InternalGUIGetElement(p_GUIContext, prevMouseDownElementIdHash);
+
+	K15_GUIElement* prevActiveElement =
+		K15_InternalGUIGetElement(p_GUIContext, prevActiveElementIdHash);
 
 	if (prevMouseDownElement)
 	{
@@ -233,10 +237,15 @@ intern void K15_InternalGUISetMouseDownElement(K15_GUIContext* p_GUIContext, K15
 intern void K15_InternalSetFocusedElement(K15_GUIContext* p_GUIContext, K15_GUIElement* p_Element)
 {
 	uint32 prevFocusedElementIdHash = p_GUIContext->focusedElementIdHash;
+	uint32 prevActivatedElementIdHash = p_GUIContext->activatedElementIdHash;
+
 	p_GUIContext->focusedElementIdHash = 0;
+	p_GUIContext->activatedElementIdHash = 0;
 
 	K15_GUIElement* prevFocusedDownElement =
 		K15_InternalGUIGetElement(p_GUIContext, prevFocusedElementIdHash);
+	K15_GUIElement* prevActivatedElement  =
+		K15_InternalGUIGetElement(p_GUIContext, prevActivatedElementIdHash);
 
 	if (prevFocusedDownElement)
 	{
@@ -518,7 +527,7 @@ intern byte* K15_InternalAddGUIElementMemory(K15_GUIContext* p_GUIContext, K15_G
 	return elementMemory;
 }
 /*********************************************************************************/
-intern void K15_InternalGUIPushLayout(K15_GUIContext* p_GUIContext, K15_GUIRectangle* p_LayoutArea, 
+intern void K15_InternalGUIPushLayout(K15_GUIContext* p_GUIContext, K15_GUIRectangle p_LayoutArea, 
 	K15_GUILayoutType p_LayoutType)
 {
 	++p_GUIContext->numLayouts;
@@ -526,7 +535,7 @@ intern void K15_InternalGUIPushLayout(K15_GUIContext* p_GUIContext, K15_GUIRecta
 	K15_ASSERT(layoutIndex != K15_GUI_MAX_LAYOUTS);
 
 	K15_GUILayout* layout = p_GUIContext->layoutStack + layoutIndex;
-	layout->layoutRectangle = *p_LayoutArea;
+	layout->layoutRectangle = p_LayoutArea;
 	layout->type = p_LayoutType;
 	layout->numElements = 0;
 }
@@ -579,6 +588,7 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	guiContext->mouseDownElementIdHash = 0;
 	guiContext->layoutIndex = 0;
 	guiContext->numLayouts = 0;
+	guiContext->activatedElementIdHash = 0;
 	guiContext->memoryBuffer = guiMemory;
 	guiContext->retainedDataOffsetInBytes = guiMemoryBufferSize;
 	guiContext->memoryMaxSizeInBytes = guiMemoryBufferSize;
@@ -627,7 +637,7 @@ void K15_GUIBeginToolBarEX(K15_GUIContext* p_GUIContext, const char* p_Identifie
 	void* toolBarDataBuffer = K15_InternalAddGUIElementMemory(p_GUIContext, guiElement, sizeof(K15_GUIToolBarData));
 	memcpy(toolBarDataBuffer, &toolBarData, sizeof(K15_GUIToolBarData));
 
-	K15_InternalGUIPushLayout(p_GUIContext, &guiElement->rect, K15_GUI_HORIZONTAL_LAYOUT_LOOSELY_FIT);
+	K15_InternalGUIPushLayout(p_GUIContext, guiElement->rect, K15_GUI_HORIZONTAL_LAYOUT_LOOSELY_FIT);
 }
 /*********************************************************************************/
 bool8 K15_GUIBeginWindow(K15_GUIContext* p_GUIContext, int16* p_PosX, int16* p_PosY,
@@ -669,7 +679,7 @@ bool8 K15_GUIBeginWindowEX(K15_GUIContext* p_GUIContext, int16* p_PosX, int16* p
 	memcpy(windowElementMemory, &windowData, sizeof(K15_GUIWindowData));
 
 	//Add layout for this window
-	K15_InternalGUIPushLayout(p_GUIContext, &windowData.contentRect, K15_GUI_HORIZONTAL_LAYOUT);
+	K15_InternalGUIPushLayout(p_GUIContext, windowData.contentRect, K15_GUI_HORIZONTAL_LAYOUT);
 
 	return K15_TRUE;
 }
@@ -683,7 +693,7 @@ bool8 K15_GUIBeginMenuEX(K15_GUIContext* p_GUIContext, const char* p_MenuText, c
 	K15_GUIMenuStyle* p_MenuStyle)
 {
 	K15_GUIElement* menuElement = K15_InternalAddAlignedGUIElement(p_GUIContext, K15_GUI_MENU, p_Identifier);
-	bool8 active = menuElement->flagMask & K15_GUI_ELEMENT_CLICKED;
+	bool8 active = menuElement->flagMask & K15_GUI_ELEMENT_FOCUSED;
 
 	uint32 textLength = (uint32)strlen(p_MenuText);
 	uint32 sizeMenuDataInBytes = sizeof(K15_GUIMenuData);
@@ -691,13 +701,11 @@ bool8 K15_GUIBeginMenuEX(K15_GUIContext* p_GUIContext, const char* p_MenuText, c
 	byte* menuElementMemory = (byte*)K15_InternalAddGUIElementMemory(p_GUIContext, menuElement, sizeMenuDataInBytes);
 	char* textMemory = (char*)K15_InternalAddGUIElementMemory(p_GUIContext, menuElement, textLength);
 
-	bool8 expanded = menuElement->flagMask & K15_GUI_ELEMENT_CLICKED;
-
 	K15_GUIMenuData menuData = {};
 	menuData.menuStyle = p_MenuStyle;
 	menuData.textLength = textLength;
 	menuData.title = textMemory;
-	menuData.expanded = expanded;
+	menuData.expanded = active;
 
 	K15_RenderFontDesc* font = p_MenuStyle->font;
 	uint32 verticalPixelPadding = p_MenuStyle->verticalPixelPadding;
@@ -709,13 +717,23 @@ bool8 K15_GUIBeginMenuEX(K15_GUIContext* p_GUIContext, const char* p_MenuText, c
 
 	//align element
 	K15_GUIRectangle* menuElementRect = &menuElement->rect;
-	menuElementRect->pixelPosRight = (uint32)textWidth + horizontalPixelPadding * 2;
-	menuElementRect->pixelPosBottom = (uint32)textHeight + verticalPixelPadding * 2;
+	menuElementRect->pixelPosRight = menuElementRect->pixelPosLeft + (uint32)textWidth + horizontalPixelPadding * 2;
+	menuElementRect->pixelPosBottom = menuElementRect->pixelPosTop + (uint32)textHeight + verticalPixelPadding * 2;
 
 	memcpy(menuElementMemory, &menuData, sizeof(K15_GUIMenuData));
 	memcpy(textMemory, p_MenuText, textLength);
 
-	return expanded;
+	if (active)
+	{
+		K15_GUIRectangle menuLayoutRect = {};
+		menuLayoutRect.pixelPosLeft = menuElementRect->pixelPosLeft;
+		menuLayoutRect.pixelPosTop = menuElementRect->pixelPosBottom;
+		menuLayoutRect.pixelPosBottom = 300;
+		menuLayoutRect.pixelPosRight = 300;
+		K15_InternalGUIPushLayout(p_GUIContext, menuLayoutRect, K15_GUI_VERTICAL_LAYOUT_LOOSELY_FIT);
+	}
+
+	return active;
 }
 /*********************************************************************************/
 bool8 K15_GUIButton(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier)
@@ -734,13 +752,17 @@ bool8 K15_GUIButtonEX(K15_GUIContext* p_GUIContext, const char* p_ButtonText, co
 	uint32 textLength = (uint32)strlen(p_ButtonText);
 	uint32 sizeButtonDataInBytes = sizeof(K15_GUIButtonData);
 
-	byte* buttonElementMemory = (byte*)K15_InternalAddGUIElementMemory(p_GUIContext, buttonElement, sizeButtonDataInBytes);
+	byte* buttonElementMemory = (byte*)K15_InternalAddGUIElementMemory(p_GUIContext, 
+		buttonElement, sizeButtonDataInBytes);
 	char* textMemory = (char*)K15_InternalAddGUIElementMemory(p_GUIContext, buttonElement, textLength);
 
 	K15_GUIButtonData buttonData = {};
 	buttonData.style = p_GUIButtonStyle;
 	buttonData.textLength = textLength;
 	buttonData.text = textMemory;
+
+	buttonElement->rect.pixelPosBottom = buttonElement->rect.pixelPosTop + 20;
+	buttonElement->rect.pixelPosRight = buttonElement->rect.pixelPosLeft + 20;
 
 	memcpy(buttonElementMemory, &buttonData, sizeof(K15_GUIButtonData));
 	memcpy(textMemory, p_ButtonText, textLength);
@@ -790,6 +812,7 @@ void K15_GUIPopLayout(K15_GUIContext* p_GUIContext)
 /*********************************************************************************/
 void K15_GUIEndMenu(K15_GUIContext* p_GUIContext)
 {
+	K15_GUIPopLayout(p_GUIContext);
 }
 /*********************************************************************************/
 void K15_GUIEndWindow(K15_GUIContext* p_GUIContext)
@@ -858,8 +881,15 @@ intern void K15_InternalGUIAlignElements(K15_GUILayout* p_Layouts, uint16 p_NumL
 				break;
 
 			case K15_GUI_HORIZONTAL_LAYOUT_LOOSELY_FIT:
+				rect->pixelPosRight = rect->pixelPosLeft + elementWidth;
 				offsetX += elementWidth;
 				layoutWidth -= elementWidth;
+				break;
+
+			case K15_GUI_VERTICAL_LAYOUT_LOOSELY_FIT:
+				rect->pixelPosBottom = rect->pixelPosTop + elementHeight;
+				offsetY += elementHeight;
+				layoutHeight -= elementHeight;
 				break;
 			}
 		}
