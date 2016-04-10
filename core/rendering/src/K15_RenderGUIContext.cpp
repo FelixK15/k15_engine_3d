@@ -290,17 +290,18 @@ intern void K15_InternalPushGUIMenuVertices(K15_GUIElement* p_GUIElement, K15_GU
 	const char* text = menuData->title;
 	uint32 textLength = menuData->textLength;
 
-	uint32 pixelPadding = menuStyle->pixelPadding;
+	uint32 horizontalPixelPadding = menuStyle->horizontalPixelPadding;
+	uint32 verticalPixelPadding = menuStyle->verticalPixelPadding;
 
 	uint32 pixelPosTop = p_GUIElement->rect.pixelPosTop;
 	uint32 pixelPosLeft = p_GUIElement->rect.pixelPosLeft;
 	uint32 pixelPosRight = p_GUIElement->rect.pixelPosRight;
 	uint32 pixelPosBottom = p_GUIElement->rect.pixelPosBottom;
 
-	uint32 textPixelPosTop = pixelPosTop + pixelPadding;
-	uint32 textPixelPosBottom = pixelPosBottom - pixelPadding;
-	uint32 textPixelPosLeft = pixelPosLeft + pixelPadding;
-	uint32 textPixelPosRight = pixelPosRight - pixelPadding;
+	uint32 textPixelPosTop = pixelPosTop + verticalPixelPadding;
+	uint32 textPixelPosBottom = pixelPosBottom - verticalPixelPadding;
+	uint32 textPixelPosLeft = pixelPosLeft + horizontalPixelPadding;
+	uint32 textPixelPosRight = pixelPosRight - horizontalPixelPadding;
 
 	uint32 P3C3Index = p_DrawInfo->numFloatsVertexBufferP3C3;
 	uint32 P3T2C3Index = p_DrawInfo->numFloatsVertexBufferP3T2C3;

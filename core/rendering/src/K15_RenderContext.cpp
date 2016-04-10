@@ -23,7 +23,7 @@ intern result8 K15_InternalCreateSpecificRenderContext(K15_CustomMemoryAllocator
 {
 	K15_ASSERT(p_OSContext);
 
-	bool8 createGLRenderContext = TRUE;
+	bool8 createGLRenderContext = K15_TRUE;
 
 	if (createGLRenderContext)
 	{

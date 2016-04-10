@@ -32,7 +32,8 @@ enum K15_GUIElementFlags
 enum K15_GUILayoutType
 {
 	K15_GUI_VERTICAL_LAYOUT = 0,
-	K15_GUI_HORIZONTAL_LAYOUT
+	K15_GUI_HORIZONTAL_LAYOUT,
+	K15_GUI_HORIZONTAL_LAYOUT_LOOSELY_FIT
 };
 /*********************************************************************************/
 enum K15_GUIElementType
@@ -52,10 +53,6 @@ struct K15_GUIRectangle
 	int16 pixelPosTop;
 	int16 pixelPosRight;
 	int16 pixelPosBottom;
-	uint16 minWidth;
-	uint16 maxWidth;
-	uint16 minHeight;
-	uint16 maxHeight;
 };
 /*********************************************************************************/
 struct K15_GUIElement
@@ -109,7 +106,8 @@ struct K15_GUIMenuStyle
 	uint32 lowerHighlightedBackgroundColor;
 	uint32 upperActiveBackgroundColor;
 	uint32 lowerActiveBackgroundColor;
-	uint32 pixelPadding;
+	uint32 verticalPixelPadding;
+	uint32 horizontalPixelPadding;
 	K15_RenderFontDesc* font;
 };
 /*********************************************************************************/
@@ -117,6 +115,7 @@ struct K15_GUIToolBarStyle
 {
 	uint32 lowerBackgroundColor;
 	uint32 upperBackgroundColor;
+	uint32 pixelHeight;
 };
 /*********************************************************************************/
 struct K15_GUIContextStyle
@@ -340,16 +339,16 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 
 byte* K15_GUIGetGUIElementMemory(K15_GUIElement* p_GUIElement);
 
-void K15_GUIBeginDockingArea(K15_GUIContext* p_GUIContext, int32 p_PosX, int32 p_PosY,
-	uint32 p_Width, uint32 p_Height, uint32 p_AllowedDockingAreasMask);
+void K15_GUIBeginDockingArea(K15_GUIContext* p_GUIContext, int16 p_PosX, int16 p_PosY,
+	uint16 p_Width, uint16 p_Height, uint32 p_AllowedDockingAreasMask);
 
 void K15_GUIBeginToolBar(K15_GUIContext* p_GUIContext, const char* p_Identifier);
 void K15_GUIBeginToolBarEX(K15_GUIContext* p_GUIContext, const char* p_Identifier, K15_GUIToolBarStyle* p_ToolBarStyle);
 
-bool8 K15_GUIBeginWindow(K15_GUIContext* p_GUIContext, int32* p_PosX, int32* p_PosY,
-	uint32* p_Width, uint32* p_Height, const char* p_Title, const char* p_Identifier);
-bool8 K15_GUIBeginWindowEX(K15_GUIContext* p_GUIContext, int32* p_PosX, int32* p_PosY,
-	uint32* p_Width, uint32* p_Height, const char* p_Title, const char* p_Identifier, 
+bool8 K15_GUIBeginWindow(K15_GUIContext* p_GUIContext, int16* p_PosX, int16* p_PosY,
+	uint16* p_Width, uint16* p_Height, const char* p_Title, const char* p_Identifier);
+bool8 K15_GUIBeginWindowEX(K15_GUIContext* p_GUIContext, int16* p_PosX, int16* p_PosY,
+	uint16* p_Width, uint16* p_Height, const char* p_Title, const char* p_Identifier,
 	K15_GUIWindowStyle* p_GUIWindowStyle);
 
 bool8 K15_GUIBeginMenu(K15_GUIContext* p_GUIContext, const char* p_MenuText, const char* p_Identifier);
