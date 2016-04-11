@@ -180,11 +180,20 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 
 	if (K15_GUIBeginMenu(guiContext, "File", "file_1"))
 	{
-		if (K15_GUIButton(guiContext, "Test", "test_1"))
+		if (K15_GUIMenuItem(guiContext, "Open...", "element_open"))
 		{
 			exit(0);
 		}
-		K15_GUIButton(guiContext, "Test2", "test_2");
+
+		if (K15_GUIBeginSubMenu(guiContext, "Even More", "sub_menu"))
+		{
+			if (K15_GUIMenuItem(guiContext, "Close...", "close"))
+			{
+				exit(0);
+			}
+			K15_EndSubMenu(guiContext);
+		}
+
 		K15_GUIEndMenu(guiContext);
 	}
 

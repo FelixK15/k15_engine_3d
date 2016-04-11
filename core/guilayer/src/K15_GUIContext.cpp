@@ -736,6 +736,60 @@ bool8 K15_GUIBeginMenuEX(K15_GUIContext* p_GUIContext, const char* p_MenuText, c
 	return active;
 }
 /*********************************************************************************/
+bool8 K15_GUIMenuItem(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier)
+{
+	return K15_GUIMenuItemEX(p_GUIContext, p_ItemText, p_Identifier, &p_GUIContext->style.menuItemStyle);
+}
+/*********************************************************************************/
+bool8 K15_GUIMenuItemEX(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier,
+	K15_GUIMenuItemStyle* p_MenuItemStyle)
+{
+	K15_GUIElement* menuItemElement = K15_InternalAddAlignedGUIElement(p_GUIContext, K15_GUI_MENU_ITEM, p_Identifier);
+	uint32 textLength = (uint32)strlen(p_ItemText);
+
+	void* menuItemDataBuffer = K15_InternalAddGUIElementMemory(p_GUIContext,
+		menuItemElement, sizeof(K15_GUIMenuItemData));
+	char* menuItemTextBuffer = (char*)K15_InternalAddGUIElementMemory(p_GUIContext,
+		menuItemElement, textLength);
+
+	K15_RenderFontDesc* font = p_MenuItemStyle->font;
+
+	float textPixelWidth = 0.f;
+	float textPixelHeight = 0.f;
+
+	uint32 verticalPixelPadding = p_MenuItemStyle->verticalPixelPadding;
+	uint32 horizontalPixelPadding = p_MenuItemStyle->horizontalPixelPadding;
+
+	K15_GetTextSizeInPixels(font, &textPixelWidth, &textPixelHeight, p_ItemText, textLength);
+
+	bool8 active = menuItemElement->flagMask & K15_GUI_ELEMENT_CLICKED;
+	menuItemElement->rect.pixelPosRight = 
+		menuItemElement->rect.pixelPosLeft + textPixelWidth + horizontalPixelPadding * 2;
+	menuItemElement->rect.pixelPosBottom = 
+		menuItemElement->rect.pixelPosTop + textPixelHeight + verticalPixelPadding * 2;
+
+	K15_GUIMenuItemData menuItemData = {};
+	menuItemData.text = menuItemTextBuffer;
+	menuItemData.textLength = textLength;
+	menuItemData.menuItemStyle = p_MenuItemStyle;
+
+	memcpy(menuItemTextBuffer, p_ItemText, textLength);
+	memcpy(menuItemDataBuffer, &menuItemData, sizeof(K15_GUIMenuItemData));
+
+	return active;
+}
+/*********************************************************************************/
+bool8 K15_GUIBeginSubMenu(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier)
+{
+
+}
+/*********************************************************************************/
+bool8 K15_GUIBeginSubMenuEX(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier,
+	K15_GUIMenuItemStyle* p_MenuItemStyle)
+{
+
+}
+/*********************************************************************************/
 bool8 K15_GUIButton(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier)
 {
 	K15_GUIButtonStyle* defaultButtonStyle = &p_GUIContext->style.buttonStyle;

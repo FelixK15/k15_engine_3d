@@ -85,6 +85,16 @@ intern void K15_InternalCountGUIElementVertices(K15_GUIContext* p_GUIContext, K1
 		break;
 	}
 
+	case K15_GUI_MENU_ITEM:
+	case K15_GUI_SUB_MENU_ITEM:
+	{
+		K15_GUIMenuItemData* menuItemData = (K15_GUIMenuItemData*)K15_GUIGetGUIElementMemory(p_GUIElement);
+		K15_RenderFontDesc* font = menuItemData->menuItemStyle->font;
+		drawInfo->numVerticesP3C3 += 6;
+		drawInfo->numVerticesP3T2C3 += K15_GetTextVertexCount(font, menuItemData->text, menuItemData->textLength);
+		break;
+	}
+
 	case K15_GUI_LABEL:
 	{
 		K15_GUILabelData* labelData = (K15_GUILabelData*)K15_GUIGetGUIElementMemory(p_GUIElement);
@@ -363,6 +373,27 @@ intern void K15_InternalPushGUIToolBarVertices(K15_GUIElement* p_GUIElement, K15
 	p_DrawInfo->numFloatsVertexBufferP3C3 = P3C3Index;
 }
 /*********************************************************************************/
+intern void K15_InternalPushGUIToolBarVertices(K15_GUIElement* p_GUIElement, K15_GUIDrawInformation* p_DrawInfo)
+{
+	uint32 P3C3Index = p_DrawInfo->numFloatsVertexBufferP3C3;
+	uint32 P3T2C3Index = p_DrawInfo->numFloatsVertexBufferP3T2C3;
+
+	float* P2C3Buffer = p_DrawInfo->vertexBufferP3C3;
+	float* P3T2C3Buffer = p_DrawInfo->vertexBufferP3T2C3;
+
+	K15_GUIMenuItemData* menuItemData = (K15_GUIMenuItemData*)K15_GUIGetGUIElementMemory(p_GUIElement);
+	uint32 upperColor = menuItemData->menuItemStyle->upperBackgroundColor;
+	uint32 lowerColor = menuItemData->menuItemStyle->lowerBackgroundColor;
+
+	uint32 pixelPosLeft = p_GUIElement->rect.pixelPosLeft;
+	uint32 pixelPosRight = p_GUIElement->rect.pixelPosRight;
+	uint32 pixelPosLeft = p_GUIElement->rect.pixelPosTop;
+	uint32 pixelPosLeft = p_GUIElement->rect.pixelPosBottom;
+
+	//CONTINUE HERE
+	
+}
+/*********************************************************************************/
 intern void K15_InternalPushGUIElementVertices(K15_GUIContext* p_GUIContext, K15_GUIElement* p_GUIElement,
 	void* p_UserData)
 {
@@ -389,6 +420,11 @@ intern void K15_InternalPushGUIElementVertices(K15_GUIContext* p_GUIContext, K15
 
 	case K15_GUI_TOOLBAR:
 		K15_InternalPushGUIToolBarVertices(p_GUIElement, drawInfo);
+		break;
+	
+	case K15_GUI_MENU_ITEM:
+	case K15_GUI_SUB_MENU_ITEM:
+		K15_InternalPushGUIMenuItemVertices(p_GUIElement, drawInfo);
 		break;
 	}
 

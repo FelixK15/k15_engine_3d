@@ -45,7 +45,9 @@ enum K15_GUIElementType
 	K15_GUI_LABEL,
 	K15_GUI_MENU,
 	K15_GUI_SEPARATOR,
-	K15_GUI_TOOLBAR
+	K15_GUI_TOOLBAR,
+	K15_GUI_MENU_ITEM,
+	K15_GUI_SUB_MENU_ITEM
 }; 
 /*********************************************************************************/
 struct K15_GUIRectangle
@@ -119,6 +121,15 @@ struct K15_GUIToolBarStyle
 	uint32 pixelHeight;
 };
 /*********************************************************************************/
+struct K15_GUIMenuItemStyle
+{
+	uint32 lowerBackgroundColor;
+	uint32 upperBackgroundColor;
+	uint32 verticalPixelPadding;
+	uint32 horizontalPixelPadding;
+	K15_RenderFontDesc* font;
+};
+/*********************************************************************************/
 struct K15_GUIContextStyle
 {
 	K15_GUIWindowStyle windowStyle;
@@ -126,6 +137,7 @@ struct K15_GUIContextStyle
 	K15_GUILabelStyle labelStyle;
 	K15_GUIMenuStyle menuStyle;
 	K15_GUIToolBarStyle toolBarStyle;
+	K15_GUIMenuItemStyle menuItemStyle;
 };
 /*********************************************************************************/
 struct K15_GUIToolBarData
@@ -139,6 +151,13 @@ struct K15_GUIMenuData
 	char* title;
 	uint32 textLength;
 	bool8 expanded;
+};
+/*********************************************************************************/
+struct K15_GUIMenuItemData
+{
+	K15_GUIMenuItemStyle* menuItemStyle;
+	char* text;
+	uint32 textLength;
 };
 /*********************************************************************************/
 struct K15_GUIWindowData
@@ -357,6 +376,14 @@ bool8 K15_GUIBeginMenu(K15_GUIContext* p_GUIContext, const char* p_MenuText, con
 bool8 K15_GUIBeginMenuEX(K15_GUIContext* p_GUIContext, const char* p_MenuText, const char* p_Identifier, 
 	K15_GUIMenuStyle* p_MenuStyle);
 
+bool8 K15_GUIMenuItem(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier);
+bool8 K15_GUIMenuItemEX(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier,
+	K15_GUIMenuItemStyle* p_MenuItemStyle);
+
+bool8 K15_GUIBeginSubMenu(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier);
+bool8 K15_GUIBeginSubMenuEX(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier,
+	K15_GUIMenuItemStyle* p_MenuItemStyle);
+
 bool8 K15_GUIButton(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier);
 bool8 K15_GUIButtonEX(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier, 
 	K15_GUIButtonStyle* p_GUIButtonStyle);
@@ -370,6 +397,7 @@ void K15_GUIPushHorizontalLayout(K15_GUIContext* p_GUIContext);
 
 void K15_GUIPopLayout(K15_GUIContext* p_GUIContext);
 
+void K15_GUIEndSubMenu(K15_GUIContext* p_GUIContext);
 void K15_GUIEndWindow(K15_GUIContext* p_GUIContext);
 void K15_GUIEndMenu(K15_GUIContext* p_GUIContext);
 void K15_GUIEndDockingArea(K15_GUIContext* p_GUIContext);
