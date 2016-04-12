@@ -127,6 +127,7 @@ struct K15_GUIMenuItemStyle
 	uint32 upperBackgroundColor;
 	uint32 verticalPixelPadding;
 	uint32 horizontalPixelPadding;
+	uint32 textColor;
 	K15_RenderFontDesc* font;
 };
 /*********************************************************************************/

@@ -191,7 +191,7 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 			{
 				exit(0);
 			}
-			K15_EndSubMenu(guiContext);
+			K15_GUIEndSubMenu(guiContext);
 		}
 
 		K15_GUIEndMenu(guiContext);

@@ -72,6 +72,14 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	defaultStyle.menuStyle.textColor = 0XFF000000;
 	defaultStyle.menuStyle.verticalPixelPadding = 2;
 	defaultStyle.menuStyle.horizontalPixelPadding = 8;
+	
+	//Menu Item Style
+	defaultStyle.menuItemStyle.font = K15_GetResourceRenderFontDesc(p_ResourceContext, styleFontResource);
+	defaultStyle.menuItemStyle.lowerBackgroundColor = 0xFF808080;
+	defaultStyle.menuItemStyle.upperBackgroundColor = 0xFF808080;
+	defaultStyle.menuItemStyle.textColor = 0xFF000000;
+	defaultStyle.menuItemStyle.verticalPixelPadding = 2;
+	defaultStyle.menuItemStyle.horizontalPixelPadding = 8;
 
 	return defaultStyle;
 }
@@ -729,8 +737,8 @@ bool8 K15_GUIBeginMenuEX(K15_GUIContext* p_GUIContext, const char* p_MenuText, c
 		menuLayoutRect.pixelPosLeft = menuElementRect->pixelPosLeft;
 		menuLayoutRect.pixelPosTop = menuElementRect->pixelPosBottom;
 		menuLayoutRect.pixelPosBottom = 300;
-		menuLayoutRect.pixelPosRight = 300;
-		K15_InternalGUIPushLayout(p_GUIContext, menuLayoutRect, K15_GUI_VERTICAL_LAYOUT_LOOSELY_FIT);
+		menuLayoutRect.pixelPosRight = 150;
+		K15_InternalGUIPushLayout(p_GUIContext, menuLayoutRect, K15_GUI_VERTICAL_LAYOUT);
 	}
 
 	return active;
@@ -781,13 +789,13 @@ bool8 K15_GUIMenuItemEX(K15_GUIContext* p_GUIContext, const char* p_ItemText, co
 /*********************************************************************************/
 bool8 K15_GUIBeginSubMenu(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier)
 {
-
+	return K15_GUIBeginSubMenuEX(p_GUIContext, p_ItemText, p_Identifier, &p_GUIContext->style.menuItemStyle);
 }
 /*********************************************************************************/
 bool8 K15_GUIBeginSubMenuEX(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier,
 	K15_GUIMenuItemStyle* p_MenuItemStyle)
 {
-
+	return K15_GUIMenuItemEX(p_GUIContext, p_ItemText, p_Identifier, p_MenuItemStyle);
 }
 /*********************************************************************************/
 bool8 K15_GUIButton(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier)
@@ -869,6 +877,11 @@ void K15_GUIEndMenu(K15_GUIContext* p_GUIContext)
 	K15_GUIPopLayout(p_GUIContext);
 }
 /*********************************************************************************/
+void K15_GUIEndSubMenu(K15_GUIContext* p_GUIContext)
+{
+
+}
+/*********************************************************************************/
 void K15_GUIEndWindow(K15_GUIContext* p_GUIContext)
 {
 	K15_GUIPopLayout(p_GUIContext);
@@ -923,8 +936,8 @@ intern void K15_InternalGUIAlignElements(K15_GUILayout* p_Layouts, uint16 p_NumL
 			case K15_GUI_VERTICAL_LAYOUT:
 				rect->pixelPosRight = rect->pixelPosLeft + layoutWidth;
 				rect->pixelPosBottom = rect->pixelPosTop + 20;
-				offsetY += elementHeightFit;
-				layoutHeight -= elementHeightFit;
+				offsetY += 20;
+				layoutHeight -= 20;
 				break;
 
 			case K15_GUI_HORIZONTAL_LAYOUT:

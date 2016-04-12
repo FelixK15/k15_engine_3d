@@ -699,8 +699,8 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextureRectVertice
 }
 /*********************************************************************************/
 intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_RenderFontDesc* p_RenderFontDesc,
-	float* p_VertexBuffer, uint32 p_VertexBufferOffsetIndex, int32 p_PixelPosLeft, int32 p_PixelPosTop,
-	int32 p_PixelPosRight, int32 p_PixelPosBottom, const K15_Vector4& p_TextColor, const char* p_Text, 
+	float* p_VertexBuffer, uint32 p_VertexBufferOffsetIndex, int32 p_PixelPosLeft, int32 p_PixelPosRight,
+	int32 p_PixelPosTop, int32 p_PixelPosBottom, const K15_Vector4& p_TextColor, const char* p_Text,
 	uint32 p_TextLength)
 {
 	uint32 vertexIndex = p_VertexBufferOffsetIndex;
@@ -799,13 +799,13 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_R
 }
 /*********************************************************************************/
 intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_RenderFontDesc* p_RenderFontDesc,
-	float* p_VertexBuffer, uint32 p_VertexBufferOffsetIndex, int32 p_PixelPosLeft, int32 p_PixelPosTop,
-	int32 p_PixelPosRight, int32 p_PixelPosBottom, uint32 p_TextColor, const char* p_Text, uint32 p_TextLength)
+	float* p_VertexBuffer, uint32 p_VertexBufferOffsetIndex, int32 p_PixelPosLeft, int32 p_PixelPosRight,
+	int32 p_PixelPosTop, int32 p_PixelPosBottom, uint32 p_TextColor, const char* p_Text, uint32 p_TextLength)
 {
 	K15_Vector4 textColor = K15_UnpackVector4(p_TextColor);
 
 	return K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderFontDesc, p_VertexBuffer,
-		p_VertexBufferOffsetIndex, p_PixelPosLeft, p_PixelPosTop, p_PixelPosRight, p_PixelPosBottom,
+		p_VertexBufferOffsetIndex, p_PixelPosLeft, p_PixelPosRight, p_PixelPosTop, p_PixelPosBottom,
 		textColor, p_Text, p_TextLength);
 }
 /*********************************************************************************/
