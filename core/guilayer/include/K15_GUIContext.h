@@ -105,10 +105,10 @@ struct K15_GUIMenuStyle
 	uint32 textColor;
 	uint32 upperBackgroundColor;
 	uint32 lowerBackgroundColor;
-	uint32 upperHighlightedBackgroundColor;
-	uint32 lowerHighlightedBackgroundColor;
-	uint32 upperActiveBackgroundColor;
-	uint32 lowerActiveBackgroundColor;
+	uint32 upperHoveredBackgroundColor;
+	uint32 lowerHoveredBackgroundColor;
+	uint32 upperFocusedBackgroundColor;
+	uint32 lowerFocusedBackgroundColor;
 	uint32 verticalPixelPadding;
 	uint32 horizontalPixelPadding;
 	K15_RenderFontDesc* font;
@@ -125,6 +125,10 @@ struct K15_GUIMenuItemStyle
 {
 	uint32 lowerBackgroundColor;
 	uint32 upperBackgroundColor;
+	uint32 lowerHoveredBackgroundColor;
+	uint32 upperHoveredBackgroundColor;
+	uint32 lowerMouseDownBackgroundColor;
+	uint32 upperMouseDownBackgroundColor;
 	uint32 verticalPixelPadding;
 	uint32 horizontalPixelPadding;
 	uint32 textColor;

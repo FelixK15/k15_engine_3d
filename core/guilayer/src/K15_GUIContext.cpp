@@ -65,10 +65,10 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	defaultStyle.menuStyle.font = K15_GetResourceRenderFontDesc(p_ResourceContext, styleFontResource);
 	defaultStyle.menuStyle.lowerBackgroundColor = 0xFF808080;
 	defaultStyle.menuStyle.upperBackgroundColor = 0xFF101010;
-	defaultStyle.menuStyle.lowerActiveBackgroundColor = 0xFFC0C0C0;
-	defaultStyle.menuStyle.upperActiveBackgroundColor = 0xFF606060;
-	defaultStyle.menuStyle.lowerHighlightedBackgroundColor = 0xFFA0A0A0;
-	defaultStyle.menuStyle.upperHighlightedBackgroundColor = 0xFF404040;
+	defaultStyle.menuStyle.lowerFocusedBackgroundColor = 0xFFC0C0C0;
+	defaultStyle.menuStyle.upperFocusedBackgroundColor = 0xFF606060;
+	defaultStyle.menuStyle.lowerHoveredBackgroundColor = 0xFFA0A0A0;
+	defaultStyle.menuStyle.upperHoveredBackgroundColor = 0xFF404040;
 	defaultStyle.menuStyle.textColor = 0XFF000000;
 	defaultStyle.menuStyle.verticalPixelPadding = 2;
 	defaultStyle.menuStyle.horizontalPixelPadding = 8;
@@ -77,6 +77,10 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	defaultStyle.menuItemStyle.font = K15_GetResourceRenderFontDesc(p_ResourceContext, styleFontResource);
 	defaultStyle.menuItemStyle.lowerBackgroundColor = 0xFF808080;
 	defaultStyle.menuItemStyle.upperBackgroundColor = 0xFF808080;
+	defaultStyle.menuItemStyle.lowerHoveredBackgroundColor = 0xFF656565;
+	defaultStyle.menuItemStyle.upperHoveredBackgroundColor = 0xFF656565;
+	defaultStyle.menuItemStyle.lowerMouseDownBackgroundColor = 0xFF404040;
+	defaultStyle.menuItemStyle.upperMouseDownBackgroundColor = 0xFF404040;
 	defaultStyle.menuItemStyle.textColor = 0xFF000000;
 	defaultStyle.menuItemStyle.verticalPixelPadding = 2;
 	defaultStyle.menuItemStyle.horizontalPixelPadding = 8;
@@ -548,8 +552,43 @@ intern void K15_InternalGUIPushLayout(K15_GUIContext* p_GUIContext, K15_GUIRecta
 	layout->numElements = 0;
 }
 /*********************************************************************************/
+intern K15_GUIElement* K15_InternalGUIMenuItemBase(K15_GUIContext* p_GUIContext, K15_GUIElementType p_ElementType,
+	const char* p_Text, const char* p_Identifier, K15_GUIMenuItemStyle* p_MenuItemStyle)
+{
+	K15_GUIElement* menuItemElement = K15_InternalAddAlignedGUIElement(p_GUIContext, p_ElementType, p_Identifier);
+	uint32 textLength = (uint32)strlen(p_Text);
 
+	void* menuItemDataBuffer = K15_InternalAddGUIElementMemory(p_GUIContext,
+		menuItemElement, sizeof(K15_GUIMenuItemData));
+	char* menuItemTextBuffer = (char*)K15_InternalAddGUIElementMemory(p_GUIContext,
+		menuItemElement, textLength);
 
+	K15_RenderFontDesc* font = p_MenuItemStyle->font;
+
+	float textPixelWidth = 0.f;
+	float textPixelHeight = 0.f;
+
+	uint32 verticalPixelPadding = p_MenuItemStyle->verticalPixelPadding;
+	uint32 horizontalPixelPadding = p_MenuItemStyle->horizontalPixelPadding;
+
+	K15_GetTextSizeInPixels(font, &textPixelWidth, &textPixelHeight, p_Text, textLength);
+
+	menuItemElement->rect.pixelPosRight =
+		menuItemElement->rect.pixelPosLeft + textPixelWidth + horizontalPixelPadding * 2;
+	menuItemElement->rect.pixelPosBottom =
+		menuItemElement->rect.pixelPosTop + textPixelHeight + verticalPixelPadding * 2;
+
+	K15_GUIMenuItemData menuItemData = {};
+	menuItemData.text = menuItemTextBuffer;
+	menuItemData.textLength = textLength;
+	menuItemData.menuItemStyle = p_MenuItemStyle;
+
+	memcpy(menuItemTextBuffer, p_Text, textLength);
+	memcpy(menuItemDataBuffer, &menuItemData, sizeof(K15_GUIMenuItemData));
+
+	return menuItemElement;
+}
+/*********************************************************************************/
 
 
 
@@ -752,37 +791,10 @@ bool8 K15_GUIMenuItem(K15_GUIContext* p_GUIContext, const char* p_ItemText, cons
 bool8 K15_GUIMenuItemEX(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier,
 	K15_GUIMenuItemStyle* p_MenuItemStyle)
 {
-	K15_GUIElement* menuItemElement = K15_InternalAddAlignedGUIElement(p_GUIContext, K15_GUI_MENU_ITEM, p_Identifier);
-	uint32 textLength = (uint32)strlen(p_ItemText);
-
-	void* menuItemDataBuffer = K15_InternalAddGUIElementMemory(p_GUIContext,
-		menuItemElement, sizeof(K15_GUIMenuItemData));
-	char* menuItemTextBuffer = (char*)K15_InternalAddGUIElementMemory(p_GUIContext,
-		menuItemElement, textLength);
-
-	K15_RenderFontDesc* font = p_MenuItemStyle->font;
-
-	float textPixelWidth = 0.f;
-	float textPixelHeight = 0.f;
-
-	uint32 verticalPixelPadding = p_MenuItemStyle->verticalPixelPadding;
-	uint32 horizontalPixelPadding = p_MenuItemStyle->horizontalPixelPadding;
-
-	K15_GetTextSizeInPixels(font, &textPixelWidth, &textPixelHeight, p_ItemText, textLength);
+	K15_GUIElement* menuItemElement = K15_InternalGUIMenuItemBase(p_GUIContext, K15_GUI_MENU_ITEM, p_ItemText, 
+		p_Identifier, p_MenuItemStyle);
 
 	bool8 active = menuItemElement->flagMask & K15_GUI_ELEMENT_CLICKED;
-	menuItemElement->rect.pixelPosRight = 
-		menuItemElement->rect.pixelPosLeft + textPixelWidth + horizontalPixelPadding * 2;
-	menuItemElement->rect.pixelPosBottom = 
-		menuItemElement->rect.pixelPosTop + textPixelHeight + verticalPixelPadding * 2;
-
-	K15_GUIMenuItemData menuItemData = {};
-	menuItemData.text = menuItemTextBuffer;
-	menuItemData.textLength = textLength;
-	menuItemData.menuItemStyle = p_MenuItemStyle;
-
-	memcpy(menuItemTextBuffer, p_ItemText, textLength);
-	memcpy(menuItemDataBuffer, &menuItemData, sizeof(K15_GUIMenuItemData));
 
 	return active;
 }
@@ -795,7 +807,23 @@ bool8 K15_GUIBeginSubMenu(K15_GUIContext* p_GUIContext, const char* p_ItemText, 
 bool8 K15_GUIBeginSubMenuEX(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier,
 	K15_GUIMenuItemStyle* p_MenuItemStyle)
 {
-	return K15_GUIMenuItemEX(p_GUIContext, p_ItemText, p_Identifier, p_MenuItemStyle);
+	K15_GUIElement* subMenuElement = K15_InternalGUIMenuItemBase(p_GUIContext, K15_GUI_SUB_MENU_ITEM, p_ItemText,
+		p_Identifier, p_MenuItemStyle);
+
+	bool8 hovered = subMenuElement->flagMask & K15_GUI_ELEMENT_HOVERED;
+
+	if (hovered)
+	{
+		K15_GUIRectangle layoutRect = {};
+		layoutRect.pixelPosLeft = subMenuElement->rect.pixelPosRight;
+		layoutRect.pixelPosTop = subMenuElement->rect.pixelPosTop;
+		layoutRect.pixelPosRight = layoutRect.pixelPosLeft + 200;
+		layoutRect.pixelPosBottom = layoutRect.pixelPosTop + 200;
+
+		K15_InternalGUIPushLayout(p_GUIContext, layoutRect, K15_GUI_VERTICAL_LAYOUT);
+	}
+
+	return hovered;
 }
 /*********************************************************************************/
 bool8 K15_GUIButton(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier)
@@ -879,7 +907,7 @@ void K15_GUIEndMenu(K15_GUIContext* p_GUIContext)
 /*********************************************************************************/
 void K15_GUIEndSubMenu(K15_GUIContext* p_GUIContext)
 {
-
+	K15_GUIPopLayout(p_GUIContext);
 }
 /*********************************************************************************/
 void K15_GUIEndWindow(K15_GUIContext* p_GUIContext)
