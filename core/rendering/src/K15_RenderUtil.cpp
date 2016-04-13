@@ -680,6 +680,51 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextureRectVertice
 	return vertexIndex;
 }
 /*********************************************************************************/
+intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTriangleVertices(float* p_VertexBuffer,
+	uint32 p_StartIndex, uint32 p_PixelPosALeft, uint32 p_PixelPosATop,
+	uint32 p_PixelPosBLeft, uint32 p_PixelPosBTop,
+	uint32 p_PixelPosCLeft, uint32 p_PixelPosCTop,
+	const K15_Vector4& p_TriangleColor)
+{
+	uint32 vertexIndex = p_StartIndex;
+	
+	p_VertexBuffer[vertexIndex++] = p_PixelPosALeft;
+	p_VertexBuffer[vertexIndex++] = p_PixelPosATop;
+	p_VertexBuffer[vertexIndex++] = p_TriangleColor.x;
+	p_VertexBuffer[vertexIndex++] = p_TriangleColor.y;
+	p_VertexBuffer[vertexIndex++] = p_TriangleColor.z;
+	p_VertexBuffer[vertexIndex++] = p_TriangleColor.w;
+
+	p_VertexBuffer[vertexIndex++] = p_PixelPosBLeft;
+	p_VertexBuffer[vertexIndex++] = p_PixelPosBTop;
+	p_VertexBuffer[vertexIndex++] = p_TriangleColor.x;
+	p_VertexBuffer[vertexIndex++] = p_TriangleColor.y;
+	p_VertexBuffer[vertexIndex++] = p_TriangleColor.z;
+	p_VertexBuffer[vertexIndex++] = p_TriangleColor.w;
+
+	p_VertexBuffer[vertexIndex++] = p_PixelPosCLeft;
+	p_VertexBuffer[vertexIndex++] = p_PixelPosCTop;
+	p_VertexBuffer[vertexIndex++] = p_TriangleColor.x;
+	p_VertexBuffer[vertexIndex++] = p_TriangleColor.y;
+	p_VertexBuffer[vertexIndex++] = p_TriangleColor.z;
+	p_VertexBuffer[vertexIndex++] = p_TriangleColor.w;
+
+	return vertexIndex;
+}
+/*********************************************************************************/
+intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTriangleVertices(float* p_VertexBuffer,
+	uint32 p_StartIndex, uint32 p_PixelPosALeft, uint32 p_PixelPosATop,
+	uint32 p_PixelPosBLeft, uint32 p_PixelPosBTop,
+	uint32 p_PixelPosCLeft, uint32 p_PixelPosCTop,
+	uint32 p_TriangleColor)
+{
+	K15_Vector4 unpackedColor = K15_UnpackVector4(p_TriangleColor) / 255.f;
+	
+	return K15_InternalPush2DScreenspacePixelColoredTriangleVertices(p_VertexBuffer, p_StartIndex,
+		p_PixelPosALeft, p_PixelPosATop, p_PixelPosBLeft, p_PixelPosBTop, p_PixelPosCLeft, p_PixelPosCTop,
+		unpackedColor);
+}
+/*********************************************************************************/
 intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextureRectVertices(float* p_VertexBuffer, 
 	uint32 p_StartIndex, uint32 p_PixelPosLeft, uint32 p_PixelPosRight, 
 	uint32 p_PixelPosTop, uint32 p_PixelPosBottom, float p_UCoordLeft, float p_UCoordRight, 

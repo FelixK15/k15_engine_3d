@@ -573,11 +573,6 @@ intern K15_GUIElement* K15_InternalGUIMenuItemBase(K15_GUIContext* p_GUIContext,
 
 	K15_GetTextSizeInPixels(font, &textPixelWidth, &textPixelHeight, p_Text, textLength);
 
-	menuItemElement->rect.pixelPosRight =
-		menuItemElement->rect.pixelPosLeft + textPixelWidth + horizontalPixelPadding * 2;
-	menuItemElement->rect.pixelPosBottom =
-		menuItemElement->rect.pixelPosTop + textPixelHeight + verticalPixelPadding * 2;
-
 	K15_GUIMenuItemData menuItemData = {};
 	menuItemData.text = menuItemTextBuffer;
 	menuItemData.textLength = textLength;

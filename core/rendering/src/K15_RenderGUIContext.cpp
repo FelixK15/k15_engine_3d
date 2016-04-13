@@ -426,6 +426,15 @@ intern void K15_InternalPushGUIMenuItemVertices(K15_GUIElement* p_GUIElement, K1
 		textPixelPosLeft, textPixelPosRight, textPixelPosTop, textPixelPosBottom,
 		textColor, text, textLength);
 
+	if (p_GUIElement->type == K15_GUI_SUB_MENU_ITEM)
+	{
+		P3C3Index = K15_InternalPush2DScreenspacePixelColoredTriangleVertices(P3C3Buffer, P3C3Index,
+			pixelPosRight - 10, pixelPosTop + 3,
+			pixelPosRight - 3, pixelPosTop + 3 + ((pixelPosBottom - 3) - (pixelPosTop + 3)) / 2,
+			pixelPosRight - 10, pixelPosBottom - 3,
+			0XFFFFFFFF);
+	}
+
 	p_DrawInfo->numFloatsVertexBufferP3C3 = P3C3Index;
 	p_DrawInfo->numFloatsVertexBufferP3T2C3 = P3T2C3Index;
 }
