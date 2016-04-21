@@ -32,9 +32,7 @@ enum K15_GUIElementFlags
 enum K15_GUILayoutType
 {
 	K15_GUI_VERTICAL_LAYOUT = 0,
-	K15_GUI_VERTICAL_LAYOUT_LOOSELY_FIT,
-	K15_GUI_HORIZONTAL_LAYOUT,
-	K15_GUI_HORIZONTAL_LAYOUT_LOOSELY_FIT
+	K15_GUI_HORIZONTAL_LAYOUT
 };
 /*********************************************************************************/
 enum K15_GUIElementType
@@ -58,10 +56,25 @@ struct K15_GUIRectangle
 	int16 pixelPosBottom;
 };
 /*********************************************************************************/
+struct K15_GUIDimension
+{
+	uint16 width;
+	uint16 height;
+};
+/*********************************************************************************/
+struct K15_GUISizeHint
+{
+	K15_GUIRectangle* rect;
+	K15_GUIDimension dimHint;
+	K15_GUIDimension dimMin;
+};
+/*********************************************************************************/
 struct K15_GUIElement
 {
 	K15_GUIElementType type;
 	K15_GUIRectangle rect;
+	K15_GUIDimension minSize;
+	K15_GUIDimension sizeHint;
 	uint32 identifierHash;
 	uint32 offsetInBytes;
 	uint32 sizeInBytes;
@@ -90,7 +103,8 @@ struct K15_GUIButtonStyle
 	uint32 lowerBackgroundColor;
 	uint32 textColor;
 	uint16 borderPixelThickness;
-	uint16 textPixelPadding;
+	uint16 verticalPixelPadding;
+	uint16 horizontalPixelPadding;
 	K15_RenderFontDesc* font;
 };
 /*********************************************************************************/
@@ -190,10 +204,23 @@ struct K15_GUILabelData
 /*********************************************************************************/
 struct K15_GUILayout
 {
-	K15_GUIRectangle* elementRectangles[K15_GUI_MAX_ELEMENTS_PER_LAYOUT];
+	K15_GUISizeHint elementSizeHints[K15_GUI_MAX_ELEMENTS_PER_LAYOUT];
 	K15_GUIRectangle layoutRectangle;
 	K15_GUILayoutType type;
 	uint32 numElements;
+
+	union 
+	{
+		uint16 fixedWidthPerElement;
+		uint16 fixedHeightPerElement;
+	} params;
+};
+/*********************************************************************************/
+enum K15_GUIContextFlags
+{
+	K15_GUI_CONTEXT_INSIDE_WINDOW_FLAG		= 0x01,
+	K15_GUI_CONTEXT_INSIDE_MENU_FLAG		= 0x02,
+	K15_GUI_CONTEXT_INSIDE_SUB_MENU_FLAG	= 0x04
 };
 /*********************************************************************************/
 enum K15_GUIMouseInputType : uint16
@@ -348,6 +375,7 @@ struct K15_GUIContext
 	uint32 memoryCurrentSizeInBytes;
 	uint32 retainedDataOffsetInBytes;
 	uint32 retainedDataSizeInBytes;
+	uint32 flagMask;
 	bool8 debugModeActive;
 };
 /*********************************************************************************/
@@ -397,8 +425,10 @@ void K15_GUILabel(K15_GUIContext* p_GUIContext, const char* p_LabelText, const c
 void K15_GUILabelEX(K15_GUIContext* p_GUIContext, const char* p_LabelText, const char* p_Identifier, 
 	K15_GUILabelStyle* p_GUILabelStyle);
 
-void K15_GUIPushVerticalLayout(K15_GUIContext* p_GUIContext);
-void K15_GUIPushHorizontalLayout(K15_GUIContext* p_GUIContext);
+void K15_GUIPushVerticalLayout(K15_GUIContext* p_GUIContext, K15_GUIRectangle p_LayoutArea, 
+	uint16 p_FixedWidthPerElement = 0);
+void K15_GUIPushHorizontalLayout(K15_GUIContext* p_GUIContext, K15_GUIRectangle p_LayoutArea,
+	uint16 p_FixedHeightPerElement = 0);
 
 void K15_GUIPopLayout(K15_GUIContext* p_GUIContext);
 

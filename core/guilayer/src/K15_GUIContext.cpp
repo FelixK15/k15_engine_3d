@@ -37,7 +37,8 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 	defaultStyle.buttonStyle.upperBackgroundColor = 0xFF303030;
 	defaultStyle.buttonStyle.textColor = 0xFF000000;
 	defaultStyle.buttonStyle.borderPixelThickness = 2;
-	defaultStyle.buttonStyle.textPixelPadding = 2;
+	defaultStyle.buttonStyle.horizontalPixelPadding = 4;
+	defaultStyle.buttonStyle.verticalPixelPadding = 2;
 	defaultStyle.buttonStyle.font = K15_GetResourceRenderFontDesc(p_ResourceContext, styleFontResource);
 	
 	//Window Style
@@ -139,7 +140,8 @@ intern K15_GUILayout* K15_InternalGUIGetTopLayout(K15_GUIContext* p_GUIContext)
 	return topLayout;
 }
 /*********************************************************************************/
-intern void K15_InternalGUIAddGUIRectToTopLayout(K15_GUIContext* p_GUIContext, K15_GUIRectangle* p_GUIRect)
+intern void K15_InternalGUIAddGUISizeHintsToTopLayout(K15_GUIContext* p_GUIContext, K15_GUIRectangle* p_GUIRect,
+	K15_GUIDimension p_SizeHint, K15_GUIDimension p_SizeMin)
 {
 	K15_GUILayout* topLayout = K15_InternalGUIGetTopLayout(p_GUIContext);
 
@@ -148,7 +150,9 @@ intern void K15_InternalGUIAddGUIRectToTopLayout(K15_GUIContext* p_GUIContext, K
 		K15_ASSERT(topLayout->numElements != K15_GUI_MAX_ELEMENTS_PER_LAYOUT);
 
 		uint32 elementIndex = topLayout->numElements++;
-		topLayout->elementRectangles[elementIndex] = p_GUIRect;
+		topLayout->elementSizeHints[elementIndex].rect = p_GUIRect;
+		topLayout->elementSizeHints[elementIndex].dimHint = p_SizeHint;
+		topLayout->elementSizeHints[elementIndex].dimMin = p_SizeMin;
 	}
 }
 /*********************************************************************************/
@@ -466,8 +470,26 @@ intern void K15_InternalRetrieveGUIRectCoordinates(K15_GUIRectangle* p_GUIRectan
 	}
 }
 /*********************************************************************************/
-intern K15_GUIElement* K15_InternalAddUnalignedGUIElement(K15_GUIContext* p_GUIContext, K15_GUIElementType p_GUIElementType,
-	int16* p_PosLeft, int16* p_PosTop, uint16* p_Width, uint16* p_Height, const char* p_Identifier)
+intern void K15_InternalCalculateSizeHint(K15_RenderFontDesc* p_Font, const char* p_Text, uint32 p_TextLength,
+	uint16* p_WidthHintOut, uint16* p_HeightHintOut,
+	uint16 p_PaddingLeft = 0, uint16 p_PaddingRight = 0,
+	uint16 p_PaddingTop = 0, uint16 p_PaddingBottom = 0)
+{
+	float textWidth = 0.f;
+	float textHeight = 0.f;
+	K15_GetTextSizeInPixels(p_Font, &textWidth, &textHeight, p_Text, p_TextLength);
+
+	if (p_WidthHintOut)
+		*p_WidthHintOut = p_PaddingRight + p_PaddingLeft + textWidth;
+
+	if (p_HeightHintOut)
+		*p_HeightHintOut = p_PaddingTop + p_PaddingBottom + textHeight;
+}
+/*********************************************************************************/
+intern K15_GUIElement* K15_InternalAddUnalignedGUIElement(K15_GUIContext* p_GUIContext, 
+	K15_GUIElementType p_GUIElementType, int16* p_PosLeft, int16* p_PosTop, 
+	uint16* p_Width, uint16* p_Height, uint16 p_WidthHint, uint16 p_HeightHint, 
+	const char* p_Identifier, uint16 p_MinWidth = 0, uint16 p_MinHeight = 0)
 {
 	K15_ASSERT(p_GUIContext->memoryCurrentSizeInBytes <= p_GUIContext->memoryMaxSizeInBytes);
 	//so what do we need to do here?
@@ -482,7 +504,11 @@ intern K15_GUIElement* K15_InternalAddUnalignedGUIElement(K15_GUIContext* p_GUIC
 	element->type = p_GUIElementType;
 	element->offsetInBytes = p_GUIContext->memoryCurrentSizeInBytes;
 	element->sizeInBytes = sizeof(K15_GUIElement);
-	
+	element->sizeHint.height = p_HeightHint;
+	element->sizeHint.width = p_WidthHint;
+	element->minSize.height = p_MinHeight;
+	element->minSize.width = p_MinWidth;
+
 	if (p_GUIContext->layoutIndex > 0)
 	{
 		element->flagMask |= K15_GUI_ELEMENT_LAYOUTED;
@@ -512,15 +538,18 @@ intern K15_GUIElement* K15_InternalAddUnalignedGUIElement(K15_GUIContext* p_GUIC
 		K15_InternalSetGUIRectCoordinates(&element->rect, p_PosLeft, p_PosTop, p_Width, p_Height);
 	}
 
-	K15_InternalGUIAddGUIRectToTopLayout(p_GUIContext, &element->rect);
+	K15_InternalGUIAddGUISizeHintsToTopLayout(p_GUIContext, &element->rect, 
+		element->sizeHint, element->minSize);
 
 	return element;
 }
 /*********************************************************************************/
 intern K15_GUIElement* K15_InternalAddAlignedGUIElement(K15_GUIContext* p_GUIContext, 
-	K15_GUIElementType p_GUIElementType, const char* p_Identifier)
+	K15_GUIElementType p_GUIElementType, uint16 p_WidthHint, uint16 p_HeightHint, 
+	const char* p_Identifier, uint16 p_MinWidth = 0, uint16 p_MinHeight = 0)
 {
-	return K15_InternalAddUnalignedGUIElement(p_GUIContext, p_GUIElementType, 0, 0, 0, 0, p_Identifier);
+	return K15_InternalAddUnalignedGUIElement(p_GUIContext, p_GUIElementType, 0, 0, 0, 0, 
+		p_WidthHint, p_HeightHint, p_Identifier, p_MinWidth, p_MinHeight);
 }
 /*********************************************************************************/
 intern byte* K15_InternalAddGUIElementMemory(K15_GUIContext* p_GUIContext, K15_GUIElement* p_GUIElement,
@@ -539,7 +568,7 @@ intern byte* K15_InternalAddGUIElementMemory(K15_GUIContext* p_GUIContext, K15_G
 	return elementMemory;
 }
 /*********************************************************************************/
-intern void K15_InternalGUIPushLayout(K15_GUIContext* p_GUIContext, K15_GUIRectangle p_LayoutArea, 
+intern K15_GUILayout* K15_InternalGUIPushLayout(K15_GUIContext* p_GUIContext, K15_GUIRectangle p_LayoutArea, 
 	K15_GUILayoutType p_LayoutType)
 {
 	++p_GUIContext->numLayouts;
@@ -550,28 +579,32 @@ intern void K15_InternalGUIPushLayout(K15_GUIContext* p_GUIContext, K15_GUIRecta
 	layout->layoutRectangle = p_LayoutArea;
 	layout->type = p_LayoutType;
 	layout->numElements = 0;
+
+	return layout;
 }
 /*********************************************************************************/
 intern K15_GUIElement* K15_InternalGUIMenuItemBase(K15_GUIContext* p_GUIContext, K15_GUIElementType p_ElementType,
 	const char* p_Text, const char* p_Identifier, K15_GUIMenuItemStyle* p_MenuItemStyle)
 {
-	K15_GUIElement* menuItemElement = K15_InternalAddAlignedGUIElement(p_GUIContext, p_ElementType, p_Identifier);
 	uint32 textLength = (uint32)strlen(p_Text);
+	uint32 verticalPixelPadding = p_MenuItemStyle->verticalPixelPadding;
+	uint32 horizontalPixelPadding = p_MenuItemStyle->horizontalPixelPadding;
+	K15_RenderFontDesc* font = p_MenuItemStyle->font;
 
+	uint16 widthHint = 0;
+	uint16 heightHint = 0;
+
+	K15_InternalCalculateSizeHint(font, p_Text, textLength, &widthHint, &heightHint,
+		horizontalPixelPadding, horizontalPixelPadding,
+		verticalPixelPadding, verticalPixelPadding);
+
+	K15_GUIElement* menuItemElement = K15_InternalAddAlignedGUIElement(p_GUIContext, p_ElementType, 
+		widthHint, heightHint, p_Identifier);
+	
 	void* menuItemDataBuffer = K15_InternalAddGUIElementMemory(p_GUIContext,
 		menuItemElement, sizeof(K15_GUIMenuItemData));
 	char* menuItemTextBuffer = (char*)K15_InternalAddGUIElementMemory(p_GUIContext,
 		menuItemElement, textLength);
-
-	K15_RenderFontDesc* font = p_MenuItemStyle->font;
-
-	float textPixelWidth = 0.f;
-	float textPixelHeight = 0.f;
-
-	uint32 verticalPixelPadding = p_MenuItemStyle->verticalPixelPadding;
-	uint32 horizontalPixelPadding = p_MenuItemStyle->horizontalPixelPadding;
-
-	K15_GetTextSizeInPixels(font, &textPixelWidth, &textPixelHeight, p_Text, textLength);
 
 	K15_GUIMenuItemData menuItemData = {};
 	menuItemData.text = menuItemTextBuffer;
@@ -584,6 +617,7 @@ intern K15_GUIElement* K15_InternalGUIMenuItemBase(K15_GUIContext* p_GUIContext,
 	return menuItemElement;
 }
 /*********************************************************************************/
+
 
 
 
@@ -640,6 +674,7 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	guiContext->debugModeActive = K15_FALSE;
 	guiContext->windowHeight = windowHeight;
 	guiContext->windowWidth = windowWidth;
+	guiContext->flagMask = 0;
 
 	return guiContext;
 }
@@ -671,7 +706,7 @@ void K15_GUIBeginToolBarEX(K15_GUIContext* p_GUIContext, const char* p_Identifie
 	uint16 posBottom = height;
 	
 	K15_GUIElement* guiElement = K15_InternalAddUnalignedGUIElement(p_GUIContext, K15_GUI_TOOLBAR,
-		&posLeft, &posTop, &posRight, &posBottom, p_Identifier);
+		&posLeft, &posTop, &posRight, &posBottom, width, height, p_Identifier);
 
 	K15_GUIToolBarData toolBarData = {};
 	toolBarData.toolBarStyle = p_ToolBarStyle;
@@ -679,7 +714,7 @@ void K15_GUIBeginToolBarEX(K15_GUIContext* p_GUIContext, const char* p_Identifie
 	void* toolBarDataBuffer = K15_InternalAddGUIElementMemory(p_GUIContext, guiElement, sizeof(K15_GUIToolBarData));
 	memcpy(toolBarDataBuffer, &toolBarData, sizeof(K15_GUIToolBarData));
 
-	K15_InternalGUIPushLayout(p_GUIContext, guiElement->rect, K15_GUI_HORIZONTAL_LAYOUT_LOOSELY_FIT);
+	K15_GUIPushHorizontalLayout(p_GUIContext, guiElement->rect, height);
 }
 /*********************************************************************************/
 bool8 K15_GUIBeginWindow(K15_GUIContext* p_GUIContext, int16* p_PosX, int16* p_PosY,
@@ -694,9 +729,12 @@ bool8 K15_GUIBeginWindowEX(K15_GUIContext* p_GUIContext, int16* p_PosX, int16* p
 	uint16* p_Width, uint16* p_Height, const char* p_Title, const char* p_Identifier,
 	K15_GUIWindowStyle* p_GUIWindowStyle)
 {
+	K15_ASSERT((p_GUIContext->flagMask & K15_GUI_CONTEXT_INSIDE_WINDOW_FLAG) == 0);
+
+	p_GUIContext->flagMask |= K15_GUI_CONTEXT_INSIDE_WINDOW_FLAG;
 
 	K15_GUIElement* windowElement = K15_InternalAddUnalignedGUIElement(p_GUIContext, K15_GUI_WINDOW,
-		p_PosX, p_PosY, p_Width, p_Height, p_Identifier);
+		p_PosX, p_PosY, p_Width, p_Height, *p_Width, *p_Height, p_Identifier);
 
 	if (windowElement->flagMask & K15_GUI_ELEMENT_MOUSE_DOWN)
 	{
@@ -721,7 +759,7 @@ bool8 K15_GUIBeginWindowEX(K15_GUIContext* p_GUIContext, int16* p_PosX, int16* p
 	memcpy(windowElementMemory, &windowData, sizeof(K15_GUIWindowData));
 
 	//Add layout for this window
-	K15_InternalGUIPushLayout(p_GUIContext, windowData.contentRect, K15_GUI_HORIZONTAL_LAYOUT);
+	K15_GUIPushHorizontalLayout(p_GUIContext, windowData.contentRect, 0);
 
 	return K15_TRUE;
 }
@@ -734,10 +772,24 @@ bool8 K15_GUIBeginMenu(K15_GUIContext* p_GUIContext, const char* p_MenuText, con
 bool8 K15_GUIBeginMenuEX(K15_GUIContext* p_GUIContext, const char* p_MenuText, const char* p_Identifier, 
 	K15_GUIMenuStyle* p_MenuStyle)
 {
-	K15_GUIElement* menuElement = K15_InternalAddAlignedGUIElement(p_GUIContext, K15_GUI_MENU, p_Identifier);
+	uint32 verticalPixelPadding = p_MenuStyle->verticalPixelPadding;
+	uint32 horizontalPixelPadding = p_MenuStyle->horizontalPixelPadding;
+	uint32 textLength = (uint32)strlen(p_MenuText);
+	K15_RenderFontDesc* font = p_MenuStyle->font;
+
+	uint16 widthHint = 0;
+	uint16 heightHint = 0;
+
+	K15_InternalCalculateSizeHint(font, p_MenuText, textLength, 
+		&widthHint, &heightHint, horizontalPixelPadding, horizontalPixelPadding,
+		verticalPixelPadding, verticalPixelPadding);
+
+	p_GUIContext->flagMask |= K15_GUI_CONTEXT_INSIDE_MENU_FLAG;
+
+	K15_GUIElement* menuElement = K15_InternalAddAlignedGUIElement(p_GUIContext, K15_GUI_MENU, 
+		widthHint, heightHint, p_Identifier);
 	bool8 active = menuElement->flagMask & K15_GUI_ELEMENT_FOCUSED;
 
-	uint32 textLength = (uint32)strlen(p_MenuText);
 	uint32 sizeMenuDataInBytes = sizeof(K15_GUIMenuData);
 
 	byte* menuElementMemory = (byte*)K15_InternalAddGUIElementMemory(p_GUIContext, menuElement, sizeMenuDataInBytes);
@@ -749,30 +801,17 @@ bool8 K15_GUIBeginMenuEX(K15_GUIContext* p_GUIContext, const char* p_MenuText, c
 	menuData.title = textMemory;
 	menuData.expanded = active;
 
-	K15_RenderFontDesc* font = p_MenuStyle->font;
-	uint32 verticalPixelPadding = p_MenuStyle->verticalPixelPadding;
-	uint32 horizontalPixelPadding = p_MenuStyle->horizontalPixelPadding;
-
-	float textWidth = 0.f;
-	float textHeight = 0.f;
-	K15_GetTextSizeInPixels(font, &textWidth, &textHeight, p_MenuText, textLength);
-
-	//align element
-	K15_GUIRectangle* menuElementRect = &menuElement->rect;
-	menuElementRect->pixelPosRight = menuElementRect->pixelPosLeft + (uint32)textWidth + horizontalPixelPadding * 2;
-	menuElementRect->pixelPosBottom = menuElementRect->pixelPosTop + (uint32)textHeight + verticalPixelPadding * 2;
-
 	memcpy(menuElementMemory, &menuData, sizeof(K15_GUIMenuData));
 	memcpy(textMemory, p_MenuText, textLength);
 
 	if (active)
 	{
 		K15_GUIRectangle menuLayoutRect = {};
-		menuLayoutRect.pixelPosLeft = menuElementRect->pixelPosLeft;
-		menuLayoutRect.pixelPosTop = menuElementRect->pixelPosBottom;
+		menuLayoutRect.pixelPosLeft = menuElement->rect.pixelPosLeft;
+		menuLayoutRect.pixelPosTop = menuElement->rect.pixelPosBottom;
 		menuLayoutRect.pixelPosBottom = 300;
 		menuLayoutRect.pixelPosRight = 150;
-		K15_InternalGUIPushLayout(p_GUIContext, menuLayoutRect, K15_GUI_VERTICAL_LAYOUT);
+		K15_GUIPushVerticalLayout(p_GUIContext, menuLayoutRect, 150);
 	}
 
 	return active;
@@ -786,6 +825,9 @@ bool8 K15_GUIMenuItem(K15_GUIContext* p_GUIContext, const char* p_ItemText, cons
 bool8 K15_GUIMenuItemEX(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier,
 	K15_GUIMenuItemStyle* p_MenuItemStyle)
 {
+	K15_ASSERT((p_GUIContext->flagMask & K15_GUI_CONTEXT_INSIDE_MENU_FLAG) > 0 ||
+		(p_GUIContext->flagMask & K15_GUI_CONTEXT_INSIDE_SUB_MENU_FLAG) > 0);
+
 	K15_GUIElement* menuItemElement = K15_InternalGUIMenuItemBase(p_GUIContext, K15_GUI_MENU_ITEM, p_ItemText, 
 		p_Identifier, p_MenuItemStyle);
 
@@ -815,7 +857,7 @@ bool8 K15_GUIBeginSubMenuEX(K15_GUIContext* p_GUIContext, const char* p_ItemText
 		layoutRect.pixelPosRight = layoutRect.pixelPosLeft + 200;
 		layoutRect.pixelPosBottom = layoutRect.pixelPosTop + 200;
 
-		K15_InternalGUIPushLayout(p_GUIContext, layoutRect, K15_GUI_VERTICAL_LAYOUT);
+		K15_GUIPushVerticalLayout(p_GUIContext, layoutRect, 150);
 	}
 
 	return hovered;
@@ -830,12 +872,22 @@ bool8 K15_GUIButton(K15_GUIContext* p_GUIContext, const char* p_ButtonText, cons
 bool8 K15_GUIButtonEX(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier,
 	K15_GUIButtonStyle* p_GUIButtonStyle)
 {
-	K15_GUIElement* buttonElement = K15_InternalAddAlignedGUIElement(p_GUIContext, K15_GUI_BUTTON, p_Identifier);
-
-	bool8 active = buttonElement->flagMask & K15_GUI_ELEMENT_CLICKED;
-
 	uint32 textLength = (uint32)strlen(p_ButtonText);
 	uint32 sizeButtonDataInBytes = sizeof(K15_GUIButtonData);
+	uint32 horizontalPixelPadding = p_GUIButtonStyle->horizontalPixelPadding + p_GUIButtonStyle->borderPixelThickness;
+	uint32 verticalPixelPadding = p_GUIButtonStyle->verticalPixelPadding + p_GUIButtonStyle->borderPixelThickness;
+
+	K15_RenderFontDesc* font = p_GUIButtonStyle->font;
+
+	uint16 widthHint = 0;
+	uint16 heightHint = 0;
+	K15_InternalCalculateSizeHint(font, p_ButtonText, textLength, &widthHint, &heightHint,
+		horizontalPixelPadding, horizontalPixelPadding, verticalPixelPadding, verticalPixelPadding);
+
+	K15_GUIElement* buttonElement = K15_InternalAddAlignedGUIElement(p_GUIContext, K15_GUI_BUTTON, 
+		heightHint, widthHint, p_Identifier);
+
+	bool8 active = buttonElement->flagMask & K15_GUI_ELEMENT_CLICKED;
 
 	byte* buttonElementMemory = (byte*)K15_InternalAddGUIElementMemory(p_GUIContext, 
 		buttonElement, sizeButtonDataInBytes);
@@ -845,9 +897,6 @@ bool8 K15_GUIButtonEX(K15_GUIContext* p_GUIContext, const char* p_ButtonText, co
 	buttonData.style = p_GUIButtonStyle;
 	buttonData.textLength = textLength;
 	buttonData.text = textMemory;
-
-	buttonElement->rect.pixelPosBottom = buttonElement->rect.pixelPosTop + 20;
-	buttonElement->rect.pixelPosRight = buttonElement->rect.pixelPosLeft + 20;
 
 	memcpy(buttonElementMemory, &buttonData, sizeof(K15_GUIButtonData));
 	memcpy(textMemory, p_ButtonText, textLength);
@@ -863,11 +912,19 @@ void K15_GUILabel(K15_GUIContext* p_GUIContext, const char* p_LabelText, const c
 void K15_GUILabelEX(K15_GUIContext* p_GUIContext, const char* p_LabelText, const char* p_Identifier, 
 	K15_GUILabelStyle* p_GUILabelStyle)
 {
-	K15_GUIElement* labelElement = K15_InternalAddAlignedGUIElement(p_GUIContext, K15_GUI_LABEL, p_Identifier);
-
 	uint32 textLength = (uint32)strlen(p_LabelText);
-	
-	byte* labelElementMemory = (byte*)K15_InternalAddGUIElementMemory(p_GUIContext, labelElement, sizeof(K15_GUILabelData));
+	uint16 widthHint = 0;
+	uint16 heightHint = 0;
+
+	K15_RenderFontDesc* font = p_GUILabelStyle->font;
+	K15_InternalCalculateSizeHint(font, p_LabelText, textLength, &widthHint, &heightHint);
+
+	K15_GUIElement* labelElement = K15_InternalAddAlignedGUIElement(p_GUIContext, K15_GUI_LABEL, 
+		widthHint, heightHint, p_Identifier);
+
+	byte* labelElementMemory = (byte*)K15_InternalAddGUIElementMemory(p_GUIContext, labelElement, 
+		sizeof(K15_GUILabelData));
+
 	char* textMemory = (char*)K15_InternalAddGUIElementMemory(p_GUIContext, labelElement, textLength);
 
 	K15_GUILabelData labelData = {};
@@ -879,14 +936,18 @@ void K15_GUILabelEX(K15_GUIContext* p_GUIContext, const char* p_LabelText, const
 	memcpy(textMemory, p_LabelText, textLength);
 }
 /*********************************************************************************/
-void K15_GUIPushVerticalLayout(K15_GUIContext* p_GUIContext)
+void K15_GUIPushVerticalLayout(K15_GUIContext* p_GUIContext, K15_GUIRectangle p_LayoutArea,
+	uint16 p_FixedWidthPerElement)
 {
-	
+	K15_GUILayout* layout = K15_InternalGUIPushLayout(p_GUIContext, p_LayoutArea, K15_GUI_VERTICAL_LAYOUT);
+	layout->params.fixedWidthPerElement = p_FixedWidthPerElement;
 }
 /*********************************************************************************/
-void K15_GUIPushHorizontalLayout(K15_GUIContext* p_GUIContext)
+void K15_GUIPushHorizontalLayout(K15_GUIContext* p_GUIContext, K15_GUIRectangle p_LayoutArea, 
+	uint16 p_FixedHeightPerElement)
 {
-
+	K15_GUILayout* layout = K15_InternalGUIPushLayout(p_GUIContext, p_LayoutArea, K15_GUI_HORIZONTAL_LAYOUT);
+	layout->params.fixedHeightPerElement = p_FixedHeightPerElement;
 }
 /*********************************************************************************/
 void K15_GUIPopLayout(K15_GUIContext* p_GUIContext)
@@ -945,41 +1006,55 @@ intern void K15_InternalGUIAlignElements(K15_GUILayout* p_Layouts, uint16 p_NumL
 			elementIndex < numElements;
 			++elementIndex)
 		{			
-			K15_GUIRectangle* rect = layout->elementRectangles[elementIndex];
-			rect->pixelPosLeft = layoutPosX + offsetX;
-			rect->pixelPosTop = layoutPosY + offsetY;
+			K15_GUISizeHint* sizeHint = layout->elementSizeHints + elementIndex;
+			K15_GUIRectangle* sizeHintRect = sizeHint->rect;
+			sizeHint->rect->pixelPosLeft = layoutPosX + offsetX;
+			sizeHint->rect->pixelPosTop = layoutPosY + offsetY;
 
+			//get the hint 
+			uint16 elementWidthHint = sizeHint->dimHint.width;
+			uint16 elementHeightHint = sizeHint->dimHint.height;
+
+			//get the min size
+			uint16 elementMinWidth = sizeHint->dimMin.width;
+			uint16 elementMinHeight = sizeHint->dimMin.height;
+
+			//how much space is left?
 			uint16 elementWidthFit = (layoutWidth / (numElements - elementIndex));
 			uint16 elementHeightFit = (layoutHeight / (numElements - elementIndex));
-			uint16 elementWidth = (rect->pixelPosRight - rect->pixelPosLeft);
-			uint16 elementHeight = (rect->pixelPosBottom - rect->pixelPosTop);
 			
+			//if there's enough space, use the size provided by the hint.
+			//otherwise use something in the range [minSize, sizeHint)
+			uint16 elementWidth = elementWidthFit < elementWidthHint ?
+				elementWidthHint - elementWidthFit : elementWidthHint;
+
+			uint16 elementHeight = elementHeightFit < elementHeightHint ?
+				elementHeightHint - elementHeightFit : elementHeightHint;
+
+			elementWidth = K15_MAX(elementMinWidth, elementWidth);
+			elementHeight = K15_MAX(elementMinHeight, elementHeight);
+
 			switch (type)
 			{
 			case K15_GUI_VERTICAL_LAYOUT:
-				rect->pixelPosRight = rect->pixelPosLeft + layoutWidth;
-				rect->pixelPosBottom = rect->pixelPosTop + 20;
-				offsetY += 20;
-				layoutHeight -= 20;
+
+				if (layout->params.fixedHeightPerElement > 0)
+					elementWidth = layout->params.fixedHeightPerElement;
+
+				sizeHintRect->pixelPosRight = sizeHintRect->pixelPosLeft + elementWidth;
+				sizeHintRect->pixelPosBottom = sizeHintRect->pixelPosTop + elementHeight;
+				offsetY += elementHeight;
+				layoutHeight -= elementHeight;
 				break;
 
 			case K15_GUI_HORIZONTAL_LAYOUT:
-				rect->pixelPosRight = rect->pixelPosLeft + elementWidthFit;
-				rect->pixelPosBottom = rect->pixelPosTop + 20;
-				offsetX += elementWidthFit;
-				layoutWidth -= elementWidthFit;
-				break;
+				if (layout->params.fixedWidthPerElement > 0)
+					elementHeight = layout->params.fixedWidthPerElement;
 
-			case K15_GUI_HORIZONTAL_LAYOUT_LOOSELY_FIT:
-				rect->pixelPosRight = rect->pixelPosLeft + elementWidth;
+				sizeHintRect->pixelPosRight = sizeHintRect->pixelPosLeft + elementWidth;
+				sizeHintRect->pixelPosBottom = sizeHintRect->pixelPosTop + elementHeight;
 				offsetX += elementWidth;
 				layoutWidth -= elementWidth;
-				break;
-
-			case K15_GUI_VERTICAL_LAYOUT_LOOSELY_FIT:
-				rect->pixelPosBottom = rect->pixelPosTop + elementHeight;
-				offsetY += elementHeight;
-				layoutHeight -= elementHeight;
 				break;
 			}
 		}
