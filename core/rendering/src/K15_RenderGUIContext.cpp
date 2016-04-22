@@ -74,7 +74,7 @@ intern void K15_InternalCountGUIElementVertices(K15_GUIContext* p_GUIContext, K1
 	{
 		K15_GUIMenuData* menuData = (K15_GUIMenuData*)K15_GUIGetGUIElementMemory(p_GUIElement);
 		K15_RenderFontDesc* font = menuData->menuStyle->font;
-		drawInfo->numVerticesP3C3 += 6;
+		drawInfo->numVerticesP3C3 += 9;
 		drawInfo->numVerticesP3T2C3 += K15_GetTextVertexCount(font, menuData->title, menuData->textLength);
 		break;
 	}
@@ -86,7 +86,6 @@ intern void K15_InternalCountGUIElementVertices(K15_GUIContext* p_GUIContext, K1
 	}
 
 	case K15_GUI_MENU_ITEM:
-	case K15_GUI_SUB_MENU_ITEM:
 	{
 		K15_GUIMenuItemData* menuItemData = (K15_GUIMenuItemData*)K15_GUIGetGUIElementMemory(p_GUIElement);
 		K15_RenderFontDesc* font = menuItemData->menuItemStyle->font;
@@ -316,7 +315,7 @@ intern void K15_InternalPushGUIMenuVertices(K15_GUIElement* p_GUIElement, K15_GU
 	uint32 P3C3Index = p_DrawInfo->numFloatsVertexBufferP3C3;
 	uint32 P3T2C3Index = p_DrawInfo->numFloatsVertexBufferP3T2C3;
 
-	float* P2C3Buffer = p_DrawInfo->vertexBufferP3C3;
+	float* P3C3Buffer = p_DrawInfo->vertexBufferP3C3;
 	float* P3T2C3Buffer = p_DrawInfo->vertexBufferP3T2C3;
 
 	uint32 textColor		= menuStyle->textColor;
@@ -325,22 +324,42 @@ intern void K15_InternalPushGUIMenuVertices(K15_GUIElement* p_GUIElement, K15_GU
 	uint32 upperLeftColor	= menuStyle->upperBackgroundColor;
 	uint32 upperRightColor	= menuStyle->upperBackgroundColor;
 
-	if (p_GUIElement->flagMask & K15_GUI_ELEMENT_HOVERED)
+	if (menuData->subMenu)
 	{
-		lowerLeftColor  = menuStyle->lowerHoveredBackgroundColor;
-		lowerRightColor = menuStyle->lowerHoveredBackgroundColor;
-		upperLeftColor  = menuStyle->upperHoveredBackgroundColor;
-		upperRightColor = menuStyle->upperHoveredBackgroundColor;
+		if (p_GUIElement->flagMask & K15_GUI_ELEMENT_HOVERED)
+		{
+			lowerLeftColor = menuStyle->lowerHoveredBackgroundColor;
+			lowerRightColor = menuStyle->lowerHoveredBackgroundColor;
+			upperLeftColor = menuStyle->upperHoveredBackgroundColor;
+			upperRightColor = menuStyle->upperHoveredBackgroundColor;
+		}
+		else if (p_GUIElement->flagMask & K15_GUI_ELEMENT_CLICKED)
+		{
+			lowerLeftColor = menuStyle->lowerFocusedBackgroundColor;
+			lowerRightColor = menuStyle->lowerFocusedBackgroundColor;
+			upperLeftColor = menuStyle->upperFocusedBackgroundColor;
+			upperRightColor = menuStyle->upperFocusedBackgroundColor;
+		}
 	}
-	else if (p_GUIElement->flagMask & K15_GUI_ELEMENT_CLICKED)
+	else
 	{
-		lowerLeftColor = menuStyle->lowerFocusedBackgroundColor;
-		lowerRightColor = menuStyle->lowerFocusedBackgroundColor;
-		upperLeftColor = menuStyle->upperFocusedBackgroundColor;
-		upperRightColor = menuStyle->upperFocusedBackgroundColor;
+		if (p_GUIElement->flagMask & K15_GUI_ELEMENT_HOVERED)
+		{
+			lowerLeftColor = menuStyle->lowerHoveredBackgroundColor;
+			lowerRightColor = menuStyle->lowerHoveredBackgroundColor;
+			upperLeftColor = menuStyle->upperHoveredBackgroundColor;
+			upperRightColor = menuStyle->upperHoveredBackgroundColor;
+		}
+		else if (p_GUIElement->flagMask & K15_GUI_ELEMENT_CLICKED)
+		{
+			lowerLeftColor = menuStyle->lowerFocusedBackgroundColor;
+			lowerRightColor = menuStyle->lowerFocusedBackgroundColor;
+			upperLeftColor = menuStyle->upperFocusedBackgroundColor;
+			upperRightColor = menuStyle->upperFocusedBackgroundColor;
+		}
 	}
-
-	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRectVertices(P2C3Buffer, P3C3Index,
+	
+	P3C3Index = K15_InternalPush2DScreenspacePixelColoredRectVertices(P3C3Buffer, P3C3Index,
 		pixelPosLeft, pixelPosRight, pixelPosTop, pixelPosBottom,
 		upperLeftColor, upperRightColor, lowerLeftColor, lowerRightColor);
 
@@ -348,6 +367,15 @@ intern void K15_InternalPushGUIMenuVertices(K15_GUIElement* p_GUIElement, K15_GU
 		textPixelPosLeft, textPixelPosRight, textPixelPosTop, textPixelPosBottom, textColor,
 		text, textLength);
 	
+	if (menuData->subMenu)
+	{
+		P3C3Index = K15_InternalPush2DScreenspacePixelColoredTriangleVertices(P3C3Buffer, P3C3Index,
+			pixelPosRight - 10, pixelPosTop + 3,
+			pixelPosRight - 3, pixelPosTop + 3 + ((pixelPosBottom - 3) - (pixelPosTop + 3)) / 2,
+			pixelPosRight - 10, pixelPosBottom - 3,
+			0XFFFFFFFF);
+	}
+
 	p_DrawInfo->numFloatsVertexBufferP3C3 = P3C3Index;
 	p_DrawInfo->numFloatsVertexBufferP3T2C3 = P3T2C3Index;
 }
@@ -426,15 +454,6 @@ intern void K15_InternalPushGUIMenuItemVertices(K15_GUIElement* p_GUIElement, K1
 		textPixelPosLeft, textPixelPosRight, textPixelPosTop, textPixelPosBottom,
 		textColor, text, textLength);
 
-	if (p_GUIElement->type == K15_GUI_SUB_MENU_ITEM)
-	{
-		P3C3Index = K15_InternalPush2DScreenspacePixelColoredTriangleVertices(P3C3Buffer, P3C3Index,
-			pixelPosRight - 10, pixelPosTop + 3,
-			pixelPosRight - 3, pixelPosTop + 3 + ((pixelPosBottom - 3) - (pixelPosTop + 3)) / 2,
-			pixelPosRight - 10, pixelPosBottom - 3,
-			0XFFFFFFFF);
-	}
-
 	p_DrawInfo->numFloatsVertexBufferP3C3 = P3C3Index;
 	p_DrawInfo->numFloatsVertexBufferP3T2C3 = P3T2C3Index;
 }
@@ -468,7 +487,6 @@ intern void K15_InternalPushGUIElementVertices(K15_GUIContext* p_GUIContext, K15
 		break;
 	
 	case K15_GUI_MENU_ITEM:
-	case K15_GUI_SUB_MENU_ITEM:
 		K15_InternalPushGUIMenuItemVertices(p_GUIElement, drawInfo);
 		break;
 	}

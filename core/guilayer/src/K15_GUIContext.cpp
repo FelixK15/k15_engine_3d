@@ -664,6 +664,7 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	guiContext->mouseDownElementIdHash = 0;
 	guiContext->layoutIndex = 0;
 	guiContext->numLayouts = 0;
+	guiContext->numMenus = 0;
 	guiContext->activatedElementIdHash = 0;
 	guiContext->memoryBuffer = guiMemory;
 	guiContext->retainedDataOffsetInBytes = guiMemoryBufferSize;
@@ -675,7 +676,6 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	guiContext->windowHeight = windowHeight;
 	guiContext->windowWidth = windowWidth;
 	guiContext->flagMask = 0;
-
 	return guiContext;
 }
 /*********************************************************************************/
@@ -772,6 +772,8 @@ bool8 K15_GUIBeginMenu(K15_GUIContext* p_GUIContext, const char* p_MenuText, con
 bool8 K15_GUIBeginMenuEX(K15_GUIContext* p_GUIContext, const char* p_MenuText, const char* p_Identifier, 
 	K15_GUIMenuStyle* p_MenuStyle)
 {
+	bool8 insideMenu = (p_GUIContext->flagMask & K15_GUI_CONTEXT_INSIDE_MENU_FLAG) > 0;
+
 	uint32 verticalPixelPadding = p_MenuStyle->verticalPixelPadding;
 	uint32 horizontalPixelPadding = p_MenuStyle->horizontalPixelPadding;
 	uint32 textLength = (uint32)strlen(p_MenuText);
@@ -784,11 +786,14 @@ bool8 K15_GUIBeginMenuEX(K15_GUIContext* p_GUIContext, const char* p_MenuText, c
 		&widthHint, &heightHint, horizontalPixelPadding, horizontalPixelPadding,
 		verticalPixelPadding, verticalPixelPadding);
 
-	p_GUIContext->flagMask |= K15_GUI_CONTEXT_INSIDE_MENU_FLAG;
-
 	K15_GUIElement* menuElement = K15_InternalAddAlignedGUIElement(p_GUIContext, K15_GUI_MENU, 
 		widthHint, heightHint, p_Identifier);
-	bool8 active = menuElement->flagMask & K15_GUI_ELEMENT_FOCUSED;
+	bool8 active = K15_FALSE;
+	
+	if (!insideMenu)
+		active = (menuElement->flagMask & K15_GUI_ELEMENT_FOCUSED) > 0;
+	else
+		active = (menuElement->flagMask & K15_GUI_ELEMENT_HOVERED) > 0;
 
 	uint32 sizeMenuDataInBytes = sizeof(K15_GUIMenuData);
 
@@ -800,18 +805,34 @@ bool8 K15_GUIBeginMenuEX(K15_GUIContext* p_GUIContext, const char* p_MenuText, c
 	menuData.textLength = textLength;
 	menuData.title = textMemory;
 	menuData.expanded = active;
-
+	menuData.subMenu = insideMenu;
 	memcpy(menuElementMemory, &menuData, sizeof(K15_GUIMenuData));
 	memcpy(textMemory, p_MenuText, textLength);
 
 	if (active)
 	{
+		p_GUIContext->flagMask |= K15_GUI_CONTEXT_INSIDE_MENU_FLAG;
+		p_GUIContext->numMenus += 1;
+
 		K15_GUIRectangle menuLayoutRect = {};
-		menuLayoutRect.pixelPosLeft = menuElement->rect.pixelPosLeft;
-		menuLayoutRect.pixelPosTop = menuElement->rect.pixelPosBottom;
-		menuLayoutRect.pixelPosBottom = 300;
-		menuLayoutRect.pixelPosRight = 150;
-		K15_GUIPushVerticalLayout(p_GUIContext, menuLayoutRect, 150);
+		uint32 menuWidth = 150;
+		uint32 menuHeight = 200;
+		uint32 fixedElementWidth = 150;
+		
+		if (insideMenu)
+		{
+			menuLayoutRect.pixelPosLeft = menuElement->rect.pixelPosRight;
+			menuLayoutRect.pixelPosTop = menuElement->rect.pixelPosTop;
+		}
+		else
+		{
+			menuLayoutRect.pixelPosLeft = menuElement->rect.pixelPosLeft;
+			menuLayoutRect.pixelPosTop = menuElement->rect.pixelPosBottom;
+		}	
+	
+		menuLayoutRect.pixelPosBottom = menuElement->rect.pixelPosLeft + menuHeight;
+		menuLayoutRect.pixelPosRight = menuElement->rect.pixelPosBottom + menuWidth;
+		K15_GUIPushVerticalLayout(p_GUIContext, menuLayoutRect, fixedElementWidth);
 	}
 
 	return active;
@@ -825,42 +846,13 @@ bool8 K15_GUIMenuItem(K15_GUIContext* p_GUIContext, const char* p_ItemText, cons
 bool8 K15_GUIMenuItemEX(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier,
 	K15_GUIMenuItemStyle* p_MenuItemStyle)
 {
-	K15_ASSERT((p_GUIContext->flagMask & K15_GUI_CONTEXT_INSIDE_MENU_FLAG) > 0 ||
-		(p_GUIContext->flagMask & K15_GUI_CONTEXT_INSIDE_SUB_MENU_FLAG) > 0);
-
+	K15_ASSERT((p_GUIContext->flagMask & K15_GUI_CONTEXT_INSIDE_MENU_FLAG) > 0);
 	K15_GUIElement* menuItemElement = K15_InternalGUIMenuItemBase(p_GUIContext, K15_GUI_MENU_ITEM, p_ItemText, 
 		p_Identifier, p_MenuItemStyle);
 
 	bool8 active = menuItemElement->flagMask & K15_GUI_ELEMENT_CLICKED;
 
 	return active;
-}
-/*********************************************************************************/
-bool8 K15_GUIBeginSubMenu(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier)
-{
-	return K15_GUIBeginSubMenuEX(p_GUIContext, p_ItemText, p_Identifier, &p_GUIContext->style.menuItemStyle);
-}
-/*********************************************************************************/
-bool8 K15_GUIBeginSubMenuEX(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier,
-	K15_GUIMenuItemStyle* p_MenuItemStyle)
-{
-	K15_GUIElement* subMenuElement = K15_InternalGUIMenuItemBase(p_GUIContext, K15_GUI_SUB_MENU_ITEM, p_ItemText,
-		p_Identifier, p_MenuItemStyle);
-
-	bool8 hovered = subMenuElement->flagMask & K15_GUI_ELEMENT_HOVERED;
-
-	if (hovered)
-	{
-		K15_GUIRectangle layoutRect = {};
-		layoutRect.pixelPosLeft = subMenuElement->rect.pixelPosRight;
-		layoutRect.pixelPosTop = subMenuElement->rect.pixelPosTop;
-		layoutRect.pixelPosRight = layoutRect.pixelPosLeft + 200;
-		layoutRect.pixelPosBottom = layoutRect.pixelPosTop + 200;
-
-		K15_GUIPushVerticalLayout(p_GUIContext, layoutRect, 150);
-	}
-
-	return hovered;
 }
 /*********************************************************************************/
 bool8 K15_GUIButton(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier)
@@ -958,6 +950,11 @@ void K15_GUIPopLayout(K15_GUIContext* p_GUIContext)
 /*********************************************************************************/
 void K15_GUIEndMenu(K15_GUIContext* p_GUIContext)
 {
+	p_GUIContext->numMenus -= 1;
+	
+	if (p_GUIContext->numMenus == 0)
+		p_GUIContext->flagMask &= ~K15_GUI_CONTEXT_INSIDE_MENU_FLAG;
+
 	K15_GUIPopLayout(p_GUIContext);
 }
 /*********************************************************************************/
@@ -1065,6 +1062,8 @@ void K15_GUIFinishGUIFrame(K15_GUIContext* p_GUIContext)
 {
 	K15_InternalGUIAlignElements(p_GUIContext->layoutStack, p_GUIContext->numLayouts);
 	K15_InternalGUIHandleInput(p_GUIContext);
+
+	K15_ASSERT((p_GUIContext->flagMask & K15_GUI_CONTEXT_INSIDE_MENU_FLAG) == 0);
 
 	byte* retainedBuffer = K15_InternalGUIGetRetainedDataBuffer(p_GUIContext);
 

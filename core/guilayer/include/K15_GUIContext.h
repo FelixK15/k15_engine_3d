@@ -45,7 +45,6 @@ enum K15_GUIElementType
 	K15_GUI_SEPARATOR,
 	K15_GUI_TOOLBAR,
 	K15_GUI_MENU_ITEM,
-	K15_GUI_SUB_MENU_ITEM
 }; 
 /*********************************************************************************/
 struct K15_GUIRectangle
@@ -170,6 +169,7 @@ struct K15_GUIMenuData
 	char* title;
 	uint32 textLength;
 	bool8 expanded;
+	bool8 subMenu;
 };
 /*********************************************************************************/
 struct K15_GUIMenuItemData
@@ -219,8 +219,7 @@ struct K15_GUILayout
 enum K15_GUIContextFlags
 {
 	K15_GUI_CONTEXT_INSIDE_WINDOW_FLAG		= 0x01,
-	K15_GUI_CONTEXT_INSIDE_MENU_FLAG		= 0x02,
-	K15_GUI_CONTEXT_INSIDE_SUB_MENU_FLAG	= 0x04
+	K15_GUI_CONTEXT_INSIDE_MENU_FLAG		= 0x02
 };
 /*********************************************************************************/
 enum K15_GUIMouseInputType : uint16
@@ -362,8 +361,10 @@ struct K15_GUIContext
 	K15_GUIContextStyle style;
 	K15_GUIContextEvents events;
 	K15_GUILayout layoutStack[K15_GUI_MAX_LAYOUTS];
-	uint16 layoutIndex;
-	uint16 numLayouts;
+	bool8 debugModeActive;
+	uint8 numMenus;
+	uint8 layoutIndex;
+	uint8 numLayouts;
 	uint16 windowWidth;
 	uint16 windowHeight;
 	uint32 focusedElementIdHash;
@@ -376,7 +377,6 @@ struct K15_GUIContext
 	uint32 retainedDataOffsetInBytes;
 	uint32 retainedDataSizeInBytes;
 	uint32 flagMask;
-	bool8 debugModeActive;
 };
 /*********************************************************************************/
 
@@ -413,10 +413,6 @@ bool8 K15_GUIMenuItem(K15_GUIContext* p_GUIContext, const char* p_ItemText, cons
 bool8 K15_GUIMenuItemEX(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier,
 	K15_GUIMenuItemStyle* p_MenuItemStyle);
 
-bool8 K15_GUIBeginSubMenu(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier);
-bool8 K15_GUIBeginSubMenuEX(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier,
-	K15_GUIMenuItemStyle* p_MenuItemStyle);
-
 bool8 K15_GUIButton(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier);
 bool8 K15_GUIButtonEX(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier, 
 	K15_GUIButtonStyle* p_GUIButtonStyle);
@@ -432,7 +428,6 @@ void K15_GUIPushHorizontalLayout(K15_GUIContext* p_GUIContext, K15_GUIRectangle 
 
 void K15_GUIPopLayout(K15_GUIContext* p_GUIContext);
 
-void K15_GUIEndSubMenu(K15_GUIContext* p_GUIContext);
 void K15_GUIEndWindow(K15_GUIContext* p_GUIContext);
 void K15_GUIEndMenu(K15_GUIContext* p_GUIContext);
 void K15_GUIEndDockingArea(K15_GUIContext* p_GUIContext);
