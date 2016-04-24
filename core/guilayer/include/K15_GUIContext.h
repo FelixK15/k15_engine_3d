@@ -116,12 +116,27 @@ struct K15_GUILabelStyle
 struct K15_GUIMenuStyle
 {
 	uint32 textColor;
-	uint32 upperBackgroundColor;
-	uint32 lowerBackgroundColor;
-	uint32 upperHoveredBackgroundColor;
-	uint32 lowerHoveredBackgroundColor;
-	uint32 upperFocusedBackgroundColor;
-	uint32 lowerFocusedBackgroundColor;
+
+	struct
+	{
+		uint32 upperBackgroundColor;
+		uint32 lowerBackgroundColor;
+		uint32 upperHoveredBackgroundColor;
+		uint32 lowerHoveredBackgroundColor;
+		uint32 upperFocusedBackgroundColor;
+		uint32 lowerFocusedBackgroundColor;
+	} subMenuColors;
+
+	struct
+	{
+		uint32 upperBackgroundColor;
+		uint32 lowerBackgroundColor;
+		uint32 upperHoveredBackgroundColor;
+		uint32 lowerHoveredBackgroundColor;
+		uint32 upperFocusedBackgroundColor;
+		uint32 lowerFocusedBackgroundColor;
+	} menuColors;
+
 	uint32 verticalPixelPadding;
 	uint32 horizontalPixelPadding;
 	K15_RenderFontDesc* font;
