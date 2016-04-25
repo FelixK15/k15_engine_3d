@@ -224,7 +224,8 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
 	K15_GUIEndDockingArea(guiContext);
 	K15_GUIFinishGUIFrame(guiContext);
 
-	K15_RenderCommandDraw2DGUI(gameRenderCommandQueue, guiContext);
+	K15_GUIDrawCommandBuffer* guiDrawCommandBuffer = K15_GUIGenerateDrawCommandBuffer(guiContext);
+	K15_RenderCommandDraw2DGUI(gameRenderCommandQueue, guiDrawCommandBuffer);
 
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameContext->resourceContext->commandQueue);
 	K15_DispatchRenderCommandQueue(p_GameContext->renderContext, gameRenderCommandQueue);

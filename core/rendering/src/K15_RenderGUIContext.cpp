@@ -41,66 +41,72 @@ struct K15_GUIDrawInformation
 /*********************************************************************************/
 
 
-
 /*********************************************************************************/
-intern void K15_InternalCountGUIElementVertices(K15_GUIContext* p_GUIContext, K15_GUIElement* p_GUIElement,
-	void* p_UserData)
+intern inline uint32 K15_InternalGetGUIElementVertexCount(K15_GUIDrawCommand* p_GUIDrawCmd)
 {
-	bool8 debugMode = p_GUIContext->debugModeActive;
-	K15_GUIElementType type = p_GUIElement->type;
-	K15_GUIDrawInformation* drawInfo = (K15_GUIDrawInformation*)p_UserData;
+	K15_GUIElementType type = p_GUIDrawCmd->params.elementType;
+	uint32 numVertices = 0;
 
 	switch (type)
 	{
-	case K15_GUI_WINDOW:
-	{
-		K15_GUIWindowData* windowData = (K15_GUIWindowData*)K15_GUIGetGUIElementMemory(p_GUIElement);
-		K15_RenderFontDesc* font = windowData->style->font;
-		drawInfo->numVerticesP3C3 += 802;
-		drawInfo->numVerticesP3T2C3 += K15_GetTextVertexCount(font, windowData->title, windowData->textLength);
-		break;
-	}
+		case K15_GUI_WINDOW:
+			numVertices = 40;
+			break;
 
-	case K15_GUI_BUTTON:
-	{
-		K15_GUIButtonData* buttonData = (K15_GUIButtonData*)K15_GUIGetGUIElementMemory(p_GUIElement);
-		K15_RenderFontDesc* font = buttonData->style->font;
-		drawInfo->numVerticesP3C3 += 12;
-		drawInfo->numVerticesP3T2C3 += K15_GetTextVertexCount(font, buttonData->text, buttonData->textLength);
-		break;
-	}
+		case K15_GUI_BUTTON:
+			numVertices = 12;
+			break;
 
-	case K15_GUI_MENU:
-	{
-		K15_GUIMenuData* menuData = (K15_GUIMenuData*)K15_GUIGetGUIElementMemory(p_GUIElement);
-		K15_RenderFontDesc* font = menuData->menuStyle->font;
-		drawInfo->numVerticesP3C3 += 9;
-		drawInfo->numVerticesP3T2C3 += K15_GetTextVertexCount(font, menuData->title, menuData->textLength);
-		break;
+		case K15_GUI_MENU:
+		case K15_GUI_TOOLBAR:
+		case K15_GUI_MENU_ITEM:
+			numVertices = 6;
+			break;
 	}
+}
+/*********************************************************************************/
+intern inline uint32 K15_InternalGetGUITextVertexCount(K15_GUIRenderResources* p_GUIRenderResources, 
+	K15_GUIDrawCommand* p_GUIDrawCmd)
+{
+	K15_GUIFontInfo* fontInfo = p_GUIDrawCmd->params.fontInfo;
+	uint32 textLength = p_GUIDrawCmd->params.textLength;
+	char* text = p_GUIDrawCmd->params.text;
 
-	case K15_GUI_TOOLBAR:
+	K15_RenderFontDesc* font = K15_InternalGetGUIFont(p_GUIRenderResources, fontIndex);
+	
+	if (!font)
 	{
-		drawInfo->numVerticesP3C3 += 6;
-		break;
-	}
+		K15_LOG_ERROR_MESSAGE("Could not create font '%s' with size '%d' (italic: '%s', bold: '%s')",
+				fontInfo->name, fontInfo->mask & K15_GUI_ITLAIC_FONT_FLAG > 0 ? "true" : "false",
+				fontInfo->mask & K15_GUI_BOLD_FONT_FLAG > 0 ? "true" : "false");
 
-	case K15_GUI_MENU_ITEM:
-	{
-		K15_GUIMenuItemData* menuItemData = (K15_GUIMenuItemData*)K15_GUIGetGUIElementMemory(p_GUIElement);
-		K15_RenderFontDesc* font = menuItemData->menuItemStyle->font;
-		drawInfo->numVerticesP3C3 += 9;
-		drawInfo->numVerticesP3T2C3 += K15_GetTextVertexCount(font, menuItemData->text, menuItemData->textLength);
-		break;
-	}
+		return 0;
+ 	}
 
-	case K15_GUI_LABEL:
+	return K15_GetTextVertexCount(font, text, textLength);
+}
+/*********************************************************************************/
+void K15_CountGUIContextVertices(K15_GUIRenderResources* p_GUIRenderResources, K15_GUIDrawInformation* p_DrawInfo)
+{
+	K15_GUIDrawCommandBuffer* drawCmdBuffer = p_DrawInfo->drawCommandBuffer;
+	uint32 numVertices = 0;
+	uint32 numTextVertices = 0;
+	
+	for (uint32 drawCmdIndex = 0;
+		drawCmdIndex < drawCmdBuffer->numCommands;
+		++drawCmdIndex)
 	{
-		K15_GUILabelData* labelData = (K15_GUILabelData*)K15_GUIGetGUIElementMemory(p_GUIElement);
-		K15_RenderFontDesc* font = labelData->style->font;
-		drawInfo->numVerticesP3T2C3 += K15_GetTextVertexCount(font, labelData->text, labelData->textLength);
-		break;
-	}
+		K15_GUIDrawCommand* drawCmd = drawCmdBuffer->command[drawCmdIndex];
+
+		switch (drawCmd->type)
+		{
+			case K15_GUI_DRAW_ELEMENT_CMD:
+				numVertices += K15_InternalGetGUIElementVertexCount(p_GUIRenderResources, drawCmd);
+				break;
+
+			case K15_GUI_DRAW_TEXT_CMD:
+				numTextVertices += K15_InternalGetGUITextVertexCount(drawCmd);
+		}
 	}
 }
 /*********************************************************************************/

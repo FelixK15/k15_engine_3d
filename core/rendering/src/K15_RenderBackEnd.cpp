@@ -579,23 +579,18 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	K15_RenderContext* renderContext = p_RenderBackEnd->renderContext;
 	K15_CustomMemoryAllocator* renderAllocator = &renderContext->memoryAllocator;
 
-	K15_GUIContext guiContext = {};
-	uint32 guiMemorySize = 0;
-	byte* guiMemoryBuffer = 0;
-
-	uint32 localOffset = 0;
-
-	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset + localOffset, 
-		sizeof(K15_GUIContext), &guiContext);
-	localOffset += sizeof(K15_GUIContext);
+	K15_GUIDrawCommandBuffer drawCommandBuffer = {};
+	
+	K15_ReadMemoryFromCommandBuffer(p_RenderCommandBuffer, p_BufferOffset, 
+		sizeof(drawCommandBuffer), &drawCommandBuffer);
 
 	uint32 currentGUIMemoryOffset = 0;
 
-	K15_Matrix4 orthoProj = K15_CreateOrthographicProjectionMatrix(p_RenderBackEnd->viewportWidth, p_RenderBackEnd->viewportHeight);
-	K15_UpdateUniformCacheEntry(&p_RenderBackEnd->uniformCache, K15_UNIFORM_SEMANTIC_PROJECTION_MATRIX,
-		(byte*)&orthoProj);
+	float guiProjectionMatrix[16];
+	K15_GUIGetProjectionMatrix(&drawCommandBuffer, &guiProjectionMatrix);
 
-	/*K15_GetTransformedVector(K15_CreateVector(400, 400, 1), orthoProj);*/
+	K15_UpdateUniformCacheEntry(&p_RenderBackEnd->uniformCache, K15_UNIFORM_SEMANTIC_PROJECTION_MATRIX,
+		(byte*)guiProjectionMatrix);
 
 	K15_RenderVertexFormatDesc vertexFormatP3C3 = K15_CreateRenderVertexFormatDesc(p_RenderBackEnd->renderContext, 2, 
 		K15_ATTRIBUTE_SEMANTIC_POSITION, K15_TYPE_FLOAT_VECTOR2,
@@ -609,7 +604,8 @@ intern void K15_InternalRender2DGUI(K15_RenderBackEnd* p_RenderBackEnd, K15_Rend
 	//count vertices
 	K15_GUIDrawInformation guiDrawInfo = {};
 	guiDrawInfo.renderContext = p_RenderBackEnd->renderContext;
-	K15_GUIIterateRetainedElements(&guiContext, K15_InternalCountGUIElementVertices, &guiDrawInfo);
+	guiDrawInfo.drawCommandBuffer = &drawCommandBuffer;
+	K15_CountGUIContextVertices(p_RenderBackEnd->guiResources, &guiDrawInfo);
 
 	//early out
 	if (guiDrawInfo.numVerticesP3C3 == 0 && guiDrawInfo.numVerticesP3T2C3 == 0)
