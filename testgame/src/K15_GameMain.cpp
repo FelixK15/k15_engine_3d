@@ -174,7 +174,7 @@ K15_EXPORT_SYMBOL void K15_TickGame(K15_GameContext* p_GameContext)
  	char* text = (char*)alloca(128);
  	sprintf(text, "FPS: %.1f\nms: %.3f", p_GameContext->frameCounter.FPS, p_GameContext->frameCounter.avgDeltaTime);
 	K15_RenderCommandDraw2DText(gameRenderCommandQueue, gameFont, text, K15_CreateVector(1.0f, 0.25f, 0.25f, 1.0f),
-		K15_CreateVector(0.f, 0.f));
+		K15_CreateVector(150.f, 150.f));
 
 	K15_GUIBeginToolBar(guiContext, "default_toolbar");
 

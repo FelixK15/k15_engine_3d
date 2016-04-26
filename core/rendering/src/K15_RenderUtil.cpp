@@ -864,7 +864,7 @@ intern inline uint32 K15_InternalPush2DScreenspacePixelColoredTextVertices(K15_R
 	K15_GetTextSizeInPixels(p_RenderFontDesc, &textWidth, &textHeight, p_Text, p_TextLength);
 
 	return K15_InternalPush2DScreenspacePixelColoredTextVertices(p_RenderFontDesc, p_VertexBuffer,
-		p_VertexBufferOffsetIndex, p_PixelPosLeft, p_PixelPosTop, p_PixelPosLeft + textWidth,
+		p_VertexBufferOffsetIndex, p_PixelPosLeft, p_PixelPosLeft + textWidth, p_PixelPosTop,
 		p_PixelPosTop + textHeight, p_TextColor, p_Text, p_TextLength);
 }
 /*********************************************************************************/
