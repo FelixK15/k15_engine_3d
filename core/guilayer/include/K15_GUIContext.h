@@ -102,7 +102,8 @@ typedef struct _K15_GUIElement
 	kg_u32 offsetInBytes;
 	kg_u32 sizeInBytes;
 	kg_u32 flagMask;
-} K15_GUIFont;
+} K15_GUIElement;
+
 /*********************************************************************************/
 typedef struct _K15_GUIFont
 {

@@ -318,44 +318,58 @@ intern void K15_InternalPushGUIMenuVertices(K15_GUIElement* p_GUIElement, K15_GU
 	float* P3C3Buffer = p_DrawInfo->vertexBufferP3C3;
 	float* P3T2C3Buffer = p_DrawInfo->vertexBufferP3T2C3;
 
-	uint32 textColor		= menuStyle->textColor;
-	uint32 lowerLeftColor	= menuStyle->lowerBackgroundColor;
-	uint32 lowerRightColor	= menuStyle->lowerBackgroundColor;
-	uint32 upperLeftColor	= menuStyle->upperBackgroundColor;
-	uint32 upperRightColor	= menuStyle->upperBackgroundColor;
+	uint32 textColor = menuStyle->textColor;
+	uint32 lowerLeftColor = 0;
+	uint32 lowerRightColor = 0;
+	uint32 upperLeftColor = 0;
+	uint32 upperRightColor = 0;
 
 	if (menuData->subMenu)
 	{
-		if (p_GUIElement->flagMask & K15_GUI_ELEMENT_HOVERED)
+		if (p_GUIElement->flagMask & K15_GUI_ELEMENT_MOUSE_DOWN)
 		{
-			lowerLeftColor = menuStyle->lowerHoveredBackgroundColor;
-			lowerRightColor = menuStyle->lowerHoveredBackgroundColor;
-			upperLeftColor = menuStyle->upperHoveredBackgroundColor;
-			upperRightColor = menuStyle->upperHoveredBackgroundColor;
+			lowerLeftColor = menuStyle->subMenuColors.lowerFocusedBackgroundColor;
+			lowerRightColor = menuStyle->subMenuColors.lowerFocusedBackgroundColor;
+			upperLeftColor = menuStyle->subMenuColors.upperFocusedBackgroundColor;
+			upperRightColor = menuStyle->subMenuColors.upperFocusedBackgroundColor;
 		}
-		else if (p_GUIElement->flagMask & K15_GUI_ELEMENT_CLICKED)
+		else if (p_GUIElement->flagMask & K15_GUI_ELEMENT_HOVERED)
 		{
-			lowerLeftColor = menuStyle->lowerFocusedBackgroundColor;
-			lowerRightColor = menuStyle->lowerFocusedBackgroundColor;
-			upperLeftColor = menuStyle->upperFocusedBackgroundColor;
-			upperRightColor = menuStyle->upperFocusedBackgroundColor;
+			lowerLeftColor = menuStyle->subMenuColors.lowerHoveredBackgroundColor;
+			lowerRightColor = menuStyle->subMenuColors.lowerHoveredBackgroundColor;
+			upperLeftColor = menuStyle->subMenuColors.upperHoveredBackgroundColor;
+			upperRightColor = menuStyle->subMenuColors.upperHoveredBackgroundColor;
+		}
+		else
+		{
+			upperLeftColor = menuStyle->subMenuColors.upperBackgroundColor;
+			upperRightColor = menuStyle->subMenuColors.upperBackgroundColor;
+			lowerLeftColor = menuStyle->subMenuColors.lowerBackgroundColor;
+			lowerRightColor = menuStyle->subMenuColors.lowerBackgroundColor;
 		}
 	}
 	else
 	{
-		if (p_GUIElement->flagMask & K15_GUI_ELEMENT_HOVERED)
+		if (p_GUIElement->flagMask & K15_GUI_ELEMENT_MOUSE_DOWN)
 		{
-			lowerLeftColor = menuStyle->lowerHoveredBackgroundColor;
-			lowerRightColor = menuStyle->lowerHoveredBackgroundColor;
-			upperLeftColor = menuStyle->upperHoveredBackgroundColor;
-			upperRightColor = menuStyle->upperHoveredBackgroundColor;
+			lowerLeftColor = menuStyle->menuColors.lowerFocusedBackgroundColor;
+			lowerRightColor = menuStyle->menuColors.lowerFocusedBackgroundColor;
+			upperLeftColor = menuStyle->menuColors.upperFocusedBackgroundColor;
+			upperRightColor = menuStyle->menuColors.upperFocusedBackgroundColor;
 		}
-		else if (p_GUIElement->flagMask & K15_GUI_ELEMENT_CLICKED)
+		else if (p_GUIElement->flagMask & K15_GUI_ELEMENT_HOVERED)
 		{
-			lowerLeftColor = menuStyle->lowerFocusedBackgroundColor;
-			lowerRightColor = menuStyle->lowerFocusedBackgroundColor;
-			upperLeftColor = menuStyle->upperFocusedBackgroundColor;
-			upperRightColor = menuStyle->upperFocusedBackgroundColor;
+			lowerLeftColor = menuStyle->menuColors.lowerHoveredBackgroundColor;
+			lowerRightColor = menuStyle->menuColors.lowerHoveredBackgroundColor;
+			upperLeftColor = menuStyle->menuColors.upperHoveredBackgroundColor;
+			upperRightColor = menuStyle->menuColors.upperHoveredBackgroundColor;
+		}
+		else
+		{
+			upperLeftColor = menuStyle->menuColors.upperBackgroundColor;
+			upperRightColor = menuStyle->menuColors.upperBackgroundColor;
+			lowerLeftColor = menuStyle->menuColors.lowerBackgroundColor;
+			lowerRightColor = menuStyle->menuColors.lowerBackgroundColor;
 		}
 	}
 	

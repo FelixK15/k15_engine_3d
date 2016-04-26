@@ -41,12 +41,18 @@ intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceCon
 
 	//Menu Style
 	defaultStyle.menuStyle.font = K15_GetResourceRenderFontDesc(p_ResourceContext, styleFontResource);
-	defaultStyle.menuStyle.lowerBackgroundColor = 0xFF808080;
-	defaultStyle.menuStyle.upperBackgroundColor = 0xFF101010;
-	defaultStyle.menuStyle.lowerFocusedBackgroundColor = 0xFFC0C0C0;
-	defaultStyle.menuStyle.upperFocusedBackgroundColor = 0xFF606060;
-	defaultStyle.menuStyle.lowerHoveredBackgroundColor = 0xFFA0A0A0;
-	defaultStyle.menuStyle.upperHoveredBackgroundColor = 0xFF404040;
+	defaultStyle.menuStyle.menuColors.lowerBackgroundColor = 0xFF808080;
+	defaultStyle.menuStyle.menuColors.upperBackgroundColor = 0xFF101010;
+	defaultStyle.menuStyle.menuColors.lowerFocusedBackgroundColor = 0xFFC0C0C0;
+	defaultStyle.menuStyle.menuColors.upperFocusedBackgroundColor = 0xFF606060;
+	defaultStyle.menuStyle.menuColors.lowerHoveredBackgroundColor = 0xFFA0A0A0;
+	defaultStyle.menuStyle.menuColors.upperHoveredBackgroundColor = 0xFF404040;
+	defaultStyle.menuStyle.subMenuColors.lowerBackgroundColor = 0xFF808080;
+	defaultStyle.menuStyle.subMenuColors.upperBackgroundColor = 0xFF808080;
+	defaultStyle.menuStyle.subMenuColors.lowerFocusedBackgroundColor = 0xFF404040;
+	defaultStyle.menuStyle.subMenuColors.upperFocusedBackgroundColor = 0xFF404040;
+	defaultStyle.menuStyle.subMenuColors.lowerHoveredBackgroundColor = 0xFF656565;
+	defaultStyle.menuStyle.subMenuColors.upperHoveredBackgroundColor = 0xFF656565;
 	defaultStyle.menuStyle.textColor = 0XFF000000;
 	defaultStyle.menuStyle.verticalPixelPadding = 2;
 	defaultStyle.menuStyle.horizontalPixelPadding = 8;
