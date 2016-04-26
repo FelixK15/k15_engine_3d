@@ -1,14 +1,38 @@
 #ifndef _K15_GUILayer_Context_h_
 #define _K15_GUILayer_Context_h_
 
-struct K15_SystemEvent;
+#define K15_GUI_MAX_LAYOUTS 20
+#define K15_GUI_MAX_ELEMENT_PTR_PER_LAYOUT 128
+#define K15_GUI_MEMORY_BUFFER_COUNT 2
+#define K15_GUI_MEMORY_FRONT_BUFFER 0
+#define K15_GUI_MEMORY_BACK_BUFFER 1
+
+#define K15_GUI_MAX_BUFFERED_MOUSE_INPUTS 16
+#define K15_GUI_MAX_BUFFERED_KEYBOARD_INPUTS 16
+#define K15_GUI_MAX_BUFFERED_SYSTEM_EVENTS 16
+
+#define K15_GUI_RESULT_SUCCESS 0
+#define K15_GUI_RESULT_OUT_OF_MEMORY 1
+#define K15_GUI_RESULT_NOT_ENOUGH_MEMORY 2
+
+#define kg_size_kilo_bytes(n) (n*1024)
+
+#define K15_GUI_MIN_MEMORY_SIZE_IN_BYTES sizeof(K15_GUIContext) + kg_size_kilo_bytes(10)
+
+typedef unsigned int kg_u32;
+typedef unsigned short kg_u16;
+typedef unsigned char kg_u8;
+
+typedef int kg_s32;
+typedef short kg_s16;
+typedef char kg_s8;
+
+typedef unsigned char kg_byte;
+typedef unsigned char kg_b8;
+typedef unsigned int kg_result;
+
 struct K15_GUIContext;
 struct K15_GUIElement;
-
-#include "K15_GUIContextPrerequisites.h"
-#include "K15_CustomMemoryAllocator.h"
-
-#include <K15_RenderMaterialDesc.h>
 
 typedef void(*K15_GUIIteratorFnc)(K15_GUIContext*, K15_GUIElement*, void*);
 /*********************************************************************************/
@@ -47,108 +71,113 @@ enum K15_GUIElementType
 	K15_GUI_MENU_ITEM,
 }; 
 /*********************************************************************************/
-struct K15_GUIRectangle
+typedef struct _K15_GUIRectangle
 {
-	int16 pixelPosLeft;
-	int16 pixelPosTop;
-	int16 pixelPosRight;
-	int16 pixelPosBottom;
-};
+	kg_s16 pixelPosLeft;
+	kg_s16 pixelPosTop;
+	kg_s16 pixelPosRight;
+	kg_s16 pixelPosBottom;
+} K15_GUIRectangle;
 /*********************************************************************************/
-struct K15_GUIDimension
+typedef struct _K15_GUIDimension
 {
-	uint16 width;
-	uint16 height;
-};
+	kg_u16 width;
+	kg_u16 height;
+} K15_GUIDimension;
 /*********************************************************************************/
-struct K15_GUISizeHint
+typedef struct _K15_GUISizeHint
 {
 	K15_GUIRectangle* rect;
 	K15_GUIDimension dimHint;
 	K15_GUIDimension dimMin;
-};
+} K15_GUISizeHint;
 /*********************************************************************************/
-struct K15_GUIElement
+typedef struct _K15_GUIElement
 {
 	K15_GUIElementType type;
 	K15_GUIRectangle rect;
 	K15_GUIDimension minSize;
 	K15_GUIDimension sizeHint;
-	uint32 identifierHash;
-	uint32 offsetInBytes;
-	uint32 sizeInBytes;
-	uint32 flagMask;
-};
+	kg_u32 identifierHash;
+	kg_u32 offsetInBytes;
+	kg_u32 sizeInBytes;
+	kg_u32 flagMask;
+} K15_GUIFont;
 /*********************************************************************************/
-struct K15_GUIWindowStyle
+typedef struct _K15_GUIFont
 {
-	uint32 borderUpperColor;
-	uint32 borderLowerColor;
-	uint32 upperBackgroundColor;
-	uint32 lowerBackgroundColor;
-	uint32 upperTitleBackgroundColor;
-	uint32 lowerTitleBackgroundColor;
-	uint32 titleTextColor;
-	uint16 titlePixelPadding;
-	uint16 borderPixelThickness;
-	K15_RenderFontDesc* font;
-};
+
+} K15_GUIFont;
 /*********************************************************************************/
-struct K15_GUIButtonStyle
+typedef struct _K15_GUIWindowStyle
 {
-	uint32 borderUpperColor;
-	uint32 borderLowerColor;
-	uint32 upperBackgroundColor;
-	uint32 lowerBackgroundColor;
-	uint32 textColor;
-	uint16 borderPixelThickness;
-	uint16 verticalPixelPadding;
-	uint16 horizontalPixelPadding;
-	K15_RenderFontDesc* font;
-};
+	kg_u32 borderUpperColor;
+	kg_u32 borderLowerColor;
+	kg_u32 upperBackgroundColor;
+	kg_u32 lowerBackgroundColor;
+	kg_u32 upperTitleBackgroundColor;
+	kg_u32 lowerTitleBackgroundColor;
+	kg_u32 titleTextColor;
+	kg_u16 titlePixelPadding;
+	kg_u16 borderPixelThickness;
+	K15_GUIFont* font;
+} K15_GUIWindowStyle;
 /*********************************************************************************/
-struct K15_GUILabelStyle
+typedef struct _K15_GUIButtonStyle
 {
-	uint32 textColor;
-	K15_RenderFontDesc* font;
-};
+	kg_u32 borderUpperColor;
+	kg_u32 borderLowerColor;
+	kg_u32 upperBackgroundColor;
+	kg_u32 lowerBackgroundColor;
+	kg_u32 textColor;
+	kg_u16 borderPixelThickness;
+	kg_u16 verticalPixelPadding;
+	kg_u16 horizontalPixelPadding;
+	K15_GUIFont* font;
+} K15_GUIButtonStyle;
 /*********************************************************************************/
-struct K15_GUIMenuStyle
+typedef struct _K15_GUILabelStyle
 {
-	uint32 textColor;
-	uint32 upperBackgroundColor;
-	uint32 lowerBackgroundColor;
-	uint32 upperHoveredBackgroundColor;
-	uint32 lowerHoveredBackgroundColor;
-	uint32 upperFocusedBackgroundColor;
-	uint32 lowerFocusedBackgroundColor;
-	uint32 verticalPixelPadding;
-	uint32 horizontalPixelPadding;
-	K15_RenderFontDesc* font;
-};
+	kg_u32 textColor;
+	K15_GUIFont* font;
+} K15_GUILabelStyle;
 /*********************************************************************************/
-struct K15_GUIToolBarStyle
+typedef struct _K15_GUIMenuStyle
 {
-	uint32 lowerBackgroundColor;
-	uint32 upperBackgroundColor;
-	uint32 pixelHeight;
-};
+	kg_u32 textColor;
+	kg_u32 upperBackgroundColor;
+	kg_u32 lowerBackgroundColor;
+	kg_u32 upperHoveredBackgroundColor;
+	kg_u32 lowerHoveredBackgroundColor;
+	kg_u32 upperFocusedBackgroundColor;
+	kg_u32 lowerFocusedBackgroundColor;
+	kg_u32 verticalPixelPadding;
+	kg_u32 horizontalPixelPadding;
+	K15_GUIFont* font;
+} K15_GUIMenuStyle;
 /*********************************************************************************/
-struct K15_GUIMenuItemStyle
+typedef struct _K15_GUIToolBarStyle
 {
-	uint32 lowerBackgroundColor;
-	uint32 upperBackgroundColor;
-	uint32 lowerHoveredBackgroundColor;
-	uint32 upperHoveredBackgroundColor;
-	uint32 lowerMouseDownBackgroundColor;
-	uint32 upperMouseDownBackgroundColor;
-	uint32 verticalPixelPadding;
-	uint32 horizontalPixelPadding;
-	uint32 textColor;
-	K15_RenderFontDesc* font;
-};
+	kg_u32 lowerBackgroundColor;
+	kg_u32 upperBackgroundColor;
+	kg_u32 pixelHeight;
+} K15_GUIToolBarStyle;
 /*********************************************************************************/
-struct K15_GUIContextStyle
+typedef struct _K15_GUIMenuItemStyle
+{
+	kg_u32 lowerBackgroundColor;
+	kg_u32 upperBackgroundColor;
+	kg_u32 lowerHoveredBackgroundColor;
+	kg_u32 upperHoveredBackgroundColor;
+	kg_u32 lowerMouseDownBackgroundColor;
+	kg_u32 upperMouseDownBackgroundColor;
+	kg_u32 verticalPixelPadding;
+	kg_u32 horizontalPixelPadding;
+	kg_u32 textColor;
+	K15_GUIFont* font;
+} K15_GUIMenuItemStyle;
+/*********************************************************************************/
+typedef struct _K15_GUIContextStyle
 {
 	K15_GUIWindowStyle windowStyle;
 	K15_GUIButtonStyle buttonStyle;
@@ -156,65 +185,65 @@ struct K15_GUIContextStyle
 	K15_GUIMenuStyle menuStyle;
 	K15_GUIToolBarStyle toolBarStyle;
 	K15_GUIMenuItemStyle menuItemStyle;
-};
+} K15_GUIContextStyle;
 /*********************************************************************************/
-struct K15_GUIToolBarData
+typedef struct _K15_GUIToolBarData
 {
 	K15_GUIToolBarStyle* toolBarStyle;
-};
+} K15_GUIToolBarData;
 /*********************************************************************************/
-struct K15_GUIMenuData
+typedef struct _K15_GUIMenuData
 {
 	K15_GUIMenuStyle* menuStyle;
 	char* title;
-	uint32 textLength;
-	bool8 expanded;
-	bool8 subMenu;
-};
+	kg_u32 textLength;
+	kg_b8 expanded;
+	kg_b8 subMenu;
+} K15_GUIMenuData;
 /*********************************************************************************/
-struct K15_GUIMenuItemData
+typedef struct _K15_GUIMenuItemData
 {
 	K15_GUIMenuItemStyle* menuItemStyle;
 	char* text;
-	uint32 textLength;
-};
+	kg_u32 textLength;
+} K15_GUIMenuItemData;
 /*********************************************************************************/
-struct K15_GUIWindowData
+typedef struct _K15_GUIWindowData
 {
 	K15_GUIWindowStyle* style;
 	K15_GUIRectangle contentRect;
 	char* title;
-	uint32 textLength;
-	bool8 expanded;
-};
+	kg_u32 textLength;
+	kg_b8 expanded;
+} K15_GUIWindowData;
 /*********************************************************************************/
-struct K15_GUIButtonData
+typedef struct _K15_GUIButtonData
 {
 	K15_GUIButtonStyle* style;
 	char* text;
-	uint32 textLength;
-};
+	kg_u32 textLength;
+} K15_GUIButtonData;
 /*********************************************************************************/
-struct K15_GUILabelData
+typedef struct _K15_GUILabelData
 {
 	K15_GUILabelStyle* style;
 	char* text;
-	uint32 textLength;
-};
+	kg_u32 textLength;
+} K15_GUILabelData;
 /*********************************************************************************/
-struct K15_GUILayout
+typedef struct _K15_GUILayout
 {
 	K15_GUISizeHint elementSizeHints[K15_GUI_MAX_ELEMENTS_PER_LAYOUT];
 	K15_GUIRectangle layoutRectangle;
 	K15_GUILayoutType type;
-	uint32 numElements;
+	kg_u32 numElements;
 
 	union 
 	{
-		uint16 fixedWidthPerElement;
-		uint16 fixedHeightPerElement;
+		kg_u16 fixedWidthPerElement;
+		kg_u16 fixedHeightPerElement;
 	} params;
-};
+} K15_GUILayout;
 /*********************************************************************************/
 enum K15_GUIContextFlags
 {
@@ -222,7 +251,7 @@ enum K15_GUIContextFlags
 	K15_GUI_CONTEXT_INSIDE_MENU_FLAG		= 0x02
 };
 /*********************************************************************************/
-enum K15_GUIMouseInputType : uint16
+enum K15_GUIMouseInputType : kg_u16
 {
 	K15_GUI_MOUSE_BUTTON_PRESSED = 0,
 	K15_GUI_MOUSE_BUTTON_RELEASED,
@@ -231,7 +260,7 @@ enum K15_GUIMouseInputType : uint16
 	K15_GUI_MOUSE_MOVED
 };
 /*********************************************************************************/
-enum K15_GUIMouseButtonType : uint16
+enum K15_GUIMouseButtonType : kg_u16
 {
 	K15_GUI_MOUSE_BUTTON_LEFT = 0,
 	K15_GUI_MOUSE_BUTTON_RIGHT,
@@ -296,36 +325,36 @@ enum K15_GUISystemEventType
 	K15_GUI_SYSTEM_EVENT_COUNT
 };
 /*********************************************************************************/
-struct K15_GUIMouseInput
+typedef struct _K15_GUIMouseInput
 {
 	union
 	{
 		struct
 		{
-			uint16 mousePosX;
-			uint16 mousePosY;
+			kg_u16 mousePosX;
+			kg_u16 mousePosY;
 		};
 		
-		uint32 mouseButton;
+		kg_u32 mouseButton;
 	};
 
 	K15_GUIMouseInputType type;
-};
+} K15_GUIMouseInput;
 /*********************************************************************************/
-struct K15_GUIKeyboardInput
+typedef struct _K15_GUIKeyboardInput
 {
 	struct 
 	{
-		uint16 key;
-		uint16 modifierMask;
+		kg_u16 key;
+		kg_u16 modifierMask;
 	} keyInput;
 
 	K15_GUIKeyboardInputType type;
 	K15_GUIKeyboardKeyType keyType;
 	K15_GUIKeyboardModifierType modifier;
-};
+} K15_GUIKeyboardInput;
 /*********************************************************************************/
-struct K15_GUISystemEvent
+typedef struct _K15_GUISystemEvent
 {
 	K15_GUISystemEventType type;
 	
@@ -333,51 +362,52 @@ struct K15_GUISystemEvent
 	{
 		struct 
 		{
-			uint16 width;
-			uint16 height;
+			kg_u16 width;
+			kg_u16 height;
 		} size;
 	} params;
-};
+} K15_GUISystemEvent;
 /*********************************************************************************/
-struct K15_GUIContextEvents
+typedef struct _K15_GUIContextEvents
 {
-	uint16 mousePosX;
-	uint16 mousePosY;
-	int16 mouseDeltaX;
-	int16 mouseDeltaY;
-	uint16 numBufferedSystemEvents;
-	uint16 numBufferedMouseInputs;
-	uint16 numBufferedKeyboardInputs;
+	kg_u16 mousePosX;
+	kg_u16 mousePosY;
+	kg_s16 mouseDeltaX;
+	kg_s16 mouseDeltaY;
+	kg_u16 numBufferedSystemEvents;
+	kg_u16 numBufferedMouseInputs;
+	kg_u16 numBufferedKeyboardInputs;
 	K15_GUISystemEvent bufferedSystemEvents[K15_GUI_MAX_BUFFERED_SYSTEM_EVENTS];
 	K15_GUIMouseInput bufferedMouseInput[K15_GUI_MAX_BUFFERED_MOUSE_INPUTS];
 	K15_GUIKeyboardInput bufferedKeyboardInput[K15_GUI_MAX_BUFFERED_KEYBOARD_INPUTS];
-};
+} K15_GUIContextEvents;
 /*********************************************************************************/
-struct K15_GUIContext
+typedef struct _K15_GUIResources
 {
-	K15_Semaphore* memoryLock;
-	byte* memoryBuffer;
-	K15_CustomMemoryAllocator memoryAllocator;
+		
+} K15_GUIResources;
+/*********************************************************************************/
+typedef struct _K15_GUIContext
+{
+	kg_byte* memoryBuffer;
+	K15_GUIResources* resources;
 	K15_GUIContextStyle style;
 	K15_GUIContextEvents events;
 	K15_GUILayout layoutStack[K15_GUI_MAX_LAYOUTS];
-	bool8 debugModeActive;
-	uint8 numMenus;
-	uint8 layoutIndex;
-	uint8 numLayouts;
-	uint16 windowWidth;
-	uint16 windowHeight;
-	uint32 focusedElementIdHash;
-	uint32 clickedElementIdHash;
-	uint32 activatedElementIdHash;
-	uint32 hoveredElementIdHash;
-	uint32 mouseDownElementIdHash;
-	uint32 memoryMaxSizeInBytes;
-	uint32 memoryCurrentSizeInBytes;
-	uint32 retainedDataOffsetInBytes;
-	uint32 retainedDataSizeInBytes;
-	uint32 flagMask;
-};
+	kg_u8 numMenus;
+	kg_u8 numLayouts;
+	kg_u8 layoutIndex;
+	kg_u16 windowWidth;
+	kg_u16 windowHeight;
+	kg_u32 focusedElementIdHash;
+	kg_u32 clickedElementIdHash;
+	kg_u32 activatedElementIdHash;
+	kg_u32 hoveredElementIdHash;
+	kg_u32 mouseDownElementIdHash;
+	kg_u32 memoryBufferCapacityInBytes;
+	kg_u32 memoryBufferSizeInBytes;
+	kg_u32 flagMask;
+} K15_GUIContext;
 /*********************************************************************************/
 
 //how this should work:
@@ -388,33 +418,33 @@ struct K15_GUIContext
 // - iterate over elements (rendering)
 // - Call gui logic (next frame - retrieve results from last frame. Mainly results of the input)
 
-K15_GUIContext* K15_CreateGUIContext(K15_ResourceContext* p_ResourceContext, K15_RenderCommandQueue* p_RenderCommandQueue);
-K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocator p_MemoryAllocator, K15_ResourceContext* p_ResourceContext, K15_RenderCommandQueue* p_RenderCommandQueue);
+K15_GUIContext* K15_CreateGUIContext();
+K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(kg_byte* p_Memory, kg_u32 p_MemorySizeInBytes);
 
-byte* K15_GUIGetGUIElementMemory(K15_GUIElement* p_GUIElement);
+kg_byte K15_GUIGetGUIElementMemory(K15_GUIElement* p_GUIElement);
 
-void K15_GUIBeginDockingArea(K15_GUIContext* p_GUIContext, int16 p_PosX, int16 p_PosY,
-	uint16 p_Width, uint16 p_Height, uint32 p_AllowedDockingAreasMask);
+void K15_GUIBeginDockingArea(K15_GUIContext* p_GUIContext, kg_s16 p_PosX, kg_s16 p_PosY,
+	kg_u16 p_Width, kg_u16 p_Height, kg_u32 p_AllowedDockingAreasMask);
 
 void K15_GUIBeginToolBar(K15_GUIContext* p_GUIContext, const char* p_Identifier);
 void K15_GUIBeginToolBarEX(K15_GUIContext* p_GUIContext, const char* p_Identifier, K15_GUIToolBarStyle* p_ToolBarStyle);
 
-bool8 K15_GUIBeginWindow(K15_GUIContext* p_GUIContext, int16* p_PosX, int16* p_PosY,
-	uint16* p_Width, uint16* p_Height, const char* p_Title, const char* p_Identifier);
-bool8 K15_GUIBeginWindowEX(K15_GUIContext* p_GUIContext, int16* p_PosX, int16* p_PosY,
-	uint16* p_Width, uint16* p_Height, const char* p_Title, const char* p_Identifier,
+kg_b8 K15_GUIBeginWindow(K15_GUIContext* p_GUIContext, kg_s16* p_PosX, kg_s16* p_PosY,
+	kg_u16* p_Width, kg_u16* p_Height, const char* p_Title, const char* p_Identifier);
+kg_b8 K15_GUIBeginWindowEX(K15_GUIContext* p_GUIContext, kg_s16* p_PosX, kg_s16* p_PosY,
+	kg_u16* p_Width, kg_u16* p_Height, const char* p_Title, const char* p_Identifier,
 	K15_GUIWindowStyle* p_GUIWindowStyle);
 
-bool8 K15_GUIBeginMenu(K15_GUIContext* p_GUIContext, const char* p_MenuText, const char* p_Identifier);
-bool8 K15_GUIBeginMenuEX(K15_GUIContext* p_GUIContext, const char* p_MenuText, const char* p_Identifier, 
+kg_b8 K15_GUIBeginMenu(K15_GUIContext* p_GUIContext, const char* p_MenuText, const char* p_Identifier);
+kg_b8 K15_GUIBeginMenuEX(K15_GUIContext* p_GUIContext, const char* p_MenuText, const char* p_Identifier, 
 	K15_GUIMenuStyle* p_MenuStyle);
 
-bool8 K15_GUIMenuItem(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier);
-bool8 K15_GUIMenuItemEX(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier,
+kg_b8 K15_GUIMenuItem(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier);
+kg_b8 K15_GUIMenuItemEX(K15_GUIContext* p_GUIContext, const char* p_ItemText, const char* p_Identifier,
 	K15_GUIMenuItemStyle* p_MenuItemStyle);
 
-bool8 K15_GUIButton(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier);
-bool8 K15_GUIButtonEX(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier, 
+kg_b8 K15_GUIButton(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier);
+kg_b8 K15_GUIButtonEX(K15_GUIContext* p_GUIContext, const char* p_ButtonText, const char* p_Identifier, 
 	K15_GUIButtonStyle* p_GUIButtonStyle);
 
 void K15_GUILabel(K15_GUIContext* p_GUIContext, const char* p_LabelText, const char* p_Identifier);
@@ -422,9 +452,9 @@ void K15_GUILabelEX(K15_GUIContext* p_GUIContext, const char* p_LabelText, const
 	K15_GUILabelStyle* p_GUILabelStyle);
 
 void K15_GUIPushVerticalLayout(K15_GUIContext* p_GUIContext, K15_GUIRectangle p_LayoutArea, 
-	uint16 p_FixedWidthPerElement = 0);
+	kg_u16 p_FixedWidthPerElement = 0);
 void K15_GUIPushHorizontalLayout(K15_GUIContext* p_GUIContext, K15_GUIRectangle p_LayoutArea,
-	uint16 p_FixedHeightPerElement = 0);
+	kg_u16 p_FixedHeightPerElement = 0);
 
 void K15_GUIPopLayout(K15_GUIContext* p_GUIContext);
 

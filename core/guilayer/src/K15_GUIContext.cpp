@@ -2,33 +2,10 @@
 #include "K15_CustomMemoryAllocator.h"
 #include "K15_DefaultCLibraries.h"
 
-#include "K15_OSContext.h"
-#include "K15_Window.h"
-#include "K15_SystemEvents.h"
-
-#include "K15_MaterialFormat.h"
-#include "K15_TextureFormat.h"
-#include "K15_FontFormat.h"
-
-#include "K15_RenderFontDesc.h"
-#include "K15_RenderTextureDesc.h"
-#include "K15_RenderCommands.h"
-#include "K15_RenderContext.h"
-#include "K15_ResourceContext.h"
-#include "K15_Logging.h"
-
-#include "K15_Math.h"
-#include "K15_String.h"
-#include "K15_Thread.h"
-
-
 /*********************************************************************************/
 intern inline K15_GUIContextStyle K15_InternalCreateDefaultStyle(K15_ResourceContext* p_ResourceContext)
 {
 	K15_GUIContextStyle defaultStyle = {};
-
-	K15_ResourceHandle styleFontResource = 
-		K15_LoadResource(p_ResourceContext, K15_FONT_RESOURCE_IDENTIFIER, "fonts/gui_font.ttf", 0); 
 
 	//Button Style
 	defaultStyle.buttonStyle.borderLowerColor = 0xFF101010;
@@ -111,14 +88,6 @@ intern K15_GUIElement* K15_InternalGUISearchElementByIdentifier(K15_GUIContext* 
 	return element;
 }
 /*********************************************************************************/
-intern K15_GUIElement* K15_InternalGUIGetRetainedElement(K15_GUIContext* p_GUIContext, uint32 p_IdentifierHash)
-{
-	uint32 retainedDataBufferOffset = p_GUIContext->retainedDataOffsetInBytes;
-	uint32 retainedDataBufferSize = p_GUIContext->retainedDataSizeInBytes;
-	return K15_InternalGUISearchElementByIdentifier(p_GUIContext, p_IdentifierHash,
-		retainedDataBufferOffset, retainedDataBufferSize);
-}
-/*********************************************************************************/
 intern K15_GUIElement* K15_InternalGUIGetElement(K15_GUIContext* p_GUIContext, uint32 p_IdentifierHash)
 {
 	uint32 dataSizeInBytes = p_GUIContext->memoryCurrentSizeInBytes;
@@ -154,36 +123,6 @@ intern void K15_InternalGUIAddGUISizeHintsToTopLayout(K15_GUIContext* p_GUIConte
 		topLayout->elementSizeHints[elementIndex].dimHint = p_SizeHint;
 		topLayout->elementSizeHints[elementIndex].dimMin = p_SizeMin;
 	}
-}
-/*********************************************************************************/
-intern byte* K15_InternalGUIGetRetainedDataBuffer(K15_GUIContext* p_GUIContext)
-{
-	return p_GUIContext->memoryBuffer +
-		p_GUIContext->retainedDataOffsetInBytes;
-}
-/*********************************************************************************/
-intern K15_GUIElement* K15_InternalGUIGetGUIElementFromRetainedDataBuffer(K15_GUIContext* p_GUIContext,
-	uint32 p_IdentifierHash)
-{
-	byte* retainendDataBuffer = K15_InternalGUIGetRetainedDataBuffer(p_GUIContext);
-	K15_GUIElement* retainedElement = 0;
-
-	uint32 offset = 0;
-
-	while (offset < p_GUIContext->retainedDataSizeInBytes)
-	{
-		K15_GUIElement* currentElement = (K15_GUIElement*)(retainendDataBuffer + offset);
-
-		if (currentElement->identifierHash == p_IdentifierHash)
-		{
-			retainedElement = currentElement;
-			break;
-		}
-
-		offset += currentElement->sizeInBytes;
-	}
-
-	return retainedElement;
 }
 /*********************************************************************************/
 struct K15_GUIMousePickQuery
@@ -622,42 +561,37 @@ intern K15_GUIElement* K15_InternalGUIMenuItemBase(K15_GUIContext* p_GUIContext,
 
 
 /*********************************************************************************/
-K15_GUIContext* K15_CreateGUIContext(K15_ResourceContext* p_ResourceContext, K15_RenderCommandQueue* p_RenderCommandQueue)
+kg_result K15_CreateGUIContext(K15_GUIContext* p_OutGUIContext);
 {
-	return K15_CreateGUIContextWithCustomAllocator(K15_CreateDefaultMemoryAllocator(), p_ResourceContext, p_RenderCommandQueue);
+	kg_byte* guiMemory = (kg_byte*)malloc(K15_GUI_MIN_MEMORY_SIZE_IN_BYTES);
+
+	if (!guiMemory)
+		return K15_GUI_RESULT_OUT_OF_MEMORY;
+
+	return K15_CreateGUIContextWithCustomAllocator();
 }
 /*********************************************************************************/
-K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocator p_MemoryAllocator, 
-	K15_ResourceContext* p_ResourceContext, K15_RenderCommandQueue* p_RenderCommandQueue)
+kg_result K15_CreateGUIContextWithCustomAllocator(K15_GUIContext* p_OutGUIContext, 
+	kg_byte* p_Memory, kg_u32 p_MemorySizeInBytes)
 {
-	K15_OSContext* osContext = K15_GetOSLayerContext();
-	K15_GUIContext* guiContext = (K15_GUIContext*)K15_AllocateFromMemoryAllocator(&p_MemoryAllocator, 
-		sizeof(K15_GUIContext));
+	if (!p_Memory)
+		return K15_GUI_RESULT_OUT_OF_MEMORY;
 
-	uint32 windowHeight = 0;
-	uint32 windowWidth = 0;
+	if (p_MemorySizeInBytes < K15_GUI_MIN_MEMORY_SIZE_IN_BYTES)
+		return K15_GUI_RESULT_NOT_ENOUGH_MEMORY;
 
-	uint32 bookKeeping = sizeof(K15_GUIContext) + 512;
+	kg_byte* guiMemory = p_Memory;
+	kg_u32 guiMemorySizeInBytes = p_MemorySizeInBytes;
 
-	if (osContext->window.window)
-	{
-		windowHeight = osContext->window.window->height;
-		windowWidth = osContext->window.window->width;
-	}
+	K15_GUIContext* guiContext = (K15_GUIContext*)guiMemory;
+	guiMemory += sizeof(K15_GUIContext);
+	guiMemorySizeInBytes -= sizeof(K15_GUIContext);
 
-	uint32 actualGUIMemorySize = K15_GUI_CONTEXT_MEMORY_SIZE - bookKeeping;
-	uint32 guiMemoryBufferSize = actualGUIMemorySize / 2;
-
-	byte* guiMemory = (byte*)K15_AllocateFromMemoryAllocator(&p_MemoryAllocator, actualGUIMemorySize);
-	memset(guiMemory, 0, actualGUIMemorySize);
-
-	K15_ASSERT_TEXT(guiMemory, "Could not acquire gui memory (%dkb) from allocator '%s'",
-		actualGUIMemorySize / 1024, p_MemoryAllocator.name);
-
-	guiContext->memoryLock = K15_CreateSemaphoreWithInitialValue(1);
-	guiContext->memoryAllocator = p_MemoryAllocator;
-	guiContext->retainedDataSizeInBytes = 0;
-	guiContext->memoryCurrentSizeInBytes = 0;
+	//nullify the rest of the memory
+	memset(guiMemory, 0, guiMemorySizeInBytes);
+	
+	guiContext->memoryBufferSizeInBytes = guiMemorySizeInBytes;
+	guiContext->memoryBufferCapacityInBytes = guiMemorySizeInBytes;
 	guiContext->focusedElementIdHash = 0;
 	guiContext->hoveredElementIdHash = 0;
 	guiContext->clickedElementIdHash = 0;
@@ -667,16 +601,17 @@ K15_GUIContext* K15_CreateGUIContextWithCustomAllocator(K15_CustomMemoryAllocato
 	guiContext->numMenus = 0;
 	guiContext->activatedElementIdHash = 0;
 	guiContext->memoryBuffer = guiMemory;
-	guiContext->retainedDataOffsetInBytes = guiMemoryBufferSize;
-	guiContext->memoryMaxSizeInBytes = guiMemoryBufferSize;
-	guiContext->style = K15_InternalCreateDefaultStyle(p_ResourceContext);
+	guiContext->style = K15_InternalCreateDefaultStyle();
 	guiContext->events.numBufferedKeyboardInputs = 0;
 	guiContext->events.numBufferedMouseInputs = 0;
-	guiContext->debugModeActive = K15_FALSE;
-	guiContext->windowHeight = windowHeight;
-	guiContext->windowWidth = windowWidth;
+	guiContext->windowHeight = 0;
+	guiContext->windowWidth = 0;
 	guiContext->flagMask = 0;
-	return guiContext;
+	
+	//assign newly created gui context
+	*p_OutGUIContext = *guiContext;
+
+	return K15_GUI_RESULT_SUCCESS;
 }
 /*********************************************************************************/
 byte* K15_GUIGetGUIElementMemory(K15_GUIElement* p_GUIElement)
@@ -1065,18 +1000,8 @@ void K15_GUIFinishGUIFrame(K15_GUIContext* p_GUIContext)
 
 	K15_ASSERT((p_GUIContext->flagMask & K15_GUI_CONTEXT_INSIDE_MENU_FLAG) == 0);
 
-	byte* retainedBuffer = K15_InternalGUIGetRetainedDataBuffer(p_GUIContext);
-
-	//wait until we can safely access the retained memory
-	K15_WaitSemaphore(p_GUIContext->memoryLock);
-
-	//load of current frame gui data to retained memory segment
-	memcpy(retainedBuffer, p_GUIContext->memoryBuffer,
-		p_GUIContext->memoryCurrentSizeInBytes);
-
 	p_GUIContext->layoutIndex = 0;
 	p_GUIContext->numLayouts = 0;
-	p_GUIContext->retainedDataSizeInBytes = p_GUIContext->memoryCurrentSizeInBytes;
 	p_GUIContext->memoryCurrentSizeInBytes = 0;
 }
 /*********************************************************************************/
@@ -1097,13 +1022,6 @@ intern void K15_InternalIterateGUIElements(K15_GUIContext* p_GUIContext,
 void K15_GUIIterateElements(K15_GUIContext* p_GUIContext, K15_GUIIteratorFnc p_Function, void* p_UserData)
 {
 	K15_InternalIterateGUIElements(p_GUIContext, p_GUIContext->memoryBuffer, p_GUIContext->memoryCurrentSizeInBytes,
-		p_Function, p_UserData);
-}
-/*********************************************************************************/
-void K15_GUIIterateRetainedElements(K15_GUIContext* p_GUIContext, K15_GUIIteratorFnc p_Function, void* p_UserData)
-{
-	byte* retainedMemoryBuffer = K15_InternalGUIGetRetainedDataBuffer(p_GUIContext);
-	K15_InternalIterateGUIElements(p_GUIContext, retainedMemoryBuffer, p_GUIContext->retainedDataSizeInBytes,
 		p_Function, p_UserData);
 }
 /*********************************************************************************/
