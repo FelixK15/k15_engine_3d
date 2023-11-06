@@ -1,0 +1,4 @@
+@echo off
+mkdir build
+cd build
+cmake -DK15_RENDERER="OpenGL" -DK15_BUILD_DYNAMIC_GAME_LIBRARY=1 -DK15_RENDERER_VERSION=3 -DK15_PLATFORM="Win32" ../
