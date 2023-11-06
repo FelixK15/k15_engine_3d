@@ -32,7 +32,7 @@
 
 #ifdef K15_LOAD_GAME_LIB_DYNAMIC
 /*********************************************************************************/
-intern void K15_InternalOnGameLibraryReload(void* p_UserData)
+intern void K15_InternalOnGameLibraryReload(const char* p_FileName, void* p_UserData)
 {
 	K15_GameContext* gameContext = (K15_GameContext*)p_UserData;
 	K15_DynamicLibrary* gameLibrary = gameContext->gameLibrary;
@@ -43,9 +43,9 @@ intern void K15_InternalOnGameLibraryReload(void* p_UserData)
 	K15_ReloadDynamicLibrary(gameLibrary);
 
 	gameContext->tickFnc = (K15_TickGameFnc)K15_GetProcAddress(gameLibrary, "K15_TickGame");
-	gameContext->onSystemEventFnc = (K15_TickGameFnc)K15_GetProcAddress(gameLibrary, "K15_OnSystemEvent");
-	gameContext->onWindowEventFnc = (K15_TickGameFnc)K15_GetProcAddress(gameLibrary, "K15_OnWindowEvent");
-	gameContext->onInputEventFnc = (K15_TickGameFnc)K15_GetProcAddress(gameLibrary, "K15_OnInputEvent");
+	gameContext->onSystemEventFnc = (K15_OnSystemEventFnc)K15_GetProcAddress(gameLibrary, "K15_OnSystemEvent");
+	gameContext->onWindowEventFnc = (K15_OnWindowEventFnc)K15_GetProcAddress(gameLibrary, "K15_OnWindowEvent");
+	gameContext->onInputEventFnc = (K15_OnInputEventFnc)K15_GetProcAddress(gameLibrary, "K15_OnInputEvent");
 
 	K15_UnlockMutex(gameLibrarySynchronizer);
 }

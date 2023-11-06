@@ -11,6 +11,8 @@ set(LAUNCHER_LIBRARIES resourceformats oslayer logging guilayer rendering runtim
 
 if(${K15_BUILD_DYNAMIC_GAME_LIBRARY} EQUAL 0)
 	set(LAUNCHER_LIBRARIES ${LAUNCHER_LIBRARIES} testgame)
+else()
+	add_definitions(-DK15_LOAD_GAME_LIB_DYNAMIC)
 endif()
 
 if (${K15_PLATFORM} STREQUAL "Android")

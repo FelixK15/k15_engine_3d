@@ -38,3 +38,4 @@ source_group(include\\generated FILES ${K15_RUNTIME_GENERATED_INC})
 #source_group(src\\generated FILES ${K15_RUNTIME_GENERATED_SRC})
 
 add_library(runtime STATIC ${K15_RUNTIME_COMPLETE_SRC})
+target_link_libraries(runtime libresourcecompiler)
